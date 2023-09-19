@@ -8,9 +8,11 @@ import {
 } from "@arco-design/web-react/icon";
 
 const Rect = (props) => {
+  const [node, setNode] = useState(Node.NONE);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const [node, setNode] = useState(Node.NONE);
+  const [name, setName] = useState("New table");
+
   const [fields, setFields] = useState([
     {
       name: "id",
@@ -32,11 +34,7 @@ const Rect = (props) => {
     },
   ]);
 
-  const table = {
-    name: "Students",
-  };
-
-  const height = fields.length * 36 + 40 + 2;
+  const height = fields.length * 36 + 40 + 4;
 
   return (
     <g>
@@ -62,8 +60,21 @@ const Rect = (props) => {
             isHovered ? "border-sky-500" : "border-gray-500"
           } bg-gray-300 select-none rounded-md`}
         >
-          <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md flex justify-between">
-            {table.name}
+          <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md flex justify-between items-center">
+            {
+              <form onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={`p-1 select-text w-[100px] bg-gray-400 focus:bg-gray-200 ${
+                    name < 1
+                      ? "ring-2 ring-red-600"
+                      : "focus:ring-2 focus:ring-sky-500 "
+                  }`}
+                />
+              </form>
+            }
             {isHovered && (
               <div className="flex justify-end items-center">
                 <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
