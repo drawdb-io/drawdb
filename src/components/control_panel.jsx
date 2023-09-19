@@ -797,6 +797,7 @@ export default function ControlPanel(props) {
             saveAs(blob, `${exportData.filename}.${exportData.extension}`);
           } else if (visible === MODAL.IMPORT) {
             if (error.type !== ERROR.ERROR) {
+              setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
               overwriteDiagram();
               setData(null);
               setVisible(MODAL.NONE);
@@ -819,7 +820,13 @@ export default function ControlPanel(props) {
         centered
         closeOnEsc={true}
         okText={`${visible === MODAL.IMPORT ? "Import" : "Export"}`}
-        okButtonProps={{ disabled: error.type === ERROR.ERROR }}
+        okButtonProps={{
+          disabled:
+            (visible === MODAL.IMPORT &&
+              (error.type === ERROR.ERROR || !data)) ||
+            ((visible === MODAL.IMG || visible === MODAL.CODE) &&
+              !exportData.data),
+        }}
         cancelText="Cancel"
         width={520}
       >
