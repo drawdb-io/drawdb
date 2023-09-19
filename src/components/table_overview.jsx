@@ -1,4 +1,4 @@
-import { React, useState, memo } from "react";
+import { React, useState } from "react";
 import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
 import {
   Collapse,
@@ -23,16 +23,9 @@ import {
   IconSearch,
 } from "@douyinfe/semi-icons";
 
-const TableOverview = memo(function TableOverView(props) {
+export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [tableActiveKey, setTableActiveKey] = useState("");
-
-  const updateColor = (id, c) => {
-    const updatedTables = [...props.tables];
-    updatedTables[id] = { ...updatedTables[id], color: c };
-    props.setTables(updatedTables);
-  };
-
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
     props.tables.map((t) => {
@@ -50,8 +43,34 @@ const TableOverview = memo(function TableOverView(props) {
     );
   };
 
-  const handleChange = (value) => {
-    setValue(value);
+  const updatedField = (tid, fid, updatedValues) => {
+    props.setTables((prev) =>
+      prev.map((table, i) => {
+        if (tid === i) {
+          return {
+            ...table,
+            fields: table.fields.map((field, j) =>
+              fid === j ? { ...field, ...updatedValues } : field
+            ),
+          };
+        }
+        return table;
+      })
+    );
+  };
+
+  const updateTable = (tid, updatedValues) => {
+    props.setTables((prev) =>
+      prev.map((table, i) => {
+        if (tid === i) {
+          return {
+            ...table,
+            ...updatedValues,
+          };
+        }
+        return table;
+      })
+    );
   };
 
   return (
@@ -67,7 +86,7 @@ const TableOverview = memo(function TableOverView(props) {
               placeholder="Search..."
               emptyContent={<div className="p-3">No tables found</div>}
               onSearch={(v) => handleStringSearch(v)}
-              onChange={(v) => handleChange(v)}
+              onChange={(v) => setValue(v)}
               onSelect={(v) => {
                 const { id, name } = props.tables.find((t) => t.name === v);
                 setTableActiveKey(`${id}`);
@@ -109,10 +128,7 @@ const TableOverview = memo(function TableOverView(props) {
                   indices: [],
                   color: defaultTableTheme,
                 };
-                props.setTables((prev) => {
-                  const updatedTables = [...prev, newTable];
-                  return updatedTables;
-                });
+                props.setTables((prev) => [...prev, newTable]);
               }}
             >
               Add table
@@ -131,23 +147,7 @@ const TableOverview = memo(function TableOverView(props) {
               {t.fields.map((f, j) => (
                 <Form
                   key={j}
-                  onChange={(value) => {
-                    props.setTables((prev) => {
-                      return prev.map((p, idx) => {
-                        if (idx === i) {
-                          return {
-                            ...p,
-                            fields: p.fields.map((field, index) =>
-                              index === j
-                                ? { ...field, ...value.values }
-                                : field
-                            ),
-                          };
-                        }
-                        return p;
-                      });
-                    });
-                  }}
+                  onChange={(value) => updatedField(i, j, value.values)}
                 >
                   <Row
                     type="flex"
@@ -186,16 +186,9 @@ const TableOverview = memo(function TableOverView(props) {
                         type={f.notNull ? "primary" : "tertiary"}
                         title="Nullable"
                         theme={f.notNull ? "solid" : "light"}
-                        onClick={() => {
-                          const updatedTables = [...props.tables];
-                          updatedTables[i].fields = updatedTables[i].fields.map(
-                            (field, index) =>
-                              index === j
-                                ? { ...field, notNull: !f.notNull }
-                                : field
-                          );
-                          props.setTables(updatedTables);
-                        }}
+                        onClick={() =>
+                          updatedField(i, j, { notNull: !f.notNull })
+                        }
                       >
                         ?
                       </Button>
@@ -203,18 +196,11 @@ const TableOverview = memo(function TableOverView(props) {
                     <Col span={3}>
                       <Button
                         type={f.primary ? "primary" : "tertiary"}
-                        title="Nullable"
+                        title="Primary"
                         theme={f.primary ? "solid" : "light"}
-                        onClick={() => {
-                          const updatedTables = [...props.tables];
-                          updatedTables[i].fields = updatedTables[i].fields.map(
-                            (field, index) =>
-                              index === j
-                                ? { ...field, primary: !f.primary }
-                                : field
-                          );
-                          props.setTables(updatedTables);
-                        }}
+                        onClick={() =>
+                          updatedField(i, j, { primary: !f.primary })
+                        }
                         icon={<IconKeyStroked />}
                       ></Button>
                     </Col>
@@ -223,19 +209,9 @@ const TableOverview = memo(function TableOverView(props) {
                         content={
                           <div className="px-1">
                             <Form
-                              onChange={(value) => {
-                                const updatedTables = [...props.tables];
-                                updatedTables[i] = {
-                                  ...updatedTables[i],
-                                  fields: updatedTables[i].fields.map(
-                                    (field, index) =>
-                                      index === j
-                                        ? { ...field, ...value.values }
-                                        : field
-                                  ),
-                                };
-                                props.setTables(updatedTables);
-                              }}
+                              onChange={(value) =>
+                                updatedField(i, j, value.values)
+                              }
                             >
                               <Form.Input
                                 field="default"
@@ -258,21 +234,12 @@ const TableOverview = memo(function TableOverView(props) {
                                 <Checkbox
                                   value="unique"
                                   defaultChecked={f.unique}
-                                  onChange={(checkedValues) => {
-                                    const updatedTables = [...props.tables];
-                                    updatedTables[i].fields = updatedTables[
-                                      i
-                                    ].fields.map((field, index) =>
-                                      index === j
-                                        ? {
-                                            ...field,
-                                            [checkedValues.target.value]:
-                                              checkedValues.target.checked,
-                                          }
-                                        : field
-                                    );
-                                    props.setTables(updatedTables);
-                                  }}
+                                  onChange={(checkedValues) =>
+                                    updatedField(i, j, {
+                                      [checkedValues.target.value]:
+                                        checkedValues.target.checked,
+                                    })
+                                  }
                                 ></Checkbox>
                               </div>
                               <div className="flex justify-between items-center my-3">
@@ -285,21 +252,12 @@ const TableOverview = memo(function TableOverView(props) {
                                 <Checkbox
                                   value="increment"
                                   defaultChecked={f.increment}
-                                  onChange={(checkedValues) => {
-                                    const updatedTables = [...props.tables];
-                                    updatedTables[i].fields = updatedTables[
-                                      i
-                                    ].fields.map((field, index) =>
-                                      index === j
-                                        ? {
-                                            ...field,
-                                            [checkedValues.target.value]:
-                                              checkedValues.target.checked,
-                                          }
-                                        : field
-                                    );
-                                    props.setTables(updatedTables);
-                                  }}
+                                  onChange={(checkedValues) =>
+                                    updatedField(i, j, {
+                                      [checkedValues.target.value]:
+                                        checkedValues.target.checked,
+                                    })
+                                  }
                                 ></Checkbox>
                               </div>
                               <Form.TextArea
@@ -436,28 +394,12 @@ const TableOverview = memo(function TableOverView(props) {
               >
                 <Collapse>
                   <Collapse.Panel header="Comment" itemKey="1">
-                    <Form
-                      onChange={(value) => {
-                        const updatedTables = [...props.tables];
-                        updatedTables[i] = {
-                          ...t,
-                          ...value.values,
-                        };
-                        props.setTables(updatedTables);
-                      }}
-                    >
+                    <Form onChange={(value) => updateTable(i, value.values)}>
                       <Form.TextArea
                         field="comment"
                         noLabel={true}
                         showClear
-                        onClear={() => {
-                          const updatedTables = [...props.tables];
-                          updatedTables[i] = {
-                            ...t,
-                            comment: "",
-                          };
-                          props.setTables(updatedTables);
-                        }}
+                        onClear={() => updateTable(i, { comment: "" })}
                         initValue={t.comment}
                         autosize
                         placeholder="Add comment"
@@ -477,7 +419,9 @@ const TableOverview = memo(function TableOverView(props) {
                           <Button
                             type="tertiary"
                             size="small"
-                            onClick={() => updateColor(i, defaultTableTheme)}
+                            onClick={() =>
+                              updateTable(i, { color: defaultTableTheme })
+                            }
                           >
                             Clear
                           </Button>
@@ -492,7 +436,7 @@ const TableOverview = memo(function TableOverView(props) {
                                   key={c}
                                   style={{ backgroundColor: c }}
                                   className="p-3 rounded-full mx-1"
-                                  onClick={() => updateColor(i, c)}
+                                  onClick={() => updateTable(i, { color: c })}
                                 >
                                   {t.color === c ? (
                                     <IconCheckboxTick
@@ -512,15 +456,13 @@ const TableOverview = memo(function TableOverView(props) {
                                   key={c}
                                   style={{ backgroundColor: c }}
                                   className="p-3 rounded-full mx-1"
-                                  onClick={() => updateColor(i, c)}
+                                  onClick={() => updateTable(i, { color: c })}
                                 >
-                                  {t.color === c ? (
-                                    <IconCheckboxTick
-                                      style={{ color: "white" }}
-                                    />
-                                  ) : (
-                                    <IconCheckboxTick style={{ color: c }} />
-                                  )}
+                                  <IconCheckboxTick
+                                    style={{
+                                      color: t.color === c ? "white" : c,
+                                    }}
+                                  />
                                 </button>
                               ))}
                           </div>
@@ -586,11 +528,11 @@ const TableOverview = memo(function TableOverView(props) {
                     type="danger"
                     onClick={() => {
                       Toast.success(`Table deleted!`);
-                      props.setTables((prev) => {
-                        return prev
+                      props.setTables((prev) =>
+                        prev
                           .filter((e) => e.id !== i)
-                          .map((e, idx) => ({ ...e, id: idx }));
-                      });
+                          .map((e, idx) => ({ ...e, id: idx }))
+                      );
                       setTableActiveKey("");
                     }}
                   ></Button>
@@ -602,6 +544,4 @@ const TableOverview = memo(function TableOverView(props) {
       </Collapse>
     </>
   );
-});
-
-export default TableOverview;
+}

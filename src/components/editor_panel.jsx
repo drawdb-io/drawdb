@@ -1,4 +1,4 @@
-import { React, useState, useRef, memo } from "react";
+import { React, useState, useRef } from "react";
 import { ResizableBox } from "react-resizable";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
@@ -28,7 +28,7 @@ const myTheme = createTheme({
   ],
 });
 
-const EditorPanel = memo(function EditorPanel(props) {
+const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   const map = useRef(new Map());
 
@@ -40,7 +40,7 @@ const EditorPanel = memo(function EditorPanel(props) {
   ];
   const contentList = [
     <div>
-      <TableOverview tables={props.tables} setTables={props.setTables}/>
+      <TableOverview tables={props.tables} setTables={props.setTables} />
     </div>,
     <div>
       <ReferenceOverview
@@ -176,6 +176,6 @@ const EditorPanel = memo(function EditorPanel(props) {
       </div>
     </ResizableBox>
   );
-});
+};
 
 export default EditorPanel;
