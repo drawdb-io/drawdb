@@ -6,10 +6,7 @@ import timeLine from "../assets/process.png";
 import todo from "../assets/calendar.png";
 import { Tooltip, SideSheet } from "@douyinfe/semi-ui";
 import { UndoRedoContext } from "../pages/editor";
-// import {
-//   IllustrationNoContent,
-//   IllustrationNoContentDark,
-// } from "@douyinfe/semi-illustrations";
+import Todo from "./todo";
 
 export default function Sidebar() {
   const SidesheetType = {
@@ -20,8 +17,8 @@ export default function Sidebar() {
     TIMELINE: 4,
     BOT: 5,
   };
-  const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
   const { undoStack } = useContext(UndoRedoContext);
+  const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
 
   const getTitle = (type) => {
     switch (type) {
@@ -39,11 +36,11 @@ export default function Sidebar() {
             <div className="ms-3">Chat</div>
           </div>
         );
-      case SidesheetType.TEAM:
+      case SidesheetType.TODO:
         return (
           <div className="flex items-center">
-            <img src={teamIcon} className="w-7" alt="chat icon" />
-            <div className="ms-3">Your team</div>
+            <img src={todo} className="w-7" alt="todo icon" />
+            <div className="ms-3">To-do list</div>
           </div>
         );
       default:
@@ -54,7 +51,9 @@ export default function Sidebar() {
   const getContent = (type) => {
     switch (type) {
       case SidesheetType.TIMELINE:
-        return getTimeline();
+        return renderTimeline();
+      case SidesheetType.TODO:
+        return <Todo />;
       default:
         break;
     }
@@ -77,8 +76,11 @@ export default function Sidebar() {
           </button>
         </Tooltip>
         <Tooltip content="To-do">
-          <button className="block">
-            <img src={todo} className="w-8 mb-5" alt="chat icon" />
+          <button
+            className="block"
+            onClick={() => setSidesheet(SidesheetType.TODO)}
+          >
+            <img src={todo} className="w-8 mb-5" alt="todo icon" />
           </button>
         </Tooltip>
         <Tooltip content="Timeline">
@@ -97,20 +99,23 @@ export default function Sidebar() {
       </div>
       <SideSheet
         visible={sidesheet !== SidesheetType.NONE}
-        onCancel={() => setSidesheet(SidesheetType.NONE)}
+        onCancel={() => {
+          setSidesheet(SidesheetType.NONE);
+        }}
         width={340}
         title={getTitle(sidesheet)}
         style={{ paddingBottom: "16px" }}
+        bodyStyle={{ padding: "0px" }}
       >
         {getContent(sidesheet)}
       </SideSheet>
     </>
   );
 
-  function getTimeline() {
+  function renderTimeline() {
     if (undoStack.length > 0) {
       return (
-        <div>
+        <div className="m-5">
           <hr />
           {[...undoStack].reverse().map((e) => (
             <>
@@ -125,18 +130,9 @@ export default function Sidebar() {
       );
     } else {
       return (
-        <div className="mt-4">
+        <div className="m-5">
           You havent added anything to your diagram yet.
         </div>
-        // <Empty
-        //   className="mt-5"
-        //   image={<IllustrationNoContent style={{ width: 160, height: 160 }} />}
-        //   darkModeImage={
-        //     <IllustrationNoContentDark style={{ width: 160, height: 160 }} />
-        //   }
-        //   title="No activity"
-        //   description="You have not added anything to your diagram yet."
-        // />
       );
     }
   }

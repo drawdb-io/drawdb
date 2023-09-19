@@ -19,6 +19,7 @@ export const NoteContext = createContext();
 export const SettingsContext = createContext();
 export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
+export const TaskContext = createContext();
 
 export default function Editor(props) {
   const [tables, setTables] = useState([]);
@@ -47,6 +48,7 @@ export default function Editor(props) {
     pan: { x: 0, y: 0 },
     showGrid: true,
   });
+  const [tasks, setTasks] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
   const [selectedElement, setSelectedElement] = useState({
@@ -386,6 +388,11 @@ export default function Editor(props) {
     );
   };
 
+  const updateTask = (id, values) =>
+    setTasks((prev) =>
+      prev.map((task, i) => (id === i ? { ...task, ...values } : task))
+    );
+
   useEffect(() => {
     document.title = "Editor - drawDB";
   }, []);
@@ -420,28 +427,32 @@ export default function Editor(props) {
                   <SelectContext.Provider
                     value={{ selectedElement, setSelectedElement }}
                   >
-                    <div className="h-[100vh] overflow-hidden">
-                      <ControlPanel />
-                      <div
-                        className={
-                          layout.header
-                            ? `flex h-[calc(100vh-120px)]`
-                            : `flex h-[calc(100vh-52px)]`
-                        }
-                        onMouseUp={() => setResize(false)}
-                        onMouseMove={dragHandler}
-                      >
-                        {layout.sidebar && (
-                          <EditorPanel
-                            resize={resize}
-                            setResize={setResize}
-                            width={width}
-                          />
-                        )}
-                        <Canvas />
-                        {layout.services && <Sidebar />}
+                    <TaskContext.Provider
+                      value={{ tasks, setTasks, updateTask }}
+                    >
+                      <div className="h-[100vh] overflow-hidden">
+                        <ControlPanel />
+                        <div
+                          className={
+                            layout.header
+                              ? `flex h-[calc(100vh-120px)]`
+                              : `flex h-[calc(100vh-52px)]`
+                          }
+                          onMouseUp={() => setResize(false)}
+                          onMouseMove={dragHandler}
+                        >
+                          {layout.sidebar && (
+                            <EditorPanel
+                              resize={resize}
+                              setResize={setResize}
+                              width={width}
+                            />
+                          )}
+                          <Canvas />
+                          {layout.services && <Sidebar />}
+                        </div>
                       </div>
-                    </div>
+                    </TaskContext.Provider>
                   </SelectContext.Provider>
                 </UndoRedoContext.Provider>
               </SettingsContext.Provider>
