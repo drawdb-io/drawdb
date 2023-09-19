@@ -12,6 +12,7 @@ import ToolbarPlugin from "../plugins/ToolbarPlugin";
 import ListMaxIndentLevelPlugin from "../plugins/ListMaxIndentLevelPlugin";
 import CodeHighlightPlugin from "../plugins/CodeHighlightPlugin";
 import AutoLinkPlugin from "../plugins/AutoLinkPlugin";
+import "../styles/richeditor.css";
 
 function Placeholder() {
   return <div className="editor-placeholder">Describe the bug</div>;
