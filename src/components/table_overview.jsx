@@ -77,6 +77,9 @@ export default function TableOverview(props) {
             prefix={<IconSearch />}
             placeholder="Search..."
             onSearch={(v) => handleStringSearch(v)}
+            emptyContent={
+              <div className="p-3 popover-theme">No tables found</div>
+            }
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
               const { id } = tables.find((t) => t.name === v);
@@ -112,14 +115,14 @@ export default function TableOverview(props) {
         accordion
       >
         {tables.length <= 0 ? (
-          <div className="select-none">
+          <div className="select-none mt-2">
             <Empty
               image={
-                <IllustrationNoContent style={{ width: 160, height: 160 }} />
+                <IllustrationNoContent style={{ width: 154, height: 154 }} />
               }
               darkModeImage={
                 <IllustrationNoContentDark
-                  style={{ width: 160, height: 160 }}
+                  style={{ width: 154, height: 154 }}
                 />
               }
               title="No tables"
@@ -131,7 +134,7 @@ export default function TableOverview(props) {
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
                 {t.fields.map((f, j) => (
-                  <Row gutter={6} key={j} className="hover:bg-slate-100 mb-2">
+                  <Row gutter={6} key={j} className="hover-1 mb-2">
                     <Col span={7}>
                       <Input
                         value={f.name}
@@ -256,7 +259,7 @@ export default function TableOverview(props) {
                     <Col span={3}>
                       <Popover
                         content={
-                          <div className="px-1 w-[240px]">
+                          <div className="px-1 w-[240px] popover-theme">
                             <div className="font-semibold">Default value</div>
                             <Input
                               className="my-2"
@@ -625,7 +628,7 @@ export default function TableOverview(props) {
                             />
                             <Popover
                               content={
-                                <div className="px-1">
+                                <div className="px-1 popover-theme">
                                   <div className="font-semibold mb-1">
                                     Index name:{" "}
                                   </div>
@@ -767,7 +770,7 @@ export default function TableOverview(props) {
                   <Col span={8}>
                     <Popover
                       content={
-                        <div>
+                        <div className="popover-theme">
                           <div className="flex justify-between items-center p-2">
                             <div className="font-medium">Theme</div>
                             <Button

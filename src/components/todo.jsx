@@ -98,7 +98,7 @@ export default function Todo() {
 
   return (
     <>
-      <div className="flex justify-between items-center mx-5 mb-2">
+      <div className="flex justify-between items-center mx-5 mb-2 sidesheet-theme">
         <Dropdown
           render={
             <Dropdown.Menu>
@@ -145,14 +145,12 @@ export default function Todo() {
         </Button>
       </div>
       {tasks.length > 0 ? (
-        <List>
+        <List className="sidesheet-theme">
           {tasks.map((t, i) => (
             <List.Item
               key={i}
               style={{ paddingLeft: "18px", paddingRight: "18px" }}
-              className={`${
-                t.complete ? "bg-emerald-50" : "hover:bg-slate-100"
-              }`}
+              className="hover-1"
               onClick={() => setActiveTask(i)}
             >
               <div className="w-full">
@@ -175,7 +173,7 @@ export default function Todo() {
                   <Col span={3}>
                     <Popover
                       content={
-                        <div className="p-2">
+                        <div className="p-2 popover-theme">
                           <div className="mb-2 font-semibold">
                             Set priority:{" "}
                           </div>
@@ -256,7 +254,7 @@ export default function Todo() {
           ))}
         </List>
       ) : (
-        <div className="m-5">
+        <div className="m-5 sidesheet-theme">
           You have no tasks yet. Add your to-dos and keep track of your
           progress.
         </div>

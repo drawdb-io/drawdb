@@ -16,6 +16,7 @@ import {
   AreaContext,
   LayoutContext,
   SelectContext,
+  SettingsContext,
   TabContext,
   UndoRedoContext,
 } from "../pages/editor";
@@ -25,6 +26,7 @@ export default function Area(props) {
   const [saved, setSaved] = useState(false);
   const [editField, setEditField] = useState({});
   const { layout } = useContext(LayoutContext);
+  const { settings } = useContext(SettingsContext);
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
@@ -70,7 +72,7 @@ export default function Area(props) {
             style={{ backgroundColor: props.areaData.color }}
           />
         </div>
-        <div className="text-gray-900 absolute top-2 left-3 select-none">
+        <div className="text-color absolute top-2 left-3 select-none">
           {props.areaData.name}
         </div>
         {(hovered ||
@@ -94,7 +96,7 @@ export default function Area(props) {
               }}
               stopPropagation
               content={
-                <div>
+                <div className="popover-theme">
                   <div className="font-semibold mb-2 ms-1">
                     Edit subject area
                   </div>
@@ -126,7 +128,7 @@ export default function Area(props) {
                     />
                     <Popover
                       content={
-                        <div>
+                        <div className="popover-theme">
                           <div className="flex justify-between items-center p-2">
                             <div className="font-medium">Theme</div>
                             <Button
@@ -306,7 +308,7 @@ export default function Area(props) {
             cx={props.areaData.x}
             cy={props.areaData.y}
             r={6}
-            fill="white"
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
             strokeWidth={3}
             cursor="nwse-resize"
@@ -316,7 +318,7 @@ export default function Area(props) {
             cx={props.areaData.x + props.areaData.width}
             cy={props.areaData.y}
             r={6}
-            fill="white"
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
             strokeWidth={3}
             cursor="nesw-resize"
@@ -326,7 +328,7 @@ export default function Area(props) {
             cx={props.areaData.x}
             cy={props.areaData.y + props.areaData.height}
             r={6}
-            fill="white"
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
             strokeWidth={3}
             cursor="nesw-resize"
@@ -336,7 +338,7 @@ export default function Area(props) {
             cx={props.areaData.x + props.areaData.width}
             cy={props.areaData.y + props.areaData.height}
             r={6}
-            fill="white"
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
             strokeWidth={3}
             cursor="nwse-resize"

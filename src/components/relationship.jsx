@@ -87,9 +87,9 @@ export default function Relationship(props) {
           <feDropShadow
             dx="0"
             dy="0"
-            stdDeviation="6"
+            stdDeviation="4"
             floodColor="gray"
-            floodOpacity="0.5"
+            floodOpacity="0.3"
           />
         </filter>
       </defs>

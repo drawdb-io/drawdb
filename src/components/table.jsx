@@ -81,13 +81,21 @@ export default function Table(props) {
             props.active && !props.moving && "border-blue-500 border-4"
           } ${
             props.moving && "border-blue-500 border-4 border-dashed"
-          }  bg-gray-100 select-none rounded-lg w-full`}
+          } select-none rounded-lg w-full ${
+            settings.mode === "light"
+              ? "bg-zinc-100 text-zinc-800"
+              : "bg-zinc-800 text-zinc-200"
+          }`}
         >
           <div
             className={`h-[10px] w-full rounded-t-md`}
             style={{ backgroundColor: props.tableData.color }}
           />
-          <div className="font-bold text-slate-800 h-[40px] flex justify-between items-center border-b border-gray-400 bg-gray-200">
+          <div
+            className={`font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
+              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
+            }`}
+          >
             <div className="px-3">
               {isHovered
                 ? props.tableData.name.length < 10
@@ -133,7 +141,7 @@ export default function Table(props) {
                 ></Button>
                 <Popover
                   content={
-                    <div className="text-slate-600">
+                    <div className="popover-theme">
                       <div className="mb-2">
                         <strong>Comment :</strong>{" "}
                         {props.tableData.comment === "" ? (
@@ -142,7 +150,7 @@ export default function Table(props) {
                           <div>{props.tableData.comment}</div>
                         )}
                       </div>
-                      <div className="text-slate-600">
+                      <div>
                         <strong
                           className={`${
                             props.tableData.indices.length === 0 ? "" : "block"
@@ -156,8 +164,12 @@ export default function Table(props) {
                           <div>
                             {props.tableData.indices.map((index, k) => (
                               <div
-                                className="flex items-center my-1 px-2 py-1 rounded bg-gray-100"
                                 key={k}
+                                className={`flex items-center my-1 px-2 py-1 rounded ${
+                                  settings.mode === "light"
+                                    ? "bg-gray-100"
+                                    : "bg-zinc-800"
+                                }`}
                               >
                                 <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
                                 <div>
@@ -209,10 +221,10 @@ export default function Table(props) {
               <Popover
                 key={i}
                 content={
-                  <>
+                  <div className="popover-theme">
                     <div className="flex justify-between items-center pb-2">
                       <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4 text-slate-600">{e.type}</p>
+                      <p className="ms-4">{e.type}</p>
                     </div>
                     <hr />
                     {e.primary && (
@@ -235,11 +247,11 @@ export default function Table(props) {
                         Increment
                       </Tag>
                     )}
-                    <p className="text-slate-600">
+                    <p>
                       <strong>Default :</strong>{" "}
                       {e.default === "" ? "Not set" : e.default}
                     </p>
-                  </>
+                  </div>
                 }
                 position="right"
                 showArrow
@@ -268,7 +280,7 @@ export default function Table(props) {
         }
         style={{ paddingBottom: "16px" }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center sidesheet-theme">
           <div className="text-md font-semibold">Name: </div>
           <Input
             value={props.tableData.name}
@@ -298,7 +310,7 @@ export default function Table(props) {
         </div>
         <div>
           {props.tableData.fields.map((f, j) => (
-            <Row gutter={6} key={j} className="hover:bg-slate-100 mt-2">
+            <Row gutter={6} key={j} className="hover-2 mt-2">
               <Col span={7}>
                 <Input
                   value={f.name}
@@ -425,7 +437,7 @@ export default function Table(props) {
               <Col span={3}>
                 <Popover
                   content={
-                    <div className="px-1 w-[240px]">
+                    <div className="px-1 w-[240px] popover-theme">
                       <div className="font-semibold">Default value</div>
                       <Input
                         className="my-2"
@@ -782,7 +794,7 @@ export default function Table(props) {
                   />
                   <Popover
                     content={
-                      <div className="px-1">
+                      <div className="px-1 popover-theme">
                         <div className="font-semibold mb-1">Index name: </div>
                         <Input
                           value={idx.name}
@@ -1124,7 +1136,7 @@ export default function Table(props) {
           setHoveredField(-1);
         }}
       >
-        <div className={`${hoveredField === index ? "text-slate-500" : ""}`}>
+        <div className={`${hoveredField === index ? "text-zinc-400" : ""}`}>
           <button
             className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
             onMouseDown={(ev) => {
@@ -1142,7 +1154,7 @@ export default function Table(props) {
           ></button>
           {fieldData.name}
         </div>
-        <div className="text-slate-400">
+        <div className="text-zinc-400">
           {hoveredField === index ? (
             <Popconfirm
               title="Are you sure you want to delete this field?"

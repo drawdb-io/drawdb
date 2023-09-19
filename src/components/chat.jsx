@@ -9,7 +9,7 @@ export default function Chat() {
   const { messages } = useContext(MessageContext);
 
   return (
-    <div className="mx-5 flex flex-col h-full">
+    <div className="mx-5 flex flex-col h-full sidesheet-theme">
       <div className="h-full flex-1 overflow-y-auto flex flex-col-reverse py-2">
         {messages.map((m, i) =>
           m.type === "note" ? (
@@ -24,7 +24,7 @@ export default function Chat() {
                 size="small"
                 alt={m.name}
                 color={m.color}
-                className="border border-grey-900"
+                className="border border-color"
               >
                 {m.name.split(" ").map((c) => c[0])}
               </Avatar>

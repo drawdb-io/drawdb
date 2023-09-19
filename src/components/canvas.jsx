@@ -369,9 +369,11 @@ export default function Canvas(props) {
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
-          className="w-full h-full bg-white"
+          className="w-full h-full"
           style={{
             cursor: cursor,
+            backgroundColor:
+              settings.mode === "light" ? "white" : "rgba(22, 22, 26, 1)",
           }}
         >
           {settings.showGrid && (

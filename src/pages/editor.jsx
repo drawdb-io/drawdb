@@ -51,6 +51,7 @@ export default function Editor(props) {
     zoom: 1,
     pan: { x: 0, y: 0 },
     showGrid: true,
+    mode: "light",
   });
   const [tasks, setTasks] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -477,7 +478,7 @@ export default function Editor(props) {
                     <TaskContext.Provider
                       value={{ tasks, setTasks, updateTask }}
                     >
-                      <div className="h-[100vh] overflow-hidden">
+                      <div className="h-[100vh] overflow-hidden theme">
                         <ControlPanel />
                         <div
                           className={

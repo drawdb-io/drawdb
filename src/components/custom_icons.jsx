@@ -1,11 +1,11 @@
 import React from "react";
 
-export function IconAddTable() {
+export function IconAddTable({ theme }) {
   return (
     <svg height="26" width="26">
       <path
         fill="none"
-        stroke="rgb(51 65 85)"
+        stroke={theme === "light" ? "rgb(51 65 85)" : "lightgrey"}
         strokeWidth="2"
         d="M4 2 L20 2 A4 4 0 0 1 22 4 L22 14 M14 22 L4 22 A4 4 0 0 1 1 18 L1 4 A4 4 0 0 1 5 2 M22 17 L22 25 M18 21 L26 21 M1 8 L22 8"
       />
@@ -13,12 +13,12 @@ export function IconAddTable() {
   );
 }
 
-export function IconAddArea() {
+export function IconAddArea({ theme }) {
   return (
     <svg height="26" width="26">
       <path
         fill="none"
-        stroke="rgb(51 65 85)"
+        stroke={theme === "light" ? "rgb(51 65 85)" : "lightgrey"}
         strokeWidth="2"
         d="M4 2 L20 2 A4 4 0 0 1 22 4 L22 14 M14 22 L4 22 A4 4 0 0 1 1 18 L1 4 A4 4 0 0 1 5 2 M22 17 L22 25 M18 21 L26 21"
       />
@@ -26,12 +26,12 @@ export function IconAddArea() {
   );
 }
 
-export function IconAddNote() {
+export function IconAddNote({ theme }) {
   return (
     <svg height="26" width="26">
       <path
         fill="none"
-        stroke="rgb(51 65 85)"
+        stroke={theme === "light" ? "rgb(51 65 85)" : "lightgrey"}
         strokeWidth="2"
         d="M12 2 L20 2 A4 4 0 0 1 22 4 L22 14 M14 22 L4 22 A4 4 0 0 1 1 18 L1 12 L12 2 M1 12 L9 12 A3 3 0 0 0 12 9 L12 1 M22 17 L22 25 M18 21 L26 21"
       />

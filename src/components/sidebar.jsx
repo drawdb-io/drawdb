@@ -3,9 +3,14 @@ import chatIcon from "../assets/chat.png";
 import botIcon from "../assets/bot.png";
 import teamIcon from "../assets/group.png";
 import timeLine from "../assets/process.png";
+import timeLineDark from "../assets/process_dark.png";
 import todo from "../assets/calendar.png";
 import { Tooltip, SideSheet, List, Badge } from "@douyinfe/semi-ui";
-import { MessageContext, UndoRedoContext } from "../pages/editor";
+import {
+  MessageContext,
+  SettingsContext,
+  UndoRedoContext,
+} from "../pages/editor";
 import Todo from "./todo";
 import Chat from "./chat";
 
@@ -20,16 +25,21 @@ export default function Sidebar() {
   };
   const { undoStack } = useContext(UndoRedoContext);
   const { messages } = useContext(MessageContext);
+  const { settings } = useContext(SettingsContext);
   const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
-  const [seen, setSeen] = useState(0)
-  const [count, setCount] = useState(messages.length-seen);
+  const [seen, setSeen] = useState(0);
+  const [count, setCount] = useState(messages.length - seen);
 
   const getTitle = (type) => {
     switch (type) {
       case SidesheetType.TIMELINE:
         return (
           <div className="flex items-center">
-            <img src={timeLine} className="w-7" alt="chat icon" />
+            <img
+              src={settings.mode === "light" ? timeLine : timeLineDark}
+              className="w-7"
+              alt="chat icon"
+            />
             <div className="ms-3">Timeline</div>
           </div>
         );
@@ -73,7 +83,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="ps-3 pe-4 py-4 shadow-lg h-full select-none">
+      <div className="ps-3 pe-4 py-4 shadow-lg h-full select-none border-l border-color">
         <Tooltip content="Chat">
           <Badge
             count={count === 0 ? null : count}
@@ -109,7 +119,11 @@ export default function Sidebar() {
             className="block"
             onClick={() => setSidesheet(SidesheetType.TIMELINE)}
           >
-            <img src={timeLine} className="w-8 mb-5" alt="chat icon" />
+            <img
+              src={settings.mode === "light" ? timeLine : timeLineDark}
+              className="w-8 mb-5"
+              alt="chat icon"
+            />
           </button>
         </Tooltip>
         <Tooltip content="Botle">
@@ -137,11 +151,11 @@ export default function Sidebar() {
   function renderTimeline() {
     if (undoStack.length > 0) {
       return (
-        <List>
+        <List className="sidesheet-theme">
           {[...undoStack].reverse().map((e) => (
             <List.Item
               style={{ padding: "4px 18px 4px 18px" }}
-              className="hover:bg-slate-100"
+              className="hover-1"
             >
               <div className="flex items-center py-1 w-full">
                 <i className="block fa-regular fa-circle fa-xs"></i>
@@ -153,8 +167,9 @@ export default function Sidebar() {
       );
     } else {
       return (
-        <div className="m-5">
-          You havent added anything to your diagram yet.
+        <div className="m-5 sidesheet-theme">
+          No activity was recorded. You have not added anything to your diagram
+          yet.
         </div>
       );
     }

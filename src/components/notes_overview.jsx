@@ -55,7 +55,9 @@ export default function NotesOverview(props) {
             showClear
             prefix={<IconSearch />}
             placeholder="Search..."
-            emptyContent={<div className="p-3">No notes found</div>}
+            emptyContent={
+              <div className="p-3 popover-theme">No notes found</div>
+            }
             onSearch={(v) => handleStringSearch(v)}
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
@@ -75,13 +77,13 @@ export default function NotesOverview(props) {
         </Col>
       </Row>
       {notes.length <= 0 ? (
-        <div className="select-none">
+        <div className="select-none mt-2">
           <Empty
             image={
-              <IllustrationNoContent style={{ width: 160, height: 160 }} />
+              <IllustrationNoContent style={{ width: 154, height: 154 }} />
             }
             darkModeImage={
-              <IllustrationNoContentDark style={{ width: 160, height: 160 }} />
+              <IllustrationNoContentDark style={{ width: 154, height: 154 }} />
             }
             title="No text notes"
             description="Add notes cuz why not!"
@@ -139,8 +141,8 @@ export default function NotesOverview(props) {
                 <div className="ms-2">
                   <Popover
                     content={
-                      <div>
-                        <div className="font-medium">Theme</div>
+                      <div className="popover-theme">
+                        <div className="font-medium mb-1">Theme</div>
                         <hr />
                         <div className="py-3">
                           {noteThemes.map((c) => (

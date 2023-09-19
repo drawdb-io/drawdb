@@ -134,7 +134,7 @@ export default function Note(props) {
                 }}
                 stopPropagation
                 content={
-                  <div>
+                  <div className="popover-theme">
                     <div className="font-semibold mb-2 ms-1">Edit note</div>
                     <div className="w-[280px] flex items-center mb-2">
                       <Input
@@ -164,8 +164,8 @@ export default function Note(props) {
                       />
                       <Popover
                         content={
-                          <div>
-                            <div className="font-medium">Theme</div>
+                          <div className="popover-theme">
+                            <div className="font-medium mb-1">Theme</div>
                             <hr />
                             <div className="py-3">
                               {noteThemes.map((c) => (

@@ -63,7 +63,9 @@ export default function ReferenceOverview(props) {
         showClear
         prefix={<IconSearch />}
         placeholder="Search..."
-        emptyContent={<div className="p-3">No relationships found</div>}
+        emptyContent={
+          <div className="p-3 popover-theme">No relationships found</div>
+        }
         onSearch={(v) => handleStringSearch(v)}
         onChange={(v) => setValue(v)}
         onSelect={(v) => {
@@ -81,14 +83,14 @@ export default function ReferenceOverview(props) {
         accordion
       >
         {relationships.length <= 0 ? (
-          <div className="select-none">
+          <div className="select-none mt-2">
             <Empty
               image={
-                <IllustrationNoContent style={{ width: 160, height: 160 }} />
+                <IllustrationNoContent style={{ width: 154, height: 154 }} />
               }
               darkModeImage={
                 <IllustrationNoContentDark
-                  style={{ width: 160, height: 160 }}
+                  style={{ width: 154, height: 154 }}
                 />
               }
               title="No relationships"
@@ -111,7 +113,7 @@ export default function ReferenceOverview(props) {
                   <div className="ms-1">
                     <Popover
                       content={
-                        <div className="p-2">
+                        <div className="p-2 popover-theme">
                           <Table
                             columns={columns}
                             dataSource={[

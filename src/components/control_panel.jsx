@@ -9,6 +9,7 @@ import {
   IconSaveStroked,
   IconUndo,
   IconRedo,
+  IconRowsStroked,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -844,7 +845,26 @@ export default function ControlPanel(props) {
         shortcut: "Ctrl+Shift+G",
       },
       Theme: {
-        children: [{ Light: () => {} }, { Dark: () => {} }],
+        children: [
+          {
+            Light: () => {
+              const body = document.body;
+              if (body.hasAttribute("theme-mode")) {
+                body.setAttribute("theme-mode", "light");
+              }
+              setSettings((prev) => ({ ...prev, mode: "light" }));
+            },
+          },
+          {
+            Dark: () => {
+              const body = document.body;
+              if (body.hasAttribute("theme-mode")) {
+                body.setAttribute("theme-mode", "dark");
+              }
+              setSettings((prev) => ({ ...prev, mode: "dark" }));
+            },
+          },
+        ],
         function: () => {},
       },
       "Zoom in": {
@@ -917,7 +937,7 @@ export default function ControlPanel(props) {
   return (
     <div>
       {layout.header && header()}
-      <div className="py-1 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 sm:mx-1 md:mx-6 text-slate-700 select-none overflow-x-hidden">
+      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 md:mx-6 select-none overflow-x-hidden toolbar-theme">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
@@ -963,7 +983,7 @@ export default function ControlPanel(props) {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center">
+            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
               <div className="w-[40px]">{Math.floor(settings.zoom * 100)}%</div>
               <div>
                 <IconCaretdown />
@@ -971,7 +991,7 @@ export default function ControlPanel(props) {
             </div>
           </Dropdown>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
+            className="py-1 px-2 hover-2 rounded text-lg"
             title="Zoom in"
             onClick={() =>
               setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
@@ -980,7 +1000,7 @@ export default function ControlPanel(props) {
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
+            className="py-1 px-2 hover-2 rounded text-lg"
             title="Zoom out"
             onClick={() =>
               setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
@@ -990,7 +1010,7 @@ export default function ControlPanel(props) {
           </button>
           <Divider layout="vertical" margin="8px" />
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
+            className="py-1 px-2 hover-2 rounded flex items-center"
             title="Undo"
             onClick={undo}
           >
@@ -1000,7 +1020,7 @@ export default function ControlPanel(props) {
             />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
+            className="py-1 px-2 hover-2 rounded flex items-center"
             title="Redo"
             onClick={redo}
           >
@@ -1011,37 +1031,34 @@ export default function ControlPanel(props) {
           </button>
           <Divider layout="vertical" margin="8px" />
           <button
-            className="flex items-center py-1 px-2 hover:bg-slate-200 rounded"
+            className="flex items-center py-1 px-2 hover-2 rounded"
             title="Add new table"
             onClick={() => addTable()}
           >
-            <IconAddTable />
+            <IconAddTable theme={settings.mode} />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
+            className="py-1 px-2 hover-2 rounded flex items-center"
             title="Add subject area"
             onClick={() => addArea()}
           >
-            <IconAddArea />
+            <IconAddArea theme={settings.mode} />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
+            className="py-1 px-2 hover-2 rounded flex items-center"
             title="Add new note"
             onClick={() => addNote()}
           >
-            <IconAddNote />
+            <IconAddNote theme={settings.mode} />
           </button>
           <Divider layout="vertical" margin="8px" />
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
+            className="py-1 px-2 hover-2 rounded flex items-center"
             title="Save"
           >
             <IconSaveStroked size="extra-large" />
           </button>
-          <button
-            className="py-1 px-2 hover:bg-slate-200 rounded text-xl"
-            title="Commit"
-          >
+          <button className="py-1 px-2 hover-2 rounded text-xl" title="Commit">
             <i className="fa-solid fa-code-branch"></i>
           </button>
         </div>
@@ -1211,13 +1228,14 @@ export default function ControlPanel(props) {
         ) : exportData.data !== "" || exportData.data ? (
           <>
             {visible === MODAL.IMG ? (
-              <Image src={exportData.data} alt="Diagram" height={220} />
+              <Image src={exportData.data} alt="Diagram" height={280} />
             ) : (
               <Editor
                 height="360px"
                 value={exportData.data}
                 language={exportData.extension}
                 options={{ readOnly: true }}
+                theme={settings.mode === "light" ? "light" : "vs-dark"}
               />
             )}
             <div className="text-sm font-semibold mt-2">Filename:</div>
@@ -1243,7 +1261,7 @@ export default function ControlPanel(props) {
   function header() {
     return (
       <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
-        <div className="flex justify-start items-center text-slate-800">
+        <div className="flex justify-start items-center">
           <Link to="/">
             <img
               width={54}
@@ -1327,9 +1345,7 @@ export default function ControlPanel(props) {
                       </Dropdown.Menu>
                     }
                   >
-                    <div className="px-3 py-1 hover:bg-gray-100 rounded">
-                      {category}
-                    </div>
+                    <div className="px-3 py-1 hover-2 rounded">{category}</div>
                   </Dropdown>
                 ))}
               </div>
@@ -1453,10 +1469,8 @@ export default function ControlPanel(props) {
         }
         trigger="click"
       >
-        <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center">
-          <div>
-            <i className="fa-solid fa-table-list text-xl me-1"></i>
-          </div>
+        <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+          <IconRowsStroked size="extra-large" />
           <div>
             <IconCaretdown />
           </div>

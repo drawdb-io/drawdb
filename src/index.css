@@ -17,23 +17,66 @@
   overflow: hidden;
 }
 
-.semi-card .semi-collapse-item{
+.semi-card .semi-collapse-item {
   border: none !important;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  opacity: 0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c5c5c5; 
-  border-radius: 10px;
+  background-color: rgba(var(--semi-grey-2), 1);
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b9b9b9; 
+  background-color: rgba(var(--semi-grey-3), 1);
+}
+
+.theme {
+  color: var(--semi-color-text-1);
+  background-color: var(--semi-color-bg-0);
+}
+
+.sidesheet-theme {
+  color: var(--semi-color-text-1);
+  background-color: var(--semi-color-bg-2);
+}
+
+.popover-theme {
+  color: var(--semi-color-text-1);
+  background-color: var(--semi-color-bg-3);
+}
+
+.toolbar-theme {
+  background-color: rgba(var(--semi-grey-1), 1);
+}
+
+.hover-1:hover {
+  background-color: rgba(var(--semi-grey-1), 1);
+}
+
+.bg-semi-grey-2 {
+  background-color: rgba(var(--semi-grey-2), 1);
+}
+
+.hover-2:hover {
+  background-color: rgba(var(--semi-grey-2), 1);
+}
+
+.text-color {
+  color: var(--semi-color-text-1);
+}
+
+.border-color {
+  border-color: rgba(var(--semi-grey-9), 0.08);
+}
+
+.table-border {
+  border-color: rgba(var(--semi-grey-2), 1);
 }

@@ -28,7 +28,7 @@ const EditorPanel = (props) => {
   return (
     <div className="flex h-full">
       <div
-        className="flex flex-col h-full relative border-r border-gray-200"
+        className="flex flex-col h-full relative border-r border-color"
         style={{ width: `${props.width}px` }}
       >
         <div className="h-full flex-1 overflow-y-auto">
@@ -45,18 +45,18 @@ const EditorPanel = (props) => {
           </Tabs>
         </div>
         {layout.issues && (
-          <div className="mt-auto border-t-2 border-gray-200 shadow-inner shadow-neutral-200">
+          <div className="mt-auto border-t-2 border-color shadow-inner">
             <Issues />
           </div>
         )}
       </div>
       <div
-        className={`flex justify-center items-center p-1 h-auto hover:bg-slate-400 cursor-col-resize ${
-          props.resize ? "bg-slate-300" : ""
+        className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
+          props.resize ? "bg-semi-grey-2" : ""
         }`}
         onMouseDown={() => props.setResize(true)}
       >
-        <div className="w-1 border-x border-white h-1/6" />
+        <div className="w-1 border-x border-color h-1/6" />
       </div>
     </div>
   );

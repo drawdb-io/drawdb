@@ -58,7 +58,9 @@ export default function AreaOverview(props) {
             showClear
             prefix={<IconSearch />}
             placeholder="Search..."
-            emptyContent={<div className="p-3">No areas found</div>}
+            emptyContent={
+              <div className="p-3 popover-theme">No areas found</div>
+            }
             onSearch={(v) => handleStringSearch(v)}
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
@@ -77,13 +79,13 @@ export default function AreaOverview(props) {
         </Col>
       </Row>
       {areas.length <= 0 ? (
-        <div className="select-none">
+        <div className="select-none mt-2">
           <Empty
             image={
-              <IllustrationNoContent style={{ width: 160, height: 160 }} />
+              <IllustrationNoContent style={{ width: 154, height: 154 }} />
             }
             darkModeImage={
-              <IllustrationNoContentDark style={{ width: 160, height: 160 }} />
+              <IllustrationNoContentDark style={{ width: 154, height: 154 }} />
             }
             title="No subject areas"
             description="Add subject areas to compartmentalize tables!"
@@ -127,7 +129,7 @@ export default function AreaOverview(props) {
               <Col span={3}>
                 <Popover
                   content={
-                    <div>
+                    <div className="popover-theme">
                       <div className="flex justify-between items-center p-2">
                         <div className="font-medium">Theme</div>
                         <Button
