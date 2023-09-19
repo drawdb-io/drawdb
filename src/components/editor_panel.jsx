@@ -107,44 +107,6 @@ export default function EditorPanel(props) {
         <br />
         <button
           onClick={() => {
-            const newTable = {
-              id: props.tables.length,
-              name: `table_${props.tables.length}`,
-              x: 0,
-              y: 0,
-              fields: [
-                {
-                  name: "id",
-                  type: "UUID",
-                  default: "",
-                  check: "",
-                  primary: true,
-                  unique: true,
-                  notNull: true,
-                  increment: true,
-                  comment: "",
-                },
-              ],
-              comment: "",
-              indices: [],
-              color: defaultTableTheme,
-            };
-            props.setTables((prev) => {
-              const updatedTables = [...prev, newTable];
-              return updatedTables;
-            });
-            props.setCode((prev) =>
-              prev === ""
-                ? `CREATE TABLE \`${newTable.name}\`;`
-                : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
-            );
-          }}
-        >
-          add
-        </button>
-        <br />
-        <button
-          onClick={() => {
             const blob = new Blob([props.code], {
               type: "text/plain;charset=utf-8",
             });
