@@ -283,6 +283,8 @@ export default function Canvas(props) {
               key={a.id}
               areaData={a}
               onMouseDown={(e) => handleMouseDownRect(e, a.id, ObjectType.AREA)}
+              setPanning={setPanning}
+              setAreas={props.setAreas}
             ></Area>
           ))}
           {props.tables.map((table, i) => (
