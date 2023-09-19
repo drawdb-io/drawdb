@@ -7,10 +7,12 @@ import {
   Tab,
   defaultTableTheme,
   defaultNoteTheme,
+  avatarThemes,
   Action,
   ObjectType,
 } from "../data/data";
 import { socket } from "../data/socket";
+import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 
 export const LayoutContext = createContext();
 export const TableContext = createContext();
@@ -401,15 +403,44 @@ export default function Editor(props) {
 
     socket.connect();
 
-    const onConnect = () => console.log(`You connected with id: ${socket.id}`);
-    const onRecieve = (value) => setMessages((prev) => [...prev, value]);
+    const onConnect = () => {
+      const name = uniqueNamesGenerator({
+        dictionaries: [colors, animals],
+        separator: " ",
+        style: "capital",
+      });
+      const color =
+        avatarThemes[Math.floor(Math.random() * avatarThemes.length)];
+      socket.emit("new-user", name, color);
+      setMessages((prev) => [
+        ...prev,
+        { message: `You joined as ${name}`, type: "note", action: "join" },
+      ]);
+    };
+    const onRecieve = (value) =>
+      setMessages((prev) => [{ ...value, type: "message" }, ...prev]);
+    const onUserConnected = (name) =>
+      setMessages((prev) => [
+        { message: `${name} just joined`, type: "note", action: "join" },
+        ...prev,
+      ]);
+    const onUserDisconnected = (name) =>
+      setMessages((prev) => [
+        { message: `${name} left`, type: "note", action: "leave" },
+        ...prev,
+      ]);
 
     socket.on("connect", onConnect);
     socket.on("recieve-message", onRecieve);
+    socket.on("user-connected", onUserConnected);
+    socket.on("user-disconnected", onUserDisconnected);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("recieve-message", onRecieve);
+      socket.off("user-connected", onUserConnected);
+      socket.off("user-disconnected", onUserDisconnected);
+      socket.disconnect();
     };
   }, []);
 

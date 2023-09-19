@@ -40,6 +40,26 @@ const tableThemes = [
 
 const noteThemes = ["#ffdfd9", "#fcf7ac", "#cffcb1", "#c7d2ff", "#e7c7ff"];
 
+const avatarThemes = [
+  "amber",
+  "blue",
+  "cyan",
+  "green",
+  "grey",
+  "indigo",
+  "light-blue",
+  "light-green",
+  "lime",
+  "orange",
+  "pink",
+  "rain",
+  "red",
+  "teal",
+  "violet",
+  "yellow",
+  "white",
+];
+
 const defaultTableTheme = "#175e7a";
 const defaultNoteTheme = "#fcf7ac";
 const bgBlue = "#124559";
@@ -88,6 +108,7 @@ export {
   noteThemes,
   defaultTableTheme,
   defaultNoteTheme,
+  avatarThemes,
   Cardinality,
   Constraint,
   Tab,

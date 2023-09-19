@@ -19,6 +19,7 @@
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.7.2",
+    "unique-names-generator": "^4.7.1",
     "url": "^0.11.1",
     "web-vitals": "^2.1.4"
   },
