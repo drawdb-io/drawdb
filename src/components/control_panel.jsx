@@ -158,6 +158,25 @@ export default function ControlPanel(props) {
         addArea(false, a.data);
       }
       setRedoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.EDIT) {
+      if (a.element === ObjectType.AREA) {
+        setAreas((prev) =>
+          prev.map((n) => {
+            if (n.id === a.data.undo.id) {
+              return a.data.undo;
+            }
+            return n;
+          })
+        );
+      }
+      setRedoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.PAN) {
+      console.log(a)
+      setSettings((prev) => ({
+        ...prev,
+        pan: a.data.undo
+      }));
+      setRedoStack((prev) => [...prev, a]);
     }
   };
 
@@ -205,6 +224,24 @@ export default function ControlPanel(props) {
       } else if (a.element === ObjectType.AREA) {
         deleteArea(a.data.id, false);
       }
+      setUndoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.EDIT) {
+      if (a.element === ObjectType.AREA) {
+        setAreas((prev) =>
+          prev.map((n) => {
+            if (n.id === a.data.redo.id) {
+              return a.data.redo;
+            }
+            return n;
+          })
+        );
+      }
+      setUndoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.PAN) {
+      setSettings((prev) => ({
+        ...prev,
+        pan: a.data.redo
+      }));
       setUndoStack((prev) => [...prev, a]);
     }
   };

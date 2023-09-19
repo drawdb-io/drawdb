@@ -11,7 +11,7 @@ export default function Note(props) {
     const textarea = document.getElementById(`note_${props.data.id}`);
     textarea.style.height = "0";
     textarea.style.height = textarea.scrollHeight + "px";
-    const newHeight = textarea.scrollHeight + 16 + 20 + 4;
+    const newHeight = textarea.scrollHeight + 41;
     setNotes((prev) =>
       prev.map((n) => {
         if (n.id === props.data.id) {
@@ -25,17 +25,17 @@ export default function Note(props) {
   return (
     <g>
       <path
-        d={`M${props.data.x + fold} ${props.data.y} L${
+        d={`M${props.data.x + fold} ${props.data.y} L${props.data.x + w - r} ${
+          props.data.y
+        } A${r} ${r} 0 0 1 ${props.data.x + w} ${props.data.y + r} L${
+          props.data.x + w
+        } ${props.data.y + props.data.height - r} A${r} ${r} 0 0 1 ${
           props.data.x + w - r
-        } ${props.data.y} A${r} ${r} 0 0 1 ${props.data.x + w} ${
-          props.data.y + r
-        } L${props.data.x + w} ${
-          props.data.y + props.data.height - r
-        } A${r} ${r} 0 0 1 ${props.data.x + w - r} ${
+        } ${props.data.y + props.data.height} L${props.data.x + r} ${
           props.data.y + props.data.height
-        } L${props.data.x + r} ${props.data.y + props.data.height} A${r} ${r} 0 0 1 ${
-          props.data.x
-        } ${props.data.y + props.data.height - r} L${props.data.x} ${props.data.y + fold}`}
+        } A${r} ${r} 0 0 1 ${props.data.x} ${
+          props.data.y + props.data.height - r
+        } L${props.data.x} ${props.data.y + fold}`}
         fill={props.data.color}
         stroke="#665b25"
         strokeLinejoin="round"
@@ -62,13 +62,15 @@ export default function Note(props) {
         onMouseDown={props.onMouseDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
-          <label htmlFor={`note_${props.data.id}`} className="ms-5">{props.data.title}</label>
+          <label htmlFor={`note_${props.data.id}`} className="ms-5">
+            {props.data.title}
+          </label>
           <textarea
             id={`note_${props.data.id}`}
             value={props.data.content}
-            onInput={handleChange}
-            className="mt-1 w-full resize-none outline-none overflow-y-hidden border-none select-none"
-            style={{backgroundColor: props.data.color}}
+            onChange={handleChange}
+            className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
+            style={{ backgroundColor: props.data.color }}
           ></textarea>
         </div>
       </foreignObject>

@@ -325,6 +325,20 @@ export default function Editor(props) {
     );
   };
 
+  const editNote = (id, values, addToHistory=true) => {
+    setNotes((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            ...values,
+          };
+        }
+        return t;
+      })
+    );
+  }
+
   useEffect(() => {
     document.title = "Editor - drawDB";
   }, []);
@@ -348,7 +362,7 @@ export default function Editor(props) {
           value={{ areas, setAreas, moveArea, addArea, deleteArea }}
         >
           <NoteContext.Provider
-            value={{ notes, setNotes, moveNote, addNote, deleteNote }}
+            value={{ notes, setNotes, moveNote, addNote, deleteNote, editNote }}
           >
             <TabContext.Provider value={{ tab, setTab }}>
               <SettingsContext.Provider value={{ settings, setSettings }}>

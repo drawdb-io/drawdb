@@ -102,13 +102,7 @@ export default function TableOverview(props) {
           />
         </Col>
         <Col span={8}>
-          <Button
-            icon={<IconPlus />}
-            block
-            onClick={() => {
-              addTable(true);
-            }}
-          >
+          <Button icon={<IconPlus />} block onClick={() => addTable(true)}>
             Add table
           </Button>
         </Col>

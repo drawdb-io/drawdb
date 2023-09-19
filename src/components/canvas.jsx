@@ -46,9 +46,12 @@ export default function Canvas(props) {
     tableId: -1,
     field: -2,
   });
-  const [panning, setPanning] = useState(false);
+  const [panning, setPanning] = useState({ state: false, x: 0, y: 0 });
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
-  const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
+  const [areaResize, setAreaResize] = useState({
+    id: -1,
+    dir: "none",
+  });
   const [initCoords, setInitCoords] = useState({
     x: 0,
     y: 0,
@@ -114,7 +117,7 @@ export default function Canvas(props) {
         endY: (e.clientY - offsetY) / settings.zoom - settings.pan.y,
       });
     } else if (
-      panning &&
+      panning.state &&
       dragging.element === ObjectType.NONE &&
       areaResize.id === -1
     ) {
@@ -150,7 +153,7 @@ export default function Canvas(props) {
       let newHeight = initCoords.height;
       const mouseX = e.clientX / settings.zoom;
       const mouseY = e.clientY / settings.zoom;
-      setPanning(false);
+      setPanning({ state: false, x: 0, y: 0 });
       if (areaResize.dir === "br") {
         newWidth = initCoords.width + (mouseX - initCoords.mouseX);
         newHeight = initCoords.height + (mouseY - initCoords.mouseY);
@@ -187,7 +190,7 @@ export default function Canvas(props) {
   };
 
   const handleMouseDown = (e) => {
-    setPanning(true);
+    setPanning({ state: true, ...settings.pan });
     setPanOffset({ x: e.clientX, y: e.clientY });
     setCursor("grabbing");
   };
@@ -214,6 +217,18 @@ export default function Canvas(props) {
     }
   };
 
+  const didResize = (id) => {
+    return !(
+      areas[id].x === initCoords.x &&
+      areas[id].y === initCoords.y &&
+      areas[id].width === initCoords.width &&
+      areas[id].height === initCoords.height
+    );
+  };
+
+  const didPan = () =>
+    !(settings.pan.x === panning.x && settings.pan.y === panning.y);
+
   const handleMouseUp = (e) => {
     if (coordsDidUpdate(dragging.element)) {
       setUndoStack((prev) => [
@@ -229,10 +244,44 @@ export default function Canvas(props) {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    setPanning(false);
+    // NOTE: consider just saving the offset to sub and add in undo redo 
+    if (panning.state && didPan()) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.PAN,
+          data: {
+            undo: { x: panning.x, y: panning.y },
+            redo: settings.pan,
+          },
+        },
+      ]);
+      setRedoStack([]);
+    }
+    setPanning({ state: false, x: 0, y: 0 });
     setCursor("default");
     if (linking) handleLinking();
     setLinking(false);
+    if (areaResize.id !== -1 && didResize(areaResize.id)) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.AREA,
+          data: {
+            undo: {
+              ...areas[areaResize.id],
+              x: initCoords.x,
+              y: initCoords.y,
+              width: initCoords.width,
+              height: initCoords.height,
+            },
+            redo: areas[areaResize.id],
+          },
+        },
+      ]);
+      setRedoStack([]);
+    }
     setAreaResize({ id: -1, dir: "none" });
     setInitCoords({
       x: 0,
