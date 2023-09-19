@@ -69,6 +69,7 @@ const ObjectType = {
   NONE: 0,
   TABLE: 1,
   AREA: 2,
+  NOTE: 3,
 };
 
 export {

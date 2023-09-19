@@ -2,7 +2,7 @@ import { React } from "react";
 import { useDrag } from "react-dnd";
 import { ObjectType, defaultTableTheme } from "../data/data";
 
-export default function Shape() {
+function Table() {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD",
     item: { type: ObjectType.TABLE },
@@ -16,7 +16,7 @@ export default function Shape() {
       ref={drag}
       className={`${
         isDragging ? "opacity-50" : ""
-      } bg-gray-100 cursor-move w-[150px] h-[72px]`}
+      } cursor-move w-[150px] h-[72px]`}
     >
       <svg
         style={{
@@ -32,12 +32,12 @@ export default function Shape() {
             height: "100%",
           }}
         >
-          <div className="border border-gray-400 w-full rounded-md h-full text-xs border-collapse">
+          <div className="border border-gray-400 w-full rounded-md h-full text-xs border-collapse bg-gray-100">
             <div
               className={`h-[7px] w-full rounded-t`}
               style={{ backgroundColor: defaultTableTheme }}
             />
-            <div className="px-3 py-0.5 border-b border-gray-400 bg-gray-200">
+            <div className="px-2 py-0.5 border-b border-gray-400 bg-gray-200">
               Table
             </div>
             <div className="px-1 py-0.5 border-b border-gray-400 flex items-center justify-between">
@@ -57,6 +57,51 @@ export default function Shape() {
           </div>
         </foreignObject>
       </svg>
+    </div>
+  );
+}
+
+function Note() {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "CARD",
+    item: { type: ObjectType.NOTE },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  return (
+    <div
+      ref={drag}
+      className={`${
+        isDragging ? "opacity-50" : ""
+      } cursor-move w-[82px] h-[82px]`}
+    >
+      <svg
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <path
+          d="M20 1 L76 1 A4 4 0 0 1 80 4 L80 76 A4 4 0 0 1 76 80 L4 80 A4 4 0 0 1 1 76 L1 20 M1 20 L16 20 A4 4 0 0 0 20 16 L20 1Z"
+          fill="#fae989"
+          stroke="#665b25"
+          strokeLinejoin="round"
+          strokeWidth="1"
+        />
+      </svg>
+    </div>
+  );
+}
+
+export default function Shape() {
+  return (
+    <div>
+      <Table />
+      <div className="py-2"></div>
+      <Note />
+      <div className="py-2"></div>
     </div>
   );
 }
