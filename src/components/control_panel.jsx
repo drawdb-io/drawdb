@@ -19,7 +19,7 @@ import {
   Image,
   Modal,
 } from "@douyinfe/semi-ui";
-import { toPng } from "html-to-image";
+import { toPng, toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
 
 export default function ControlPanel() {
@@ -30,6 +30,7 @@ export default function ControlPanel() {
   const [filename, setFilename] = useState(
     `diagram_${new Date().toISOString()}`
   );
+  const [extension, setExtension] = useState("");
 
   const menu = {
     File: {
@@ -69,12 +70,23 @@ export default function ControlPanel() {
                 setDataUrl(dataUrl);
               });
               setVisible(true);
+              setExtension("png");
             },
           },
-          { ".jpg": () => {} },
+          {
+            ".jpeg": () => {
+              toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
+                function (dataUrl) {
+                  setDataUrl(dataUrl);
+                }
+              );
+              setVisible(true);
+              setExtension("jpeg");
+            },
+          },
           { ".xml": () => {} },
           { ".svg": () => {} },
-          { ".xml": () => {} },
+          { ".pdf": () => {} },
         ],
         function: () => {},
       },
@@ -474,8 +486,11 @@ export default function ControlPanel() {
       <Modal
         title="Export diagram"
         visible={visible}
-        onOk={() => saveAs(dataUrl, `${filename}.png`)}
-        afterClose={() => setFilename(`diagram_${new Date().toISOString()}`)}
+        onOk={() => saveAs(dataUrl, `${filename}.${extension}`)}
+        afterClose={() => {
+          setFilename(`diagram_${new Date().toISOString()}`);
+          setDataUrl("");
+        }}
         onCancel={() => setVisible(false)}
         centered
         closeOnEsc={true}
@@ -488,14 +503,17 @@ export default function ControlPanel() {
           labelPosition="left"
           labelAlign="right"
           onChange={(value) => {
-            console.log(value.values);
-            setFilename(value.values["filename"]);
+            setFilename((prev) =>
+              value.values["filename"] !== undefined
+                ? value.values["filename"]
+                : prev
+            );
           }}
         >
           <Form.Input
             field="filename"
             label="Filename"
-            suffix={<div className="p-2">.png</div>}
+            suffix={<div className="p-2">{`.${extension}`}</div>}
             initValue={filename}
           />
         </Form>
