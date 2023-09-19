@@ -21,7 +21,7 @@ export default function Editor(props) {
   const [areas, setAreas] = useState([]);
   const [notes, setNotes] = useState([]);
   const [resize, setResize] = useState(false);
-  const [width, setWidth] = useState(320);
+  const [width, setWidth] = useState(340);
   const [selectedTable, setSelectedTable] = useState("");
   const [tab, setTab] = useState(Tab.tables);
   const [layout, setLayout] = useState({
@@ -46,7 +46,7 @@ export default function Editor(props) {
   const dragHandler = (e) => {
     if (!resize) return;
     const w = e.clientX;
-    if (w > 320) setWidth(w);
+    if (w > 340) setWidth(w);
   };
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function Editor(props) {
         <AreaContext.Provider value={{ areas, setAreas }}>
           <NoteContext.Provider value={{ notes, setNotes }}>
             <TabContext.Provider value={{ tab, setTab }}>
-              <SettingsContext.Provider value={{settings, setSettings}}>
+              <SettingsContext.Provider value={{ settings, setSettings }}>
                 <div className="h-[100vh] overflow-hidden">
                   <ControlPanel />
                   <div

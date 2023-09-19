@@ -34,6 +34,7 @@ import {
   enterFullscreen,
   exitFullscreen,
   ddbDiagramIsValid,
+  dataURItoBlob,
 } from "../utils";
 import {
   AreaContext,
@@ -246,6 +247,15 @@ export default function ControlPanel(props) {
         children: [],
         function: () => {},
       },
+      Clear: {
+        children: [],
+        function: () => {
+          setTables([]);
+          setRelationships([]);
+          setAreas([]);
+          setNotes([]);
+        },
+      },
       Cut: {
         children: [],
         function: () => {},
@@ -254,13 +264,25 @@ export default function ControlPanel(props) {
         children: [],
         function: () => {},
       },
-      "Copy as image": {
-        children: [],
-        function: () => {},
-      },
       Paste: {
         children: [],
         function: () => {},
+      },
+      "Copy as image": {
+        children: [],
+        function: () => {
+          toPng(document.getElementById("canvas")).then(function (dataUrl) {
+            const blob = dataURItoBlob(dataUrl);
+            navigator.clipboard
+              .write([new ClipboardItem({ "image/png": blob })])
+              .then(() => {
+                Toast.success("Copied to clipboard.");
+              })
+              .catch((error) => {
+                Toast.error("Could not copy to clipboard.");
+              });
+          });
+        },
       },
       Delete: {
         children: [],

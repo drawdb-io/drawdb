@@ -34,9 +34,23 @@ const ddbDiagramIsValid = (obj) => {
   return new Validator().validate(obj, ddbSchema).valid;
 };
 
+function dataURItoBlob(dataUrl) {
+  const byteString = atob(dataUrl.split(",")[1]);
+  const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const intArray = new Uint8Array(arrayBuffer);
+
+  for (let i = 0; i < byteString.length; i++) {
+    intArray[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([intArray], { type: mimeString });
+}
+
 export {
   enterFullscreen,
   exitFullscreen,
   jsonDiagramIsValid,
   ddbDiagramIsValid,
+  dataURItoBlob,
 };

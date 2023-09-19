@@ -60,7 +60,7 @@ const EditorPanel = (props) => {
   return (
     <div className="flex h-full">
       <div
-        className="flex flex-col h-full relative"
+        className="flex flex-col h-full relative border-r border-gray-200"
         style={{ width: `${props.width}px` }}
       >
         <div className="h-full flex-1 overflow-y-auto">
