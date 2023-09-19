@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
 import {
@@ -51,6 +51,7 @@ export default function Canvas(props) {
     mouseY: 0,
   });
   const [cursor, setCursor] = useState("default");
+  const [zoom, setZoom] = useState(1);
 
   const canvas = useRef(null);
 
@@ -347,6 +348,26 @@ export default function Canvas(props) {
     [tables, areas]
   );
 
+  const handleMouseWheel = (e) => {
+    // const zoomDirection = e.deltaY > 0 ? "out" : "in";
+    e.preventDefault();
+    if (e.deltaY <= 0 ) {
+      setZoom((prev) => prev * 1.1);
+    } else {
+      setZoom((prev) => prev / 1.1);
+    }
+  };
+
+  useEffect(() => {
+    const canvasElement = canvas.current;
+    canvasElement.addEventListener("wheel", handleMouseWheel, {
+      passive: false,
+    });
+    return () => {
+      canvasElement.removeEventListener("wheel", handleMouseWheel);
+    };
+  }, []);
+
   return (
     <div ref={drop} className="flex-grow h-full" id="canvas">
       <div ref={canvas} className="w-full h-full">
@@ -385,47 +406,53 @@ export default function Canvas(props) {
             height="100%"
             fill="url(#pattern-circles)"
           ></rect>
-          {areas.map((a) => (
-            <Area
-              key={a.id}
-              areaData={a}
-              onMouseDown={(e) => handleMouseDownRect(e, a.id, ObjectType.AREA)}
-              setResize={setAreaResize}
-              initCoords={initCoords}
-              setInitCoords={setInitCoords}
-            ></Area>
-          ))}
-          {tables.map((table) => (
-            <Table
-              key={table.id}
-              tableData={table}
-              setOnRect={setOnRect}
-              handleGripField={handleGripField}
-              setLine={setLine}
-              onMouseDown={(e) =>
-                handleMouseDownRect(e, table.id, ObjectType.TABLE)
-              }
-              selectedTable={props.selectedTable}
-              setSelectedTable={props.setSelectedTable}
-            />
-          ))}
-          {linking && (
-            <path
-              d={`M ${line.startX} ${line.startY} L ${line.endX} ${line.endY}`}
-              stroke="red"
-              strokeDasharray="8,8"
-            />
-          )}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
-          ))}
-          {notes.map((n) => (
-            <Note
-              key={n.id}
-              data={n}
-              onMouseDown={(e) => handleMouseDownRect(e, n.id, ObjectType.NOTE)}
-            ></Note>
-          ))}
+          <g style={{ transform: `scale(${zoom})`, transformOrigin: "0 0" }}>
+            {areas.map((a) => (
+              <Area
+                key={a.id}
+                areaData={a}
+                onMouseDown={(e) =>
+                  handleMouseDownRect(e, a.id, ObjectType.AREA)
+                }
+                setResize={setAreaResize}
+                initCoords={initCoords}
+                setInitCoords={setInitCoords}
+              ></Area>
+            ))}
+            {tables.map((table) => (
+              <Table
+                key={table.id}
+                tableData={table}
+                setOnRect={setOnRect}
+                handleGripField={handleGripField}
+                setLine={setLine}
+                onMouseDown={(e) =>
+                  handleMouseDownRect(e, table.id, ObjectType.TABLE)
+                }
+                selectedTable={props.selectedTable}
+                setSelectedTable={props.setSelectedTable}
+              />
+            ))}
+            {linking && (
+              <path
+                d={`M ${line.startX} ${line.startY} L ${line.endX} ${line.endY}`}
+                stroke="red"
+                strokeDasharray="8,8"
+              />
+            )}
+            {relationships.map((e, i) => (
+              <Relationship key={i} data={e} />
+            ))}
+            {notes.map((n) => (
+              <Note
+                key={n.id}
+                data={n}
+                onMouseDown={(e) =>
+                  handleMouseDownRect(e, n.id, ObjectType.NOTE)
+                }
+              ></Note>
+            ))}
+          </g>
         </svg>
       </div>
     </div>
