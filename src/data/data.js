@@ -61,8 +61,8 @@ const Tab = {
   tables: "1",
   relationships: "2",
   subject_areas: "3",
-  // shapes: "4",
   editor: "4",
+  notes: "5",
 };
 
 const ObjectType = {

@@ -9,6 +9,7 @@ import ReferenceOverview from "./reference_overview";
 import AreaOverview from "./area_overview";
 import { Tab } from "../data/data";
 import { TabContext } from "../pages/editor";
+import NotesOverview from "./notes_overview";
 
 const myTheme = createTheme({
   dark: "light",
@@ -32,8 +33,8 @@ const EditorPanel = (props) => {
     { tab: "Tables", itemKey: Tab.tables },
     { tab: "Relationships", itemKey: Tab.relationships },
     { tab: "Subject Areas", itemKey: Tab.subject_areas },
-    // { tab: "Shapes", itemKey: Tab.shapes },
     { tab: "Editor", itemKey: Tab.editor },
+    { tab: "Notes", itemKey: Tab.notes },
   ];
   const contentList = [
     <TableOverview
@@ -51,6 +52,7 @@ const EditorPanel = (props) => {
         props.setCode(e);
       }}
     />,
+    <NotesOverview/>
   ];
 
   return (

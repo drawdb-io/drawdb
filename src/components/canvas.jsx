@@ -9,12 +9,14 @@ import {
 } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
-import { AreaContext, TableContext } from "../pages/editor";
+import { AreaContext, NoteContext, TableContext } from "../pages/editor";
+import Note from "./note";
 
 export default function Canvas(props) {
   const { tables, setTables, relationships, setRelationships } =
     useContext(TableContext);
   const { areas, setAreas } = useContext(AreaContext);
+  const { notes, setNotes } = useContext(NoteContext);
   const [dragging, setDragging] = useState([ObjectType.NONE, -1]);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
@@ -68,6 +70,13 @@ export default function Canvas(props) {
         y: clientY - area.y,
       });
       setDragging([ObjectType.AREA, id]);
+    } else if (type === ObjectType.NOTE) {
+      const note = notes.find((t) => t.id === id);
+      setOffset({
+        x: clientX - note.x,
+        y: clientY - note.y,
+      });
+      setDragging([ObjectType.NOTE, id]);
     }
   };
 
@@ -91,8 +100,8 @@ export default function Canvas(props) {
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
-      setTables(
-        tables.map((t) => ({
+      setTables((prev) =>
+        prev.map((t) => ({
           ...t,
           x: t.x + dx,
           y: t.y + dy,
@@ -109,13 +118,9 @@ export default function Canvas(props) {
         }))
       );
 
-      setAreas(
-        areas.map((t) => ({
-          ...t,
-          x: t.x + dx,
-          y: t.y + dy,
-        }))
-      );
+      setAreas((prev) => prev.map((t) => ({ ...t, x: t.x + dx, y: t.y + dy })));
+
+      setNotes((prev) => prev.map((n) => ({ ...n, x: n.x + dx, y: n.y + dy })));
     } else if (dragging[0] === ObjectType.TABLE && dragging[1] >= 0) {
       const updatedTables = tables.map((t) => {
         if (t.id === dragging[1]) {
@@ -163,6 +168,22 @@ export default function Canvas(props) {
         return t;
       });
       setAreas(updatedAreas);
+    } else if (
+      dragging[0] === ObjectType.NOTE &&
+      dragging[1] >= 0
+    ) {
+      setNotes((prev) =>
+        prev.map((t) => {
+          if (t.id === dragging[1]) {
+            return {
+              ...t,
+              x: e.clientX - offset.x,
+              y: e.clientY - offset.y,
+            };
+          }
+          return t;
+        })
+      );
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
 
@@ -374,14 +395,12 @@ export default function Canvas(props) {
               key={a.id}
               areaData={a}
               onMouseDown={(e) => handleMouseDownRect(e, a.id, ObjectType.AREA)}
-              resize={areaResize}
               setResize={setAreaResize}
               initCoords={initCoords}
               setInitCoords={setInitCoords}
-              setAreas={setAreas}
             ></Area>
           ))}
-          {tables.map((table, i) => (
+          {tables.map((table) => (
             <Table
               key={table.id}
               tableData={table}
@@ -404,6 +423,13 @@ export default function Canvas(props) {
           )}
           {relationships.map((e, i) => (
             <Relationship key={i} data={e} />
+          ))}
+          {notes.map((n) => (
+            <Note
+              key={n.id}
+              data={n}
+              onMouseDown={(e) => handleMouseDownRect(e, n.id, ObjectType.NOTE)}
+            ></Note>
           ))}
         </svg>
       </div>

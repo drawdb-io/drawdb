@@ -626,7 +626,7 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
-                      layout.shapes ? (
+                      layout.notes ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
@@ -635,11 +635,11 @@ export default function ControlPanel(props) {
                     onClick={() =>
                       setLayout((prev) => ({
                         ...prev,
-                        shapes: !prev.shapes,
+                        notes: !prev.notes,
                       }))
                     }
                   >
-                    Shapes
+                    Notes
                   </Dropdown.Item>
                 </Dropdown.Menu>
               }
