@@ -1,14 +1,15 @@
-import { React, useState, useRef } from "react";
+import { React, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
-import { Parser } from "node-sql-parser";
+// import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
+// import { TableContext } from "../pages/editor";
 
 const myTheme = createTheme({
   dark: "light",
@@ -26,7 +27,8 @@ const myTheme = createTheme({
 
 const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
-  const map = useRef(new Map());
+  // const map = useRef(new Map());
+  // const {tables, setTables} = useContext(TableContext);
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -35,11 +37,10 @@ const EditorPanel = (props) => {
     { tab: "Editor", itemKey: "4" },
   ];
   const contentList = [
-    <TableOverview tables={props.tables} setTables={props.setTables} />,
+    <TableOverview />,
     <ReferenceOverview
       relationships={props.relationships}
       setRelationships={props.setRelationships}
-      tables={props.tables}
     />,
     <Shape />,
     <CodeMirror
@@ -99,44 +100,44 @@ const EditorPanel = (props) => {
         <br />
         <button
           onClick={() => {
-            try {
-              const parser = new Parser();
-              const ast = parser.astify(props.code);
-              console.log(ast);
-              ast.forEach((e) => {
-                e.table.forEach((t) => {
-                  if (map.current.has(t.table)) {
-                    return;
-                  }
-                  map.current.set(t.table, t);
-                  const newTable = {
-                    id: props.tables.length,
-                    name: `table_${props.tables.length}`,
-                    x: 0,
-                    y: 0,
-                    fields: [
-                      {
-                        name: "id",
-                        type: "UUID",
-                        default: "",
-                        check: "",
-                        primary: true,
-                        unique: true,
-                        notNull: true,
-                        increment: true,
-                        comment: "",
-                      },
-                    ],
-                    comment: "",
-                    indices: [],
-                    color: defaultTableTheme,
-                  };
-                  props.setTables((prev) => [...prev, newTable]);
-                });
-              });
-            } catch (e) {
-              alert("parsing error");
-            }
+            // try {
+            //   const parser = new Parser();
+            //   const ast = parser.astify(props.code);
+            //   console.log(ast);
+            //   ast.forEach((e) => {
+            //     e.table.forEach((t) => {
+            //       if (map.current.has(t.table)) {
+            //         return;
+            //       }
+            //       map.current.set(t.table, t);
+            //       const newTable = {
+            //         id: props.tables.length,
+            //         name: `table_${props.tables.length}`,
+            //         x: 0,
+            //         y: 0,
+            //         fields: [
+            //           {
+            //             name: "id",
+            //             type: "UUID",
+            //             default: "",
+            //             check: "",
+            //             primary: true,
+            //             unique: true,
+            //             notNull: true,
+            //             increment: true,
+            //             comment: "",
+            //           },
+            //         ],
+            //         comment: "",
+            //         indices: [],
+            //         color: defaultTableTheme,
+            //       };
+            //       props.setTables((prev) => [...prev, newTable]);
+            //     });
+            //   });
+            // } catch (e) {
+            //   alert("parsing error");
+            // }
           }}
         >
           parse

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   AutoComplete,
   Collapse,
@@ -23,6 +23,7 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { Cardinality, Constraint } from "../data/data";
+import { TableContext } from "../pages/editor";
 
 export default function ReferenceOverview(props) {
   const columns = [
@@ -35,6 +36,7 @@ export default function ReferenceOverview(props) {
       dataIndex: "foreign",
     },
   ];
+  const { tables } = useContext(TableContext);
   const [refActiveIndex, setRefActiveIndex] = useState("");
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -108,11 +110,11 @@ export default function ReferenceOverview(props) {
                   <div className="flex justify-between items-center my-1">
                     <div className="me-3">
                       <strong>Primary: </strong>
-                      {props.tables[r.endTableId].name}
+                      {tables[r.endTableId].name}
                     </div>
                     <div className="mx-1">
                       <strong>Foreign: </strong>
-                      {props.tables[r.startTableId].name}
+                      {tables[r.startTableId].name}
                     </div>
                     <div className="ms-1">
                       <Popover
@@ -123,19 +125,18 @@ export default function ReferenceOverview(props) {
                               dataSource={[
                                 {
                                   key: "1",
-                                  foreign: props.tables[r.startTableId].name,
-                                  primary: props.tables[r.endTableId].name,
+                                  foreign: tables[r.startTableId].name,
+                                  primary: tables[r.endTableId].name,
                                 },
                                 {
                                   key: "2",
                                   foreign:
-                                    props.tables[r.startTableId].fields[
+                                    tables[r.startTableId].fields[
                                       r.startFieldId
                                     ].name,
                                   primary:
-                                    props.tables[r.endTableId].fields[
-                                      r.endFieldId
-                                    ].name,
+                                    tables[r.endTableId].fields[r.endFieldId]
+                                      .name,
                                 },
                               ]}
                               pagination={false}

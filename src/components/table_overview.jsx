@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
 import {
   Collapse,
@@ -27,20 +27,22 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
+import { TableContext } from "../pages/editor";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [tableActiveKey, setTableActiveKey] = useState("");
   const [value, setValue] = useState("");
+  const { tables, setTables } = useContext(TableContext);
   const [filteredResult, setFilteredResult] = useState(
-    props.tables.map((t) => {
+    tables.map((t) => {
       return t.name;
     })
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      props.tables
+      tables
         .map((t) => {
           return t.name;
         })
@@ -49,7 +51,7 @@ export default function TableOverview(props) {
   };
 
   const updatedField = (tid, fid, updatedValues) => {
-    props.setTables((prev) =>
+    setTables((prev) =>
       prev.map((table, i) => {
         if (tid === i) {
           return {
@@ -65,7 +67,7 @@ export default function TableOverview(props) {
   };
 
   const updateTable = (tid, updatedValues) => {
-    props.setTables((prev) =>
+    setTables((prev) =>
       prev.map((table, i) => {
         if (tid === i) {
           return {
@@ -92,7 +94,7 @@ export default function TableOverview(props) {
             onSearch={(v) => handleStringSearch(v)}
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
-              const { id } = props.tables.find((t) => t.name === v);
+              const { id } = tables.find((t) => t.name === v);
               setTableActiveKey(`${id}`);
               document
                 .getElementById(`scroll_table_${id}`)
@@ -107,9 +109,7 @@ export default function TableOverview(props) {
             block
             onClick={() => {
               const id =
-                props.tables.length === 0
-                  ? 0
-                  : props.tables[props.tables.length - 1].id + 1;
+                tables.length === 0 ? 0 : tables[tables.length - 1].id + 1;
               const newTable = {
                 id: id,
                 name: `table_${id}`,
@@ -132,7 +132,7 @@ export default function TableOverview(props) {
                 indices: [],
                 color: defaultTableTheme,
               };
-              props.setTables((prev) => [...prev, newTable]);
+              setTables((prev) => [...prev, newTable]);
             }}
           >
             Add table
@@ -144,7 +144,7 @@ export default function TableOverview(props) {
         onChange={(k) => setTableActiveKey(k)}
         accordion
       >
-        {props.tables.length <= 0 ? (
+        {tables.length <= 0 ? (
           <div className="select-none">
             <Empty
               image={
@@ -160,7 +160,7 @@ export default function TableOverview(props) {
             />
           </div>
         ) : (
-          props.tables.map((t, i) => (
+          tables.map((t, i) => (
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
                 {t.fields.map((f, j) => (
@@ -296,7 +296,7 @@ export default function TableOverview(props) {
                                 type="danger"
                                 block
                                 onClick={(ev) => {
-                                  props.setTables((prev) => {
+                                  setTables((prev) => {
                                     const updatedTables = [...prev];
                                     const updatedFields = [
                                       ...updatedTables[t.id].fields,
@@ -349,7 +349,7 @@ export default function TableOverview(props) {
                               className="w-full"
                               defaultValue={idx.fields}
                               onChange={(value) => {
-                                const updatedTables = [...props.tables];
+                                const updatedTables = [...tables];
                                 const updatedIndices = [...t.indices];
                                 updatedIndices[k] = {
                                   name: `${value.join("_")}_index`,
@@ -359,7 +359,7 @@ export default function TableOverview(props) {
                                   ...t,
                                   indices: [...updatedIndices],
                                 };
-                                props.setTables(updatedTables);
+                                setTables(updatedTables);
                               }}
                             />
                             <Popover
@@ -379,14 +379,14 @@ export default function TableOverview(props) {
                                     type="danger"
                                     block
                                     onClick={() => {
-                                      const updatedTables = [...props.tables];
+                                      const updatedTables = [...tables];
                                       const updatedIndices = [...t.indices];
                                       updatedIndices.splice(k, 1);
                                       updatedTables[i] = {
                                         ...t,
                                         indices: [...updatedIndices],
                                       };
-                                      props.setTables(updatedTables);
+                                      setTables(updatedTables);
                                     }}
                                   >
                                     Delete
@@ -506,7 +506,7 @@ export default function TableOverview(props) {
                       block
                       onClick={() => {
                         setIndexActiveKey("1");
-                        const updatedTables = [...props.tables];
+                        const updatedTables = [...tables];
                         updatedTables[i] = {
                           ...t,
                           indices: [
@@ -514,7 +514,7 @@ export default function TableOverview(props) {
                             { name: `index_${t.indices.length}`, fields: [] },
                           ],
                         };
-                        props.setTables(updatedTables);
+                        setTables(updatedTables);
                       }}
                     >
                       Add index
@@ -523,7 +523,7 @@ export default function TableOverview(props) {
                   <Col span={6}>
                     <Button
                       onClick={() => {
-                        const updatedTables = [...props.tables];
+                        const updatedTables = [...tables];
                         updatedTables[i].fields = [
                           ...updatedTables[i].fields,
                           {
@@ -537,7 +537,7 @@ export default function TableOverview(props) {
                             comment: "",
                           },
                         ];
-                        props.setTables(updatedTables);
+                        setTables(updatedTables);
                       }}
                       block
                     >
@@ -550,7 +550,7 @@ export default function TableOverview(props) {
                       type="danger"
                       onClick={() => {
                         Toast.success(`Table deleted!`);
-                        props.setTables((prev) =>
+                        setTables((prev) =>
                           prev
                             .filter((e) => e.id !== i)
                             .map((e, idx) => ({ ...e, id: idx }))

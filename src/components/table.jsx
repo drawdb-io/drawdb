@@ -12,13 +12,14 @@ import {
   Button,
   SideSheet,
 } from "@douyinfe/semi-ui";
-import { LayoutContext } from "../pages/editor";
+import { LayoutContext, TableContext } from "../pages/editor";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
   const [visible, setVisible] = useState(false);
   const {layout} = useContext(LayoutContext);
+  const {setTables} = useContext(TableContext);
   // const [editFieldVisible, setEditFieldVisible] = useState(-1);
   // const [field, setField] = useState({
   //   name: "",
@@ -36,7 +37,7 @@ export default function Table(props) {
   return (
     <g>
       <foreignObject
-        key={props.id}
+        key={props.tableData.id}
         x={props.tableData.x}
         y={props.tableData.y}
         width={200}
@@ -199,7 +200,7 @@ export default function Table(props) {
                   onMouseEnter={() => {
                     setHoveredField(i);
                     props.setOnRect({
-                      tableId: props.id,
+                      tableId: props.tableData.id,
                       field: i,
                     });
                   }}
@@ -217,7 +218,7 @@ export default function Table(props) {
                         props.setLine((prev) => ({
                           ...prev,
                           startFieldId: i,
-                          startTableId: props.id,
+                          startTableId: props.tableData.id,
                           startX: props.tableData.x + 15,
                           startY: props.tableData.y + i * 36 + 50 + 19,
                           endX: props.tableData.x + 15,
@@ -237,13 +238,13 @@ export default function Table(props) {
                           backgroundColor: "#d42020",
                         }}
                         onClick={(ev) => {
-                          props.setTables((prev) => {
+                          setTables((prev) => {
                             const updatedTables = [...prev];
                             const updatedFields = [
-                              ...updatedTables[props.id].fields,
+                              ...updatedTables[props.tableData.id].fields,
                             ];
                             updatedFields.splice(i, 1);
-                            updatedTables[props.id].fields = [...updatedFields];
+                            updatedTables[props.tableData.id].fields = [...updatedFields];
                             return updatedTables;
                           });
                         }}

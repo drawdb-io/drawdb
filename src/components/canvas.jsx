@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
 import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
+import { TableContext } from "../pages/editor";
 
 export default function Canvas(props) {
+  const { tables, setTables } = useContext(TableContext);
   const ObjectType = {
     NONE: 0,
     TABLE: 1,
@@ -51,7 +53,7 @@ export default function Canvas(props) {
   const handleMouseDownRect = (e, id, type) => {
     const { clientX, clientY } = e;
     if (type === ObjectType.TABLE) {
-      const table = props.tables.find((t) => t.id === id);
+      const table = tables.find((t) => t.id === id);
       setOffset({
         x: clientX - table.x,
         y: clientY - table.y,
@@ -87,8 +89,8 @@ export default function Canvas(props) {
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
-      props.setTables(
-        props.tables.map((t) => ({
+      setTables(
+        tables.map((t) => ({
           ...t,
           x: t.x + dx,
           y: t.y + dy,
@@ -113,7 +115,7 @@ export default function Canvas(props) {
         }))
       );
     } else if (dragging[0] === ObjectType.TABLE && dragging[1] >= 0) {
-      const updatedTables = props.tables.map((t) => {
+      const updatedTables = tables.map((t) => {
         if (t.id === dragging[1]) {
           const updatedTable = {
             ...t,
@@ -124,20 +126,19 @@ export default function Canvas(props) {
         }
         return t;
       });
-      props.setTables(updatedTables);
+      setTables(updatedTables);
       const updatedRelationShips = props.relationships.map((r) => {
         if (r.startTableId === dragging[1]) {
           return {
             ...r,
-            startX: props.tables[r.startTableId].x + 15,
-            startY:
-              props.tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
+            startX: tables[r.startTableId].x + 15,
+            startY: tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
           };
         } else if (r.endTableId === dragging[1]) {
           return {
             ...r,
-            endX: props.tables[r.endTableId].x + 15,
-            endY: props.tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
+            endX: tables[r.endTableId].x + 15,
+            endY: tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
           };
         }
         return r;
@@ -246,10 +247,10 @@ export default function Canvas(props) {
         ...line,
         endTableId: onRect.tableId,
         endFieldId: onRect.field,
-        endX: props.tables[onRect.tableId].x + 15,
-        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 50 + 19,
-        name: `${props.tables[line.startTableId].name}_to_${
-          props.tables[onRect.tableId].name
+        endX: tables[onRect.tableId].x + 15,
+        endY: tables[onRect.tableId].y + onRect.field * 36 + 50 + 19,
+        name: `${tables[line.startTableId].name}_to_${
+          tables[onRect.tableId].name
         }`,
         id: prev.length,
       },
@@ -265,8 +266,8 @@ export default function Canvas(props) {
         const x = offset.x - canvasRect.left - 100 * 0.5;
         const y = offset.y - canvasRect.top - 100 * 0.5;
         const newTable = {
-          id: props.tables.length,
-          name: `table_${props.tables.length}`,
+          id: tables.length,
+          name: `table_${tables.length}`,
           x: x,
           y: y,
           fields: [
@@ -286,7 +287,7 @@ export default function Canvas(props) {
           indices: [],
           color: defaultTableTheme,
         };
-        props.setTables((prev) => [...prev, newTable]);
+        setTables((prev) => [...prev, newTable]);
         props.setCode((prev) =>
           prev === ""
             ? `CREATE TABLE \`${newTable.name}\`;`
@@ -297,7 +298,7 @@ export default function Canvas(props) {
         isOver: !!monitor.isOver(),
       }),
     }),
-    [props.tables]
+    [tables]
   );
 
   return (
@@ -352,13 +353,10 @@ export default function Canvas(props) {
               setAreas={props.setAreas}
             ></Area>
           ))}
-          {props.tables.map((table, i) => (
+          {tables.map((table, i) => (
             <Table
               key={table.id}
-              id={table.id}
               tableData={table}
-              tables={props.tables}
-              setTables={props.setTables}
               setOnRect={setOnRect}
               handleGripField={handleGripField}
               setLine={setLine}
