@@ -47,7 +47,6 @@ const Rect = (props) => {
 
   const handleOkEdit = () => {
     setFields((prev) => {
-      // console.log(field);
       const updatedFields = [...prev];
       updatedFields[editFieldVisible] = { ...field };
       return updatedFields;
@@ -311,7 +310,7 @@ const Rect = (props) => {
         title="Add new field"
         visible={visible}
         onOk={handleOk}
-        onCancel={handleOk}
+        onCancel={() => setVisible(false)}
         centered
         closeOnEsc={true}
         okText="Add"
@@ -435,6 +434,7 @@ const Rect = (props) => {
                     value: value,
                   };
                 })}
+                filter
                 initValue={
                   editFieldVisible !== -1 ? fields[editFieldVisible].type : ""
                 }
