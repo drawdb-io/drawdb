@@ -395,6 +395,9 @@ export default function ControlPanel(props) {
     },
   };
 
+  const invertLayout = (component) =>
+    setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
+
   const diagramIsEmpty = () => {
     return (
       tables.length === 0 &&
@@ -581,9 +584,7 @@ export default function ControlPanel(props) {
           </button>
         </div>
         <button
-          onClick={(e) =>
-            setLayout((prev) => ({ ...prev, header: !prev.header }))
-          }
+          onClick={() => invertLayout("header")}
           className="flex items-center"
         >
           {layout.header ? <IconChevronUp /> : <IconChevronDown />}
@@ -905,142 +906,35 @@ export default function ControlPanel(props) {
                   <div className="px-2"></div>
                 )
               }
-              onClick={() =>
-                setLayout((prev) => ({
-                  ...prev,
-                  header: !prev.header,
-                }))
-              }
+              onClick={() => invertLayout("header")}
             >
               Header
             </Dropdown.Item>
-            <Dropdown
-              position={"rightTop"}
-              render={
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    icon={
-                      layout.tables ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        tables: !prev.tables,
-                      }))
-                    }
-                  >
-                    Tables
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      layout.relationships ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        relationships: !prev.relationships,
-                      }))
-                    }
-                  >
-                    Relationships
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      layout.issues ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        issues: !prev.issues,
-                      }))
-                    }
-                  >
-                    Issues
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      layout.areas ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        areas: !prev.areas,
-                      }))
-                    }
-                  >
-                    Subject areas
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      layout.editor ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        editor: !prev.editor,
-                      }))
-                    }
-                  >
-                    Editor
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    icon={
-                      layout.notes ? (
-                        <IconCheckboxTick />
-                      ) : (
-                        <div className="px-2"></div>
-                      )
-                    }
-                    onClick={() =>
-                      setLayout((prev) => ({
-                        ...prev,
-                        notes: !prev.notes,
-                      }))
-                    }
-                  >
-                    Notes
-                  </Dropdown.Item>
-                </Dropdown.Menu>
+            <Dropdown.Item
+              icon={
+                layout.sidebar ? (
+                  <IconCheckboxTick />
+                ) : (
+                  <div className="px-2"></div>
+                )
               }
+              onClick={() => invertLayout("sidebar")}
             >
-              <Dropdown.Item
-                icon={
-                  layout.sidebar ? (
-                    <IconCheckboxTick />
-                  ) : (
-                    <div className="px-2"></div>
-                  )
-                }
-                onClick={() =>
-                  setLayout((prev) => ({
-                    ...prev,
-                    sidebar: !prev.sidebar,
-                  }))
-                }
-              >
-                Sidebar
-              </Dropdown.Item>
-            </Dropdown>
+              Sidebar
+            </Dropdown.Item>
+            <Dropdown.Item
+              icon={
+                layout.issues ? (
+                  <IconCheckboxTick />
+                ) : (
+                  <div className="px-2"></div>
+                )
+              }
+              onClick={() => invertLayout("issues")}
+            >
+              Issues
+            </Dropdown.Item>
+
             <Dropdown.Item
               icon={
                 layout.services ? (
@@ -1049,12 +943,7 @@ export default function ControlPanel(props) {
                   <div className="px-2"></div>
                 )
               }
-              onClick={() =>
-                setLayout((prev) => ({
-                  ...prev,
-                  services: !prev.services,
-                }))
-              }
+              onClick={() => invertLayout("services")}
             >
               Services
             </Dropdown.Item>
@@ -1073,10 +962,7 @@ export default function ControlPanel(props) {
                 } else {
                   enterFullscreen();
                 }
-                setLayout((prev) => ({
-                  ...prev,
-                  fullscreen: !prev.fullscreen,
-                }));
+                invertLayout("fullscreen");
               }}
             >
               Fullscreen

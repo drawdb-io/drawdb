@@ -27,7 +27,6 @@ const myTheme = createTheme({
 });
 
 const EditorPanel = (props) => {
-  // const map = useRef(new Map());
   const { tab, setTab } = useContext(TabContext);
   const { layout } = useContext(LayoutContext);
 
