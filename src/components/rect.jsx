@@ -18,9 +18,11 @@ const Rect = (props) => {
         onMouseDown={props.onMouseDown}
         onMouseEnter={() => {
           setIsHovered(true);
+          props.setOnRect(true);
         }}
         onMouseLeave={() => {
           setIsHovered(false);
+          props.setOnRect(false);
         }}
       >
         <div

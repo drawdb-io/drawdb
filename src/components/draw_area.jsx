@@ -4,14 +4,18 @@ import Rect from "./rect";
 import Node from "./node";
 
 export default function Canvas(props) {
-  const [dragging, setDragging] = useState(false);
+  const [dragging, setDragging] = useState(-1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [links, setLinks] = useState([]);
+  const [onRect, setOnRect] = useState(false);
+  const [panning, setPanning] = useState(false);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [cursor, setCursor] = useState("default");
 
   const canvas = useRef(null);
 
-  const handleMouseDown = (event, id) => {
-    const { clientX, clientY } = event;
+  const handleMouseDownRect = (e, id) => {
+    const { clientX, clientY } = e;
     const rectangle = props.rectangles.find((rect) => rect.id === id);
     setOffset({
       x: clientX - rectangle.x,
@@ -20,65 +24,96 @@ export default function Canvas(props) {
     setDragging(id);
   };
 
-  const handleMouseMove = (event) => {
-    if (dragging === false) return;
-    const { clientX, clientY } = event;
-    const updatedRectangles = props.rectangles.map((rect) => {
-      if (rect.id === dragging) {
-        const updatedRect = {
-          ...rect,
-          x: clientX - offset.x,
-          y: clientY - offset.y,
-        };
-        const updatedLinks = links.map((link) => {
-          let updatedLink = link;
-          if (link.rect === updatedRect.id) {
-            switch (link.node) {
-              case Node.TOP:
-                updatedLink = {
-                  ...link,
-                  x: updatedRect.x + updatedRect.width / 2,
-                  y: updatedRect.y,
-                };
-                break;
-              case Node.BOTTOM:
-                updatedLink = {
-                  ...link,
-                  x: updatedRect.x + updatedRect.width / 2,
-                  y: updatedRect.y + updatedRect.height,
-                };
-                break;
-              case Node.LEFT:
-                updatedLink = {
-                  ...link,
-                  x: updatedRect.x,
-                  y: updatedRect.y + updatedRect.height / 2,
-                };
-                break;
-              case Node.RIGHT:
-                updatedLink = {
-                  ...link,
-                  x: updatedRect.x + updatedRect.width,
-                  y: updatedRect.y + updatedRect.height / 2,
-                };
-                break;
-              default:
-                break;
-            }
-          }
-          return updatedLink;
-        });
+  const handleMouseMove = (e) => {
+    if (dragging < 0 && panning) {
+      const dx = e.clientX - panOffset.x;
+      const dy = e.clientY - panOffset.y;
+      setPanOffset({ x: e.clientX, y: e.clientY });
 
-        setLinks(updatedLinks);
-        return updatedRect;
+      const updatedRectangles = props.rectangles.map((rect) => ({
+        ...rect,
+        x: rect.x + dx,
+        y: rect.y + dy,
+      }));
+      props.setRectangles(updatedRectangles);
+
+      const updatedLinks = links.map((link) => ({
+        ...link,
+        x: link.x + dx,
+        y: link.y + dy,
+      }));
+      setLinks(updatedLinks);
+    } else if (dragging >= 0) {
+      const { clientX, clientY } = e;
+      const updatedRectangles = props.rectangles.map((rect) => {
+        if (rect.id === dragging) {
+          const updatedRect = {
+            ...rect,
+            x: clientX - offset.x,
+            y: clientY - offset.y,
+          };
+          const updatedLinks = links.map((link) => {
+            let updatedLink = link;
+            if (link.rect === updatedRect.id) {
+              switch (link.node) {
+                case Node.TOP:
+                  updatedLink = {
+                    ...link,
+                    x: updatedRect.x + updatedRect.width / 2,
+                    y: updatedRect.y,
+                  };
+                  break;
+                case Node.BOTTOM:
+                  updatedLink = {
+                    ...link,
+                    x: updatedRect.x + updatedRect.width / 2,
+                    y: updatedRect.y + updatedRect.height,
+                  };
+                  break;
+                case Node.LEFT:
+                  updatedLink = {
+                    ...link,
+                    x: updatedRect.x,
+                    y: updatedRect.y + updatedRect.height / 2,
+                  };
+                  break;
+                case Node.RIGHT:
+                  updatedLink = {
+                    ...link,
+                    x: updatedRect.x + updatedRect.width,
+                    y: updatedRect.y + updatedRect.height / 2,
+                  };
+                  break;
+                default:
+                  break;
+              }
+            }
+            return updatedLink;
+          });
+
+          setLinks(updatedLinks);
+          return updatedRect;
+        }
+        return rect;
+      });
+      props.setRectangles(updatedRectangles);
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    if (dragging < 0) {
+      if (!onRect) {
+        setPanning(true);
+        setPanOffset({ x: e.clientX, y: e.clientY });
+        setCursor("grabbing");
       }
-      return rect;
-    });
-    props.setRectangles(updatedRectangles);
+    }
   };
 
   const handleMouseUp = () => {
-    setDragging(false);
+    setDragging(-1);
+    setPanning(false);
+    setCursor("default");
   };
 
   const [, drop] = useDrop(
@@ -110,14 +145,14 @@ export default function Canvas(props) {
     }),
     [props.rectangles]
   );
-
   return (
     <div ref={drop} className="flex-grow" id="canvas">
       <div ref={canvas} className="w-full h-screen">
         <svg
           onMouseMove={handleMouseMove}
+          onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", cursor: cursor }}
         >
           {props.rectangles.map((rectangle) => (
             <Rect
@@ -128,9 +163,10 @@ export default function Canvas(props) {
               label={rectangle.label}
               width={rectangle.width}
               height={rectangle.height}
+              setOnRect={setOnRect}
               links={links}
               setLinks={setLinks}
-              onMouseDown={(event) => handleMouseDown(event, rectangle.id)}
+              onMouseDown={(e) => handleMouseDownRect(e, rectangle.id)}
             />
           ))}
           {links.map(
