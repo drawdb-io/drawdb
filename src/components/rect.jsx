@@ -6,7 +6,15 @@ import {
   IconPlus,
   IconMinus,
 } from "@douyinfe/semi-icons";
-import { Modal, Form, Checkbox, Row, Col } from "@douyinfe/semi-ui";
+import {
+  Modal,
+  Form,
+  Checkbox,
+  Row,
+  Col,
+  Popover,
+  Tag,
+} from "@douyinfe/semi-ui";
 
 const Rect = (props) => {
   const [node, setNode] = useState(Node.NONE);
@@ -63,7 +71,7 @@ const Rect = (props) => {
     {
       name: "name",
       type: "varchar(20)",
-      default: "n/a",
+      default: "",
       primary: false,
       unique: false,
       notNull: true,
@@ -136,44 +144,82 @@ const Rect = (props) => {
           </div>
           {fields.map((e, i) => {
             return (
-              <div
+              <Popover
                 key={i}
-                className={`${
-                  i === fields.length - 1 ? "" : "border-b-2 border-gray-400"
-                } h-[36px] p-2 flex justify-between`}
-                onMouseEnter={() => {
-                  setHoveredField(i);
-                }}
-                onMouseLeave={() => {
-                  setHoveredField(-1);
-                }}
-              >
-                <div>{e.name}</div>
-                <div className="text-slate-600">
-                  {hoveredField === i ? (
-                    <div>
-                      <button
-                        className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
-                        onClick={(e) => setEditFieldVisible(i)}
-                      >
-                        <IconEdit />
-                      </button>
-                      <button
-                        className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
-                        onClick={(e) => {
-                          const updatedFields = [...fields];
-                          updatedFields.splice(i, 1);
-                          setFields(updatedFields);
-                        }}
-                      >
-                        <IconMinus />
-                      </button>
+                content={
+                  <div>
+                    <div className="flex justify-between items-center pb-2">
+                      <p className="me-4 font-bold">{e.name}</p>
+                      <p className="ms-4 text-slate-600">{e.type}</p>
                     </div>
-                  ) : (
-                    e.type
-                  )}
+                    <hr />
+                    {e.primary && (
+                      <Tag color="blue" className="me-2 my-2">
+                        Primary
+                      </Tag>
+                    )}
+                    {e.unique && (
+                      <Tag color="amber" className="me-2 my-2">
+                        Unique
+                      </Tag>
+                    )}
+                    {e.notNull && (
+                      <Tag color="purple" className="me-2 my-2">
+                        Not null
+                      </Tag>
+                    )}
+                    {e.increment && (
+                      <Tag color="green" className="me-2 my-2">
+                        Not null
+                      </Tag>
+                    )}
+                    <p className="text-slate-600">
+                      <strong>Default :</strong>{" "}
+                      {e.default === "" ? "Not set" : e.default}
+                    </p>
+                  </div>
+                }
+                position="right"
+                showArrow
+              >
+                <div
+                  className={`${
+                    i === fields.length - 1 ? "" : "border-b-2 border-gray-400"
+                  } h-[36px] p-2 flex justify-between`}
+                  onMouseEnter={() => {
+                    setHoveredField(i);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredField(-1);
+                  }}
+                >
+                  <div>{e.name}</div>
+                  <div className="text-slate-600">
+                    {hoveredField === i ? (
+                      <div>
+                        <button
+                          className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
+                          onClick={(e) => setEditFieldVisible(i)}
+                        >
+                          <IconEdit />
+                        </button>
+                        <button
+                          className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
+                          onClick={(e) => {
+                            const updatedFields = [...fields];
+                            updatedFields.splice(i, 1);
+                            setFields(updatedFields);
+                          }}
+                        >
+                          <IconMinus />
+                        </button>
+                      </div>
+                    ) : (
+                      e.type
+                    )}
+                  </div>
                 </div>
-              </div>
+              </Popover>
             );
           })}
         </div>
