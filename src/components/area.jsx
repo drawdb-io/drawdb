@@ -1,21 +1,11 @@
 import { React, useState } from "react";
 
 export default function Area(props) {
-  const [resize, setResize] = useState("none");
-  const [initCoords, setInitCoords] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    mouseX: 0,
-    mouseY: 0,
-  });
   const [hovered, setHovered] = useState(false);
 
   const handleMouseDown = (e, dir) => {
-    setResize(dir);
-    props.setPanning(false);
-    setInitCoords({
+    props.setResize({id: props.areaData.id, dir: dir});
+    props.setInitCoords({
       x: props.areaData.x,
       y: props.areaData.y,
       width: props.areaData.width,
@@ -23,52 +13,6 @@ export default function Area(props) {
       mouseX: e.clientX,
       mouseY: e.clientY,
     });
-  };
-
-  const handleMouseMove = (e) => {
-    if (resize === "none") return;
-
-    let newX = initCoords.x;
-    let newY = initCoords.y;
-    let newWidth = initCoords.width;
-    let newHeight = initCoords.height;
-    props.setPanning(false);
-    if (resize === "br") {
-      newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
-      newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
-    } else if (resize === "tl") {
-      newX = initCoords.x + (e.clientX - initCoords.mouseX);
-      newY = initCoords.y + (e.clientY - initCoords.mouseY);
-      newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
-      newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
-    } else if (resize === "tr") {
-      newY = initCoords.y + (e.clientY - initCoords.mouseY);
-      newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
-      newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
-    } else if (resize === "bl") {
-      newX = initCoords.x + (e.clientX - initCoords.mouseX);
-      newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
-      newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
-    }
-
-    props.setAreas((prev) => {
-      return prev.map((a) => {
-        if (a.id === props.areaData.id) {
-          return {
-            ...a,
-            x: newX,
-            y: newY,
-            width: newWidth,
-            height: newHeight,
-          };
-        }
-        return a;
-      });
-    });
-  };
-
-  const unableResize = () => {
-    setResize("none");
   };
 
   return (
@@ -82,70 +26,57 @@ export default function Area(props) {
         y={props.areaData.y}
         width={props.areaData.width > 0 ? props.areaData.width : 0}
         height={props.areaData.height > 0 ? props.areaData.height : 0}
-        style={{ cursor: "move" }}
         onMouseDown={props.onMouseDown}
       >
-        <div className="border-2 border-dashed border-blue-600 opacity-70 bg-slate-400 w-fill h-full select-none">
+        <div className="border-2 border-dashed border-blue-600 opacity-70 bg-slate-400 w-fill h-full select-none cursor-move">
           {props.areaData.name}
         </div>
       </foreignObject>
       {hovered && (
         <>
           <rect
-            x={props.areaData.x - 8}
-            y={props.areaData.y - 8}
-            width={16}
-            height={16}
+            x={props.areaData.x - 5}
+            y={props.areaData.y - 5}
+            width={10}
+            height={10}
             fill="lightblue"
             stroke="blue"
             strokeWidth={1}
             cursor="nwse-resize"
             onMouseDown={(e) => handleMouseDown(e, "tl")}
-            onMouseUp={unableResize}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={unableResize}
           />
           <rect
-            x={props.areaData.x + props.areaData.width - 8}
-            y={props.areaData.y - 8}
-            width={16}
-            height={16}
+            x={props.areaData.x + props.areaData.width - 5}
+            y={props.areaData.y - 5}
+            width={10}
+            height={10}
             fill="lightblue"
             stroke="blue"
             strokeWidth={1}
             cursor="nesw-resize"
             onMouseDown={(e) => handleMouseDown(e, "tr")}
-            onMouseUp={unableResize}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={unableResize}
           />
           <rect
-            x={props.areaData.x - 8}
-            y={props.areaData.y + props.areaData.height - 8}
-            width={16}
-            height={16}
+            x={props.areaData.x - 5}
+            y={props.areaData.y + props.areaData.height - 5}
+            width={10}
+            height={10}
             fill="lightblue"
             stroke="blue"
             strokeWidth={1}
             cursor="nesw-resize"
             onMouseDown={(e) => handleMouseDown(e, "bl")}
-            onMouseUp={unableResize}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={unableResize}
           />
           <rect
-            x={props.areaData.x + props.areaData.width - 8}
-            y={props.areaData.y + props.areaData.height - 8}
-            width={16}
-            height={16}
+            x={props.areaData.x + props.areaData.width - 5}
+            y={props.areaData.y + props.areaData.height - 5}
+            width={10}
+            height={10}
             fill="lightblue"
             stroke="blue"
             strokeWidth={1}
             cursor="nwse-resize"
             onMouseDown={(e) => handleMouseDown(e, "br")}
-            onMouseUp={unableResize}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={unableResize}
           />
         </>
       )}

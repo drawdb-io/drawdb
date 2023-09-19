@@ -35,6 +35,15 @@ export default function Canvas(props) {
   });
   const [panning, setPanning] = useState(false);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
+  const [initCoords, setInitCoords] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    mouseX: 0,
+    mouseY: 0,
+  });
   const [cursor, setCursor] = useState("default");
 
   const canvas = useRef(null);
@@ -69,7 +78,11 @@ export default function Canvas(props) {
         endX: e.clientX - offsetX,
         endY: e.clientY - offsetY,
       });
-    } else if (dragging[0] === ObjectType.NONE && panning) {
+    } else if (
+      dragging[0] === ObjectType.NONE &&
+      panning &&
+      areaResize === -1
+    ) {
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
@@ -130,7 +143,11 @@ export default function Canvas(props) {
         return r;
       });
       props.setRelationships(updatedRelationShips);
-    } else if (dragging[0] === ObjectType.AREA && dragging[1] >= 0) {
+    } else if (
+      dragging[0] === ObjectType.AREA &&
+      dragging[1] >= 0 &&
+      areaResize.id === -1
+    ) {
       const updatedAreas = props.areas.map((t) => {
         if (t.id === dragging[1]) {
           const updatedArea = {
@@ -143,6 +160,46 @@ export default function Canvas(props) {
         return t;
       });
       props.setAreas(updatedAreas);
+    } else if (areaResize.id !== -1) {
+      if (areaResize.dir === "none") return;
+
+      let newX = initCoords.x;
+      let newY = initCoords.y;
+      let newWidth = initCoords.width;
+      let newHeight = initCoords.height;
+      setPanning(false);
+      if (areaResize.dir === "br") {
+        newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
+        newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
+      } else if (areaResize.dir === "tl") {
+        newX = initCoords.x + (e.clientX - initCoords.mouseX);
+        newY = initCoords.y + (e.clientY - initCoords.mouseY);
+        newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
+        newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
+      } else if (areaResize.dir === "tr") {
+        newY = initCoords.y + (e.clientY - initCoords.mouseY);
+        newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
+        newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
+      } else if (areaResize.dir === "bl") {
+        newX = initCoords.x + (e.clientX - initCoords.mouseX);
+        newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
+        newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
+      }
+
+      props.setAreas((prev) =>
+        prev.map((a) => {
+          if (a.id === areaResize.id) {
+            return {
+              ...a,
+              x: newX,
+              y: newY,
+              width: newWidth,
+              height: newHeight,
+            };
+          }
+          return a;
+        })
+      );
     }
   };
 
@@ -158,6 +215,15 @@ export default function Canvas(props) {
     setCursor("default");
     if (linking) handleLinking();
     setLinking(false);
+    setAreaResize({ id: -1, dir: "none" });
+    setInitCoords({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      mouseX: 0,
+      mouseY: 0,
+    });
   };
 
   const handleGripField = (id) => {
@@ -279,7 +345,10 @@ export default function Canvas(props) {
               key={a.id}
               areaData={a}
               onMouseDown={(e) => handleMouseDownRect(e, a.id, ObjectType.AREA)}
-              setPanning={setPanning}
+              resize={areaResize}
+              setResize={setAreaResize}
+              initCoords={initCoords}
+              setInitCoords={setInitCoords}
               setAreas={props.setAreas}
             ></Area>
           ))}
