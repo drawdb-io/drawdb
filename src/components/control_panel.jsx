@@ -195,19 +195,11 @@ export default function ControlPanel(props) {
         } else if (a.component === "comment") {
           updateTable(a.tid, a.undo, false);
         } else if (a.component === "index_add") {
-          setTables((prev) =>
-            prev.map((table, i) => {
-              if (table.id === a.tid) {
-                return {
-                  ...table,
-                  indices: table.indices
-                    .filter((e) => e.id !== tables[a.tid].indices.length - 1)
-                    .map((t, i) => ({ ...t, id: i })),
-                };
-              }
-              return table;
-            })
-          );
+          updateTable(a.tid, {
+            indices: tables[a.tid].indices
+              .filter((e) => e.id !== tables[a.tid].indices.length - 1)
+              .map((t, i) => ({ ...t, id: i })),
+          });
         } else if (a.component === "index") {
           updateTable(a.tid, {
             indices: tables[a.tid].indices.map((index) =>
@@ -236,6 +228,10 @@ export default function ControlPanel(props) {
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
         }
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) =>
+          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e))
+        );
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -365,6 +361,10 @@ export default function ControlPanel(props) {
         } else if (a.component === "self") {
           updateTable(a.tid, a.redo);
         }
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) =>
+          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e))
+        );
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -1105,7 +1105,7 @@ export default function ControlPanel(props) {
               !exportData.data),
         }}
         cancelText="Cancel"
-        width={540}
+        width={600}
       >
         {visible === MODAL.IMPORT ? (
           <div>

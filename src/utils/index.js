@@ -48,7 +48,7 @@ function dataURItoBlob(dataUrl) {
 }
 
 function jsonToSQL(obj) {
-  return obj.tables
+  return `${obj.tables
     .map(
       (table) =>
         `${
@@ -86,7 +86,7 @@ function jsonToSQL(obj) {
             : ""
         }\n);\n${
           table.indices.length > 0
-            ? `${table.indices.map(
+            ? `\n${table.indices.map(
                 (i) =>
                   `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
                     i.name
@@ -97,7 +97,18 @@ function jsonToSQL(obj) {
             : ""
         }`
     )
-    .join("\n\n");
+    .join("\n")}\n${obj.references
+    .map(
+      (r) =>
+        `ALTER TABLE \`${
+          obj.tables[r.startTableId].name
+        }\`\nADD FOREIGN KEY(\`${
+          obj.tables[r.startTableId].fields[r.startFieldId].name
+        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
+          obj.tables[r.endTableId].fields[r.endFieldId].name
+        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+    )
+    .join("\n")}`;
 }
 
 export {

@@ -3,9 +3,9 @@ import {
   AutoComplete,
   Collapse,
   Empty,
-  Form,
   Row,
   Col,
+  Select,
   Button,
   Checkbox,
   Popover,
@@ -22,8 +22,8 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { Cardinality, Constraint } from "../data/data";
-import { TableContext } from "../pages/editor";
+import { Cardinality, Constraint, Action, ObjectType } from "../data/data";
+import { TableContext, UndoRedoContext } from "../pages/editor";
 
 export default function ReferenceOverview(props) {
   const columns = [
@@ -38,6 +38,7 @@ export default function ReferenceOverview(props) {
   ];
   const { tables, relationships, setRelationships, deleteRelationship } =
     useContext(TableContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [refActiveIndex, setRefActiveIndex] = useState("");
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -99,126 +100,177 @@ export default function ReferenceOverview(props) {
           relationships.map((r, i) => (
             <div id={`scroll_ref_${r.id}`} key={i}>
               <Collapse.Panel header={<div>{r.name}</div>} itemKey={`${i}`}>
-                <Form
-                  onChange={(value) =>
+                <div className="flex justify-between items-center mb-3">
+                  <div className="me-3">
+                    <span className="font-semibold">Primary: </span>
+                    {tables[r.endTableId].name}
+                  </div>
+                  <div className="mx-1">
+                    <span className="font-semibold">Foreign: </span>
+                    {tables[r.startTableId].name}
+                  </div>
+                  <div className="ms-1">
+                    <Popover
+                      content={
+                        <div className="p-2">
+                          <Table
+                            columns={columns}
+                            dataSource={[
+                              {
+                                key: "1",
+                                foreign: `${tables[r.startTableId].name}(${
+                                  tables[r.startTableId].fields[r.startFieldId]
+                                    .name
+                                })`,
+                                primary: `${tables[r.endTableId].name}(${
+                                  tables[r.endTableId].fields[r.endFieldId].name
+                                })`,
+                              },
+                            ]}
+                            pagination={false}
+                            size="small"
+                            bordered
+                          />
+                          <div className="mt-2">
+                            <Button icon={<IconLoopTextStroked />} block>
+                              Swap
+                            </Button>
+                          </div>
+                        </div>
+                      }
+                      trigger="click"
+                      position="rightTop"
+                      showArrow
+                    >
+                      <Button icon={<IconMore />} type="tertiary"></Button>
+                    </Popover>
+                  </div>
+                </div>
+                <div className="font-semibold my-1">Cardinality</div>
+                <Select
+                  optionList={Object.values(Cardinality).map((v) => ({
+                    label: v,
+                    value: v,
+                  }))}
+                  value={r.cardinality}
+                  className="w-full"
+                  onChange={(value) => {
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.RELATIONSHIP,
+                        rid: i,
+                        undo: { cardinality: r.cardinality },
+                        redo: { cardinality: value },
+                      },
+                    ]);
+                    setRedoStack([]);
                     setRelationships((prev) =>
                       prev.map((e, idx) =>
-                        idx === i ? { ...e, ...value.values } : e
+                        idx === i ? { ...e, cardinality: value } : e
                       )
-                    )
-                  }
-                >
-                  <div className="flex justify-between items-center my-1">
-                    <div className="me-3">
-                      <strong>Primary: </strong>
-                      {tables[r.endTableId].name}
-                    </div>
-                    <div className="mx-1">
-                      <strong>Foreign: </strong>
-                      {tables[r.startTableId].name}
-                    </div>
-                    <div className="ms-1">
-                      <Popover
-                        content={
-                          <div className="p-2 w-[260px]">
-                            <Table
-                              columns={columns}
-                              dataSource={[
-                                {
-                                  key: "1",
-                                  foreign: tables[r.startTableId].name,
-                                  primary: tables[r.endTableId].name,
-                                },
-                                {
-                                  key: "2",
-                                  foreign:
-                                    tables[r.startTableId].fields[
-                                      r.startFieldId
-                                    ].name,
-                                  primary:
-                                    tables[r.endTableId].fields[r.endFieldId]
-                                      .name,
-                                },
-                              ]}
-                              pagination={false}
-                              bordered
-                            />
-                            <div className="mt-2">
-                              <Button icon={<IconLoopTextStroked />} block>
-                                Swap
-                              </Button>
-                            </div>
-                          </div>
-                        }
-                        trigger="click"
-                        position="rightTop"
-                        showArrow
-                      >
-                        <Button icon={<IconMore />} type="tertiary"></Button>
-                      </Popover>
-                    </div>
-                  </div>
-                  <Form.Input initValue={r.name} field="name" label="Name" />
-                  <Form.Select
-                    optionList={Object.values(Cardinality).map((v) => ({
-                      label: v,
-                      value: v,
-                    }))}
-                    field="cardinality"
-                    label="Cardinality"
-                    initValue={r.cardinality}
-                    className="w-full"
-                  ></Form.Select>
-                  <Row gutter={6}>
-                    <Col span={12}>
-                      <Form.Select
-                        optionList={Object.values(Constraint).map((v) => ({
-                          label: v,
-                          value: v,
-                        }))}
-                        field="updateConstraint"
-                        label="On update"
-                        initValue={r.updateConstraint}
-                        className="w-full"
-                      ></Form.Select>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Select
-                        optionList={Object.values(Constraint).map((v) => ({
-                          label: v,
-                          value: v,
-                        }))}
-                        field="deleteConstraint"
-                        label="On delete"
-                        initValue={r.deleteConstraint}
-                        className="w-full"
-                      ></Form.Select>
-                    </Col>
-                  </Row>
-                  <div className="flex justify-between items-center my-3">
-                    <label htmlFor="unique" className="font-medium text-black">
-                      Mandetory
-                    </label>
-                    <Checkbox
-                      value="mandetory"
-                      checked={r.mandetory}
-                      onChange={(checkedValues) =>
+                    );
+                  }}
+                ></Select>
+                <Row gutter={6} className="my-3">
+                  <Col span={12}>
+                    <div className="font-semibold">On update: </div>
+                    <Select
+                      optionList={Object.values(Constraint).map((v) => ({
+                        label: v,
+                        value: v,
+                      }))}
+                      value={r.updateConstraint}
+                      className="w-full"
+                      onChange={(value) => {
+                        setUndoStack((prev) => [
+                          ...prev,
+                          {
+                            action: Action.EDIT,
+                            element: ObjectType.RELATIONSHIP,
+                            rid: i,
+                            undo: { updateConstraint: r.updateConstraint },
+                            redo: { updateConstraint: value },
+                          },
+                        ]);
+                        setRedoStack([]);
                         setRelationships((prev) =>
                           prev.map((e, idx) =>
-                            idx === i
-                              ? {
-                                  ...e,
-                                  [checkedValues.target.value]:
-                                    checkedValues.target.checked,
-                                }
-                              : e
+                            idx === i ? { ...e, updateConstraint: value } : e
                           )
+                        );
+                      }}
+                    ></Select>
+                  </Col>
+                  <Col span={12}>
+                    <div className="font-semibold">On delete: </div>
+                    <Select
+                      optionList={Object.values(Constraint).map((v) => ({
+                        label: v,
+                        value: v,
+                      }))}
+                      value={r.deleteConstraint}
+                      className="w-full"
+                      onChange={(value) => {
+                        setUndoStack((prev) => [
+                          ...prev,
+                          {
+                            action: Action.EDIT,
+                            element: ObjectType.RELATIONSHIP,
+                            rid: i,
+                            undo: { deleteConstraint: r.deleteConstraint },
+                            redo: { deleteConstraint: value },
+                          },
+                        ]);
+                        setRedoStack([]);
+                        setRelationships((prev) =>
+                          prev.map((e, idx) =>
+                            idx === i ? { ...e, deleteConstraint: value } : e
+                          )
+                        );
+                      }}
+                    ></Select>
+                  </Col>
+                </Row>
+                <div className="flex justify-between items-center my-3">
+                  <div className="font-semibold">Mandetory</div>
+                  <Checkbox
+                    value="mandetory"
+                    checked={r.mandetory}
+                    onChange={(checkedValues) => {
+                      setUndoStack((prev) => [
+                        ...prev,
+                        {
+                          action: Action.EDIT,
+                          element: ObjectType.RELATIONSHIP,
+                          rid: i,
+                          undo: {
+                            [checkedValues.target.value]:
+                              !checkedValues.target.checked,
+                          },
+                          redo: {
+                            [checkedValues.target.value]:
+                              checkedValues.target.checked,
+                          },
+                        },
+                      ]);
+                      setRedoStack([]);
+                      setRelationships((prev) =>
+                        prev.map((e, idx) =>
+                          idx === i
+                            ? {
+                                ...e,
+                                [checkedValues.target.value]:
+                                  checkedValues.target.checked,
+                              }
+                            : e
                         )
-                      }
-                    ></Checkbox>
-                  </div>
-                </Form>
-                <Row gutter={6} className="mt-1">
+                      );
+                    }}
+                  ></Checkbox>
+                </div>
+                <Row gutter={6} className="mt-3">
                   <Col span={12}>
                     <Button
                       icon={<IconRowsStroked />}
