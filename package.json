@@ -11,6 +11,8 @@
     "@uiw/codemirror-themes": "^4.20.2",
     "@uiw/react-codemirror": "^4.20.2",
     "codemirror": "^5.65.13",
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
     "jointjs": "^3.7.2",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

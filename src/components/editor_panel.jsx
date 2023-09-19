@@ -6,6 +6,8 @@ import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import { shapes } from "jointjs";
 import Shape from "./shape";
+import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
 import "react-resizable/css/styles.css";
 
 const myTheme = createTheme({
@@ -62,6 +64,30 @@ export default function EditorPanel(props) {
           }}
         >
           add
+        </button>
+        <br />
+        <button
+          onClick={() => {
+            const blob = new Blob([props.code], {
+              type: "text/plain;charset=utf-8",
+            });
+
+            saveAs(blob, "src.txt");
+          }}
+        >
+          export src
+        </button>
+        <br />
+        <button
+          onClick={() => {
+            html2canvas(document.getElementById("canvas")).then((canvas) => {
+              canvas.toBlob((blob) => {
+                saveAs(blob, "image.png");
+              });
+            });
+          }}
+        >
+          export img
         </button>
         {editor ? (
           <CodeMirror
