@@ -23,10 +23,16 @@ import {
   Modal,
   Spin,
   Input,
+  Upload,
+  Banner,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
-import { enterFullscreen, exitFullscreen } from "../utils";
+import {
+  diagramObjectIsValid,
+  enterFullscreen,
+  exitFullscreen,
+} from "../utils";
 import {
   AreaContext,
   LayoutContext,
@@ -45,6 +51,7 @@ export default function ControlPanel(props) {
     NONE: 0,
     IMG: 1,
     CODE: 2,
+    IMPORT: 3,
   };
   const [visible, setVisible] = useState(MODAL.NONE);
   const [exportData, setExportData] = useState({
@@ -52,6 +59,7 @@ export default function ControlPanel(props) {
     filename: `diagram_${new Date().toISOString()}`,
     extension: "",
   });
+  const [error, setError] = useState(null);
   const { layout, setLayout } = useContext(LayoutContext);
   const { setSettings } = useContext(SettingsContext);
   const { relationships, tables, setTables } = useContext(TableContext);
@@ -86,7 +94,9 @@ export default function ControlPanel(props) {
       },
       Import: {
         children: [],
-        function: () => {},
+        function: () => {
+          setVisible(MODAL.IMPORT);
+        },
       },
       "Export as": {
         children: [
@@ -125,7 +135,7 @@ export default function ControlPanel(props) {
                   tables: tables,
                   relationships: relationships,
                   notes: notes,
-                  "subject areas": areas,
+                  subjectAreas: areas,
                 },
                 null,
                 2
@@ -155,23 +165,21 @@ export default function ControlPanel(props) {
           {
             PDF: () => {
               const canvas = document.getElementById("canvas");
-              toJpeg(canvas).then(
-                function (dataUrl) {
-                  const doc = new jsPDF("l", "px", [
-                    canvas.offsetWidth,
-                    canvas.offsetHeight,
-                  ]);
-                  doc.addImage(
-                    dataUrl,
-                    "jpeg",
-                    0,
-                    0,
-                    canvas.offsetWidth,
-                    canvas.offsetHeight
-                  );
-                  doc.save(`${exportData.filename}.pdf`);
-                }
-              );
+              toJpeg(canvas).then(function (dataUrl) {
+                const doc = new jsPDF("l", "px", [
+                  canvas.offsetWidth,
+                  canvas.offsetHeight,
+                ]);
+                doc.addImage(
+                  dataUrl,
+                  "jpeg",
+                  0,
+                  0,
+                  canvas.offsetWidth,
+                  canvas.offsetHeight
+                );
+                doc.save(`${exportData.filename}.pdf`);
+              });
             },
           },
         ],
@@ -494,7 +502,7 @@ export default function ControlPanel(props) {
         </button>
       </div>
       <Modal
-        title="Export diagram"
+        title={`${visible === MODAL.IMPORT ? "Import" : "Export"} diagram`}
         visible={visible !== MODAL.NONE}
         onOk={() => {
           if (visible === MODAL.IMG) {
@@ -507,6 +515,7 @@ export default function ControlPanel(props) {
               type: "text/plain;charset=utf-8",
             });
             saveAs(blob, `${exportData.filename}.${exportData.extension}`);
+          } else if (visible === MODAL.IMPORT) {
           }
         }}
         afterClose={() => {
@@ -515,44 +524,101 @@ export default function ControlPanel(props) {
             extension: "",
             filename: `diagram_${new Date().toISOString()}`,
           }));
+          setError(null);
         }}
         onCancel={() => setVisible(MODAL.NONE)}
         centered
         closeOnEsc={true}
-        okText="Export"
+        okText={`${visible === MODAL.IMPORT ? "Import" : "Export"}`}
         cancelText="Cancel"
         width={520}
       >
-        {exportData.data !== "" || exportData.data ? (
-          visible === MODAL.IMG ? (
-            <Image src={exportData.data} alt="Diagram" height={220} />
-          ) : (
-            <div className="max-h-[400px] overflow-auto border border-gray-200">
-              <CodeMirror
-                value={exportData.data}
-                extensions={[json()]}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
+        {visible === MODAL.IMPORT ? (
+          <div>
+            <Upload
+              action="#"
+              beforeUpload={({ file, fileList }) => {
+                const f = fileList[0].fileInstance;
+                if (!f) {
+                  return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                  if (f.type === "application/json") {
+                    let jsonObject = null;
+                    try {
+                      jsonObject = JSON.parse(event.target.result);
+                    } catch (error) {
+                      setError("Invalid JSON. The file contains an error.");
+                      return;
+                    }
+
+                    if (!diagramObjectIsValid(jsonObject)) {
+                      setError(
+                        "The file is missing necessary properties for a diagram."
+                      );
+                      return;
+                    }
+                  }
+                };
+                reader.readAsText(f);
+
+                return {
+                  autoRemove: false,
+                  fileInstance: file.fileInstance,
+                  status: "success",
+                  shouldUpload: false,
+                };
+              }}
+              draggable={true}
+              dragMainText="Click to upload the file or drag and drop the file here"
+              dragSubText="Support json"
+              accept="application/json,.txt"
+              onRemove={() => setError(null)}
+              onFileChange={() => setError(null)}
+              limit={1}
+            ></Upload>
+            {error && (
+              <Banner
+                type="danger"
+                fullMode={false}
+                description={<div className="text-red-800">{error}</div>}
               />
-            </div>
-          )
+            )}
+          </div>
+        ) : exportData.data !== "" || exportData.data ? (
+          <>
+            {visible === MODAL.IMG ? (
+              <Image src={exportData.data} alt="Diagram" height={220} />
+            ) : (
+              <div className="max-h-[400px] overflow-auto border border-gray-200">
+                <CodeMirror
+                  value={exportData.data}
+                  extensions={[json()]}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </div>
+            )}
+            <div className="text-sm font-semibold mt-2">Filename:</div>
+            <Input
+              value={exportData.filename}
+              placeholder="Filename"
+              suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
+              onChange={(value) =>
+                setExportData((prev) => ({ ...prev, filename: value }))
+              }
+              field="filename"
+            />
+          </>
         ) : (
           <div className="text-center my-3">
             <Spin tip="Loading..." size="large" />
           </div>
         )}
-        <div className="text-sm font-semibold mt-2">Filename : </div>
-        <Input
-          value={exportData.filename}
-          placeholder="Filename"
-          suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
-          onChange={(value) =>
-            setExportData((prev) => ({ ...prev, filename: value }))
-          }
-          field="filename"
-        />
       </Modal>
     </div>
   );

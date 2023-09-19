@@ -1,3 +1,6 @@
+import { Validator } from "jsonschema";
+import { jsonSchema } from "../schemas";
+
 const enterFullscreen = () => {
   const element = document.documentElement;
   if (element.requestFullscreen) {
@@ -23,4 +26,8 @@ const exitFullscreen = () => {
   }
 };
 
-export { enterFullscreen, exitFullscreen };
+const diagramObjectIsValid = (obj) => {
+  return new Validator().validate(obj, jsonSchema).valid;
+};
+
+export { enterFullscreen, exitFullscreen, diagramObjectIsValid };

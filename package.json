@@ -15,6 +15,7 @@
     "codemirror": "^5.65.13",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.11",
+    "jsonschema": "^1.4.1",
     "jspdf": "^2.5.1",
     "node-sql-parser": "^4.7.0",
     "react": "^18.2.0",
@@ -23,6 +24,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
+    "url": "^0.11.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
