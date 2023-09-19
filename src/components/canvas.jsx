@@ -297,27 +297,38 @@ export default function Canvas(props) {
             />
           ))}
           {linking && (
-            <line
-              x1={line.startX}
-              y1={line.startY}
-              x2={line.endX}
-              y2={line.endY}
+            <path
+              d={`M ${line.startX} ${line.startY} L ${line.endX} ${line.endY}`}
               stroke="red"
-              strokeDasharray="5,5"
+              strokeDasharray="8,8"
             />
           )}
-          {props.relationships.map((e, i) => (
-            <line
-              key={i}
-              x1={e.startX}
-              y1={e.startY}
-              x2={e.endX}
-              y2={e.endY}
-              stroke="gray"
-              strokeWidth={2.5}
-              onClick={() => {}}
-            />
-          ))}
+          {props.relationships.map((e, i) => {
+            const r = 20;
+            const invert1 = e.startY < e.endY ? 1 : 0;
+            const invert2 = e.startY < e.endY ? 0 : 1;
+
+            return (
+              <path
+                key={i}
+                d={`M ${e.startX} ${e.startY} L ${e.startX + 224} ${
+                  e.startY
+                } L ${e.startX + 254} ${e.startY} A ${r} ${r} 0 0 ${invert1} ${
+                  e.startX + 254 + 20
+                } ${invert1 === 1 ? e.startY + r : e.startY - r} L ${
+                  e.startX + 254 + 20
+                } ${
+                  invert2 === 1 ? e.endY + r : e.endY - r
+                } A ${r} ${r} 0 0 ${invert2} ${e.startX + 254 + 40} ${
+                  e.endY
+                } L ${e.endX} ${e.endY}`}
+                stroke="gray"
+                fill="none"
+                strokeWidth={2.5}
+                onClick={() => {}}
+              />
+            );
+          })}
         </svg>
       </div>
     </div>

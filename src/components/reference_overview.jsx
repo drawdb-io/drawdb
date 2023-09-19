@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Collapse,
-  Input,
   Form,
   Row,
   Col,
@@ -32,15 +31,7 @@ export default function ReferenceOverview(props) {
   return (
     <Collapse>
       {props.relationships.map((r, i) => (
-        <Collapse.Panel
-          key={i}
-          header={
-            <div>
-              <Input defaultValue={r.name} borderless />
-            </div>
-          }
-          itemKey={`${i}`}
-        >
+        <Collapse.Panel key={i} header={<div>{r.name}</div>} itemKey={`${i}`}>
           <Form>
             <div className="flex justify-between items-center my-1">
               <div className="me-3">
