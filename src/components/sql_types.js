@@ -1,0 +1,27 @@
+const sqlDataTypes = [
+  "INT",
+  "SMALLINT",
+  "BIGINT",
+  "DECIMAL",
+  "NUMERIC",
+  "FLOAT",
+  "REAL",
+  "DOUBLE PRECISION",
+  "CHAR",
+  "VARCHAR",
+  "TEXT",
+  "DATE",
+  "TIME",
+  "TIMESTAMP",
+  "INTERVAL",
+  "BOOLEAN",
+  "BINARY",
+  "VARBINARY",
+  "BLOB",
+  "CLOB",
+  "UUID",
+  "XML",
+  "JSON",
+];
+
+export default sqlDataTypes;

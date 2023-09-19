@@ -1,5 +1,6 @@
 import { React, useState } from "react";
 import Node from "./node";
+import sqlDataTypes from "./sql_types";
 import {
   IconEdit,
   IconDelete,
@@ -49,36 +50,18 @@ const Rect = (props) => {
   };
 
   const handleOk = () => {
-    console.log(field);
     setFields((prev) => [...prev, field]);
+    setField({
+      name: "",
+      type: "",
+      default: "",
+      primary: false,
+      unique: false,
+      notNull: false,
+      increment: false,
+    });
     setVisible(false);
   };
-
-  const sqlDataTypes = [
-    "INT",
-    "SMALLINT",
-    "BIGINT",
-    "DECIMAL",
-    "NUMERIC",
-    "FLOAT",
-    "REAL",
-    "DOUBLE PRECISION",
-    "CHAR",
-    "VARCHAR",
-    "TEXT",
-    "DATE",
-    "TIME",
-    "TIMESTAMP",
-    "INTERVAL",
-    "BOOLEAN",
-    "BINARY",
-    "VARBINARY",
-    "BLOB",
-    "CLOB",
-    "UUID",
-    "XML",
-    "JSON",
-  ];
 
   const height = fields.length * 36 + 40 + 4;
 
@@ -303,7 +286,6 @@ const Rect = (props) => {
         title="Add new field"
         visible={visible}
         onOk={handleOk}
-        afterClose={() => {}}
         onCancel={handleOk}
         centered
         closeOnEsc={true}
