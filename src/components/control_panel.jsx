@@ -417,7 +417,7 @@ export default function ControlPanel(props) {
     setNotes(data.notes);
   };
 
-  const addTable = () =>{
+  const addTable = () => {
     setTables((prev) => [
       ...prev,
       {
@@ -443,33 +443,33 @@ export default function ControlPanel(props) {
         color: defaultTableTheme,
       },
     ]);
-    setUndoStack((prev)=>[...prev, {
-      action: "add",
-      element: "table",
-    }])
-  }
+  };
 
-  const undo = () =>{
-    if(undoStack.length===0) return;
+  const undo = () => {
+    if (undoStack.length === 0) return;
     const a = undoStack.pop();
-    if(a.action==="add"){
-      if(a.element==="table"){
-        setTables(prev=>prev.filter(e=>e.id!==prev.length-1).map((e, i)=>({...e, id: i})))
+    if (a.action === "add") {
+      if (a.element === "table") {
+        setTables((prev) =>
+          prev
+            .filter((e) => e.id !== prev.length - 1)
+            .map((e, i) => ({ ...e, id: i }))
+        );
       }
     }
-    setRedoStack(prev=>[...prev, a])
-  }
+    setRedoStack((prev) => [...prev, a]);
+  };
 
-  const redo = () =>{
-    if(redoStack.length===0) return;
+  const redo = () => {
+    if (redoStack.length === 0) return;
     const a = redoStack.pop();
-    if(a.action==="add"){
-      if(a.element==="table"){
+    if (a.action === "add") {
+      if (a.element === "table") {
         addTable();
       }
     }
-    setUndoStack(prev=>[...prev, a])
-  }
+    setUndoStack((prev) => [...prev, a]);
+  };
 
   return (
     <div>
@@ -558,7 +558,17 @@ export default function ControlPanel(props) {
           <button
             className="flex items-center py-1 px-2 hover:bg-slate-200 rounded"
             title="Add new table"
-            onClick={addTable}
+            onClick={() => {
+              addTable();
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: "add",
+                  element: "table",
+                },
+              ]);
+              if (redoStack.length > 0) setRedoStack([]);
+            }}
           >
             <AddTable />
           </button>
