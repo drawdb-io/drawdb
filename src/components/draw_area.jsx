@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import { dia, shapes } from "jointjs";
 import { useDrop } from "react-dnd";
 
-function Diagram(props) {
+export default function DrawArea(props) {
   const canvas = useRef(null);
 
-  const [{ isOver }, drop] = useDrop(() => ({
+  const [, drop] = useDrop(() => ({
     accept: "CARD",
     drop: (item, monitor) => {
       const offset = monitor.getClientOffset();
@@ -45,4 +45,3 @@ function Diagram(props) {
     </div>
   );
 }
-export default Diagram;
