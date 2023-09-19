@@ -12,7 +12,6 @@ import {
   Table,
 } from "@douyinfe/semi-ui";
 import {
-  IconRowsStroked,
   IconDeleteStroked,
   IconLoopTextStroked,
   IconMore,
@@ -309,27 +308,14 @@ export default function ReferenceOverview(props) {
                     }}
                   ></Checkbox>
                 </div>
-                <Row gutter={6} className="mt-3">
-                  <Col span={12}>
-                    <Button
-                      icon={<IconRowsStroked />}
-                      disabled={r.cardinality === Cardinality.ONE_TO_ONE}
-                      block
-                    >
-                      Extract to table
-                    </Button>
-                  </Col>
-                  <Col span={12}>
-                    <Button
-                      icon={<IconDeleteStroked />}
-                      block
-                      type="danger"
-                      onClick={() => deleteRelationship(r.id, true)}
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
+                <Button
+                  icon={<IconDeleteStroked />}
+                  block
+                  type="danger"
+                  onClick={() => deleteRelationship(r.id, true)}
+                >
+                  Delete
+                </Button>
               </Collapse.Panel>
             </div>
           ))

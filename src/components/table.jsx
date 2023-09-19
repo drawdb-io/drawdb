@@ -44,10 +44,10 @@ import {
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  // const [visible, setVisible] = useState(false);
   const [editField, setEditField] = useState({});
   const { layout } = useContext(LayoutContext);
-  const { deleteTable, updateTable, updateField } = useContext(TableContext);
+  const { deleteTable, updateTable, updateField, setRelationships } =
+    useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
@@ -88,7 +88,15 @@ export default function Table(props) {
             style={{ backgroundColor: props.tableData.color }}
           />
           <div className="font-bold text-slate-800 h-[40px] flex justify-between items-center border-b border-gray-400 bg-gray-200">
-            <div className="px-3">{props.tableData.name}</div>
+            <div className="px-3">
+              {isHovered
+                ? props.tableData.name.length < 10
+                  ? props.tableData.name
+                  : `${props.tableData.name.substring(0, 10)}...`
+                : props.tableData.name.length < 14
+                ? props.tableData.name
+                : `${props.tableData.name.substring(0, 14)}...`}
+            </div>
             {isHovered && (
               <div className="flex justify-end items-center mx-2">
                 <Button
@@ -662,6 +670,19 @@ export default function Table(props) {
                             },
                           ]);
                           setRedoStack([]);
+                          setRelationships((prev) =>
+                            prev
+                              .filter(
+                                (e) =>
+                                  !(
+                                    (e.startTableId === props.tableData.id &&
+                                      e.startFieldId === j) ||
+                                    (e.endTableId === props.tableData.id &&
+                                      e.endFieldId === j)
+                                  )
+                              )
+                              .map((e, i) => ({ ...e, id: i }))
+                          );
                           updateTable(props.tableData.id, {
                             fields: props.tableData.fields
                               .filter((field) => field.id !== j)
@@ -1102,6 +1123,19 @@ export default function Table(props) {
                   },
                 ]);
                 setRedoStack([]);
+                setRelationships((prev) =>
+                  prev
+                    .filter(
+                      (e) =>
+                        !(
+                          (e.startTableId === props.tableData.id &&
+                            e.startFieldId === index) ||
+                          (e.endTableId === props.tableData.id &&
+                            e.endFieldId === index)
+                        )
+                    )
+                    .map((e, i) => ({ ...e, id: i }))
+                );
                 updateTable(props.tableData.id, {
                   fields: props.tableData.fields
                     .filter((e) => e.id !== fieldData.id)

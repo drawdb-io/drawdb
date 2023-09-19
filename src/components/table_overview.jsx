@@ -39,8 +39,14 @@ import { SelectContext, TableContext, UndoRedoContext } from "../pages/editor";
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [value, setValue] = useState("");
-  const { tables, addTable, deleteTable, updateField, updateTable } =
-    useContext(TableContext);
+  const {
+    tables,
+    addTable,
+    deleteTable,
+    updateField,
+    updateTable,
+    setRelationships,
+  } = useContext(TableContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [editField, setEditField] = useState({});
@@ -502,6 +508,21 @@ export default function TableOverview(props) {
                                   },
                                 ]);
                                 setRedoStack([]);
+                                setRelationships((prev) =>
+                                  prev
+                                    .filter(
+                                      (e) =>
+                                        !(
+                                          (e.startTableId ===
+                                            props.tableData.id &&
+                                            e.startFieldId === j) ||
+                                          (e.endTableId ===
+                                            props.tableData.id &&
+                                            e.endFieldId === j)
+                                        )
+                                    )
+                                    .map((e, i) => ({ ...e, id: i }))
+                                );
                                 updateTable(i, {
                                   fields: t.fields
                                     .filter((field) => field.id !== j)

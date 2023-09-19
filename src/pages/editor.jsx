@@ -230,6 +230,11 @@ export default function Editor(props) {
     setTables((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
     );
+    setRelationships((prev) =>
+      prev
+        .filter((e) => e.startTableId !== id && e.endTableId !== id)
+        .map((e, i) => ({ ...e, id: i }))
+    );
     if (id === selectedElement.id) {
       setSelectedElement({
         element: ObjectType.NONE,

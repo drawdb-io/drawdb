@@ -102,7 +102,12 @@ export default function Canvas(props) {
         prevY: note.y,
       });
     }
-    setSelectedElement({ element: type, id: id, openDialogue: false, openCollapse: false });
+    setSelectedElement({
+      element: type,
+      id: id,
+      openDialogue: false,
+      openCollapse: false,
+    });
   };
 
   const handleMouseMove = (e) => {
@@ -113,8 +118,8 @@ export default function Canvas(props) {
 
       setLine({
         ...line,
-        endX: (e.clientX - offsetX) / settings.zoom - settings.pan.x,
-        endY: (e.clientY - offsetY) / settings.zoom - settings.pan.y,
+        endX: (e.clientX - offsetX - settings.pan.x) / settings.zoom,
+        endY: (e.clientY - offsetY - settings.pan.y) / settings.zoom,
       });
     } else if (
       panning.state &&
