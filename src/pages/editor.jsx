@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
 import { DndProvider } from "react-dnd";
@@ -15,7 +14,6 @@ export default function Editor(props) {
 
   return (
     <>
-      <Header name={props.name} />
       <ControlPanel />
       <div className="flex h-full">
         <DndProvider backend={HTML5Backend}>

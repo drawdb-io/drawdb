@@ -99,6 +99,7 @@ const tableThemes = [
 ];
 
 const defaultTableTheme = "#9e9e9e";
+const bgBlue = "#124559";
 
 const Cardinality = {
   ONE_TO_ONE: "One to one",
@@ -115,4 +116,4 @@ const Constraint = {
   setDefault: "Set default",
 };
 
-export { menu, sqlDataTypes, tableThemes, defaultTableTheme, Cardinality, Constraint };
+export { menu, bgBlue, sqlDataTypes, tableThemes, defaultTableTheme, Cardinality, Constraint };
