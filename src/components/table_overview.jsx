@@ -721,9 +721,21 @@ export default function TableOverview(props) {
                             <Button
                               type="tertiary"
                               size="small"
-                              onClick={() =>
-                                updateTable(i, { color: defaultTableTheme })
-                              }
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.TABLE,
+                                    component: "self",
+                                    tid: i,
+                                    undo: { color: t.color },
+                                    redo: { color: defaultTableTheme },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                                updateTable(i, { color: defaultTableTheme });
+                              }}
                             >
                               Clear
                             </Button>
@@ -738,7 +750,21 @@ export default function TableOverview(props) {
                                     key={c}
                                     style={{ backgroundColor: c }}
                                     className="p-3 rounded-full mx-1"
-                                    onClick={() => updateTable(i, { color: c })}
+                                    onClick={() => {
+                                      setUndoStack((prev) => [
+                                        ...prev,
+                                        {
+                                          action: Action.EDIT,
+                                          element: ObjectType.TABLE,
+                                          component: "self",
+                                          tid: i,
+                                          undo: { color: t.color },
+                                          redo: { color: c },
+                                        },
+                                      ]);
+                                      setRedoStack([]);
+                                      updateTable(i, { color: c });
+                                    }}
                                   >
                                     {t.color === c ? (
                                       <IconCheckboxTick
@@ -758,7 +784,21 @@ export default function TableOverview(props) {
                                     key={c}
                                     style={{ backgroundColor: c }}
                                     className="p-3 rounded-full mx-1"
-                                    onClick={() => updateTable(i, { color: c })}
+                                    onClick={() => {
+                                      setUndoStack((prev) => [
+                                        ...prev,
+                                        {
+                                          action: Action.EDIT,
+                                          element: ObjectType.TABLE,
+                                          component: "self",
+                                          tid: i,
+                                          undo: { color: t.color },
+                                          redo: { color: c },
+                                        },
+                                      ]);
+                                      setRedoStack([]);
+                                      updateTable(i, { color: c });
+                                    }}
                                   >
                                     <IconCheckboxTick
                                       style={{

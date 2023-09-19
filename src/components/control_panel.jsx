@@ -260,6 +260,10 @@ export default function ControlPanel(props) {
               return table;
             })
           );
+        } else if (a.component === "self") {
+          setTables((prev) =>
+            prev.map((t) => (t.id === a.tid ? { ...t, ...a.undo } : t))
+          );
         }
       }
       setRedoStack((prev) => [...prev, a]);
@@ -437,6 +441,10 @@ export default function ControlPanel(props) {
               }
               return table;
             })
+          );
+        } else if (a.component === "self") {
+          setTables((prev) =>
+            prev.map((t) => (t.id === a.tid ? { ...t, ...a.redo } : t))
           );
         }
       }
