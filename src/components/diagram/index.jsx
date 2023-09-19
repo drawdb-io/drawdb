@@ -1,39 +1,48 @@
 import React, { useEffect, useRef } from "react";
 import { dia, shapes } from "jointjs";
+import { useDrop } from "react-dnd";
 
 function Diagram(props) {
   const canvas = useRef(null);
 
-  useEffect(() => {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "CARD",
+    drop: (item, monitor) => {
+      const offset = monitor.getClientOffset();
+      const canvasRect = canvas.current.getBoundingClientRect();
+      const x = offset.x - canvasRect.left - item.size.width * 0.5;
+      const y = offset.y - canvasRect.top - item.size.height * 0.5;
+      if (item.type === "rect") {
+        const rect = new shapes.standard.Rectangle();
+        rect.position(x, y);
+        rect.resize(item.size.width, item.size.height);
+        rect.attr(item.attrs);
+        rect.addTo(props.graph);
+        props.setCode((prevCode) => `create table hi\n\n${prevCode}`);
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
 
+  useEffect(() => {
     new dia.Paper({
       el: document.getElementById("canvas"),
       background: {
         color: "#aec3b0",
       },
       model: props.graph,
-      height: "100%",
       width: "100%",
       gridSize: 1,
       interactive: true,
     });
-
-    const rect = new shapes.standard.Rectangle();
-    rect.position(100, 100);
-    rect.resize(100, 40);
-    rect.attr({
-      body: {
-        fill: "#7039FF",
-      },
-      label: {
-        text: "hi",
-        fill: "white",
-      },
-    });
-    rect.addTo(props.graph);
   }, [props.graph]);
 
-  return <div id="canvas" ref={canvas} />;
+  return (
+    <div ref={drop} className="flex-grow">
+      <div id="canvas" ref={canvas}></div>
+    </div>
+  );
 }
-
 export default Diagram;
