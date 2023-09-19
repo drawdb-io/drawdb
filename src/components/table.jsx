@@ -41,7 +41,7 @@ import {
   TableContext,
   UndoRedoContext,
 } from "../pages/editor";
-import { getSize, hasPrecision, isSized } from "../utils";
+import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -405,6 +405,12 @@ export default function Table(props) {
                         size: "",
                         values: [],
                       });
+                    } else if (hasCheck(value)) {
+                      updateField(props.tableData.id, j, {
+                        type: value,
+                        check: "",
+                        increment: incr,
+                      });
                     } else {
                       updateField(props.tableData.id, j, {
                         type: value,
@@ -633,34 +639,45 @@ export default function Table(props) {
                           />
                         </>
                       )}
-                      <div className="font-semibold">Check Expression</div>
-                      <Input
-                        className="my-2"
-                        placeholder="Set constraint"
-                        value={f.check}
-                        disabled={f.increment}
-                        onChange={(value) =>
-                          updateField(props.tableData.id, j, { check: value })
-                        }
-                        onFocus={(e) => setEditField({ check: e.target.value })}
-                        onBlur={(e) => {
-                          if (e.target.value === editField.check) return;
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.TABLE,
-                              component: "field",
-                              tid: props.tableData.id,
-                              fid: j,
-                              undo: editField,
-                              redo: { check: e.target.value },
-                              message: `Edit table field check expression to "${e.target.value}"`,
-                            },
-                          ]);
-                          setRedoStack([]);
-                        }}
-                      />
+                      {hasCheck(f.type) && (
+                        <>
+                          <div className="font-semibold">Check Expression</div>
+                          <Input
+                            className="my-2"
+                            placeholder="Set constraint"
+                            value={f.check}
+                            disabled={f.increment}
+                            onChange={(value) =>
+                              updateField(props.tableData.id, j, {
+                                check: value,
+                              })
+                            }
+                            onFocus={(e) =>
+                              setEditField({ check: e.target.value })
+                            }
+                            onBlur={(e) => {
+                              if (e.target.value === editField.check) return;
+                              setUndoStack((prev) => [
+                                ...prev,
+                                {
+                                  action: Action.EDIT,
+                                  element: ObjectType.TABLE,
+                                  component: "field",
+                                  tid: props.tableData.id,
+                                  fid: j,
+                                  undo: editField,
+                                  redo: { check: e.target.value },
+                                  message: `Edit table field check expression to ${e.target.value}`,
+                                },
+                              ]);
+                              setRedoStack([]);
+                            }}
+                          />
+                          <div className="text-xs mt-1">
+                            *This will be in the script as is.
+                          </div>
+                        </>
+                      )}
                       <div className="flex justify-between items-center my-3">
                         <div className="font-medium">Unique</div>
                         <Checkbox
@@ -732,8 +749,8 @@ export default function Table(props) {
                             ]);
                             setRedoStack([]);
                             updateField(props.tableData.id, j, {
-                              [checkedValues.target.value]:
-                                checkedValues.target.checked,
+                              increment: !f.increment,
+                              check: f.increment ? f.check : "",
                             });
                           }}
                         ></Checkbox>

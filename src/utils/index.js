@@ -99,7 +99,11 @@ function jsonToSQL(obj) {
                         : `${field.default}`
                     }`
                   : ""
-              }${field.check === "" ? "" : ` CHECK (${field.check})`}`
+              }${
+                field.check === "" || !hasCheck(field.type)
+                  ? ""
+                  : ` CHECK(${field.check})`
+              }`
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -147,6 +151,21 @@ function isSized(type) {
 
 function hasPrecision(type) {
   return ["DOUBLE", "NUMERIC", "DECIMAL"].includes(type);
+}
+
+function hasCheck(type) {
+  return [
+    "INT",
+    "SMALLINT",
+    "BIGINT",
+    "CHAR",
+    "VARCHAR",
+    "FLOAT",
+    "DECIMAL",
+    "DOUBLE",
+    "NUMERIC",
+    "REAL",
+  ].includes(type);
 }
 
 function getSize(type) {
@@ -371,4 +390,5 @@ export {
   getSize,
   hasPrecision,
   validateDateStr,
+  hasCheck,
 };
