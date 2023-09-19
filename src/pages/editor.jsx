@@ -80,7 +80,7 @@ export default function Editor(props) {
           fields: [
             {
               name: "id",
-              type: "UUID",
+              type: "INT",
               default: "",
               check: "",
               primary: true,

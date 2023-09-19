@@ -35,6 +35,7 @@ import {
   exitFullscreen,
   ddbDiagramIsValid,
   dataURItoBlob,
+  jsonToSQL,
 } from "../utils";
 import {
   AreaContext,
@@ -53,6 +54,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../schemas";
 import { Editor } from "@monaco-editor/react";
+// import { Parser } from "node-sql-parser";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -69,7 +71,7 @@ export default function ControlPanel(props) {
   };
   const [visible, setVisible] = useState(MODAL.NONE);
   const [exportData, setExportData] = useState({
-    data: "",
+    data: null,
     filename: `diagram_${new Date().toISOString()}`,
     extension: "",
   });
@@ -726,7 +728,29 @@ export default function ControlPanel(props) {
       },
       "Export source": {
         children: [
-          { MySQL: () => {} },
+          {
+            MySQL: () => {
+              setVisible(MODAL.CODE);
+              const src = jsonToSQL({
+                tables: tables,
+                references: relationships,
+              });
+              // try{
+              //   const parser = new Parser();
+              //   const ast = parser.astify(src);
+              //   console.log(ast);
+              //   const sql = parser.sqlify(ast);
+              //   console.log(sql);
+              // } catch(e){
+              //   console.log(e)
+              // }
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
           { PostgreSQL: () => {} },
           { DBML: () => {} },
         ],
@@ -863,7 +887,10 @@ export default function ControlPanel(props) {
       "Tweet us": {
         function: () => {},
       },
-      "Found a bug": {
+      "Report a bug": {
+        function: () => {},
+      },
+      "Suggest a feature": {
         function: () => {},
       },
     },
@@ -1193,7 +1220,7 @@ export default function ControlPanel(props) {
               <Editor
                 height="360px"
                 value={exportData.data}
-                language="json"
+                language={exportData.extension}
                 options={{ readOnly: true }}
               />
             )}

@@ -1,7 +1,7 @@
 import { Validator } from "jsonschema";
 import { ddbSchema, jsonSchema } from "../schemas";
 
-const enterFullscreen = () => {
+function enterFullscreen() {
   const element = document.documentElement;
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -12,9 +12,9 @@ const enterFullscreen = () => {
   } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
   }
-};
+}
 
-const exitFullscreen = () => {
+function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
   } else if (document.mozCancelFullScreen) {
@@ -24,15 +24,15 @@ const exitFullscreen = () => {
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
-};
+}
 
-const jsonDiagramIsValid = (obj) => {
+function jsonDiagramIsValid(obj) {
   return new Validator().validate(obj, jsonSchema).valid;
-};
+}
 
-const ddbDiagramIsValid = (obj) => {
+function ddbDiagramIsValid(obj) {
   return new Validator().validate(obj, ddbSchema).valid;
-};
+}
 
 function dataURItoBlob(dataUrl) {
   const byteString = atob(dataUrl.split(",")[1]);
@@ -47,10 +47,33 @@ function dataURItoBlob(dataUrl) {
   return new Blob([intArray], { type: mimeString });
 }
 
+function jsonToSQL(obj) {
+  return obj.tables
+    .map(
+      (table) =>
+        `${
+          table.comment === "" ? "" : `/* ${table.comment} */\n`
+        }CREATE TABLE \`${table.name}\` (\n${table.fields
+          .map(
+            (field) =>
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
+                field.name
+              }\` ${field.type} ${field.notNull ? "NOT NULL" : ""} ${
+                field.increment ? "AUTO_INCREMENT" : ""
+              } ${field.unique ? "UNIQUE" : ""},`
+          )
+          .join("\n")}\n\tPRIMARY KEY(${table.fields.map((f) =>
+          f.primary ? `${f.name}` : ""
+        )})\n);`
+    )
+    .join("\n");
+}
+
 export {
   enterFullscreen,
   exitFullscreen,
   jsonDiagramIsValid,
   ddbDiagramIsValid,
   dataURItoBlob,
+  jsonToSQL,
 };
