@@ -193,6 +193,28 @@ export default function ControlPanel(props) {
               });
             },
           },
+          {
+            DRAWDB: () => {
+              const result = JSON.stringify(
+                {
+                  author: "Unnamed",
+                  project: "Untitled",
+                  filename: "Untitled",
+                  date: Date().toISOString(),
+                  tables: tables,
+                  relationships: relationships,
+                  notes: notes,
+                  subjectAreas: areas,
+                },
+                null,
+                2
+              );
+              const blob = new Blob([result], {
+                type: "text/plain;charset=utf-8",
+              });
+              saveAs(blob, `${exportData.filename}.ddb`);
+            },
+          },
         ],
         function: () => {},
       },
@@ -539,7 +561,7 @@ export default function ControlPanel(props) {
             );
           } else if (visible === MODAL.CODE) {
             const blob = new Blob([exportData.data], {
-              type: "text/plain;charset=utf-8",
+              type: "application/json",
             });
             saveAs(blob, `${exportData.filename}.${exportData.extension}`);
           } else if (visible === MODAL.IMPORT) {
