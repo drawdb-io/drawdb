@@ -68,6 +68,7 @@ export default function Todo() {
   };
 
   const sort = (s) => {
+    setActiveTask(-1);
     switch (s) {
       case SortOrder.ORIGINAL:
         setTasks((prev) => prev.sort((a, b) => a.order - b.order));

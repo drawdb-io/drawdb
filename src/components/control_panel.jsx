@@ -55,7 +55,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../schemas";
 import { Editor } from "@monaco-editor/react";
-// import { Parser } from "node-sql-parser";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -732,15 +731,6 @@ export default function ControlPanel(props) {
                 tables: tables,
                 references: relationships,
               });
-              // try{
-              //   const parser = new Parser();
-              //   const ast = parser.astify(src);
-              //   console.log(ast);
-              //   const sql = parser.sqlify(ast);
-              //   console.log(sql);
-              // } catch(e){
-              //   console.log(e)
-              // }
               setExportData((prev) => ({
                 ...prev,
                 data: src,

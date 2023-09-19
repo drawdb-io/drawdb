@@ -134,8 +134,34 @@ export default function TableOverview(props) {
           tables.map((t, i) => (
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
+                <div className="flex items-center mb-2">
+                  <div className="text-md font-semibold">Name: </div>
+                  <Input
+                    value={t.name}
+                    placeholder="Name"
+                    className="ms-2"
+                    onChange={(value) => updateTable(t.id, { name: value })}
+                    onFocus={(e) => setEditField({ name: e.target.value })}
+                    onBlur={(e) => {
+                      if (e.target.value === editField.name) return;
+                      setUndoStack((prev) => [
+                        ...prev,
+                        {
+                          action: Action.EDIT,
+                          element: ObjectType.TABLE,
+                          component: "self",
+                          tid: t.id,
+                          undo: editField,
+                          redo: { name: e.target.value },
+                          message: `Edit table name to ${e.target.value}`,
+                        },
+                      ]);
+                      setRedoStack([]);
+                    }}
+                  />
+                </div>
                 {t.fields.map((f, j) => (
-                  <Row gutter={6} key={j} className="hover-1 mb-2">
+                  <Row gutter={6} key={j} className="hover-1 my-2">
                     <Col span={7}>
                       <Input
                         value={f.name}

@@ -8,6 +8,7 @@ import {
   AutoComplete,
   TextArea,
   Popover,
+  Input,
   Toast,
 } from "@douyinfe/semi-ui";
 import {
@@ -102,6 +103,30 @@ export default function NotesOverview(props) {
               id={`scroll_note_${n.id}`}
               key={n.id}
             >
+              <div className="flex items-center mb-2">
+                <div className="font-semibold me-2">Title:</div>
+                <Input
+                  value={n.title}
+                  placeholder="Title"
+                  onChange={(value) => updateNote(n.id, { title: value })}
+                  onFocus={(e) => setEditField({ title: e.target.value })}
+                  onBlur={(e) => {
+                    if (e.target.value === editField.title) return;
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.NOTE,
+                        nid: n.id,
+                        undo: editField,
+                        redo: { title: e.target.value },
+                        message: `Edit note title to "${e.target.name}"`,
+                      },
+                    ]);
+                    setRedoStack([]);
+                  }}
+                />
+              </div>
               <div className="flex justify-between align-top">
                 <TextArea
                   placeholder="Add content"
