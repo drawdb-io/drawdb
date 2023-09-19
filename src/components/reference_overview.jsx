@@ -32,7 +32,15 @@ export default function ReferenceOverview(props) {
     <Collapse>
       {props.relationships.map((r, i) => (
         <Collapse.Panel key={i} header={<div>{r.name}</div>} itemKey={`${i}`}>
-          <Form>
+          <Form
+            onChange={(value) =>
+              props.setRelationships((prev) =>
+                prev.map((e, idx) =>
+                  idx === i ? { ...e, ...value.values } : e
+                )
+              )
+            }
+          >
             <div className="flex justify-between items-center my-1">
               <div className="me-3">
                 <strong>Primary: </strong>
@@ -127,26 +135,49 @@ export default function ReferenceOverview(props) {
               <Checkbox
                 value="mandetory"
                 defaultChecked={r.mandetory}
-                onChange={(checkedValues) => {}}
+                onChange={(checkedValues) =>
+                  props.setRelationships((prev) =>
+                    prev.map((e, idx) =>
+                      idx === i
+                        ? {
+                            ...e,
+                            [checkedValues.target.value]:
+                              checkedValues.target.checked,
+                          }
+                        : e
+                    )
+                  )
+                }
               ></Checkbox>
             </div>
-            <Row gutter={6} className="mt-1">
-              <Col span={12}>
-                <Button
-                  icon={<IconRowsStroked />}
-                  disabled={r.Cardinality === Cardinality.ONE_TO_ONE}
-                  block
-                >
-                  Extract to table
-                </Button>
-              </Col>
-              <Col span={12}>
-                <Button icon={<IconDeleteStroked />} block type="danger">
-                  Delete
-                </Button>
-              </Col>
-            </Row>
           </Form>
+          <Row gutter={6} className="mt-1">
+            <Col span={12}>
+              <Button
+                icon={<IconRowsStroked />}
+                disabled={r.cardinality === Cardinality.ONE_TO_ONE}
+                block
+              >
+                Extract to table
+              </Button>
+            </Col>
+            <Col span={12}>
+              <Button
+                icon={<IconDeleteStroked />}
+                block
+                type="danger"
+                onClick={() =>
+                  props.setRelationships((prev) =>
+                    prev
+                      .filter((e) => e.id !== i)
+                      .map((e, idx) => ({ ...e, id: idx }))
+                  )
+                }
+              >
+                Delete
+              </Button>
+            </Col>
+          </Row>
         </Collapse.Panel>
       ))}
     </Collapse>

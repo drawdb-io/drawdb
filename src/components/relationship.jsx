@@ -85,11 +85,11 @@ export default function Relationship(props) {
       <defs>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow
-            dx="2"
-            dy="2"
+            dx="0"
+            dy="0"
             stdDeviation="6"
             floodColor="gray"
-            floodOpacity="0.8"
+            floodOpacity="0.5"
           />
         </filter>
       </defs>
@@ -102,7 +102,7 @@ export default function Relationship(props) {
         )}
         stroke={hovered ? "blue" : "gray"}
         fill="none"
-        strokeWidth={2.0}
+        strokeWidth={2}
         filter="url(#shadow)"
         cursor="pointer"
         onMouseEnter={() => setHovered(true)}

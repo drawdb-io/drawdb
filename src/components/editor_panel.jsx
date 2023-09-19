@@ -45,6 +45,7 @@ const EditorPanel = (props) => {
     <div>
       <ReferenceOverview
         relationships={props.relationships}
+        setRelationships={props.setRelationships}
         tables={props.tables}
       />
     </div>,

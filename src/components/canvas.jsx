@@ -23,7 +23,7 @@ export default function Canvas(props) {
     endX: 0,
     endY: 0,
     name: "",
-    cardinality: Cardinality.ONE_TO_MANY,
+    cardinality: Cardinality.ONE_TO_ONE,
     updateConstraint: Constraint.none,
     deleteConstraint: Constraint.none,
     mandatory: false,
@@ -185,6 +185,7 @@ export default function Canvas(props) {
         name: `${props.tables[line.startTableId].name}_to_${
           props.tables[onRect.tableId].name
         }`,
+        id: prev.length
       },
     ]);
   };
@@ -304,7 +305,7 @@ export default function Canvas(props) {
               strokeDasharray="8,8"
             />
           )}
-          {props.relationships.map((e, i) => <Relationship data={e}/>)}
+          {props.relationships.map((e, i) => <Relationship key={i} data={e}/>)}
         </svg>
       </div>
     </div>
