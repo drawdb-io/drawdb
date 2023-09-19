@@ -42,6 +42,7 @@ import {
   NoteContext,
   SettingsContext,
   TableContext,
+  UndoRedoContext,
 } from "../pages/editor";
 import { AddTable, AddArea, AddNote } from "./custom_icons";
 import { defaultTableTheme, defaultNoteTheme } from "../data/data";
@@ -79,6 +80,8 @@ export default function ControlPanel(props) {
     useContext(TableContext);
   const { notes, setNotes } = useContext(NoteContext);
   const { areas, setAreas } = useContext(AreaContext);
+  const { undoStack, redoStack, setUndoStack, setRedoStack } =
+    useContext(UndoRedoContext);
 
   const menu = {
     File: {
@@ -414,6 +417,60 @@ export default function ControlPanel(props) {
     setNotes(data.notes);
   };
 
+  const addTable = () =>{
+    setTables((prev) => [
+      ...prev,
+      {
+        id: prev.length,
+        name: `table_${prev.length}`,
+        x: 0,
+        y: 0,
+        fields: [
+          {
+            name: "id",
+            type: "UUID",
+            default: "",
+            check: "",
+            primary: true,
+            unique: true,
+            notNull: true,
+            increment: true,
+            comment: "",
+          },
+        ],
+        comment: "",
+        indices: [],
+        color: defaultTableTheme,
+      },
+    ]);
+    setUndoStack((prev)=>[...prev, {
+      action: "add",
+      element: "table",
+    }])
+  }
+
+  const undo = () =>{
+    if(undoStack.length===0) return;
+    const a = undoStack.pop();
+    if(a.action==="add"){
+      if(a.element==="table"){
+        setTables(prev=>prev.filter(e=>e.id!==prev.length-1).map((e, i)=>({...e, id: i})))
+      }
+    }
+    setRedoStack(prev=>[...prev, a])
+  }
+
+  const redo = () =>{
+    if(redoStack.length===0) return;
+    const a = redoStack.pop();
+    if(a.action==="add"){
+      if(a.element==="table"){
+        addTable();
+      }
+    }
+    setUndoStack(prev=>[...prev, a])
+  }
+
   return (
     <div>
       {layout.header && header()}
@@ -486,12 +543,14 @@ export default function ControlPanel(props) {
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Undo"
+            onClick={undo}
           >
             <IconUndo size="large" />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Redo"
+            onClick={redo}
           >
             <IconRedo size="large" />
           </button>
@@ -499,33 +558,7 @@ export default function ControlPanel(props) {
           <button
             className="flex items-center py-1 px-2 hover:bg-slate-200 rounded"
             title="Add new table"
-            onClick={() =>
-              setTables((prev) => [
-                ...prev,
-                {
-                  id: prev.length,
-                  name: `table_${prev.length}`,
-                  x: 0,
-                  y: 0,
-                  fields: [
-                    {
-                      name: "id",
-                      type: "UUID",
-                      default: "",
-                      check: "",
-                      primary: true,
-                      unique: true,
-                      notNull: true,
-                      increment: true,
-                      comment: "",
-                    },
-                  ],
-                  comment: "",
-                  indices: [],
-                  color: defaultTableTheme,
-                },
-              ])
-            }
+            onClick={addTable}
           >
             <AddTable />
           </button>
