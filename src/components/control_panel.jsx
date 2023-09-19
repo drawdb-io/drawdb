@@ -19,7 +19,7 @@ import {
   Image,
   Modal,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg } from "html-to-image";
+import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 
 export default function ControlPanel() {
@@ -65,7 +65,7 @@ export default function ControlPanel() {
       "Export as": {
         children: [
           {
-            ".png": () => {
+            PNG: () => {
               toPng(document.getElementById("canvas")).then(function (dataUrl) {
                 setDataUrl(dataUrl);
               });
@@ -74,7 +74,7 @@ export default function ControlPanel() {
             },
           },
           {
-            ".jpeg": () => {
+            JPEG: () => {
               toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
                 function (dataUrl) {
                   setDataUrl(dataUrl);
@@ -84,9 +84,20 @@ export default function ControlPanel() {
               setExtension("jpeg");
             },
           },
-          { ".xml": () => {} },
-          { ".svg": () => {} },
-          { ".pdf": () => {} },
+          { XML: () => {} },
+          {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setDataUrl(dataUrl);
+                }
+              );
+              setVisible(true);
+              setExtension("svg");
+            },
+          },
+          { PDF: () => {} },
         ],
         function: () => {},
       },
@@ -374,7 +385,16 @@ export default function ControlPanel() {
             style={{ width: "180px" }}
             render={
               <Dropdown.Menu>
-                <Dropdown.Item icon={<IconCheckboxTick />}>
+                <Dropdown.Item
+                  icon={
+                    showToolBar ? (
+                      <IconCheckboxTick />
+                    ) : (
+                      <div className="px-2"></div>
+                    )
+                  }
+                  onClick={() => setShowToolBar((prev) => !prev)}
+                >
                   Header
                 </Dropdown.Item>
                 <Dropdown.Item icon={<IconCheckboxTick />}>

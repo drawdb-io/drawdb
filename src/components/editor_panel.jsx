@@ -5,14 +5,12 @@ import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
-import { toPng } from "html-to-image";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
-import { ImagePreview } from "@douyinfe/semi-ui";
 
 const myTheme = createTheme({
   dark: "light",
@@ -31,13 +29,6 @@ const myTheme = createTheme({
 const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   const map = useRef(new Map());
-
-  const [visible1, setVisible1] = useState(false);
-  const [dataUrl, setDataUrl] = useState("");
-
-  const visibleChange1 = (v) => {
-    setVisible1(v);
-  };
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -169,24 +160,6 @@ const EditorPanel = (props) => {
         >
           parse
         </button>
-        <br />
-        <button
-          onClick={() => {
-            toPng(document.getElementById("canvas")).then(function (dataUrl) {
-              // window.saveAs(dataUrl, "canvas.png");
-              setDataUrl(dataUrl);
-            });
-            setVisible1(true);
-          }}
-        >
-          export img
-        </button>
-        <ImagePreview
-          src={dataUrl}
-          visible={visible1}
-          onVisibleChange={visibleChange1}
-        >
-        </ImagePreview>
       </div>
     </ResizableBox>
   );
