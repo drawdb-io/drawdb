@@ -22,9 +22,7 @@ import {
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 
-export default function ControlPanel() {
-  const [showToolBar, setShowToolBar] = useState(true);
-
+export default function ControlPanel(props) {
   const [visible, setVisible] = useState(false);
   const [dataUrl, setDataUrl] = useState("");
   const [filename, setFilename] = useState(
@@ -249,157 +247,12 @@ export default function ControlPanel() {
 
   return (
     <>
-      {showToolBar && (
-        <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
-          <div className="flex justify-start items-center text-slate-800">
-            <Link to="/">
-              <img
-                width={54}
-                src={icon}
-                alt="logo"
-                className="ms-8 min-w-[54px]"
-              />
-            </Link>
-            <div className="ms-1 mt-1">
-              <div className="text-xl ms-3">Project1 / Untitled</div>
-              <div className="flex justify-between items-center">
-                <div className="flex justify-start text-md select-none me-2">
-                  {Object.keys(menu).map((category) => (
-                    <Dropdown
-                      key={category}
-                      position="bottomLeft"
-                      style={{ width: "200px" }}
-                      render={
-                        <Dropdown.Menu>
-                          {Object.keys(menu[category]).map((item, index) => {
-                            if (menu[category][item].children.length > 0) {
-                              return (
-                                <Dropdown
-                                  style={{ width: "120px" }}
-                                  key={item}
-                                  position={"rightTop"}
-                                  render={
-                                    <Dropdown.Menu>
-                                      {menu[category][item].children.map(
-                                        (e, i) => (
-                                          <Dropdown.Item
-                                            key={i}
-                                            onClick={Object.values(e)[0]}
-                                          >
-                                            {Object.keys(e)[0]}
-                                          </Dropdown.Item>
-                                        )
-                                      )}
-                                    </Dropdown.Menu>
-                                  }
-                                >
-                                  <Dropdown.Item
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      alignItems: "center",
-                                    }}
-                                    onClick={menu[category][item].function}
-                                  >
-                                    {item}
-                                    <IconChevronRight />
-                                  </Dropdown.Item>
-                                </Dropdown>
-                              );
-                            }
-                            return (
-                              <Dropdown.Item
-                                key={index}
-                                onClick={menu[category][item].function}
-                              >
-                                {item}
-                              </Dropdown.Item>
-                            );
-                          })}
-                        </Dropdown.Menu>
-                      }
-                    >
-                      <div className="px-3 py-1 hover:bg-gray-100 rounded">
-                        {category}
-                      </div>
-                    </Dropdown>
-                  ))}
-                </div>
-                <Button size="small" type="tertiary">
-                  Last saved {new Date().toISOString()}
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-around items-center text-md me-8">
-            <AvatarGroup maxCount={3} size="default">
-              <Avatar color="red" alt="Lisa LeBlanc">
-                LL
-              </Avatar>
-              <Avatar color="green" alt="Caroline Xiao">
-                CX
-              </Avatar>
-              <Avatar color="amber" alt="Rafal Matin">
-                RM
-              </Avatar>
-              <Avatar alt="Zank Lance">ZL</Avatar>
-              <Avatar alt="Youself Zhang">YZ</Avatar>
-            </AvatarGroup>
-            <Button
-              type="primary"
-              style={{
-                fontSize: "16px",
-                marginLeft: "12px",
-                marginRight: "12px",
-              }}
-              size="large"
-              icon={<IconShareStroked />}
-            >
-              Share
-            </Button>
-            <Avatar size="default" alt="Buni Zhang">
-              BZ
-            </Avatar>
-          </div>
-        </nav>
+      {props.layout.header && (
+        header()
       )}
       <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700 select-none">
         <div className="flex justify-start items-center">
-          <Dropdown
-            position="bottomLeft"
-            style={{ width: "180px" }}
-            render={
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  icon={
-                    showToolBar ? (
-                      <IconCheckboxTick />
-                    ) : (
-                      <div className="px-2"></div>
-                    )
-                  }
-                  onClick={() => setShowToolBar((prev) => !prev)}
-                >
-                  Header
-                </Dropdown.Item>
-                <Dropdown.Item icon={<IconCheckboxTick />}>
-                  Overview
-                </Dropdown.Item>
-                <Dropdown.Item icon={<IconCheckboxTick />}>
-                  Services
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item icon={<IconCheckboxTick />}>
-                  Fullscreen
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            }
-            trigger="click"
-          >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded">
-              <i className="fa-solid fa-table-list"></i> <IconCaretdown />
-            </div>
-          </Dropdown>
+          {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
           <Dropdown
             style={{ width: "180px" }}
@@ -496,8 +349,12 @@ export default function ControlPanel() {
             <i className="fa-solid fa-code-branch"></i>
           </button>
         </div>
-        <button onClick={(e) => setShowToolBar((prev) => !prev)}>
-          {showToolBar ? <IconChevronUp /> : <IconChevronDown />}
+        <button
+          onClick={(e) =>
+            props.setLayout((prev) => ({ ...prev, header: !prev.header }))
+          }
+        >
+          {props.layout.header ? <IconChevronUp /> : <IconChevronDown />}
         </button>
       </div>
       <Modal
@@ -537,4 +394,280 @@ export default function ControlPanel() {
       </Modal>
     </>
   );
+
+  function header() {
+    return <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
+      <div className="flex justify-start items-center text-slate-800">
+        <Link to="/">
+          <img
+            width={54}
+            src={icon}
+            alt="logo"
+            className="ms-8 min-w-[54px]" />
+        </Link>
+        <div className="ms-1 mt-1">
+          <div className="text-xl ms-3">Project1 / Untitled</div>
+          <div className="flex justify-between items-center">
+            <div className="flex justify-start text-md select-none me-2">
+              {Object.keys(menu).map((category) => (
+                <Dropdown
+                  key={category}
+                  position="bottomLeft"
+                  style={{ width: "200px" }}
+                  render={<Dropdown.Menu>
+                    {Object.keys(menu[category]).map((item, index) => {
+                      if (menu[category][item].children.length > 0) {
+                        return (
+                          <Dropdown
+                            style={{ width: "120px" }}
+                            key={item}
+                            position={"rightTop"}
+                            render={<Dropdown.Menu>
+                              {menu[category][item].children.map(
+                                (e, i) => (
+                                  <Dropdown.Item
+                                    key={i}
+                                    onClick={Object.values(e)[0]}
+                                  >
+                                    {Object.keys(e)[0]}
+                                  </Dropdown.Item>
+                                )
+                              )}
+                            </Dropdown.Menu>}
+                          >
+                            <Dropdown.Item
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                              onClick={menu[category][item].function}
+                            >
+                              {item}
+                              <IconChevronRight />
+                            </Dropdown.Item>
+                          </Dropdown>
+                        );
+                      }
+                      return (
+                        <Dropdown.Item
+                          key={index}
+                          onClick={menu[category][item].function}
+                        >
+                          {item}
+                        </Dropdown.Item>
+                      );
+                    })}
+                  </Dropdown.Menu>}
+                >
+                  <div className="px-3 py-1 hover:bg-gray-100 rounded">
+                    {category}
+                  </div>
+                </Dropdown>
+              ))}
+            </div>
+            <Button size="small" type="tertiary">
+              Last saved {new Date().toISOString()}
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-around items-center text-md me-8">
+        <AvatarGroup maxCount={3} size="default">
+          <Avatar color="red" alt="Lisa LeBlanc">
+            LL
+          </Avatar>
+          <Avatar color="green" alt="Caroline Xiao">
+            CX
+          </Avatar>
+          <Avatar color="amber" alt="Rafal Matin">
+            RM
+          </Avatar>
+          <Avatar alt="Zank Lance">ZL</Avatar>
+          <Avatar alt="Youself Zhang">YZ</Avatar>
+        </AvatarGroup>
+        <Button
+          type="primary"
+          style={{
+            fontSize: "16px",
+            marginLeft: "12px",
+            marginRight: "12px",
+          }}
+          size="large"
+          icon={<IconShareStroked />}
+        >
+          Share
+        </Button>
+        <Avatar size="default" alt="Buni Zhang">
+          BZ
+        </Avatar>
+      </div>
+    </nav>;
+  }
+
+  function layoutDropdown() {
+    return (
+      <Dropdown
+        position="bottomLeft"
+        style={{ width: "180px" }}
+        render={
+          <Dropdown.Menu>
+            <Dropdown.Item
+              icon={
+                props.layout.header ? (
+                  <IconCheckboxTick />
+                ) : (
+                  <div className="px-2"></div>
+                )
+              }
+              onClick={() =>
+                props.setLayout((prev) => ({
+                  ...prev,
+                  header: !prev.header,
+                }))
+              }
+            >
+              Header
+            </Dropdown.Item>
+            <Dropdown
+              position={"rightTop"}
+              render={
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    icon={
+                      props.layout.tables ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      props.setLayout((prev) => ({
+                        ...prev,
+                        tables: !prev.tables,
+                      }))
+                    }
+                  >
+                    Tables
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      props.layout.relationships ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      props.setLayout((prev) => ({
+                        ...prev,
+                        relationships: !prev.relationships,
+                      }))
+                    }
+                  >
+                    Relationships
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      props.layout.issues ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      props.setLayout((prev) => ({
+                        ...prev,
+                        issues: !prev.issues,
+                      }))
+                    }
+                  >
+                    Issues
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      props.layout.editor ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      props.setLayout((prev) => ({
+                        ...prev,
+                        editor: !prev.editor,
+                      }))
+                    }
+                  >
+                    Editor
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
+                      props.layout.shapes ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      props.setLayout((prev) => ({
+                        ...prev,
+                        shapes: !prev.shapes,
+                      }))
+                    }
+                  >
+                    Shapes
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              }
+            >
+              <Dropdown.Item
+                icon={
+                  props.layout.sidebar ? (
+                    <IconCheckboxTick />
+                  ) : (
+                    <div className="px-2"></div>
+                  )
+                }
+                onClick={() =>
+                  props.setLayout((prev) => ({
+                    ...prev,
+                    sidebar: !prev.sidebar,
+                  }))
+                }
+              >
+                Sidebar
+              </Dropdown.Item>
+            </Dropdown>
+            <Dropdown.Item
+              icon={
+                props.layout.services ? (
+                  <IconCheckboxTick />
+                ) : (
+                  <div className="px-2"></div>
+                )
+              }
+              onClick={() =>
+                props.setLayout((prev) => ({
+                  ...prev,
+                  services: !prev.services,
+                }))
+              }
+            >
+              Services
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item icon={<IconCheckboxTick />}>
+              Fullscreen
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        }
+        trigger="click"
+      >
+        <div className="py-1 px-2 hover:bg-slate-200 rounded">
+          <i className="fa-solid fa-table-list"></i> <IconCaretdown />
+        </div>
+      </Dropdown>
+    );
+  }
 }

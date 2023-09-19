@@ -93,7 +93,7 @@ export default function Table(props) {
         key={props.id}
         x={props.tableData.x}
         y={props.tableData.y}
-        width={240}
+        width={220}
         height={height}
         style={{ cursor: "move" }}
         onMouseDown={props.onMouseDown}
@@ -111,34 +111,15 @@ export default function Table(props) {
         <div
           className={`border-2 ${
             isHovered ? "border-sky-500" : "border-gray-500"
-          } bg-gray-300 select-none rounded-md`}
+          } bg-gray-200 select-none rounded-md`}
         >
           <div
-            style={{ backgroundColor: props.tableData.color }}
-            className={`p-3 font-bold text-slate-800 h-[40px] rounded-t-md flex justify-between items-center`}
+            // style={{ backgroundColor: props.tableData.color }}
+            className="p-3 bg-gray-300 font-bold text-slate-800 h-[40px] rounded-t-md flex justify-between items-center"
           >
-            {
-              <form
-                onSubmit={(e) => e.preventDefault()}
-                onMouseEnter={() =>
-                  props.setOnRect({
-                    tableId: props.id,
-                    field: -1,
-                  })
-                }
-              >
-                <div
-                  // type="text"
-                  // value={name}
-                  // onChange={(e) => setName(e.target.value)}
-                  className={`p-1 select-text w-[100px] bg-gray-400 focus:bg-gray-200 ${
-                    false
-                      ? "ring-2 ring-red-600"
-                      : "focus:ring-2 focus:ring-sky-500 "
-                  }`}
-                >{props.tableData.name}</div>
-              </form>
-            }
+            <div className="p-1">
+              {props.tableData.name}
+            </div>
             {isHovered && (
               <div className="flex justify-end items-center">
                 <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
@@ -499,3 +480,4 @@ export default function Table(props) {
     </g>
   );
 }
+ 

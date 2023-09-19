@@ -5,7 +5,7 @@ export default function Relationship(props) {
   const calcPath = (x1, x2, y1, y2) => {
     let r = 16;
     const offsetX = 8;
-    const tableWidth = 240;
+    const tableWidth = 220;
     const midX = (x2 + x1 + tableWidth) / 2;
     const endX = x2 + tableWidth < x1 ? x2 + tableWidth - offsetX * 2 : x2;
 

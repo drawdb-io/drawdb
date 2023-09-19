@@ -13,6 +13,16 @@ export default function Editor(props) {
   const [areas, setAreas] = useState([]);
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
+  const [layout, setLayout] = useState({
+    header: true,
+    sidebar: true,
+    services: true,
+    tables: true,
+    relationships: true,
+    issues: true,
+    editor: true,
+    shapes: true,
+  });
 
   const dragHandler = (e) => {
     if (!resize) return;
@@ -22,26 +32,28 @@ export default function Editor(props) {
 
   return (
     <>
-      <ControlPanel />
+      <ControlPanel layout={layout} setLayout={setLayout} />
       <div
         className={`flex h-full`}
         onMouseUp={() => setResize(false)}
         onMouseMove={dragHandler}
       >
         <DndProvider backend={HTML5Backend}>
-          <EditorPanel
-            tables={tables}
-            setTables={setTables}
-            code={code}
-            setCode={setCode}
-            relationships={relationships}
-            setRelationships={setRelationships}
-            areas={areas}
-            setAreas={setAreas}
-            resize={resize}
-            setResize={setResize}
-            width={width}
-          />
+          {layout.sidebar && (
+            <EditorPanel
+              tables={tables}
+              setTables={setTables}
+              code={code}
+              setCode={setCode}
+              relationships={relationships}
+              setRelationships={setRelationships}
+              areas={areas}
+              setAreas={setAreas}
+              resize={resize}
+              setResize={setResize}
+              width={width}
+            />
+          )}
           <Canvas
             tables={tables}
             setTables={setTables}
@@ -53,7 +65,7 @@ export default function Editor(props) {
             setAreas={setAreas}
           />
         </DndProvider>
-        <Sidebar />
+        {layout.services && <Sidebar />}
       </div>
     </>
   );
