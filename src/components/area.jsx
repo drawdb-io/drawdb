@@ -23,7 +23,7 @@ export default function Area(props) {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [editField, setEditField] = useState("");
+  const [editField, setEditField] = useState({});
   const { layout } = useContext(LayoutContext);
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
@@ -201,7 +201,7 @@ export default function Area(props) {
                         </div>
                       }
                       trigger="click"
-                      position="bottomLeft"
+                      position="rightTop"
                       showArrow
                     >
                       <div
