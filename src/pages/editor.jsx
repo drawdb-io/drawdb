@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
 import { DndProvider } from "react-dnd";
@@ -34,6 +34,11 @@ export default function Editor(props) {
     const w = e.clientX;
     if (w > 340) setWidth(w);
   };
+
+  useEffect(()=>{
+    document.title = "Editor";
+    console.log("hey");
+  }, [])
 
   return (
     <LayoutContext.Provider value={{ layout, setLayout }}>

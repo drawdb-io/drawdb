@@ -92,11 +92,11 @@ export default function Table(props) {
                 <Popover
                   content={
                     <div className="text-slate-600">
-                      <p>
+                      <p className="mb-2">
                         <strong>Comment :</strong>{" "}
                         {props.tableData.comment === ""
                           ? "No comment"
-                          : props.tableData.comment}
+                          : <div>{props.tableData.comment}</div>}
                       </p>
                       <p className="text-slate-600">
                         <strong
@@ -133,6 +133,7 @@ export default function Table(props) {
                   position="rightTop"
                   showArrow
                   trigger="click"
+                  style={{width: "200px"}}
                 >
                   <Button
                     icon={<IconMore />}
