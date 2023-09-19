@@ -124,7 +124,7 @@ export default function Canvas(props) {
         const canvasRect = canvas.current.getBoundingClientRect();
         const x = offset.x - canvasRect.left - 100 * 0.5;
         const y = offset.y - canvasRect.top - 100 * 0.5;
-        const d = {
+        const newRectangle = {
           id: props.rectangles.length + 1,
           x,
           y,
@@ -132,11 +132,11 @@ export default function Canvas(props) {
           height: 100,
           label: `rect ${props.rectangles.length + 1}`,
         };
-        props.setRectangles([...props.rectangles, d]);
+        props.setRectangles([...props.rectangles, newRectangle]);
         props.setCode((prev) =>
           prev === ""
-            ? `CREATE TABLE \`${d.label}\`;`
-            : `${prev}\n\nCREATE TABLE \`${d.label}\`;`
+            ? `CREATE TABLE \`${newRectangle.label}\`;`
+            : `${prev}\n\nCREATE TABLE \`${newRectangle.label}\`;`
         );
       },
       collect: (monitor) => ({

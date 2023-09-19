@@ -5,13 +5,45 @@ import {
   IconDelete,
   IconPlus,
   IconMinus,
-} from "@arco-design/web-react/icon";
+} from "@douyinfe/semi-icons";
+import { Modal, Form, Checkbox, Row, Col } from "@douyinfe/semi-ui";
 
 const Rect = (props) => {
   const [node, setNode] = useState(Node.NONE);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const [name, setName] = useState("New table");
+  const [name, setName] = useState("New Table");
+  const [visible, setVisible] = useState(false);
+
+  const handleOk = () => {
+    setVisible(false);
+  };
+
+  const sqlDataTypes = [
+    "INT",
+    "SMALLINT",
+    "BIGINT",
+    "DECIMAL",
+    "NUMERIC",
+    "FLOAT",
+    "REAL",
+    "DOUBLE PRECISION",
+    "CHAR",
+    "VARCHAR",
+    "TEXT",
+    "DATE",
+    "TIME",
+    "TIMESTAMP",
+    "INTERVAL",
+    "BOOLEAN",
+    "BINARY",
+    "VARBINARY",
+    "BLOB",
+    "CLOB",
+    "UUID",
+    "XML",
+    "JSON",
+  ];
 
   const [fields, setFields] = useState([
     {
@@ -83,18 +115,7 @@ const Rect = (props) => {
                 <button
                   className="btn bg-green-600 text-white text-xs py-1 px-2 me-2 opacity-80"
                   onClick={(e) => {
-                    setFields([
-                      ...fields,
-                      {
-                        name: "age",
-                        type: "numeric",
-                        default: "n/a",
-                        primary: false,
-                        unique: false,
-                        notNull: true,
-                        increment: false,
-                      },
-                    ]);
+                    setVisible(true);
                   }}
                 >
                   <IconPlus />
@@ -108,6 +129,7 @@ const Rect = (props) => {
           {fields.map((e, i) => {
             return (
               <div
+                key={i}
                 className={`${
                   i === fields.length - 1 ? "" : "border-b-2 border-gray-400"
                 } h-[36px] p-2 flex justify-between`}
@@ -221,6 +243,50 @@ const Rect = (props) => {
         }}
         style={{ fill: node === Node.BOTTOM ? "green" : "black" }}
       />
+      <Modal
+        title="Add new field"
+        visible={visible}
+        onOk={handleOk}
+        afterClose={handleOk}
+        onCancel={handleOk}
+        centered
+        closeOnEsc={true}
+        okText="Add"
+        cancelText="Cancel"
+      >
+        <Form labelPosition="left" labelAlign="right">
+          <Row>
+            <Col span={11}>
+              <Form.Input field="name" label="Name" trigger="blur" />
+            </Col>
+            <Col span={2}></Col>
+            <Col span={11}>
+              <Form.Input field="default" label="Default" trigger="blur" />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Select
+                field="type"
+                label="Type"
+                className="w-full"
+                optionList={sqlDataTypes.map((value, index) => {
+                  return {
+                    label: value,
+                    value: index,
+                  };
+                })}
+              ></Form.Select>
+              <div className="flex justify-around mt-2">
+                <Checkbox value="A">Primary</Checkbox>
+                <Checkbox value="B">Unique</Checkbox>
+                <Checkbox value="C">Not null</Checkbox>
+                <Checkbox value="D">Increment</Checkbox>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
     </g>
   );
 };

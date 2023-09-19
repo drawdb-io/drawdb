@@ -160,7 +160,7 @@ export default function ControlPanel() {
               title="Add"
               onClick={(e) => invert(e, Tool.ADD)}
             >
-              <i class="fa-solid fa-plus"></i> <IconCaretDown />
+              <i className="fa-solid fa-plus"></i> <IconCaretDown />
             </button>
             <ul
               className={`${

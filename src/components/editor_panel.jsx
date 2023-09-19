@@ -54,13 +54,13 @@ export default function EditorPanel(props) {
               y: 0,
               width: 240,
               height: 100,
-              label: `rect ${props.rectangles.length + 1}`,
+              name: `Table ${props.rectangles.length + 1}`,
             };
             props.setRectangles([...props.rectangles, newRectangle]);
             props.setCode((prev) =>
               prev === ""
-                ? `CREATE TABLE \`${newRectangle.label}\`;`
-                : `${prev}\n\nCREATE TABLE \`${newRectangle.label}\`;`
+                ? `CREATE TABLE \`${newRectangle.name}\`;`
+                : `${prev}\n\nCREATE TABLE \`${newRectangle.name}\`;`
             );
           }}
         >
@@ -97,7 +97,7 @@ export default function EditorPanel(props) {
                     y: 0,
                     width: 240,
                     height: 100,
-                    label: `rect ${props.rectangles.length + 1}`,
+                    name: `rect ${props.rectangles.length + 1}`,
                   };
                   props.setRectangles([...props.rectangles, newRectangle]);
                 });
