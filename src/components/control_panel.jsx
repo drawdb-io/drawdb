@@ -49,6 +49,7 @@ import { ObjectType, Action } from "../data/data";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -368,37 +369,65 @@ export default function ControlPanel(props) {
     }
   };
 
+  const fileImport = () => setVisible(MODAL.IMPORT);
+  const viewGrid = () =>
+    setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
+  const zoomIn = () =>
+    setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
+  const zoomOut = () =>
+    setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
+  const viewStrictMode = () => {
+    setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
+    Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
+  };
+  const viewFieldSummary = () => {
+    setSettings((prev) => ({
+      ...prev,
+      showFieldSummary: !prev.showFieldSummary,
+    }));
+    Toast.success(
+      `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
+    );
+  };
+  const copyAsImage = () => {
+    toPng(document.getElementById("canvas")).then(function (dataUrl) {
+      const blob = dataURItoBlob(dataUrl);
+      navigator.clipboard
+        .write([new ClipboardItem({ "image/png": blob })])
+        .then(() => {
+          Toast.success("Copied to clipboard.");
+        })
+        .catch((e) => {
+          Toast.error("Could not copy to clipboard.");
+        });
+    });
+  };
+  const resetView = () =>
+    setSettings((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
+
   const menu = {
     File: {
       New: {
-        children: [],
-        function: () => console.log("New"),
+        function: () => {},
       },
       "New window": {
-        children: [],
         function: () => {},
       },
       Save: {
-        children: [],
         function: () => {},
       },
       "Save as": {
-        children: [],
         function: () => {},
       },
       Share: {
-        children: [],
         function: () => {},
       },
       Rename: {
-        children: [],
         function: () => {},
       },
       Import: {
-        children: [],
-        function: () => {
-          setVisible(MODAL.IMPORT);
-        },
+        function: fileImport,
+        shortcut: "Ctrl+I",
       },
       "Export as": {
         children: [
@@ -518,182 +547,150 @@ export default function ControlPanel(props) {
         function: () => {},
       },
       Properties: {
-        children: [],
         function: () => {},
       },
       Close: {
-        children: [],
         function: () => {},
       },
     },
     Edit: {
       Undo: {
-        children: [],
         function: undo,
+        shortcut: "Ctrl+Z",
       },
       Redo: {
-        children: [],
         function: redo,
+        shortcut: "Ctrl+Y",
       },
       Clear: {
-        children: [],
         function: () => {
           setTables([]);
           setRelationships([]);
           setAreas([]);
           setNotes([]);
+          setUndoStack([]);
+          setRedoStack([]);
         },
       },
       Edit: {
-        children: [],
         function: () => {},
       },
       Cut: {
-        children: [],
         function: () => {},
       },
       Copy: {
-        children: [],
         function: () => {},
       },
       Paste: {
-        children: [],
         function: () => {},
       },
       Duplicate: {
-        children: [],
         function: () => {},
       },
       Delete: {
-        children: [],
         function: () => {},
       },
       "Copy as image": {
-        children: [],
-        function: () => {
-          toPng(document.getElementById("canvas")).then(function (dataUrl) {
-            const blob = dataURItoBlob(dataUrl);
-            navigator.clipboard
-              .write([new ClipboardItem({ "image/png": blob })])
-              .then(() => {
-                Toast.success("Copied to clipboard.");
-              })
-              .catch((error) => {
-                Toast.error("Could not copy to clipboard.");
-              });
-          });
-        },
+        function: copyAsImage,
+        shortcut: "Ctrl+Alt+C",
       },
     },
     View: {
       Header: {
-        children: [],
         function: () =>
           setLayout((prev) => ({ ...prev, header: !prev.header })),
       },
       Sidebar: {
-        children: [],
         function: () =>
           setLayout((prev) => ({ ...prev, sidebar: !prev.sidebar })),
       },
       Issues: {
-        children: [],
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
       Services: {
-        children: [],
         function: () =>
           setLayout((prev) => ({ ...prev, services: !prev.services })),
       },
       "Strict mode": {
-        children: [],
-        function: () => {
-          setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
-          Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
-        },
+        function: viewStrictMode,
+        shortcut: "Ctrl+Shift+M",
       },
       "Field summary": {
-        children: [],
-        function: () => {
-          setSettings((prev) => ({
-            ...prev,
-            showFieldSummary: !prev.showFieldSummary,
-          }));
-          Toast.success(
-            `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
-          );
-        },
+        function: viewFieldSummary,
+        shortcut: "Ctrl+Shift+F",
       },
       "Reset view": {
-        children: [],
-        function: () => {},
+        function: resetView,
+        shortcut: "Ctrl+R",
       },
       "View schema": {
-        children: [],
         function: () => {},
       },
       Grid: {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid })),
+        function: viewGrid,
+        shortcut: "Ctrl+Shift+G",
       },
       Theme: {
         children: [{ Light: () => {} }, { Dark: () => {} }],
         function: () => {},
       },
       "Zoom in": {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 })),
+        function: zoomIn,
+        shortcut: "Ctrl+Up/Wheel",
       },
       "Zoom out": {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 })),
+        function: zoomOut,
+        shortcut: "Ctrl+Down/Wheel",
       },
       Fullscreen: {
-        children: [],
         function: enterFullscreen,
       },
     },
     Logs: {
       "Open logs": {
-        children: [],
         function: () => {},
       },
       "Commit changes": {
-        children: [],
         function: () => {},
       },
       "Revert changes": {
-        children: [],
         function: () => {},
       },
       "View commits": {
-        children: [],
         function: () => {},
       },
     },
     Help: {
       Shortcuts: {
-        children: [],
         function: () => {},
       },
       "Ask us on discord": {
-        children: [],
         function: () => {},
       },
       "Tweet us": {
-        children: [],
         function: () => {},
       },
       "Found a bug": {
-        children: [],
         function: () => {},
       },
     },
   };
+
+  useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
+  useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
+  useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
+  useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
+  useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
+  useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
+  useHotkeys("ctrl+shift+m, meta+shift+m", viewStrictMode, {
+    preventDefault: true,
+  });
+  useHotkeys("ctrl+shift+f, meta+shift+f", viewFieldSummary, {
+    preventDefault: true,
+  });
+  useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
+  useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
 
   return (
     <div>
@@ -1040,11 +1037,11 @@ export default function ControlPanel(props) {
                   <Dropdown
                     key={category}
                     position="bottomLeft"
-                    style={{ width: "200px" }}
+                    style={{ width: "220px" }}
                     render={
                       <Dropdown.Menu>
                         {Object.keys(menu[category]).map((item, index) => {
-                          if (menu[category][item].children.length > 0) {
+                          if (menu[category][item].children) {
                             return (
                               <Dropdown
                                 style={{ width: "120px" }}
@@ -1083,8 +1080,24 @@ export default function ControlPanel(props) {
                             <Dropdown.Item
                               key={index}
                               onClick={menu[category][item].function}
+                              style={
+                                menu[category][item].shortcut && {
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                }
+                              }
                             >
-                              {item}
+                              {menu[category][item].shortcut ? (
+                                <>
+                                  <div>{item}</div>
+                                  <div className="text-gray-400">
+                                    {menu[category][item].shortcut}
+                                  </div>
+                                </>
+                              ) : (
+                                item
+                              )}
                             </Dropdown.Item>
                           );
                         })}
