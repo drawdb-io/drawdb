@@ -241,8 +241,12 @@ export default function Canvas(props) {
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
-          style={{ width: "100%", height: "100%", cursor: cursor, backgroundColor:"white" }}
-          
+          style={{
+            width: "100%",
+            height: "100%",
+            cursor: cursor,
+            backgroundColor: "white",
+          }}
         >
           <defs>
             <pattern
@@ -265,7 +269,7 @@ export default function Canvas(props) {
           </defs>
           <rect
             x="0"
-            y="0" 
+            y="0"
             width="100%"
             height="100%"
             fill="url(#pattern-circles)"

@@ -42,7 +42,7 @@ export default function ControlPanel() {
                       render={
                         <Dropdown.Menu>
                           {Object.keys(menu[category]).map((item, index) => {
-                            if (menu[category][item].length > 0) {
+                            if (menu[category][item].children.length > 0) {
                               return (
                                 <Dropdown
                                   style={{ width: "120px" }}
@@ -50,11 +50,17 @@ export default function ControlPanel() {
                                   position={"rightTop"}
                                   render={
                                     <Dropdown.Menu>
-                                      {menu[category][item].map((e) => (
-                                        <Dropdown.Item key={e}>
-                                          <div>{e}</div>
-                                        </Dropdown.Item>
-                                      ))}
+                                      {menu[category][item].children.map(
+                                        (e, i) => (
+                                          <Dropdown.Item key={i}>
+                                            <button
+                                              onClick={Object.values(e)[0]}
+                                            >
+                                              {Object.keys(e)[0]}
+                                            </button>
+                                          </Dropdown.Item>
+                                        )
+                                      )}
                                     </Dropdown.Menu>
                                   }
                                 >
@@ -65,14 +71,22 @@ export default function ControlPanel() {
                                       alignItems: "center",
                                     }}
                                   >
-                                    <div>{item}</div>
+                                    <button
+                                      onClick={menu[category][item].function}
+                                    >
+                                      {item}
+                                    </button>
                                     <IconChevronRight />
                                   </Dropdown.Item>
                                 </Dropdown>
                               );
                             }
                             return (
-                              <Dropdown.Item key={index}>{item}</Dropdown.Item>
+                              <Dropdown.Item key={index}>
+                                <button onClick={menu[category][item].function}>
+                                  {item}
+                                </button>
+                              </Dropdown.Item>
                             );
                           })}
                         </Dropdown.Menu>

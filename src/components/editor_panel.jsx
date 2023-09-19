@@ -5,7 +5,7 @@ import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
-import { saveAs } from "file-saver";
+// import { saveAs } from "file-saver";
 import { toPng } from "html-to-image";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
@@ -13,6 +13,7 @@ import "react-resizable/css/styles.css";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
+import { ImagePreview, Image } from "@douyinfe/semi-ui";
 
 const myTheme = createTheme({
   dark: "light",
@@ -31,6 +32,13 @@ const myTheme = createTheme({
 const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   const map = useRef(new Map());
+
+  const [visible1, setVisible1] = useState(false);
+  const [dataUrl, setDataUrl] = useState("");
+
+  const visibleChange1 = (v) => {
+    setVisible1(v);
+  };
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -112,7 +120,7 @@ const EditorPanel = (props) => {
               type: "text/plain;charset=utf-8",
             });
 
-            saveAs(blob, "src.txt");
+            window.saveAs(blob, "src.txt");
           }}
         >
           export src
@@ -166,12 +174,29 @@ const EditorPanel = (props) => {
         <button
           onClick={() => {
             toPng(document.getElementById("canvas")).then(function (dataUrl) {
-              saveAs(dataUrl, "canvas.png");
+              // window.saveAs(dataUrl, "canvas.png");
+              setDataUrl(dataUrl);
             });
+            setVisible1(true);
           }}
         >
           export img
         </button>
+        <ImagePreview
+          src={dataUrl}
+          visible={visible1}
+          onVisibleChange={visibleChange1}
+        >
+          <div>
+            {visible1&&<Image
+              src={"https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/abstract.jpg"}
+              width={200}
+              alt={`lamp${1}`}
+              
+              style={{ marginRight: 5 }}
+            />}
+          </div>
+        </ImagePreview>
       </div>
     </ResizableBox>
   );

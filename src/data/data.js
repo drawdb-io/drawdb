@@ -1,59 +1,191 @@
 const menu = {
   File: {
-    New: [],
-    "New window": [],
-    Save: [],
-    "Save as": [],
-    Share: [],
-    Rename: [],
-    Import: [],
-    "Export as": [".png", ".jpg", ".pdf", ".xml"],
-    "Export source": ["MySQL", "PostgreSQL", "DBML"],
-    Properties: [],
-    Close: [],
+    New: {
+      children: [],
+      function: () => console.log("New"),
+    },
+    "New window": {
+      children: [],
+      function: () => {},
+    },
+    Save: {
+      children: [],
+      function: () => {},
+    },
+    "Save as": {
+      children: [],
+      function: () => {},
+    },
+    Share: {
+      children: [],
+      function: () => {},
+    },
+    Rename: {
+      children: [],
+      function: () => {},
+    },
+    Import: {
+      children: [],
+      function: () => {},
+    },
+    "Export as": {
+      children: [{".png": ()=>console.log("exporting png")}, {".jpg": ()=>{}}, {".xml": ()=>{}},{".svg": ()=>{}}, {".xml": ()=>{}}],
+      function: () => {},
+    },
+    "Export source": {
+      children: [{"MySQL": ()=>{}}, {"PostgreSQL": ()=>{}}, {"DBML": ()=>{}}],
+      function: () => {},
+    },
+    Properties: {
+      children: [],
+      function: () => {},
+    },
+    Close: {
+      children: [],
+      function: () => {},
+    },
   },
   Edit: {
-    Undo: [],
-    Redo: [],
-    Cut: [],
-    Copy: [],
-    "Copy as image": [],
-    Paste: [],
-    Delete: [],
-    "Edit table": [],
+    Undo: {
+      children: [],
+      function: () => {},
+    },
+    Redo: {
+      children: [],
+      function: () => {},
+    },
+    Cut: {
+      children: [],
+      function: () => {},
+    },
+    Copy: {
+      children: [],
+      function: () => {},
+    },
+    "Copy as image": {
+      children: [],
+      function: () => {},
+    },
+    Paste: {
+      children: [],
+      function: () => {},
+    },
+    Delete: {
+      children: [],
+      function: () => {},
+    },
+    "Edit table": {
+      children: [],
+      function: () => {},
+    },
   },
   View: {
-    Toolbar: [],
-    Grid: [],
-    Sidebar: [],
-    Editor: [],
-    "Strict mode": [],
-    "Reset view": [],
-    "View schema": [],
-    Theme: ["Light", "Dark"],
-    "Zoom in": [],
-    "Zoom out": [],
-    Fullscreen: [],
+    Toolbar: {
+      children: [],
+      function: () => {},
+    },
+    Grid: {
+      children: [],
+      function: () => {},
+    },
+    Sidebar: {
+      children: [],
+      function: () => {},
+    },
+    Editor: {
+      children: [],
+      function: () => {},
+    },
+    "Strict mode": {
+      children: [],
+      function: () => {},
+    },
+    "Reset view": {
+      children: [],
+      function: () => {},
+    },
+    "View schema": {
+      children: [],
+      function: () => {},
+    },
+    Theme: {
+      children: [{Light: ()=>{}}, {Dark: ()=>{}}],
+      function: ()=>{}
+    },
+    "Zoom in": {
+      children: [],
+      function: () => {},
+    },
+    "Zoom out": {
+      children: [],
+      function: () => {},
+    },
+    Fullscreen: {
+      children: [],
+      function: () => {},
+    },
   },
   Insert: {
-    "New table": [],
-    "New relationship": [],
-    Note: [],
-    Image: [],
-    Textbox: [],
-    Shape: ["Rhombus", "Rectangle"],
+    "New table": {
+      children: [],
+      function: () => {},
+    },
+    "New relationship": {
+      children: [],
+      function: () => {},
+    },
+    Note: {
+      children: [],
+      function: () => {},
+    },
+    Image: {
+      children: [],
+      function: () => {},
+    },
+    Textbox: {
+      children: [],
+      function: () => {},
+    },
+    Shape: {
+      children: [],
+      function: () => {},
+    },
   },
   Logs: {
-    "Open logs": [],
-    "Commit changes": [],
-    "Revert changes": [],
-    "View commits": [],
+    "Open logs": {
+      children: [],
+      function: () => {},
+    },
+    "Commit changes": {
+      children: [],
+      function: () => {},
+    },
+    "Revert changes": {
+      children: [],
+      function: () => {},
+    },
+    "View commits": {
+      children: [],
+      function: () => {},
+    },
   },
   Help: {
-    Shortcuts: [],
-    "Ask us on discord": [],
-    "Tweet us": [],
-    "Found a bug": [],
+    Shortcuts: {
+      children: [],
+      function: () => {},
+    },
+    "Ask us on discord": {
+      children: [],
+      function: () => {},
+    },
+    "Tweet us": {
+      children: [],
+      function: () => {},
+    },
+    "Found a bug": {
+      children: [],
+      function: () => {},
+    },
   },
 };
 
@@ -116,4 +248,12 @@ const Constraint = {
   setDefault: "Set default",
 };
 
-export { menu, bgBlue, sqlDataTypes, tableThemes, defaultTableTheme, Cardinality, Constraint };
+export {
+  menu,
+  bgBlue,
+  sqlDataTypes,
+  tableThemes,
+  defaultTableTheme,
+  Cardinality,
+  Constraint,
+};
