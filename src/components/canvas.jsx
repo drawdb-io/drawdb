@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
+import { defaultTableTheme } from "../data/data";
 
 export default function Canvas(props) {
   const [dragging, setDragging] = useState(-1);
@@ -86,14 +87,14 @@ export default function Canvas(props) {
       });
       props.setTables(updatedTables);
       const updatedRelationShips = relationships.map((r) => {
-        if (r.startTableId === dragging - 1) {
+        if (r.startTableId === dragging) {
           return {
             ...r,
             startX: props.tables[r.startTableId].x + 15,
             startY:
               props.tables[r.startTableId].y + r.startFieldId * 36 + 40 + 19,
           };
-        } else if (r.endTableId === dragging - 1) {
+        } else if (r.endTableId === dragging) {
           return {
             ...r,
             endX: props.tables[r.endTableId].x + 15,
@@ -160,8 +161,8 @@ export default function Canvas(props) {
         const x = offset.x - canvasRect.left - 100 * 0.5;
         const y = offset.y - canvasRect.top - 100 * 0.5;
         const newTable = {
-          id: props.tables.length + 1,
-          name: `Table ${props.tables.length + 1}`,
+          id: props.tables.length,
+          name: `Table ${props.tables.length}`,
           x: x,
           y: y,
           fields: [
@@ -178,6 +179,7 @@ export default function Canvas(props) {
           ],
           comment: "",
           indices: [],
+          color: defaultTableTheme,
         };
         props.setTables((prev) => [...prev, newTable]);
         props.setCode((prev) =>
@@ -235,7 +237,7 @@ export default function Canvas(props) {
           {props.tables.map((table, i) => (
             <Table
               key={table.id}
-              id={i}
+              id={table.id}
               tableData={table}
               tables={props.tables}
               setTables={props.setTables}

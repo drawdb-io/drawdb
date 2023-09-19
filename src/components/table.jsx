@@ -113,7 +113,10 @@ export default function Table(props) {
             isHovered ? "border-sky-500" : "border-gray-500"
           } bg-gray-300 select-none rounded-md`}
         >
-          <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md flex justify-between items-center">
+          <div
+            style={{ backgroundColor: props.tableData.color }}
+            className={`p-3 font-bold text-slate-800 h-[40px] rounded-t-md flex justify-between items-center`}
+          >
             {
               <form
                 onSubmit={(e) => e.preventDefault()}
@@ -138,10 +141,7 @@ export default function Table(props) {
             }
             {isHovered && (
               <div className="flex justify-end items-center">
-                <button
-                  className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
-                  // onClick={() => setSideSheetOn(true)}
-                >
+                <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
                   <IconEdit />
                 </button>
                 <button

@@ -11,6 +11,7 @@ import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
 import DiagramOverview from "./diagram_overview";
+import { defaultTableTheme } from "../data/data";
 
 const myTheme = createTheme({
   dark: "light",
@@ -37,7 +38,7 @@ export default function EditorPanel(props) {
   ];
   const contentList = [
     <div>
-      <DiagramOverview tables={props.tables} />
+      <DiagramOverview tables={props.tables} setTables={props.setTables} />
     </div>,
     <div>
       <Shape />
@@ -79,8 +80,8 @@ export default function EditorPanel(props) {
         <button
           onClick={() => {
             const newTable = {
-              id: props.tables.length + 1,
-              name: `Table ${props.tables.length + 1}`,
+              id: props.tables.length,
+              name: `Table ${props.tables.length}`,
               x: 0,
               y: 0,
               fields: [
@@ -97,6 +98,7 @@ export default function EditorPanel(props) {
               ],
               comment: "",
               indices: [],
+              color: defaultTableTheme,
             };
             props.setTables((prev) => {
               const updatedTables = [...prev, newTable];
@@ -137,8 +139,8 @@ export default function EditorPanel(props) {
                   }
                   map.current.set(t.table, t);
                   const newTable = {
-                    id: props.tables.length + 1,
-                    name: `Table ${props.tables.length + 1}`,
+                    id: props.tables.length,
+                    name: `Table ${props.tables.length}`,
                     x: 0,
                     y: 0,
                     fields: [
@@ -155,6 +157,7 @@ export default function EditorPanel(props) {
                     ],
                     comment: "",
                     indices: [],
+                    color: defaultTableTheme,
                   };
                   props.setTables((prev) => [...prev, newTable]);
                 });

@@ -1,5 +1,5 @@
 import { React } from "react";
-import { sqlDataTypes } from "../data/data";
+import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
 import {
   Collapse,
   Input,
@@ -17,9 +17,16 @@ import {
   IconKeyStroked,
   IconColorPalette,
   IconDeleteStroked,
+  IconCheckboxTick,
 } from "@douyinfe/semi-icons";
 
 export default function DiagramOverview(props) {
+  const updateColor = (id, c) => {
+    const updatedTables = [...props.tables];
+    updatedTables[id] = { ...updatedTables[id], color: c };
+    props.setTables(updatedTables);
+  };
+
   return (
     <Collapse>
       {props.tables.map((t, i) => (
@@ -33,8 +40,8 @@ export default function DiagramOverview(props) {
           itemKey={`${i}`}
         >
           {t.fields.map((f, j) => (
-            <Form>
-              <div key={j}>
+            <Form key={j}>
+              <div>
                 <Row
                   type="flex"
                   justify="start"
@@ -101,16 +108,15 @@ export default function DiagramOverview(props) {
                                 defaultChecked={f.increment}
                               ></Checkbox>
                             </div>
-                            <label htmlFor="comment" className="font-medium">
-                              Comment
-                            </label>
                             <Form.TextArea
+                              field="comment"
+                              label="Comment"
                               initValue={f.comment}
                               autosize
                               rows={2}
                             />
                           </Form>
-                          <div className="flex justify-end">
+                          <div className="flex justify-end mt-2">
                             <Button icon={<IconDeleteStroked />} type="danger">
                               Delete
                             </Button>
@@ -152,7 +158,66 @@ export default function DiagramOverview(props) {
           </Card>
           <Row gutter={6} className="mt-2">
             <Col span={8}>
-              <Button type="tertiary" icon={<IconColorPalette />}></Button>
+              <Popover
+                content={
+                  <div>
+                    <div className="flex justify-between items-center p-2">
+                      <div className="font-medium">Theme</div>
+                      <Button
+                        type="tertiary"
+                        size="small"
+                        onClick={() => updateColor(i, defaultTableTheme)}
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                    <hr />
+                    <div className="py-3">
+                      <div>
+                        {tableThemes
+                          .slice(0, Math.ceil(tableThemes.length / 2))
+                          .map((c) => (
+                            <button
+                              key={c}
+                              style={{ backgroundColor: c }}
+                              className="p-3 rounded-full mx-1"
+                              onClick={() => updateColor(i, c)}
+                            >
+                              {t.color === c ? (
+                                <IconCheckboxTick style={{ color: "white" }} />
+                              ) : (
+                                <IconCheckboxTick style={{ color: c }} />
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                      <div className="mt-3">
+                        {tableThemes
+                          .slice(Math.ceil(tableThemes.length / 2))
+                          .map((c) => (
+                            <button
+                              key={c}
+                              style={{ backgroundColor: c }}
+                              className="p-3 rounded-full mx-1"
+                              onClick={() => updateColor(i, c)}
+                            >
+                              {t.color === c ? (
+                                <IconCheckboxTick style={{ color: "white" }} />
+                              ) : (
+                                <IconCheckboxTick style={{ color: c }} />
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                }
+                trigger="click"
+                position="bottomLeft"
+                showArrow
+              >
+                <Button type="tertiary" icon={<IconColorPalette />}></Button>
+              </Popover>
             </Col>
             <Col span={8}>
               <Button block>Add index</Button>
