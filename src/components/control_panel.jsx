@@ -22,22 +22,40 @@ import {
   Image,
   Modal,
   Spin,
+  Input,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import { enterFullscreen, exitFullscreen } from "../utils";
-import { LayoutContext, SettingsContext } from "../pages/editor";
+import {
+  AreaContext,
+  LayoutContext,
+  NoteContext,
+  SettingsContext,
+  TableContext,
+} from "../pages/editor";
 import { AddTable, AddArea, AddNote } from "./custom_icons";
+import { defaultTableTheme, defaultNoteTheme } from "../data/data";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
 
 export default function ControlPanel(props) {
-  const [visible, setVisible] = useState(false);
-  const [dataUrl, setDataUrl] = useState("");
-  const [filename, setFilename] = useState(
-    `diagram_${new Date().toISOString()}`
-  );
-  const [extension, setExtension] = useState("");
+  const MODAL = {
+    NONE: 0,
+    IMG: 1,
+    CODE: 2,
+  };
+  const [visible, setVisible] = useState(MODAL.NONE);
+  const [exportData, setExportData] = useState({
+    data: "",
+    filename: `diagram_${new Date().toISOString()}`,
+    extension: "",
+  });
   const { layout, setLayout } = useContext(LayoutContext);
   const { setSettings } = useContext(SettingsContext);
+  const { relationships, tables, setTables } = useContext(TableContext);
+  const { notes, setNotes } = useContext(NoteContext);
+  const { areas, setAreas } = useContext(AreaContext);
 
   const menu = {
     File: {
@@ -74,37 +92,66 @@ export default function ControlPanel(props) {
           {
             PNG: () => {
               toPng(document.getElementById("canvas")).then(function (dataUrl) {
-                setDataUrl(dataUrl);
+                setExportData((prev) => ({
+                  ...prev,
+                  data: dataUrl,
+                  extension: "png",
+                }));
               });
-              setVisible(true);
-              setExtension("png");
+              setVisible(MODAL.IMG);
             },
           },
           {
             JPEG: () => {
               toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
                 function (dataUrl) {
-                  setDataUrl(dataUrl);
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "jpeg",
+                  }));
                 }
               );
-              setVisible(true);
-              setExtension("jpeg");
+              setVisible(MODAL.IMG);
             },
           },
-          { XML: () => {} },
+          {
+            JSON: () => {
+              setVisible(MODAL.CODE);
+
+              const result = JSON.stringify(
+                {
+                  tables: tables,
+                  relationships: relationships,
+                  notes: notes,
+                  "subject areas": areas,
+                },
+                null,
+                2
+              );
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "json",
+              }));
+            },
+          },
           {
             SVG: () => {
               const filter = (node) => node.tagName !== "i";
               toSvg(document.getElementById("canvas"), { filter: filter }).then(
                 function (dataUrl) {
-                  setDataUrl(dataUrl);
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
                 }
               );
-              setVisible(true);
-              setExtension("svg");
+              setVisible(MODAL.IMG);
             },
           },
-          { PDF: () => {} },
+          { IFRAME: () => {} },
         ],
         function: () => {},
       },
@@ -316,39 +363,94 @@ export default function ControlPanel(props) {
           </button>
           <Divider layout="vertical" margin="8px" />
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Undo"
           >
             <IconUndo size="large" />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Redo"
           >
             <IconRedo size="large" />
           </button>
           <Divider layout="vertical" margin="8px" />
-          <div
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+          <button
+            className="flex items-center py-1 px-2 hover:bg-slate-200 rounded"
             title="Add new table"
+            onClick={() =>
+              setTables((prev) => [
+                ...prev,
+                {
+                  id: prev.length,
+                  name: `table_${prev.length}`,
+                  x: 0,
+                  y: 0,
+                  fields: [
+                    {
+                      name: "id",
+                      type: "UUID",
+                      default: "",
+                      check: "",
+                      primary: true,
+                      unique: true,
+                      notNull: true,
+                      increment: true,
+                      comment: "",
+                    },
+                  ],
+                  comment: "",
+                  indices: [],
+                  color: defaultTableTheme,
+                },
+              ])
+            }
           >
             <AddTable />
-          </div>
-          <div
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+          </button>
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add subject area"
+            onClick={() =>
+              setAreas((prev) => [
+                ...prev,
+                {
+                  id: prev.length,
+                  name: `area_${prev.length}`,
+                  x: 0,
+                  y: 0,
+                  width: 200,
+                  height: 200,
+                  color: defaultTableTheme,
+                },
+              ])
+            }
           >
             <AddArea />
-          </div>
-          <div
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+          </button>
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add new note"
+            onClick={() =>
+              setNotes((prev) => [
+                ...prev,
+                {
+                  id: prev.length,
+                  x: 0,
+                  y: 0,
+                  title: `note_${prev.length}`,
+                  content: "",
+                  color: defaultNoteTheme,
+                  height: 88,
+                },
+              ])
+            }
           >
             <AddNote />
-          </div>
+          </button>
           <Divider layout="vertical" margin="8px" />
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Save"
           >
             <IconSaveStroked size="extra-large" />
@@ -364,50 +466,71 @@ export default function ControlPanel(props) {
           onClick={(e) =>
             setLayout((prev) => ({ ...prev, header: !prev.header }))
           }
+          className="flex items-center"
         >
           {layout.header ? <IconChevronUp /> : <IconChevronDown />}
         </button>
       </div>
       <Modal
         title="Export diagram"
-        visible={visible}
-        onOk={() => saveAs(dataUrl, `${filename}.${extension}`)}
-        afterClose={() => {
-          setFilename(`diagram_${new Date().toISOString()}`);
-          setDataUrl("");
+        visible={visible !== MODAL.NONE}
+        onOk={() => {
+          if (visible === MODAL.IMG) {
+            saveAs(
+              exportData.data,
+              `${exportData.filename}.${exportData.extension}`
+            );
+          } else if (visible === MODAL.CODE) {
+            const blob = new Blob([exportData.data], {
+              type: "text/plain;charset=utf-8",
+            });
+            saveAs(blob, `${exportData.filename}.${exportData.extension}`);
+          }
         }}
-        onCancel={() => setVisible(false)}
+        afterClose={() => {
+          setExportData((prev) => ({
+            data: "",
+            extension: "",
+            filename: `diagram_${new Date().toISOString()}`,
+          }));
+        }}
+        onCancel={() => setVisible(MODAL.NONE)}
         centered
         closeOnEsc={true}
         okText="Export"
         cancelText="Cancel"
-        width={470}
+        width={520}
       >
-        {dataUrl !== "" || dataUrl ? (
-          <Image src={dataUrl} alt="Diagram" width={420}></Image>
+        {exportData.data !== "" || exportData.data ? (
+          visible === MODAL.IMG ? (
+            <Image src={exportData.data} alt="Diagram" height={220} />
+          ) : (
+            <div className="max-h-[400px] overflow-auto border border-gray-200">
+              <CodeMirror
+                value={exportData.data}
+                extensions={[json()]}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            </div>
+          )
         ) : (
           <div className="text-center my-3">
-            <Spin tip="Loading..." size="large"></Spin>
+            <Spin tip="Loading..." size="large" />
           </div>
         )}
-        <Form
-          labelPosition="left"
-          labelAlign="right"
-          onChange={(value) => {
-            setFilename((prev) =>
-              value.values["filename"] !== undefined
-                ? value.values["filename"]
-                : prev
-            );
-          }}
-        >
-          <Form.Input
-            field="filename"
-            label="Filename"
-            suffix={<div className="p-2">{`.${extension}`}</div>}
-            initValue={filename}
-          />
-        </Form>
+        <div className="text-sm font-semibold mt-2">Filename : </div>
+        <Input
+          value={exportData.filename}
+          placeholder="Filename"
+          suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
+          onChange={(value) =>
+            setExportData((prev) => ({ ...prev, filename: value }))
+          }
+          field="filename"
+        />
       </Modal>
     </div>
   );

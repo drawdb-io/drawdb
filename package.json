@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-sql": "^6.5.0",
     "@douyinfe/semi-ui": "^2.36.0",
     "@lezer/highlight": "^1.1.5",
