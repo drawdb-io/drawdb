@@ -211,11 +211,12 @@ const Rect = (props) => {
                       onMouseDown={(ev) => {
                         console.log("mouse down");
                         props.handleGripField(i);
-                        props.setLine((prev) => ({
-                          ...prev,
+                        props.setLine({
                           startX: props.x + 15,
-                          startY: props.y + i * 36 + 40 + 18,
-                        }));
+                          startY: props.y + i * 36 + 40 + 19,
+                          endX: props.x + 15,
+                          endY: props.y + i * 36 + 40 + 19,
+                        });
                       }}
                     ></button>
                     {e.name}
