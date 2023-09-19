@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import sqlDataTypes from "./sql_types";
+import {sqlDataTypes} from "../data/data";
 import {
   IconEdit,
   IconDelete,
@@ -16,7 +16,6 @@ import {
   Tag,
   Popconfirm,
   Toast,
-  SideSheet,
 } from "@douyinfe/semi-ui";
 
 export default function Table(props) {
@@ -24,7 +23,6 @@ export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
   const [name, setName] = useState(props.tableData.name);
   const [visible, setVisible] = useState(false);
-  const [sideSheetOn, setSideSheetOn] = useState(false);
   const [editFieldVisible, setEditFieldVisible] = useState(-1);
 
   const [field, setField] = useState({
@@ -139,7 +137,7 @@ export default function Table(props) {
               <div className="flex justify-end items-center">
                 <button
                   className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
-                  onClick={() => setSideSheetOn(true)}
+                  // onClick={() => setSideSheetOn(true)}
                 >
                   <IconEdit />
                 </button>
@@ -475,11 +473,6 @@ export default function Table(props) {
           </Row>
         </Form>
       </Modal>
-      <SideSheet title="Sidesheet" visible={sideSheetOn} onCancel={() => setSideSheetOn
-      (false)}>
-        <p>This is the content of a basic sidesheet.</p>
-        <p>Here is more content...</p>
-      </SideSheet>
     </g>
   );
 }

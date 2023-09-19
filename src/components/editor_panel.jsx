@@ -8,6 +8,7 @@ import Shape from "./shape";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 import { Parser } from "node-sql-parser";
+import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
 
 const myTheme = createTheme({
@@ -25,8 +26,31 @@ const myTheme = createTheme({
 });
 
 export default function EditorPanel(props) {
-  const [editor, setEditor] = useState(true);
+  const [tab, setTab] = useState(1);
   const map = useRef(new Map());
+
+  const tabList = [
+    { tab: "Overview", itemKey: 1 },
+    { tab: "Shapes", itemKey: 2 },
+    { tab: "Editor", itemKey: 3 },
+  ];
+  const contentList = [
+    <div>Overview</div>,
+    <div>
+      <Shape />
+    </div>,
+    <div>
+      <CodeMirror
+        value={props.code}
+        height="100%"
+        theme={myTheme}
+        extensions={[sql()]}
+        onChange={(e) => {
+          props.setCode(e);
+        }}
+      />
+    </div>,
+  ];
 
   return (
     <ResizableBox
@@ -37,15 +61,17 @@ export default function EditorPanel(props) {
       maxConstraints={[Infinity, Infinity]}
       axis="x"
     >
-      <div className="overflow-auto h-full">
-        <button
-          onClick={() => {
-            setEditor(!editor);
+      <div className="overflow-auto h-full mt-2">
+        <Tabs
+          type="card"
+          tabList={tabList}
+          onChange={(key) => {
+            setTab(key);
           }}
         >
-          change view
-        </button>
-        <br />
+          {contentList[tab -1]}
+        </Tabs>
+
         <button
           onClick={() => {
             const newTable = {
@@ -65,7 +91,7 @@ export default function EditorPanel(props) {
                 },
               ],
             };
-            props.setTables(prev => {
+            props.setTables((prev) => {
               const updatedTables = [...prev, newTable];
               return updatedTables;
             });
@@ -120,7 +146,7 @@ export default function EditorPanel(props) {
                       },
                     ],
                   };
-                  props.setTables((prev)=>[...prev, newTable]);
+                  props.setTables((prev) => [...prev, newTable]);
                 });
               });
             } catch (e) {
@@ -142,19 +168,6 @@ export default function EditorPanel(props) {
         >
           export img
         </button>
-        {editor ? (
-          <CodeMirror
-            value={props.code}
-            height="100%"
-            theme={myTheme}
-            extensions={[sql()]}
-            onChange={(e) => {
-              props.setCode(e);
-            }}
-          />
-        ) : (
-          <Shape />
-        )}
       </div>
     </ResizableBox>
   );

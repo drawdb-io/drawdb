@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import menu from "./menu";
+import {menu} from "../data/data";
 import {
   IconCaretUp,
   IconCaretDown,
