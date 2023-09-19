@@ -14,6 +14,11 @@ const Rect = (props) => {
   const [hoveredField, setHoveredField] = useState(-1);
   const [name, setName] = useState("New Table");
   const [visible, setVisible] = useState(false);
+  const [editFieldVisible, setEditFieldVisible] = useState(-1);
+
+  const handleOkEdit = () => {
+    setEditFieldVisible(-1);
+  };
 
   const handleOk = () => {
     setVisible(false);
@@ -144,7 +149,10 @@ const Rect = (props) => {
                 <div className="text-slate-600">
                   {hoveredField === i ? (
                     <div>
-                      <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
+                      <button
+                        className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
+                        onClick={(e) => setEditFieldVisible(i)}
+                      >
                         <IconEdit />
                       </button>
                       <button
@@ -252,6 +260,52 @@ const Rect = (props) => {
         centered
         closeOnEsc={true}
         okText="Add"
+        cancelText="Cancel"
+      >
+        <Form labelPosition="left" labelAlign="right">
+          <Row>
+            <Col span={11}>
+              <Form.Input field="name" label="Name" trigger="blur" />
+            </Col>
+            <Col span={2}></Col>
+            <Col span={11}>
+              <Form.Input field="default" label="Default" trigger="blur" />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Select
+                field="type"
+                label="Type"
+                className="w-full"
+                optionList={sqlDataTypes.map((value, index) => {
+                  return {
+                    label: value,
+                    value: index,
+                  };
+                })}
+              ></Form.Select>
+              <div className="flex justify-around mt-2">
+                <Checkbox value="A">Primary</Checkbox>
+                <Checkbox value="B">Unique</Checkbox>
+                <Checkbox value="C">Not null</Checkbox>
+                <Checkbox value="D">Increment</Checkbox>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+      <Modal
+        title={`Edit field ${
+          editFieldVisible !== -1 ? fields[editFieldVisible].name : ""
+        }`}
+        visible={editFieldVisible !== -1}
+        onOk={handleOkEdit}
+        afterClose={handleOkEdit}
+        onCancel={handleOkEdit}
+        centered
+        closeOnEsc={true}
+        okText="Edit"
         cancelText="Cancel"
       >
         <Form labelPosition="left" labelAlign="right">
