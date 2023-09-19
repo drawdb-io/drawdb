@@ -12,14 +12,13 @@ const Rect = (props) => {
         style={{ fill: "blue", cursor: "move" }}
         onMouseDown={props.onMouseDown}
       />
-      <text
-        x={props.x + 50}
-        y={props.y + 50}
-        textAnchor="middle"
-        style={{ fill: "white" }}
-      >
-        {props.label}
-      </text>
+      <foreignObject x={props.x + 10} y={props.y + 25} width={80} height={50}>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <form onSubmit={(e) => e.preventDefault()}>
+            <input type="text" className="w-full" />
+          </form>
+        </body>
+      </foreignObject>
     </g>
   );
 };
