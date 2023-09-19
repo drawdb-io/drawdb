@@ -44,8 +44,13 @@ import {
   TableContext,
   UndoRedoContext,
 } from "../pages/editor";
-import { AddTable, AddArea, AddNote } from "./custom_icons";
-import { defaultTableTheme, defaultNoteTheme } from "../data/data";
+import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
+import {
+  defaultTableTheme,
+  defaultNoteTheme,
+  ObjectType,
+  Action,
+} from "../data/data";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
@@ -445,30 +450,161 @@ export default function ControlPanel(props) {
     ]);
   };
 
+  const addArea = () => {
+    setAreas((prev) => [
+      ...prev,
+      {
+        id: prev.length,
+        name: `area_${prev.length}`,
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 200,
+        color: defaultTableTheme,
+      },
+    ]);
+  };
+
+  const addNote = () => {
+    setNotes((prev) => [
+      ...prev,
+      {
+        id: prev.length,
+        x: 0,
+        y: 0,
+        title: `note_${prev.length}`,
+        content: "",
+        color: defaultNoteTheme,
+        height: 88,
+      },
+    ]);
+  };
+
+  const moveTable = (id, x, y) => {
+    setTables((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            x: x,
+            y: y,
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  const moveArea = (id, x, y) => {
+    setAreas((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            x: x,
+            y: y,
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  const moveNote = (id, x, y) => {
+    setNotes((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            x: x,
+            y: y,
+          };
+        }
+        return t;
+      })
+    );
+  };
+
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack.pop();
-    if (a.action === "add") {
-      if (a.element === "table") {
+    if (a.action === Action.ADD) {
+      if (a.element === ObjectType.TABLE) {
         setTables((prev) =>
           prev
             .filter((e) => e.id !== prev.length - 1)
             .map((e, i) => ({ ...e, id: i }))
         );
+      } else if (a.element === ObjectType.AREA) {
+        setAreas((prev) =>
+          prev
+            .filter((e) => e.id !== prev.length - 1)
+            .map((e, i) => ({ ...e, id: i }))
+        );
+      } else if (a.element === ObjectType.NOTE) {
+        setNotes((prev) =>
+          prev
+            .filter((e) => e.id !== prev.length - 1)
+            .map((e, i) => ({ ...e, id: i }))
+        );
+      }
+      setRedoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.MOVE) {
+      if (a.element === ObjectType.TABLE) {
+        setRedoStack((prev) => [
+          ...prev,
+          { ...a, x: tables[a.id].x, y: tables[a.id].y },
+        ]);
+        moveTable(a.id, a.x, a.y);
+      } else if (a.element === ObjectType.AREA) {
+        setRedoStack((prev) => [
+          ...prev,
+          { ...a, x: areas[a.id].x, y: areas[a.id].y },
+        ]);
+        moveArea(a.id, a.x, a.y);
+      } else if (a.element === ObjectType.NOTE) {
+        setRedoStack((prev) => [
+          ...prev,
+          { ...a, x: notes[a.id].x, y: notes[a.id].y },
+        ]);
+        moveNote(a.id, a.x, a.y);
       }
     }
-    setRedoStack((prev) => [...prev, a]);
   };
 
   const redo = () => {
     if (redoStack.length === 0) return;
     const a = redoStack.pop();
-    if (a.action === "add") {
-      if (a.element === "table") {
+    if (a.action === Action.ADD) {
+      if (a.element === ObjectType.TABLE) {
         addTable();
+      } else if (a.element === ObjectType.AREA) {
+        addArea();
+      } else if (a.element === ObjectType.NOTE) {
+        addNote();
+      }
+      setUndoStack((prev) => [...prev, a]);
+    } else if (a.action === Action.MOVE) {
+      if (a.element === ObjectType.TABLE) {
+        setUndoStack((prev) => [
+          ...prev,
+          { ...a, x: tables[a.id].x, y: tables[a.id].y },
+        ]);
+        moveTable(a.id, a.x, a.y);
+      }else if (a.element === ObjectType.AREA) {
+        setUndoStack((prev) => [
+          ...prev,
+          { ...a, x: areas[a.id].x, y: areas[a.id].y },
+        ]);
+        moveArea(a.id, a.x, a.y);
+      } else if (a.element === ObjectType.NOTE) {
+        setUndoStack((prev) => [
+          ...prev,
+          { ...a, x: notes[a.id].x, y: notes[a.id].y },
+        ]);
+        moveNote(a.id, a.x, a.y);
       }
     }
-    setUndoStack((prev) => [...prev, a]);
   };
 
   return (
@@ -545,14 +681,20 @@ export default function ControlPanel(props) {
             title="Undo"
             onClick={undo}
           >
-            <IconUndo size="large" />
+            <IconUndo
+              size="large"
+              style={{ color: undoStack.length === 0 ? "#9598a6" : "" }}
+            />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Redo"
             onClick={redo}
           >
-            <IconRedo size="large" />
+            <IconRedo
+              size="large"
+              style={{ color: redoStack.length === 0 ? "#9598a6" : "" }}
+            />
           </button>
           <Divider layout="vertical" margin="8px" />
           <button
@@ -563,54 +705,48 @@ export default function ControlPanel(props) {
               setUndoStack((prev) => [
                 ...prev,
                 {
-                  action: "add",
-                  element: "table",
+                  action: Action.ADD,
+                  element: ObjectType.TABLE,
                 },
               ]);
-              if (redoStack.length > 0) setRedoStack([]);
+              setRedoStack([]);
             }}
           >
-            <AddTable />
+            <IconAddTable />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add subject area"
-            onClick={() =>
-              setAreas((prev) => [
+            onClick={() => {
+              addArea();
+              setUndoStack((prev) => [
                 ...prev,
                 {
-                  id: prev.length,
-                  name: `area_${prev.length}`,
-                  x: 0,
-                  y: 0,
-                  width: 200,
-                  height: 200,
-                  color: defaultTableTheme,
+                  action: Action.ADD,
+                  element: ObjectType.AREA,
                 },
-              ])
-            }
+              ]);
+              setRedoStack([]);
+            }}
           >
-            <AddArea />
+            <IconAddArea />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add new note"
-            onClick={() =>
-              setNotes((prev) => [
+            onClick={() => {
+              addNote();
+              setUndoStack((prev) => [
                 ...prev,
                 {
-                  id: prev.length,
-                  x: 0,
-                  y: 0,
-                  title: `note_${prev.length}`,
-                  content: "",
-                  color: defaultNoteTheme,
-                  height: 88,
+                  action: Action.ADD,
+                  element: ObjectType.NOTE,
                 },
-              ])
-            }
+              ]);
+              setRedoStack([]);
+            }}
           >
-            <AddNote />
+            <IconAddNote />
           </button>
           <Divider layout="vertical" margin="8px" />
           <button

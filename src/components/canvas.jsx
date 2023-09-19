@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
 import Table from "./table";
-import { Cardinality, Constraint, ObjectType } from "../data/data";
+import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
 import {
@@ -8,6 +8,7 @@ import {
   NoteContext,
   SettingsContext,
   TableContext,
+  UndoRedoContext,
 } from "../pages/editor";
 import Note from "./note";
 
@@ -17,7 +18,13 @@ export default function Canvas(props) {
   const { areas, setAreas } = useContext(AreaContext);
   const { notes, setNotes } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
-  const [dragging, setDragging] = useState([ObjectType.NONE, -1]);
+  const { redoStack, setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const [dragging, setDragging] = useState({
+    element: ObjectType.NONE,
+    id: -1,
+    prevX: 0,
+    prevY: 0,
+  });
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
     startTableId: -1,
@@ -62,21 +69,36 @@ export default function Canvas(props) {
         x: clientX / settings.zoom - table.x,
         y: clientY / settings.zoom - table.y,
       });
-      setDragging([ObjectType.TABLE, id]);
+      setDragging({
+        element: ObjectType.TABLE,
+        id: id,
+        prevX: table.x,
+        prevY: table.y,
+      });
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
       setOffset({
         x: clientX / settings.zoom - area.x,
         y: clientY / settings.zoom - area.y,
       });
-      setDragging([ObjectType.AREA, id]);
+      setDragging({
+        element: ObjectType.AREA,
+        id: id,
+        prevX: area.x,
+        prevY: area.y,
+      });
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
       setOffset({
         x: clientX / settings.zoom - note.x,
         y: clientY / settings.zoom - note.y,
       });
-      setDragging([ObjectType.NOTE, id]);
+      setDragging({
+        element: ObjectType.NOTE,
+        id: id,
+        prevX: note.x,
+        prevY: note.y,
+      });
     }
   };
 
@@ -93,7 +115,7 @@ export default function Canvas(props) {
       });
     } else if (
       panning &&
-      dragging[0] === ObjectType.NONE &&
+      dragging.element === ObjectType.NONE &&
       areaResize.id === -1
     ) {
       const dx = (e.clientX - panOffset.x) / settings.zoom;
@@ -121,9 +143,9 @@ export default function Canvas(props) {
       setAreas((prev) => prev.map((t) => ({ ...t, x: t.x + dx, y: t.y + dy })));
 
       setNotes((prev) => prev.map((n) => ({ ...n, x: n.x + dx, y: n.y + dy })));
-    } else if (dragging[0] === ObjectType.TABLE && dragging[1] >= 0) {
+    } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
       const updatedTables = tables.map((t) => {
-        if (t.id === dragging[1]) {
+        if (t.id === dragging.id) {
           return {
             ...t,
             x: e.clientX / settings.zoom - offset.x,
@@ -135,13 +157,13 @@ export default function Canvas(props) {
       setTables(updatedTables);
       setRelationships((prev) =>
         prev.map((r) => {
-          if (r.startTableId === dragging[1]) {
+          if (r.startTableId === dragging.id) {
             return {
               ...r,
               startX: tables[r.startTableId].x + 15,
               startY: tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
             };
-          } else if (r.endTableId === dragging[1]) {
+          } else if (r.endTableId === dragging.id) {
             return {
               ...r,
               endX: tables[r.endTableId].x + 15,
@@ -152,13 +174,13 @@ export default function Canvas(props) {
         })
       );
     } else if (
-      dragging[0] === ObjectType.AREA &&
-      dragging[1] >= 0 &&
+      dragging.element === ObjectType.AREA &&
+      dragging.id >= 0 &&
       areaResize.id === -1
     ) {
       setAreas((prev) =>
         prev.map((t) => {
-          if (t.id === dragging[1]) {
+          if (t.id === dragging.id) {
             const updatedArea = {
               ...t,
               x: e.clientX / settings.zoom - offset.x,
@@ -169,10 +191,10 @@ export default function Canvas(props) {
           return t;
         })
       );
-    } else if (dragging[0] === ObjectType.NOTE && dragging[1] >= 0) {
+    } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
       setNotes((prev) =>
         prev.map((t) => {
-          if (t.id === dragging[1]) {
+          if (t.id === dragging.id) {
             return {
               ...t,
               x: e.clientX / settings.zoom - offset.x,
@@ -233,8 +255,28 @@ export default function Canvas(props) {
     setCursor("grabbing");
   };
 
-  const handleMouseUp = () => {
-    setDragging([ObjectType.NONE, -1]);
+  const coordsDidUpdate = () => {
+    return !(
+      dragging.prevX === tables[dragging.id].x &&
+      dragging.prevY === tables[dragging.id].y
+    );
+  };
+
+  const handleMouseUp = (e) => {
+    if (dragging.element !== ObjectType.NONE && coordsDidUpdate()) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.MOVE,
+          element: dragging.element,
+          x: dragging.prevX,
+          y: dragging.prevY,
+          id: dragging.id,
+        },
+      ]);
+      if (redoStack.length > 0) setRedoStack([]);
+    }
+    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setPanning(false);
     setCursor("default");
     if (linking) handleLinking();
@@ -252,7 +294,7 @@ export default function Canvas(props) {
 
   const handleGripField = (id) => {
     setPanning(false);
-    setDragging([ObjectType.NONE, -1]);
+    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinking(true);
   };
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-export function AddTable() {
+export function IconAddTable() {
   return (
     <svg height="26" width="26">
       <path
@@ -13,7 +13,7 @@ export function AddTable() {
   );
 }
 
-export function AddArea() {
+export function IconAddArea() {
   return (
     <svg height="26" width="26">
       <path
@@ -26,7 +26,7 @@ export function AddArea() {
   );
 }
 
-export function AddNote() {
+export function IconAddNote() {
   return (
     <svg height="26" width="26">
       <path

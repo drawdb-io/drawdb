@@ -75,6 +75,11 @@ const ObjectType = {
   NOTE: 3,
 };
 
+const Action = {
+  ADD: 0,
+  MOVE: 1,
+}
+
 export {
   bgBlue,
   sqlDataTypes,
@@ -86,4 +91,5 @@ export {
   Constraint,
   Tab,
   ObjectType,
+  Action
 };
