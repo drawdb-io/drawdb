@@ -15,6 +15,8 @@ import {
   Col,
   Popover,
   Tag,
+  Popconfirm,
+  Toast,
 } from "@douyinfe/semi-ui";
 
 const Rect = (props) => {
@@ -136,12 +138,21 @@ const Rect = (props) => {
                 >
                   <IconPlus />
                 </button>
-                <button
-                  className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
-                  onClick={(e) => props.onDelete(props.id)}
+                <Popconfirm
+                  title="Are you sure you want to delete this table?"
+                  content="This modification will be irreversible."
+                  cancelText="Cancel"
+                  okText="Delete"
+                  onConfirm={() => {
+                    Toast.success(`Table deleted!`);
+                    props.onDelete(props.id);
+                  }}
+                  onCancel={() => {}}
                 >
-                  <IconDelete />
-                </button>
+                  <button className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80">
+                    <IconDelete />
+                  </button>
+                </Popconfirm>
               </div>
             )}
           </div>
