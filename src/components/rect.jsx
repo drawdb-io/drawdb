@@ -23,12 +23,34 @@ const Rect = (props) => {
   const [name, setName] = useState("New Table");
   const [visible, setVisible] = useState(false);
   const [editFieldVisible, setEditFieldVisible] = useState(-1);
+  const [fields, setFields] = useState([
+    {
+      name: "id",
+      type: "UUID",
+      default: "",
+      primary: true,
+      unique: true,
+      notNull: true,
+      increment: true,
+    },
+  ]);
+  const [field, setField] = useState({
+    name: "",
+    type: "",
+    default: "",
+    primary: false,
+    unique: false,
+    notNull: false,
+    increment: false,
+  });
 
   const handleOkEdit = () => {
     setEditFieldVisible(-1);
   };
 
   const handleOk = () => {
+    console.log(field);
+    setFields((prev) => [...prev, field]);
     setVisible(false);
   };
 
@@ -57,27 +79,6 @@ const Rect = (props) => {
     "XML",
     "JSON",
   ];
-
-  const [fields, setFields] = useState([
-    {
-      name: "id",
-      type: "uuid",
-      default: "",
-      primary: true,
-      unique: true,
-      notNull: true,
-      increment: false,
-    },
-    {
-      name: "name",
-      type: "varchar(20)",
-      default: "",
-      primary: false,
-      unique: false,
-      notNull: true,
-      increment: false,
-    },
-  ]);
 
   const height = fields.length * 36 + 40 + 4;
 
@@ -127,9 +128,7 @@ const Rect = (props) => {
                 </button>
                 <button
                   className="btn bg-green-600 text-white text-xs py-1 px-2 me-2 opacity-80"
-                  onClick={(e) => {
-                    setVisible(true);
-                  }}
+                  onClick={(e) => setVisible(true)}
                 >
                   <IconPlus />
                 </button>
@@ -170,7 +169,7 @@ const Rect = (props) => {
                     )}
                     {e.increment && (
                       <Tag color="green" className="me-2 my-2">
-                        Not null
+                        Increment
                       </Tag>
                     )}
                     <p className="text-slate-600">
@@ -304,14 +303,18 @@ const Rect = (props) => {
         title="Add new field"
         visible={visible}
         onOk={handleOk}
-        afterClose={handleOk}
+        afterClose={() => {}}
         onCancel={handleOk}
         centered
         closeOnEsc={true}
         okText="Add"
         cancelText="Cancel"
       >
-        <Form labelPosition="left" labelAlign="right">
+        <Form
+          labelPosition="left"
+          labelAlign="right"
+          onValueChange={(v) => setField({ ...field, ...v })}
+        >
           <Row>
             <Col span={11}>
               <Form.Input field="name" label="Name" trigger="blur" />
@@ -331,15 +334,41 @@ const Rect = (props) => {
                 optionList={sqlDataTypes.map((value, index) => {
                   return {
                     label: value,
-                    value: index,
+                    value: value,
                   };
                 })}
               ></Form.Select>
               <div className="flex justify-around mt-2">
-                <Checkbox value="A">Primary</Checkbox>
-                <Checkbox value="B">Unique</Checkbox>
-                <Checkbox value="C">Not null</Checkbox>
-                <Checkbox value="D">Increment</Checkbox>
+                <Checkbox
+                  value="primary"
+                  onChange={() =>
+                    setField({ ...field, primary: !field.primary })
+                  }
+                >
+                  Primary
+                </Checkbox>
+                <Checkbox
+                  value="unique"
+                  onChange={() => setField({ ...field, unique: !field.unique })}
+                >
+                  Unique
+                </Checkbox>
+                <Checkbox
+                  value="not null"
+                  onChange={() =>
+                    setField({ ...field, notNull: !field.notNull })
+                  }
+                >
+                  Not null
+                </Checkbox>
+                <Checkbox
+                  value="increment"
+                  onChange={() =>
+                    setField({ ...field, increment: !field.increment })
+                  }
+                >
+                  Increment
+                </Checkbox>
               </div>
             </Col>
           </Row>
@@ -361,11 +390,23 @@ const Rect = (props) => {
         <Form labelPosition="left" labelAlign="right">
           <Row>
             <Col span={11}>
-              <Form.Input field="name" label="Name" trigger="blur" />
+              <Form.Input
+                field="name"
+                label="Name"
+                trigger="blur"
+                onChange={(e) => setField({ ...field, name: e.target.value })}
+              />
             </Col>
             <Col span={2}></Col>
             <Col span={11}>
-              <Form.Input field="default" label="Default" trigger="blur" />
+              <Form.Input
+                field="default"
+                label="Default"
+                trigger="blur"
+                onChange={(e) =>
+                  setField({ ...field, default: e.target.value })
+                }
+              />
             </Col>
           </Row>
           <Row>
@@ -380,6 +421,7 @@ const Rect = (props) => {
                     value: index,
                   };
                 })}
+                onChange={(e) => setField({ ...field, type: e.target.value })}
               ></Form.Select>
               <div className="flex justify-around mt-2">
                 <Checkbox value="A">Primary</Checkbox>
