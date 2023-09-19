@@ -1,0 +1,187 @@
+import React, { useEffect, useState } from "react";
+import logo_light from "../assets/logo_light_46.png";
+import logo_dark from "../assets/logo_dark_46.png";
+import { Banner, Button, Input, Upload } from "@douyinfe/semi-ui";
+import {
+  IconSun,
+  IconMoon,
+  IconGithubLogo,
+  IconPaperclip,
+} from "@douyinfe/semi-icons";
+import RichEditor from "../components/rich_editor";
+
+export default function BugReport() {
+  const [theme, setTheme] = useState("");
+
+  useEffect(() => {
+    const t = localStorage.getItem("theme");
+    setTheme(t);
+    if (t === "dark") {
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "dark");
+      }
+    } else {
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "light");
+      }
+    }
+    document.title = "Report a bug - drawDB";
+    document.body.setAttribute("class", "theme");
+  }, [setTheme]);
+
+  const changeTheme = () => {
+    const body = document.body;
+    const t = body.getAttribute("theme-mode");
+    if (t === "dark") {
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "light");
+        setTheme("light");
+      }
+    } else {
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "dark");
+        setTheme("dark");
+      }
+    }
+  };
+
+  return (
+    <>
+      <div className="sm:py-3 py-5 px-6 flex justify-between items-center">
+        <div className="flex items-center justify-start">
+          <img
+            src={theme === "dark" ? logo_dark : logo_light}
+            alt="logo"
+            className="me-2 sm:h-[28px] md:h-[46px]"
+          />
+          <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
+            Report a bug
+          </div>
+        </div>
+        <div className="flex items-center">
+          <Button
+            icon={
+              theme === "dark" ? (
+                <IconSun size="extra-large" />
+              ) : (
+                <IconMoon size="extra-large" />
+              )
+            }
+            theme="borderless"
+            onClick={changeTheme}
+          ></Button>
+        </div>
+      </div>
+      <hr
+        className={`${
+          theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+        } my-1`}
+      />
+      <div className="grid grid-cols-12 gap-8 my-6 mx-8">
+        <div className="col-span-4 card-theme p-5 rounded-md">
+          <div className="flex items-center">
+            <IconPaperclip />
+            <div className="font-bold ms-1">Describe the bug </div>
+          </div>
+          <div className="text-sm mt-1">
+            Please provide a clear and concise description of what the bug is.
+          </div>
+          <div className="flex items-center mt-3">
+            <IconPaperclip />
+            <div className="font-bold ms-1">Steps to reproduce the bug </div>
+          </div>
+          <div className="text-sm mt-1">
+            Please provide the steps of how to reproduce the bug.
+          </div>
+          <div className="flex items-center mt-3">
+            <IconPaperclip />
+            <div className="font-bold ms-1">Expected behaviour</div>
+          </div>
+          <div className="text-sm mt-1">
+            Tell us what you expected to see vs what you saw.
+          </div>
+          <div className="flex items-center mt-3">
+            <IconPaperclip />
+            <div className="font-bold ms-1">Your browser and device</div>
+          </div>
+          <div className="text-sm mt-1">
+            What web browser and device did you encounter the bug on.
+          </div>
+          <div className="flex items-center mt-3">
+            <IconPaperclip />
+            <div className="font-bold ms-1">Screenshots</div>
+          </div>
+          <div className="text-sm mt-1">
+            Add any relevant images if possible.
+          </div>
+          <div className="flex items-center justify-center my-2">
+            <hr
+              className={`${
+                theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+              } flex-grow`}
+            />
+            <div className="text-sm font-semibold m-2">Alternatively</div>
+            <hr
+              className={`${
+                theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+              } flex-grow`}
+            />
+          </div>
+          <Button
+            block
+            icon={<IconGithubLogo />}
+            style={{ backgroundColor: "#239144", color: "white" }}
+            onClick={() => {
+              window.open(
+                "https://github.com/drawdb-io/drawdb-issues/issues",
+                "_self"
+              );
+            }}
+          >
+            Add an issue
+          </Button>
+        </div>
+        <div className="col-span-8">
+          <Banner
+            fullMode={false}
+            type="info"
+            icon={null}
+            closeIcon={null}
+            description={
+              <div>
+                We value your feedback! If you've encountered a bug or issue
+                while using our platform, please help us improve by reporting
+                it. Your input is invaluable in making our service better.
+              </div>
+            }
+          />
+          <div className="p-5 mt-6 card-theme rounded-md">
+            <Input placeholder="Title" />
+            <RichEditor />
+            <Upload
+              action="#"
+              beforeUpload={({ file, fileList }) => {}}
+              draggable={true}
+              dragMainText="Click to upload the file or drag and drop the file here"
+              dragSubText="Support json"
+              accept="application/json,.ddb"
+              onRemove={() => {}}
+              onFileChange={() => {}}
+              limit={5}
+            ></Upload>
+          </div>
+        </div>
+      </div>
+      <hr
+        className={`${
+          theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+        } my-1`}
+      />
+      <div className="text-center text-sm py-3">
+        &copy; 2024 <strong>drawDB</strong> - All right reserved.
+      </div>
+    </>
+  );
+}

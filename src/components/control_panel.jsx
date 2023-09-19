@@ -976,7 +976,7 @@ export default function ControlPanel(props) {
         function: () => {},
       },
       "Report a bug": {
-        function: () => {},
+        function: () => window.open("/bug_report", "_blank"),
       },
       "Suggest a feature": {
         function: () => {},

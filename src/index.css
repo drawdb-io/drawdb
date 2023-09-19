@@ -55,7 +55,7 @@
 
 .card-theme{
   color: var(--semi-color-text-1);
-  background-color: rgba(var(--semi-grey-1), 1);
+  background-color: rgba(var(--semi-grey-0), 1);
 }
 
 .toolbar-theme {
