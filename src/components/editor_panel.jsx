@@ -28,14 +28,6 @@ const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   const map = useRef(new Map());
 
-  const [width, setWidth] = useState(320);
-
-  const dragHandler = (e) => {
-    if (!props.resize) return;
-    const w = e.clientX;
-    if (w > 320) setWidth(w);
-  };
-
   const tabList = [
     { tab: "Tables", itemKey: "1" },
     { tab: "References", itemKey: "2" },
@@ -70,12 +62,8 @@ const EditorPanel = (props) => {
   ];
 
   return (
-    <div
-      className="h-screen flex overflow-clip relative"
-      onMouseMove={dragHandler}
-      onMouseUp={() => props.setResize(false)}
-    >
-      <div className="mt-2" style={{ width: `${width}px` }}>
+    <div className="h-screen flex overflow-clip relative">
+      <div className="mt-2" style={{ width: `${props.width}px` }}>
         <Tabs
           type="card"
           tabList={tabList}
@@ -111,7 +99,6 @@ const EditorPanel = (props) => {
             const blob = new Blob([props.code], {
               type: "text/plain;charset=utf-8",
             });
-
             window.saveAs(blob, "src.txt");
           }}
         >
@@ -164,9 +151,8 @@ const EditorPanel = (props) => {
         </button>
       </div>
       <div
-        className="flex justify-center items-center p-1 h-full bg-slate-300 cursor-col-resize"
+        className={`flex justify-center items-center p-1 h-full hover:bg-slate-300 cursor-col-resize ${props.resize? "bg-slate-300": ""}`}
         onMouseDown={() => props.setResize(true)}
-        onMouseUp={() => props.setResize(false)}
       >
         <div className="w-1 border-x border-white h-1/6" />
       </div>

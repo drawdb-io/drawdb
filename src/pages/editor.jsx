@@ -12,11 +12,22 @@ export default function Editor(props) {
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resize, setResize] = useState(false);
+  const [width, setWidth] = useState(320);
+
+  const dragHandler = (e) => {
+    if (!resize) return;
+    const w = e.clientX;
+    if (w > 320) setWidth(w);
+  };
 
   return (
     <>
       <ControlPanel />
-      <div className="flex h-full">
+      <div
+        className={`flex h-full`}
+        onMouseUp={() => setResize(false)}
+        onMouseMove={dragHandler}
+      >
         <DndProvider backend={HTML5Backend}>
           <EditorPanel
             tables={tables}
@@ -29,6 +40,7 @@ export default function Editor(props) {
             setAreas={setAreas}
             resize={resize}
             setResize={setResize}
+            width={width}
           />
           <Canvas
             tables={tables}
@@ -39,8 +51,6 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
-            resize={resize}
-            setResize={setResize}
           />
         </DndProvider>
         <Sidebar />
