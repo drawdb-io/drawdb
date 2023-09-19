@@ -1,14 +1,17 @@
 import React from "react";
 import Diagram from "../components/diagram";
+import Header from "../components/header";
+import Sidebar from "../components/sidebar";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import Header from "../components/header";
+import ControlPanel from "../components/control_panel";
 
 export default function Editor(props) {
   return (
     <>
       <Header name={props.name} />
-      <div className="flex">
+      <ControlPanel/>
+      <div className="flex h-full">
         <ResizableBox
           width={window.innerWidth * 0.2}
           height={window.innerHeight}
@@ -19,10 +22,10 @@ export default function Editor(props) {
         >
           <span className="text">window 1</span>
         </ResizableBox>
-        <div>
+        <div className="flex-grow">
           <Diagram />
         </div>
-        <div>hi</div>
+        <Sidebar/>
       </div>
     </>
   );

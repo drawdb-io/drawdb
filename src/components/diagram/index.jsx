@@ -10,7 +10,7 @@ function Diagram() {
     new dia.Paper({
       el: document.getElementById("canvas"),
       background: {
-        color: "#F1F92A",
+        color: "#aec3b0",
       },
       model: graph,
       height: "100%",
@@ -34,11 +34,7 @@ function Diagram() {
     rect.addTo(graph);
   }, []);
 
-  return (
-    <>
-      <div id="canvas" className="max-w-full h-full" ref={canvas} />
-    </>
-  );
+  return <div id="canvas" ref={canvas} />;
 }
 
 export default Diagram;
