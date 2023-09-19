@@ -326,7 +326,7 @@ export default function Canvas(props) {
         isOver: !!monitor.isOver(),
       }),
     }),
-    [tables]
+    [tables, areas]
   );
 
   return (
