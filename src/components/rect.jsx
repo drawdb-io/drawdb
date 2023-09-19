@@ -65,7 +65,7 @@ const Rect = (props) => {
           props.setLinks([
             ...props.links,
             {
-              rect: `${props.id}`,
+              rect: props.id,
               node: Node.LEFT,
               x: props.x,
               y: props.y + props.height / 2,

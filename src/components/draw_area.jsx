@@ -122,6 +122,7 @@ export default function Canvas(props) {
           {props.rectangles.map((rectangle) => (
             <Rect
               key={rectangle.id}
+              id={rectangle.id}
               x={rectangle.x}
               y={rectangle.y}
               label={rectangle.label}
