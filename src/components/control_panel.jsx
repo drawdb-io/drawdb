@@ -186,19 +186,11 @@ export default function ControlPanel(props) {
             })
           );
         } else if (a.component === "field_add") {
-          setTables((prev) =>
-            prev.map((t, i) => {
-              if (t.id === a.tid) {
-                return {
-                  ...t,
-                  fields: t.fields
-                    .filter((e) => e.id !== tables[a.tid].fields.length - 1)
-                    .map((t, i) => ({ ...t, id: i })),
-                };
-              }
-              return t;
-            })
-          );
+          updateTable(a.tid, {
+            fields: tables[a.tid].fields
+              .filter((e) => e.id !== tables[a.tid].fields.length - 1)
+              .map((t, i) => ({ ...t, id: i })),
+          });
         } else if (a.component === "comment") {
           updateTable(a.tid, a.undo, false);
         } else if (a.component === "index_add") {

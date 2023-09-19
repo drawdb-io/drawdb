@@ -4,6 +4,8 @@ import {
   tableThemes,
   defaultTableTheme,
   Tab,
+  Action,
+  ObjectType,
 } from "../data/data";
 import {
   IconEdit,
@@ -17,6 +19,8 @@ import {
 import {
   Popconfirm,
   Select,
+  Input,
+  TextArea,
   Card,
   Form,
   Checkbox,
@@ -33,51 +37,26 @@ import {
   SettingsContext,
   TabContext,
   TableContext,
+  UndoRedoContext,
 } from "../pages/editor";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
+  const [indexActiveKey, setIndexActiveKey] = useState("");
   const [hoveredField, setHoveredField] = useState(-1);
   const [visible, setVisible] = useState(false);
   const { layout } = useContext(LayoutContext);
-  const { setTables, deleteTable } = useContext(TableContext);
+  const { setTables, deleteTable, updateTable, updateField } =
+    useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
 
   const height = props.tableData.fields.length * 36 + 50 + 3;
 
-  const updatedField = (tid, fid, updatedValues) => {
-    setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
-          return {
-            ...table,
-            fields: table.fields.map((field, j) =>
-              fid === j ? { ...field, ...updatedValues } : field
-            ),
-          };
-        }
-        return table;
-      })
-    );
-  };
-
-  const updateTable = (tid, updatedValues) => {
-    setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
-          return {
-            ...table,
-            ...updatedValues,
-          };
-        }
-        return table;
-      })
-    );
-  };
-
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const [editField, setEditField] = useState({});
   return (
-    <g>
+    <>
       <foreignObject
         key={props.tableData.id}
         x={props.tableData.x}
@@ -241,10 +220,6 @@ export default function Table(props) {
                       <strong>Default :</strong>{" "}
                       {e.default === "" ? "Not set" : e.default}
                     </p>
-                    <p className="text-slate-600">
-                      <strong>Comment :</strong>{" "}
-                      {e.comment === "" ? "Not comment" : e.comment}
-                    </p>
                   </>
                 }
                 position="right"
@@ -260,178 +235,335 @@ export default function Table(props) {
       </foreignObject>
       <SideSheet
         title="Edit table"
+        size="small"
         visible={visible}
         onCancel={() => setVisible((prev) => !prev)}
         style={{ paddingBottom: "16px" }}
       >
-        <Form
-          labelPosition="left"
-          onChange={(value) => updateTable(props.tableData.id, value.values)}
-        >
-          <Form.Input
-            initValue={props.tableData.name}
-            field="name"
-            label="Name"
+        <div className="flex items-center">
+          <div className="text-md font-semibold">Name: </div>
+          <Input
+            value={props.tableData.name}
+            placeholder="Name"
+            className="mx-2 mb-1"
+            onChange={(value) =>
+              updateTable(props.tableData.id, { name: value })
+            }
+            onFocus={(e) => setEditField({ name: e.target.value })}
+            onBlur={(e) => {
+              if (e.target.value === editField.name) return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "self",
+                  tid: props.tableData.id,
+                  undo: editField,
+                  redo: { name: e.target.value },
+                },
+              ]);
+              setRedoStack([]);
+            }}
           />
-        </Form>
+        </div>
         <div>
           {props.tableData.fields.map((f, j) => (
-            <Form
-              key={j}
-              onChange={(value) =>
-                updatedField(props.tableData.id, j, value.values)
-              }
-              initValues={f}
-            >
-              <Row
-                type="flex"
-                justify="start"
-                align="middle"
-                gutter={6}
-                className="hover:bg-slate-100"
-              >
-                <Col span={8}>
-                  <Form.Input
-                    field="name"
-                    noLabel={true}
-                    className="m-0"
-                    placeholder="Name"
-                  />
-                </Col>
-                <Col span={8}>
-                  <Form.Select
-                    className="w-full"
-                    field="type"
-                    noLabel={true}
-                    optionList={sqlDataTypes.map((value, index) => {
-                      return {
-                        label: value,
-                        value: value,
-                      };
-                    })}
-                    filter
-                    placeholder="Type"
-                  ></Form.Select>
-                </Col>
-                <Col
-                  span={8}
-                  style={{ display: "flex", justifyContent: "space-around" }}
+            <Row gutter={6} key={j} className="hover:bg-slate-100 mt-2">
+              <Col span={7}>
+                <Input
+                  value={f.name}
+                  placeholder="Name"
+                  onChange={(value) =>
+                    updateField(props.tableData.id, j, { name: value })
+                  }
+                  onFocus={(e) => setEditField({ name: e.target.value })}
+                  onBlur={(e) => {
+                    if (e.target.value === editField.name) return;
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "field",
+                        tid: props.tableData.id,
+                        fid: j,
+                        undo: editField,
+                        redo: { name: e.target.value },
+                      },
+                    ]);
+                    setRedoStack([]);
+                  }}
+                />
+              </Col>
+              <Col span={8}>
+                <Select
+                  className="w-full"
+                  optionList={sqlDataTypes.map((value, index) => {
+                    return {
+                      label: value,
+                      value: value,
+                    };
+                  })}
+                  filter
+                  value={f.type}
+                  placeholder="Type"
+                  onChange={(value) => {
+                    if (value === f.type) return;
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "field",
+                        tid: props.tableData.id,
+                        fid: j,
+                        undo: { type: f.type },
+                        redo: { type: value },
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateField(props.tableData.id, j, { type: value });
+                  }}
+                ></Select>
+              </Col>
+              <Col span={3}>
+                <Button
+                  type={f.notNull ? "primary" : "tertiary"}
+                  title="Nullable"
+                  theme={f.notNull ? "solid" : "light"}
+                  onClick={() => {
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "field",
+                        tid: props.tableData.id,
+                        fid: j,
+                        undo: { notNull: f.notNull },
+                        redo: { notNull: !f.notNull },
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateField(props.tableData.id, j, { notNull: !f.notNull });
+                  }}
                 >
-                  <Button
-                    type={f.notNull ? "primary" : "tertiary"}
-                    title="Nullable"
-                    theme={f.notNull ? "solid" : "light"}
-                    onClick={() =>
-                      updatedField(props.tableData.id, j, {
-                        notNull: !f.notNull,
-                      })
-                    }
-                  >
-                    ?
-                  </Button>
-                  <Button
-                    type={f.primary ? "primary" : "tertiary"}
-                    title="Primary"
-                    theme={f.primary ? "solid" : "light"}
-                    onClick={() =>
-                      updatedField(props.tableData.id, j, {
-                        primary: !f.primary,
-                      })
-                    }
-                    icon={<IconKeyStroked />}
-                  ></Button>
-                  <Popover
-                    content={
-                      <div className="px-1">
-                        <Form
-                          onChange={(value) =>
-                            updatedField(props.tableData.id, j, value.values)
-                          }
-                        >
-                          <Form.Input
-                            field="default"
-                            label="Default"
-                            initValue={f.default}
-                            trigger="blur"
-                            placeholder="Set default"
-                          />
-                          <Form.Input
-                            field="check"
-                            label="Check Expression"
-                            trigger="blur"
-                            placeholder="Set constraint"
-                            initValue={f.check}
-                          />
-                          <div className="flex justify-between items-center my-3">
-                            <label htmlFor="unique" className="font-medium">
-                              Unique
-                            </label>
-                            <Checkbox
-                              value="unique"
-                              defaultChecked={f.unique}
-                              onChange={(checkedValues) =>
-                                updatedField(props.tableData.id, j, {
+                  ?
+                </Button>
+              </Col>
+              <Col span={3}>
+                <Button
+                  type={f.primary ? "primary" : "tertiary"}
+                  title="Primary"
+                  theme={f.primary ? "solid" : "light"}
+                  onClick={() => {
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "field",
+                        tid: props.tableData.id,
+                        fid: j,
+                        undo: { primary: f.primary },
+                        redo: { primary: !f.primary },
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateField(props.tableData.id, j, { primary: !f.primary });
+                  }}
+                  icon={<IconKeyStroked />}
+                ></Button>
+              </Col>
+              <Col span={3}>
+                <Popover
+                  content={
+                    <div className="px-1 w-[240px]">
+                      <div className="font-semibold">Default value</div>
+                      <Input
+                        className="my-2"
+                        placeholder="Set default"
+                        value={f.default}
+                        onChange={(value) =>
+                          updateField(props.tableData.id, j, { default: value })
+                        }
+                        onFocus={(e) =>
+                          setEditField({ default: e.target.value })
+                        }
+                        onBlur={(e) => {
+                          if (e.target.value === editField.default) return;
+                          setUndoStack((prev) => [
+                            ...prev,
+                            {
+                              action: Action.EDIT,
+                              element: ObjectType.TABLE,
+                              component: "field",
+                              tid: props.tableData.id,
+                              fid: j,
+                              undo: editField,
+                              redo: { default: e.target.value },
+                            },
+                          ]);
+                          setRedoStack([]);
+                        }}
+                      />
+                      <div className="font-semibold">Check Expression</div>
+                      <Input
+                        className="my-2"
+                        placeholder="Set constraint"
+                        value={f.check}
+                        onChange={(value) =>
+                          updateField(props.tableData.id, j, { check: value })
+                        }
+                        onFocus={(e) => setEditField({ check: e.target.value })}
+                        onBlur={(e) => {
+                          if (e.target.value === editField.check) return;
+                          setUndoStack((prev) => [
+                            ...prev,
+                            {
+                              action: Action.EDIT,
+                              element: ObjectType.TABLE,
+                              component: "field",
+                              tid: props.tableData.id,
+                              fid: j,
+                              undo: editField,
+                              redo: { check: e.target.value },
+                            },
+                          ]);
+                          setRedoStack([]);
+                        }}
+                      />
+                      <div className="flex justify-between items-center my-3">
+                        <div className="font-medium">Unique</div>
+                        <Checkbox
+                          value="unique"
+                          defaultChecked={f.unique}
+                          onChange={(checkedValues) => {
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.TABLE,
+                                component: "field",
+                                tid: props.tableData.id,
+                                fid: j,
+                                undo: {
+                                  [checkedValues.target.value]:
+                                    !checkedValues.target.checked,
+                                },
+                                redo: {
                                   [checkedValues.target.value]:
                                     checkedValues.target.checked,
-                                })
-                              }
-                            ></Checkbox>
-                          </div>
-                          <div className="flex justify-between items-center my-3">
-                            <label htmlFor="increment" className="font-medium">
-                              Autoincrement
-                            </label>
-                            <Checkbox
-                              value="increment"
-                              defaultChecked={f.increment}
-                              onChange={(checkedValues) =>
-                                updatedField(props.tableData.id, j, {
-                                  [checkedValues.target.value]:
-                                    checkedValues.target.checked,
-                                })
-                              }
-                            ></Checkbox>
-                          </div>
-                          <Form.TextArea
-                            field="comment"
-                            label="Comment"
-                            placeholder="Add comment"
-                            initValue={f.comment}
-                            autosize
-                            rows={2}
-                          />
-                        </Form>
-                        <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
-                          block
-                          onClick={(ev) => {
-                            setTables((prev) => {
-                              const updatedTables = [...prev];
-                              const updatedFields = [
-                                ...updatedTables[props.tableData.id].fields,
-                              ];
-                              updatedFields.splice(j, 1);
-                              updatedTables[props.tableData.id].fields = [
-                                ...updatedFields,
-                              ];
-                              return updatedTables;
+                                },
+                              },
+                            ]);
+                            setRedoStack([]);
+                            updateField(props.tableData.id, j, {
+                              [checkedValues.target.value]:
+                                checkedValues.target.checked,
                             });
                           }}
-                        >
-                          Delete
-                        </Button>
+                        ></Checkbox>
                       </div>
-                    }
-                    trigger="click"
-                    position="rightTop"
-                    showArrow
-                  >
-                    <Button type="tertiary" icon={<IconMore />}></Button>
-                  </Popover>
-                </Col>
-              </Row>
-            </Form>
+                      <div className="flex justify-between items-center my-3">
+                        <div className="font-medium">Autoincrement</div>
+                        <Checkbox
+                          value="increment"
+                          defaultChecked={f.increment}
+                          onChange={(checkedValues) => {
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.TABLE,
+                                component: "field",
+                                tid: props.tableData.id,
+                                fid: j,
+                                undo: {
+                                  [checkedValues.target.value]:
+                                    !checkedValues.target.checked,
+                                },
+                                redo: {
+                                  [checkedValues.target.value]:
+                                    checkedValues.target.checked,
+                                },
+                              },
+                            ]);
+                            setRedoStack([]);
+                            updateField(props.tableData.id, j, {
+                              [checkedValues.target.value]:
+                                checkedValues.target.checked,
+                            });
+                          }}
+                        ></Checkbox>
+                      </div>
+                      <div className="font-semibold">Comment</div>
+                      <TextArea
+                        className="my-2"
+                        label="Comment"
+                        placeholder="Add comment"
+                        value={f.comment}
+                        autosize
+                        rows={2}
+                        onChange={(value) =>
+                          updateField(props.tableData.id, j, { comment: value })
+                        }
+                        onFocus={(e) =>
+                          setEditField({ comment: e.target.value })
+                        }
+                        onBlur={(e) => {
+                          if (e.target.value === editField.comment) return;
+                          setUndoStack((prev) => [
+                            ...prev,
+                            {
+                              action: Action.EDIT,
+                              element: ObjectType.TABLE,
+                              component: "field",
+                              tid: props.tableData.id,
+                              fid: j,
+                              undo: editField,
+                              redo: { comment: e.target.value },
+                            },
+                          ]);
+                          setRedoStack([]);
+                        }}
+                      />
+                      <Button
+                        icon={<IconDeleteStroked />}
+                        type="danger"
+                        block
+                        onClick={() => {
+                          setUndoStack((prev) => [
+                            ...prev,
+                            {
+                              action: Action.EDIT,
+                              element: ObjectType.TABLE,
+                              component: "field_delete",
+                              tid: props.tableData.id,
+                              data: f,
+                            },
+                          ]);
+                          setRedoStack([]);
+                          updateTable(props.tableData.id, {
+                            fields: props.tableData.fields
+                              .filter((field) => field.id !== j)
+                              .map((e, i) => ({ ...e, id: i })),
+                          });
+                        }}
+                      >
+                        Delete field
+                      </Button>
+                    </div>
+                  }
+                  trigger="click"
+                  position="rightTop"
+                  showArrow
+                >
+                  <Button type="tertiary" icon={<IconMore />}></Button>
+                </Popover>
+              </Col>
+            </Row>
           ))}
           {props.tableData.indices.length > 0 && (
             <Card
@@ -439,7 +571,7 @@ export default function Table(props) {
               style={{ marginTop: "12px", marginBottom: "12px" }}
               headerLine={false}
             >
-              <div className="font-medium ms-1 mb-1">Indices</div>
+              <div className="font-medium mb-2 ms-1">Indices</div>
               {props.tableData.indices.map((idx, k) => (
                 <div className="flex justify-between items-center mb-2" key={k}>
                   <Select
@@ -450,58 +582,73 @@ export default function Table(props) {
                       label: e.name,
                     }))}
                     className="w-full"
-                    defaultValue={idx.fields}
+                    value={idx.fields}
                     onChange={(value) => {
-                      setTables((prev) =>
-                        prev.map((t, i) => {
-                          if (t.id === props.tableData.id) {
-                            return {
-                              ...t,
-                              indices: t.indices.map((index, j) => {
-                                if (j === k)
-                                  return {
-                                    name: `${value.join("_")}_index`,
-                                    fields: [...value],
-                                  };
-                                return index;
-                              }),
-                            };
-                          }
-                          return t;
-                        })
-                      );
+                      setUndoStack((prev) => [
+                        ...prev,
+                        {
+                          action: Action.EDIT,
+                          element: ObjectType.TABLE,
+                          component: "index",
+                          tid: props.tableData.id,
+                          iid: k,
+                          undo: {
+                            fields: [...idx.fields],
+                            name: `${idx.fields.join("_")}_index`,
+                          },
+                          redo: {
+                            fields: [...value],
+                            name: `${value.join("_")}_index`,
+                          },
+                        },
+                      ]);
+                      setRedoStack([]);
+                      updateTable(props.tableData.id, {
+                        indices: props.tableData.indices.map((index) =>
+                          index.id === k
+                            ? {
+                                ...index,
+                                fields: [...value],
+                                name: `${value.join("_")}_index`,
+                              }
+                            : index
+                        ),
+                      });
                     }}
                   />
                   <Popover
                     content={
                       <div className="px-1">
-                        <Form>
-                          <Form.Input
-                            field="name"
-                            label="Name"
-                            initValue={idx.name}
-                            trigger="blur"
-                            placeholder="Index name"
-                          />
-                        </Form>
+                        <Input
+                          className="my-2"
+                          value={idx.name}
+                          placeholder="Index name"
+                          disabled
+                        />
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
                           block
                           onClick={() => {
-                            setTables((prev) =>
-                              prev.map((t, i) => {
-                                if (t.id === props.tableData.id) {
-                                  const updatedIndices = [...t.indices];
-                                  updatedIndices.splice(k, 1);
-                                  return {
-                                    ...t,
-                                    indices: updatedIndices,
-                                  };
-                                }
-                                return t;
-                              })
-                            );
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.TABLE,
+                                component: "index_delete",
+                                tid: props.tableData.id,
+                                data: idx,
+                              },
+                            ]);
+                            setRedoStack([]);
+                            updateTable(props.tableData.id, {
+                              indices: props.tableData.indices
+                                .filter((e) => e.id !== k)
+                                .map((e, j) => ({
+                                  ...e,
+                                  id: j,
+                                })),
+                            });
                           }}
                         >
                           Delete
@@ -527,23 +674,32 @@ export default function Table(props) {
             style={{ marginTop: "12px", marginBottom: "12px" }}
             headerLine={false}
           >
-            <div className="font-medium ms-1">Comment</div>
-            <Form
+            <div className="font-medium ms-1 mb-1">Comment</div>
+            <TextArea
+              value={props.tableData.comment}
+              autosize
+              placeholder="Add comment"
+              rows={1}
               onChange={(value) =>
-                updateTable(props.tableData.id, value.values)
+                updateTable(props.tableData.id, { comment: value }, false)
               }
-            >
-              <Form.TextArea
-                field="comment"
-                noLabel={true}
-                showClear
-                onClear={() => updateTable(props.tableData.id, { comment: "" })}
-                initValue={props.tableData.comment}
-                autosize
-                placeholder="Add comment"
-                rows={1}
-              />
-            </Form>
+              onFocus={(e) => setEditField({ comment: e.target.value })}
+              onBlur={(e) => {
+                if (e.target.value === editField.comment) return;
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "comment",
+                    tid: props.tableData.id,
+                    undo: editField,
+                    redo: { comment: e.target.value },
+                  },
+                ]);
+                setRedoStack([]);
+              }}
+            />
           </Card>
           <Row gutter={6} className="mt-2">
             <Col span={8}>
@@ -555,11 +711,23 @@ export default function Table(props) {
                       <Button
                         type="tertiary"
                         size="small"
-                        onClick={() =>
+                        onClick={() => {
+                          setUndoStack((prev) => [
+                            ...prev,
+                            {
+                              action: Action.EDIT,
+                              element: ObjectType.TABLE,
+                              component: "self",
+                              tid: props.tableData.id,
+                              undo: { color: props.tableData.color },
+                              redo: { color: defaultTableTheme },
+                            },
+                          ]);
+                          setRedoStack([]);
                           updateTable(props.tableData.id, {
                             color: defaultTableTheme,
-                          })
-                        }
+                          });
+                        }}
                       >
                         Clear
                       </Button>
@@ -574,9 +742,21 @@ export default function Table(props) {
                               key={c}
                               style={{ backgroundColor: c }}
                               className="p-3 rounded-full mx-1"
-                              onClick={() =>
-                                updateTable(props.tableData.id, { color: c })
-                              }
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.TABLE,
+                                    component: "self",
+                                    tid: props.tableData.id,
+                                    undo: { color: props.tableData.color },
+                                    redo: { color: c },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                                updateTable(props.tableData.id, { color: c });
+                              }}
                             >
                               {props.tableData.color === c ? (
                                 <IconCheckboxTick style={{ color: "white" }} />
@@ -594,9 +774,21 @@ export default function Table(props) {
                               key={c}
                               style={{ backgroundColor: c }}
                               className="p-3 rounded-full mx-1"
-                              onClick={() =>
-                                updateTable(props.tableData.id, { color: c })
-                              }
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.TABLE,
+                                    component: "self",
+                                    tid: props.tableData.id,
+                                    undo: { color: props.tableData.color },
+                                    redo: { color: c },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                                updateTable(props.tableData.id, { color: c });
+                              }}
                             >
                               <IconCheckboxTick
                                 style={{
@@ -621,20 +813,27 @@ export default function Table(props) {
               <Button
                 block
                 onClick={() => {
-                  setTables((prev) =>
-                    prev.map((t, i) => {
-                      if (t.id === props.tableData.id) {
-                        return {
-                          ...t,
-                          indices: [
-                            ...t.indices,
-                            { name: `index_${t.indices.length}`, fields: [] },
-                          ],
-                        };
-                      }
-                      return t;
-                    })
-                  );
+                  setIndexActiveKey("1");
+                  setUndoStack((prev) => [
+                    ...prev,
+                    {
+                      action: Action.EDIT,
+                      element: ObjectType.TABLE,
+                      component: "index_add",
+                      tid: props.tableData.id,
+                    },
+                  ]);
+                  setRedoStack([]);
+                  updateTable(props.tableData.id, {
+                    indices: [
+                      ...props.tableData.indices,
+                      {
+                        id: props.tableData.indices.length,
+                        name: `index_${props.tableData.indices.length}`,
+                        fields: [],
+                      },
+                    ],
+                  });
                 }}
               >
                 Add index
@@ -643,30 +842,33 @@ export default function Table(props) {
             <Col span={6}>
               <Button
                 onClick={() => {
-                  setTables((prev) =>
-                    prev.map((t, i) => {
-                      if (t.id === props.tableData.id) {
-                        return {
-                          ...t,
-                          fields: [
-                            ...t.fields,
-                            {
-                              name: "",
-                              type: "",
-                              default: "",
-                              check: "",
-                              primary: false,
-                              unique: false,
-                              notNull: false,
-                              increment: false,
-                              comment: "",
-                            },
-                          ],
-                        };
-                      }
-                      return t;
-                    })
-                  );
+                  setUndoStack((prev) => [
+                    ...prev,
+                    {
+                      action: Action.EDIT,
+                      element: ObjectType.TABLE,
+                      component: "field_add",
+                      tid: props.tableData.id,
+                    },
+                  ]);
+                  setRedoStack([]);
+                  updateTable(props.tableData.id, {
+                    fields: [
+                      ...props.tableData.fields,
+                      {
+                        name: "",
+                        type: "",
+                        default: "",
+                        check: "",
+                        primary: false,
+                        unique: false,
+                        notNull: false,
+                        increment: false,
+                        comment: "",
+                        id: props.tableData.fields.length,
+                      },
+                    ],
+                  });
                 }}
                 block
               >
@@ -688,7 +890,7 @@ export default function Table(props) {
           </Row>
         </div>
       </SideSheet>
-    </g>
+    </>
   );
 
   function field(fieldData, index) {
@@ -733,17 +935,24 @@ export default function Table(props) {
             <Popconfirm
               title="Are you sure you want to delete this field?"
               content="This modification will be irreversible"
-              onConfirm={() =>
-                setTables((prev) => {
-                  const updatedTables = [...prev];
-                  const updatedFields = [
-                    ...updatedTables[props.tableData.id].fields,
-                  ];
-                  updatedFields.splice(index, 1);
-                  updatedTables[props.tableData.id].fields = [...updatedFields];
-                  return updatedTables;
-                })
-              }
+              onConfirm={() => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "field_delete",
+                    tid: props.tableData.id,
+                    data: fieldData,
+                  },
+                ]);
+                setRedoStack([]);
+                updateTable(props.tableData.id, {
+                  fields: props.tableData.fields
+                    .filter((e) => e.id !== fieldData.id)
+                    .map((t, i) => ({ ...t, id: i })),
+                });
+              }}
               onCancel={() => {}}
             >
               <Button

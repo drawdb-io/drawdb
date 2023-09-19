@@ -111,17 +111,9 @@ export default function TableOverview(props) {
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
                 {t.fields.map((f, j) => (
-                  <Row
-                    type="flex"
-                    justify="start"
-                    align="middle"
-                    gutter={6}
-                    key={j}
-                    className="hover:bg-slate-100 mb-2"
-                  >
+                  <Row gutter={6} key={j} className="hover:bg-slate-100 mb-2">
                     <Col span={7}>
                       <Input
-                        field="name"
                         value={f.name}
                         placeholder="Name"
                         onChange={(value) => updateField(i, j, { name: value })}
