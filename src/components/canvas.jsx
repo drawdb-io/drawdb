@@ -168,10 +168,7 @@ export default function Canvas(props) {
         return t;
       });
       setAreas(updatedAreas);
-    } else if (
-      dragging[0] === ObjectType.NOTE &&
-      dragging[1] >= 0
-    ) {
+    } else if (dragging[0] === ObjectType.NOTE && dragging[1] >= 0) {
       setNotes((prev) =>
         prev.map((t) => {
           if (t.id === dragging[1]) {
@@ -357,11 +354,9 @@ export default function Canvas(props) {
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          className="w-full h-full bg-white"
           style={{
-            width: "100%",
-            height: "100%",
             cursor: cursor,
-            backgroundColor: "white",
           }}
         >
           <defs>

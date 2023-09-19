@@ -38,6 +38,7 @@ import { AddTable, AddArea, AddNote } from "./custom_icons";
 import { defaultTableTheme, defaultNoteTheme } from "../data/data";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
+import jsPDF from "jspdf";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -151,7 +152,28 @@ export default function ControlPanel(props) {
               setVisible(MODAL.IMG);
             },
           },
-          { IFRAME: () => {} },
+          {
+            PDF: () => {
+              const canvas = document.getElementById("canvas");
+              toJpeg(canvas).then(
+                function (dataUrl) {
+                  const doc = new jsPDF("l", "px", [
+                    canvas.offsetWidth,
+                    canvas.offsetHeight,
+                  ]);
+                  doc.addImage(
+                    dataUrl,
+                    "jpeg",
+                    0,
+                    0,
+                    canvas.offsetWidth,
+                    canvas.offsetHeight
+                  );
+                  doc.save(`${exportData.filename}.pdf`);
+                }
+              );
+            },
+          },
         ],
         function: () => {},
       },
