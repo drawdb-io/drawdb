@@ -95,7 +95,6 @@ export default function Editor(props) {
               unique: true,
               notNull: true,
               increment: true,
-              length: "",
               comment: "",
               id: 0,
             },

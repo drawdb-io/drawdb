@@ -59,7 +59,7 @@ function jsonToSQL(obj) {
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
               }\` ${field.type}${
-                field.length !== ""
+                field.type === "VARCHAR"
                   ? `(${field.length})`
                   : field.type === "ENUM" || field.type === "SET"
                   ? `(${field.values.map((v) => `"${v}"`).join(", ")})`
@@ -142,6 +142,12 @@ function validateDiagram(diagram) {
       }
       if (field.type === "") {
         issues.push(`Empty field type in table "${table.name}"`);
+      } else if (field.type === "ENUM" || field.type === "SET") {
+        if (!field.values || field.values.length === 0) {
+          issues.push(
+            `"${field.name}" field of table "${table.name}" is of type ${field.type} but values have been specified`
+          );
+        }
       }
       if (duplicateFieldNames[field.name]) {
         issues.push(`Duplicate table fields in table "${table.name}"`);

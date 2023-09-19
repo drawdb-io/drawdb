@@ -223,11 +223,26 @@ export default function TableOverview(props) {
                             (value === "INT" ||
                               value === "BIGINT" ||
                               value === "SMALLINT");
-                          updateField(i, j, {
-                            type: value,
-                            length: value === "VARCHAR" ? 255 : "",
-                            increment: incr,
-                          });
+                          if (value === "ENUM" || value === "SET") {
+                            updateField(i, j, {
+                              type: value,
+                              values: [],
+                              increment: incr,
+                            });
+                          } else if (value === "VARCHAR") {
+                            updateField(i, j, {
+                              type: value,
+                              length: 255,
+                              increment: incr,
+                            });
+                          } else {
+                            updateField(i, j, {
+                              type: value,
+                              increment: incr,
+                              length: "",
+                              values: [],
+                            });
+                          }
                         }}
                       ></Select>
                     </Col>
@@ -975,7 +990,6 @@ export default function TableOverview(props) {
                               default: "",
                               check: "",
                               primary: false,
-                              length: "",
                               unique: false,
                               notNull: false,
                               increment: false,

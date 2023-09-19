@@ -377,11 +377,26 @@ export default function Table(props) {
                       (value === "INT" ||
                         value === "BIGINT" ||
                         value === "SMALLINT");
-                    updateField(props.tableData.id, j, {
-                      type: value,
-                      length: value === "VARCHAR" ? 255 : "",
-                      increment: incr,
-                    });
+                    if (value === "ENUM" || value === "SET") {
+                      updateField(props.tableData.id, j, {
+                        type: value,
+                        values: [],
+                        increment: incr,
+                      });
+                    } else if (value === "VARCHAR") {
+                      updateField(props.tableData.id, j, {
+                        type: value,
+                        length: 255,
+                        increment: incr,
+                      });
+                    } else {
+                      updateField(props.tableData.id, j, {
+                        type: value,
+                        increment: incr,
+                        length: "",
+                        values: [],
+                      });
+                    }
                   }}
                 ></Select>
               </Col>
@@ -1102,7 +1117,6 @@ export default function Table(props) {
                         type: "",
                         default: "",
                         check: "",
-                        length: "",
                         primary: false,
                         unique: false,
                         notNull: false,
