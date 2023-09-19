@@ -21,6 +21,7 @@ import {
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
+import { enterFullscreen, exitFullscreen } from "../utils";
 
 export default function ControlPanel(props) {
   const [visible, setVisible] = useState(false);
@@ -193,18 +194,7 @@ export default function ControlPanel(props) {
       },
       Fullscreen: {
         children: [],
-        function: () => {
-          const element = document.documentElement;
-          if (element.requestFullscreen) {
-            element.requestFullscreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-          } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-          }
-        },
+        function: enterFullscreen,
       },
     },
     Logs: {
@@ -247,9 +237,7 @@ export default function ControlPanel(props) {
 
   return (
     <>
-      {props.layout.header && (
-        header()
-      )}
+      {props.layout.header && header()}
       <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700 select-none">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
@@ -396,113 +384,120 @@ export default function ControlPanel(props) {
   );
 
   function header() {
-    return <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
-      <div className="flex justify-start items-center text-slate-800">
-        <Link to="/">
-          <img
-            width={54}
-            src={icon}
-            alt="logo"
-            className="ms-8 min-w-[54px]" />
-        </Link>
-        <div className="ms-1 mt-1">
-          <div className="text-xl ms-3">Project1 / Untitled</div>
-          <div className="flex justify-between items-center">
-            <div className="flex justify-start text-md select-none me-2">
-              {Object.keys(menu).map((category) => (
-                <Dropdown
-                  key={category}
-                  position="bottomLeft"
-                  style={{ width: "200px" }}
-                  render={<Dropdown.Menu>
-                    {Object.keys(menu[category]).map((item, index) => {
-                      if (menu[category][item].children.length > 0) {
-                        return (
-                          <Dropdown
-                            style={{ width: "120px" }}
-                            key={item}
-                            position={"rightTop"}
-                            render={<Dropdown.Menu>
-                              {menu[category][item].children.map(
-                                (e, i) => (
-                                  <Dropdown.Item
-                                    key={i}
-                                    onClick={Object.values(e)[0]}
-                                  >
-                                    {Object.keys(e)[0]}
-                                  </Dropdown.Item>
-                                )
-                              )}
-                            </Dropdown.Menu>}
-                          >
+    return (
+      <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
+        <div className="flex justify-start items-center text-slate-800">
+          <Link to="/">
+            <img
+              width={54}
+              src={icon}
+              alt="logo"
+              className="ms-8 min-w-[54px]"
+            />
+          </Link>
+          <div className="ms-1 mt-1">
+            <div className="text-xl ms-3">Project1 / Untitled</div>
+            <div className="flex justify-between items-center">
+              <div className="flex justify-start text-md select-none me-2">
+                {Object.keys(menu).map((category) => (
+                  <Dropdown
+                    key={category}
+                    position="bottomLeft"
+                    style={{ width: "200px" }}
+                    render={
+                      <Dropdown.Menu>
+                        {Object.keys(menu[category]).map((item, index) => {
+                          if (menu[category][item].children.length > 0) {
+                            return (
+                              <Dropdown
+                                style={{ width: "120px" }}
+                                key={item}
+                                position={"rightTop"}
+                                render={
+                                  <Dropdown.Menu>
+                                    {menu[category][item].children.map(
+                                      (e, i) => (
+                                        <Dropdown.Item
+                                          key={i}
+                                          onClick={Object.values(e)[0]}
+                                        >
+                                          {Object.keys(e)[0]}
+                                        </Dropdown.Item>
+                                      )
+                                    )}
+                                  </Dropdown.Menu>
+                                }
+                              >
+                                <Dropdown.Item
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                  onClick={menu[category][item].function}
+                                >
+                                  {item}
+                                  <IconChevronRight />
+                                </Dropdown.Item>
+                              </Dropdown>
+                            );
+                          }
+                          return (
                             <Dropdown.Item
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                              }}
+                              key={index}
                               onClick={menu[category][item].function}
                             >
                               {item}
-                              <IconChevronRight />
                             </Dropdown.Item>
-                          </Dropdown>
-                        );
-                      }
-                      return (
-                        <Dropdown.Item
-                          key={index}
-                          onClick={menu[category][item].function}
-                        >
-                          {item}
-                        </Dropdown.Item>
-                      );
-                    })}
-                  </Dropdown.Menu>}
-                >
-                  <div className="px-3 py-1 hover:bg-gray-100 rounded">
-                    {category}
-                  </div>
-                </Dropdown>
-              ))}
+                          );
+                        })}
+                      </Dropdown.Menu>
+                    }
+                  >
+                    <div className="px-3 py-1 hover:bg-gray-100 rounded">
+                      {category}
+                    </div>
+                  </Dropdown>
+                ))}
+              </div>
+              <Button size="small" type="tertiary">
+                Last saved {new Date().toISOString()}
+              </Button>
             </div>
-            <Button size="small" type="tertiary">
-              Last saved {new Date().toISOString()}
-            </Button>
           </div>
         </div>
-      </div>
-      <div className="flex justify-around items-center text-md me-8">
-        <AvatarGroup maxCount={3} size="default">
-          <Avatar color="red" alt="Lisa LeBlanc">
-            LL
+        <div className="flex justify-around items-center text-md me-8">
+          <AvatarGroup maxCount={3} size="default">
+            <Avatar color="red" alt="Lisa LeBlanc">
+              LL
+            </Avatar>
+            <Avatar color="green" alt="Caroline Xiao">
+              CX
+            </Avatar>
+            <Avatar color="amber" alt="Rafal Matin">
+              RM
+            </Avatar>
+            <Avatar alt="Zank Lance">ZL</Avatar>
+            <Avatar alt="Youself Zhang">YZ</Avatar>
+          </AvatarGroup>
+          <Button
+            type="primary"
+            style={{
+              fontSize: "16px",
+              marginLeft: "12px",
+              marginRight: "12px",
+            }}
+            size="large"
+            icon={<IconShareStroked />}
+          >
+            Share
+          </Button>
+          <Avatar size="default" alt="Buni Zhang">
+            BZ
           </Avatar>
-          <Avatar color="green" alt="Caroline Xiao">
-            CX
-          </Avatar>
-          <Avatar color="amber" alt="Rafal Matin">
-            RM
-          </Avatar>
-          <Avatar alt="Zank Lance">ZL</Avatar>
-          <Avatar alt="Youself Zhang">YZ</Avatar>
-        </AvatarGroup>
-        <Button
-          type="primary"
-          style={{
-            fontSize: "16px",
-            marginLeft: "12px",
-            marginRight: "12px",
-          }}
-          size="large"
-          icon={<IconShareStroked />}
-        >
-          Share
-        </Button>
-        <Avatar size="default" alt="Buni Zhang">
-          BZ
-        </Avatar>
-      </div>
-    </nav>;
+        </div>
+      </nav>
+    );
   }
 
   function layoutDropdown() {
@@ -657,7 +652,26 @@ export default function ControlPanel(props) {
               Services
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item icon={<IconCheckboxTick />}>
+            <Dropdown.Item
+              icon={
+                props.layout.fullscreen ? (
+                  <IconCheckboxTick />
+                ) : (
+                  <div className="px-2"></div>
+                )
+              }
+              onClick={() => {
+                if (props.layout.fullscreen) {
+                  exitFullscreen();
+                } else {
+                  enterFullscreen();
+                }
+                props.setLayout((prev) => ({
+                  ...prev,
+                  fullscreen: !prev.fullscreen,
+                }));
+              }}
+            >
               Fullscreen
             </Dropdown.Item>
           </Dropdown.Menu>

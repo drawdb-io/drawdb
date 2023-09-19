@@ -22,6 +22,7 @@ export default function Editor(props) {
     issues: true,
     editor: true,
     shapes: true,
+    fullscreen: false,
   });
 
   const dragHandler = (e) => {
