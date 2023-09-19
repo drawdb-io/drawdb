@@ -347,10 +347,14 @@ export default function Editor(props) {
                     ...r,
                     startX: updatedValues.x + 15,
                     startY: updatedValues.y + r.startFieldId * 36 + 69,
+                    endX: tables[r.endTableId].x + 15,
+                    endY: tables[r.endTableId].y + r.endFieldId * 36 + 69,
                   };
                 } else if (r.endTableId === id) {
                   return {
                     ...r,
+                    startX: tables[r.startTableId].x + 15,
+                    startY: tables[r.startTableId].y + r.startFieldId * 36 + 69,
                     endX: updatedValues.x + 15,
                     endY: updatedValues.y + r.endFieldId * 36 + 69,
                   };

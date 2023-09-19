@@ -132,7 +132,46 @@ export default function ReferenceOverview(props) {
                             bordered
                           />
                           <div className="mt-2">
-                            <Button icon={<IconLoopTextStroked />} block>
+                            <Button
+                              icon={<IconLoopTextStroked />}
+                              block
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.RELATIONSHIP,
+                                    rid: i,
+                                    undo: {
+                                      startTableId: r.startTableId,
+                                      startFieldId: r.startFieldId,
+                                      endTableId: r.endTableId,
+                                      endFieldId: r.endFieldId,
+                                    },
+                                    redo: {
+                                      startTableId: r.endTableId,
+                                      startFieldId: r.endFieldId,
+                                      endTableId: r.startTableId,
+                                      endFieldId: r.startFieldId,
+                                    },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                                setRelationships((prev) =>
+                                  prev.map((e, idx) =>
+                                    idx === i
+                                      ? {
+                                          ...e,
+                                          startTableId: e.endTableId,
+                                          startFieldId: e.endFieldId,
+                                          endTableId: e.startTableId,
+                                          endFieldId: e.startFieldId,
+                                        }
+                                      : e
+                                  )
+                                );
+                              }}
+                            >
                               Swap
                             </Button>
                           </div>
