@@ -35,7 +35,11 @@ export default function Editor(props) {
     <div className="h-[100vh] overflow-hidden">
       <ControlPanel layout={layout} setLayout={setLayout} />
       <div
-        className={`flex h-[calc(100vh-123.93px)]`}
+        className={
+          layout.header
+            ? `flex h-[calc(100vh-123.93px)]`
+            : `flex h-[calc(100vh-51.97px)]`
+        }
         onMouseUp={() => setResize(false)}
         onMouseMove={dragHandler}
       >
@@ -56,7 +60,6 @@ export default function Editor(props) {
             />
           )}
           <Canvas
-          width={window.innerWidth-width-8}
             tables={tables}
             setTables={setTables}
             code={code}

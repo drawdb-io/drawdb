@@ -93,7 +93,7 @@ export default function Table(props) {
         key={props.id}
         x={props.tableData.x}
         y={props.tableData.y}
-        width={220}
+        width={200}
         height={height}
         style={{ cursor: "move" }}
         onMouseDown={props.onMouseDown}
