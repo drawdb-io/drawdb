@@ -13,7 +13,7 @@ function Diagram() {
         color: "#F1F92A",
       },
       model: graph,
-      height: window.innerHeight,
+      height: "100%",
       width: "100%",
       gridSize: 1,
       interactive: true,
