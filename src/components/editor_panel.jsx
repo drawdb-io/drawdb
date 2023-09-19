@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useRef } from "react";
 import { ResizableBox } from "react-resizable";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
@@ -8,6 +8,7 @@ import { shapes } from "jointjs";
 import Shape from "./shape";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
+import { Parser } from "node-sql-parser";
 import "react-resizable/css/styles.css";
 
 const myTheme = createTheme({
@@ -26,6 +27,7 @@ const myTheme = createTheme({
 
 export default function EditorPanel(props) {
   const [editor, setEditor] = useState(true);
+  const map = useRef(new Map());
 
   return (
     <ResizableBox
@@ -80,6 +82,41 @@ export default function EditorPanel(props) {
         <br />
         <button
           onClick={() => {
+            try {
+              const parser = new Parser();
+              const ast = parser.astify(props.code);
+              console.log(ast);
+              ast.forEach((e) => {
+                e.table.forEach((t) => {
+                  if (map.current.has(t.table)) {
+                    return;
+                  }
+                  map.current.set(t.table, t);
+                  const rect = new shapes.standard.Rectangle();
+                  rect.position(100, 100);
+                  rect.resize(100, 40);
+                  rect.attr({
+                    body: {
+                      fill: "#7039FF",
+                    },
+                    label: {
+                      text: t.table,
+                      fill: "white",
+                    },
+                  });
+                  rect.addTo(props.graph);
+                });
+              });
+            } catch (e) {
+              alert("parsing error");
+            }
+          }}
+        >
+          parse
+        </button>
+        <br />
+        <button
+          onClick={() => {
             html2canvas(document.getElementById("canvas")).then((canvas) => {
               canvas.toBlob((blob) => {
                 saveAs(blob, "image.png");
@@ -95,7 +132,9 @@ export default function EditorPanel(props) {
             height="100%"
             theme={myTheme}
             extensions={[sql()]}
-            onChange={() => {}}
+            onChange={(e) => {
+              props.setCode(e);
+            }}
           />
         ) : (
           <Shape />
