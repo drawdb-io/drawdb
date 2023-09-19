@@ -177,7 +177,19 @@ function jsonToMySQL(obj) {
 }
 
 function jsonToPostgreSQL(obj) {
-  return `${obj.tables
+  return `${obj.types.map(
+    (type) =>
+      `${type.fields
+        .filter((f) => f.type === "ENUM" || f.type === "SET")
+        .map(
+          (f) =>
+            `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+              .map((v) => `'${v}'`)
+              .join(", ")});\n`
+        )}CREATE TYPE ${type.name} AS (\n${type.fields
+        .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+        .join("\n")}\n);`
+  )}\n${obj.tables
     .map(
       (table) =>
         `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${

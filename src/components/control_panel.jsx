@@ -775,7 +775,7 @@ export default function ControlPanel(props) {
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
-                  types: types
+                  types: types,
                 },
                 null,
                 2
@@ -797,6 +797,7 @@ export default function ControlPanel(props) {
               const src = jsonToMySQL({
                 tables: tables,
                 references: relationships,
+                types: types,
               });
               setExportData((prev) => ({
                 ...prev,
@@ -811,6 +812,7 @@ export default function ControlPanel(props) {
               const src = jsonToPostgreSQL({
                 tables: tables,
                 references: relationships,
+                types: types,
               });
               setExportData((prev) => ({
                 ...prev,
