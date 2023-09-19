@@ -7,15 +7,28 @@ import {
   Col,
   Button,
   Checkbox,
+  Popover,
+  Table,
 } from "@douyinfe/semi-ui";
 import {
   IconRowsStroked,
   IconDeleteStroked,
   IconLoopTextStroked,
+  IconMore,
 } from "@douyinfe/semi-icons";
 import { Cardinality, Constraint } from "../data/data";
 
 export default function ReferenceOverview(props) {
+  const columns = [
+    {
+      title: "Primary",
+      dataIndex: "primary",
+    },
+    {
+      title: "Foreign",
+      dataIndex: "foreign",
+    },
+  ];
   return (
     <Collapse>
       {props.relationships.map((r, i) => (
@@ -29,20 +42,57 @@ export default function ReferenceOverview(props) {
           itemKey={`${i}`}
         >
           <Form>
-            <Form.Input initValue={r.name} field="name" label="Name" />
             <div className="flex justify-between items-center my-1">
-              <div className="me-1">
+              <div className="me-3">
                 <strong>Primary: </strong>
-                {props.tables[r.startTableId].name}
+                {props.tables[r.endTableId].name}
               </div>
               <div className="mx-1">
                 <strong>Foreign: </strong>
-                {props.tables[r.endTableId].name}
+                {props.tables[r.startTableId].name}
               </div>
               <div className="ms-1">
-                <Button icon={<IconLoopTextStroked />}>Swap</Button>
+                <Popover
+                  content={
+                    <div className="p-2 w-[260px]">
+                      <Table
+                        columns={columns}
+                        dataSource={[
+                          {
+                            key: "1",
+                            foreign: props.tables[r.startTableId].name,
+                            primary: props.tables[r.endTableId].name,
+                          },
+                          {
+                            key: "2",
+                            foreign:
+                              props.tables[r.startTableId].fields[
+                                r.startFieldId
+                              ].name,
+                            primary:
+                              props.tables[r.endTableId].fields[r.endFieldId]
+                                .name,
+                          },
+                        ]}
+                        pagination={false}
+                        bordered
+                      />
+                      <div className="mt-2">
+                        <Button icon={<IconLoopTextStroked />} block>
+                          Swap
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                  trigger="click"
+                  position="rightTop"
+                  showArrow
+                >
+                  <Button icon={<IconMore />} type="tertiary"></Button>
+                </Popover>
               </div>
             </div>
+            <Form.Input initValue={r.name} field="name" label="Name" />
             <Form.Select
               optionList={Object.values(Cardinality).map((v) => ({
                 label: v,
@@ -79,7 +129,7 @@ export default function ReferenceOverview(props) {
                 ></Form.Select>
               </Col>
             </Row>
-            <div className="flex justify-between items-center my-2">
+            <div className="flex justify-between items-center my-3">
               <label htmlFor="unique" className="font-medium text-black">
                 Mandetory
               </label>
