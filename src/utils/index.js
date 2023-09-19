@@ -120,10 +120,62 @@ function validateDiagram(diagram) {
   const duplicateTableNames = {};
 
   diagram.tables.forEach((table) => {
+    if (table.name === "") {
+      issues.push(`Declared a table with no name`);
+    }
+
     if (duplicateTableNames[table.name]) {
-      issues.push(`Duplicate table name: "${table.name}"`);
+      issues.push(`Duplicate table by the name "${table.name}"`);
     } else {
       duplicateTableNames[table.name] = true;
+    }
+
+    const duplicateFieldNames = {};
+    let hasPrimaryKey = false;
+
+    table.fields.forEach((field) => {
+      if (field.primary) {
+        hasPrimaryKey = true;
+      }
+      if (field.name === "") {
+        issues.push(`Empty field name in table "${table.name}"`);
+      }
+      if (field.type === "") {
+        issues.push(`Empty field type in table "${table.name}"`);
+      }
+      if (duplicateFieldNames[field.name]) {
+        issues.push(`Duplicate table fields in table "${table.name}"`);
+      } else {
+        duplicateFieldNames[field.name] = true;
+      }
+    });
+
+    const duplicateIndices = {};
+    table.indices.forEach((index) => {
+      if (duplicateIndices[index.name]) {
+        issues.push(`Duplicate index by the name "${index.name}"`);
+      } else {
+        duplicateIndices[index.name] = true;
+      }
+    });
+
+    table.indices.forEach((index) => {
+      if (index.fields.length === 0) {
+        issues.push(`Empty index type in table "${table.name}"`);
+      }
+    });
+
+    if (!hasPrimaryKey) {
+      issues.push(`Table "${table.name}" has no primary key`);
+    }
+  });
+
+  const duplicateFKName = {};
+  diagram.relationships.forEach((relationship) => {
+    if (duplicateFKName[relationship.name]) {
+      issues.push(`Duplicate relationship by the name "${relationship.name}"`);
+    } else {
+      duplicateFKName[relationship.name] = true;
     }
   });
 

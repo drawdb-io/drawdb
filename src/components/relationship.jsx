@@ -13,9 +13,13 @@ export default function Relationship(props) {
       r = Math.abs(y2 - y1) / 3;
       if (r <= 2) {
         if (x1 + tableWidth <= x2)
-          return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x2} ${y2}`;
+          return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x2 + 0.1} ${
+            y2 + 0.1
+          }`;
         else if (x2 + tableWidth < x1)
-          return `M ${x2 + tableWidth - 2 * offsetX} ${y2} L ${x1} ${y1}`;
+          return `M ${x2 + tableWidth - 2 * offsetX} ${y2} L ${x1 + 0.1} ${
+            y1 + 0.1
+          }`;
       }
     }
 
