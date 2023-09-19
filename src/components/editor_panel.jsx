@@ -10,7 +10,8 @@ import html2canvas from "html2canvas";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
-import DiagramOverview from "./diagram_overview";
+import TableOverview from "./table_overview";
+import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
 
 const myTheme = createTheme({
@@ -32,13 +33,20 @@ export default function EditorPanel(props) {
   const map = useRef(new Map());
 
   const tabList = [
-    { tab: "Overview", itemKey: "1" },
-    { tab: "Shapes", itemKey: "2" },
-    { tab: "Editor", itemKey: "3" },
+    { tab: "Tables", itemKey: "1" },
+    { tab: "References", itemKey: "2" },
+    { tab: "Shapes", itemKey: "3" },
+    { tab: "Editor", itemKey: "4" },
   ];
   const contentList = [
     <div>
-      <DiagramOverview tables={props.tables} setTables={props.setTables} />
+      <TableOverview tables={props.tables} setTables={props.setTables} />
+    </div>,
+    <div>
+      <ReferenceOverview
+        relationships={props.relationships}
+        tables={props.tables}
+      />
     </div>,
     <div>
       <Shape />
@@ -81,7 +89,7 @@ export default function EditorPanel(props) {
           onClick={() => {
             const newTable = {
               id: props.tables.length,
-              name: `Table ${props.tables.length}`,
+              name: `table_${props.tables.length}`,
               x: 0,
               y: 0,
               fields: [
@@ -141,7 +149,7 @@ export default function EditorPanel(props) {
                   map.current.set(t.table, t);
                   const newTable = {
                     id: props.tables.length,
-                    name: `Table ${props.tables.length}`,
+                    name: `table_${props.tables.length}`,
                     x: 0,
                     y: 0,
                     fields: [

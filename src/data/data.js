@@ -27,6 +27,7 @@ const menu = {
     Grid: [],
     Sidebar: [],
     Editor: [],
+    "Strict mode": [],
     "Reset view": [],
     "View schema": [],
     Theme: ["Light", "Dark"],
@@ -97,6 +98,6 @@ const tableThemes = [
   "#ff9159",
 ];
 
-const defaultTableTheme = "#9e9e9e"
+const defaultTableTheme = "#9e9e9e";
 
 export { menu, sqlDataTypes, tableThemes, defaultTableTheme };

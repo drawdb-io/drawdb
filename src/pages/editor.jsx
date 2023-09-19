@@ -10,6 +10,7 @@ import EditorPanel from "../components/editor_panel";
 export default function Editor(props) {
   const [code, setCode] = useState("");
   const [tables, setTables] = useState([]);
+  const [relationships, setRelationships] = useState([]);
 
   return (
     <>
@@ -22,12 +23,16 @@ export default function Editor(props) {
             setTables={setTables}
             code={code}
             setCode={setCode}
+            relationships={relationships}
+            setRelationships={setRelationships}
           />
           <Canvas
             tables={tables}
             setTables={setTables}
             code={code}
             setCode={setCode}
+            relationships={relationships}
+            setRelationships={setRelationships}
           />
         </DndProvider>
         <Sidebar />

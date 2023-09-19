@@ -20,7 +20,7 @@ import {
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
 
-export default function DiagramOverview(props) {
+export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
 
   const updateColor = (id, c) => {

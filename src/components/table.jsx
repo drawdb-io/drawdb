@@ -205,7 +205,7 @@ export default function Table(props) {
                     </p>
                     <p className="text-slate-600">
                       <strong>Comment :</strong>{" "}
-                      {e.default === "" ? "Not comment" : e.comment}
+                      {e.comment === "" ? "Not comment" : e.comment}
                     </p>
                   </div>
                 }

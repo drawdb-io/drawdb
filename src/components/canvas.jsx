@@ -4,6 +4,22 @@ import Table from "./table";
 import { defaultTableTheme } from "../data/data";
 
 export default function Canvas(props) {
+  const Cardinality = {
+    NONE: -1,
+    ONE_TO_ONE: 0,
+    ONE_TO_MANY: 1,
+    MANY_TO_ONE: 2,
+    MANY_TO_MANY: 3,
+  };
+
+  const Constraint = {
+    none: "None",
+    restrict: "Restrict",
+    cascade: "Cascade",
+    setNull: "Set null",
+    setDefault: "Set default",
+  };
+
   const [dragging, setDragging] = useState(-1);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
@@ -15,8 +31,12 @@ export default function Canvas(props) {
     startY: 0,
     endX: 0,
     endY: 0,
+    name: "",
+    cardinality: Cardinality.NONE,
+    updateConstraint: Constraint.none,
+    deleteConstraint: Constraint.none,
+    mandatory: false,
   });
-  const [relationships, setRelationships] = useState([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [onRect, setOnRect] = useState({
     tableId: -1,
@@ -64,8 +84,8 @@ export default function Canvas(props) {
         }))
       );
 
-      setRelationships(
-        relationships.map((r) => ({
+      props.setRelationships(
+        props.relationships.map((r) => ({
           ...r,
           startX: r.startX + dx,
           startY: r.startY + dy,
@@ -86,7 +106,7 @@ export default function Canvas(props) {
         return t;
       });
       props.setTables(updatedTables);
-      const updatedRelationShips = relationships.map((r) => {
+      const updatedRelationShips = props.relationships.map((r) => {
         if (r.startTableId === dragging) {
           return {
             ...r,
@@ -103,7 +123,7 @@ export default function Canvas(props) {
         }
         return r;
       });
-      setRelationships(updatedRelationShips);
+      props.setRelationships(updatedRelationShips);
     }
   };
 
@@ -140,14 +160,22 @@ export default function Canvas(props) {
   const handleLinking = () => {
     if (onRect.tableId < 0) return;
     if (onRect.field < 0) return;
-    setRelationships((prev) => [
+    if (
+      line.startTableId === onRect.tableId &&
+      line.startFieldId === onRect.field
+    )
+      return;
+    props.setRelationships((prev) => [
       ...prev,
       {
         ...line,
-        endX: props.tables[onRect.tableId].x + 15,
-        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 40 + 19,
         endTableId: onRect.tableId,
         endFieldId: onRect.field,
+        endX: props.tables[onRect.tableId].x + 15,
+        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 40 + 19,
+        name: `${props.tables[line.startTableId].name}_to_${
+          props.tables[onRect.tableId].name
+        }`,
       },
     ]);
   };
@@ -162,7 +190,7 @@ export default function Canvas(props) {
         const y = offset.y - canvasRect.top - 100 * 0.5;
         const newTable = {
           id: props.tables.length,
-          name: `Table ${props.tables.length}`,
+          name: `table_${props.tables.length}`,
           x: x,
           y: y,
           fields: [
@@ -195,6 +223,7 @@ export default function Canvas(props) {
     }),
     [props.tables]
   );
+
   return (
     <div ref={drop} className="flex-grow" id="canvas">
       <div ref={canvas} className="w-full h-screen">
@@ -259,7 +288,7 @@ export default function Canvas(props) {
               strokeDasharray="5,5"
             />
           )}
-          {relationships.map((e, i) => (
+          {props.relationships.map((e, i) => (
             <line
               key={i}
               x1={e.startX}
@@ -267,6 +296,8 @@ export default function Canvas(props) {
               x2={e.endX}
               y2={e.endY}
               stroke="gray"
+              strokeWidth={2.5}
+              onClick={() => {}}
             />
           ))}
         </svg>
