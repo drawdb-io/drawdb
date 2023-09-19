@@ -319,7 +319,7 @@ export default function ControlPanel() {
                         </Dropdown.Menu>
                       }
                     >
-                      <div className="px-3 py-1 hover:bg-gray-100 rounded-md">
+                      <div className="px-3 py-1 hover:bg-gray-100 rounded">
                         {category}
                       </div>
                     </Dropdown>
@@ -363,7 +363,7 @@ export default function ControlPanel() {
           </div>
         </nav>
       )}
-      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700">
+      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700 select-none">
         <div className="flex justify-start items-center">
           <Dropdown
             position="bottomLeft"
@@ -396,7 +396,7 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded">
               <i className="fa-solid fa-table-list"></i> <IconCaretdown />
             </div>
           </Dropdown>
@@ -435,33 +435,27 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded">
               zoom <IconCaretdown />
             </div>
           </Dropdown>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            className="py-1 px-2 hover:bg-slate-200 rounded"
             title="Zoom in"
           >
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            className="py-1 px-2 hover:bg-slate-200 rounded"
             title="Zoom out"
           >
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
-            title="Undo"
-          >
+          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Undo">
             <i className="fa-solid fa-rotate-left "></i>
           </button>
-          <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
-            title="Redo"
-          >
+          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Redo">
             <i className="fa-solid fa-rotate-right"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
@@ -478,31 +472,25 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded">
               <i className="fa-solid fa-plus"></i> <IconCaretdown />
             </div>
           </Dropdown>
-          <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
-            title="Edit"
-          >
+          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Edit">
             <i className="fa-solid fa-pen-to-square"></i>
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            className="py-1 px-2 hover:bg-slate-200 rounded"
             title="Delete"
           >
             <i className="fa-solid fa-trash"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
-            title="Save"
-          >
+          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Save">
             <i className="fa-regular fa-floppy-disk"></i>
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            className="py-1 px-2 hover:bg-slate-200 rounded"
             title="Commit"
           >
             <i className="fa-solid fa-code-branch"></i>

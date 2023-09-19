@@ -12,12 +12,12 @@ export default function Editor(props) {
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
   const [resize, setResize] = useState(false);
-  const [width, setWidth] = useState(320);
+  const [width, setWidth] = useState(340);
 
   const dragHandler = (e) => {
     if (!resize) return;
     const w = e.clientX;
-    if (w > 320) setWidth(w);
+    if (w > 340) setWidth(w);
   };
 
   return (

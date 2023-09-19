@@ -30,40 +30,32 @@ const EditorPanel = (props) => {
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
-    { tab: "References", itemKey: "2" },
+    { tab: "Relationships", itemKey: "2" },
     { tab: "Shapes", itemKey: "3" },
     { tab: "Editor", itemKey: "4" },
   ];
   const contentList = [
-    <div>
-      <TableOverview tables={props.tables} setTables={props.setTables} />
-    </div>,
-    <div>
-      <ReferenceOverview
-        relationships={props.relationships}
-        setRelationships={props.setRelationships}
-        tables={props.tables}
-      />
-    </div>,
-    <div>
-      <Shape />
-    </div>,
-    <div>
-      <CodeMirror
-        value={props.code}
-        height="100%"
-        theme={myTheme}
-        extensions={[sql()]}
-        onChange={(e) => {
-          props.setCode(e);
-        }}
-      />
-    </div>,
+    <TableOverview tables={props.tables} setTables={props.setTables} />,
+    <ReferenceOverview
+      relationships={props.relationships}
+      setRelationships={props.setRelationships}
+      tables={props.tables}
+    />,
+    <Shape />,
+    <CodeMirror
+      value={props.code}
+      height="100%"
+      theme={myTheme}
+      extensions={[sql()]}
+      onChange={(e) => {
+        props.setCode(e);
+      }}
+    />,
   ];
 
   return (
     <div className="h-screen flex overflow-clip relative">
-      <div className="mt-2" style={{ width: `${props.width}px` }}>
+      <div style={{ width: `${props.width}px` }}>
         <Tabs
           type="card"
           tabList={tabList}
@@ -72,7 +64,7 @@ const EditorPanel = (props) => {
           }}
           collapsible
         >
-          {contentList[parseInt(tab) - 1]}
+          <div className="p-2">{contentList[parseInt(tab) - 1]}</div>
         </Tabs>
         <button
           onClick={() => {
@@ -151,7 +143,9 @@ const EditorPanel = (props) => {
         </button>
       </div>
       <div
-        className={`flex justify-center items-center p-1 h-full hover:bg-slate-300 cursor-col-resize ${props.resize? "bg-slate-300": ""}`}
+        className={`flex justify-center items-center p-1 h-full hover:bg-slate-300 cursor-col-resize ${
+          props.resize ? "bg-slate-300" : ""
+        }`}
         onMouseDown={() => props.setResize(true)}
       >
         <div className="w-1 border-x border-white h-1/6" />

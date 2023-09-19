@@ -80,67 +80,65 @@ export default function TableOverview(props) {
 
   return (
     <>
-      <div className="p-2">
-        <Row gutter={6}>
-          <Col span={16}>
-            <AutoComplete
-              data={filteredResult}
-              value={value}
-              showClear
-              prefix={<IconSearch />}
-              placeholder="Search..."
-              emptyContent={<div className="p-3">No tables found</div>}
-              onSearch={(v) => handleStringSearch(v)}
-              onChange={(v) => setValue(v)}
-              onSelect={(v) => {
-                const { id, name } = props.tables.find((t) => t.name === v);
-                setTableActiveKey(`${id}`);
-                document
-                  .getElementById(`${name}_scroll_id`)
-                  .scrollIntoView({ behavior: "smooth" });
-              }}
-              className="w-full"
-            />
-          </Col>
-          <Col span={8}>
-            <Button
-              icon={<IconPlus />}
-              block
-              onClick={() => {
-                const id =
-                  props.tables.length === 0
-                    ? 0
-                    : props.tables[props.tables.length - 1].id + 1;
-                const newTable = {
-                  id: id,
-                  name: `table_${id}`,
-                  x: 0,
-                  y: 0,
-                  fields: [
-                    {
-                      name: "id",
-                      type: "UUID",
-                      default: "",
-                      check: "",
-                      primary: true,
-                      unique: true,
-                      notNull: true,
-                      increment: true,
-                      comment: "",
-                    },
-                  ],
-                  comment: "",
-                  indices: [],
-                  color: defaultTableTheme,
-                };
-                props.setTables((prev) => [...prev, newTable]);
-              }}
-            >
-              Add table
-            </Button>
-          </Col>
-        </Row>
-      </div>
+      <Row gutter={6}>
+        <Col span={16}>
+          <AutoComplete
+            data={filteredResult}
+            value={value}
+            showClear
+            prefix={<IconSearch />}
+            placeholder="Search..."
+            emptyContent={<div className="p-3">No tables found</div>}
+            onSearch={(v) => handleStringSearch(v)}
+            onChange={(v) => setValue(v)}
+            onSelect={(v) => {
+              const { id } = props.tables.find((t) => t.name === v);
+              setTableActiveKey(`${id}`);
+              document
+                .getElementById(`scroll_table_${id}`)
+                .scrollIntoView({ behavior: "smooth" });
+            }}
+            className="w-full"
+          />
+        </Col>
+        <Col span={8}>
+          <Button
+            icon={<IconPlus />}
+            block
+            onClick={() => {
+              const id =
+                props.tables.length === 0
+                  ? 0
+                  : props.tables[props.tables.length - 1].id + 1;
+              const newTable = {
+                id: id,
+                name: `table_${id}`,
+                x: 0,
+                y: 0,
+                fields: [
+                  {
+                    name: "id",
+                    type: "UUID",
+                    default: "",
+                    check: "",
+                    primary: true,
+                    unique: true,
+                    notNull: true,
+                    increment: true,
+                    comment: "",
+                  },
+                ],
+                comment: "",
+                indices: [],
+                color: defaultTableTheme,
+              };
+              props.setTables((prev) => [...prev, newTable]);
+            }}
+          >
+            Add table
+          </Button>
+        </Col>
+      </Row>
       <Collapse
         activeKey={tableActiveKey}
         onChange={(k) => setTableActiveKey(k)}
@@ -163,7 +161,7 @@ export default function TableOverview(props) {
           </div>
         ) : (
           props.tables.map((t, i) => (
-            <div id={`${t.name}_scroll_id`} key={t.id}>
+            <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
                 {t.fields.map((f, j) => (
                   <Form
