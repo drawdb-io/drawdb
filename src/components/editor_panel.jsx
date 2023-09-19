@@ -57,6 +57,11 @@ export default function EditorPanel(props) {
               label: `rect ${props.rectangles.length + 1}`,
             };
             props.setRectangles([...props.rectangles, newRectangle]);
+            props.setCode((prev) =>
+              prev === ""
+                ? `CREATE TABLE \`${newRectangle.label}\`;`
+                : `${prev}\n\nCREATE TABLE \`${newRectangle.label}\`;`
+            );
           }}
         >
           add

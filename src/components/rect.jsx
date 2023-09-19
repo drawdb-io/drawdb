@@ -1,9 +1,10 @@
 import React from "react";
+import { Button } from "@arco-design/web-react";
 
 const Rect = (props) => {
   return (
     <g>
-      <rect
+      <foreignObject
         key={props.id}
         x={props.x}
         y={props.y}
@@ -11,13 +12,16 @@ const Rect = (props) => {
         height={props.height}
         style={{ fill: "blue", cursor: "move" }}
         onMouseDown={props.onMouseDown}
-      />
-      <foreignObject x={props.x + 10} y={props.y + 25} width={80} height={50}>
-        <body xmlns="http://www.w3.org/1999/xhtml">
+      >
+        <div xmlns="http://www.w3.org/1999/xhtml" className="bg-blue p-3">
+          <div className="text-white">{props.label}</div>
           <form onSubmit={(e) => e.preventDefault()}>
             <input type="text" className="w-full" />
           </form>
-        </body>
+          <Button type="secondary" onClick={(e) => console.log("sup")}>
+            sup
+          </Button>
+        </div>
       </foreignObject>
     </g>
   );
