@@ -16,8 +16,8 @@ export default function Area(props) {
       y: props.areaData.y,
       width: props.areaData.width,
       height: props.areaData.height,
-      mouseX: e.clientX,
-      mouseY: e.clientY,
+      mouseX: e.clientX/props.zoom,
+      mouseY: e.clientY/props.zoom,
     });
   };
 

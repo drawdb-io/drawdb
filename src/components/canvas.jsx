@@ -1,12 +1,6 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
-import { useDrop } from "react-dnd";
 import Table from "./table";
-import {
-  defaultTableTheme,
-  Cardinality,
-  Constraint,
-  ObjectType,
-} from "../data/data";
+import { Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
 import { AreaContext, NoteContext, TableContext } from "../pages/editor";
@@ -60,22 +54,22 @@ export default function Canvas(props) {
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setOffset({
-        x: clientX - table.x,
-        y: clientY - table.y,
+        x: clientX / zoom - table.x,
+        y: clientY / zoom - table.y,
       });
       setDragging([ObjectType.TABLE, id]);
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
       setOffset({
-        x: clientX - area.x,
-        y: clientY - area.y,
+        x: clientX / zoom - area.x,
+        y: clientY / zoom - area.y,
       });
       setDragging([ObjectType.AREA, id]);
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
       setOffset({
-        x: clientX - note.x,
-        y: clientY - note.y,
+        x: clientX / zoom - note.x,
+        y: clientY / zoom - note.y,
       });
       setDragging([ObjectType.NOTE, id]);
     }
@@ -89,16 +83,16 @@ export default function Canvas(props) {
 
       setLine({
         ...line,
-        endX: e.clientX - offsetX,
-        endY: e.clientY - offsetY,
+        endX: (e.clientX - offsetX) / zoom,
+        endY: (e.clientY - offsetY) / zoom,
       });
     } else if (
       panning &&
       dragging[0] === ObjectType.NONE &&
       areaResize.id === -1
     ) {
-      const dx = e.clientX - panOffset.x;
-      const dy = e.clientY - panOffset.y;
+      const dx = (e.clientX - panOffset.x) / zoom;
+      const dy = (e.clientY - panOffset.y) / zoom;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
       setTables((prev) =>
@@ -112,10 +106,10 @@ export default function Canvas(props) {
       setRelationships(
         relationships.map((r) => ({
           ...r,
-          startX: r.startX + dx,
-          startY: r.startY + dy,
-          endX: r.endX + dx,
-          endY: r.endY + dy,
+          startX: tables[r.startTableId].x + 15,
+          startY: tables[r.startTableId].y + r.startFieldId * 36 + 69,
+          endX: tables[r.endTableId].x + 15,
+          endY: tables[r.endTableId].y + r.endFieldId * 36 + 69,
         }))
       );
 
@@ -125,58 +119,59 @@ export default function Canvas(props) {
     } else if (dragging[0] === ObjectType.TABLE && dragging[1] >= 0) {
       const updatedTables = tables.map((t) => {
         if (t.id === dragging[1]) {
-          const updatedTable = {
+          return {
             ...t,
-            x: e.clientX - offset.x,
-            y: e.clientY - offset.y,
+            x: e.clientX / zoom - offset.x,
+            y: e.clientY / zoom - offset.y,
           };
-          return updatedTable;
         }
         return t;
       });
       setTables(updatedTables);
-      const updatedRelationShips = relationships.map((r) => {
-        if (r.startTableId === dragging[1]) {
-          return {
-            ...r,
-            startX: tables[r.startTableId].x + 15,
-            startY: tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
-          };
-        } else if (r.endTableId === dragging[1]) {
-          return {
-            ...r,
-            endX: tables[r.endTableId].x + 15,
-            endY: tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
-          };
-        }
-        return r;
-      });
-      setRelationships(updatedRelationShips);
+      setRelationships((prev) =>
+        prev.map((r) => {
+          if (r.startTableId === dragging[1]) {
+            return {
+              ...r,
+              startX: tables[r.startTableId].x + 15,
+              startY: tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
+            };
+          } else if (r.endTableId === dragging[1]) {
+            return {
+              ...r,
+              endX: tables[r.endTableId].x + 15,
+              endY: tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
+            };
+          }
+          return r;
+        })
+      );
     } else if (
       dragging[0] === ObjectType.AREA &&
       dragging[1] >= 0 &&
       areaResize.id === -1
     ) {
-      const updatedAreas = areas.map((t) => {
-        if (t.id === dragging[1]) {
-          const updatedArea = {
-            ...t,
-            x: e.clientX - offset.x,
-            y: e.clientY - offset.y,
-          };
-          return updatedArea;
-        }
-        return t;
-      });
-      setAreas(updatedAreas);
+      setAreas((prev) =>
+        prev.map((t) => {
+          if (t.id === dragging[1]) {
+            const updatedArea = {
+              ...t,
+              x: e.clientX / zoom - offset.x,
+              y: e.clientY / zoom - offset.y,
+            };
+            return updatedArea;
+          }
+          return t;
+        })
+      );
     } else if (dragging[0] === ObjectType.NOTE && dragging[1] >= 0) {
       setNotes((prev) =>
         prev.map((t) => {
           if (t.id === dragging[1]) {
             return {
               ...t,
-              x: e.clientX - offset.x,
-              y: e.clientY - offset.y,
+              x: e.clientX / zoom - offset.x,
+              y: e.clientY / zoom - offset.y,
             };
           }
           return t;
@@ -189,23 +184,25 @@ export default function Canvas(props) {
       let newY = initCoords.y;
       let newWidth = initCoords.width;
       let newHeight = initCoords.height;
+      const mouseX = e.clientX / zoom;
+      const mouseY = e.clientY / zoom;
       setPanning(false);
       if (areaResize.dir === "br") {
-        newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
-        newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
+        newWidth = initCoords.width + (mouseX - initCoords.mouseX);
+        newHeight = initCoords.height + (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "tl") {
-        newX = initCoords.x + (e.clientX - initCoords.mouseX);
-        newY = initCoords.y + (e.clientY - initCoords.mouseY);
-        newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
-        newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
+        newX = initCoords.x + (mouseX - initCoords.mouseX);
+        newY = initCoords.y + (mouseY - initCoords.mouseY);
+        newWidth = initCoords.width - (mouseX - initCoords.mouseX);
+        newHeight = initCoords.height - (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "tr") {
-        newY = initCoords.y + (e.clientY - initCoords.mouseY);
-        newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
-        newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
+        newY = initCoords.y + (mouseY - initCoords.mouseY);
+        newWidth = initCoords.width + (mouseX - initCoords.mouseX);
+        newHeight = initCoords.height - (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "bl") {
-        newX = initCoords.x + (e.clientX - initCoords.mouseX);
-        newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
-        newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
+        newX = initCoords.x + (mouseX - initCoords.mouseX);
+        newWidth = initCoords.width - (mouseX - initCoords.mouseX);
+        newHeight = initCoords.height + (mouseY - initCoords.mouseY);
       }
 
       setAreas((prev) =>
@@ -278,83 +275,12 @@ export default function Canvas(props) {
     ]);
   };
 
-  const addTable = (x, y) => {
-    const newTable = {
-      id: tables.length,
-      name: `table_${tables.length}`,
-      x: x,
-      y: y,
-      fields: [
-        {
-          name: "id",
-          type: "UUID",
-          check: "",
-          default: "",
-          primary: true,
-          unique: true,
-          notNull: true,
-          increment: true,
-          comment: "",
-        },
-      ],
-      comment: "",
-      indices: [],
-      color: defaultTableTheme,
-    };
-    setTables((prev) => [...prev, newTable]);
-    props.setCode((prev) =>
-      prev === ""
-        ? `CREATE TABLE \`${newTable.name}\`;`
-        : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
-    );
-  };
-
-  const addArea = (x, y) => {
-    const newArea = {
-      id: areas.length,
-      name: `area_${areas.length}`,
-      x: x,
-      y: y,
-      width: 200,
-      height: 200,
-      color: defaultTableTheme,
-    };
-    setAreas((prev) => [...prev, newArea]);
-  };
-
-  const [, drop] = useDrop(
-    () => ({
-      accept: "CARD",
-      drop: (item, monitor) => {
-        const offset = monitor.getClientOffset();
-        const canvasRect = canvas.current.getBoundingClientRect();
-        const x = offset.x - canvasRect.left - 100 * 0.5;
-        const y = offset.y - canvasRect.top - 100 * 0.5;
-        switch (item.type) {
-          case ObjectType.TABLE:
-            addTable(x, y);
-            break;
-          case ObjectType.AREA:
-            addArea(x, y);
-            break;
-          default:
-            break;
-        }
-      },
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    [tables, areas]
-  );
-
   const handleMouseWheel = (e) => {
-    // const zoomDirection = e.deltaY > 0 ? "out" : "in";
     e.preventDefault();
-    if (e.deltaY <= 0 ) {
-      setZoom((prev) => prev * 1.1);
+    if (e.deltaY <= 0) {
+      setZoom((prev) => prev * 1.05);
     } else {
-      setZoom((prev) => prev / 1.1);
+      setZoom((prev) => prev / 1.05);
     }
   };
 
@@ -369,7 +295,7 @@ export default function Canvas(props) {
   }, []);
 
   return (
-    <div ref={drop} className="flex-grow h-full" id="canvas">
+    <div className="flex-grow h-full" id="canvas">
       <div ref={canvas} className="w-full h-full">
         <svg
           onMouseMove={handleMouseMove}
@@ -417,6 +343,7 @@ export default function Canvas(props) {
                 setResize={setAreaResize}
                 initCoords={initCoords}
                 setInitCoords={setInitCoords}
+                zoom={zoom}
               ></Area>
             ))}
             {tables.map((table) => (
