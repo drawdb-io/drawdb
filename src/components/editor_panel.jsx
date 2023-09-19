@@ -94,6 +94,8 @@ export default function EditorPanel(props) {
                   increment: true,
                 },
               ],
+              comment: "",
+              indices: [],
             };
             props.setTables((prev) => {
               const updatedTables = [...prev, newTable];
@@ -149,6 +151,8 @@ export default function EditorPanel(props) {
                         increment: true,
                       },
                     ],
+                    comment: "",
+                    indices: [],
                   };
                   props.setTables((prev) => [...prev, newTable]);
                 });

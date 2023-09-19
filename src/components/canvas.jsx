@@ -175,6 +175,8 @@ export default function Canvas(props) {
               increment: true,
             },
           ],
+          comment: "",
+          indices: [],
         };
         props.setTables((prev) => [...prev, newTable]);
         props.setCode((prev) =>

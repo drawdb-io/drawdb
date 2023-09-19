@@ -75,7 +75,7 @@ export default function Table(props) {
     setVisible(false);
   };
 
-  const height = props.tableData.fields.length * 36 + 40 + 4;
+  const height = props.tableData.fields.length * 36 + 40 + 4 + 36;
 
   const onCheck = (checkedValues) => {
     setField({
@@ -281,6 +281,9 @@ export default function Table(props) {
               </Popover>
             );
           })}
+          <div className="h-[36px] p-2">
+           { props.tableData.comment===""? "No comment": props.tableData.comment}
+          </div>
         </div>
       </foreignObject>
 
