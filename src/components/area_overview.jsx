@@ -28,7 +28,7 @@ import {
 import { AreaContext, UndoRedoContext } from "../pages/editor";
 
 export default function AreaOverview(props) {
-  const { areas, setAreas, addArea, deleteArea } = useContext(AreaContext);
+  const { areas, addArea, deleteArea, updateArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [editField, setEditField] = useState({});
   const [value, setValue] = useState("");
@@ -45,20 +45,6 @@ export default function AreaOverview(props) {
           return t.name;
         })
         .filter((i) => i.includes(value))
-    );
-  };
-
-  const updateArea = (aid, updatedValues) => {
-    setAreas((prev) =>
-      prev.map((a, i) => {
-        if (aid === i) {
-          return {
-            ...a,
-            ...updatedValues,
-          };
-        }
-        return a;
-      })
     );
   };
 
@@ -134,7 +120,6 @@ export default function AreaOverview(props) {
                       },
                     ]);
                     setRedoStack([]);
-                    setEditField({});
                   }}
                 />
               </Col>
@@ -176,7 +161,6 @@ export default function AreaOverview(props) {
                                     },
                                   ]);
                                   setRedoStack([]);
-                                  setEditField({});
                                   updateArea(i, { color: c });
                                 }}
                               >
@@ -210,7 +194,6 @@ export default function AreaOverview(props) {
                                     },
                                   ]);
                                   setRedoStack([]);
-                                  setEditField({});
                                   updateArea(i, { color: c });
                                 }}
                               >

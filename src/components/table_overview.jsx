@@ -38,7 +38,7 @@ import { TableContext, UndoRedoContext } from "../pages/editor";
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [value, setValue] = useState("");
-  const { tables, setTables, addTable, deleteTable, updateField } =
+  const { tables, addTable, deleteTable, updateField, updateTable } =
     useContext(TableContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [editField, setEditField] = useState({});
@@ -58,20 +58,6 @@ export default function TableOverview(props) {
     );
   };
 
-  const updateTable = (tid, updatedValues) => {
-    setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
-          return {
-            ...table,
-            ...updatedValues,
-          };
-        }
-        return table;
-      })
-    );
-  };
-
   return (
     <>
       <Row gutter={6}>
@@ -82,7 +68,6 @@ export default function TableOverview(props) {
             showClear
             prefix={<IconSearch />}
             placeholder="Search..."
-            emptyContent={<div className="p-3">No tables found</div>}
             onSearch={(v) => handleStringSearch(v)}
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
@@ -138,16 +123,9 @@ export default function TableOverview(props) {
                       <Input
                         field="name"
                         value={f.name}
-                        className="m-0"
                         placeholder="Name"
                         onChange={(value) => updateField(i, j, { name: value })}
-                        onFocus={(e) =>
-                          setEditField({
-                            tid: i,
-                            fid: j,
-                            values: { name: e.target.value },
-                          })
-                        }
+                        onFocus={(e) => setEditField({ name: e.target.value })}
                         onBlur={(e) => {
                           if (e.target.value === editField.name) return;
                           setUndoStack((prev) => [
@@ -156,18 +134,13 @@ export default function TableOverview(props) {
                               action: Action.EDIT,
                               element: ObjectType.TABLE,
                               component: "field",
-                              data: {
-                                undo: editField,
-                                redo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { name: e.target.value },
-                                },
-                              },
+                              tid: i,
+                              fid: j,
+                              undo: editField,
+                              redo: { name: e.target.value },
                             },
                           ]);
                           setRedoStack([]);
-                          setEditField({});
                         }}
                       />
                     </Col>
@@ -191,22 +164,13 @@ export default function TableOverview(props) {
                               action: Action.EDIT,
                               element: ObjectType.TABLE,
                               component: "field",
-                              data: {
-                                undo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { type: f.type },
-                                },
-                                redo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { type: value },
-                                },
-                              },
+                              tid: i,
+                              fid: j,
+                              undo: { type: f.type },
+                              redo: { type: value },
                             },
                           ]);
                           setRedoStack([]);
-                          setEditField({});
                           updateField(i, j, { type: value });
                         }}
                       ></Select>
@@ -223,22 +187,13 @@ export default function TableOverview(props) {
                               action: Action.EDIT,
                               element: ObjectType.TABLE,
                               component: "field",
-                              data: {
-                                undo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { notNull: f.notNull },
-                                },
-                                redo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { notNull: !f.notNull },
-                                },
-                              },
+                              tid: i,
+                              fid: j,
+                              undo: { notNull: f.notNull },
+                              redo: { notNull: !f.notNull },
                             },
                           ]);
                           setRedoStack([]);
-                          setEditField({});
                           updateField(i, j, { notNull: !f.notNull });
                         }}
                       >
@@ -257,22 +212,13 @@ export default function TableOverview(props) {
                               action: Action.EDIT,
                               element: ObjectType.TABLE,
                               component: "field",
-                              data: {
-                                undo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { primary: f.primary },
-                                },
-                                redo: {
-                                  tid: i,
-                                  fid: j,
-                                  values: { primary: !f.primary },
-                                },
-                              },
+                              tid: i,
+                              fid: j,
+                              undo: { primary: f.primary },
+                              redo: { primary: !f.primary },
                             },
                           ]);
                           setRedoStack([]);
-                          setEditField({});
                           updateField(i, j, { primary: !f.primary });
                         }}
                         icon={<IconKeyStroked />}
@@ -291,11 +237,7 @@ export default function TableOverview(props) {
                                 updateField(i, j, { default: value })
                               }
                               onFocus={(e) =>
-                                setEditField({
-                                  tid: i,
-                                  fid: j,
-                                  values: { default: e.target.value },
-                                })
+                                setEditField({ default: e.target.value })
                               }
                               onBlur={(e) => {
                                 if (e.target.value === editField.default)
@@ -306,18 +248,13 @@ export default function TableOverview(props) {
                                     action: Action.EDIT,
                                     element: ObjectType.TABLE,
                                     component: "field",
-                                    data: {
-                                      undo: editField,
-                                      redo: {
-                                        tid: i,
-                                        fid: j,
-                                        values: { default: e.target.value },
-                                      },
-                                    },
+                                    tid: i,
+                                    fid: j,
+                                    undo: editField,
+                                    redo: { default: e.target.value },
                                   },
                                 ]);
                                 setRedoStack([]);
-                                setEditField({});
                               }}
                             />
                             <div className="font-semibold">
@@ -331,11 +268,7 @@ export default function TableOverview(props) {
                                 updateField(i, j, { check: value })
                               }
                               onFocus={(e) =>
-                                setEditField({
-                                  tid: i,
-                                  fid: j,
-                                  values: { check: e.target.value },
-                                })
+                                setEditField({ check: e.target.value })
                               }
                               onBlur={(e) => {
                                 if (e.target.value === editField.check) return;
@@ -345,18 +278,13 @@ export default function TableOverview(props) {
                                     action: Action.EDIT,
                                     element: ObjectType.TABLE,
                                     component: "field",
-                                    data: {
-                                      undo: editField,
-                                      redo: {
-                                        tid: i,
-                                        fid: j,
-                                        values: { check: e.target.value },
-                                      },
-                                    },
+                                    tid: i,
+                                    fid: j,
+                                    undo: editField,
+                                    redo: { check: e.target.value },
                                   },
                                 ]);
                                 setRedoStack([]);
-                                setEditField({});
                               }}
                             />
                             <div className="flex justify-between items-center my-3">
@@ -371,28 +299,19 @@ export default function TableOverview(props) {
                                       action: Action.EDIT,
                                       element: ObjectType.TABLE,
                                       component: "field",
-                                      data: {
-                                        undo: {
-                                          tid: i,
-                                          fid: j,
-                                          values: {
-                                            [checkedValues.target.value]:
-                                              !checkedValues.target.checked,
-                                          },
-                                        },
-                                        redo: {
-                                          tid: i,
-                                          fid: j,
-                                          values: {
-                                            [checkedValues.target.value]:
-                                              checkedValues.target.checked,
-                                          },
-                                        },
+                                      tid: i,
+                                      fid: j,
+                                      undo: {
+                                        [checkedValues.target.value]:
+                                          !checkedValues.target.checked,
+                                      },
+                                      redo: {
+                                        [checkedValues.target.value]:
+                                          checkedValues.target.checked,
                                       },
                                     },
                                   ]);
                                   setRedoStack([]);
-                                  setEditField({});
                                   updateField(i, j, {
                                     [checkedValues.target.value]:
                                       checkedValues.target.checked,
@@ -412,28 +331,19 @@ export default function TableOverview(props) {
                                       action: Action.EDIT,
                                       element: ObjectType.TABLE,
                                       component: "field",
-                                      data: {
-                                        undo: {
-                                          tid: i,
-                                          fid: j,
-                                          values: {
-                                            [checkedValues.target.value]:
-                                              !checkedValues.target.checked,
-                                          },
-                                        },
-                                        redo: {
-                                          tid: i,
-                                          fid: j,
-                                          values: {
-                                            [checkedValues.target.value]:
-                                              checkedValues.target.checked,
-                                          },
-                                        },
+                                      tid: i,
+                                      fid: j,
+                                      undo: {
+                                        [checkedValues.target.value]:
+                                          !checkedValues.target.checked,
+                                      },
+                                      redo: {
+                                        [checkedValues.target.value]:
+                                          checkedValues.target.checked,
                                       },
                                     },
                                   ]);
                                   setRedoStack([]);
-                                  setEditField({});
                                   updateField(i, j, {
                                     [checkedValues.target.value]:
                                       checkedValues.target.checked,
@@ -453,11 +363,7 @@ export default function TableOverview(props) {
                                 updateField(i, j, { comment: value })
                               }
                               onFocus={(e) =>
-                                setEditField({
-                                  tid: i,
-                                  fid: j,
-                                  values: { comment: e.target.value },
-                                })
+                                setEditField({ comment: e.target.value })
                               }
                               onBlur={(e) => {
                                 if (e.target.value === editField.comment)
@@ -468,18 +374,13 @@ export default function TableOverview(props) {
                                     action: Action.EDIT,
                                     element: ObjectType.TABLE,
                                     component: "field",
-                                    data: {
-                                      undo: editField,
-                                      redo: {
-                                        tid: i,
-                                        fid: j,
-                                        values: { comment: e.target.value },
-                                      },
-                                    },
+                                    tid: i,
+                                    fid: j,
+                                    undo: editField,
+                                    redo: { comment: e.target.value },
                                   },
                                 ]);
                                 setRedoStack([]);
-                                setEditField({});
                               }}
                             />
                             <Button
@@ -498,19 +399,11 @@ export default function TableOverview(props) {
                                   },
                                 ]);
                                 setRedoStack([]);
-                                setTables((prev) =>
-                                  prev.map((table) => {
-                                    if (table.id === i) {
-                                      return {
-                                        ...table,
-                                        fields: table.fields.filter(
-                                          (field, k) => k !== j
-                                        ),
-                                      };
-                                    }
-                                    return table;
-                                  })
-                                );
+                                updateTable(i, {
+                                  fields: t.fields
+                                    .filter((field) => field.id !== j)
+                                    .map((e, i) => ({ ...e, id: i })),
+                                });
                               }}
                             >
                               Delete field
@@ -562,42 +455,27 @@ export default function TableOverview(props) {
                                     tid: i,
                                     iid: k,
                                     undo: {
-                                      values: {
-                                        fields: [...idx.fields],
-                                        name: `${idx.fields.join("_")}_index`,
-                                      },
+                                      fields: [...idx.fields],
+                                      name: `${idx.fields.join("_")}_index`,
                                     },
                                     redo: {
-                                      values: {
-                                        fields: [...value],
-                                        name: `${value.join("_")}_index`,
-                                      },
+                                      fields: [...value],
+                                      name: `${value.join("_")}_index`,
                                     },
                                   },
                                 ]);
                                 setRedoStack([]);
-                                setEditField({});
-                                setTables((prev) =>
-                                  prev.map((table, i) => {
-                                    if (table.id === i) {
-                                      return {
-                                        ...table,
-                                        indices: table.indices.map((index) =>
-                                          index.id === k
-                                            ? {
-                                                ...index,
-                                                fields: [...value],
-                                                name: `${value.join(
-                                                  "_"
-                                                )}_index`,
-                                              }
-                                            : index
-                                        ),
-                                      };
-                                    }
-                                    return table;
-                                  })
-                                );
+                                updateTable(i, {
+                                  indices: t.indices.map((index) =>
+                                    index.id === k
+                                      ? {
+                                          ...index,
+                                          fields: [...value],
+                                          name: `${value.join("_")}_index`,
+                                        }
+                                      : index
+                                  ),
+                                });
                               }}
                             />
                             <Popover
@@ -625,24 +503,14 @@ export default function TableOverview(props) {
                                         },
                                       ]);
                                       setRedoStack([]);
-                                      setTables((prev) =>
-                                        prev.map((table) => {
-                                          if (table.id === i) {
-                                            return {
-                                              ...table,
-                                              indices: table.indices
-                                                .filter(
-                                                  (index) => index.id !== idx.id
-                                                )
-                                                .map((e, j) => ({
-                                                  ...e,
-                                                  id: j,
-                                                })),
-                                            };
-                                          }
-                                          return table;
-                                        })
-                                      );
+                                      updateTable(i, {
+                                        indices: t.indices
+                                          .filter((e) => e.id !== k)
+                                          .map((e, j) => ({
+                                            ...e,
+                                            id: j,
+                                          })),
+                                      });
                                     }}
                                   >
                                     Delete
@@ -674,18 +542,15 @@ export default function TableOverview(props) {
                     <Collapse.Panel header="Comment" itemKey="1">
                       <TextArea
                         field="comment"
-                        showClear
-                        onClear={() => updateTable(i, { comment: "" })}
                         value={t.comment}
                         autosize
                         placeholder="Add comment"
                         rows={1}
-                        onChange={(value) => updateTable(i, { comment: value })}
+                        onChange={(value) =>
+                          updateTable(i, { comment: value }, false)
+                        }
                         onFocus={(e) =>
-                          setEditField({
-                            tid: t.id,
-                            values: { comment: e.target.value },
-                          })
+                          setEditField({ comment: e.target.value })
                         }
                         onBlur={(e) => {
                           if (e.target.value === editField.comment) return;
@@ -695,17 +560,12 @@ export default function TableOverview(props) {
                               action: Action.EDIT,
                               element: ObjectType.TABLE,
                               component: "comment",
-                              data: {
-                                undo: editField,
-                                redo: {
-                                  tid: i,
-                                  values: { comment: e.target.value },
-                                },
-                              },
+                              tid: i,
+                              undo: editField,
+                              redo: { comment: e.target.value },
                             },
                           ]);
                           setRedoStack([]);
-                          setEditField({});
                         }}
                       />
                     </Collapse.Panel>
@@ -836,24 +696,16 @@ export default function TableOverview(props) {
                           },
                         ]);
                         setRedoStack([]);
-                        setTables((prev) =>
-                          prev.map((table) => {
-                            if (table.id === i) {
-                              return {
-                                ...table,
-                                indices: [
-                                  ...table.indices,
-                                  {
-                                    id: table.indices.length,
-                                    name: `index_${table.indices.length}`,
-                                    fields: [],
-                                  },
-                                ],
-                              };
-                            }
-                            return table;
-                          })
-                        );
+                        updateTable(i, {
+                          indices: [
+                            ...t.indices,
+                            {
+                              id: t.indices.length,
+                              name: `index_${t.indices.length}`,
+                              fields: [],
+                            },
+                          ],
+                        });
                       }}
                     >
                       Add index
@@ -872,31 +724,23 @@ export default function TableOverview(props) {
                           },
                         ]);
                         setRedoStack([]);
-                        setTables((prev) =>
-                          prev.map((table) => {
-                            if (table.id === i) {
-                              return {
-                                ...table,
-                                fields: [
-                                  ...table.fields,
-                                  {
-                                    name: "",
-                                    type: "",
-                                    default: "",
-                                    check: "",
-                                    primary: false,
-                                    unique: false,
-                                    notNull: false,
-                                    increment: false,
-                                    comment: "",
-                                    id: table.fields.length,
-                                  },
-                                ],
-                              };
-                            }
-                            return table;
-                          })
-                        );
+                        updateTable(i, {
+                          fields: [
+                            ...t.fields,
+                            {
+                              name: "",
+                              type: "",
+                              default: "",
+                              check: "",
+                              primary: false,
+                              unique: false,
+                              notNull: false,
+                              increment: false,
+                              comment: "",
+                              id: t.fields.length,
+                            },
+                          ],
+                        });
                       }}
                       block
                     >

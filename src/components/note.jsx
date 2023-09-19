@@ -3,7 +3,7 @@ import { NoteContext, UndoRedoContext } from "../pages/editor";
 import { Action, ObjectType } from "../data/data";
 
 export default function Note(props) {
-  const { setNotes } = useContext(NoteContext);
+  const { updateNote } = useContext(NoteContext);
   const w = 180;
   const r = 3;
   const fold = 24;
@@ -14,14 +14,7 @@ export default function Note(props) {
     textarea.style.height = "0";
     textarea.style.height = textarea.scrollHeight + "px";
     const newHeight = textarea.scrollHeight + 41;
-    setNotes((prev) =>
-      prev.map((n) => {
-        if (n.id === props.data.id) {
-          return { ...n, content: e.target.value, height: newHeight };
-        }
-        return n;
-      })
-    );
+    updateNote(props.data.id, { content: e.target.value, height: newHeight });
   };
 
   return (
@@ -94,7 +87,6 @@ export default function Note(props) {
                 },
               ]);
               setRedoStack([]);
-              setEditField({});
             }}
             className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
             style={{ backgroundColor: props.data.color }}

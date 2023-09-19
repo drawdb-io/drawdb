@@ -24,7 +24,7 @@ import { NoteContext, UndoRedoContext } from "../pages/editor";
 import { noteThemes, Action, ObjectType } from "../data/data";
 
 export default function NotesOverview(props) {
-  const { notes, setNotes, addNote, deleteNote } = useContext(NoteContext);
+  const { notes, updateNote, addNote, deleteNote } = useContext(NoteContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [value, setValue] = useState("");
   const [editField, setEditField] = useState({});
@@ -42,17 +42,6 @@ export default function NotesOverview(props) {
           return t.title;
         })
         .filter((i) => i.includes(value))
-    );
-  };
-
-  const updateNote = (id, values) => {
-    setNotes((prev) =>
-      prev.map((note) => {
-        if (note.id === id) {
-          return { ...note, ...values };
-        }
-        return note;
-      })
     );
   };
 
@@ -145,7 +134,6 @@ export default function NotesOverview(props) {
                       },
                     ]);
                     setRedoStack([]);
-                    setEditField({});
                   }}
                   rows={3}
                 />

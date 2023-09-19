@@ -13,10 +13,10 @@ import {
 import Note from "./note";
 
 export default function Canvas(props) {
-  const { tables, moveTable, relationships, addRelationship } =
+  const { tables, updateTable, relationships, addRelationship } =
     useContext(TableContext);
-  const { areas, setAreas, moveArea } = useContext(AreaContext);
-  const { notes, moveNote } = useContext(NoteContext);
+  const { areas, setAreas, updateArea } = useContext(AreaContext);
+  const { notes, updateNote } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [dragging, setDragging] = useState({
@@ -128,7 +128,7 @@ export default function Canvas(props) {
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
       const dx = e.clientX / settings.zoom - offset.x;
       const dy = e.clientY / settings.zoom - offset.y;
-      moveTable(dragging.id, dx, dy);
+      updateTable(dragging.id, { x: dx, y: dy }, true);
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
@@ -136,11 +136,11 @@ export default function Canvas(props) {
     ) {
       const dx = e.clientX / settings.zoom - offset.x;
       const dy = e.clientY / settings.zoom - offset.y;
-      moveArea(dragging.id, dx, dy);
+      updateArea(dragging.id, { x: dx, y: dy });
     } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
       const dx = e.clientX / settings.zoom - offset.x;
       const dy = e.clientY / settings.zoom - offset.y;
-      moveNote(dragging.id, dx, dy);
+      updateNote(dragging.id, { x: dx, y: dy });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
 
@@ -241,16 +241,13 @@ export default function Canvas(props) {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    // NOTE: consider just saving the offset to sub and add in undo redo
     if (panning.state && didPan()) {
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.PAN,
-          data: {
-            undo: { x: panning.x, y: panning.y },
-            redo: settings.pan,
-          },
+          undo: { x: panning.x, y: panning.y },
+          redo: settings.pan,
         },
       ]);
       setRedoStack([]);

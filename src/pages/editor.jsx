@@ -211,69 +211,6 @@ export default function Editor(props) {
     }
   };
 
-  const moveTable = (id, x, y) => {
-    setTables((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          setRelationships((prev) =>
-            prev.map((r) => {
-              if (r.startTableId === id) {
-                return {
-                  ...r,
-                  startX: x + 15,
-                  startY: y + r.startFieldId * 36 + 69,
-                };
-              } else if (r.endTableId === id) {
-                return {
-                  ...r,
-                  endX: x + 15,
-                  endY: y + r.endFieldId * 36 + 69,
-                };
-              }
-              return r;
-            })
-          );
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
-  const moveArea = (id, x, y) => {
-    setAreas((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
-  const moveNote = (id, x, y) => {
-    setNotes((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
   const deleteTable = (id, addToHistory = true) => {
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -342,7 +279,21 @@ export default function Editor(props) {
     );
   };
 
-  const editNote = (id, values, addToHistory = true) => {
+  const updateArea = (id, values) => {
+    setAreas((prev) =>
+      prev.map((t) => {
+        if (t.id === id) {
+          return {
+            ...t,
+            ...values,
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  const updateNote = (id, values, addToHistory = true) => {
     setNotes((prev) =>
       prev.map((t) => {
         if (t.id === id) {
@@ -352,6 +303,40 @@ export default function Editor(props) {
           };
         }
         return t;
+      })
+    );
+  };
+
+  const updateTable = (id, updatedValues, updateRelationships = false) => {
+    setTables((prev) =>
+      prev.map((table) => {
+        if (table.id === id) {
+          if (updateRelationships) {
+            setRelationships((prev) =>
+              prev.map((r) => {
+                if (r.startTableId === id) {
+                  return {
+                    ...r,
+                    startX: updatedValues.x + 15,
+                    startY: updatedValues.y + r.startFieldId * 36 + 69,
+                  };
+                } else if (r.endTableId === id) {
+                  return {
+                    ...r,
+                    endX: updatedValues.x + 15,
+                    endY: updatedValues.y + r.endFieldId * 36 + 69,
+                  };
+                }
+                return r;
+              })
+            );
+          }
+          return {
+            ...table,
+            ...updatedValues,
+          };
+        }
+        return table;
       })
     );
   };
@@ -367,7 +352,7 @@ export default function Editor(props) {
           tables,
           setTables,
           addTable,
-          moveTable,
+          updateTable,
           updateField,
           deleteTable,
           relationships,
@@ -377,10 +362,10 @@ export default function Editor(props) {
         }}
       >
         <AreaContext.Provider
-          value={{ areas, setAreas, moveArea, addArea, deleteArea }}
+          value={{ areas, setAreas, updateArea, addArea, deleteArea }}
         >
           <NoteContext.Provider
-            value={{ notes, setNotes, moveNote, addNote, deleteNote, editNote }}
+            value={{ notes, setNotes, updateNote, addNote, deleteNote }}
           >
             <TabContext.Provider value={{ tab, setTab }}>
               <SettingsContext.Provider value={{ settings, setSettings }}>
