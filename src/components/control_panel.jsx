@@ -25,6 +25,7 @@ import {
   Input,
   Upload,
   Banner,
+  Toast,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -277,7 +278,8 @@ export default function ControlPanel(props) {
       },
       Grid: {
         children: [],
-        function: () => {},
+        function: () =>
+          setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid })),
       },
       Sidebar: {
         children: [],
@@ -291,6 +293,7 @@ export default function ControlPanel(props) {
         children: [],
         function: () => {
           setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
+          Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
         },
       },
       "Field summary": {
@@ -300,6 +303,9 @@ export default function ControlPanel(props) {
             ...prev,
             showFieldSummary: !prev.showFieldSummary,
           }));
+          Toast.success(
+            `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
+          );
         },
       },
       "Reset view": {

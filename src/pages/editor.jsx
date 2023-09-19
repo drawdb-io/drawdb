@@ -40,6 +40,7 @@ export default function Editor(props) {
     strictMode: false,
     showFieldSummary: true,
     zoom: 1,
+    showGrid: true,
   });
 
   const dragHandler = (e) => {

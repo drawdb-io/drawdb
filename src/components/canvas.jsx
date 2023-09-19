@@ -311,32 +311,36 @@ export default function Canvas(props) {
             cursor: cursor,
           }}
         >
-          <defs>
-            <pattern
-              id="pattern-circles"
-              x="0"
-              y="0"
-              width="24"
-              height="24"
-              patternUnits="userSpaceOnUse"
-              patternContentUnits="userSpaceOnUse"
-            >
-              <circle
-                id="pattern-circle"
-                cx="4"
-                cy="4"
-                r="0.85"
-                fill="rgb(99, 152, 191)"
-              ></circle>
-            </pattern>
-          </defs>
-          <rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#pattern-circles)"
-          ></rect>
+          {settings.showGrid && (
+            <>
+              <defs>
+                <pattern
+                  id="pattern-circles"
+                  x="0"
+                  y="0"
+                  width="24"
+                  height="24"
+                  patternUnits="userSpaceOnUse"
+                  patternContentUnits="userSpaceOnUse"
+                >
+                  <circle
+                    id="pattern-circle"
+                    cx="4"
+                    cy="4"
+                    r="0.85"
+                    fill="rgb(99, 152, 191)"
+                  ></circle>
+                </pattern>
+              </defs>
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill="url(#pattern-circles)"
+              ></rect>
+            </>
+          )}
           <g
             style={{
               transform: `scale(${settings.zoom})`,
