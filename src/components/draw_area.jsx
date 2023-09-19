@@ -1,10 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Rect from "./rect";
+import Node from "./node";
 
 export default function Canvas(props) {
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [links, setLinks] = useState([]);
 
   const canvas = useRef(null);
 
@@ -23,11 +25,52 @@ export default function Canvas(props) {
     const { clientX, clientY } = event;
     const updatedRectangles = props.rectangles.map((rect) => {
       if (rect.id === dragging) {
-        return {
+        const updatedRect = {
           ...rect,
           x: clientX - offset.x,
           y: clientY - offset.y,
         };
+        const updatedLinks = links.map((link) => {
+          let updatedLink = link;
+          if (link.rect === updatedRect.id) {
+            switch (link.node) {
+              case Node.TOP:
+                updatedLink = {
+                  ...link,
+                  x: updatedRect.x + updatedRect.width / 2,
+                  y: updatedRect.y,
+                };
+                break;
+              case Node.BOTTOM:
+                updatedLink = {
+                  ...link,
+                  x: updatedRect.x + updatedRect.width / 2,
+                  y: updatedRect.y + updatedRect.height,
+                };
+                break;
+              case Node.LEFT:
+                updatedLink = {
+                  ...link,
+                  x: updatedRect.x,
+                  y: updatedRect.y + updatedRect.height / 2,
+                };
+                break;
+              case Node.RIGHT:
+                updatedLink = {
+                  ...link,
+                  x: updatedRect.x + updatedRect.width,
+                  y: updatedRect.y + updatedRect.height / 2,
+                };
+                break;
+              default:
+                break;
+            }
+          }
+          return updatedLink;
+        });
+
+        setLinks(updatedLinks);
+        return updatedRect;
       }
       return rect;
     });
@@ -84,9 +127,27 @@ export default function Canvas(props) {
               label={rectangle.label}
               width={rectangle.width}
               height={rectangle.height}
+              links={links}
+              setLinks={setLinks}
               onMouseDown={(event) => handleMouseDown(event, rectangle.id)}
             />
           ))}
+          {links.map(
+            (link, index) =>
+              links.length >= 2 &&
+              index % 2 === 0 &&
+              index + 1 < links.length && (
+                <line
+                  key={index}
+                  x1={links[index].x}
+                  y1={links[index].y}
+                  x2={links[index + 1].x}
+                  y2={links[index + 1].y}
+                  stroke="red"
+                  strokeDasharray="5,5"
+                />
+              )
+          )}
         </svg>
       </div>
     </div>
