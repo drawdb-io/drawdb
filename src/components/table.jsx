@@ -7,7 +7,6 @@ import {
 } from "../data/data";
 import {
   IconEdit,
-  IconPlus,
   IconMore,
   IconMinus,
   IconDeleteStroked,
@@ -131,16 +130,6 @@ export default function Table(props) {
                         .getElementById(`scroll_table_${props.tableData.id}`)
                         .scrollIntoView({ behavior: "smooth" });
                     }
-                  }}
-                ></Button>
-                <Button
-                  icon={<IconPlus />}
-                  size="small"
-                  theme="solid"
-                  style={{
-                    backgroundColor: "#3cb558",
-                    opacity: "0.7",
-                    marginRight: "6px",
                   }}
                 ></Button>
                 <Popover

@@ -169,6 +169,24 @@ export default function ControlPanel(props) {
     setTables((prev) =>
       prev.map((t) => {
         if (t.id === id) {
+          setRelationships((prev) =>
+            prev.map((r) => {
+              if (r.startTableId === id) {
+                return {
+                  ...r,
+                  startX: x + 15,
+                  startY: y + r.startFieldId * 36 + 69,
+                };
+              } else if (r.endTableId === id) {
+                return {
+                  ...r,
+                  endX: x + 15,
+                  endY: y + r.endFieldId * 36 + 69,
+                };
+              }
+              return r;
+            })
+          );
           return {
             ...t,
             x: x,
@@ -232,6 +250,12 @@ export default function ControlPanel(props) {
             .filter((e) => e.id !== prev.length - 1)
             .map((e, i) => ({ ...e, id: i }))
         );
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) =>
+          prev
+            .filter((e) => e.id !== a.data.id)
+            .map((e, idx) => ({ ...e, id: idx }))
+        );
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -254,6 +278,21 @@ export default function ControlPanel(props) {
         ]);
         moveNote(a.id, a.x, a.y);
       }
+    } else if (a.action === Action.DELETE) {
+      if (a.element === ObjectType.TABLE) {
+        setTables((prev) => {
+          const temp = prev.slice();
+          temp.splice(a.data.id, 0, a.data);
+          return temp.map((t, i) => ({ ...t, id: i }));
+        });
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) => {
+          const temp = prev.slice();
+          temp.splice(a.data.id, 0, a.data);
+          return temp.map((t, i) => ({ ...t, id: i }));
+        });
+      }
+      setRedoStack((prev) => [...prev, a]);
     }
   };
 
@@ -267,6 +306,12 @@ export default function ControlPanel(props) {
         addArea();
       } else if (a.element === ObjectType.NOTE) {
         addNote();
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) => {
+          const temp = prev.slice();
+          temp.splice(a.data.id, 0, a.data);
+          return temp.map((t, i) => ({ ...t, id: i }));
+        });
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -289,6 +334,21 @@ export default function ControlPanel(props) {
         ]);
         moveNote(a.id, a.x, a.y);
       }
+    } else if (a.action === Action.DELETE) {
+      if (a.element === ObjectType.TABLE) {
+        setTables((prev) =>
+          prev
+            .filter((t) => t.id !== a.data.id)
+            .map((t, i) => ({ ...t, id: i }))
+        );
+      } else if (a.element === ObjectType.RELATIONSHIP) {
+        setRelationships((prev) =>
+          prev
+            .filter((t) => t.id !== a.data.id)
+            .map((t, i) => ({ ...t, id: i }))
+        );
+      }
+      setUndoStack((prev) => [...prev, a]);
     }
   };
 
@@ -801,6 +861,8 @@ export default function ControlPanel(props) {
               overwriteDiagram();
               setData(null);
               setVisible(MODAL.NONE);
+              setUndoStack([]);
+              setRedoStack([]);
             }
           }
         }}

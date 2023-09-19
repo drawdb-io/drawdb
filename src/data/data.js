@@ -73,12 +73,14 @@ const ObjectType = {
   TABLE: 1,
   AREA: 2,
   NOTE: 3,
+  RELATIONSHIP: 4,
 };
 
 const Action = {
   ADD: 0,
   MOVE: 1,
-}
+  DELETE: 2,
+};
 
 export {
   bgBlue,
@@ -91,5 +93,5 @@ export {
   Constraint,
   Tab,
   ObjectType,
-  Action
+  Action,
 };

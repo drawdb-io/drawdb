@@ -1,5 +1,11 @@
 import { React, useContext, useState } from "react";
-import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
+import {
+  defaultTableTheme,
+  sqlDataTypes,
+  tableThemes,
+  Action,
+  ObjectType,
+} from "../data/data";
 import {
   Collapse,
   Row,
@@ -26,12 +32,18 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TableContext } from "../pages/editor";
+import {
+  SettingsContext,
+  TableContext,
+  UndoRedoContext,
+} from "../pages/editor";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [value, setValue] = useState("");
   const { tables, setTables } = useContext(TableContext);
+  const { settings } = useContext(SettingsContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [filteredResult, setFilteredResult] = useState(
     tables.map((t) => {
       return t.name;
@@ -106,31 +118,39 @@ export default function TableOverview(props) {
             icon={<IconPlus />}
             block
             onClick={() => {
-              const id =
-                tables.length === 0 ? 0 : tables[tables.length - 1].id + 1;
-              const newTable = {
-                id: id,
-                name: `table_${id}`,
-                x: 0,
-                y: 0,
-                fields: [
-                  {
-                    name: "id",
-                    type: "UUID",
-                    default: "",
-                    check: "",
-                    primary: true,
-                    unique: true,
-                    notNull: true,
-                    increment: true,
-                    comment: "",
-                  },
-                ],
-                comment: "",
-                indices: [],
-                color: defaultTableTheme,
-              };
-              setTables((prev) => [...prev, newTable]);
+              setTables((prev) => [
+                ...prev,
+                {
+                  id: prev.length,
+                  name: `table_${prev.length}`,
+                  x: -settings.pan.x,
+                  y: -settings.pan.y,
+                  fields: [
+                    {
+                      name: "id",
+                      type: "UUID",
+                      default: "",
+                      check: "",
+                      primary: true,
+                      unique: true,
+                      notNull: true,
+                      increment: true,
+                      comment: "",
+                    },
+                  ],
+                  comment: "",
+                  indices: [],
+                  color: defaultTableTheme,
+                },
+              ]);
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.ADD,
+                  element: ObjectType.TABLE,
+                },
+              ]);
+              setRedoStack([]);
             }}
           >
             Add table
@@ -550,6 +570,15 @@ export default function TableOverview(props) {
                       type="danger"
                       onClick={() => {
                         Toast.success(`Table deleted!`);
+                        setUndoStack((prev) => [
+                          ...prev,
+                          {
+                            action: Action.DELETE,
+                            element: ObjectType.TABLE,
+                            data: tables[i],
+                          },
+                        ]);
+                        setRedoStack([]);
                         setTables((prev) =>
                           prev
                             .filter((e) => e.id !== i)

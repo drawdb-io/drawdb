@@ -18,7 +18,7 @@ export default function Canvas(props) {
   const { areas, setAreas } = useContext(AreaContext);
   const { notes, setNotes } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
-  const { redoStack, setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -256,7 +256,7 @@ export default function Canvas(props) {
           id: dragging.id,
         },
       ]);
-      if (redoStack.length > 0) setRedoStack([]);
+      setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setPanning(false);
@@ -288,9 +288,9 @@ export default function Canvas(props) {
       line.startFieldId === onRect.field
     )
       return;
-    setRelationships((prev) => [
-      ...prev,
-      {
+
+    setRelationships((prev) => {
+      const newRelationship = {
         ...line,
         endTableId: onRect.tableId,
         endFieldId: onRect.field,
@@ -300,8 +300,18 @@ export default function Canvas(props) {
           tables[onRect.tableId].name
         }`,
         id: prev.length,
-      },
-    ]);
+      };
+      setUndoStack((prevUndo) => [
+        ...prevUndo,
+        {
+          action: Action.ADD,
+          element: ObjectType.RELATIONSHIP,
+          data: newRelationship,
+        },
+      ]);
+      setRedoStack([]);
+      return [...prev, newRelationship];
+    });
   };
 
   const handleMouseWheel = (e) => {
