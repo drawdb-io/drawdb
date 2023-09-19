@@ -345,9 +345,9 @@ export default function Canvas(props) {
       endFieldId: onRect.field,
       endX: tables[onRect.tableId].x + 15,
       endY: tables[onRect.tableId].y + onRect.field * 36 + 69,
-      name: `${tables[line.startTableId].name}_FK_${
+      name: `${tables[line.startTableId].name}_${
         tables[line.startTableId].fields[line.startFieldId].name
-      }_to_${tables[onRect.tableId].fields[onRect.field].name}`,
+      }_fk`,
       id: relationships.length,
     });
   };
