@@ -1,7 +1,6 @@
 import React from "react";
-import blank_pfp from "../../assets/blank_pfp.webp";
-import logo from "../../assets/logo_80.png";
-import "./index.css";
+import blank_pfp from "../assets/blank_pfp.webp";
+import logo from "../assets/logo_80.png";
 
 export default function Header(props) {
   return (

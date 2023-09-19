@@ -1,9 +1,9 @@
-import EditorWindow from "./editor";
+import Editor from "./pages/editor";
 
 function App() {
   return (
     <>
-      <EditorWindow name="Untitled"/>
+      <Editor name="Untitled"/>
     </>
   );
 }

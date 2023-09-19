@@ -6,6 +6,10 @@
   outline: none !important;
 }
 
-body{
+body {
   overflow: hidden;
+}
+
+.bg-blue {
+  background-color: #124559;
 }
