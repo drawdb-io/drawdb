@@ -83,6 +83,7 @@ export default function ControlPanel(props) {
     addTable,
     moveTable,
     deleteTable,
+    updateField,
     setRelationships,
     addRelationship,
     deleteRelationship,
@@ -111,22 +112,6 @@ export default function ControlPanel(props) {
     setRelationships(data.relationships);
     setAreas(data.subjectAreas);
     setNotes(data.notes);
-  };
-
-  const updatedField = (tid, fid, updatedValues) => {
-    setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
-          return {
-            ...table,
-            fields: table.fields.map((field, j) =>
-              fid === j ? { ...field, ...updatedValues } : field
-            ),
-          };
-        }
-        return table;
-      })
-    );
   };
 
   const undo = () => {
@@ -184,17 +169,95 @@ export default function ControlPanel(props) {
             return n;
           })
         );
-      }else if(a.element===ObjectType.TABLE){
-        if(a.component==="field"){
-          console.log(a);
-          updatedField(a.data.undo.tid, a.data.undo.fid, a.data.undo.values)
+      } else if (a.element === ObjectType.TABLE) {
+        if (a.component === "field") {
+          updateField(a.data.undo.tid, a.data.undo.fid, a.data.undo.values);
+        } else if (a.component === "field_delete") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.tid) {
+                const temp = t.fields.slice();
+                temp.splice(a.data.id, 0, a.data);
+                return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "field_add") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.tid) {
+                return {
+                  ...t,
+                  fields: t.fields
+                    .filter((e) => e.id !== tables[a.tid].fields.length - 1)
+                    .map((t, i) => ({ ...t, id: i })),
+                };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "comment") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.data.undo.tid) {
+                return {
+                  ...t,
+                  ...a.data.undo.values,
+                };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "index_add") {
+          setTables((prev) =>
+            prev.map((table, i) => {
+              if (table.id === a.tid) {
+                return {
+                  ...table,
+                  indices: table.indices
+                    .filter((e) => e.id !== tables[a.tid].indices.length - 1)
+                    .map((t, i) => ({ ...t, id: i })),
+                };
+              }
+              return table;
+            })
+          );
+        } else if (a.component === "index") {
+          setTables((prev) =>
+            prev.map((table, i) => {
+              if (a.tid === i) {
+                return {
+                  ...table,
+                  indices: table.indices.map((idx) =>
+                    idx.id === a.iid ? { ...idx, ...a.undo.values } : idx
+                  ),
+                };
+              }
+              return table;
+            })
+          );
+        } else if (a.component === "index_delete") {
+          setTables((prev) =>
+            prev.map((table, i) => {
+              if (table.id === a.tid) {
+                const temp = table.indices.slice();
+                temp.splice(a.data.id, 0, a.data);
+                return {
+                  ...table,
+                  indices: temp.map((t, i) => ({ ...t, id: i })),
+                };
+              }
+              return table;
+            })
+          );
         }
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
       setSettings((prev) => ({
         ...prev,
-        pan: a.data.undo
+        pan: a.data.undo,
       }));
       setRedoStack((prev) => [...prev, a]);
     }
@@ -255,17 +318,115 @@ export default function ControlPanel(props) {
             return n;
           })
         );
-      } else if(a.element===ObjectType.TABLE){
-        if(a.component==="field"){
-          console.log(a);
-          updatedField(a.data.redo.tid, a.data.redo.fid, a.data.redo.values)
+      } else if (a.element === ObjectType.TABLE) {
+        if (a.component === "field") {
+          updateField(a.data.redo.tid, a.data.redo.fid, a.data.redo.values);
+        } else if (a.component === "field_delete") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.tid) {
+                return {
+                  ...t,
+                  fields: t.fields
+                    .filter((e) => e.id !== a.data.id)
+                    .map((t, i) => ({ ...t, id: i })),
+                };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "field_add") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.tid) {
+                return {
+                  ...t,
+                  fields: [
+                    ...t.fields,
+                    {
+                      name: "",
+                      type: "",
+                      default: "",
+                      check: "",
+                      primary: false,
+                      unique: false,
+                      notNull: false,
+                      increment: false,
+                      comment: "",
+                      id: t.fields.length,
+                    },
+                  ],
+                };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "comment") {
+          setTables((prev) =>
+            prev.map((t, i) => {
+              if (t.id === a.data.redo.tid) {
+                return {
+                  ...t,
+                  ...a.data.redo.values,
+                };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "index_add") {
+          setTables((prev) =>
+            prev.map((table) => {
+              if (table.id === a.tid) {
+                return {
+                  ...table,
+                  indices: [
+                    ...table.indices,
+                    {
+                      id: table.indices.length,
+                      name: `index_${table.indices.length}`,
+                      fields: [],
+                    },
+                  ],
+                };
+              }
+              return table;
+            })
+          );
+        } else if (a.component === "index") {
+          setTables((prev) =>
+            prev.map((table, i) => {
+              if (a.tid === i) {
+                return {
+                  ...table,
+                  indices: table.indices.map((idx) =>
+                    idx.id === a.iid ? { ...idx, ...a.redo.values } : idx
+                  ),
+                };
+              }
+              return table;
+            })
+          );
+        } else if (a.component === "index_delete") {
+          setTables((prev) =>
+            prev.map((table, i) => {
+              if (table.id === a.tid) {
+                return {
+                  ...table,
+                  indices: table.indices
+                    .filter((e) => e.id !== a.data.id)
+                    .map((t, i) => ({ ...t, id: i })),
+                };
+              }
+              return table;
+            })
+          );
         }
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
       setSettings((prev) => ({
         ...prev,
-        pan: a.data.redo
+        pan: a.data.redo,
       }));
       setUndoStack((prev) => [...prev, a]);
     }

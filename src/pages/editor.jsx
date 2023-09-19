@@ -85,6 +85,7 @@ export default function Editor(props) {
               notNull: true,
               increment: true,
               comment: "",
+              id: 0,
             },
           ],
           comment: "",
@@ -103,6 +104,22 @@ export default function Editor(props) {
       ]);
       setRedoStack([]);
     }
+  };
+
+  const updateField = (tid, fid, updatedValues) => {
+    setTables((prev) =>
+      prev.map((table, i) => {
+        if (tid === i) {
+          return {
+            ...table,
+            fields: table.fields.map((field, j) =>
+              fid === j ? { ...field, ...updatedValues } : field
+            ),
+          };
+        }
+        return table;
+      })
+    );
   };
 
   const addArea = (addToHistory = true, data) => {
@@ -325,7 +342,7 @@ export default function Editor(props) {
     );
   };
 
-  const editNote = (id, values, addToHistory=true) => {
+  const editNote = (id, values, addToHistory = true) => {
     setNotes((prev) =>
       prev.map((t) => {
         if (t.id === id) {
@@ -337,7 +354,7 @@ export default function Editor(props) {
         return t;
       })
     );
-  }
+  };
 
   useEffect(() => {
     document.title = "Editor - drawDB";
@@ -351,6 +368,7 @@ export default function Editor(props) {
           setTables,
           addTable,
           moveTable,
+          updateField,
           deleteTable,
           relationships,
           setRelationships,
