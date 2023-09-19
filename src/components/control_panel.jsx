@@ -448,7 +448,7 @@ export default function ControlPanel(props) {
           .getElementById(`scroll_table_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
       }
-    } else if(selectedElement.element===ObjectType.AREA){
+    } else if (selectedElement.element === ObjectType.AREA) {
       if (layout.sidebar) {
         setTab(Tab.subject_areas);
         if (tab !== Tab.subject_areas) return;
@@ -463,7 +463,7 @@ export default function ControlPanel(props) {
           openCollapse: false,
         });
       }
-    } else if(selectedElement.element===ObjectType.NOTE){
+    } else if (selectedElement.element === ObjectType.NOTE) {
       if (layout.sidebar) {
         setTab(Tab.notes);
         if (tab !== Tab.notes) return;
@@ -478,6 +478,51 @@ export default function ControlPanel(props) {
           openCollapse: false,
         });
       }
+    }
+  };
+  const del = () => {
+    switch (selectedElement.element) {
+      case ObjectType.TABLE:
+        deleteTable(selectedElement.id, true);
+        break;
+      case ObjectType.NOTE:
+        deleteNote(selectedElement.id, true);
+        break;
+      case ObjectType.AREA:
+        deleteArea(selectedElement.id, true);
+        break;
+      default:
+        break;
+    }
+  };
+  const duplicate = () => {
+    switch (selectedElement.element) {
+      case ObjectType.TABLE:
+        addTable(true, {
+          ...tables[selectedElement.id],
+          x: tables[selectedElement.id].x + 20,
+          y: tables[selectedElement.id].y + 20,
+          id: tables.length,
+        });
+        break;
+      case ObjectType.NOTE:
+        addNote(true, {
+          ...notes[selectedElement.id],
+          x: notes[selectedElement.id].x + 20,
+          y: notes[selectedElement.id].y + 20,
+          id: notes.length,
+        });
+        break;
+      case ObjectType.AREA:
+        addArea(true, {
+          ...areas[selectedElement.id],
+          x: areas[selectedElement.id].x + 20,
+          y: areas[selectedElement.id].y + 20,
+          id: areas.length,
+        });
+        break;
+      default:
+        break;
     }
   };
 
@@ -665,11 +710,11 @@ export default function ControlPanel(props) {
         shortcut: "Ctrl+V",
       },
       Duplicate: {
-        function: () => {},
+        function: duplicate,
         shortcut: "Ctrl+D",
       },
       Delete: {
-        function: () => {},
+        function: del,
         shortcut: "Del",
       },
       "Copy as image": {
@@ -763,6 +808,8 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
   useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
   useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
+  useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
+  useHotkeys("delete", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
   useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
