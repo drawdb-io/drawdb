@@ -1,18 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { dia, shapes } from "jointjs";
 
-function Diagram() {
+function Diagram(props) {
   const canvas = useRef(null);
 
   useEffect(() => {
-    const graph = new dia.Graph();
 
     new dia.Paper({
       el: document.getElementById("canvas"),
       background: {
         color: "#aec3b0",
       },
-      model: graph,
+      model: props.graph,
       height: "100%",
       width: "100%",
       gridSize: 1,
@@ -31,8 +30,8 @@ function Diagram() {
         fill: "white",
       },
     });
-    rect.addTo(graph);
-  }, []);
+    rect.addTo(props.graph);
+  }, [props.graph]);
 
   return <div id="canvas" ref={canvas} />;
 }

@@ -12,7 +12,7 @@ export default function Header(props) {
         <button className="me-6 border px-4 py-1 rounded-xl">
           <i className="fa-solid fa-lock me-2"></i>Share
         </button>
-        <img src={blank_pfp} alt="profile" className="rounded-full h-10 w-10" />
+        <img src={blank_pfp} alt="profile" className="rounded-full h-8 w-8" />
       </div>
     </nav>
   );

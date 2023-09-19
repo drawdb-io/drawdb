@@ -5,3 +5,7 @@
 .cm-focused {
   outline: none !important;
 }
+
+body{
+  overflow: hidden;
+}
