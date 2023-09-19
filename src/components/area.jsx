@@ -2,97 +2,68 @@ import { React, useState } from "react";
 
 export default function Area(props) {
   const [resize, setResize] = useState("none");
-  const [initialMouseX, setInitialMouseX] = useState(0);
-  const [initialMouseY, setInitialMouseY] = useState(0);
-  const [initialWidth, setInitialWidth] = useState(0);
-  const [initialHeight, setInitialHeight] = useState(0);
-  const [initialX, setInitialX] = useState(0);
-  const [initialY, setInitialY] = useState(0);
+  const [initCoords, setInitCoords] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    mouseX: 0,
+    mouseY: 0,
+  });
 
   const handleMouseDown = (e, dir) => {
     setResize(dir);
     props.setPanning(false);
-    setInitialMouseX(e.clientX);
-    setInitialMouseY(e.clientY);
-    setInitialWidth(props.areaData.width);
-    setInitialHeight(props.areaData.height);
-    setInitialX(props.areaData.x);
-    setInitialY(props.areaData.y);
+    setInitCoords({
+      x: props.areaData.x,
+      y: props.areaData.y,
+      width: props.areaData.width,
+      height: props.areaData.height,
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+    });
   };
 
   const handleMouseMove = (e) => {
+    if (resize === "none") return;
+
+    let newX = initCoords.x;
+    let newY = initCoords.y;
+    let newWidth = initCoords.width;
+    let newHeight = initCoords.height;
     props.setPanning(false);
     if (resize === "br") {
-      const newWidth = initialWidth + (e.clientX - initialMouseX);
-      const newHeight = initialHeight + (e.clientY - initialMouseY);
-      props.setAreas((prev) => {
-        return prev.map((a) => {
-          if (a.id === props.areaData.id) {
-            return {
-              ...a,
-              width: newWidth,
-              height: newHeight,
-            };
-          }
-          return a;
-        });
-      });
+      newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
+      newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
     } else if (resize === "tl") {
-      const newX = initialX + (e.clientX - initialMouseX);
-      const newY = initialY + (e.clientY - initialMouseY);
-      const newWidth = initialWidth - (e.clientX - initialMouseX);
-      const newHeight = initialHeight - (e.clientY - initialMouseY);
-      props.setAreas((prev) => {
-        return prev.map((a) => {
-          if (a.id === props.areaData.id) {
-            return {
-              ...a,
-              x: newX,
-              y: newY,
-              width: newWidth,
-              height: newHeight,
-            };
-          }
-          return a;
-        });
-      });
+      newX = initCoords.x + (e.clientX - initCoords.mouseX);
+      newY = initCoords.y + (e.clientY - initCoords.mouseY);
+      newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
+      newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
     } else if (resize === "tr") {
-      const newY = initialY + (e.clientY - initialMouseY);
-      const newWidth = initialWidth + (e.clientX - initialMouseX);
-      const newHeight = initialHeight - (e.clientY - initialMouseY);
-      props.setAreas((prev) => {
-        return prev.map((a) => {
-          if (a.id === props.areaData.id) {
-            return {
-              ...a,
-              y: newY,
-              width: newWidth,
-              height: newHeight,
-            };
-          }
-          return a;
-        });
-      });
+      newY = initCoords.y + (e.clientY - initCoords.mouseY);
+      newWidth = initCoords.width + (e.clientX - initCoords.mouseX);
+      newHeight = initCoords.height - (e.clientY - initCoords.mouseY);
     } else if (resize === "bl") {
-      const newX = initialX + (e.clientX - initialMouseX);
-      const newWidth = initialWidth - (e.clientX - initialMouseX);
-      const newHeight = initialHeight + (e.clientY - initialMouseY);
-      props.setAreas((prev) => {
-        return prev.map((a) => {
-          if (a.id === props.areaData.id) {
-            return {
-              ...a,
-              x: newX,
-              width: newWidth,
-              height: newHeight,
-            };
-          }
-          return a;
-        });
-      });
-    } else {
-      return;
+      newX = initCoords.x + (e.clientX - initCoords.mouseX);
+      newWidth = initCoords.width - (e.clientX - initCoords.mouseX);
+      newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
     }
+
+    props.setAreas((prev) => {
+      return prev.map((a) => {
+        if (a.id === props.areaData.id) {
+          return {
+            ...a,
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+          };
+        }
+        return a;
+      });
+    });
   };
 
   const handleMouseUp = () => {
