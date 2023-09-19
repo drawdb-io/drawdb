@@ -235,6 +235,20 @@ export default function TableOverview(props) {
                               length: 255,
                               increment: incr,
                             });
+                          } else if (
+                            f.type === "BLOB" ||
+                            f.type === "JSON" ||
+                            f.type === "GEOMETRY" ||
+                            f.type === "TEXT" ||
+                            incr
+                          ) {
+                            updateField(props.tableData.id, j, {
+                              type: value,
+                              increment: incr,
+                              default: "",
+                              length: "",
+                              values: [],
+                            });
                           } else {
                             updateField(i, j, {
                               type: value,
@@ -389,7 +403,7 @@ export default function TableOverview(props) {
                                 />
                               </>
                             )}
-                            {f.type === "VARCHAR" && (
+                            {(f.type === "VARCHAR" || f.type === "CHAR") && (
                               <>
                                 <div className="font-semibold">Length</div>
                                 <InputNumber

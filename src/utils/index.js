@@ -115,6 +115,29 @@ function arrayIsEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
+function checkDefault(field) {
+  if (field.default === "") return true;
+
+  switch (field.type) {
+    case "INT":
+    case "BIGINT":
+    case "SMALLINT":
+      return /^\d*$/.test(field.default);
+    case "ENUM":
+    case "SET":
+      return field.values.includes(field.default);
+    case "CHAR":
+    case "VARCHAR":
+      return field.default.length <= field.length;
+    case "BOOLEAN":
+      return (
+        field.default.trim() === "false" || field.default.trim() === "true"
+      );
+    default:
+      return true;
+  }
+}
+
 function validateDiagram(diagram) {
   const issues = [];
   const duplicateTableNames = {};
@@ -140,6 +163,7 @@ function validateDiagram(diagram) {
       if (field.name === "") {
         issues.push(`Empty field name in table "${table.name}"`);
       }
+
       if (field.type === "") {
         issues.push(`Empty field type in table "${table.name}"`);
       } else if (field.type === "ENUM" || field.type === "SET") {
@@ -149,6 +173,13 @@ function validateDiagram(diagram) {
           );
         }
       }
+
+      if (!checkDefault(field)) {
+        issues.push(
+          `Default value for field "${field.name}" in table "${table.name}" does not match its type.`
+        );
+      }
+
       if (duplicateFieldNames[field.name]) {
         issues.push(`Duplicate table fields in table "${table.name}"`);
       } else {
