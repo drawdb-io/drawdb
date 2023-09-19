@@ -16,47 +16,29 @@ function Table() {
       ref={drag}
       className={`${
         isDragging ? "opacity-50" : ""
-      } cursor-move w-[150px] h-[72px]`}
+      } cursor-move w-[136px] h-[72px] border border-gray-400 rounded-md text-xs border-collapse bg-gray-100`}
     >
-      <svg
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <foreignObject
-          x={0}
-          y={0}
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <div className="border border-gray-400 w-full rounded-md h-full text-xs border-collapse bg-gray-100">
-            <div
-              className={`h-[7px] w-full rounded-t`}
-              style={{ backgroundColor: defaultTableTheme }}
-            />
-            <div className="px-2 py-0.5 border-b border-gray-400 bg-gray-200">
-              Table
-            </div>
-            <div className="px-1 py-0.5 border-b border-gray-400 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
-                <div>id</div>
-              </div>
-              <div className="text-slate-400">UUID</div>
-            </div>
-            <div className="px-1 py-0.5 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
-                <div>name</div>
-              </div>
-              <div className="text-slate-400">VARCHAR</div>
-            </div>
-          </div>
-        </foreignObject>
-      </svg>
+      <div
+        className={`h-[7px] w-full rounded-t`}
+        style={{ backgroundColor: defaultTableTheme }}
+      />
+      <div className="px-2 py-0.5 border-b border-gray-400 bg-gray-200">
+        Table
+      </div>
+      <div className="px-1 py-0.5 border-b border-gray-400 flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
+          <div>id</div>
+        </div>
+        <div className="text-slate-400">UUID</div>
+      </div>
+      <div className="px-1 py-0.5 flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
+          <div>name</div>
+        </div>
+        <div className="text-slate-400">VARCHAR</div>
+      </div>
     </div>
   );
 }
