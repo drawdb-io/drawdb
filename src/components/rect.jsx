@@ -21,20 +21,10 @@ import {
 const Rect = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const [name, setName] = useState("New Table");
+  const [name, setName] = useState(props.tableData.name);
   const [visible, setVisible] = useState(false);
   const [editFieldVisible, setEditFieldVisible] = useState(-1);
-  const [fields, setFields] = useState([
-    {
-      name: "id",
-      type: "UUID",
-      default: "",
-      primary: true,
-      unique: true,
-      notNull: true,
-      increment: true,
-    },
-  ]);
+
   const [field, setField] = useState({
     name: "",
     type: "",
@@ -45,12 +35,13 @@ const Rect = (props) => {
     increment: false,
   });
 
-  const handleOkEdit = () => {
-    setFields((prev) => {
-      const updatedFields = [...prev];
-      updatedFields[editFieldVisible] = { ...field };
-      return updatedFields;
+  const handleEditField = () => {
+    props.setTables((prev) => {
+      const updatedTables = [...prev];
+      updatedTables[props.id].fields[editFieldVisible] = { ...field };
+      return updatedTables;
     });
+
     setField({
       name: "",
       type: "",
@@ -63,8 +54,15 @@ const Rect = (props) => {
     setEditFieldVisible(-1);
   };
 
-  const handleOk = () => {
-    setFields((prev) => [...prev, field]);
+  const handleAddField = () => {
+    props.setTables((prev) => {
+      const updatedTables = [...prev];
+      updatedTables[props.id].fields = [
+        ...updatedTables[props.id].fields,
+        { ...field },
+      ];
+      return updatedTables;
+    });
     setField({
       name: "",
       type: "",
@@ -77,7 +75,7 @@ const Rect = (props) => {
     setVisible(false);
   };
 
-  const height = fields.length * 36 + 40 + 4;
+  const height = props.tableData.fields.length * 36 + 40 + 4;
 
   const onCheck = (checkedValues) => {
     setField({
@@ -90,9 +88,9 @@ const Rect = (props) => {
     <g>
       <foreignObject
         key={props.id}
-        x={props.x}
-        y={props.y}
-        width={props.width}
+        x={props.tableData.x}
+        y={props.tableData.y}
+        width={240}
         height={height}
         style={{ cursor: "move" }}
         onMouseDown={props.onMouseDown}
@@ -154,7 +152,7 @@ const Rect = (props) => {
               </div>
             )}
           </div>
-          {fields.map((e, i) => {
+          {props.tableData.fields.map((e, i) => {
             return (
               <Popover
                 key={i}
@@ -196,7 +194,9 @@ const Rect = (props) => {
               >
                 <div
                   className={`${
-                    i === fields.length - 1 ? "" : "border-b-2 border-gray-400"
+                    i === props.tableData.fields.length - 1
+                      ? ""
+                      : "border-b-2 border-gray-400"
                   } h-[36px] p-2 flex justify-between`}
                   onMouseEnter={() => {
                     setHoveredField(i);
@@ -205,17 +205,18 @@ const Rect = (props) => {
                     setHoveredField(-1);
                   }}
                 >
-                  <div>
+                  <div
+                    className={`${hoveredField === i ? "text-slate-600" : ""}`}
+                  >
                     <button
-                      className="w-[10px] h-[10px] bg-green-600 rounded-full me-2"
+                      className={`w-[10px] h-[10px] bg-green-600 rounded-full me-2`}
                       onMouseDown={(ev) => {
-                        console.log("mouse down");
                         props.handleGripField(i);
                         props.setLine({
-                          startX: props.x + 15,
-                          startY: props.y + i * 36 + 40 + 19,
-                          endX: props.x + 15,
-                          endY: props.y + i * 36 + 40 + 19,
+                          startX: props.tableData.x + 15,
+                          startY: props.tableData.y + i * 36 + 40 + 19,
+                          endX: props.tableData.x + 15,
+                          endY: props.tableData.y + i * 36 + 40 + 19,
                         });
                       }}
                     ></button>
@@ -235,10 +236,18 @@ const Rect = (props) => {
                         </button>
                         <button
                           className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
-                          onClick={(e) => {
-                            const updatedFields = [...fields];
-                            updatedFields.splice(i, 1);
-                            setFields(updatedFields);
+                          onClick={(ev) => {
+                            props.setTables((prev) => {
+                              const updatedTables = [...prev];
+                              const updatedFields = [
+                                ...updatedTables[props.id].fields,
+                              ];
+                              updatedFields.splice(i, 1);
+                              updatedTables[props.id].fields = [
+                                ...updatedFields,
+                              ];
+                              return updatedTables;
+                            });
                           }}
                         >
                           <IconMinus />
@@ -258,7 +267,7 @@ const Rect = (props) => {
       <Modal
         title="Add new field"
         visible={visible}
-        onOk={handleOk}
+        onOk={handleAddField}
         onCancel={() => setVisible(false)}
         centered
         closeOnEsc={true}
@@ -331,10 +340,12 @@ const Rect = (props) => {
       </Modal>
       <Modal
         title={`Edit field ${
-          editFieldVisible !== -1 ? fields[editFieldVisible].name : ""
+          editFieldVisible !== -1
+            ? props.tableData.fields[editFieldVisible].name
+            : ""
         }`}
         visible={editFieldVisible !== -1}
-        onOk={handleOkEdit}
+        onOk={handleEditField}
         onCancel={() => setEditFieldVisible(-1)}
         centered
         closeOnEsc={true}
@@ -353,7 +364,9 @@ const Rect = (props) => {
                 label="Name"
                 trigger="blur"
                 initValue={
-                  editFieldVisible !== -1 ? fields[editFieldVisible].name : ""
+                  editFieldVisible !== -1
+                    ? props.tableData.fields[editFieldVisible].name
+                    : ""
                 }
               />
             </Col>
@@ -365,7 +378,7 @@ const Rect = (props) => {
                 trigger="blur"
                 initValue={
                   editFieldVisible !== -1
-                    ? fields[editFieldVisible].default
+                    ? props.tableData.fields[editFieldVisible].default
                     : ""
                 }
               />
@@ -385,7 +398,9 @@ const Rect = (props) => {
                 })}
                 filter
                 initValue={
-                  editFieldVisible !== -1 ? fields[editFieldVisible].type : ""
+                  editFieldVisible !== -1
+                    ? props.tableData.fields[editFieldVisible].type
+                    : ""
                 }
               ></Form.Select>
               <div className="flex justify-around mt-2">
@@ -394,7 +409,7 @@ const Rect = (props) => {
                   onChange={onCheck}
                   defaultChecked={
                     editFieldVisible !== -1
-                      ? fields[editFieldVisible].primary
+                      ? props.tableData.fields[editFieldVisible].primary
                       : undefined
                   }
                 >
@@ -405,7 +420,7 @@ const Rect = (props) => {
                   onChange={onCheck}
                   defaultChecked={
                     editFieldVisible !== -1
-                      ? fields[editFieldVisible].unique
+                      ? props.tableData.fields[editFieldVisible].unique
                       : undefined
                   }
                 >
@@ -416,7 +431,7 @@ const Rect = (props) => {
                   onChange={onCheck}
                   defaultChecked={
                     editFieldVisible !== -1
-                      ? fields[editFieldVisible].notNull
+                      ? props.tableData.fields[editFieldVisible].notNull
                       : undefined
                   }
                 >
@@ -427,7 +442,7 @@ const Rect = (props) => {
                   onChange={onCheck}
                   defaultChecked={
                     editFieldVisible !== -1
-                      ? fields[editFieldVisible].increment
+                      ? props.tableData.fields[editFieldVisible].increment
                       : undefined
                   }
                 >

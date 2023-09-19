@@ -48,19 +48,32 @@ export default function EditorPanel(props) {
         <br />
         <button
           onClick={() => {
-            const newRectangle = {
-              id: props.rectangles.length + 1,
+            const newTable = {
+              id: props.tables.length + 1,
+              name: `Table ${props.tables.length + 1}`,
               x: 0,
               y: 0,
-              width: 240,
-              height: 100,
-              name: `Table ${props.rectangles.length + 1}`,
+              fields: [
+                {
+                  name: "id",
+                  type: "UUID",
+                  default: "",
+                  primary: true,
+                  unique: true,
+                  notNull: true,
+                  increment: true,
+                },
+              ],
             };
-            props.setRectangles([...props.rectangles, newRectangle]);
+            props.setTables(prev => {
+              const updatedTables = [...prev, newTable];
+              console.log(updatedTables);
+              return updatedTables;
+            });
             props.setCode((prev) =>
               prev === ""
-                ? `CREATE TABLE \`${newRectangle.name}\`;`
-                : `${prev}\n\nCREATE TABLE \`${newRectangle.name}\`;`
+                ? `CREATE TABLE \`${newTable.name}\`;`
+                : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
             );
           }}
         >
@@ -91,15 +104,24 @@ export default function EditorPanel(props) {
                     return;
                   }
                   map.current.set(t.table, t);
-                  const newRectangle = {
-                    id: props.rectangles.length + 1,
+                  const newTable = {
+                    id: props.tables.length + 1,
+                    name: `Table ${props.tables.length + 1}`,
                     x: 0,
                     y: 0,
-                    width: 240,
-                    height: 100,
-                    name: `rect ${props.rectangles.length + 1}`,
+                    fields: [
+                      {
+                        name: "id",
+                        type: "UUID",
+                        default: "",
+                        primary: true,
+                        unique: true,
+                        notNull: true,
+                        increment: true,
+                      },
+                    ],
                   };
-                  props.setRectangles([...props.rectangles, newRectangle]);
+                  props.setTables((prev)=>[...prev, newTable]);
                 });
               });
             } catch (e) {

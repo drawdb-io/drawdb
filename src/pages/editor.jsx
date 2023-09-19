@@ -9,7 +9,7 @@ import EditorPanel from "../components/editor_panel";
 
 export default function Editor(props) {
   const [code, setCode] = useState("");
-  const [rectangles, setRectangles] = useState([]);
+  const [tables, setTables] = useState([]);
 
   return (
     <>
@@ -18,14 +18,14 @@ export default function Editor(props) {
       <div className="flex h-full">
         <DndProvider backend={HTML5Backend}>
           <EditorPanel
-            rectangles={rectangles}
-            setRectangles={setRectangles}
+            tables={tables}
+            setTables={setTables}
             code={code}
             setCode={setCode}
           />
           <Canvas
-            rectangles={rectangles}
-            setRectangles={setRectangles}
+            tables={tables}
+            setTables={setTables}
             code={code}
             setCode={setCode}
           />

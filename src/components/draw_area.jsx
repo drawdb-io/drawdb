@@ -21,10 +21,10 @@ export default function Canvas(props) {
 
   const handleMouseDownRect = (e, id) => {
     const { clientX, clientY } = e;
-    const rectangle = props.rectangles.find((rect) => rect.id === id);
+    const table = props.tables.find((t) => t.id === id);
     setOffset({
-      x: clientX - rectangle.x,
-      y: clientY - rectangle.y,
+      x: clientX - table.x,
+      y: clientY - table.y,
     });
     setDragging(id);
   };
@@ -47,26 +47,25 @@ export default function Canvas(props) {
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
-      const updatedRectangles = props.rectangles.map((rect) => ({
-        ...rect,
-        x: rect.x + dx,
-        y: rect.y + dy,
+      const updatedTables = props.tables.map((t) => ({
+        ...t,
+        x: t.x + dx,
+        y: t.y + dy,
       }));
-      props.setRectangles(updatedRectangles);
+      props.setTables(updatedTables);
     } else if (dragging >= 0) {
-      const { clientX, clientY } = e;
-      const updatedRectangles = props.rectangles.map((rect) => {
-        if (rect.id === dragging) {
-          const updatedRect = {
-            ...rect,
-            x: clientX - offset.x,
-            y: clientY - offset.y,
+      const updatedTables = props.tables.map((t) => {
+        if (t.id === dragging) {
+          const updatedTable = {
+            ...t,
+            x: e.clientX - offset.x,
+            y: e.clientY - offset.y,
           };
-          return updatedRect;
+          return updatedTable;
         }
-        return rect;
+        return t;
       });
-      props.setRectangles(updatedRectangles);
+      props.setTables(updatedTables);
     }
   };
 
@@ -88,16 +87,19 @@ export default function Canvas(props) {
   };
 
   const deleteTable = (id) => {
-    const updatedTables = [...props.rectangles];
+    const updatedTables = [...props.tables];
     updatedTables.splice(id, 1);
-    props.setRectangles(updatedTables);
+    props.setTables(updatedTables);
   };
 
   const handleGripField = (id) => {
     setPanning(false);
     setDragging(-1);
     setLinking(true);
+    handleLinking();
   };
+
+  const handleLinking = () => {};
 
   const [, drop] = useDrop(
     () => ({
@@ -107,26 +109,35 @@ export default function Canvas(props) {
         const canvasRect = canvas.current.getBoundingClientRect();
         const x = offset.x - canvasRect.left - 100 * 0.5;
         const y = offset.y - canvasRect.top - 100 * 0.5;
-        const newRectangle = {
-          id: props.rectangles.length + 1,
-          x,
-          y,
-          width: 240,
-          height: 100,
-          label: `rect ${props.rectangles.length + 1}`,
+        const newTable = {
+          id: props.tables.length + 1,
+          name: `Table ${props.tables.length + 1}`,
+          x: x,
+          y: y,
+          fields: [
+            {
+              name: "id",
+              type: "UUID",
+              default: "",
+              primary: true,
+              unique: true,
+              notNull: true,
+              increment: true,
+            },
+          ],
         };
-        props.setRectangles([...props.rectangles, newRectangle]);
+        props.setTables((prev) => [...prev, newTable]);
         props.setCode((prev) =>
           prev === ""
-            ? `CREATE TABLE \`${newRectangle.label}\`;`
-            : `${prev}\n\nCREATE TABLE \`${newRectangle.label}\`;`
+            ? `CREATE TABLE \`${newTable.name}\`;`
+            : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
         );
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [props.rectangles]
+    [props.tables]
   );
   return (
     <div ref={drop} className="flex-grow" id="canvas">
@@ -168,20 +179,17 @@ export default function Canvas(props) {
           </defs>
 
           <rect width="100%" height="100%" fill="url(#grid)" />
-          {props.rectangles.map((rectangle, i) => (
+          {props.tables.map((table, i) => (
             <Rect
-              key={rectangle.id}
+              key={table.id}
               id={i}
-              x={rectangle.x}
-              y={rectangle.y}
-              label={rectangle.label}
-              width={rectangle.width}
-              height={rectangle.height}
+              tableData={table}
+              tables={props.tables}
+              setTables={props.setTables}
               setOnRect={setOnRect}
               handleGripField={handleGripField}
-              // links={links}
               setLine={setLine}
-              onMouseDown={(e) => handleMouseDownRect(e, rectangle.id)}
+              onMouseDown={(e) => handleMouseDownRect(e, table.id)}
               onDelete={deleteTable}
             />
           ))}
