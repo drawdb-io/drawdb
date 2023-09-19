@@ -1,5 +1,4 @@
 import { React, useState } from "react";
-import { menu } from "../data/data";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -17,18 +16,241 @@ import {
   Divider,
   Dropdown,
   Form,
+  Image,
+  Modal,
 } from "@douyinfe/semi-ui";
+import { toPng } from "html-to-image";
+import { saveAs } from "file-saver";
 
 export default function ControlPanel() {
   const [showToolBar, setShowToolBar] = useState(true);
 
+  const [visible, setVisible] = useState(false);
+  const [dataUrl, setDataUrl] = useState("");
+  const [filename, setFilename] = useState(
+    `diagram_${new Date().toISOString()}`
+  );
+
+  const menu = {
+    File: {
+      New: {
+        children: [],
+        function: () => console.log("New"),
+      },
+      "New window": {
+        children: [],
+        function: () => {},
+      },
+      Save: {
+        children: [],
+        function: () => {},
+      },
+      "Save as": {
+        children: [],
+        function: () => {},
+      },
+      Share: {
+        children: [],
+        function: () => {},
+      },
+      Rename: {
+        children: [],
+        function: () => {},
+      },
+      Import: {
+        children: [],
+        function: () => {},
+      },
+      "Export as": {
+        children: [
+          {
+            ".png": () => {
+              toPng(document.getElementById("canvas")).then(function (dataUrl) {
+                setDataUrl(dataUrl);
+              });
+              setVisible(true);
+            },
+          },
+          { ".jpg": () => {} },
+          { ".xml": () => {} },
+          { ".svg": () => {} },
+          { ".xml": () => {} },
+        ],
+        function: () => {},
+      },
+      "Export source": {
+        children: [
+          { MySQL: () => {} },
+          { PostgreSQL: () => {} },
+          { DBML: () => {} },
+        ],
+        function: () => {},
+      },
+      Properties: {
+        children: [],
+        function: () => {},
+      },
+      Close: {
+        children: [],
+        function: () => {},
+      },
+    },
+    Edit: {
+      Undo: {
+        children: [],
+        function: () => {},
+      },
+      Redo: {
+        children: [],
+        function: () => {},
+      },
+      Cut: {
+        children: [],
+        function: () => {},
+      },
+      Copy: {
+        children: [],
+        function: () => {},
+      },
+      "Copy as image": {
+        children: [],
+        function: () => {},
+      },
+      Paste: {
+        children: [],
+        function: () => {},
+      },
+      Delete: {
+        children: [],
+        function: () => {},
+      },
+      "Edit table": {
+        children: [],
+        function: () => {},
+      },
+    },
+    View: {
+      Toolbar: {
+        children: [],
+        function: () => {},
+      },
+      Grid: {
+        children: [],
+        function: () => {},
+      },
+      Sidebar: {
+        children: [],
+        function: () => {},
+      },
+      Editor: {
+        children: [],
+        function: () => {},
+      },
+      "Strict mode": {
+        children: [],
+        function: () => {},
+      },
+      "Reset view": {
+        children: [],
+        function: () => {},
+      },
+      "View schema": {
+        children: [],
+        function: () => {},
+      },
+      Theme: {
+        children: [{ Light: () => {} }, { Dark: () => {} }],
+        function: () => {},
+      },
+      "Zoom in": {
+        children: [],
+        function: () => {},
+      },
+      "Zoom out": {
+        children: [],
+        function: () => {},
+      },
+      Fullscreen: {
+        children: [],
+        function: () => {},
+      },
+    },
+    Insert: {
+      "New table": {
+        children: [],
+        function: () => {},
+      },
+      "New relationship": {
+        children: [],
+        function: () => {},
+      },
+      Note: {
+        children: [],
+        function: () => {},
+      },
+      Image: {
+        children: [],
+        function: () => {},
+      },
+      Textbox: {
+        children: [],
+        function: () => {},
+      },
+      Shape: {
+        children: [],
+        function: () => {},
+      },
+    },
+    Logs: {
+      "Open logs": {
+        children: [],
+        function: () => {},
+      },
+      "Commit changes": {
+        children: [],
+        function: () => {},
+      },
+      "Revert changes": {
+        children: [],
+        function: () => {},
+      },
+      "View commits": {
+        children: [],
+        function: () => {},
+      },
+    },
+    Help: {
+      Shortcuts: {
+        children: [],
+        function: () => {},
+      },
+      "Ask us on discord": {
+        children: [],
+        function: () => {},
+      },
+      "Tweet us": {
+        children: [],
+        function: () => {},
+      },
+      "Found a bug": {
+        children: [],
+        function: () => {},
+      },
+    },
+  };
+
   return (
     <>
       {showToolBar && (
-        <nav className="flex justify-between pt-1 items-center">
+        <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
           <div className="flex justify-start items-center text-slate-800">
             <Link to="/">
-              <img width={54} src={icon} alt="logo" className="ms-8" />
+              <img
+                width={54}
+                src={icon}
+                alt="logo"
+                className="ms-8 min-w-[54px]"
+              />
             </Link>
             <div className="ms-1 mt-1">
               <div className="text-xl ms-3">Project1 / Untitled</div>
@@ -52,12 +274,11 @@ export default function ControlPanel() {
                                     <Dropdown.Menu>
                                       {menu[category][item].children.map(
                                         (e, i) => (
-                                          <Dropdown.Item key={i}>
-                                            <button
-                                              onClick={Object.values(e)[0]}
-                                            >
-                                              {Object.keys(e)[0]}
-                                            </button>
+                                          <Dropdown.Item
+                                            key={i}
+                                            onClick={Object.values(e)[0]}
+                                          >
+                                            {Object.keys(e)[0]}
                                           </Dropdown.Item>
                                         )
                                       )}
@@ -70,22 +291,20 @@ export default function ControlPanel() {
                                       justifyContent: "space-between",
                                       alignItems: "center",
                                     }}
+                                    onClick={menu[category][item].function}
                                   >
-                                    <button
-                                      onClick={menu[category][item].function}
-                                    >
-                                      {item}
-                                    </button>
+                                    {item}
                                     <IconChevronRight />
                                   </Dropdown.Item>
                                 </Dropdown>
                               );
                             }
                             return (
-                              <Dropdown.Item key={index}>
-                                <button onClick={menu[category][item].function}>
-                                  {item}
-                                </button>
+                              <Dropdown.Item
+                                key={index}
+                                onClick={menu[category][item].function}
+                              >
+                                {item}
                               </Dropdown.Item>
                             );
                           })}
@@ -252,6 +471,35 @@ export default function ControlPanel() {
           {showToolBar ? <IconChevronUp /> : <IconChevronDown />}
         </button>
       </div>
+      <Modal
+        title="Export diagram"
+        visible={visible}
+        onOk={() => saveAs(dataUrl, `${filename}.png`)}
+        afterClose={() => setFilename(`diagram_${new Date().toISOString()}`)}
+        onCancel={() => setVisible(false)}
+        centered
+        closeOnEsc={true}
+        okText="Export"
+        cancelText="Cancel"
+        width={470}
+      >
+        <Image src={dataUrl} alt="Diagram" width={420}></Image>
+        <Form
+          labelPosition="left"
+          labelAlign="right"
+          onChange={(value) => {
+            console.log(value.values);
+            setFilename(value.values["filename"]);
+          }}
+        >
+          <Form.Input
+            field="filename"
+            label="Filename"
+            suffix={<div className="p-2">.png</div>}
+            initValue={filename}
+          />
+        </Form>
+      </Modal>
     </>
   );
 }

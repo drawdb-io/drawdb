@@ -5,7 +5,6 @@ import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
-// import { saveAs } from "file-saver";
 import { toPng } from "html-to-image";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
@@ -13,7 +12,7 @@ import "react-resizable/css/styles.css";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
-import { ImagePreview, Image } from "@douyinfe/semi-ui";
+import { ImagePreview } from "@douyinfe/semi-ui";
 
 const myTheme = createTheme({
   dark: "light",
@@ -187,15 +186,6 @@ const EditorPanel = (props) => {
           visible={visible1}
           onVisibleChange={visibleChange1}
         >
-          <div>
-            {visible1&&<Image
-              src={"https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/abstract.jpg"}
-              width={200}
-              alt={`lamp${1}`}
-              
-              style={{ marginRight: 5 }}
-            />}
-          </div>
         </ImagePreview>
       </div>
     </ResizableBox>
