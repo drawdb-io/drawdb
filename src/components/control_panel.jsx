@@ -18,7 +18,7 @@ import {
   Button,
   Divider,
   Dropdown,
-  Form,
+  InputNumber,
   Image,
   Modal,
   Spin,
@@ -72,7 +72,7 @@ export default function ControlPanel(props) {
   });
   const [data, setData] = useState(null);
   const { layout, setLayout } = useContext(LayoutContext);
-  const { setSettings } = useContext(SettingsContext);
+  const { settings, setSettings } = useContext(SettingsContext);
   const { relationships, tables, setTables, setRelationships } =
     useContext(TableContext);
   const { notes, setNotes } = useContext(NoteContext);
@@ -316,11 +316,13 @@ export default function ControlPanel(props) {
       },
       "Zoom in": {
         children: [],
-        function: () => {},
+        function: () =>
+          setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 })),
       },
       "Zoom out": {
         children: [],
-        function: () => {},
+        function: () =>
+          setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 })),
       },
       Fullscreen: {
         children: [],
@@ -395,35 +397,37 @@ export default function ControlPanel(props) {
               <Dropdown.Menu>
                 <Dropdown.Item>Fit window</Dropdown.Item>
                 <Dropdown.Divider />
-                {[
-                  "25%",
-                  "50%",
-                  "75%",
-                  "100%",
-                  "125%",
-                  "150%",
-                  "200%",
-                  "300%",
-                ].map((e, i) => (
-                  <Dropdown.Item key={i}>{e}</Dropdown.Item>
+                {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
+                  <Dropdown.Item
+                    key={i}
+                    onClick={() => {
+                      setSettings((prev) => ({ ...prev, zoom: e }));
+                    }}
+                  >
+                    {Math.floor(e * 100)}%
+                  </Dropdown.Item>
                 ))}
                 <Dropdown.Divider />
                 <Dropdown.Item>
-                  <Form>
-                    <Form.InputNumber
-                      field="zoom"
-                      label="Custom zoom"
-                      placeholder="Zoom"
-                      suffix={<div className="p-1">%</div>}
-                    />
-                  </Form>
+                  <InputNumber
+                    field="zoom"
+                    label="Custom zoom"
+                    placeholder="Zoom"
+                    suffix={<div className="p-1">%</div>}
+                    onChange={(v) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        zoom: parseFloat(v) * 0.01,
+                      }))
+                    }
+                  />
                 </Dropdown.Item>
               </Dropdown.Menu>
             }
             trigger="click"
           >
             <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center">
-              <div>zoom</div>
+              <div className="w-[40px]">{Math.floor(settings.zoom * 100)}%</div>
               <div>
                 <IconCaretdown />
               </div>
@@ -432,12 +436,18 @@ export default function ControlPanel(props) {
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
             title="Zoom in"
+            onClick={() =>
+              setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
+            }
           >
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
             title="Zoom out"
+            onClick={() =>
+              setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+            }
           >
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>

@@ -3,7 +3,12 @@ import Table from "./table";
 import { Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
-import { AreaContext, NoteContext, TableContext } from "../pages/editor";
+import {
+  AreaContext,
+  NoteContext,
+  SettingsContext,
+  TableContext,
+} from "../pages/editor";
 import Note from "./note";
 
 export default function Canvas(props) {
@@ -11,6 +16,7 @@ export default function Canvas(props) {
     useContext(TableContext);
   const { areas, setAreas } = useContext(AreaContext);
   const { notes, setNotes } = useContext(NoteContext);
+  const { settings, setSettings } = useContext(SettingsContext);
   const [dragging, setDragging] = useState([ObjectType.NONE, -1]);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
@@ -45,7 +51,6 @@ export default function Canvas(props) {
     mouseY: 0,
   });
   const [cursor, setCursor] = useState("default");
-  const [zoom, setZoom] = useState(1);
 
   const canvas = useRef(null);
 
@@ -54,22 +59,22 @@ export default function Canvas(props) {
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setOffset({
-        x: clientX / zoom - table.x,
-        y: clientY / zoom - table.y,
+        x: clientX / settings.zoom - table.x,
+        y: clientY / settings.zoom - table.y,
       });
       setDragging([ObjectType.TABLE, id]);
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
       setOffset({
-        x: clientX / zoom - area.x,
-        y: clientY / zoom - area.y,
+        x: clientX / settings.zoom - area.x,
+        y: clientY / settings.zoom - area.y,
       });
       setDragging([ObjectType.AREA, id]);
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
       setOffset({
-        x: clientX / zoom - note.x,
-        y: clientY / zoom - note.y,
+        x: clientX / settings.zoom - note.x,
+        y: clientY / settings.zoom - note.y,
       });
       setDragging([ObjectType.NOTE, id]);
     }
@@ -83,16 +88,16 @@ export default function Canvas(props) {
 
       setLine({
         ...line,
-        endX: (e.clientX - offsetX) / zoom,
-        endY: (e.clientY - offsetY) / zoom,
+        endX: (e.clientX - offsetX) / settings.zoom,
+        endY: (e.clientY - offsetY) / settings.zoom,
       });
     } else if (
       panning &&
       dragging[0] === ObjectType.NONE &&
       areaResize.id === -1
     ) {
-      const dx = (e.clientX - panOffset.x) / zoom;
-      const dy = (e.clientY - panOffset.y) / zoom;
+      const dx = (e.clientX - panOffset.x) / settings.zoom;
+      const dy = (e.clientY - panOffset.y) / settings.zoom;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
       setTables((prev) =>
@@ -121,8 +126,8 @@ export default function Canvas(props) {
         if (t.id === dragging[1]) {
           return {
             ...t,
-            x: e.clientX / zoom - offset.x,
-            y: e.clientY / zoom - offset.y,
+            x: e.clientX / settings.zoom - offset.x,
+            y: e.clientY / settings.zoom - offset.y,
           };
         }
         return t;
@@ -156,8 +161,8 @@ export default function Canvas(props) {
           if (t.id === dragging[1]) {
             const updatedArea = {
               ...t,
-              x: e.clientX / zoom - offset.x,
-              y: e.clientY / zoom - offset.y,
+              x: e.clientX / settings.zoom - offset.x,
+              y: e.clientY / settings.zoom - offset.y,
             };
             return updatedArea;
           }
@@ -170,8 +175,8 @@ export default function Canvas(props) {
           if (t.id === dragging[1]) {
             return {
               ...t,
-              x: e.clientX / zoom - offset.x,
-              y: e.clientY / zoom - offset.y,
+              x: e.clientX / settings.zoom - offset.x,
+              y: e.clientY / settings.zoom - offset.y,
             };
           }
           return t;
@@ -184,8 +189,8 @@ export default function Canvas(props) {
       let newY = initCoords.y;
       let newWidth = initCoords.width;
       let newHeight = initCoords.height;
-      const mouseX = e.clientX / zoom;
-      const mouseY = e.clientY / zoom;
+      const mouseX = e.clientX / settings.zoom;
+      const mouseY = e.clientY / settings.zoom;
       setPanning(false);
       if (areaResize.dir === "br") {
         newWidth = initCoords.width + (mouseX - initCoords.mouseX);
@@ -278,9 +283,9 @@ export default function Canvas(props) {
   const handleMouseWheel = (e) => {
     e.preventDefault();
     if (e.deltaY <= 0) {
-      setZoom((prev) => prev * 1.05);
+      setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.05 }));
     } else {
-      setZoom((prev) => prev / 1.05);
+      setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.05 }));
     }
   };
 
@@ -292,7 +297,7 @@ export default function Canvas(props) {
     return () => {
       canvasElement.removeEventListener("wheel", handleMouseWheel);
     };
-  }, []);
+  });
 
   return (
     <div className="flex-grow h-full" id="canvas">
@@ -332,7 +337,12 @@ export default function Canvas(props) {
             height="100%"
             fill="url(#pattern-circles)"
           ></rect>
-          <g style={{ transform: `scale(${zoom})`, transformOrigin: "0 0" }}>
+          <g
+            style={{
+              transform: `scale(${settings.zoom})`,
+              transformOrigin: "0 0",
+            }}
+          >
             {areas.map((a) => (
               <Area
                 key={a.id}
@@ -343,7 +353,7 @@ export default function Canvas(props) {
                 setResize={setAreaResize}
                 initCoords={initCoords}
                 setInitCoords={setInitCoords}
-                zoom={zoom}
+                zoom={settings.zoom}
               ></Area>
             ))}
             {tables.map((table) => (
