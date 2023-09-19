@@ -35,7 +35,12 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { SelectContext, TableContext, UndoRedoContext } from "../pages/editor";
+import {
+  SelectContext,
+  TableContext,
+  TypeContext,
+  UndoRedoContext,
+} from "../pages/editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 
 export default function TableOverview(props) {
@@ -49,6 +54,7 @@ export default function TableOverview(props) {
     updateTable,
     setRelationships,
   } = useContext(TableContext);
+  const { types } = useContext(TypeContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [editField, setEditField] = useState({});
@@ -193,12 +199,16 @@ export default function TableOverview(props) {
                     <Col span={8}>
                       <Select
                         className="w-full"
-                        optionList={sqlDataTypes.map((value) => {
-                          return {
+                        optionList={[
+                          ...sqlDataTypes.map((value) => ({
                             label: value,
                             value: value,
-                          };
-                        })}
+                          })),
+                          ...types.map((type) => ({
+                            label: type.name.toUpperCase(),
+                            value: type.name.toUpperCase(),
+                          })),
+                        ]}
                         filter
                         value={f.type}
                         validateStatus={f.type === "" ? "error" : "default"}

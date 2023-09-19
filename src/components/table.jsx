@@ -39,6 +39,7 @@ import {
   SettingsContext,
   TabContext,
   TableContext,
+  TypeContext,
   UndoRedoContext,
 } from "../pages/editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
@@ -52,6 +53,7 @@ export default function Table(props) {
     useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
+  const { types } = useContext(TypeContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
 
@@ -347,12 +349,16 @@ export default function Table(props) {
               <Col span={8}>
                 <Select
                   className="w-full"
-                  optionList={sqlDataTypes.map((value) => {
-                    return {
+                  optionList={[
+                    ...sqlDataTypes.map((value) => ({
                       label: value,
                       value: value,
-                    };
-                  })}
+                    })),
+                    ...types.map((type) => ({
+                      label: type.name.toUpperCase(),
+                      value: type.name.toUpperCase(),
+                    })),
+                  ]}
                   filter
                   value={f.type}
                   validateStatus={f.type === "" ? "error" : "default"}

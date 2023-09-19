@@ -180,12 +180,18 @@ export default function TableOverview(props) {
                     <Col span={11}>
                       <Select
                         className="w-full"
-                        optionList={sqlDataTypes.map((value) => {
-                          return {
+                        optionList={[
+                          ...sqlDataTypes.map((value) => ({
                             label: value,
                             value: value,
-                          };
-                        })}
+                          })),
+                          ...types
+                            .filter((type) => type.name !== t.name)
+                            .map((type) => ({
+                              label: type.name.toUpperCase(),
+                              value: type.name.toUpperCase(),
+                            })),
+                        ]}
                         filter
                         value={f.type}
                         validateStatus={f.type === "" ? "error" : "default"}
