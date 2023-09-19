@@ -490,6 +490,21 @@ export default function Editor(props) {
     socket.on("user-connected", onUserConnected);
     socket.on("user-disconnected", onUserDisconnected);
 
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      setSettings((prev) => ({ ...prev, mode: "dark" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "dark");
+      }
+    } else {
+      setSettings((prev) => ({ ...prev, mode: "light" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "light");
+      }
+    }
+
     return () => {
       socket.off("connect", onConnect);
       socket.off("recieve-message", onRecieve);

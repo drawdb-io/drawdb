@@ -921,6 +921,7 @@ export default function ControlPanel(props) {
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "light");
               }
+              localStorage.setItem("theme", "light");
               setSettings((prev) => ({ ...prev, mode: "light" }));
             },
           },
@@ -930,6 +931,7 @@ export default function ControlPanel(props) {
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "dark");
               }
+              localStorage.setItem("theme", "dark");
               setSettings((prev) => ({ ...prev, mode: "dark" }));
             },
           },

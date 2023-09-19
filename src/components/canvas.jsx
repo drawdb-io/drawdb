@@ -370,6 +370,8 @@ export default function Canvas(props) {
     };
   });
 
+  const theme = localStorage.getItem("theme");
+
   return (
     <div className="flex-grow h-full" id="canvas">
       <div ref={canvas} className="w-full h-full">
@@ -380,8 +382,7 @@ export default function Canvas(props) {
           className="w-full h-full"
           style={{
             cursor: cursor,
-            backgroundColor:
-              settings.mode === "light" ? "white" : "rgba(22, 22, 26, 1)",
+            backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
           }}
         >
           {settings.showGrid && (
