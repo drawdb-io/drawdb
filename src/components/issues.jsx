@@ -1,9 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Collapse } from "@douyinfe/semi-ui";
-import { SettingsContext } from "../pages/editor";
+import { SettingsContext, TableContext } from "../pages/editor";
+import { validateDiagram, arrayIsEqual } from "../utils";
 
 export default function Issues() {
   const { settings } = useContext(SettingsContext);
+  const { tables, relationships } = useContext(TableContext);
+  const [issues, setIssues] = useState([]);
+  
+  useEffect(() => {
+    const findIssues = async () => {
+      const newIssues = validateDiagram({
+        tables: tables,
+        relationships: relationships,
+      });
+
+      if (!arrayIsEqual(newIssues, issues)) {
+        setIssues(newIssues);
+      }
+    };
+
+    findIssues();
+  }, [tables, relationships, issues]);
+
   return (
     <Collapse style={{ width: "100%" }}>
       <Collapse.Panel
@@ -22,12 +41,11 @@ export default function Issues() {
             </div>
           ) : (
             <div>
-              <div className="py-2">Issue 1</div>
-              <div className="py-2">Issue 2</div>
-              <div className="py-2">Issue 3</div>
-              <div className="py-2">Issue 4</div>
-              <div className="py-2">Issue 5</div>
-              <div className="py-2">Issue 6</div>
+              {issues.map((e, i) => (
+                <div key={i} className="py-2">
+                  {e}
+                </div>
+              ))}
             </div>
           )}
         </div>

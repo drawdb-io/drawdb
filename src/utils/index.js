@@ -111,6 +111,51 @@ function jsonToSQL(obj) {
     .join("\n")}`;
 }
 
+function arrayIsEqual(arr1, arr2) {
+  return JSON.stringify(arr1) === JSON.stringify(arr2);
+}
+
+function validateDiagram(diagram) {
+  const issues = [];
+  const duplicateTableNames = {};
+
+  diagram.tables.forEach((table) => {
+    if (duplicateTableNames[table.name]) {
+      issues.push(`Duplicate table name: "${table.name}"`);
+    } else {
+      duplicateTableNames[table.name] = true;
+    }
+  });
+
+  const visitedTables = new Set();
+
+  function checkCircularRelationships(tableId, visited = []) {
+    if (visited.includes(tableId)) {
+      issues.push(
+        `Circular relationship involving table: "${diagram.tables[tableId].name}"`
+      );
+      return;
+    }
+
+    visited.push(tableId);
+    visitedTables.add(tableId);
+
+    diagram.relationships.forEach((relationship) => {
+      if (relationship.startTableId === tableId) {
+        checkCircularRelationships(relationship.endTableId, [...visited]);
+      }
+    });
+  }
+
+  diagram.tables.forEach((table) => {
+    if (!visitedTables.has(table.id)) {
+      checkCircularRelationships(table.id);
+    }
+  });
+
+  return issues;
+}
+
 export {
   enterFullscreen,
   exitFullscreen,
@@ -118,4 +163,6 @@ export {
   ddbDiagramIsValid,
   dataURItoBlob,
   jsonToSQL,
+  validateDiagram,
+  arrayIsEqual,
 };
