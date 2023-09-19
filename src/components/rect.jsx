@@ -125,7 +125,10 @@ const Rect = (props) => {
                 >
                   <IconPlus />
                 </button>
-                <button className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80">
+                <button
+                  className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
+                  onClick={(e) => props.onDelete(props.id)}
+                >
                   <IconDelete />
                 </button>
               </div>
@@ -278,6 +281,7 @@ const Rect = (props) => {
                 field="type"
                 label="Type"
                 className="w-full"
+                filter
                 optionList={sqlDataTypes.map((value, index) => {
                   return {
                     label: value,

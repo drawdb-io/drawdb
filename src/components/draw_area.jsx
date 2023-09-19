@@ -116,6 +116,12 @@ export default function Canvas(props) {
     setCursor("default");
   };
 
+  const deleteTable = (id) => {
+    const updatedTables = [...props.rectangles];
+    updatedTables.splice(id, 1);
+    props.setRectangles(updatedTables);
+  };
+
   const [, drop] = useDrop(
     () => ({
       accept: "CARD",
@@ -185,10 +191,10 @@ export default function Canvas(props) {
           </defs>
 
           <rect width="100%" height="100%" fill="url(#grid)" />
-          {props.rectangles.map((rectangle) => (
+          {props.rectangles.map((rectangle, i) => (
             <Rect
               key={rectangle.id}
-              id={rectangle.id}
+              id={i}
               x={rectangle.x}
               y={rectangle.y}
               label={rectangle.label}
@@ -198,6 +204,7 @@ export default function Canvas(props) {
               links={links}
               setLinks={setLinks}
               onMouseDown={(e) => handleMouseDownRect(e, rectangle.id)}
+              onDelete={deleteTable}
             />
           ))}
           {links.map(
