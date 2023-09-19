@@ -4,7 +4,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
-import { shapes } from "jointjs";
 import Shape from "./shape";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
@@ -87,19 +86,15 @@ export default function EditorPanel(props) {
                     return;
                   }
                   map.current.set(t.table, t);
-                  const rect = new shapes.standard.Rectangle();
-                  rect.position(100, 100);
-                  rect.resize(100, 40);
-                  rect.attr({
-                    body: {
-                      fill: "#7039FF",
-                    },
-                    label: {
-                      text: t.table,
-                      fill: "white",
-                    },
-                  });
-                  rect.addTo(props.graph);
+                  const newRectangle = {
+                    id: props.rectangles.length + 1,
+                    x: 0,
+                    y: 0,
+                    width: 100,
+                    height: 100,
+                    label: `rect ${props.rectangles.length + 1}`,
+                  };
+                  props.setRectangles([...props.rectangles, newRectangle]);
                 });
               });
             } catch (e) {
