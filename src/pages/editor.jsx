@@ -24,12 +24,14 @@ export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
 export const TaskContext = createContext();
 export const MessageContext = createContext();
+export const TypeContext = createContext();
 
 export default function Editor(props) {
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
   const [notes, setNotes] = useState([]);
+  const [types, setTypes] = useState([]);
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
   const [tab, setTab] = useState(Tab.tables);
@@ -116,6 +118,59 @@ export default function Editor(props) {
       ]);
       setRedoStack([]);
     }
+  };
+
+  const addType = (addToHistory = true, data) => {
+    if (data) {
+      setTypes((prev) => {
+        const temp = prev.slice();
+        temp.splice(data.id, 0, data);
+        return temp;
+      });
+    } else {
+      setTypes((prev) => [
+        ...prev,
+        {
+          name: `type_${prev.length}`,
+          fields: [],
+          comment: "",
+        },
+      ]);
+    }
+    if (addToHistory) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.ADD,
+          element: ObjectType.TYPE,
+          message: `Add new type`,
+        },
+      ]);
+      setRedoStack([]);
+    }
+  };
+
+  const deleteType = (id, addToHistory = true) => {
+    if (addToHistory) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.DELETE,
+          element: ObjectType.TYPE,
+          id: id,
+          data: types[id],
+          message: `Delete type`,
+        },
+      ]);
+      setRedoStack([]);
+    }
+    setTypes((prev) => prev.filter((e, i) => i !== id));
+  };
+
+  const updateType = (id, values) => {
+    setTypes((prev) =>
+      prev.map((e, i) => (i === id ? { ...e, ...values } : e))
+    );
   };
 
   const updateField = (tid, fid, updatedValues) => {
@@ -477,34 +532,44 @@ export default function Editor(props) {
                     <TaskContext.Provider
                       value={{ tasks, setTasks, updateTask }}
                     >
-                      <div className="h-[100vh] overflow-hidden theme">
-                        <ControlPanel />
-                        <div
-                          className={
-                            layout.header
-                              ? `flex h-[calc(100vh-120px)]`
-                              : `flex h-[calc(100vh-52px)]`
-                          }
-                          onMouseUp={() => setResize(false)}
-                          onMouseMove={dragHandler}
-                        >
-                          {layout.sidebar && (
-                            <EditorPanel
-                              resize={resize}
-                              setResize={setResize}
-                              width={width}
-                            />
-                          )}
-                          <Canvas />
-                          {layout.services && (
-                            <MessageContext.Provider
-                              value={{ messages, setMessages }}
-                            >
-                              <Sidebar />
-                            </MessageContext.Provider>
-                          )}
+                      <TypeContext.Provider
+                        value={{
+                          types,
+                          setTypes,
+                          addType,
+                          updateType,
+                          deleteType,
+                        }}
+                      >
+                        <div className="h-[100vh] overflow-hidden theme">
+                          <ControlPanel />
+                          <div
+                            className={
+                              layout.header
+                                ? `flex h-[calc(100vh-120px)]`
+                                : `flex h-[calc(100vh-52px)]`
+                            }
+                            onMouseUp={() => setResize(false)}
+                            onMouseMove={dragHandler}
+                          >
+                            {layout.sidebar && (
+                              <EditorPanel
+                                resize={resize}
+                                setResize={setResize}
+                                width={width}
+                              />
+                            )}
+                            <Canvas />
+                            {layout.services && (
+                              <MessageContext.Provider
+                                value={{ messages, setMessages }}
+                              >
+                                <Sidebar />
+                              </MessageContext.Provider>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      </TypeContext.Provider>
                     </TaskContext.Provider>
                   </SelectContext.Provider>
                 </UndoRedoContext.Provider>

@@ -84,6 +84,7 @@ const Tab = {
   relationships: "2",
   subject_areas: "3",
   notes: "4",
+  types: "5",
 };
 
 const ObjectType = {
@@ -92,6 +93,7 @@ const ObjectType = {
   AREA: 2,
   NOTE: 3,
   RELATIONSHIP: 4,
+  TYPE: 5,
 };
 
 const Action = {

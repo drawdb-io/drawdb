@@ -7,6 +7,7 @@ import { Tab } from "../data/data";
 import { LayoutContext, TabContext } from "../pages/editor";
 import NotesOverview from "./notes_overview";
 import Issues from "./issues";
+import TypesOverview from "./types_overview";
 
 const EditorPanel = (props) => {
   const { tab, setTab } = useContext(TabContext);
@@ -17,12 +18,14 @@ const EditorPanel = (props) => {
     { tab: "Relationships", itemKey: Tab.relationships },
     { tab: "Subject Areas", itemKey: Tab.subject_areas },
     { tab: "Notes", itemKey: Tab.notes },
+    { tab: "Types", itemKey: Tab.types },
   ];
   const contentList = [
     <TableOverview />,
     <ReferenceOverview />,
     <AreaOverview />,
     <NotesOverview />,
+    <TypesOverview />,
   ];
 
   return (

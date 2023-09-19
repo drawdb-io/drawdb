@@ -48,6 +48,7 @@ import {
   SettingsContext,
   TabContext,
   TableContext,
+  TypeContext,
   UndoRedoContext,
 } from "../pages/editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
@@ -96,6 +97,8 @@ export default function ControlPanel(props) {
     addRelationship,
     deleteRelationship,
   } = useContext(TableContext);
+  const { types, addType, deleteType, updateType, setTypes } =
+    useContext(TypeContext);
   const { notes, setNotes, updateNote, addNote, deleteNote } =
     useContext(NoteContext);
   const { areas, setAreas, updateArea, addArea, deleteArea } =
@@ -136,6 +139,8 @@ export default function ControlPanel(props) {
         deleteNote(notes[notes.length - 1].id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.id, false);
+      } else if (a.element === ObjectType.TYPE) {
+        deleteType(types.length - 1, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -167,6 +172,8 @@ export default function ControlPanel(props) {
         addNote(false, a.data);
       } else if (a.element === ObjectType.AREA) {
         addArea(false, a.data);
+      } else if (a.element === ObjectType.TYPE) {
+        addType(false, { id: a.id, ...a.data });
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -232,6 +239,34 @@ export default function ControlPanel(props) {
         setRelationships((prev) =>
           prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e))
         );
+      } else if (a.element === ObjectType.TYPE) {
+        if (a.component === "field_add") {
+          updateType(a.tid, {
+            fields: types[a.tid].fields.filter(
+              (e, i) => i !== types[a.tid].fields.length - 1
+            ),
+          });
+        }
+        if (a.component === "field") {
+          updateType(a.tid, {
+            fields: types[a.tid].fields.map((e, i) =>
+              i === a.fid ? { ...e, ...a.undo } : e
+            ),
+          });
+        } else if (a.component === "field_delete") {
+          setTypes((prev) =>
+            prev.map((t, i) => {
+              if (i === a.tid) {
+                const temp = t.fields.slice();
+                temp.splice(a.fid, 0, a.data);
+                return { ...t, fields: temp };
+              }
+              return t;
+            })
+          );
+        } else if (a.component === "self") {
+          updateType(a.tid, a.undo);
+        }
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -255,6 +290,8 @@ export default function ControlPanel(props) {
         addNote(false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(false, a.data);
+      } else if (a.element === ObjectType.TYPE) {
+        addType(false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -286,6 +323,8 @@ export default function ControlPanel(props) {
         deleteNote(a.data.id, false);
       } else if (a.element === ObjectType.AREA) {
         deleteArea(a.data.id, false);
+      } else if (a.element === ObjectType.TYPE) {
+        deleteType(a.id, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -363,6 +402,30 @@ export default function ControlPanel(props) {
         setRelationships((prev) =>
           prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e))
         );
+      } else if (a.element === ObjectType.TYPE) {
+        if (a.component === "field_add") {
+          updateType(a.tid, {
+            fields: [
+              ...types[a.tid].fields,
+              {
+                name: "",
+                type: "",
+              },
+            ],
+          });
+        } else if (a.component === "field") {
+          updateType(a.tid, {
+            fields: types[a.tid].fields.map((e, i) =>
+              i === a.fid ? { ...e, ...a.redo } : e
+            ),
+          });
+        } else if (a.component === "field_delete") {
+          updateType(a.tid, {
+            fields: types[a.tid].fields.filter((field, i) => i !== a.fid),
+          });
+        } else if (a.component === "self") {
+          updateType(a.tid, a.redo);
+        }
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
