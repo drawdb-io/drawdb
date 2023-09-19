@@ -17,7 +17,6 @@ import {
 import {
   IconMore,
   IconKeyStroked,
-  IconColorPalette,
   IconDeleteStroked,
   IconCheckboxTick,
   IconPlus,
@@ -495,10 +494,10 @@ export default function TableOverview(props) {
                       position="bottomLeft"
                       showArrow
                     >
-                      <Button
-                        type="tertiary"
-                        icon={<IconColorPalette />}
-                      ></Button>
+                      <div
+                        className="h-[32px] w-[32px] rounded mb-2"
+                        style={{ backgroundColor: t.color }}
+                      />
                     </Popover>
                   </Col>
                   <Col span={7}>

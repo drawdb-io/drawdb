@@ -39,7 +39,10 @@ const tableThemes = [
   "#ff9159",
 ];
 
+const noteThemes = ["#ffdfd9", "#ffffc7", "#cffcb1", "#c7d2ff", "#e7c7ff"];
+
 const defaultTableTheme = "#175e7a";
+const defaultNoteTheme = "#fcf7ac";
 const bgBlue = "#124559";
 
 const Cardinality = {
@@ -76,9 +79,11 @@ export {
   bgBlue,
   sqlDataTypes,
   tableThemes,
+  noteThemes,
   defaultTableTheme,
+  defaultNoteTheme,
   Cardinality,
   Constraint,
-  Tab, 
-  ObjectType
+  Tab,
+  ObjectType,
 };
