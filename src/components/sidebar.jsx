@@ -4,7 +4,7 @@ import botIcon from "../assets/bot.png";
 import teamIcon from "../assets/group.png";
 import timeLine from "../assets/process.png";
 import todo from "../assets/calendar.png";
-import { Tooltip, SideSheet } from "@douyinfe/semi-ui";
+import { Tooltip, SideSheet, List } from "@douyinfe/semi-ui";
 import { UndoRedoContext } from "../pages/editor";
 import Todo from "./todo";
 
@@ -115,18 +115,17 @@ export default function Sidebar() {
   function renderTimeline() {
     if (undoStack.length > 0) {
       return (
-        <div className="m-5">
-          <hr />
+        <List>
           {[...undoStack].reverse().map((e) => (
-            <>
-              <div className="flex items-center py-1">
+            <List.Item style={{ padding: "4px 18px 4px 18px" }}
+            className="hover:bg-slate-100">
+              <div className="flex items-center py-1 w-full">
                 <i className="block fa-regular fa-circle fa-xs"></i>
                 <div className="ms-2">{e.message}</div>
               </div>
-              <hr />
-            </>
+            </List.Item>
           ))}
-        </div>
+        </List>
       );
     } else {
       return (

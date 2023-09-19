@@ -143,112 +143,123 @@ export default function Todo() {
           Add task
         </Button>
       </div>
-      <List>
-        {tasks.map((t, i) => (
-          <List.Item
-            key={i}
-            style={{ paddingLeft: "18px", paddingRight: "18px" }}
-            className={`${t.complete ? "bg-emerald-50" : "hover:bg-slate-100"}`}
-            onClick={() => setActiveTask(i)}
-          >
-            <div className="w-full">
-              <Row gutter={6} align="middle" type="flex" className="mb-2">
-                <Col span={2}>
-                  <Checkbox
-                    checked={t.complete}
-                    onChange={(e) =>
-                      updateTask(i, { complete: e.target.checked })
-                    }
-                  ></Checkbox>
-                </Col>
-                <Col span={19}>
-                  <Input
-                    placeholder="Title"
-                    onChange={(v) => updateTask(i, { title: v })}
-                    value={t.title}
-                  ></Input>
-                </Col>
-                <Col span={3}>
-                  <Popover
-                    content={
-                      <div className="p-2">
-                        <div className="mb-2 font-semibold">Set priority: </div>
-                        <RadioGroup
-                          onChange={(e) =>
-                            updateTask(i, { priority: e.target.value })
-                          }
-                          value={t.priority}
-                          direction="vertical"
-                        >
-                          <Radio value={Priority.NONE}>
-                            <Tag color={priorityColor(Priority.NONE)}>
-                              {priorityLabel(Priority.NONE)}
-                            </Tag>
-                          </Radio>
-                          <Radio value={Priority.LOW}>
-                            <Tag color={priorityColor(Priority.LOW)}>
-                              {priorityLabel(Priority.LOW)}
-                            </Tag>
-                          </Radio>
-                          <Radio value={Priority.MEDIUM}>
-                            <Tag color={priorityColor(Priority.MEDIUM)}>
-                              {priorityLabel(Priority.MEDIUM)}
-                            </Tag>
-                          </Radio>
-                          <Radio value={Priority.HIGH}>
-                            <Tag color={priorityColor(Priority.HIGH)}>
-                              {priorityLabel(Priority.HIGH)}
-                            </Tag>
-                          </Radio>
-                        </RadioGroup>
-                        <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
-                          block
-                          style={{ marginTop: "12px" }}
-                          onClick={() =>
-                            setTasks((prev) =>
-                              prev.filter((task, j) => i !== j)
-                            )
-                          }
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    }
-                    trigger="click"
-                    showArrow
-                    className="w-[180px]"
-                  >
-                    <Button icon={<IconMore />} type="tertiary"></Button>
-                  </Popover>
-                </Col>
-              </Row>
-              {activeTask === i && (
-                <Row className="mb-2">
-                  <Col span={2}></Col>
-                  <Col span={22}>
-                    <TextArea
-                      placeholder="Details"
-                      onChange={(v) => updateTask(i, { details: v })}
-                      value={t.details}
-                    ></TextArea>
+      {tasks.length > 0 ? (
+        <List>
+          {tasks.map((t, i) => (
+            <List.Item
+              key={i}
+              style={{ paddingLeft: "18px", paddingRight: "18px" }}
+              className={`${
+                t.complete ? "bg-emerald-50" : "hover:bg-slate-100"
+              }`}
+              onClick={() => setActiveTask(i)}
+            >
+              <div className="w-full">
+                <Row gutter={6} align="middle" type="flex" className="mb-2">
+                  <Col span={2}>
+                    <Checkbox
+                      checked={t.complete}
+                      onChange={(e) =>
+                        updateTask(i, { complete: e.target.checked })
+                      }
+                    ></Checkbox>
+                  </Col>
+                  <Col span={19}>
+                    <Input
+                      placeholder="Title"
+                      onChange={(v) => updateTask(i, { title: v })}
+                      value={t.title}
+                    ></Input>
+                  </Col>
+                  <Col span={3}>
+                    <Popover
+                      content={
+                        <div className="p-2">
+                          <div className="mb-2 font-semibold">
+                            Set priority:{" "}
+                          </div>
+                          <RadioGroup
+                            onChange={(e) =>
+                              updateTask(i, { priority: e.target.value })
+                            }
+                            value={t.priority}
+                            direction="vertical"
+                          >
+                            <Radio value={Priority.NONE}>
+                              <Tag color={priorityColor(Priority.NONE)}>
+                                {priorityLabel(Priority.NONE)}
+                              </Tag>
+                            </Radio>
+                            <Radio value={Priority.LOW}>
+                              <Tag color={priorityColor(Priority.LOW)}>
+                                {priorityLabel(Priority.LOW)}
+                              </Tag>
+                            </Radio>
+                            <Radio value={Priority.MEDIUM}>
+                              <Tag color={priorityColor(Priority.MEDIUM)}>
+                                {priorityLabel(Priority.MEDIUM)}
+                              </Tag>
+                            </Radio>
+                            <Radio value={Priority.HIGH}>
+                              <Tag color={priorityColor(Priority.HIGH)}>
+                                {priorityLabel(Priority.HIGH)}
+                              </Tag>
+                            </Radio>
+                          </RadioGroup>
+                          <Button
+                            icon={<IconDeleteStroked />}
+                            type="danger"
+                            block
+                            style={{ marginTop: "12px" }}
+                            onClick={() =>
+                              setTasks((prev) =>
+                                prev.filter((task, j) => i !== j)
+                              )
+                            }
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      }
+                      trigger="click"
+                      showArrow
+                      className="w-[180px]"
+                    >
+                      <Button icon={<IconMore />} type="tertiary"></Button>
+                    </Popover>
                   </Col>
                 </Row>
-              )}
-              <Row>
-                <Col span={2}></Col>
-                <Col span={22}>
-                  Priority:{" "}
-                  <Tag color={priorityColor(t.priority)}>
-                    {priorityLabel(t.priority)}
-                  </Tag>
-                </Col>
-              </Row>
-            </div>
-          </List.Item>
-        ))}
-      </List>
+                {activeTask === i && (
+                  <Row className="mb-2">
+                    <Col span={2}></Col>
+                    <Col span={22}>
+                      <TextArea
+                        placeholder="Details"
+                        onChange={(v) => updateTask(i, { details: v })}
+                        value={t.details}
+                      ></TextArea>
+                    </Col>
+                  </Row>
+                )}
+                <Row>
+                  <Col span={2}></Col>
+                  <Col span={22}>
+                    Priority:{" "}
+                    <Tag color={priorityColor(t.priority)}>
+                      {priorityLabel(t.priority)}
+                    </Tag>
+                  </Col>
+                </Row>
+              </div>
+            </List.Item>
+          ))}
+        </List>
+      ) : (
+        <div className="m-5">
+          You have no tasks yet. Add your to-dos and keep track of your
+          progress.
+        </div>
+      )}
     </>
   );
 }
