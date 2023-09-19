@@ -10,6 +10,7 @@ export default function Area(props) {
     mouseX: 0,
     mouseY: 0,
   });
+  const [hovered, setHovered] = useState(false);
 
   const handleMouseDown = (e, dir) => {
     setResize(dir);
@@ -66,18 +67,21 @@ export default function Area(props) {
     });
   };
 
-  const handleMouseUp = () => {
+  const unableResize = () => {
     setResize("none");
   };
 
   return (
-    <g>
+    <g
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <foreignObject
         key={props.areaData.id}
         x={props.areaData.x}
         y={props.areaData.y}
-        width={props.areaData.width}
-        height={props.areaData.height}
+        width={props.areaData.width > 0 ? props.areaData.width : 0}
+        height={props.areaData.height > 0 ? props.areaData.height : 0}
         style={{ cursor: "move" }}
         onMouseDown={props.onMouseDown}
       >
@@ -85,70 +89,66 @@ export default function Area(props) {
           {props.areaData.name}
         </div>
       </foreignObject>
-      <rect
-        x={props.areaData.x - 6}
-        y={props.areaData.y - 6}
-        width={32}
-        height={32}
-        fill="lightblue"
-        stroke="blue"
-        strokeWidth={1}
-        cursor="nwse-resize"
-        onMouseDown={(e) => handleMouseDown(e, "tl")}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={(e) => {
-          setResize("none");
-        }}
-      />
-      <rect
-        x={props.areaData.x + props.areaData.width - 6}
-        y={props.areaData.y - 6}
-        width={32}
-        height={32}
-        fill="lightblue"
-        stroke="blue"
-        strokeWidth={1}
-        cursor="nesw-resize"
-        onMouseDown={(e) => handleMouseDown(e, "tr")}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={(e) => {
-          setResize("none");
-        }}
-      />
-      <rect
-        x={props.areaData.x - 6}
-        y={props.areaData.y + props.areaData.height - 6}
-        width={32}
-        height={32}
-        fill="lightblue"
-        stroke="blue"
-        strokeWidth={1}
-        cursor="nesw-resize"
-        onMouseDown={(e) => handleMouseDown(e, "bl")}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={(e) => {
-          setResize("none");
-        }}
-      />
-      <rect
-        x={props.areaData.x + props.areaData.width - 6}
-        y={props.areaData.y + props.areaData.height - 6}
-        width={32}
-        height={32}
-        fill="lightblue"
-        stroke="blue"
-        strokeWidth={1}
-        cursor="nwse-resize"
-        onMouseDown={(e) => handleMouseDown(e, "br")}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={(e) => {
-          setResize("none");
-        }}
-      />
+      {hovered && (
+        <>
+          <rect
+            x={props.areaData.x - 8}
+            y={props.areaData.y - 8}
+            width={16}
+            height={16}
+            fill="lightblue"
+            stroke="blue"
+            strokeWidth={1}
+            cursor="nwse-resize"
+            onMouseDown={(e) => handleMouseDown(e, "tl")}
+            onMouseUp={unableResize}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={unableResize}
+          />
+          <rect
+            x={props.areaData.x + props.areaData.width - 8}
+            y={props.areaData.y - 8}
+            width={16}
+            height={16}
+            fill="lightblue"
+            stroke="blue"
+            strokeWidth={1}
+            cursor="nesw-resize"
+            onMouseDown={(e) => handleMouseDown(e, "tr")}
+            onMouseUp={unableResize}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={unableResize}
+          />
+          <rect
+            x={props.areaData.x - 8}
+            y={props.areaData.y + props.areaData.height - 8}
+            width={16}
+            height={16}
+            fill="lightblue"
+            stroke="blue"
+            strokeWidth={1}
+            cursor="nesw-resize"
+            onMouseDown={(e) => handleMouseDown(e, "bl")}
+            onMouseUp={unableResize}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={unableResize}
+          />
+          <rect
+            x={props.areaData.x + props.areaData.width - 8}
+            y={props.areaData.y + props.areaData.height - 8}
+            width={16}
+            height={16}
+            fill="lightblue"
+            stroke="blue"
+            strokeWidth={1}
+            cursor="nwse-resize"
+            onMouseDown={(e) => handleMouseDown(e, "br")}
+            onMouseUp={unableResize}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={unableResize}
+          />
+        </>
+      )}
     </g>
   );
 }
