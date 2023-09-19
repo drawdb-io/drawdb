@@ -228,7 +228,7 @@ export default function TableOverview(props) {
                             updateField(i, j, {
                               type: value,
                               default: "",
-                              values: [],
+                              values: f.values ? [...f.values] : [],
                               increment: incr,
                             });
                           } else if (isSized(value) || hasPrecision(value)) {

@@ -382,7 +382,7 @@ export default function Table(props) {
                       updateField(props.tableData.id, j, {
                         type: value,
                         default: "",
-                        values: [],
+                        values: f.values ? [...f.values] : [],
                         increment: incr,
                       });
                     } else if (isSized(value) || hasPrecision(value)) {

@@ -47,20 +47,57 @@ function dataURItoBlob(dataUrl) {
   return new Blob([intArray], { type: mimeString });
 }
 
-function getTypeString(field) {
-  if (field.type === "UUID") {
-    return `VARCHAR(36)`;
+function getTypeString(field, dbms = "mysql") {
+  if (dbms === "mysql") {
+    if (field.type === "UUID") {
+      return `VARCHAR(36)`;
+    }
+    if (isSized(field.type)) {
+      return `${field.type}(${field.size})`;
+    }
+    if (hasPrecision(field.type) && field.size !== "") {
+      return `${field.type}${field.size}`;
+    }
+    if (field.type === "SET" || field.type === "ENUM") {
+      return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
+    }
+    return field.type;
+  } else if (dbms === "postgres") {
+    if (field.type === "SMALLINT" && field.increment) {
+      return "smallserial";
+    }
+    if (field.type === "INT" && field.increment) {
+      return "serial";
+    }
+    if (field.type === "BIGINT" && field.increment) {
+      return "bigserial";
+    }
+    if (field.type === "ENUM") {
+      return `${field.name}_t`;
+    }
+    if (field.type === "SET") {
+      return `${field.name}_t[]`;
+    }
+    if (field.type === "TIMESTAMP") {
+      return "TIMESTAMPTZ";
+    }
+    if (field.type === "DATETIME") {
+      return `timestamp`;
+    }
+    if (isSized(field.type)) {
+      const type =
+        field.type === "BINARY"
+          ? "bit"
+          : field.type === "VARBINARY"
+          ? "bit varying"
+          : field.type.toLowerCase();
+      return `${type}(${field.size})`;
+    }
+    if (hasPrecision(field.type) && field.size !== "") {
+      return `${field.type}${field.size}`;
+    }
+    return field.type.toLowerCase();
   }
-  if (isSized(field.type)) {
-    return `${field.type}(${field.size})`;
-  }
-  if (hasPrecision(field.type) && field.size !== "") {
-    return `${field.type}${field.size}`;
-  }
-  if (field.type === "SET" || field.type === "ENUM") {
-    return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
-  }
-  return field.type;
 }
 
 function hasQuotes(type) {
@@ -77,7 +114,7 @@ function hasQuotes(type) {
   ].includes(type);
 }
 
-function jsonToSQL(obj) {
+function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -135,6 +172,76 @@ function jsonToSQL(obj) {
         }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
           obj.tables[r.endTableId].fields[r.endFieldId].name
         }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+    )
+    .join("\n")}`;
+}
+
+function jsonToPostgreSQL(obj) {
+  return `${obj.tables
+    .map(
+      (table) =>
+        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${
+          table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
+            .length > 0
+            ? `${table.fields
+                .filter((f) => f.type === "ENUM" || f.type === "SET")
+                .map(
+                  (f) =>
+                    `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+                      .map((v) => `'${v}'`)
+                      .join(", ")});\n\n`
+                )}`
+            : ""
+        }CREATE TABLE "${table.name}" (\n${table.fields
+          .map(
+            (field) =>
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
+                field.name
+              }" ${getTypeString(field, "postgres")}${
+                field.notNull ? " NOT NULL" : ""
+              }${
+                field.default !== ""
+                  ? ` DEFAULT ${
+                      hasQuotes(field.type) &&
+                      field.default.toLowerCase() !== "null"
+                        ? `'${field.default}'`
+                        : `${field.default}`
+                    }`
+                  : ""
+              }${
+                field.check === "" || !hasCheck(field.type)
+                  ? ""
+                  : ` CHECK(${field.check})`
+              }`
+          )
+          .join(",\n")}${
+          table.fields.filter((f) => f.primary).length > 0
+            ? `,\n\tPRIMARY KEY(${table.fields
+                .filter((f) => f.primary)
+                .map((f) => `"${f.name}"`)
+                .join(", ")})`
+            : ""
+        }\n);\n${
+          table.indices.length > 0
+            ? `${table.indices.map(
+                (i) =>
+                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
+                    i.name
+                  }"\nON "${table.name}" (${i.fields
+                    .map((f) => `"${f}"`)
+                    .join(", ")});`
+              )}`
+            : ""
+        }`
+    )
+    .join("\n")}\n${obj.references
+    .map(
+      (r) =>
+        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${
+          obj.tables[r.startTableId].fields[r.startFieldId].name
+        }") REFERENCES "${obj.tables[r.endTableId].name}"("${
+          obj.tables[r.endTableId].fields[r.endFieldId].name
+        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
     )
     .join("\n")}`;
 }
@@ -383,7 +490,8 @@ export {
   jsonDiagramIsValid,
   ddbDiagramIsValid,
   dataURItoBlob,
-  jsonToSQL,
+  jsonToMySQL,
+  jsonToPostgreSQL,
   validateDiagram,
   arrayIsEqual,
   isSized,

@@ -37,7 +37,8 @@ import {
   exitFullscreen,
   ddbDiagramIsValid,
   dataURItoBlob,
-  jsonToSQL,
+  jsonToMySQL,
+  jsonToPostgreSQL,
 } from "../utils";
 import {
   AreaContext,
@@ -728,7 +729,7 @@ export default function ControlPanel(props) {
           {
             MySQL: () => {
               setVisible(MODAL.CODE);
-              const src = jsonToSQL({
+              const src = jsonToMySQL({
                 tables: tables,
                 references: relationships,
               });
@@ -739,7 +740,20 @@ export default function ControlPanel(props) {
               }));
             },
           },
-          { PostgreSQL: () => {} },
+          {
+            PostgreSQL: () => {
+              setVisible(MODAL.CODE);
+              const src = jsonToPostgreSQL({
+                tables: tables,
+                references: relationships,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
           { DBML: () => {} },
         ],
         function: () => {},
