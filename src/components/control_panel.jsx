@@ -20,6 +20,7 @@ import {
   Divider,
   Dropdown,
   InputNumber,
+  Tooltip,
   Image,
   Modal,
   Spin,
@@ -922,140 +923,9 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
   return (
-    <div>
+    <>
       {layout.header && header()}
-      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 md:mx-6 select-none overflow-x-hidden toolbar-theme">
-        <div className="flex justify-start items-center">
-          {layoutDropdown()}
-          <Divider layout="vertical" margin="8px" />
-          <Dropdown
-            style={{ width: "240px" }}
-            position="bottomLeft"
-            render={
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={fitWindow}
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div>Fit window / Reset</div>
-                  <div className="text-gray-400">Ctrl+Alt+W</div>
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
-                  <Dropdown.Item
-                    key={i}
-                    onClick={() => {
-                      setSettings((prev) => ({ ...prev, zoom: e }));
-                    }}
-                  >
-                    {Math.floor(e * 100)}%
-                  </Dropdown.Item>
-                ))}
-                <Dropdown.Divider />
-                <Dropdown.Item>
-                  <InputNumber
-                    field="zoom"
-                    label="Custom zoom"
-                    placeholder="Zoom"
-                    suffix={<div className="p-1">%</div>}
-                    onChange={(v) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        zoom: parseFloat(v) * 0.01,
-                      }))
-                    }
-                  />
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            }
-            trigger="click"
-          >
-            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
-              <div className="w-[40px]">{Math.floor(settings.zoom * 100)}%</div>
-              <div>
-                <IconCaretdown />
-              </div>
-            </div>
-          </Dropdown>
-          <button
-            className="py-1 px-2 hover-2 rounded text-lg"
-            title="Zoom in"
-            onClick={() =>
-              setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
-            }
-          >
-            <i className="fa-solid fa-magnifying-glass-plus"></i>
-          </button>
-          <button
-            className="py-1 px-2 hover-2 rounded text-lg"
-            title="Zoom out"
-            onClick={() =>
-              setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
-            }
-          >
-            <i className="fa-solid fa-magnifying-glass-minus"></i>
-          </button>
-          <Divider layout="vertical" margin="8px" />
-          <button
-            className="py-1 px-2 hover-2 rounded flex items-center"
-            title="Undo"
-            onClick={undo}
-          >
-            <IconUndo
-              size="large"
-              style={{ color: undoStack.length === 0 ? "#9598a6" : "" }}
-            />
-          </button>
-          <button
-            className="py-1 px-2 hover-2 rounded flex items-center"
-            title="Redo"
-            onClick={redo}
-          >
-            <IconRedo
-              size="large"
-              style={{ color: redoStack.length === 0 ? "#9598a6" : "" }}
-            />
-          </button>
-          <Divider layout="vertical" margin="8px" />
-          <button
-            className="flex items-center py-1 px-2 hover-2 rounded"
-            title="Add new table"
-            onClick={() => addTable()}
-          >
-            <IconAddTable theme={settings.mode} />
-          </button>
-          <button
-            className="py-1 px-2 hover-2 rounded flex items-center"
-            title="Add subject area"
-            onClick={() => addArea()}
-          >
-            <IconAddArea theme={settings.mode} />
-          </button>
-          <button
-            className="py-1 px-2 hover-2 rounded flex items-center"
-            title="Add new note"
-            onClick={() => addNote()}
-          >
-            <IconAddNote theme={settings.mode} />
-          </button>
-          <Divider layout="vertical" margin="8px" />
-          <button
-            className="py-1 px-2 hover-2 rounded flex items-center"
-            title="Save"
-          >
-            <IconSaveStroked size="extra-large" />
-          </button>
-          <button className="py-1 px-2 hover-2 rounded text-xl" title="Commit">
-            <i className="fa-solid fa-code-branch"></i>
-          </button>
-        </div>
-        <button
-          onClick={() => invertLayout("header")}
-          className="flex items-center"
-        >
-          {layout.header ? <IconChevronUp /> : <IconChevronDown />}
-        </button>
-      </div>
+      {toolbar()}
       <Modal
         title={`${visible === MODAL.IMPORT ? "Import" : "Export"} diagram`}
         visible={visible !== MODAL.NONE}
@@ -1242,8 +1112,153 @@ export default function ControlPanel(props) {
           </div>
         )}
       </Modal>
-    </div>
+    </>
   );
+
+  function toolbar() {
+    return (
+      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 md:mx-6 select-none overflow-x-hidden toolbar-theme">
+        <div className="flex justify-start items-center">
+          {layoutDropdown()}
+          <Divider layout="vertical" margin="8px" />
+          <Dropdown
+            style={{ width: "240px" }}
+            position="bottomLeft"
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={fitWindow}
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>Fit window / Reset</div>
+                  <div className="text-gray-400">Ctrl+Alt+W</div>
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
+                  <Dropdown.Item
+                    key={i}
+                    onClick={() => {
+                      setSettings((prev) => ({ ...prev, zoom: e }));
+                    }}
+                  >
+                    {Math.floor(e * 100)}%
+                  </Dropdown.Item>
+                ))}
+                <Dropdown.Divider />
+                <Dropdown.Item>
+                  <InputNumber
+                    field="zoom"
+                    label="Custom zoom"
+                    placeholder="Zoom"
+                    suffix={<div className="p-1">%</div>}
+                    onChange={(v) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        zoom: parseFloat(v) * 0.01,
+                      }))
+                    }
+                  />
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            }
+            trigger="click"
+          >
+            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+              <div className="w-[40px]">{Math.floor(settings.zoom * 100)}%</div>
+              <div>
+                <IconCaretdown />
+              </div>
+            </div>
+          </Dropdown>
+          <Tooltip content="Zoom in" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded text-lg"
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
+              }
+            >
+              <i className="fa-solid fa-magnifying-glass-plus"></i>
+            </button>
+          </Tooltip>
+          <Tooltip content="Zoom out" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded text-lg"
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+              }
+            >
+              <i className="fa-solid fa-magnifying-glass-minus"></i>
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Undo" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={undo}
+            >
+              <IconUndo
+                size="large"
+                style={{ color: undoStack.length === 0 ? "#9598a6" : "" }}
+              />
+            </button>
+          </Tooltip>
+          <Tooltip content="Redo" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={redo}
+            >
+              <IconRedo
+                size="large"
+                style={{ color: redoStack.length === 0 ? "#9598a6" : "" }}
+              />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Add table" position="bottom">
+            <button
+              className="flex items-center py-1 px-2 hover-2 rounded"
+              onClick={() => addTable()}
+            >
+              <IconAddTable theme={settings.mode} />
+            </button>
+          </Tooltip>
+          <Tooltip content="Add subject area" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={() => addArea()}
+            >
+              <IconAddArea theme={settings.mode} />
+            </button>
+          </Tooltip>
+          <Tooltip content="Add note" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={() => addNote()}
+            >
+              <IconAddNote theme={settings.mode} />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Save" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded flex items-center">
+              <IconSaveStroked size="extra-large" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Commit" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded text-xl">
+              <i className="fa-solid fa-code-branch"></i>
+            </button>
+          </Tooltip>
+        </div>
+        <button
+          onClick={() => invertLayout("header")}
+          className="flex items-center"
+        >
+          {layout.header ? <IconChevronUp /> : <IconChevronDown />}
+        </button>
+      </div>
+    );
+  }
 
   function header() {
     return (
