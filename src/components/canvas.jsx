@@ -68,9 +68,7 @@ export default function Canvas(props) {
         endX: e.clientX - offsetX,
         endY: e.clientY - offsetY,
       });
-      return;
-    }
-    if (panning) {
+    } else if (dragging[0] === ObjectType.NONE && panning) {
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
@@ -132,7 +130,6 @@ export default function Canvas(props) {
       });
       props.setRelationships(updatedRelationShips);
     } else if (dragging[0] === ObjectType.AREA && dragging[1] >= 0) {
-      console.log("hi");
       const updatedAreas = props.areas.map((t) => {
         if (t.id === dragging[1]) {
           const updatedArea = {
@@ -149,13 +146,9 @@ export default function Canvas(props) {
   };
 
   const handleMouseDown = (e) => {
-    if (dragging[0] === ObjectType.TABLE && dragging[1] < 0) {
-      if (onRect.tableId < 0) {
-        setPanning(true);
-        setPanOffset({ x: e.clientX, y: e.clientY });
-        setCursor("grabbing");
-      }
-    }
+    setPanning(true);
+    setPanOffset({ x: e.clientX, y: e.clientY });
+    setCursor("grabbing");
   };
 
   const handleMouseUp = () => {
