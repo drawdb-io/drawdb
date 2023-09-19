@@ -61,10 +61,13 @@ export default function Area(props) {
         onMouseDown={props.onMouseDown}
       >
         <div
-          className={`${
+          className={`border-2 ${
             hovered
-              ? "border-4 border-dashed border-[#5891db]"
-              : "border-2 border-slate-400"
+              ? "border-dashed border-blue-500"
+              : selectedElement.element === ObjectType.AREA &&
+                selectedElement.id === props.areaData.id
+              ? "border-blue-500"
+              : "border-slate-400"
           } w-full h-full cursor-move rounded relative`}
         >
           <div
@@ -310,7 +313,7 @@ export default function Area(props) {
             r={6}
             fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
-            strokeWidth={3}
+            strokeWidth={2}
             cursor="nwse-resize"
             onMouseDown={(e) => handleMouseDown(e, "tl")}
           />
@@ -320,7 +323,7 @@ export default function Area(props) {
             r={6}
             fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
-            strokeWidth={3}
+            strokeWidth={2}
             cursor="nesw-resize"
             onMouseDown={(e) => handleMouseDown(e, "tr")}
           />
@@ -330,7 +333,7 @@ export default function Area(props) {
             r={6}
             fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
-            strokeWidth={3}
+            strokeWidth={2}
             cursor="nesw-resize"
             onMouseDown={(e) => handleMouseDown(e, "bl")}
           />
@@ -340,7 +343,7 @@ export default function Area(props) {
             r={6}
             fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
             stroke="#5891db"
-            strokeWidth={3}
+            strokeWidth={2}
             cursor="nwse-resize"
             onMouseDown={(e) => handleMouseDown(e, "br")}
           />

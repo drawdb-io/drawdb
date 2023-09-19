@@ -23,6 +23,7 @@ import {
   TextArea,
   Card,
   Checkbox,
+  InputNumber,
   TagInput,
   Row,
   Col,
@@ -77,10 +78,13 @@ export default function Table(props) {
         }}
       >
         <div
-          className={`border-2 border-gray-400 ${
-            props.active && !props.moving && "border-blue-500 border-4"
-          } ${
-            props.moving && "border-blue-500 border-4 border-dashed"
+          className={`border-2 ${
+            isHovered
+              ? "border-dashed border-blue-500"
+              : selectedElement.element === ObjectType.TABLE &&
+                selectedElement.id === props.tableData.id
+              ? "border-blue-500"
+              : "border-slate-400"
           } select-none rounded-lg w-full ${
             settings.mode === "light"
               ? "bg-zinc-100 text-zinc-800"
@@ -519,8 +523,8 @@ export default function Table(props) {
                       {f.type === "VARCHAR" && (
                         <>
                           <div className="font-semibold">Length</div>
-                          <Input
-                            className="my-2"
+                          <InputNumber
+                            className="my-2 w-full"
                             placeholder="Set length"
                             value={f.length}
                             onChange={(value) =>

@@ -15,6 +15,7 @@ import {
   Button,
   Card,
   TagInput,
+  InputNumber,
   Popover,
   Checkbox,
   Select,
@@ -342,8 +343,8 @@ export default function TableOverview(props) {
                             {f.type === "VARCHAR" && (
                               <>
                                 <div className="font-semibold">Length</div>
-                                <Input
-                                  className="my-2"
+                                <InputNumber
+                                  className="my-2 w-full"
                                   placeholder="Set length"
                                   value={f.length}
                                   onChange={(value) =>

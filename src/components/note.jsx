@@ -53,9 +53,17 @@ export default function Note(props) {
           props.data.y + props.data.height - r
         } L${props.data.x} ${props.data.y + fold}`}
         fill={props.data.color}
-        stroke="#665b25"
+        stroke={
+          hovered
+            ? "rgb(59 130 246)"
+            : selectedElement.element === ObjectType.NOTE &&
+              selectedElement.id === props.data.id
+            ? "rgb(59 130 246)"
+            : "rgb(168 162 158)"
+        }
+        strokeDasharray={hovered ? 4 : 0}
         strokeLinejoin="round"
-        strokeWidth="0.6"
+        strokeWidth="1.2"
       />
       <path
         d={`M${props.data.x} ${props.data.y + fold} L${
@@ -66,9 +74,17 @@ export default function Note(props) {
           props.data.y + fold
         } Z`}
         fill={props.data.color}
-        stroke="#665b25"
+        stroke={
+          hovered
+            ? "rgb(59 130 246)"
+            : selectedElement.element === ObjectType.NOTE &&
+              selectedElement.id === props.data.id
+            ? "rgb(59 130 246)"
+            : "rgb(168 162 158)"
+        }
+        strokeDasharray={hovered ? 4 : 0}
         strokeLinejoin="round"
-        strokeWidth="0.6"
+        strokeWidth="1.2"
       />
       <foreignObject
         x={props.data.x}

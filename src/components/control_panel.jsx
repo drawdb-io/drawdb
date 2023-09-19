@@ -837,9 +837,6 @@ export default function ControlPanel(props) {
         function: resetView,
         shortcut: "Ctrl+R",
       },
-      "View schema": {
-        function: () => {},
-      },
       Grid: {
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
