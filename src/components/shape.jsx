@@ -98,8 +98,6 @@ function Area() {
   );
 }
 
-
-
 export default function Shape() {
   return (
     <div>

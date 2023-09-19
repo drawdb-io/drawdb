@@ -3,13 +3,10 @@ import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
-import Shape from "./shape";
-// import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import AreaOverview from "./area_overview";
-// import { TableContext } from "../pages/editor";
 import { Tab } from "../data/data";
 import { TabContext } from "../pages/editor";
 
@@ -35,7 +32,7 @@ const EditorPanel = (props) => {
     { tab: "Tables", itemKey: Tab.tables },
     { tab: "Relationships", itemKey: Tab.relationships },
     { tab: "Subject Areas", itemKey: Tab.subject_areas },
-    { tab: "Shapes", itemKey: Tab.shapes },
+    // { tab: "Shapes", itemKey: Tab.shapes },
     { tab: "Editor", itemKey: Tab.editor },
   ];
   const contentList = [
@@ -45,7 +42,6 @@ const EditorPanel = (props) => {
     />,
     <ReferenceOverview />,
     <AreaOverview/>,
-    <Shape />,
     <CodeMirror
       value={props.code}
       height="100%"

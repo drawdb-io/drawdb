@@ -127,6 +127,7 @@ export default function AreaOverview(props) {
               <Col span={18}>
                 <Input
                   value={a.name}
+                  placeholder="Name"
                   onChange={(value, e) => updateArea(a.id, { name: value })}
                   field="name"
                 />
