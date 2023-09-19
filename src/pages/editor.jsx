@@ -17,6 +17,7 @@ export default function Editor(props) {
   const [areas, setAreas] = useState([]);
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
+  const [selectedTable, setSelectedTable] = useState("");
   const [layout, setLayout] = useState({
     header: true,
     sidebar: true,
@@ -37,7 +38,6 @@ export default function Editor(props) {
 
   useEffect(()=>{
     document.title = "Editor";
-    console.log("hey");
   }, [])
 
   return (
@@ -65,11 +65,15 @@ export default function Editor(props) {
                     resize={resize}
                     setResize={setResize}
                     width={width}
+                    selectedTable={selectedTable}
+                    setSelectedTable={setSelectedTable}
                   />
                 )}
                 <Canvas
                   code={code}
                   setCode={setCode}
+                  selectedTable={selectedTable}
+                  setSelectedTable={setSelectedTable}
                 />
               </DndProvider>
               {layout.services && <Sidebar />}

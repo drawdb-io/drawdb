@@ -18,6 +18,7 @@ import {
   Form,
   Image,
   Modal,
+  Spin,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -31,7 +32,7 @@ export default function ControlPanel(props) {
     `diagram_${new Date().toISOString()}`
   );
   const [extension, setExtension] = useState("");
-  const {layout, setLayout} = useContext(LayoutContext);
+  const { layout, setLayout } = useContext(LayoutContext);
 
   const menu = {
     File: {
@@ -364,7 +365,13 @@ export default function ControlPanel(props) {
         cancelText="Cancel"
         width={470}
       >
-        <Image src={dataUrl} alt="Diagram" width={420}></Image>
+        {dataUrl !== "" || dataUrl ? (
+          <Image src={dataUrl} alt="Diagram" width={420}></Image>
+        ) : (
+          <div className="text-center my-3">
+            <Spin tip="Loading..." size="large"></Spin>
+          </div>
+        )}
         <Form
           labelPosition="left"
           labelAlign="right"

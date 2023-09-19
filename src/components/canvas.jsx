@@ -365,6 +365,8 @@ export default function Canvas(props) {
               onMouseDown={(e) =>
                 handleMouseDownRect(e, table.id, ObjectType.TABLE)
               }
+              selectedTable={props.selectedTable}
+              setSelectedTable={props.setSelectedTable}
             />
           ))}
           {linking && (

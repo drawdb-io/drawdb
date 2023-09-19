@@ -31,7 +31,6 @@ import { TableContext } from "../pages/editor";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const [tableActiveKey, setTableActiveKey] = useState("");
   const [value, setValue] = useState("");
   const { tables, setTables } = useContext(TableContext);
   const [filteredResult, setFilteredResult] = useState(
@@ -95,7 +94,7 @@ export default function TableOverview(props) {
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
               const { id } = tables.find((t) => t.name === v);
-              setTableActiveKey(`${id}`);
+              props.setSelectedTable(`${id}`);
               document
                 .getElementById(`scroll_table_${id}`)
                 .scrollIntoView({ behavior: "smooth" });
@@ -140,8 +139,8 @@ export default function TableOverview(props) {
         </Col>
       </Row>
       <Collapse
-        activeKey={tableActiveKey}
-        onChange={(k) => setTableActiveKey(k)}
+        activeKey={props.selectedTable}
+        onChange={(k) => props.setSelectedTable(k)}
         accordion
       >
         {tables.length <= 0 ? (
@@ -332,8 +331,9 @@ export default function TableOverview(props) {
                     <Collapse
                       activeKey={indexActiveKey}
                       onChange={(itemKey) => setIndexActiveKey(itemKey)}
+                      accordion
                     >
-                      <Collapse.Panel header="Indices" itemKey="1" accordion>
+                      <Collapse.Panel header="Indices" itemKey="1">
                         {t.indices.map((idx, k) => (
                           <div
                             className="flex justify-between items-center mb-2"
@@ -555,7 +555,7 @@ export default function TableOverview(props) {
                             .filter((e) => e.id !== i)
                             .map((e, idx) => ({ ...e, id: idx }))
                         );
-                        setTableActiveKey("");
+                        props.setSelectedTable("");
                       }}
                     ></Button>
                   </Col>

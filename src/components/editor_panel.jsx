@@ -30,7 +30,7 @@ const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   // const map = useRef(new Map());
   // const {tables, setTables} = useContext(TableContext);
-  const {areas, setAreas} = useContext(AreaContext);
+  const { areas, setAreas } = useContext(AreaContext);
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -39,8 +39,11 @@ const EditorPanel = (props) => {
     { tab: "Editor", itemKey: "4" },
   ];
   const contentList = [
-    <TableOverview />,
-    <ReferenceOverview/>,
+    <TableOverview
+      selectedTable={props.selectedTable}
+      setSelectedTable={props.setSelectedTable}
+    />,
+    <ReferenceOverview />,
     <Shape />,
     <CodeMirror
       value={props.code}
