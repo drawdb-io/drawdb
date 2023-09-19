@@ -51,12 +51,22 @@ export default function Canvas(props) {
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
 
-      const updatedTables = props.tables.map((t) => ({
-        ...t,
-        x: t.x + dx,
-        y: t.y + dy,
-      }));
-      props.setTables(updatedTables);
+      props.setTables(
+        props.tables.map((t) => ({
+          ...t,
+          x: t.x + dx,
+          y: t.y + dy,
+        }))
+      );
+
+      setRelationships(
+        relationships.map((r) => ({
+          startX: r.startX + dx,
+          startY: r.startY + dy,
+          endX: r.endX + dx,
+          endY: r.endY + dy,
+        }))
+      );
     } else if (dragging >= 0) {
       const updatedTables = props.tables.map((t) => {
         if (t.id === dragging) {
