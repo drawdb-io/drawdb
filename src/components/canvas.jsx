@@ -131,13 +131,13 @@ export default function Canvas(props) {
             ...r,
             startX: props.tables[r.startTableId].x + 15,
             startY:
-              props.tables[r.startTableId].y + r.startFieldId * 36 + 40 + 19,
+              props.tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
           };
         } else if (r.endTableId === dragging[1]) {
           return {
             ...r,
             endX: props.tables[r.endTableId].x + 15,
-            endY: props.tables[r.endTableId].y + r.endFieldId * 36 + 40 + 19,
+            endY: props.tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
           };
         }
         return r;
@@ -247,7 +247,7 @@ export default function Canvas(props) {
         endTableId: onRect.tableId,
         endFieldId: onRect.field,
         endX: props.tables[onRect.tableId].x + 15,
-        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 40 + 19,
+        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 50 + 19,
         name: `${props.tables[line.startTableId].name}_to_${
           props.tables[onRect.tableId].name
         }`,

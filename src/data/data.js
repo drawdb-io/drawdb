@@ -39,7 +39,7 @@ const tableThemes = [
   "#ff9159",
 ];
 
-const defaultTableTheme = "#9e9e9e";
+const defaultTableTheme = "#175e7a";
 const bgBlue = "#124559";
 
 const Cardinality = {
