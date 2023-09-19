@@ -1,37 +1,42 @@
 import { React, useState } from "react";
 import Node from "./node";
-import { Button } from "@arco-design/web-react";
+import {
+  IconEdit,
+  IconDelete,
+  IconPlus,
+  IconMinus,
+} from "@arco-design/web-react/icon";
 
 const Rect = (props) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [hoveredField, setHoveredField] = useState(-1);
   const [node, setNode] = useState(Node.NONE);
+  const [fields, setFields] = useState([
+    {
+      name: "id",
+      type: "uuid",
+      default: "",
+      primary: true,
+      unique: true,
+      notNull: true,
+      increment: false,
+    },
+    {
+      name: "name",
+      type: "varchar(20)",
+      default: "n/a",
+      primary: false,
+      unique: false,
+      notNull: true,
+      increment: false,
+    },
+  ]);
 
   const table = {
     name: "Students",
-    fields: [
-      {
-        name: "id",
-        type: "uuid",
-        default: "",
-        primary: true,
-        unique: true,
-        notNull: true,
-        increment: false,
-      },
-      {
-        name: "name",
-        type: "varchar(20)",
-        default: "n/a",
-        primary: false,
-        unique: false,
-        notNull: true,
-        increment: false,
-      },
-    ],
   };
 
-  const height =
-    table.fields.length * 36 + (table.fields.length - 1) * 2 + 40 + 4;
+  const height = fields.length * 36 + (fields.length - 1) * 2 + 40 + 2;
 
   return (
     <g>
@@ -57,20 +62,66 @@ const Rect = (props) => {
             isHovered ? "border-sky-500" : "border-gray-500"
           } bg-gray-300 select-none rounded-md`}
         >
-          <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md">
+          <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md flex justify-between">
             {table.name}
+            {isHovered && (
+              <div className="flex justify-end items-center">
+                <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
+                  <IconEdit />
+                </button>
+                <button
+                  className="btn bg-green-600 text-white text-xs py-1 px-2 me-2 opacity-80"
+                  onClick={(e) => {
+                    setFields([
+                      ...fields,
+                      {
+                        name: "age",
+                        type: "numeric",
+                        default: "n/a",
+                        primary: false,
+                        unique: false,
+                        notNull: true,
+                        increment: false,
+                      },
+                    ]);
+                  }}
+                >
+                  <IconPlus />
+                </button>
+                <button className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80">
+                  <IconDelete />
+                </button>
+              </div>
+            )}
           </div>
-          {table.fields.map((e, i) => {
+          {fields.map((e, i) => {
             return (
               <div
                 className={`${
-                  i === table.fields.length - 1
-                    ? ""
-                    : "border-b-2 border-gray-400"
+                  i === fields.length - 1 ? "" : "border-b-2 border-gray-400"
                 } h-[36px] p-2 flex justify-between`}
+                onMouseEnter={() => {
+                  setHoveredField(i);
+                }}
+                onMouseLeave={() => {
+                  setHoveredField(-1);
+                }}
               >
                 <div>{e.name}</div>
-                <div className="text-slate-600">{e.type}</div>
+                <div className="text-slate-600">
+                  {hoveredField === i ? (
+                    <div>
+                      <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
+                        <IconEdit />
+                      </button>
+                      <button className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80">
+                        <IconMinus />
+                      </button>
+                    </div>
+                  ) : (
+                    e.type
+                  )}
+                </div>
               </div>
             );
           })}
