@@ -48,12 +48,11 @@ import {
 } from "../pages/editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
 import { ObjectType, Action, Tab } from "../data/data";
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../schemas";
+import { Editor } from "@monaco-editor/react";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -1079,7 +1078,7 @@ export default function ControlPanel(props) {
               !exportData.data),
         }}
         cancelText="Cancel"
-        width={520}
+        width={540}
       >
         {visible === MODAL.IMPORT ? (
           <div>
@@ -1191,16 +1190,12 @@ export default function ControlPanel(props) {
             {visible === MODAL.IMG ? (
               <Image src={exportData.data} alt="Diagram" height={220} />
             ) : (
-              <div className="max-h-[400px] overflow-auto border border-gray-200">
-                <CodeMirror
-                  value={exportData.data}
-                  extensions={[json()]}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
-              </div>
+              <Editor
+                height="360px"
+                value={exportData.data}
+                language="json"
+                options={{ readOnly: true }}
+              />
             )}
             <div className="text-sm font-semibold mt-2">Filename:</div>
             <Input

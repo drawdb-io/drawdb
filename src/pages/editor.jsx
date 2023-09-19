@@ -1,8 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import Canvas from "../components/canvas";
 import EditorPanel from "../components/editor_panel";
 import {
@@ -23,7 +21,6 @@ export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
 
 export default function Editor(props) {
-  const [code, setCode] = useState("");
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -416,18 +413,14 @@ export default function Editor(props) {
                         onMouseUp={() => setResize(false)}
                         onMouseMove={dragHandler}
                       >
-                        <DndProvider backend={HTML5Backend}>
-                          {layout.sidebar && (
-                            <EditorPanel
-                              code={code}
-                              setCode={setCode}
-                              resize={resize}
-                              setResize={setResize}
-                              width={width}
-                            />
-                          )}
-                          <Canvas code={code} setCode={setCode} />
-                        </DndProvider>
+                        {layout.sidebar && (
+                          <EditorPanel
+                            resize={resize}
+                            setResize={setResize}
+                            width={width}
+                          />
+                        )}
+                        <Canvas />
                         {layout.services && <Sidebar />}
                       </div>
                     </div>
