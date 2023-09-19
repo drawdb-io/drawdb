@@ -10,6 +10,7 @@ import AreaOverview from "./area_overview";
 import { Tab } from "../data/data";
 import { TabContext } from "../pages/editor";
 import NotesOverview from "./notes_overview";
+import Issues from "./issues";
 
 const myTheme = createTheme({
   dark: "light",
@@ -27,7 +28,7 @@ const myTheme = createTheme({
 
 const EditorPanel = (props) => {
   // const map = useRef(new Map());
-  const {tab, setTab} = useContext(TabContext);
+  const { tab, setTab } = useContext(TabContext);
 
   const tabList = [
     { tab: "Tables", itemKey: Tab.tables },
@@ -42,7 +43,7 @@ const EditorPanel = (props) => {
       setSelectedTable={props.setSelectedTable}
     />,
     <ReferenceOverview />,
-    <AreaOverview/>,
+    <AreaOverview />,
     <CodeMirror
       value={props.code}
       height="100%"
@@ -52,79 +53,30 @@ const EditorPanel = (props) => {
         props.setCode(e);
       }}
     />,
-    <NotesOverview/>
+    <NotesOverview />,
   ];
 
   return (
     <div className="flex h-full">
-      <div style={{ width: `${props.width}px` }} className="overflow-y-auto">
-        <Tabs
-          type="card"
-          activeKey={tab}
-          tabList={tabList}
-          onChange={(key) => {
-            setTab(key);
-          }}
-          collapsible
-        >
-          <div className="p-2">{contentList[parseInt(tab) - 1]}</div>
-        </Tabs>
-        <br />
-        <button
-          onClick={() => {
-            const blob = new Blob([props.code], {
-              type: "text/plain;charset=utf-8",
-            });
-            window.saveAs(blob, "src.txt");
-          }}
-        >
-          export src
-        </button>
-        <br />
-        <button
-          onClick={() => {
-            // try {
-            //   const parser = new Parser();
-            //   const ast = parser.astify(props.code);
-            //   console.log(ast);
-            //   ast.forEach((e) => {
-            //     e.table.forEach((t) => {
-            //       if (map.current.has(t.table)) {
-            //         return;
-            //       }
-            //       map.current.set(t.table, t);
-            //       const newTable = {
-            //         id: props.tables.length,
-            //         name: `table_${props.tables.length}`,
-            //         x: 0,
-            //         y: 0,
-            //         fields: [
-            //           {
-            //             name: "id",
-            //             type: "UUID",
-            //             default: "",
-            //             check: "",
-            //             primary: true,
-            //             unique: true,
-            //             notNull: true,
-            //             increment: true,
-            //             comment: "",
-            //           },
-            //         ],
-            //         comment: "",
-            //         indices: [],
-            //         color: defaultTableTheme,
-            //       };
-            //       props.setTables((prev) => [...prev, newTable]);
-            //     });
-            //   });
-            // } catch (e) {
-            //   alert("parsing error");
-            // }
-          }}
-        >
-          parse
-        </button>
+      <div className="flex flex-col h-full relative">
+        <div className="h-full flex-1 overflow-y-auto">
+          <div style={{ width: `${props.width}px` }}>
+            <Tabs
+              type="card"
+              activeKey={tab}
+              tabList={tabList}
+              onChange={(key) => {
+                setTab(key);
+              }}
+              collapsible
+            >
+              <div className="p-2">{contentList[parseInt(tab) - 1]}</div>
+            </Tabs>
+          </div>
+        </div>
+        <div className="mt-auto border-t-2 border-gray-300">
+          <Issues />
+        </div>
       </div>
       <div
         className={`flex justify-center items-center p-1 h-auto hover:bg-slate-300 cursor-col-resize ${
