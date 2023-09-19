@@ -333,10 +333,28 @@ export default function DiagramOverview(props) {
           >
             <Collapse>
               <Collapse.Panel header="Comment" itemKey="1">
-                <Form>
+                <Form
+                  onChange={(value) => {
+                    const updatedTables = [...props.tables];
+                    updatedTables[i] = {
+                      ...t,
+                      ...value.values,
+                    };
+                    props.setTables(updatedTables);
+                  }}
+                >
                   <Form.TextArea
                     field="comment"
                     noLabel={true}
+                    showClear
+                    onClear={() => {
+                      const updatedTables = [...props.tables];
+                      updatedTables[i] = {
+                        ...t,
+                        comment: "",
+                      };
+                      props.setTables(updatedTables);
+                    }}
                     initValue={t.comment}
                     autosize
                     placeholder="Add comment"
