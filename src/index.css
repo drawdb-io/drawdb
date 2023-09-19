@@ -53,6 +53,11 @@
   background-color: var(--semi-color-bg-3);
 }
 
+.card-theme{
+  color: var(--semi-color-text-1);
+  background-color: rgba(var(--semi-grey-1), 1);
+}
+
 .toolbar-theme {
   background-color: rgba(var(--semi-grey-1), 1);
 }

@@ -21,8 +21,8 @@ export default function LandingPage() {
         </div>
       )}
       <div>
-        <div className="md:py-5 px-6 flex justify-between">
-          <div className="md:flex md:items-center md:justify-start">
+        <div className="py-5 px-6 flex justify-between">
+          <div className="flex items-center justify-start">
             <Link to="/">
               <img src={logo} alt="logo" className="me-2" />
             </Link>

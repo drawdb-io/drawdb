@@ -966,7 +966,8 @@ export default function ControlPanel(props) {
     },
     Help: {
       Shortcuts: {
-        function: () => {},
+        function: () => window.open("/shortcuts", "_blank"),
+        shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
         function: () => {},
@@ -1003,6 +1004,9 @@ export default function ControlPanel(props) {
   });
   useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
   useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
+  useHotkeys("ctrl+h, meta+h", () => window.open("/shortcuts", "_blank"), {
+    preventDefault: true,
+  });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
   return (
@@ -1200,7 +1204,7 @@ export default function ControlPanel(props) {
 
   function toolbar() {
     return (
-      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 md:mx-6 select-none overflow-x-hidden toolbar-theme">
+      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 3xl:mx-6 select-none overflow-x-hidden toolbar-theme">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
