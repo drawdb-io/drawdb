@@ -289,6 +289,7 @@ export default function Table(props) {
                   tid: props.tableData.id,
                   undo: editField,
                   redo: { name: e.target.value },
+                  message: `Edit table name to ${e.target.value}`,
                 },
               ]);
               setRedoStack([]);
@@ -318,6 +319,7 @@ export default function Table(props) {
                         fid: j,
                         undo: editField,
                         redo: { name: e.target.value },
+                        message: `Edit table field name to "${e.target.value}"`,
                       },
                     ]);
                     setRedoStack([]);
@@ -348,6 +350,7 @@ export default function Table(props) {
                         fid: j,
                         undo: { type: f.type },
                         redo: { type: value },
+                        message: `Edit table field type to "${value}"`,
                       },
                     ]);
                     setRedoStack([]);
@@ -380,6 +383,9 @@ export default function Table(props) {
                         fid: j,
                         undo: { notNull: f.notNull },
                         redo: { notNull: !f.notNull },
+                        message: `Edit table field to${
+                          f.notNull ? "" : " not"
+                        } null`,
                       },
                     ]);
                     setRedoStack([]);
@@ -405,6 +411,9 @@ export default function Table(props) {
                         fid: j,
                         undo: { primary: f.primary },
                         redo: { primary: !f.primary },
+                        message: `Edit table field to${
+                          f.primary ? " not" : ""
+                        } primary`,
                       },
                     ]);
                     setRedoStack([]);
@@ -447,6 +456,7 @@ export default function Table(props) {
                               fid: j,
                               undo: editField,
                               redo: { default: e.target.value },
+                              message: `Edit table field default to ${e.target.value}`,
                             },
                           ]);
                           setRedoStack([]);
@@ -484,6 +494,9 @@ export default function Table(props) {
                                   fid: j,
                                   undo: editField,
                                   redo: { values: f.values },
+                                  message: `Edit table field values to "${JSON.stringify(
+                                    f.values
+                                  )}"`,
                                 },
                               ]);
                               setRedoStack([]);
@@ -518,6 +531,7 @@ export default function Table(props) {
                                   fid: j,
                                   undo: editField,
                                   redo: { length: e.target.value },
+                                  message: `Edit table field length to "${e.target.value}"`,
                                 },
                               ]);
                               setRedoStack([]);
@@ -547,6 +561,7 @@ export default function Table(props) {
                               fid: j,
                               undo: editField,
                               redo: { check: e.target.value },
+                              message: `Edit table field check expression to "${e.target.value}"`,
                             },
                           ]);
                           setRedoStack([]);
@@ -574,6 +589,9 @@ export default function Table(props) {
                                   [checkedValues.target.value]:
                                     checkedValues.target.checked,
                                 },
+                                message: `Edit table field to${
+                                  f.unique ? " not" : ""
+                                } unique`,
                               },
                             ]);
                             setRedoStack([]);
@@ -613,6 +631,9 @@ export default function Table(props) {
                                   [checkedValues.target.value]:
                                     checkedValues.target.checked,
                                 },
+                                message: `Edit table field to${
+                                  f.primary ? " not" : ""
+                                } auto increment`,
                               },
                             ]);
                             setRedoStack([]);
@@ -649,6 +670,7 @@ export default function Table(props) {
                               fid: j,
                               undo: editField,
                               redo: { comment: e.target.value },
+                              message: `Edit table field comment to ${e.target.value}`,
                             },
                           ]);
                           setRedoStack([]);
@@ -667,6 +689,7 @@ export default function Table(props) {
                               component: "field_delete",
                               tid: props.tableData.id,
                               data: f,
+                              message: `Delete field`,
                             },
                           ]);
                           setRedoStack([]);
@@ -738,6 +761,9 @@ export default function Table(props) {
                             fields: [...value],
                             name: `${value.join("_")}_index`,
                           },
+                          message: `Edit index fields to "${JSON.stringify(
+                            value
+                          )}"`,
                         },
                       ]);
                       setRedoStack([]);
@@ -785,6 +811,9 @@ export default function Table(props) {
                                     [checkedValues.target.value]:
                                       checkedValues.target.checked,
                                   },
+                                  message: `Edit table field to${
+                                    idx.unique ? " not" : ""
+                                  } unique`,
                                 },
                               ]);
                               setRedoStack([]);
@@ -815,6 +844,7 @@ export default function Table(props) {
                                 component: "index_delete",
                                 tid: props.tableData.id,
                                 data: idx,
+                                message: `Delete index`,
                               },
                             ]);
                             setRedoStack([]);
@@ -868,10 +898,11 @@ export default function Table(props) {
                   {
                     action: Action.EDIT,
                     element: ObjectType.TABLE,
-                    component: "comment",
+                    component: "self",
                     tid: props.tableData.id,
                     undo: editField,
                     redo: { comment: e.target.value },
+                    message: `Edit table comment to "${e.target.value}"`,
                   },
                 ]);
                 setRedoStack([]);
@@ -898,6 +929,7 @@ export default function Table(props) {
                               tid: props.tableData.id,
                               undo: { color: props.tableData.color },
                               redo: { color: defaultTableTheme },
+                              message: `Edit table color to default`,
                             },
                           ]);
                           setRedoStack([]);
@@ -929,6 +961,7 @@ export default function Table(props) {
                                     tid: props.tableData.id,
                                     undo: { color: props.tableData.color },
                                     redo: { color: c },
+                                    message: `Edit table color to ${c}`,
                                   },
                                 ]);
                                 setRedoStack([]);
@@ -961,6 +994,7 @@ export default function Table(props) {
                                     tid: props.tableData.id,
                                     undo: { color: props.tableData.color },
                                     redo: { color: c },
+                                    message: `Edit table color to ${c}`,
                                   },
                                 ]);
                                 setRedoStack([]);
@@ -997,6 +1031,7 @@ export default function Table(props) {
                       element: ObjectType.TABLE,
                       component: "index_add",
                       tid: props.tableData.id,
+                      message: `Add index`,
                     },
                   ]);
                   setRedoStack([]);
@@ -1026,6 +1061,7 @@ export default function Table(props) {
                       element: ObjectType.TABLE,
                       component: "field_add",
                       tid: props.tableData.id,
+                      message: `Add field`,
                     },
                   ]);
                   setRedoStack([]);
@@ -1120,6 +1156,7 @@ export default function Table(props) {
                     component: "field_delete",
                     tid: props.tableData.id,
                     data: fieldData,
+                    message: `Delete field`,
                   },
                 ]);
                 setRedoStack([]);

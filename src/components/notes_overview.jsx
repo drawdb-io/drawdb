@@ -129,6 +129,7 @@ export default function NotesOverview(props) {
                         nid: i,
                         undo: editField,
                         redo: { content: e.target.value, height: newHeight },
+                        message: `Edit note content to "${e.target.value}"`,
                       },
                     ]);
                     setRedoStack([]);
@@ -156,6 +157,7 @@ export default function NotesOverview(props) {
                                     nid: i,
                                     undo: { color: n.color },
                                     redo: { color: c },
+                                    message: `Edit note color to ${c}`,
                                   },
                                 ]);
                                 setRedoStack([]);

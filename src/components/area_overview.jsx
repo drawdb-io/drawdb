@@ -117,6 +117,7 @@ export default function AreaOverview(props) {
                         aid: i,
                         undo: editField,
                         redo: { name: e.target.value },
+                        message: `Edit area name to ${e.target.value}`,
                       },
                     ]);
                     setRedoStack([]);
@@ -158,6 +159,7 @@ export default function AreaOverview(props) {
                                       aid: i,
                                       undo: { color: a.color },
                                       redo: { color: c },
+                                      message: `Edit area color to ${c}`,
                                     },
                                   ]);
                                   setRedoStack([]);
@@ -191,6 +193,7 @@ export default function AreaOverview(props) {
                                       aid: i,
                                       undo: { color: a.color },
                                       redo: { color: c },
+                                      message: `Edit area color to ${c}`,
                                     },
                                   ]);
                                   setRedoStack([]);

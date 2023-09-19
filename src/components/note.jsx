@@ -105,6 +105,7 @@ export default function Note(props) {
                   nid: props.data.id,
                   undo: editField,
                   redo: { content: e.target.value, height: newHeight },
+                  message: `Edit note content to "${e.target.value}"`,
                 },
               ]);
               setRedoStack([]);
@@ -155,6 +156,7 @@ export default function Note(props) {
                               nid: props.data.id,
                               undo: editField,
                               redo: { title: e.target.value },
+                              message: `Edit note title to "${e.target.name}"`,
                             },
                           ]);
                           setRedoStack([]);
@@ -180,6 +182,7 @@ export default function Note(props) {
                                         nid: props.data.id,
                                         undo: { color: props.data.color },
                                         redo: { color: c },
+                                        message: `Edit note color to ${c}`,
                                       },
                                     ]);
                                     setRedoStack([]);
@@ -233,6 +236,7 @@ export default function Note(props) {
                                 aid: props.data.id,
                                 undo: editField,
                                 redo: { title: props.data.title },
+                                message: `Edit note title to "${props.data.title}"`,
                               },
                             ]);
                             setRedoStack([]);

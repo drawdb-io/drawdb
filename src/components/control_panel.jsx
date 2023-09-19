@@ -192,8 +192,6 @@ export default function ControlPanel(props) {
               .filter((e) => e.id !== tables[a.tid].fields.length - 1)
               .map((t, i) => ({ ...t, id: i })),
           });
-        } else if (a.component === "comment") {
-          updateTable(a.tid, a.undo, false);
         } else if (a.component === "index_add") {
           updateTable(a.tid, {
             indices: tables[a.tid].indices
@@ -320,8 +318,6 @@ export default function ControlPanel(props) {
               },
             ],
           });
-        } else if (a.component === "comment") {
-          updateTable(a.tid, a.redo, false);
         } else if (a.component === "index_add") {
           setTables((prev) =>
             prev.map((table) => {
@@ -359,7 +355,7 @@ export default function ControlPanel(props) {
               .map((t, i) => ({ ...t, id: i })),
           });
         } else if (a.component === "self") {
-          updateTable(a.tid, a.redo);
+          updateTable(a.tid, a.redo, false);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         setRelationships((prev) =>

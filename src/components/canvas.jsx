@@ -226,8 +226,34 @@ export default function Canvas(props) {
   const didPan = () =>
     !(settings.pan.x === panning.x && settings.pan.y === panning.y);
 
+  const getMoveInfo = () => {
+    switch (dragging.element) {
+      case ObjectType.TABLE:
+        return {
+          name: "table",
+          x: tables[dragging.id].x,
+          y: tables[dragging.id].y,
+        };
+      case ObjectType.AREA:
+        return {
+          name: "area",
+          x: areas[dragging.id].x,
+          y: areas[dragging.id].y,
+        };
+      case ObjectType.NOTE:
+        return {
+          name: "note",
+          x: notes[dragging.id].x,
+          y: notes[dragging.id].y,
+        };
+      default:
+        return false;
+    }
+  };
+
   const handleMouseUp = (e) => {
     if (coordsDidUpdate(dragging.element)) {
+      const info = getMoveInfo();
       setUndoStack((prev) => [
         ...prev,
         {
@@ -236,6 +262,7 @@ export default function Canvas(props) {
           x: dragging.prevX,
           y: dragging.prevY,
           id: dragging.id,
+          message: `Move ${info.name} to (${info.x}, ${info.y})`,
         },
       ]);
       setRedoStack([]);
@@ -248,6 +275,7 @@ export default function Canvas(props) {
           action: Action.PAN,
           undo: { x: panning.x, y: panning.y },
           redo: settings.pan,
+          message: `Move diagram to (${settings.pan.x}, ${settings.pan.y})`,
         },
       ]);
       setRedoStack([]);
@@ -272,6 +300,7 @@ export default function Canvas(props) {
             height: initCoords.height,
           },
           redo: areas[areaResize.id],
+          message: `Resize area`,
         },
       ]);
       setRedoStack([]);

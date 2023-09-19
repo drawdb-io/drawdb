@@ -104,6 +104,7 @@ export default function Editor(props) {
         {
           action: Action.ADD,
           element: ObjectType.TABLE,
+          message: `Add new table`,
         },
       ]);
       setRedoStack([]);
@@ -153,6 +154,7 @@ export default function Editor(props) {
         {
           action: Action.ADD,
           element: ObjectType.AREA,
+          message: `Add new subject area`,
         },
       ]);
       setRedoStack([]);
@@ -186,6 +188,7 @@ export default function Editor(props) {
         {
           action: Action.ADD,
           element: ObjectType.NOTE,
+          message: `Add new note`,
         },
       ]);
       setRedoStack([]);
@@ -201,6 +204,7 @@ export default function Editor(props) {
             action: Action.ADD,
             element: ObjectType.RELATIONSHIP,
             data: data,
+            message: `Add new relationship`,
           },
         ]);
         setRedoStack([]);
@@ -223,6 +227,7 @@ export default function Editor(props) {
           action: Action.DELETE,
           element: ObjectType.TABLE,
           data: tables[id],
+          message: `Delete table`,
         },
       ]);
       setRedoStack([]);
@@ -253,6 +258,7 @@ export default function Editor(props) {
           action: Action.DELETE,
           element: ObjectType.AREA,
           data: areas[id],
+          message: `Delete subject area`,
         },
       ]);
       setRedoStack([]);
@@ -278,6 +284,7 @@ export default function Editor(props) {
           action: Action.DELETE,
           element: ObjectType.NOTE,
           data: notes[id],
+          message: `Delete note`,
         },
       ]);
       setRedoStack([]);
@@ -303,6 +310,7 @@ export default function Editor(props) {
           action: Action.DELETE,
           element: ObjectType.RELATIONSHIP,
           data: relationships[id],
+          message: `Delete relationship`,
         },
       ]);
       setRedoStack([]);
@@ -417,8 +425,8 @@ export default function Editor(props) {
                       <div
                         className={
                           layout.header
-                            ? `flex h-[calc(100vh-123.93px)]`
-                            : `flex h-[calc(100vh-51.97px)]`
+                            ? `flex h-[calc(100vh-120px)]`
+                            : `flex h-[calc(100vh-52px)]`
                         }
                         onMouseUp={() => setResize(false)}
                         onMouseMove={dragHandler}

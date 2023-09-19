@@ -118,6 +118,7 @@ export default function Area(props) {
                             aid: props.areaData.id,
                             undo: editField,
                             redo: { name: e.target.value },
+                            message: `Edit area name to ${e.target.value}`,
                           },
                         ]);
                         setRedoStack([]);
@@ -159,6 +160,7 @@ export default function Area(props) {
                                           aid: props.areaData.id,
                                           undo: { color: props.areaData.color },
                                           redo: { color: c },
+                                          message: `Edit area color to ${c}`,
                                         },
                                       ]);
                                       setRedoStack([]);
@@ -194,6 +196,7 @@ export default function Area(props) {
                                           aid: props.areaData.id,
                                           undo: { color: props.areaData.color },
                                           redo: { color: c },
+                                          message: `Edit area color to ${c}`,
                                         },
                                       ]);
                                       setRedoStack([]);
@@ -251,6 +254,7 @@ export default function Area(props) {
                               aid: props.areaData.id,
                               undo: editField,
                               redo: { name: props.areaData.name },
+                              message: `Edit area name to ${props.areaData.name}`,
                             },
                           ]);
                           setRedoStack([]);

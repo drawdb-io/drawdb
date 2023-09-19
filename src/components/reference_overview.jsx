@@ -153,6 +153,7 @@ export default function ReferenceOverview(props) {
                                       endTableId: r.startTableId,
                                       endFieldId: r.startFieldId,
                                     },
+                                    message: `Swap primary and foreign tables`,
                                   },
                                 ]);
                                 setRedoStack([]);
@@ -201,6 +202,7 @@ export default function ReferenceOverview(props) {
                         rid: i,
                         undo: { cardinality: r.cardinality },
                         redo: { cardinality: value },
+                        message: `Edit relationship cardinality`,
                       },
                     ]);
                     setRedoStack([]);
@@ -230,6 +232,7 @@ export default function ReferenceOverview(props) {
                             rid: i,
                             undo: { updateConstraint: r.updateConstraint },
                             redo: { updateConstraint: value },
+                            message: `Edit relationship update constraint`,
                           },
                         ]);
                         setRedoStack([]);
@@ -259,6 +262,7 @@ export default function ReferenceOverview(props) {
                             rid: i,
                             undo: { deleteConstraint: r.deleteConstraint },
                             redo: { deleteConstraint: value },
+                            message: `Edit relationship delete constraint`,
                           },
                         ]);
                         setRedoStack([]);
@@ -291,6 +295,7 @@ export default function ReferenceOverview(props) {
                             [checkedValues.target.value]:
                               checkedValues.target.checked,
                           },
+                          message: `Make foreign key mandetory`,
                         },
                       ]);
                       setRedoStack([]);
