@@ -52,6 +52,8 @@ import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
+import { Validator } from "jsonschema";
+import { areaSchema, noteSchema, tableSchema } from "../schemas";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -525,6 +527,70 @@ export default function ControlPanel(props) {
         break;
     }
   };
+  const copy = () => {
+    switch (selectedElement.element) {
+      case ObjectType.TABLE:
+        navigator.clipboard
+          .writeText(JSON.stringify({ ...tables[selectedElement.id] }))
+          .catch((e) => {
+            Toast.error("Could not copy");
+          });
+        break;
+      case ObjectType.NOTE:
+        navigator.clipboard
+          .writeText(JSON.stringify({ ...notes[selectedElement.id] }))
+          .catch((e) => {
+            Toast.error("Could not copy");
+          });
+        break;
+      case ObjectType.AREA:
+        navigator.clipboard
+          .writeText(JSON.stringify({ ...areas[selectedElement.id] }))
+          .catch((e) => {
+            Toast.error("Could not copy");
+          });
+        break;
+      default:
+        break;
+    }
+  };
+  const paste = () => {
+    navigator.clipboard.readText().then((text) => {
+      let obj = null;
+      try {
+        obj = JSON.parse(text);
+      } catch (error) {
+        return;
+      }
+      const v = new Validator();
+      if (v.validate(obj, tableSchema).valid) {
+        addTable(true, {
+          ...obj,
+          x: obj.x + 20,
+          y: obj.y + 20,
+          id: tables.length,
+        });
+      } else if (v.validate(obj, areaSchema).valid) {
+        addArea(true, {
+          ...obj,
+          x: obj.x + 20,
+          y: obj.y + 20,
+          id: areas.length,
+        });
+      } else if (v.validate(obj, noteSchema)) {
+        addNote(true, {
+          ...obj,
+          x: obj.x + 20,
+          y: obj.y + 20,
+          id: notes.length,
+        });
+      }
+    });
+  };
+  const cut = () => {
+    copy();
+    del();
+  };
 
   const menu = {
     File: {
@@ -698,15 +764,15 @@ export default function ControlPanel(props) {
         shortcut: "Ctrl+E",
       },
       Cut: {
-        function: () => {},
+        function: cut,
         shortcut: "Ctrl+X",
       },
       Copy: {
-        function: () => {},
+        function: copy,
         shortcut: "Ctrl+C",
       },
       Paste: {
-        function: () => {},
+        function: paste,
         shortcut: "Ctrl+V",
       },
       Duplicate: {
@@ -809,6 +875,9 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
   useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
   useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
+  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
+  useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
+  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
   useHotkeys("delete", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
@@ -1021,7 +1090,6 @@ export default function ControlPanel(props) {
                 if (!f) {
                   return;
                 }
-
                 const reader = new FileReader();
                 reader.onload = function (event) {
                   let jsonObject = null;
