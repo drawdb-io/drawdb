@@ -9,6 +9,8 @@ import {
   Button,
   Card,
   Select,
+  TagInput,
+  InputNumber,
   AutoComplete,
   Toast,
   Empty,
@@ -19,12 +21,14 @@ import {
   IconPlus,
   IconSearch,
   IconInfoCircle,
+  IconMore,
 } from "@douyinfe/semi-icons";
 import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { TypeContext, UndoRedoContext } from "../pages/editor";
+import { isSized, hasPrecision, getSize } from "../utils";
 
 export default function TableOverview(props) {
   const [value, setValue] = useState("");
@@ -202,36 +206,206 @@ export default function TableOverview(props) {
                             },
                           ]);
                           setRedoStack([]);
-                          updateType(i, {
-                            fields: t.fields.map((e, id) =>
-                              id === j ? { ...f, type: value } : e
-                            ),
-                          });
+                          if (value === "ENUM" || value === "SET") {
+                            updateType(i, {
+                              fields: t.fields.map((e, id) =>
+                                id === j
+                                  ? {
+                                      ...f,
+                                      type: value,
+                                      values: f.values ? [...f.values] : [],
+                                    }
+                                  : e
+                              ),
+                            });
+                          } else if (isSized(value) || hasPrecision(value)) {
+                            updateType(i, {
+                              fields: t.fields.map((e, id) =>
+                                id === j
+                                  ? { ...f, type: value, size: getSize(value) }
+                                  : e
+                              ),
+                            });
+                          } else {
+                            updateType(i, {
+                              fields: t.fields.map((e, id) =>
+                                id === j ? { ...f, type: value } : e
+                              ),
+                            });
+                          }
                         }}
                       ></Select>
                     </Col>
                     <Col span={3}>
-                      <Button
-                        icon={<IconDeleteStroked />}
-                        type="danger"
-                        onClick={() => {
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.TYPE,
-                              component: "field_delete",
-                              tid: i,
-                              fid: j,
-                              data: f,
-                              message: `Delete field`,
-                            },
-                          ]);
-                          updateType(i, {
-                            fields: t.fields.filter((field, k) => k !== j),
-                          });
-                        }}
-                      ></Button>
+                      <Popover
+                        content={
+                          <div className="popover-theme w-[240px]">
+                            {(f.type === "ENUM" || f.type === "SET") && (
+                              <>
+                                <div className="font-semibold mb-1">
+                                  {f.type} values
+                                </div>
+                                <TagInput
+                                  separator={[",", ", ", " ,"]}
+                                  value={f.values}
+                                  validateStatus={
+                                    !f.values || f.values.length === 0
+                                      ? "error"
+                                      : "default"
+                                  }
+                                  className="my-2"
+                                  placeholder="Use ',' for batch input"
+                                  onChange={(v) =>
+                                    updateType(i, {
+                                      fields: t.fields.map((e, id) =>
+                                        id === j ? { ...f, values: v } : e
+                                      ),
+                                    })
+                                  }
+                                  onFocus={(e) =>
+                                    setEditField({ values: f.values })
+                                  }
+                                  onBlur={(e) => {
+                                    if (
+                                      JSON.stringify(editField.values) ===
+                                      JSON.stringify(f.values)
+                                    )
+                                      return;
+                                    setUndoStack((prev) => [
+                                      ...prev,
+                                      {
+                                        action: Action.EDIT,
+                                        element: ObjectType.TYPE,
+                                        component: "field",
+                                        tid: i,
+                                        fid: j,
+                                        undo: editField,
+                                        redo: { values: f.values },
+                                        message: `Edit type field values to "${JSON.stringify(
+                                          f.values
+                                        )}"`,
+                                      },
+                                    ]);
+                                    setRedoStack([]);
+                                  }}
+                                />
+                              </>
+                            )}
+                            {isSized(f.type) && (
+                              <>
+                                <div className="font-semibold">Size</div>
+                                <InputNumber
+                                  className="my-2 w-full"
+                                  placeholder="Set length"
+                                  value={f.size}
+                                  onChange={(value) =>
+                                    updateType(i, {
+                                      fields: t.fields.map((e, id) =>
+                                        id === j ? { ...f, size: value } : e
+                                      ),
+                                    })
+                                  }
+                                  onFocus={(e) =>
+                                    setEditField({ size: e.target.value })
+                                  }
+                                  onBlur={(e) => {
+                                    if (e.target.value === editField.size)
+                                      return;
+                                    setUndoStack((prev) => [
+                                      ...prev,
+                                      {
+                                        action: Action.EDIT,
+                                        element: ObjectType.TABLE,
+                                        component: "field",
+                                        tid: i,
+                                        fid: j,
+                                        undo: editField,
+                                        redo: { size: e.target.value },
+                                        message: `Edit type field size to ${e.target.value}`,
+                                      },
+                                    ]);
+                                    setRedoStack([]);
+                                  }}
+                                />
+                              </>
+                            )}
+                            {hasPrecision(f.type) && (
+                              <>
+                                <div className="font-semibold">Precision</div>
+                                <Input
+                                  className="my-2 w-full"
+                                  placeholder="Set precision: (size, d)"
+                                  validateStatus={
+                                    /^\(\d+,\s*\d+\)$|^$/.test(f.size)
+                                      ? "default"
+                                      : "error"
+                                  }
+                                  value={f.size}
+                                  onChange={(value) =>
+                                    updateType(i, {
+                                      fields: t.fields.map((e, id) =>
+                                        id === j ? { ...f, size: value } : e
+                                      ),
+                                    })
+                                  }
+                                  onFocus={(e) =>
+                                    setEditField({ size: e.target.value })
+                                  }
+                                  onBlur={(e) => {
+                                    if (e.target.value === editField.size)
+                                      return;
+                                    setUndoStack((prev) => [
+                                      ...prev,
+                                      {
+                                        action: Action.EDIT,
+                                        element: ObjectType.TABLE,
+                                        component: "field",
+                                        tid: i,
+                                        fid: j,
+                                        undo: editField,
+                                        redo: { size: e.target.value },
+                                        message: `Edit type field precision to ${e.target.value}`,
+                                      },
+                                    ]);
+                                    setRedoStack([]);
+                                  }}
+                                />
+                              </>
+                            )}
+                            <Button
+                              icon={<IconDeleteStroked />}
+                              block
+                              type="danger"
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.TYPE,
+                                    component: "field_delete",
+                                    tid: i,
+                                    fid: j,
+                                    data: f,
+                                    message: `Delete field`,
+                                  },
+                                ]);
+                                updateType(i, {
+                                  fields: t.fields.filter(
+                                    (field, k) => k !== j
+                                  ),
+                                });
+                              }}
+                            >
+                              Delete field
+                            </Button>
+                          </div>
+                        }
+                        showArrow
+                        trigger="click"
+                        position="right"
+                      >
+                        <Button icon={<IconMore />} type="tertiary"></Button>
+                      </Popover>
                     </Col>
                   </Row>
                 ))}

@@ -716,6 +716,7 @@ export default function ControlPanel(props) {
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
+                  types: types,
                 },
                 null,
                 2
@@ -774,6 +775,7 @@ export default function ControlPanel(props) {
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
+                  types: types
                 },
                 null,
                 2

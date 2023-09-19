@@ -85,6 +85,30 @@ const noteSchema = {
   required: ["id", "x", "y", "title", "content", "color", "height"],
 };
 
+const typeSchema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    fields: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          type: { type: "string" },
+          values: {
+            type: "array",
+            items: { type: "string" },
+          },
+        },
+        required: ["name", "type"],
+      },
+    },
+    comment: { type: "string" },
+  },
+  required: ["name", "fields", "comment"],
+};
+
 const jsonSchema = {
   type: "object",
   properties: {
@@ -153,4 +177,11 @@ const ddbSchema = {
   },
 };
 
-export { jsonSchema, ddbSchema, tableSchema, noteSchema, areaSchema };
+export {
+  jsonSchema,
+  ddbSchema,
+  tableSchema,
+  noteSchema,
+  areaSchema,
+  typeSchema,
+};
