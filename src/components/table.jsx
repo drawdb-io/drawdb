@@ -33,6 +33,7 @@ import {
 } from "@douyinfe/semi-ui";
 import {
   LayoutContext,
+  SelectContext,
   SettingsContext,
   TabContext,
   TableContext,
@@ -42,16 +43,17 @@ import {
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
+  const [editField, setEditField] = useState({});
   const { layout } = useContext(LayoutContext);
   const { deleteTable, updateTable, updateField } = useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
-
-  const height = props.tableData.fields.length * 36 + 50 + 3;
-
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const [editField, setEditField] = useState({});
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+
+  const height = props.tableData.fields.length * 36 + 50 + 7;
+
   return (
     <>
       <foreignObject
@@ -60,7 +62,7 @@ export default function Table(props) {
         y={props.tableData.y}
         width={200}
         height={height}
-        className="shadow-lg rounded-md cursor-move"
+        className="drop-shadow-lg rounded-md cursor-move"
         onMouseDown={props.onMouseDown}
         onMouseEnter={() => {
           setIsHovered(true);
@@ -74,9 +76,11 @@ export default function Table(props) {
         }}
       >
         <div
-          className={`border-2 ${
-            isHovered ? "border-sky-500" : "border-gray-400"
-          } bg-gray-100 select-none rounded-md w-full`}
+          className={`border-2 border-gray-400 ${
+            props.active && !props.moving && "border-blue-500 border-4"
+          } ${
+            props.moving && "border-blue-500 border-4 border-dashed"
+          }  bg-gray-100 select-none rounded-lg w-full`}
         >
           <div
             className={`h-[10px] w-full rounded-t-md`}
@@ -97,10 +101,20 @@ export default function Table(props) {
                   }}
                   onClick={() => {
                     if (!layout.sidebar) {
-                      setVisible(true);
+                      setSelectedElement({
+                        element: ObjectType.TABLE,
+                        id: props.tableData.id,
+                        openDialogue: true,
+                        openCollapse: false,
+                      });
                     } else {
                       setTab(Tab.tables);
-                      props.setSelectedTable(`${props.tableData.id}`);
+                      setSelectedElement({
+                        element: ObjectType.TABLE,
+                        id: props.tableData.id,
+                        openDialogue: false,
+                        openCollapse: true,
+                      });
                       if (tab !== Tab.tables) return;
                       document
                         .getElementById(`scroll_table_${props.tableData.id}`)
@@ -157,7 +171,6 @@ export default function Table(props) {
                         onClick={() => {
                           Toast.success(`Table deleted!`);
                           deleteTable(props.tableData.id);
-                          props.setSelectedTable("");
                         }}
                       >
                         Delete table
@@ -233,8 +246,13 @@ export default function Table(props) {
       <SideSheet
         title="Edit table"
         size="small"
-        visible={visible}
-        onCancel={() => setVisible((prev) => !prev)}
+        visible={selectedElement.element===ObjectType.TABLE && selectedElement.id===props.tableData.id && selectedElement.openDialogue}
+        onCancel={() =>
+          setSelectedElement((prev) => ({
+            ...prev,
+            openDialogue: !prev.openDialogue,
+          }))
+        }
         style={{ paddingBottom: "16px" }}
       >
         <div className="flex items-center">
@@ -878,8 +896,6 @@ export default function Table(props) {
                 onClick={() => {
                   Toast.success(`Table deleted!`);
                   deleteTable(props.tableData.id);
-                  props.setSelectedTable("");
-                  setVisible(false);
                 }}
               ></Button>
             </Col>

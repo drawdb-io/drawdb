@@ -15,19 +15,20 @@ import {
 import {
   AreaContext,
   LayoutContext,
+  SelectContext,
   TabContext,
   UndoRedoContext,
 } from "../pages/editor";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [saved, setSaved] = useState(false);
   const [editField, setEditField] = useState({});
   const { layout } = useContext(LayoutContext);
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
 
   const handleMouseDown = (e, dir) => {
     props.setResize({ id: props.areaData.id, dir: dir });
@@ -46,7 +47,6 @@ export default function Area(props) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
         setHovered(false);
-        setVisible(false);
         setSaved(false);
       }}
     >
@@ -73,10 +73,26 @@ export default function Area(props) {
         <div className="text-gray-900 absolute top-2 left-3 select-none">
           {props.areaData.name}
         </div>
-        {hovered && (
+        {(hovered ||
+          (selectedElement.element === ObjectType.AREA &&
+            selectedElement.id === props.areaData.id &&
+            selectedElement.openDialogue &&
+            !layout.sidebar)) && (
           <div className="absolute top-2 right-3">
             <Popover
-              visible={visible}
+              visible={
+                selectedElement.element === ObjectType.AREA &&
+                selectedElement.id === props.areaData.id &&
+                selectedElement.openDialogue &&
+                !layout.sidebar
+              }
+              onClickOutSide={() => {
+                setSelectedElement((prev) => ({
+                  ...prev,
+                  openDialogue: false,
+                }));
+              }}
+              stopPropagation
               content={
                 <div>
                   <div className="font-semibold mb-2 ms-1">
@@ -200,7 +216,6 @@ export default function Area(props) {
                           </div>
                         </div>
                       }
-                      trigger="click"
                       position="rightTop"
                       showArrow
                     >
@@ -268,7 +283,12 @@ export default function Area(props) {
                       .getElementById(`scroll_area_${props.areaData.id}`)
                       .scrollIntoView({ behavior: "smooth" });
                   } else {
-                    setVisible(true);
+                    setSelectedElement({
+                      element: ObjectType.AREA,
+                      id: props.areaData.id,
+                      openDialogue: true,
+                      openCollapse: false,
+                    });
                   }
                 }}
               ></Button>

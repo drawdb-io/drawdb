@@ -4,6 +4,7 @@ import {
   NoteContext,
   UndoRedoContext,
   TabContext,
+  SelectContext,
 } from "../pages/editor";
 import { Action, ObjectType, noteThemes, Tab } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
@@ -16,7 +17,6 @@ import {
 export default function Note(props) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [saved, setSaved] = useState(false);
   const w = 180;
   const r = 3;
@@ -25,6 +25,7 @@ export default function Note(props) {
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { layout } = useContext(LayoutContext);
   const { tab, setTab } = useContext(TabContext);
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${props.data.id}`);
@@ -111,10 +112,26 @@ export default function Note(props) {
             className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
             style={{ backgroundColor: props.data.color }}
           ></textarea>
-          {hovered && (
+          {(hovered ||
+            (selectedElement.element === ObjectType.NOTE &&
+              selectedElement.id === props.data.id &&
+              selectedElement.openDialogue &&
+              !layout.sidebar)) && (
             <div className="absolute top-2 right-3">
               <Popover
-                visible={visible}
+                visible={
+                  selectedElement.element === ObjectType.NOTE &&
+                  selectedElement.id === props.data.id &&
+                  selectedElement.openDialogue &&
+                  !layout.sidebar
+                }
+                onClickOutSide={() => {
+                  setSelectedElement((prev) => ({
+                    ...prev,
+                    openDialogue: false,
+                  }));
+                }}
+                stopPropagation
                 content={
                   <div>
                     <div className="font-semibold mb-2 ms-1">Edit note</div>
@@ -181,7 +198,6 @@ export default function Note(props) {
                             </div>
                           </div>
                         }
-                        trigger="click"
                         position="rightTop"
                         showArrow
                       >
@@ -249,7 +265,12 @@ export default function Note(props) {
                         .getElementById(`scroll_note_${props.data.id}`)
                         .scrollIntoView({ behavior: "smooth" });
                     } else {
-                      setVisible(true);
+                      setSelectedElement({
+                        element: ObjectType.NOTE,
+                        id: props.data.id,
+                        openDialogue: true,
+                        openCollapse: false,
+                      });
                     }
                   }}
                 ></Button>

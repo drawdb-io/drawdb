@@ -38,10 +38,7 @@ const EditorPanel = (props) => {
     { tab: "Notes", itemKey: Tab.notes },
   ];
   const contentList = [
-    <TableOverview
-      selectedTable={props.selectedTable}
-      setSelectedTable={props.setSelectedTable}
-    />,
+    <TableOverview />,
     <ReferenceOverview />,
     <AreaOverview />,
     <CodeMirror

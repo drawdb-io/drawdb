@@ -33,7 +33,7 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TableContext, UndoRedoContext } from "../pages/editor";
+import { SelectContext, TableContext, UndoRedoContext } from "../pages/editor";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
@@ -41,6 +41,7 @@ export default function TableOverview(props) {
   const { tables, addTable, deleteTable, updateField, updateTable } =
     useContext(TableContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [editField, setEditField] = useState({});
   const [filteredResult, setFilteredResult] = useState(
     tables.map((t) => {
@@ -72,7 +73,12 @@ export default function TableOverview(props) {
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
               const { id } = tables.find((t) => t.name === v);
-              props.setSelectedTable(`${id}`);
+              setSelectedElement({
+                element: ObjectType.TABLE,
+                id: id,
+                openDialogue: false,
+                openCollapse: true,
+              });
               document
                 .getElementById(`scroll_table_${id}`)
                 .scrollIntoView({ behavior: "smooth" });
@@ -87,8 +93,15 @@ export default function TableOverview(props) {
         </Col>
       </Row>
       <Collapse
-        activeKey={props.selectedTable}
-        onChange={(k) => props.setSelectedTable(k)}
+        activeKey={selectedElement.openCollapse ? `${selectedElement.id}` : ""}
+        onChange={(k) =>
+          setSelectedElement({
+            element: ObjectType.TABLE,
+            id: parseInt(k),
+            openDialogue: false,
+            openCollapse: true,
+          })
+        }
         accordion
       >
         {tables.length <= 0 ? (
@@ -746,7 +759,6 @@ export default function TableOverview(props) {
                       onClick={() => {
                         Toast.success(`Table deleted!`);
                         deleteTable(i);
-                        props.setSelectedTable("");
                       }}
                     ></Button>
                   </Col>

@@ -40,12 +40,14 @@ import {
   AreaContext,
   LayoutContext,
   NoteContext,
+  SelectContext,
   SettingsContext,
+  TabContext,
   TableContext,
   UndoRedoContext,
 } from "../pages/editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
-import { ObjectType, Action } from "../data/data";
+import { ObjectType, Action, Tab } from "../data/data";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
@@ -95,6 +97,8 @@ export default function ControlPanel(props) {
     useContext(AreaContext);
   const { undoStack, redoStack, setUndoStack, setRedoStack } =
     useContext(UndoRedoContext);
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { tab, setTab } = useContext(TabContext);
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
@@ -422,6 +426,60 @@ export default function ControlPanel(props) {
       pan: { x: translateX, y: translateY },
     }));
   };
+  const edit = () => {
+    if (selectedElement.element === ObjectType.TABLE) {
+      if (!layout.sidebar) {
+        setSelectedElement({
+          element: ObjectType.TABLE,
+          id: selectedElement.id,
+          openDialogue: true,
+          openCollapse: false,
+        });
+      } else {
+        setTab(Tab.tables);
+        setSelectedElement({
+          element: ObjectType.TABLE,
+          id: selectedElement.id,
+          openDialogue: false,
+          openCollapse: true,
+        });
+        if (tab !== Tab.tables) return;
+        document
+          .getElementById(`scroll_table_${selectedElement.id}`)
+          .scrollIntoView({ behavior: "smooth" });
+      }
+    } else if(selectedElement.element===ObjectType.AREA){
+      if (layout.sidebar) {
+        setTab(Tab.subject_areas);
+        if (tab !== Tab.subject_areas) return;
+        document
+          .getElementById(`scroll_area_${selectedElement.id}`)
+          .scrollIntoView({ behavior: "smooth" });
+      } else {
+        setSelectedElement({
+          element: ObjectType.AREA,
+          id: selectedElement.id,
+          openDialogue: true,
+          openCollapse: false,
+        });
+      }
+    } else if(selectedElement.element===ObjectType.NOTE){
+      if (layout.sidebar) {
+        setTab(Tab.notes);
+        if (tab !== Tab.notes) return;
+        document
+          .getElementById(`scroll_note_${selectedElement.id}`)
+          .scrollIntoView({ behavior: "smooth" });
+      } else {
+        setSelectedElement({
+          element: ObjectType.NOTE,
+          id: selectedElement.id,
+          openDialogue: true,
+          openCollapse: false,
+        });
+      }
+    }
+  };
 
   const menu = {
     File: {
@@ -591,22 +649,28 @@ export default function ControlPanel(props) {
         },
       },
       Edit: {
-        function: () => {},
+        function: edit,
+        shortcut: "Ctrl+E",
       },
       Cut: {
         function: () => {},
+        shortcut: "Ctrl+X",
       },
       Copy: {
         function: () => {},
+        shortcut: "Ctrl+C",
       },
       Paste: {
         function: () => {},
+        shortcut: "Ctrl+V",
       },
       Duplicate: {
         function: () => {},
+        shortcut: "Ctrl+D",
       },
       Delete: {
         function: () => {},
+        shortcut: "Del",
       },
       "Copy as image": {
         function: copyAsImage,
@@ -698,6 +762,7 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
   useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
+  useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
   useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });

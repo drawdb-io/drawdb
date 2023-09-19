@@ -9,6 +9,7 @@ import {
   SettingsContext,
   TableContext,
   UndoRedoContext,
+  SelectContext,
 } from "../pages/editor";
 import Note from "./note";
 
@@ -19,6 +20,7 @@ export default function Canvas(props) {
   const { notes, updateNote } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -100,6 +102,7 @@ export default function Canvas(props) {
         prevY: note.y,
       });
     }
+    setSelectedElement({ element: type, id: id, openDialogue: false, openCollapse: false });
   };
 
   const handleMouseMove = (e) => {
@@ -243,6 +246,7 @@ export default function Canvas(props) {
         },
       ]);
       setRedoStack([]);
+      setSelectedElement({ element: ObjectType.NONE, id: -1 });
     }
     setPanning({ state: false, x: 0, y: 0 });
     setCursor("default");
@@ -396,8 +400,14 @@ export default function Canvas(props) {
                 onMouseDown={(e) =>
                   handleMouseDownRect(e, table.id, ObjectType.TABLE)
                 }
-                selectedTable={props.selectedTable}
-                setSelectedTable={props.setSelectedTable}
+                active={
+                  selectedElement.element === ObjectType.TABLE &&
+                  selectedElement.id === table.id
+                }
+                moving={
+                  dragging.element === ObjectType.TABLE &&
+                  dragging.id === table.id
+                }
               />
             ))}
             {linking && (

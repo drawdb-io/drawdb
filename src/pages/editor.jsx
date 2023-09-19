@@ -20,6 +20,7 @@ export const TabContext = createContext();
 export const NoteContext = createContext();
 export const SettingsContext = createContext();
 export const UndoRedoContext = createContext();
+export const SelectContext = createContext();
 
 export default function Editor(props) {
   const [code, setCode] = useState("");
@@ -29,7 +30,6 @@ export default function Editor(props) {
   const [notes, setNotes] = useState([]);
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
-  const [selectedTable, setSelectedTable] = useState("");
   const [tab, setTab] = useState(Tab.tables);
   const [layout, setLayout] = useState({
     header: true,
@@ -52,6 +52,12 @@ export default function Editor(props) {
   });
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
+  const [selectedElement, setSelectedElement] = useState({
+    element: ObjectType.NONE,
+    id: -1,
+    openDialogue: false,
+    openCollapse: false,
+  });
 
   const dragHandler = (e) => {
     if (!resize) return;
@@ -226,6 +232,14 @@ export default function Editor(props) {
     setTables((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
     );
+    if (id === selectedElement.id) {
+      setSelectedElement({
+        element: ObjectType.NONE,
+        id: -1,
+        openDialogue: false,
+        openCollapse: false,
+      });
+    }
   };
 
   const deleteArea = (id, addToHistory = true) => {
@@ -372,39 +386,36 @@ export default function Editor(props) {
                 <UndoRedoContext.Provider
                   value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
                 >
-                  <div className="h-[100vh] overflow-hidden">
-                    <ControlPanel />
-                    <div
-                      className={
-                        layout.header
-                          ? `flex h-[calc(100vh-123.93px)]`
-                          : `flex h-[calc(100vh-51.97px)]`
-                      }
-                      onMouseUp={() => setResize(false)}
-                      onMouseMove={dragHandler}
-                    >
-                      <DndProvider backend={HTML5Backend}>
-                        {layout.sidebar && (
-                          <EditorPanel
-                            code={code}
-                            setCode={setCode}
-                            resize={resize}
-                            setResize={setResize}
-                            width={width}
-                            selectedTable={selectedTable}
-                            setSelectedTable={setSelectedTable}
-                          />
-                        )}
-                        <Canvas
-                          code={code}
-                          setCode={setCode}
-                          selectedTable={selectedTable}
-                          setSelectedTable={setSelectedTable}
-                        />
-                      </DndProvider>
-                      {layout.services && <Sidebar />}
+                  <SelectContext.Provider
+                    value={{ selectedElement, setSelectedElement }}
+                  >
+                    <div className="h-[100vh] overflow-hidden">
+                      <ControlPanel />
+                      <div
+                        className={
+                          layout.header
+                            ? `flex h-[calc(100vh-123.93px)]`
+                            : `flex h-[calc(100vh-51.97px)]`
+                        }
+                        onMouseUp={() => setResize(false)}
+                        onMouseMove={dragHandler}
+                      >
+                        <DndProvider backend={HTML5Backend}>
+                          {layout.sidebar && (
+                            <EditorPanel
+                              code={code}
+                              setCode={setCode}
+                              resize={resize}
+                              setResize={setResize}
+                              width={width}
+                            />
+                          )}
+                          <Canvas code={code} setCode={setCode} />
+                        </DndProvider>
+                        {layout.services && <Sidebar />}
+                      </div>
                     </div>
-                  </div>
+                  </SelectContext.Provider>
                 </UndoRedoContext.Provider>
               </SettingsContext.Provider>
             </TabContext.Provider>
