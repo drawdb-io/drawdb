@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Editor from "./pages/editor";
 import LandingPage from "./pages/landing_page";
+import Survey from "./pages/survey";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/editor" element={<Editor name="Untitled" />} />
+          <Route path="/survey" element={<Survey />} />
         </Routes>
       </Router>
     </>
