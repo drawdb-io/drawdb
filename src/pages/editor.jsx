@@ -11,6 +11,7 @@ export default function Editor(props) {
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [resize, setResize] = useState(false);
 
   return (
     <>
@@ -26,6 +27,8 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
+            resize={resize}
+            setResize={setResize}
           />
           <Canvas
             tables={tables}
@@ -36,6 +39,8 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
+            resize={resize}
+            setResize={setResize}
           />
         </DndProvider>
         <Sidebar />

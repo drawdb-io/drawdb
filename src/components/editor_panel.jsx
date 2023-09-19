@@ -1,5 +1,4 @@
 import { React, useState, useRef } from "react";
-import { ResizableBox } from "react-resizable";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
@@ -7,7 +6,6 @@ import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
-import "react-resizable/css/styles.css";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
@@ -29,6 +27,14 @@ const myTheme = createTheme({
 const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   const map = useRef(new Map());
+
+  const [width, setWidth] = useState(320);
+
+  const dragHandler = (e) => {
+    if (!props.resize) return;
+    const w = e.clientX;
+    if (w > 320) setWidth(w);
+  };
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -64,16 +70,12 @@ const EditorPanel = (props) => {
   ];
 
   return (
-    <ResizableBox
-      className="shadow-xl"
-      width={window.innerWidth * 0.23}
-      height={window.innerHeight}
-      resizeHandles={["e"]}
-      minConstraints={[window.innerWidth * 0.23, window.innerHeight]}
-      maxConstraints={[Infinity, Infinity]}
-      axis="x"
+    <div
+      className="h-screen flex overflow-clip relative"
+      onMouseMove={dragHandler}
+      onMouseUp={() => props.setResize(false)}
     >
-      <div className="overflow-auto h-full mt-2">
+      <div className="mt-2" style={{ width: `${width}px` }}>
         <Tabs
           type="card"
           tabList={tabList}
@@ -84,7 +86,6 @@ const EditorPanel = (props) => {
         >
           {contentList[parseInt(tab) - 1]}
         </Tabs>
-
         <button
           onClick={() => {
             const newArea = {
@@ -162,7 +163,14 @@ const EditorPanel = (props) => {
           parse
         </button>
       </div>
-    </ResizableBox>
+      <div
+        className="flex justify-center items-center p-1 h-full bg-slate-300 cursor-col-resize"
+        onMouseDown={() => props.setResize(true)}
+        onMouseUp={() => props.setResize(false)}
+      >
+        <div className="w-1 border-x border-white h-1/6" />
+      </div>
+    </div>
   );
 };
 

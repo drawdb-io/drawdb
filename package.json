@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@arco-design/web-react": "^2.48.2",
     "@codemirror/lang-sql": "^6.5.0",
     "@douyinfe/semi-ui": "^2.36.0",
     "@lezer/highlight": "^1.1.5",
@@ -20,7 +19,6 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-resizable": "^3.0.5",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

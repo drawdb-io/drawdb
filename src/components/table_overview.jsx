@@ -147,16 +147,20 @@ export default function TableOverview(props) {
         accordion
       >
         {props.tables.length <= 0 ? (
-          <Empty
-            image={
-              <IllustrationNoContent style={{ width: 160, height: 160 }} />
-            }
-            darkModeImage={
-              <IllustrationNoContentDark style={{ width: 160, height: 160 }} />
-            }
-            title="No tables"
-            description="Start building your diagram!"
-          />
+          <div className="select-none">
+            <Empty
+              image={
+                <IllustrationNoContent style={{ width: 160, height: 160 }} />
+              }
+              darkModeImage={
+                <IllustrationNoContentDark
+                  style={{ width: 160, height: 160 }}
+                />
+              }
+              title="No tables"
+              description="Start building your diagram!"
+            />
+          </div>
         ) : (
           props.tables.map((t, i) => (
             <div id={`${t.name}_scroll_id`} key={t.id}>
