@@ -19,12 +19,18 @@ import {
   IconCheckboxTick,
   IconDeleteStroked,
 } from "@douyinfe/semi-icons";
-import { defaultTableTheme, tableThemes } from "../data/data";
-import { AreaContext } from "../pages/editor";
+import {
+  defaultTableTheme,
+  tableThemes,
+  Action,
+  ObjectType,
+} from "../data/data";
+import { AreaContext, UndoRedoContext } from "../pages/editor";
 
 export default function AreaOverview(props) {
   const { areas, setAreas, addArea, deleteArea } = useContext(AreaContext);
-
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const [editField, setEditField] = useState({});
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
     areas.map((t) => {
@@ -113,8 +119,23 @@ export default function AreaOverview(props) {
                 <Input
                   value={a.name}
                   placeholder="Name"
-                  onChange={(value, e) => updateArea(a.id, { name: value })}
-                  field="name"
+                  onChange={(value) => updateArea(a.id, { name: value })}
+                  onFocus={(e) => setEditField({ name: e.target.value })}
+                  onBlur={(e) => {
+                    if (e.target.value === editField.name) return;
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.AREA,
+                        aid: i,
+                        undo: editField,
+                        redo: { name: e.target.value },
+                      },
+                    ]);
+                    setRedoStack([]);
+                    setEditField({});
+                  }}
                 />
               </Col>
               <Col span={3}>
@@ -143,7 +164,21 @@ export default function AreaOverview(props) {
                                 key={c}
                                 style={{ backgroundColor: c }}
                                 className="p-3 rounded-full mx-1"
-                                onClick={() => updateArea(i, { color: c })}
+                                onClick={() => {
+                                  setUndoStack((prev) => [
+                                    ...prev,
+                                    {
+                                      action: Action.EDIT,
+                                      element: ObjectType.AREA,
+                                      aid: i,
+                                      undo: { color: a.color },
+                                      redo: { color: c },
+                                    },
+                                  ]);
+                                  setRedoStack([]);
+                                  setEditField({});
+                                  updateArea(i, { color: c });
+                                }}
                               >
                                 {a.color === c ? (
                                   <IconCheckboxTick
@@ -163,7 +198,21 @@ export default function AreaOverview(props) {
                                 key={c}
                                 style={{ backgroundColor: c }}
                                 className="p-3 rounded-full mx-1"
-                                onClick={() => updateArea(i, { color: c })}
+                                onClick={() => {
+                                  setUndoStack((prev) => [
+                                    ...prev,
+                                    {
+                                      action: Action.EDIT,
+                                      element: ObjectType.AREA,
+                                      aid: i,
+                                      undo: { color: a.color },
+                                      redo: { color: c },
+                                    },
+                                  ]);
+                                  setRedoStack([]);
+                                  setEditField({});
+                                  updateArea(i, { color: c });
+                                }}
                               >
                                 <IconCheckboxTick
                                   style={{

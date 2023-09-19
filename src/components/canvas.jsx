@@ -265,16 +265,15 @@ export default function Canvas(props) {
         {
           action: Action.EDIT,
           element: ObjectType.AREA,
-          data: {
-            undo: {
-              ...areas[areaResize.id],
-              x: initCoords.x,
-              y: initCoords.y,
-              width: initCoords.width,
-              height: initCoords.height,
-            },
-            redo: areas[areaResize.id],
+          aid: areaResize.id,
+          undo: {
+            ...areas[areaResize.id],
+            x: initCoords.x,
+            y: initCoords.y,
+            width: initCoords.width,
+            height: initCoords.height,
           },
+          redo: areas[areaResize.id],
         },
       ]);
       setRedoStack([]);

@@ -163,8 +163,8 @@ export default function ControlPanel(props) {
       if (a.element === ObjectType.AREA) {
         setAreas((prev) =>
           prev.map((n) => {
-            if (n.id === a.data.undo.id) {
-              return a.data.undo;
+            if (n.id === a.aid) {
+              return { ...n, ...a.undo };
             }
             return n;
           })
@@ -312,8 +312,8 @@ export default function ControlPanel(props) {
       if (a.element === ObjectType.AREA) {
         setAreas((prev) =>
           prev.map((n) => {
-            if (n.id === a.data.redo.id) {
-              return a.data.redo;
+            if (n.id === a.aid) {
+              return { ...n, ...a.redo };
             }
             return n;
           })
