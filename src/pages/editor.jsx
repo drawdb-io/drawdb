@@ -41,6 +41,7 @@ export default function Editor(props) {
     strictMode: false,
     showFieldSummary: true,
     zoom: 1,
+    pan: {x: 0, y: 0},
     showGrid: true,
   });
   const [undoStack, setUndoStack] = useState([]);

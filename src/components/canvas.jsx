@@ -110,8 +110,8 @@ export default function Canvas(props) {
 
       setLine({
         ...line,
-        endX: (e.clientX - offsetX) / settings.zoom,
-        endY: (e.clientY - offsetY) / settings.zoom,
+        endX: (e.clientX - offsetX) / settings.zoom - settings.pan.x,
+        endY: (e.clientY - offsetY) / settings.zoom - settings.pan.y,
       });
     } else if (
       panning &&
@@ -120,29 +120,11 @@ export default function Canvas(props) {
     ) {
       const dx = (e.clientX - panOffset.x) / settings.zoom;
       const dy = (e.clientY - panOffset.y) / settings.zoom;
+      setSettings((prev) => ({
+        ...prev,
+        pan: { x: prev.pan.x + dx, y: prev.pan.y + dy },
+      }));
       setPanOffset({ x: e.clientX, y: e.clientY });
-
-      setTables((prev) =>
-        prev.map((t) => ({
-          ...t,
-          x: t.x + dx,
-          y: t.y + dy,
-        }))
-      );
-
-      setRelationships(
-        relationships.map((r) => ({
-          ...r,
-          startX: tables[r.startTableId].x + 15,
-          startY: tables[r.startTableId].y + r.startFieldId * 36 + 69,
-          endX: tables[r.endTableId].x + 15,
-          endY: tables[r.endTableId].y + r.endFieldId * 36 + 69,
-        }))
-      );
-
-      setAreas((prev) => prev.map((t) => ({ ...t, x: t.x + dx, y: t.y + dy })));
-
-      setNotes((prev) => prev.map((n) => ({ ...n, x: n.x + dx, y: n.y + dy })));
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
       const updatedTables = tables.map((t) => {
         if (t.id === dragging.id) {
@@ -385,8 +367,8 @@ export default function Canvas(props) {
           )}
           <g
             style={{
-              transform: `scale(${settings.zoom})`,
-              transformOrigin: "0 0",
+              transform: `translate(${settings.pan.x}px, ${settings.pan.y}px) scale(${settings.zoom})`,
+              transformOrigin: "top left",
             }}
           >
             {areas.map((a) => (

@@ -113,8 +113,8 @@ export default function ControlPanel(props) {
       {
         id: prev.length,
         name: `table_${prev.length}`,
-        x: 0,
-        y: 0,
+        x: -settings.pan.x,
+        y: -settings.pan.y,
         fields: [
           {
             name: "id",
@@ -141,8 +141,8 @@ export default function ControlPanel(props) {
       {
         id: prev.length,
         name: `area_${prev.length}`,
-        x: 0,
-        y: 0,
+        x: -settings.pan.x,
+        y: -settings.pan.y,
         width: 200,
         height: 200,
         color: defaultTableTheme,
@@ -155,8 +155,8 @@ export default function ControlPanel(props) {
       ...prev,
       {
         id: prev.length,
-        x: 0,
-        y: 0,
+        x: -settings.pan.x,
+        y: -settings.pan.y,
         title: `note_${prev.length}`,
         content: "",
         color: defaultNoteTheme,
