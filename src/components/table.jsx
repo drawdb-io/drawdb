@@ -348,17 +348,11 @@ export default function Table(props) {
                       (value === "INT" ||
                         value === "BIGINT" ||
                         value === "SMALLINT");
-                    updateField(
-                      props.tableData.id,
-                      j,
-                      value === "ENUM"
-                        ? { type: value, enumValues: [], increment: incr }
-                        : {
-                            type: value,
-                            length: value === "VARCHAR" ? 255 : "n/a",
-                            increment: incr,
-                          }
-                    );
+                    updateField(props.tableData.id, j, {
+                      type: value,
+                      length: value === "VARCHAR" ? 255 : "n/a",
+                      increment: incr,
+                    });
                   }}
                 ></Select>
               </Col>
@@ -450,26 +444,26 @@ export default function Table(props) {
                           setRedoStack([]);
                         }}
                       />
-                      {f.type === "ENUM" && (
+                      {(f.type === "ENUM" || f.type === "SET") && (
                         <>
-                          <div className="font-semibold mb-1">Enum values</div>
+                          <div className="font-semibold mb-1">
+                            {f.type} values
+                          </div>
                           <TagInput
                             separator={[",", ", ", " ,"]}
-                            value={f.enumValues}
+                            value={f.values}
                             className="my-2"
                             placeholder="Use ',' for batch input"
                             onChange={(v) =>
                               updateField(props.tableData.id, j, {
-                                enumValues: v,
+                                values: v,
                               })
                             }
-                            onFocus={(e) =>
-                              setEditField({ enumValues: f.enumValues })
-                            }
+                            onFocus={(e) => setEditField({ values: f.values })}
                             onBlur={(e) => {
                               if (
-                                JSON.stringify(editField.enumValues) ===
-                                JSON.stringify(f.enumValues)
+                                JSON.stringify(editField.values) ===
+                                JSON.stringify(f.values)
                               )
                                 return;
                               setUndoStack((prev) => [
@@ -481,7 +475,7 @@ export default function Table(props) {
                                   tid: props.tableData.id,
                                   fid: j,
                                   undo: editField,
-                                  redo: { enumValues: f.enumValues },
+                                  redo: { values: f.values },
                                 },
                               ]);
                               setRedoStack([]);

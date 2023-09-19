@@ -61,8 +61,8 @@ function jsonToSQL(obj) {
               }\` ${field.type}${
                 field.length !== "n/a"
                   ? `(${field.length})`
-                  : field.enumValues
-                  ? `(${field.enumValues.map((v) => `"${v}"`).join(", ")})`
+                  : field.type === "ENUM" || field.type === "SET"
+                  ? `(${field.values.map((v) => `"${v}"`).join(", ")})`
                   : ""
               }${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
