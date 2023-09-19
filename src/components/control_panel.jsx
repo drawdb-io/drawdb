@@ -1204,7 +1204,7 @@ export default function ControlPanel(props) {
 
   function toolbar() {
     return (
-      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 3xl:mx-6 select-none overflow-x-hidden toolbar-theme">
+      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-x-hidden toolbar-theme">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />

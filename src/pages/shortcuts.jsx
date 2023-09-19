@@ -110,7 +110,7 @@ export default function Shortcuts() {
             alt="logo"
             className="me-2 sm:h-[28px] md:h-[46px]"
           />
-          <div className="ms-4 sm:text-base 3xl:text-lg font-semibold">
+          <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
             Keyboard shortcuts
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function Shortcuts() {
           onSelect={(v) => {}}
         ></AutoComplete>
       </div>
-      <div className="grid sm:grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 m-6 gap-5 select-none">
+      <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 m-6 gap-5 select-none">
         {shortcuts.map((s, i) => (
           <div className="p-3 card-theme rounded" key={i}>
             <div className="flex justify-between sm:text-sm">
