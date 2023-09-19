@@ -1,4 +1,4 @@
-import React from "react";
+import { React } from "react";
 import { sqlDataTypes } from "../data/data";
 import {
   Collapse,
@@ -9,11 +9,14 @@ import {
   Button,
   Card,
   TextArea,
+  Popover,
+  Checkbox,
 } from "@douyinfe/semi-ui";
 import {
   IconMore,
   IconKeyStroked,
   IconColorPalette,
+  IconDeleteStroked,
 } from "@douyinfe/semi-icons";
 
 export default function DiagramOverview(props) {
@@ -29,8 +32,8 @@ export default function DiagramOverview(props) {
           }
           itemKey={`${i}`}
         >
-          <Form>
-            {t.fields.map((f, j) => (
+          {t.fields.map((f, j) => (
+            <Form>
               <div key={j}>
                 <Row
                   type="flex"
@@ -71,12 +74,60 @@ export default function DiagramOverview(props) {
                     <Button type="tertiary" icon={<IconKeyStroked />}></Button>
                   </Col>
                   <Col span={3}>
-                    <Button type="tertiary" icon={<IconMore />}></Button>
+                    <Popover
+                      content={
+                        <div className="px-1">
+                          <Form>
+                            <Form.Input
+                              field="default"
+                              label="Default"
+                              initValue={f.default}
+                              trigger="blur"
+                            />
+                            <Form.Input
+                              field="check"
+                              label="Check Expression"
+                              trigger="blur"
+                            />
+                            <div className="flex justify-between items-center my-3">
+                              <label
+                                htmlFor="increment"
+                                className="font-medium"
+                              >
+                                Autoincrement
+                              </label>
+                              <Checkbox
+                                value="increment"
+                                defaultChecked={f.increment}
+                              ></Checkbox>
+                            </div>
+                            <label htmlFor="comment" className="font-medium">
+                              Comment
+                            </label>
+                            <Form.TextArea
+                              initValue={f.comment}
+                              autosize
+                              rows={2}
+                            />
+                          </Form>
+                          <div className="flex justify-end">
+                            <Button icon={<IconDeleteStroked />} type="danger">
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
+                      }
+                      trigger="click"
+                      position="rightTop"
+                      showArrow
+                    >
+                      <Button type="tertiary" icon={<IconMore />}></Button>
+                    </Popover>
                   </Col>
                 </Row>
               </div>
-            ))}
-          </Form>
+            </Form>
+          ))}
           <Card
             bodyStyle={{ padding: "4px" }}
             style={{ marginTop: "12px", marginBottom: "12px" }}
