@@ -59,7 +59,11 @@ function jsonToSQL(obj) {
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
               }\` ${field.type}${
-                field.length !== "n/a" ? `(${field.length})` : ""
+                field.length !== "n/a"
+                  ? `(${field.length})`
+                  : field.enumValues
+                  ? `(${field.enumValues.map((v) => `"${v}"`).join(", ")})`
+                  : ""
               }${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${

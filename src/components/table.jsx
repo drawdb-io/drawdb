@@ -23,6 +23,7 @@ import {
   TextArea,
   Card,
   Checkbox,
+  TagInput,
   Row,
   Col,
   Popover,
@@ -342,10 +343,22 @@ export default function Table(props) {
                       },
                     ]);
                     setRedoStack([]);
-                    updateField(props.tableData.id, j, {
-                      type: value,
-                      length: value === "VARCHAR" ? 255 : "n/a",
-                    });
+                    const incr =
+                      f.increment &&
+                      (value === "INT" ||
+                        value === "BIGINT" ||
+                        value === "SMALLINT");
+                    updateField(
+                      props.tableData.id,
+                      j,
+                      value === "ENUM"
+                        ? { type: value, enumValues: [], increment: incr }
+                        : {
+                            type: value,
+                            length: value === "VARCHAR" ? 255 : "n/a",
+                            increment: incr,
+                          }
+                    );
                   }}
                 ></Select>
               </Col>
@@ -437,35 +450,79 @@ export default function Table(props) {
                           setRedoStack([]);
                         }}
                       />
-                      <div className="font-semibold">Length</div>
-                      <Input
-                        className="my-2"
-                        placeholder="Set length"
-                        value={f.length}
-                        disabled={!(f.type === "VARCHAR")}
-                        onChange={(value) =>
-                          updateField(props.tableData.id, j, { length: value })
-                        }
-                        onFocus={(e) =>
-                          setEditField({ length: e.target.value })
-                        }
-                        onBlur={(e) => {
-                          if (e.target.value === editField.length) return;
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.TABLE,
-                              component: "field",
-                              tid: props.tableData.id,
-                              fid: j,
-                              undo: editField,
-                              redo: { length: e.target.value },
-                            },
-                          ]);
-                          setRedoStack([]);
-                        }}
-                      />
+                      {f.type === "ENUM" && (
+                        <>
+                          <div className="font-semibold mb-1">Enum values</div>
+                          <TagInput
+                            separator={[",", ", ", " ,"]}
+                            value={f.enumValues}
+                            className="my-2"
+                            placeholder="Use ',' for batch input"
+                            onChange={(v) =>
+                              updateField(props.tableData.id, j, {
+                                enumValues: v,
+                              })
+                            }
+                            onFocus={(e) =>
+                              setEditField({ enumValues: f.enumValues })
+                            }
+                            onBlur={(e) => {
+                              if (
+                                JSON.stringify(editField.enumValues) ===
+                                JSON.stringify(f.enumValues)
+                              )
+                                return;
+                              setUndoStack((prev) => [
+                                ...prev,
+                                {
+                                  action: Action.EDIT,
+                                  element: ObjectType.TABLE,
+                                  component: "field",
+                                  tid: props.tableData.id,
+                                  fid: j,
+                                  undo: editField,
+                                  redo: { enumValues: f.enumValues },
+                                },
+                              ]);
+                              setRedoStack([]);
+                            }}
+                          />
+                        </>
+                      )}
+                      {f.type === "VARCHAR" && (
+                        <>
+                          <div className="font-semibold">Length</div>
+                          <Input
+                            className="my-2"
+                            placeholder="Set length"
+                            value={f.length}
+                            onChange={(value) =>
+                              updateField(props.tableData.id, j, {
+                                length: value,
+                              })
+                            }
+                            onFocus={(e) =>
+                              setEditField({ length: e.target.value })
+                            }
+                            onBlur={(e) => {
+                              if (e.target.value === editField.length) return;
+                              setUndoStack((prev) => [
+                                ...prev,
+                                {
+                                  action: Action.EDIT,
+                                  element: ObjectType.TABLE,
+                                  component: "field",
+                                  tid: props.tableData.id,
+                                  fid: j,
+                                  undo: editField,
+                                  redo: { length: e.target.value },
+                                },
+                              ]);
+                              setRedoStack([]);
+                            }}
+                          />
+                        </>
+                      )}
                       <div className="font-semibold">Check Expression</div>
                       <Input
                         className="my-2"

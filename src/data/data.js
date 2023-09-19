@@ -19,6 +19,7 @@ const sqlDataTypes = [
   "VARBINARY",
   "BLOB",
   "JSON",
+  "ENUM",
 ];
 
 const tableThemes = [
