@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
 import { Banner, Button, Input, Upload } from "@douyinfe/semi-ui";
@@ -9,6 +9,43 @@ import {
   IconPaperclip,
 } from "@douyinfe/semi-icons";
 import RichEditor from "../components/rich_editor";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { editorConfig } from "../data/editor_config";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $generateHtmlFromNodes } from "@lexical/html";
+
+function Form({ theme }) {
+  const [editor] = useLexicalComposerContext();
+
+  const onSubmit = useCallback(
+    (e) => {
+      editor.update(() => {
+        const tmp = $generateHtmlFromNodes(editor);
+        console.log(tmp);
+      });
+    },
+    [editor]
+  );
+
+  return (
+    <div className="p-5 mt-6 card-theme rounded-md">
+      <Input placeholder="Title" />
+      <RichEditor theme={theme} />
+      <Upload
+        action="#"
+        beforeUpload={({ file, fileList }) => {}}
+        draggable={true}
+        dragMainText="Click to upload the file or drag and drop the file here"
+        dragSubText="Support json"
+        accept="application/json,.ddb"
+        onRemove={() => {}}
+        onFileChange={() => {}}
+        limit={5}
+      ></Upload>
+      <Button onClick={onSubmit}>Submit</Button>
+    </div>
+  );
+}
 
 export default function BugReport() {
   const [theme, setTheme] = useState("");
@@ -159,21 +196,9 @@ export default function BugReport() {
               </div>
             }
           />
-          <div className="p-5 mt-6 card-theme rounded-md">
-            <Input placeholder="Title" />
-            <RichEditor theme={theme} />
-            <Upload
-              action="#"
-              beforeUpload={({ file, fileList }) => {}}
-              draggable={true}
-              dragMainText="Click to upload the file or drag and drop the file here"
-              dragSubText="Support json"
-              accept="application/json,.ddb"
-              onRemove={() => {}}
-              onFileChange={() => {}}
-              limit={5}
-            ></Upload>
-          </div>
+          <LexicalComposer initialConfig={editorConfig}>
+            <Form theme={theme} />
+          </LexicalComposer>
         </div>
       </div>
       <hr
