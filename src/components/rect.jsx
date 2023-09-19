@@ -46,6 +46,21 @@ const Rect = (props) => {
   });
 
   const handleOkEdit = () => {
+    setFields((prev) => {
+      // console.log(field);
+      const updatedFields = [...prev];
+      updatedFields[editFieldVisible] = { ...field };
+      return updatedFields;
+    });
+    setField({
+      name: "",
+      type: "",
+      default: "",
+      primary: false,
+      unique: false,
+      notNull: false,
+      increment: false,
+    });
     setEditFieldVisible(-1);
   };
 
@@ -64,6 +79,13 @@ const Rect = (props) => {
   };
 
   const height = fields.length * 36 + 40 + 4;
+
+  const onCheck = (checkedValues) => {
+    setField({
+      ...field,
+      [checkedValues.target.value]: checkedValues.target.checked,
+    });
+  };
 
   return (
     <g>
@@ -181,7 +203,10 @@ const Rect = (props) => {
                       <div>
                         <button
                           className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80"
-                          onClick={(e) => setEditFieldVisible(i)}
+                          onClick={(ev) => {
+                            setEditFieldVisible(i);
+                            setField({ ...e });
+                          }}
                         >
                           <IconEdit />
                         </button>
@@ -362,21 +387,26 @@ const Rect = (props) => {
         }`}
         visible={editFieldVisible !== -1}
         onOk={handleOkEdit}
-        afterClose={handleOkEdit}
-        onCancel={handleOkEdit}
+        onCancel={() => setEditFieldVisible(-1)}
         centered
         closeOnEsc={true}
         okText="Edit"
         cancelText="Cancel"
       >
-        <Form labelPosition="left" labelAlign="right">
+        <Form
+          labelPosition="left"
+          labelAlign="right"
+          onValueChange={(v) => setField({ ...field, ...v })}
+        >
           <Row>
             <Col span={11}>
               <Form.Input
                 field="name"
                 label="Name"
                 trigger="blur"
-                onChange={(e) => setField({ ...field, name: e.target.value })}
+                initValue={
+                  editFieldVisible !== -1 ? fields[editFieldVisible].name : ""
+                }
               />
             </Col>
             <Col span={2}></Col>
@@ -385,8 +415,10 @@ const Rect = (props) => {
                 field="default"
                 label="Default"
                 trigger="blur"
-                onChange={(e) =>
-                  setField({ ...field, default: e.target.value })
+                initValue={
+                  editFieldVisible !== -1
+                    ? fields[editFieldVisible].default
+                    : ""
                 }
               />
             </Col>
@@ -400,16 +432,58 @@ const Rect = (props) => {
                 optionList={sqlDataTypes.map((value, index) => {
                   return {
                     label: value,
-                    value: index,
+                    value: value,
                   };
                 })}
-                onChange={(e) => setField({ ...field, type: e.target.value })}
+                initValue={
+                  editFieldVisible !== -1 ? fields[editFieldVisible].type : ""
+                }
               ></Form.Select>
               <div className="flex justify-around mt-2">
-                <Checkbox value="A">Primary</Checkbox>
-                <Checkbox value="B">Unique</Checkbox>
-                <Checkbox value="C">Not null</Checkbox>
-                <Checkbox value="D">Increment</Checkbox>
+                <Checkbox
+                  value="primary"
+                  onChange={onCheck}
+                  defaultChecked={
+                    editFieldVisible !== -1
+                      ? fields[editFieldVisible].primary
+                      : undefined
+                  }
+                >
+                  Primary
+                </Checkbox>
+                <Checkbox
+                  value="unique"
+                  onChange={onCheck}
+                  defaultChecked={
+                    editFieldVisible !== -1
+                      ? fields[editFieldVisible].unique
+                      : undefined
+                  }
+                >
+                  Unique
+                </Checkbox>
+                <Checkbox
+                  value="notNull"
+                  onChange={onCheck}
+                  defaultChecked={
+                    editFieldVisible !== -1
+                      ? fields[editFieldVisible].notNull
+                      : undefined
+                  }
+                >
+                  Not null
+                </Checkbox>
+                <Checkbox
+                  value="increment"
+                  onChange={onCheck}
+                  defaultChecked={
+                    editFieldVisible !== -1
+                      ? fields[editFieldVisible].increment
+                      : undefined
+                  }
+                >
+                  Increment
+                </Checkbox>
               </div>
             </Col>
           </Row>
