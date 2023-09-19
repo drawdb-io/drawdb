@@ -65,6 +65,12 @@ const Tab = {
   editor: "5",
 };
 
+const ObjectType = {
+  NONE: 0,
+  TABLE: 1,
+  AREA: 2,
+};
+
 export {
   bgBlue,
   sqlDataTypes,
@@ -72,5 +78,6 @@ export {
   defaultTableTheme,
   Cardinality,
   Constraint,
-  Tab
+  Tab, 
+  ObjectType
 };

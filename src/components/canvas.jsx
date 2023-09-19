@@ -1,7 +1,12 @@
 import React, { useContext, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
-import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
+import {
+  defaultTableTheme,
+  Cardinality,
+  Constraint,
+  ObjectType,
+} from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
 import { AreaContext, TableContext } from "../pages/editor";
@@ -10,11 +15,6 @@ export default function Canvas(props) {
   const { tables, setTables, relationships, setRelationships } =
     useContext(TableContext);
   const { areas, setAreas } = useContext(AreaContext);
-  const ObjectType = {
-    NONE: 0,
-    TABLE: 1,
-    AREA: 2,
-  };
   const [dragging, setDragging] = useState([ObjectType.NONE, -1]);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
@@ -259,6 +259,50 @@ export default function Canvas(props) {
     ]);
   };
 
+  const addTable = (x, y) => {
+    const newTable = {
+      id: tables.length,
+      name: `table_${tables.length}`,
+      x: x,
+      y: y,
+      fields: [
+        {
+          name: "id",
+          type: "UUID",
+          check: "",
+          default: "",
+          primary: true,
+          unique: true,
+          notNull: true,
+          increment: true,
+          comment: "",
+        },
+      ],
+      comment: "",
+      indices: [],
+      color: defaultTableTheme,
+    };
+    setTables((prev) => [...prev, newTable]);
+    props.setCode((prev) =>
+      prev === ""
+        ? `CREATE TABLE \`${newTable.name}\`;`
+        : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
+    );
+  };
+
+  const addArea = (x, y) => {
+    const newArea = {
+      id: areas.length,
+      name: `area_${areas.length}`,
+      x: x,
+      y: y,
+      width: 200,
+      height: 200,
+      color: defaultTableTheme,
+    };
+    setAreas((prev) => [...prev, newArea]);
+  };
+
   const [, drop] = useDrop(
     () => ({
       accept: "CARD",
@@ -267,34 +311,16 @@ export default function Canvas(props) {
         const canvasRect = canvas.current.getBoundingClientRect();
         const x = offset.x - canvasRect.left - 100 * 0.5;
         const y = offset.y - canvasRect.top - 100 * 0.5;
-        const newTable = {
-          id: tables.length,
-          name: `table_${tables.length}`,
-          x: x,
-          y: y,
-          fields: [
-            {
-              name: "id",
-              type: "UUID",
-              check: "",
-              default: "",
-              primary: true,
-              unique: true,
-              notNull: true,
-              increment: true,
-              comment: "",
-            },
-          ],
-          comment: "",
-          indices: [],
-          color: defaultTableTheme,
-        };
-        setTables((prev) => [...prev, newTable]);
-        props.setCode((prev) =>
-          prev === ""
-            ? `CREATE TABLE \`${newTable.name}\`;`
-            : `${prev}\n\nCREATE TABLE \`${newTable.name}\`;`
-        );
+        switch (item.type) {
+          case ObjectType.TABLE:
+            addTable(x, y);
+            break;
+          case ObjectType.AREA:
+            addArea(x, y);
+            break;
+          default:
+            break;
+        }
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),

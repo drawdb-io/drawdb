@@ -119,8 +119,8 @@ export default function Table(props) {
                       setVisible(true);
                     } else {
                       setTab(Tab.tables);
-                      if (tab !== Tab.tables) return;
                       props.setSelectedTable(`${props.tableData.id}`);
+                      if (tab !== Tab.tables) return;
                       document
                         .getElementById(`scroll_table_${props.tableData.id}`)
                         .scrollIntoView({ behavior: "smooth" });

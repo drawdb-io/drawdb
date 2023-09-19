@@ -1,7 +1,13 @@
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
+import { Button } from "@douyinfe/semi-ui";
+import { IconEdit } from "@douyinfe/semi-icons";
+import { Tab } from "../data/data";
+import { LayoutContext, TabContext } from "../pages/editor";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
+  const { layout } = useContext(LayoutContext);
+  const { tab, setTab } = useContext(TabContext);
 
   const handleMouseDown = (e, dir) => {
     props.setResize({ id: props.areaData.id, dir: dir });
@@ -43,6 +49,28 @@ export default function Area(props) {
         <div className="text-gray-900 absolute top-2 left-3 select-none">
           {props.areaData.name}
         </div>
+        {hovered && (
+          <div className="absolute top-2 right-3">
+            <Button
+              icon={<IconEdit />}
+              size="small"
+              theme="solid"
+              style={{
+                backgroundColor: "#2f68ad",
+                opacity: "0.7",
+              }}
+              onClick={() => {
+                if (layout.sidebar) {
+                  setTab(Tab.subject_areas);
+                  if (tab !== Tab.subject_areas) return;
+                  document
+                    .getElementById(`scroll_area_${props.areaData.id}`)
+                    .scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+            ></Button>
+          </div>
+        )}
       </foreignObject>
       {hovered && (
         <>

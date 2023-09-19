@@ -1,9 +1,11 @@
 import { React } from "react";
 import { useDrag } from "react-dnd";
+import { ObjectType, defaultTableTheme } from "../data/data";
 
 export default function Shape() {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD",
+    item: { type: ObjectType.TABLE },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -12,12 +14,9 @@ export default function Shape() {
   return (
     <div
       ref={drag}
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        cursor: "move",
-        width: "150px",
-        height: "65px",
-      }}
+      className={`${
+        isDragging ? "opacity-50" : ""
+      } bg-gray-100 cursor-move w-[150px] h-[72px]`}
     >
       <svg
         style={{
@@ -33,25 +32,27 @@ export default function Shape() {
             height: "100%",
           }}
         >
-          <div className="border border-gray-600 w-full rounded h-full text-xs border-collapse">
-            <div className="px-3 py-0.5 border-b border-gray-600">Table</div>
-            <div className="px-1 py-0.5 border-b border-gray-600 flex items-center justify-between">
+          <div className="border border-gray-400 w-full rounded-md h-full text-xs border-collapse">
+            <div
+              className={`h-[7px] w-full rounded-t`}
+              style={{ backgroundColor: defaultTableTheme }}
+            />
+            <div className="px-3 py-0.5 border-b border-gray-400 bg-gray-200">
+              Table
+            </div>
+            <div className="px-1 py-0.5 border-b border-gray-400 flex items-center justify-between">
               <div className="flex items-center">
-                <div className="w-[6px] h-[5px] bg-green-600 me-1 rounded-full" />
+                <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
                 <div>id</div>
               </div>
-              <div>
-                UUID
-              </div>
+              <div className="text-slate-400">UUID</div>
             </div>
             <div className="px-1 py-0.5 flex items-center justify-between">
               <div className="flex items-center">
-                <div className="w-[6px] h-[5px] bg-green-600 me-1 rounded-full" />
+                <div className="w-[6px] h-[5px] bg-[#2f68ad] opacity-80 me-1 rounded-full" />
                 <div>name</div>
               </div>
-              <div>
-                VARCHAR
-              </div>
+              <div className="text-slate-400">VARCHAR</div>
             </div>
           </div>
         </foreignObject>
