@@ -226,12 +226,15 @@ export default function Table(props) {
                       className={`w-[10px] h-[10px] bg-green-600 rounded-full me-2`}
                       onMouseDown={(ev) => {
                         props.handleGripField(i);
-                        props.setLine({
+                        props.setLine((prev)=>({
+                          ...prev,
+                          startFieldId: i,
+                          startTableId: props.id,
                           startX: props.tableData.x + 15,
                           startY: props.tableData.y + i * 36 + 40 + 19,
                           endX: props.tableData.x + 15,
                           endY: props.tableData.y + i * 36 + 40 + 19,
-                        });
+                        }));
                       }}
                     ></button>
                     {e.name}

@@ -67,7 +67,6 @@ export default function EditorPanel(props) {
             };
             props.setTables(prev => {
               const updatedTables = [...prev, newTable];
-              console.log(updatedTables);
               return updatedTables;
             });
             props.setCode((prev) =>

@@ -6,6 +6,10 @@ export default function Canvas(props) {
   const [dragging, setDragging] = useState(-1);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
+    startTableId: -1,
+    startFieldId: -1,
+    endTableId: -1,
+    endFieldId: -1,
     startX: 0,
     startY: 0,
     endX: 0,
@@ -61,6 +65,7 @@ export default function Canvas(props) {
 
       setRelationships(
         relationships.map((r) => ({
+          ...r,
           startX: r.startX + dx,
           startY: r.startY + dy,
           endX: r.endX + dx,
@@ -80,6 +85,24 @@ export default function Canvas(props) {
         return t;
       });
       props.setTables(updatedTables);
+      const updatedRelationShips = relationships.map((r) => {
+        if (r.startTableId === dragging - 1) {
+          return {
+            ...r,
+            startX: props.tables[r.startTableId].x + 15,
+            startY:
+              props.tables[r.startTableId].y + r.startFieldId * 36 + 40 + 19,
+          };
+        } else if (r.endTableId === dragging - 1) {
+          return {
+            ...r,
+            endX: props.tables[r.endTableId].x + 15,
+            endY: props.tables[r.endTableId].y + r.endFieldId * 36 + 40 + 19,
+          };
+        }
+        return r;
+      });
+      setRelationships(updatedRelationShips);
     }
   };
 
@@ -119,10 +142,11 @@ export default function Canvas(props) {
     setRelationships((prev) => [
       ...prev,
       {
-        startX: line.startX,
-        startY: line.startY,
+        ...line,
         endX: props.tables[onRect.tableId].x + 15,
         endY: props.tables[onRect.tableId].y + onRect.field * 36 + 40 + 19,
+        endTableId: onRect.tableId,
+        endFieldId: onRect.field,
       },
     ]);
   };
@@ -229,8 +253,9 @@ export default function Canvas(props) {
               strokeDasharray="5,5"
             />
           )}
-          {relationships.map((e) => (
+          {relationships.map((e, i) => (
             <line
+              key={i}
               x1={e.startX}
               y1={e.startY}
               x2={e.endX}
