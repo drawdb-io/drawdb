@@ -6,7 +6,7 @@ import {
   IconShareStroked,
   IconChevronUp,
   IconChevronDown,
-  IconPlus,
+  IconCheckboxTick,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -16,40 +16,12 @@ import {
   Button,
   Divider,
   Dropdown,
+  Form,
 } from "@douyinfe/semi-ui";
 
 export default function ControlPanel() {
-  const Tool = {
-    TOOLBAR: 0,
-    ZOOM: 1,
-    UNDO: 2,
-    REDO: 3,
-    ADD: 4,
-    COUNT: 5,
-  };
-
   const [showToolBar, setShowToolBar] = useState(true);
-  const [openZoom, setOpenZoom] = useState(false);
-  const [openAdd, setOpenAdd] = useState(false);
 
-  const invert = (e, tool) => {
-    switch (tool) {
-      case Tool.TOOLBAR:
-        setShowToolBar((prev) => !prev);
-        break;
-      case Tool.ZOOM:
-        setOpenZoom((prev) => !prev);
-        setOpenAdd(false);
-        break;
-      case Tool.ADD:
-        setOpenAdd((prev) => !prev);
-        setOpenZoom(false);
-        break;
-      default:
-        break;
-    }
-  };
-  
   return (
     <>
       {showToolBar && (
@@ -65,6 +37,7 @@ export default function ControlPanel() {
                   {Object.keys(menu).map((category) => (
                     <Dropdown
                       key={category}
+                      position="bottomLeft"
                       style={{ width: "200px" }}
                       render={
                         <Dropdown.Menu>
@@ -89,7 +62,7 @@ export default function ControlPanel() {
                                     style={{
                                       display: "flex",
                                       justifyContent: "space-between",
-                                      alignItems: "center"
+                                      alignItems: "center",
                                     }}
                                   >
                                     <div>{item}</div>
@@ -99,9 +72,7 @@ export default function ControlPanel() {
                               );
                             }
                             return (
-                              <Dropdown.Item key={index}>
-                                {item}
-                              </Dropdown.Item>
+                              <Dropdown.Item key={index}>{item}</Dropdown.Item>
                             );
                           })}
                         </Dropdown.Menu>
@@ -139,7 +110,6 @@ export default function ControlPanel() {
                 fontSize: "16px",
                 marginLeft: "12px",
                 marginRight: "12px",
-                border: "1px solid white",
               }}
               size="large"
               icon={<IconShareStroked />}
@@ -152,104 +122,119 @@ export default function ControlPanel() {
           </div>
         </nav>
       )}
-      
-      <div className="p-1 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700">
+      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700">
         <div className="flex justify-start items-center">
-          <div className="relative">
-            <button className="ms-2 py-2 px-3 hover:bg-gray-300 relative">
-              <i className="fa-solid fa-table-list"></i>
-            </button>
-            <Divider layout="vertical" margin="8px" />
-            <button
-              className="py-2 px-3 hover:bg-gray-300 relative"
-              onClick={(e) => invert(e, Tool.ZOOM)}
-            >
+          <Dropdown
+            position="bottomLeft"
+            style={{ width: "180px" }}
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item icon={<IconCheckboxTick />}>
+                  Header
+                </Dropdown.Item>
+                <Dropdown.Item icon={<IconCheckboxTick />}>
+                  Overview
+                </Dropdown.Item>
+                <Dropdown.Item icon={<IconCheckboxTick />}>
+                  Services
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item icon={<IconCheckboxTick />}>
+                  Fullscreen
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            }
+            trigger="click"
+          >
+            <div className="py-1 px-2 hover:bg-gray-300">
+              <i className="fa-solid fa-table-list"></i> <IconCaretdown />
+            </div>
+          </Dropdown>
+          <Divider layout="vertical" margin="8px" />
+          <Dropdown
+            style={{ width: "180px" }}
+            position="bottomLeft"
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item>Fit window</Dropdown.Item>
+                <Dropdown.Divider />
+                {[
+                  "25%",
+                  "50%",
+                  "75%",
+                  "100%",
+                  "125%",
+                  "150%",
+                  "200%",
+                  "300%",
+                ].map((e, i) => (
+                  <Dropdown.Item key={i}>{e}</Dropdown.Item>
+                ))}
+                <Dropdown.Divider />
+                <Dropdown.Item>
+                  <Form>
+                    <Form.InputNumber
+                      field="zoom"
+                      label="Custom zoom"
+                      placeholder="Zoom"
+                      suffix={<div className="p-1">%</div>}
+                    />
+                  </Form>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            }
+            trigger="click"
+          >
+            <div className="py-1 px-2 hover:bg-gray-300">
               zoom <IconCaretdown />
-            </button>
-            <ul
-              className={`${
-                openZoom ? "" : "hidden"
-              } w-[200px] flex-col drop-shadow-lg bg-white py-1 ms-2 absolute z-20 top-full`}
-            >
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                Fit window
-              </li>
-              <hr />
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">25%</li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">50%</li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">75%</li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                100%
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                125%
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                150%
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                175%
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                200%
-              </li>
-              <hr />
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                Custom
-              </li>
-            </ul>
-          </div>
+            </div>
+          </Dropdown>
           <button className="py-1 px-2 hover:bg-gray-300" title="Zoom in">
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
           <button className="py-1 px-2 hover:bg-gray-300" title="Zoom out">
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>
+          <Divider layout="vertical" margin="8px" />
           <button className="py-1 px-2 hover:bg-gray-300" title="Undo">
             <i className="fa-solid fa-rotate-left "></i>
           </button>
           <button className="py-1 px-2 hover:bg-gray-300" title="Redo">
             <i className="fa-solid fa-rotate-right"></i>
           </button>
+          <Divider layout="vertical" margin="8px" />
+          <Dropdown
+            position="bottomLeft"
+            style={{ width: "180px" }}
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item>Table</Dropdown.Item>
+                <Dropdown.Item>Note</Dropdown.Item>
+                <Dropdown.Item>Subject area</Dropdown.Item>
+                <Dropdown.Item>Text</Dropdown.Item>
+              </Dropdown.Menu>
+            }
+            trigger="click"
+          >
+            <div className="py-1 px-2 hover:bg-gray-300">
+              <i className="fa-solid fa-plus"></i> <IconCaretdown />
+            </div>
+          </Dropdown>
           <button className="py-1 px-2 hover:bg-gray-300" title="Edit">
             <i className="fa-solid fa-pen-to-square"></i>
           </button>
-          <div className="relative">
-            <button
-              className="py-1 px-2 hover:bg-gray-300 relative"
-              title="Add"
-              onClick={(e) => invert(e, Tool.ADD)}
-            >
-              <IconPlus />
-              <IconCaretdown />
-            </button>
-            <ul
-              className={`${
-                openAdd ? "" : "hidden"
-              } w-[200px] flex-col drop-shadow-lg bg-white py-1 absolute z-20 top-full`}
-            >
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                Table
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                Relationship
-              </li>
-              <li className="px-5 py-3 hover:bg-gray-200 relative z-20">
-                Note
-              </li>
-            </ul>
-          </div>
           <button className="py-1 px-2 hover:bg-gray-300" title="Delete">
             <i className="fa-solid fa-trash"></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Move">
-            <i className="fa-regular fa-hand"></i>
+          <Divider layout="vertical" margin="8px" />
+          <button className="py-1 px-2 hover:bg-gray-300" title="Save">
+            <i className="fa-regular fa-floppy-disk"></i>
           </button>
           <button className="py-1 px-2 hover:bg-gray-300" title="Commit">
-            <i className="fa-solid fa-code-commit"></i>
+            <i className="fa-solid fa-code-branch"></i>
           </button>
         </div>
-        <button onClick={(e) => invert(e, Tool.TOOLBAR)} className="me-3">
+        <button onClick={(e) => setShowToolBar((prev) => !prev)}>
           {showToolBar ? <IconChevronUp /> : <IconChevronDown />}
         </button>
       </div>
