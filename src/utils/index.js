@@ -58,13 +58,18 @@ function jsonToSQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
-              }\` ${field.type} ${field.notNull ? "NOT NULL" : ""} ${
-                field.increment ? "AUTO_INCREMENT" : ""
-              } ${field.unique ? "UNIQUE" : ""},`
+              }\` ${field.type}${
+                field.length !== "n/a" ? `(${field.length})` : ""
+              }${field.notNull ? " NOT NULL" : ""}${
+                field.increment ? " AUTO_INCREMENT" : ""
+              }${field.unique ? " UNIQUE" : ""}${
+                field.default !== "" ? ` DEFAULT ${field.default}` : ""
+              },`
           )
-          .join("\n")}\n\tPRIMARY KEY(${table.fields.map((f) =>
-          f.primary ? `${f.name}` : ""
-        )})\n);`
+          .join("\n")}\n\tPRIMARY KEY(${table.fields
+          .filter((f) => f.primary)
+          .map((f) => `\`${f.name}\``)
+          .join(", ")})\n);`
     )
     .join("\n");
 }

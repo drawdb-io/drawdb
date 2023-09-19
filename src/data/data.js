@@ -18,9 +18,6 @@ const sqlDataTypes = [
   "BINARY",
   "VARBINARY",
   "BLOB",
-  "CLOB",
-  "UUID",
-  "XML",
   "JSON",
 ];
 

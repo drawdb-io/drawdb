@@ -176,7 +176,10 @@ export default function TableOverview(props) {
                             },
                           ]);
                           setRedoStack([]);
-                          updateField(i, j, { type: value });
+                          updateField(i, j, {
+                            type: value,
+                            length: value === "VARCHAR" ? 255 : "n/a",
+                          });
                         }}
                       ></Select>
                     </Col>
@@ -238,6 +241,13 @@ export default function TableOverview(props) {
                               className="my-2"
                               placeholder="Set default"
                               value={f.default}
+                              disabled={
+                                f.type === "BLOB" ||
+                                f.type === "JSON" ||
+                                f.type === "GEOMETRY" ||
+                                f.type === "TEXT" ||
+                                f.increment
+                              }
                               onChange={(value) =>
                                 updateField(i, j, { default: value })
                               }
@@ -257,6 +267,35 @@ export default function TableOverview(props) {
                                     fid: j,
                                     undo: editField,
                                     redo: { default: e.target.value },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                              }}
+                            />
+                            <div className="font-semibold">Length</div>
+                            <Input
+                              className="my-2"
+                              placeholder="Set length"
+                              value={f.length}
+                              disabled={!(f.type === "VARCHAR")}
+                              onChange={(value) =>
+                                updateField(i, j, { length: value })
+                              }
+                              onFocus={(e) =>
+                                setEditField({ length: e.target.value })
+                              }
+                              onBlur={(e) => {
+                                if (e.target.value === editField.length) return;
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.TABLE,
+                                    component: "field",
+                                    tid: i,
+                                    fid: j,
+                                    undo: editField,
+                                    redo: { length: e.target.value },
                                   },
                                 ]);
                                 setRedoStack([]);
@@ -329,6 +368,13 @@ export default function TableOverview(props) {
                               <Checkbox
                                 value="increment"
                                 defaultChecked={f.increment}
+                                disabled={
+                                  !(
+                                    f.type === "INT" ||
+                                    f.type === "BIGINT" ||
+                                    f.type === "SMALLINT"
+                                  )
+                                }
                                 onChange={(checkedValues) => {
                                   setUndoStack((prev) => [
                                     ...prev,
@@ -416,7 +462,7 @@ export default function TableOverview(props) {
                           </div>
                         }
                         trigger="click"
-                        position="rightTop"
+                        position="right"
                         showArrow
                       >
                         <Button type="tertiary" icon={<IconMore />}></Button>
@@ -738,6 +784,7 @@ export default function TableOverview(props) {
                               default: "",
                               check: "",
                               primary: false,
+                              length: "n/a",
                               unique: false,
                               notNull: false,
                               increment: false,
