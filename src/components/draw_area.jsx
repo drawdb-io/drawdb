@@ -2,9 +2,15 @@ import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Rect from "./rect";
 
-
 export default function Canvas(props) {
   const [dragging, setDragging] = useState(-1);
+  const [linking, setLinking] = useState(false);
+  const [line, setLine] = useState({
+    startX: 0,
+    startY: 0,
+    endX: 0,
+    endY: 0,
+  });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [onRect, setOnRect] = useState(false);
   const [panning, setPanning] = useState(false);
@@ -24,7 +30,19 @@ export default function Canvas(props) {
   };
 
   const handleMouseMove = (e) => {
-    if (dragging < 0 && panning) {
+    if (linking) {
+      const rect = canvas.current.getBoundingClientRect();
+      const offsetX = rect.left;
+      const offsetY = rect.top;
+
+      setLine({
+        ...line,
+        endX: e.clientX - offsetX,
+        endY: e.clientY - offsetY,
+      });
+      return;
+    }
+    if (panning) {
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
       setPanOffset({ x: e.clientX, y: e.clientY });
@@ -35,8 +53,6 @@ export default function Canvas(props) {
         y: rect.y + dy,
       }));
       props.setRectangles(updatedRectangles);
-
-     
     } else if (dragging >= 0) {
       const { clientX, clientY } = e;
       const updatedRectangles = props.rectangles.map((rect) => {
@@ -46,7 +62,7 @@ export default function Canvas(props) {
             x: clientX - offset.x,
             y: clientY - offset.y,
           };
-         return updatedRect;
+          return updatedRect;
         }
         return rect;
       });
@@ -68,12 +84,19 @@ export default function Canvas(props) {
     setDragging(-1);
     setPanning(false);
     setCursor("default");
+    setLinking(false);
   };
 
   const deleteTable = (id) => {
     const updatedTables = [...props.rectangles];
     updatedTables.splice(id, 1);
     props.setRectangles(updatedTables);
+  };
+
+  const handleGripField = (id) => {
+    setPanning(false);
+    setDragging(-1);
+    setLinking(true);
   };
 
   const [, drop] = useDrop(
@@ -155,28 +178,23 @@ export default function Canvas(props) {
               width={rectangle.width}
               height={rectangle.height}
               setOnRect={setOnRect}
+              handleGripField={handleGripField}
               // links={links}
-              // setLinks={setLinks}
+              setLine={setLine}
               onMouseDown={(e) => handleMouseDownRect(e, rectangle.id)}
               onDelete={deleteTable}
             />
           ))}
-          {/* {links.map(
-            (link, index) =>
-              links.length >= 2 &&
-              index % 2 === 0 &&
-              index + 1 < links.length && (
-                <line
-                  key={index}
-                  x1={links[index].x}
-                  y1={links[index].y}
-                  x2={links[index + 1].x}
-                  y2={links[index + 1].y}
-                  stroke="red"
-                  strokeDasharray="5,5"
-                />
-              )
-          )} */}
+          {linking && (
+            <line
+              x1={line.startX}
+              y1={line.startY}
+              x2={line.endX}
+              y2={line.endY}
+              stroke="red"
+              strokeDasharray="5,5"
+            />
+          )}
         </svg>
       </div>
     </div>

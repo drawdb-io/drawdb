@@ -206,7 +206,18 @@ const Rect = (props) => {
                   }}
                 >
                   <div>
-                    <button className="w-[10px] h-[10px] bg-green-600 rounded-full me-2"></button>
+                    <button
+                      className="w-[10px] h-[10px] bg-green-600 rounded-full me-2"
+                      onMouseDown={(ev) => {
+                        console.log("mouse down");
+                        props.handleGripField(i);
+                        props.setLine((prev) => ({
+                          ...prev,
+                          startX: props.x + 15,
+                          startY: props.y + i * 36 + 40 + 18,
+                        }));
+                      }}
+                    ></button>
                     {e.name}
                   </div>
                   <div className="text-slate-600">
