@@ -7,9 +7,8 @@ function App() {
     <>
       <Router>
         <Routes>
-
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/editor" element={<Editor name="Untitled" />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/editor" element={<Editor name="Untitled" />} />
         </Routes>
       </Router>
     </>

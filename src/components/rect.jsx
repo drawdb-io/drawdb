@@ -26,8 +26,7 @@ const Rect = (props) => {
         }}
       >
         <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          className={`${isHovered ? "bg-red-500" : "bg-blue"} p-3`}
+          className={`${isHovered ? "ring-2 ring-blue-400 ring-inset" : ""} bg-gray-600 p-3 select-none rounded-md`}
         >
           <div className="text-white">{props.label}</div>
           <form onSubmit={(e) => e.preventDefault()}>
