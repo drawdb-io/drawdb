@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
@@ -9,6 +9,7 @@ import { Tabs } from "@douyinfe/semi-ui";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import { defaultTableTheme } from "../data/data";
+import { AreaContext } from "../pages/editor";
 // import { TableContext } from "../pages/editor";
 
 const myTheme = createTheme({
@@ -29,6 +30,7 @@ const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   // const map = useRef(new Map());
   // const {tables, setTables} = useContext(TableContext);
+  const {areas, setAreas} = useContext(AreaContext);
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
@@ -38,10 +40,7 @@ const EditorPanel = (props) => {
   ];
   const contentList = [
     <TableOverview />,
-    <ReferenceOverview
-      relationships={props.relationships}
-      setRelationships={props.setRelationships}
-    />,
+    <ReferenceOverview/>,
     <Shape />,
     <CodeMirror
       value={props.code}
@@ -70,15 +69,15 @@ const EditorPanel = (props) => {
         <button
           onClick={() => {
             const newArea = {
-              id: props.areas.length,
-              name: `area_${props.areas.length}`,
+              id: areas.length,
+              name: `area_${areas.length}`,
               x: 0,
               y: 0,
               width: 200,
               height: 200,
               color: defaultTableTheme,
             };
-            props.setAreas((prev) => {
+            setAreas((prev) => {
               const updatedTables = [...prev, newArea];
               return updatedTables;
             });

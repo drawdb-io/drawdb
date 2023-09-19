@@ -4,10 +4,12 @@ import Table from "./table";
 import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
 import Area from "./area";
 import Relationship from "./relationship";
-import { TableContext } from "../pages/editor";
+import { AreaContext, TableContext } from "../pages/editor";
 
 export default function Canvas(props) {
-  const { tables, setTables } = useContext(TableContext);
+  const { tables, setTables, relationships, setRelationships } =
+    useContext(TableContext);
+  const { areas, setAreas } = useContext(AreaContext);
   const ObjectType = {
     NONE: 0,
     TABLE: 1,
@@ -60,7 +62,7 @@ export default function Canvas(props) {
       });
       setDragging([ObjectType.TABLE, id]);
     } else if (type === ObjectType.AREA) {
-      const area = props.areas.find((t) => t.id === id);
+      const area = areas.find((t) => t.id === id);
       setOffset({
         x: clientX - area.x,
         y: clientY - area.y,
@@ -97,8 +99,8 @@ export default function Canvas(props) {
         }))
       );
 
-      props.setRelationships(
-        props.relationships.map((r) => ({
+      setRelationships(
+        relationships.map((r) => ({
           ...r,
           startX: r.startX + dx,
           startY: r.startY + dy,
@@ -107,8 +109,8 @@ export default function Canvas(props) {
         }))
       );
 
-      props.setAreas(
-        props.areas.map((t) => ({
+      setAreas(
+        areas.map((t) => ({
           ...t,
           x: t.x + dx,
           y: t.y + dy,
@@ -127,7 +129,7 @@ export default function Canvas(props) {
         return t;
       });
       setTables(updatedTables);
-      const updatedRelationShips = props.relationships.map((r) => {
+      const updatedRelationShips = relationships.map((r) => {
         if (r.startTableId === dragging[1]) {
           return {
             ...r,
@@ -143,13 +145,13 @@ export default function Canvas(props) {
         }
         return r;
       });
-      props.setRelationships(updatedRelationShips);
+      setRelationships(updatedRelationShips);
     } else if (
       dragging[0] === ObjectType.AREA &&
       dragging[1] >= 0 &&
       areaResize.id === -1
     ) {
-      const updatedAreas = props.areas.map((t) => {
+      const updatedAreas = areas.map((t) => {
         if (t.id === dragging[1]) {
           const updatedArea = {
             ...t,
@@ -160,7 +162,7 @@ export default function Canvas(props) {
         }
         return t;
       });
-      props.setAreas(updatedAreas);
+      setAreas(updatedAreas);
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
 
@@ -187,7 +189,7 @@ export default function Canvas(props) {
         newHeight = initCoords.height + (e.clientY - initCoords.mouseY);
       }
 
-      props.setAreas((prev) =>
+      setAreas((prev) =>
         prev.map((a) => {
           if (a.id === areaResize.id) {
             return {
@@ -241,7 +243,7 @@ export default function Canvas(props) {
       line.startFieldId === onRect.field
     )
       return;
-    props.setRelationships((prev) => [
+    setRelationships((prev) => [
       ...prev,
       {
         ...line,
@@ -341,7 +343,7 @@ export default function Canvas(props) {
             height="100%"
             fill="url(#pattern-circles)"
           ></rect>
-          {props.areas.map((a) => (
+          {areas.map((a) => (
             <Area
               key={a.id}
               areaData={a}
@@ -350,7 +352,7 @@ export default function Canvas(props) {
               setResize={setAreaResize}
               initCoords={initCoords}
               setInitCoords={setInitCoords}
-              setAreas={props.setAreas}
+              setAreas={setAreas}
             ></Area>
           ))}
           {tables.map((table, i) => (
@@ -372,7 +374,7 @@ export default function Canvas(props) {
               strokeDasharray="8,8"
             />
           )}
-          {props.relationships.map((e, i) => (
+          {relationships.map((e, i) => (
             <Relationship key={i} data={e} />
           ))}
         </svg>

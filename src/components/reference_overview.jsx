@@ -36,18 +36,18 @@ export default function ReferenceOverview(props) {
       dataIndex: "foreign",
     },
   ];
-  const { tables } = useContext(TableContext);
+  const { tables, relationships, setRelationships } = useContext(TableContext);
   const [refActiveIndex, setRefActiveIndex] = useState("");
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
-    props.relationships.map((t) => {
+    relationships.map((t) => {
       return t.name;
     })
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      props.relationships
+      relationships
         .map((t) => {
           return t.name;
         })
@@ -66,7 +66,7 @@ export default function ReferenceOverview(props) {
         onSearch={(v) => handleStringSearch(v)}
         onChange={(v) => setValue(v)}
         onSelect={(v) => {
-          const { id } = props.relationships.find((t) => t.name === v);
+          const { id } = relationships.find((t) => t.name === v);
           setRefActiveIndex(`${id}`);
           document
             .getElementById(`scroll_ref_${id}`)
@@ -79,7 +79,7 @@ export default function ReferenceOverview(props) {
         onChange={(k) => setRefActiveIndex(k)}
         accordion
       >
-        {props.relationships.length <= 0 ? (
+        {relationships.length <= 0 ? (
           <div className="select-none">
             <Empty
               image={
@@ -95,12 +95,12 @@ export default function ReferenceOverview(props) {
             />
           </div>
         ) : (
-          props.relationships.map((r, i) => (
+          relationships.map((r, i) => (
             <div id={`scroll_ref_${r.id}`} key={i}>
               <Collapse.Panel header={<div>{r.name}</div>} itemKey={`${i}`}>
                 <Form
                   onChange={(value) =>
-                    props.setRelationships((prev) =>
+                    setRelationships((prev) =>
                       prev.map((e, idx) =>
                         idx === i ? { ...e, ...value.values } : e
                       )
@@ -202,7 +202,7 @@ export default function ReferenceOverview(props) {
                       value="mandetory"
                       defaultChecked={r.mandetory}
                       onChange={(checkedValues) =>
-                        props.setRelationships((prev) =>
+                        setRelationships((prev) =>
                           prev.map((e, idx) =>
                             idx === i
                               ? {
@@ -233,7 +233,7 @@ export default function ReferenceOverview(props) {
                       block
                       type="danger"
                       onClick={() =>
-                        props.setRelationships((prev) =>
+                        setRelationships((prev) =>
                           prev
                             .filter((e) => e.id !== i)
                             .map((e, idx) => ({ ...e, id: idx }))
