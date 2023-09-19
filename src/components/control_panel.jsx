@@ -178,6 +178,12 @@ export default function ControlPanel(props) {
           setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
         },
       },
+      "Field summary": {
+        children: [],
+        function: () => {
+          setSettings((prev) => ({ ...prev, showFieldSummary: !prev.showFieldSummary }));
+        },
+      },
       "Reset view": {
         children: [],
         function: () => {},

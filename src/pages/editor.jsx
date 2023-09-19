@@ -38,6 +38,7 @@ export default function Editor(props) {
   });
   const [settings, setSettings] = useState({
     strictMode: false,
+    showFieldSummary: true,
   });
 
   const dragHandler = (e) => {

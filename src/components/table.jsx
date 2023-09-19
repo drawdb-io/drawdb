@@ -29,7 +29,12 @@ import {
   SideSheet,
   Toast,
 } from "@douyinfe/semi-ui";
-import { LayoutContext, TabContext, TableContext } from "../pages/editor";
+import {
+  LayoutContext,
+  SettingsContext,
+  TabContext,
+  TableContext,
+} from "../pages/editor";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -38,6 +43,7 @@ export default function Table(props) {
   const { layout } = useContext(LayoutContext);
   const { setTables } = useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
+  const { settings } = useContext(SettingsContext);
 
   const height = props.tableData.fields.length * 36 + 50 + 3;
 
@@ -199,7 +205,7 @@ export default function Table(props) {
             )}
           </div>
           {props.tableData.fields.map((e, i) => {
-            return (
+            return settings.showFieldSummary ? (
               <Popover
                 key={i}
                 content={
@@ -242,73 +248,10 @@ export default function Table(props) {
                 position="right"
                 showArrow
               >
-                <div
-                  className={`${
-                    i === props.tableData.fields.length - 1
-                      ? ""
-                      : "border-b border-gray-400"
-                  } h-[36px] px-2 py-1 flex justify-between`}
-                  onMouseEnter={() => {
-                    setHoveredField(i);
-                    props.setOnRect({
-                      tableId: props.tableData.id,
-                      field: i,
-                    });
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredField(-1);
-                  }}
-                >
-                  <div
-                    className={`${hoveredField === i ? "text-slate-500" : ""}`}
-                  >
-                    <button
-                      className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
-                      onMouseDown={(ev) => {
-                        props.handleGripField(i);
-                        props.setLine((prev) => ({
-                          ...prev,
-                          startFieldId: i,
-                          startTableId: props.tableData.id,
-                          startX: props.tableData.x + 15,
-                          startY: props.tableData.y + i * 36 + 50 + 19,
-                          endX: props.tableData.x + 15,
-                          endY: props.tableData.y + i * 36 + 50 + 19,
-                        }));
-                      }}
-                    ></button>
-                    {e.name}
-                  </div>
-                  <div className="text-slate-400">
-                    {hoveredField === i ? (
-                      <Button
-                        theme="solid"
-                        size="small"
-                        style={{
-                          opacity: "0.7",
-                          backgroundColor: "#d42020",
-                        }}
-                        onClick={(ev) => {
-                          setTables((prev) => {
-                            const updatedTables = [...prev];
-                            const updatedFields = [
-                              ...updatedTables[props.tableData.id].fields,
-                            ];
-                            updatedFields.splice(i, 1);
-                            updatedTables[props.tableData.id].fields = [
-                              ...updatedFields,
-                            ];
-                            return updatedTables;
-                          });
-                        }}
-                        icon={<IconMinus />}
-                      ></Button>
-                    ) : (
-                      e.type
-                    )}
-                  </div>
-                </div>
+                {field(e, i)}
               </Popover>
+            ) : (
+              field(e, i)
             );
           })}
         </div>
@@ -748,4 +691,71 @@ export default function Table(props) {
       </SideSheet>
     </g>
   );
+
+  function field(fieldData, index) {
+    return (
+      <div
+        className={`${
+          index === props.tableData.fields.length - 1
+            ? ""
+            : "border-b border-gray-400"
+        } h-[36px] px-2 py-1 flex justify-between`}
+        onMouseEnter={() => {
+          setHoveredField(index);
+          props.setOnRect({
+            tableId: props.tableData.id,
+            field: index,
+          });
+        }}
+        onMouseLeave={() => {
+          setHoveredField(-1);
+        }}
+      >
+        <div className={`${hoveredField === index ? "text-slate-500" : ""}`}>
+          <button
+            className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
+            onMouseDown={(ev) => {
+              props.handleGripField(index);
+              props.setLine((prev) => ({
+                ...prev,
+                startFieldId: index,
+                startTableId: props.tableData.id,
+                startX: props.tableData.x + 15,
+                startY: props.tableData.y + index * 36 + 50 + 19,
+                endX: props.tableData.x + 15,
+                endY: props.tableData.y + index * 36 + 50 + 19,
+              }));
+            }}
+          ></button>
+          {fieldData.name}
+        </div>
+        <div className="text-slate-400">
+          {hoveredField === index ? (
+            <Button
+              theme="solid"
+              size="small"
+              style={{
+                opacity: "0.7",
+                backgroundColor: "#d42020",
+              }}
+              onClick={(ev) => {
+                setTables((prev) => {
+                  const updatedTables = [...prev];
+                  const updatedFields = [
+                    ...updatedTables[props.tableData.id].fields,
+                  ];
+                  updatedFields.splice(index, 1);
+                  updatedTables[props.tableData.id].fields = [...updatedFields];
+                  return updatedTables;
+                });
+              }}
+              icon={<IconMinus />}
+            ></Button>
+          ) : (
+            fieldData.type
+          )}
+        </div>
+      </div>
+    );
+  }
 }
