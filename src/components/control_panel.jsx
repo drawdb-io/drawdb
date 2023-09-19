@@ -592,6 +592,23 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
+                      layout.areas ? (
+                        <IconCheckboxTick />
+                      ) : (
+                        <div className="px-2"></div>
+                      )
+                    }
+                    onClick={() =>
+                      setLayout((prev) => ({
+                        ...prev,
+                        areas: !prev.areas,
+                      }))
+                    }
+                  >
+                    Subject areas
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    icon={
                       layout.editor ? (
                         <IconCheckboxTick />
                       ) : (

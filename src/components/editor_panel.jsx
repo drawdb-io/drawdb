@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { React, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
@@ -8,8 +8,7 @@ import Shape from "./shape";
 import { Tabs } from "@douyinfe/semi-ui";
 import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
-import { defaultTableTheme } from "../data/data";
-import { AreaContext } from "../pages/editor";
+import AreaOverview from "./area_overview";
 // import { TableContext } from "../pages/editor";
 
 const myTheme = createTheme({
@@ -30,13 +29,13 @@ const EditorPanel = (props) => {
   const [tab, setTab] = useState("1");
   // const map = useRef(new Map());
   // const {tables, setTables} = useContext(TableContext);
-  const { areas, setAreas } = useContext(AreaContext);
 
   const tabList = [
     { tab: "Tables", itemKey: "1" },
     { tab: "Relationships", itemKey: "2" },
-    { tab: "Shapes", itemKey: "3" },
-    { tab: "Editor", itemKey: "4" },
+    { tab: "Subject Areas", itemKey: "3" },
+    { tab: "Shapes", itemKey: "4" },
+    { tab: "Editor", itemKey: "5" },
   ];
   const contentList = [
     <TableOverview
@@ -44,6 +43,7 @@ const EditorPanel = (props) => {
       setSelectedTable={props.setSelectedTable}
     />,
     <ReferenceOverview />,
+    <AreaOverview/>,
     <Shape />,
     <CodeMirror
       value={props.code}
@@ -69,25 +69,6 @@ const EditorPanel = (props) => {
         >
           <div className="p-2">{contentList[parseInt(tab) - 1]}</div>
         </Tabs>
-        <button
-          onClick={() => {
-            const newArea = {
-              id: areas.length,
-              name: `area_${areas.length}`,
-              x: 0,
-              y: 0,
-              width: 200,
-              height: 200,
-              color: defaultTableTheme,
-            };
-            setAreas((prev) => {
-              const updatedTables = [...prev, newArea];
-              return updatedTables;
-            });
-          }}
-        >
-          add area
-        </button>
         <br />
         <button
           onClick={() => {

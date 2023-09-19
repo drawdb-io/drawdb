@@ -23,6 +23,7 @@ export default function Editor(props) {
     sidebar: true,
     services: true,
     tables: true,
+    areas: true,
     relationships: true,
     issues: true,
     editor: true,

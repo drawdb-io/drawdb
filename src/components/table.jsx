@@ -132,15 +132,15 @@ export default function Table(props) {
                 <Popover
                   content={
                     <div className="text-slate-600">
-                      <p className="mb-2">
+                      <div className="mb-2">
                         <strong>Comment :</strong>{" "}
                         {props.tableData.comment === "" ? (
                           "No comment"
                         ) : (
                           <div>{props.tableData.comment}</div>
                         )}
-                      </p>
-                      <p className="text-slate-600">
+                      </div>
+                      <div className="text-slate-600">
                         <strong
                           className={`${
                             props.tableData.indices.length === 0 ? "" : "block"
@@ -169,7 +169,7 @@ export default function Table(props) {
                             ))}
                           </div>
                         )}
-                      </p>
+                      </div>
                     </div>
                   }
                   position="rightTop"
