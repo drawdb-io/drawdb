@@ -6,6 +6,9 @@ import {
   IconChevronUp,
   IconChevronDown,
   IconCheckboxTick,
+  IconSaveStroked,
+  IconUndo,
+  IconRedo,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -24,6 +27,7 @@ import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import { enterFullscreen, exitFullscreen } from "../utils";
 import { LayoutContext, SettingsContext } from "../pages/editor";
+import { AddTable, AddArea, AddNote } from "./custom_icons";
 
 export default function ControlPanel(props) {
   const [visible, setVisible] = useState(false);
@@ -181,7 +185,10 @@ export default function ControlPanel(props) {
       "Field summary": {
         children: [],
         function: () => {
-          setSettings((prev) => ({ ...prev, showFieldSummary: !prev.showFieldSummary }));
+          setSettings((prev) => ({
+            ...prev,
+            showFieldSummary: !prev.showFieldSummary,
+          }));
         },
       },
       "Reset view": {
@@ -250,7 +257,7 @@ export default function ControlPanel(props) {
   return (
     <div>
       {layout.header && header()}
-      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 sm:mx-1 md:mx-6 text-slate-700 select-none overflow-x-hidden">
+      <div className="py-1 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 sm:mx-1 md:mx-6 text-slate-700 select-none overflow-x-hidden">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
@@ -288,64 +295,66 @@ export default function ControlPanel(props) {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded flex">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center">
               <div>zoom</div>
-              <IconCaretdown />
+              <div>
+                <IconCaretdown />
+              </div>
             </div>
           </Dropdown>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+            className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
             title="Zoom in"
           >
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+            className="py-1 px-2 hover:bg-slate-200 rounded text-lg"
             title="Zoom out"
           >
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Undo">
-            <i className="fa-solid fa-rotate-left "></i>
-          </button>
-          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Redo">
-            <i className="fa-solid fa-rotate-right"></i>
-          </button>
-          <Divider layout="vertical" margin="8px" />
-          <Dropdown
-            position="bottomLeft"
-            style={{ width: "180px" }}
-            render={
-              <Dropdown.Menu>
-                <Dropdown.Item>Table</Dropdown.Item>
-                <Dropdown.Item>Note</Dropdown.Item>
-                <Dropdown.Item>Subject area</Dropdown.Item>
-                <Dropdown.Item>Text</Dropdown.Item>
-              </Dropdown.Menu>
-            }
-            trigger="click"
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            title="Undo"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 flex">
-              <i className="fa-solid fa-plus"></i>
-              <IconCaretdown />
-            </div>
-          </Dropdown>
-          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Edit">
-            <i className="fa-solid fa-pen-to-square"></i>
+            <IconUndo size="large" />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded"
-            title="Delete"
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            title="Redo"
           >
-            <i className="fa-solid fa-trash"></i>
+            <IconRedo size="large" />
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Save">
-            <i className="fa-regular fa-floppy-disk"></i>
+          <div
+            className="py-1 px-2 hover:bg-slate-200 rounded"
+            title="Add new table"
+          >
+            <AddTable />
+          </div>
+          <div
+            className="py-1 px-2 hover:bg-slate-200 rounded"
+            title="Add subject area"
+          >
+            <AddArea />
+          </div>
+          <div
+            className="py-1 px-2 hover:bg-slate-200 rounded"
+            title="Add new note"
+          >
+            <AddNote />
+          </div>
+          <Divider layout="vertical" margin="8px" />
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center"
+            title="Save"
+          >
+            <IconSaveStroked size="extra-large" />
           </button>
           <button
-            className="py-1 px-2 hover:bg-slate-200 rounded"
+            className="py-1 px-2 hover:bg-slate-200 rounded text-xl"
             title="Commit"
           >
             <i className="fa-solid fa-code-branch"></i>
@@ -715,8 +724,13 @@ export default function ControlPanel(props) {
         }
         trigger="click"
       >
-        <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center align-middle">
-          <i className="fa-solid fa-table-list"></i> <IconCaretdown />
+        <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center justify-center">
+          <div>
+            <i className="fa-solid fa-table-list text-xl me-1"></i>
+          </div>
+          <div>
+            <IconCaretdown />
+          </div>
         </div>
       </Dropdown>
     );
