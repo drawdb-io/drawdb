@@ -42,7 +42,17 @@ export default function DiagramOverview(props) {
           itemKey={`${i}`}
         >
           {t.fields.map((f, j) => (
-            <Form key={j}>
+            <Form
+              key={j}
+              onChange={(value) => {
+                const updatedTables = [...props.tables];
+                updatedTables[i].fields = updatedTables[i].fields.map(
+                  (field, index) =>
+                    index === j ? { ...field, ...value.values } : field
+                );
+                props.setTables(updatedTables);
+              }}
+            >
               <Row
                 type="flex"
                 justify="start"
@@ -52,7 +62,7 @@ export default function DiagramOverview(props) {
               >
                 <Col span={7}>
                   <Form.Input
-                    field={`name-${j}`}
+                    field="name"
                     noLabel={true}
                     initValue={f.name}
                     className="m-0"
@@ -62,7 +72,7 @@ export default function DiagramOverview(props) {
                 <Col span={8}>
                   <Form.Select
                     className="w-full"
-                    field={`type-${j}`}
+                    field="type"
                     noLabel={true}
                     optionList={sqlDataTypes.map((value, index) => {
                       return {
@@ -75,18 +85,61 @@ export default function DiagramOverview(props) {
                   ></Form.Select>
                 </Col>
                 <Col span={3}>
-                  <Button type="tertiary" title="Nullable">
+                  <Button
+                    type={f.notNull ? "primary" : "tertiary"}
+                    title="Nullable"
+                    theme={f.notNull ? "solid" : "light"}
+                    onClick={() => {
+                      const updatedTables = [...props.tables];
+                      updatedTables[i].fields = updatedTables[i].fields.map(
+                        (field, index) =>
+                          index === j
+                            ? { ...field, notNull: !f.notNull }
+                            : field
+                      );
+                      props.setTables(updatedTables);
+                    }}
+                  >
                     ?
                   </Button>
                 </Col>
                 <Col span={3}>
-                  <Button type="tertiary" icon={<IconKeyStroked />}></Button>
+                  <Button
+                    type={f.primary ? "primary" : "tertiary"}
+                    title="Nullable"
+                    theme={f.primary ? "solid" : "light"}
+                    onClick={() => {
+                      const updatedTables = [...props.tables];
+                      updatedTables[i].fields = updatedTables[i].fields.map(
+                        (field, index) =>
+                          index === j
+                            ? { ...field, primary: !f.primary }
+                            : field
+                      );
+                      props.setTables(updatedTables);
+                    }}
+                    icon={<IconKeyStroked />}
+                  ></Button>
                 </Col>
                 <Col span={3}>
                   <Popover
                     content={
                       <div className="px-1">
-                        <Form>
+                        <Form
+                          onChange={(value) => {
+                            const updatedTables = [...props.tables];
+                            updatedTables[i] = {
+                              ...updatedTables[i],
+                              fields: updatedTables[i].fields.map(
+                                (field, index) =>
+                                  index === j
+                                    ? { ...field, ...value.values }
+                                    : field
+                              ),
+                            };
+                            props.setTables(updatedTables);
+                          }}
+                        >
                           <Form.Input
                             field="default"
                             label="Default"
@@ -99,7 +152,32 @@ export default function DiagramOverview(props) {
                             label="Check Expression"
                             trigger="blur"
                             placeholder="Set constraint"
+                            initValue={f.check}
                           />
+                          <div className="flex justify-between items-center my-3">
+                            <label htmlFor="unique" className="font-medium">
+                              Unique
+                            </label>
+                            <Checkbox
+                              value="unique"
+                              defaultChecked={f.unique}
+                              onChange={(checkedValues) => {
+                                const updatedTables = [...props.tables];
+                                updatedTables[i].fields = updatedTables[
+                                  i
+                                ].fields.map((field, index) =>
+                                  index === j
+                                    ? {
+                                        ...field,
+                                        [checkedValues.target.value]:
+                                          checkedValues.target.checked,
+                                      }
+                                    : field
+                                );
+                                props.setTables(updatedTables);
+                              }}
+                            ></Checkbox>
+                          </div>
                           <div className="flex justify-between items-center my-3">
                             <label htmlFor="increment" className="font-medium">
                               Autoincrement
@@ -107,6 +185,21 @@ export default function DiagramOverview(props) {
                             <Checkbox
                               value="increment"
                               defaultChecked={f.increment}
+                              onChange={(checkedValues) => {
+                                const updatedTables = [...props.tables];
+                                updatedTables[i].fields = updatedTables[
+                                  i
+                                ].fields.map((field, index) =>
+                                  index === j
+                                    ? {
+                                        ...field,
+                                        [checkedValues.target.value]:
+                                          checkedValues.target.checked,
+                                      }
+                                    : field
+                                );
+                                props.setTables(updatedTables);
+                              }}
                             ></Checkbox>
                           </div>
                           <Form.TextArea
@@ -122,6 +215,16 @@ export default function DiagramOverview(props) {
                           icon={<IconDeleteStroked />}
                           type="danger"
                           block
+                          onClick={() => {
+                            const updatedTables = [...props.tables];
+                            const updatedFields = [...t.fields];
+                            updatedFields.splice(j, 1);
+                            updatedTables[i] = {
+                              ...t,
+                              fields: [...updatedFields],
+                            };
+                            props.setTables(updatedTables);
+                          }}
                         >
                           Delete
                         </Button>
@@ -326,7 +429,28 @@ export default function DiagramOverview(props) {
               </Button>
             </Col>
             <Col span={8}>
-              <Button block>Add field</Button>
+              <Button
+                onClick={() => {
+                  const updatedTables = [...props.tables];
+                  updatedTables[i].fields = [
+                    ...updatedTables[i].fields,
+                    {
+                      name: "",
+                      type: "",
+                      default: "",
+                      primary: false,
+                      unique: false,
+                      notNull: false,
+                      increment: false,
+                      comment: "",
+                    },
+                  ];
+                  props.setTables(updatedTables);
+                }}
+                block
+              >
+                Add field
+              </Button>
             </Col>
           </Row>
         </Collapse.Panel>

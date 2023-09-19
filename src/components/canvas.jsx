@@ -169,6 +169,7 @@ export default function Canvas(props) {
             {
               name: "id",
               type: "UUID",
+              check: "",
               default: "",
               primary: true,
               unique: true,
