@@ -11,8 +11,12 @@ export default function Canvas(props) {
     endX: 0,
     endY: 0,
   });
+  const [relationships, setRelationships] = useState([]);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [onRect, setOnRect] = useState(false);
+  const [onRect, setOnRect] = useState({
+    tableId: -1,
+    field: -2,
+  });
   const [panning, setPanning] = useState(false);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [cursor, setCursor] = useState("default");
@@ -71,7 +75,7 @@ export default function Canvas(props) {
 
   const handleMouseDown = (e) => {
     if (dragging < 0) {
-      if (!onRect) {
+      if (onRect.tableId < 0) {
         setPanning(true);
         setPanOffset({ x: e.clientX, y: e.clientY });
         setCursor("grabbing");
@@ -83,6 +87,7 @@ export default function Canvas(props) {
     setDragging(-1);
     setPanning(false);
     setCursor("default");
+    if (linking) handleLinking();
     setLinking(false);
   };
 
@@ -96,10 +101,21 @@ export default function Canvas(props) {
     setPanning(false);
     setDragging(-1);
     setLinking(true);
-    handleLinking();
   };
 
-  const handleLinking = () => {};
+  const handleLinking = () => {
+    if (onRect.tableId < 0) return;
+    if (onRect.field < 0) return;
+    setRelationships((prev) => [
+      ...prev,
+      {
+        startX: line.startX,
+        startY: line.startY,
+        endX: props.tables[onRect.tableId].x + 15,
+        endY: props.tables[onRect.tableId].y + onRect.field * 36 + 40 + 19,
+      },
+    ]);
+  };
 
   const [, drop] = useDrop(
     () => ({
@@ -203,6 +219,15 @@ export default function Canvas(props) {
               strokeDasharray="5,5"
             />
           )}
+          {relationships.map((e) => (
+            <line
+              x1={e.startX}
+              y1={e.startY}
+              x2={e.endX}
+              y2={e.endY}
+              stroke="gray"
+            />
+          ))}
         </svg>
       </div>
     </div>

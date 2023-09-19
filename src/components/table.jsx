@@ -96,11 +96,13 @@ export default function Table(props) {
         onMouseDown={props.onMouseDown}
         onMouseEnter={() => {
           setIsHovered(true);
-          props.setOnRect(true);
         }}
         onMouseLeave={() => {
           setIsHovered(false);
-          props.setOnRect(false);
+          props.setOnRect({
+            tableId: -1,
+            field: -2,
+          });
         }}
       >
         <div
@@ -110,7 +112,15 @@ export default function Table(props) {
         >
           <div className="p-3 font-bold text-slate-800 h-[40px] bg-gray-400 rounded-t-md flex justify-between items-center">
             {
-              <form onSubmit={(e) => e.preventDefault()}>
+              <form
+                onSubmit={(e) => e.preventDefault()}
+                onMouseEnter={() =>
+                  props.setOnRect({
+                    tableId: props.id,
+                    field: -1,
+                  })
+                }
+              >
                 <input
                   type="text"
                   value={name}
@@ -200,6 +210,10 @@ export default function Table(props) {
                   } h-[36px] p-2 flex justify-between`}
                   onMouseEnter={() => {
                     setHoveredField(i);
+                    props.setOnRect({
+                      tableId: props.id,
+                      field: i,
+                    });
                   }}
                   onMouseLeave={() => {
                     setHoveredField(-1);
