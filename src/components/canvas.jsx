@@ -2,9 +2,15 @@ import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
 import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
+import Area from "./area";
 
 export default function Canvas(props) {
-  const [dragging, setDragging] = useState(-1);
+  const ObjectType = {
+    NONE: 0,
+    TABLE: 1,
+    AREA: 2,
+  };
+  const [dragging, setDragging] = useState([ObjectType.NONE, -1]);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
     startTableId: -1,
@@ -32,14 +38,23 @@ export default function Canvas(props) {
 
   const canvas = useRef(null);
 
-  const handleMouseDownRect = (e, id) => {
+  const handleMouseDownRect = (e, id, type) => {
     const { clientX, clientY } = e;
-    const table = props.tables.find((t) => t.id === id);
-    setOffset({
-      x: clientX - table.x,
-      y: clientY - table.y,
-    });
-    setDragging(id);
+    if (type === ObjectType.TABLE) {
+      const table = props.tables.find((t) => t.id === id);
+      setOffset({
+        x: clientX - table.x,
+        y: clientY - table.y,
+      });
+      setDragging([ObjectType.TABLE, id]);
+    } else if (type === ObjectType.AREA) {
+      const area = props.areas.find((t) => t.id === id);
+      setOffset({
+        x: clientX - area.x,
+        y: clientY - area.y,
+      });
+      setDragging([ObjectType.AREA, id]);
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -77,9 +92,17 @@ export default function Canvas(props) {
           endY: r.endY + dy,
         }))
       );
-    } else if (dragging >= 0) {
+
+      props.setAreas(
+        props.areas.map((t) => ({
+          ...t,
+          x: t.x + dx,
+          y: t.y + dy,
+        }))
+      );
+    } else if (dragging[0] === ObjectType.TABLE && dragging[1] >= 0) {
       const updatedTables = props.tables.map((t) => {
-        if (t.id === dragging) {
+        if (t.id === dragging[1]) {
           const updatedTable = {
             ...t,
             x: e.clientX - offset.x,
@@ -91,14 +114,14 @@ export default function Canvas(props) {
       });
       props.setTables(updatedTables);
       const updatedRelationShips = props.relationships.map((r) => {
-        if (r.startTableId === dragging) {
+        if (r.startTableId === dragging[1]) {
           return {
             ...r,
             startX: props.tables[r.startTableId].x + 15,
             startY:
               props.tables[r.startTableId].y + r.startFieldId * 36 + 40 + 19,
           };
-        } else if (r.endTableId === dragging) {
+        } else if (r.endTableId === dragging[1]) {
           return {
             ...r,
             endX: props.tables[r.endTableId].x + 15,
@@ -108,11 +131,25 @@ export default function Canvas(props) {
         return r;
       });
       props.setRelationships(updatedRelationShips);
+    } else if (dragging[0] === ObjectType.AREA && dragging[1] >= 0) {
+      console.log("hi");
+      const updatedAreas = props.areas.map((t) => {
+        if (t.id === dragging[1]) {
+          const updatedArea = {
+            ...t,
+            x: e.clientX - offset.x,
+            y: e.clientY - offset.y,
+          };
+          return updatedArea;
+        }
+        return t;
+      });
+      props.setAreas(updatedAreas);
     }
   };
 
   const handleMouseDown = (e) => {
-    if (dragging < 0) {
+    if (dragging[0] === ObjectType.TABLE && dragging[1] < 0) {
       if (onRect.tableId < 0) {
         setPanning(true);
         setPanOffset({ x: e.clientX, y: e.clientY });
@@ -122,7 +159,7 @@ export default function Canvas(props) {
   };
 
   const handleMouseUp = () => {
-    setDragging(-1);
+    setDragging([ObjectType.NONE, -1]);
     setPanning(false);
     setCursor("default");
     if (linking) handleLinking();
@@ -137,7 +174,7 @@ export default function Canvas(props) {
 
   const handleGripField = (id) => {
     setPanning(false);
-    setDragging(-1);
+    setDragging([ObjectType.NONE, -1]);
     setLinking(true);
   };
 
@@ -248,6 +285,13 @@ export default function Canvas(props) {
           </defs>
 
           <rect width="100%" height="100%" fill="url(#grid)" />
+          {props.areas.map((a) => (
+            <Area
+              key={a.id}
+              areaData={a}
+              onMouseDown={(e) => handleMouseDownRect(e, a.id, ObjectType.AREA)}
+            ></Area>
+          ))}
           {props.tables.map((table, i) => (
             <Table
               key={table.id}
@@ -258,7 +302,9 @@ export default function Canvas(props) {
               setOnRect={setOnRect}
               handleGripField={handleGripField}
               setLine={setLine}
-              onMouseDown={(e) => handleMouseDownRect(e, table.id)}
+              onMouseDown={(e) =>
+                handleMouseDownRect(e, table.id, ObjectType.TABLE)
+              }
               onDelete={deleteTable}
             />
           ))}

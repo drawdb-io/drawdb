@@ -87,6 +87,26 @@ export default function EditorPanel(props) {
 
         <button
           onClick={() => {
+            const newArea = {
+              id: props.areas.length,
+              name: `area_${props.areas.length}`,
+              x: 0,
+              y: 0,
+              width: 200,
+              height: 200,
+              color: defaultTableTheme,
+            };
+            props.setAreas((prev) => {
+              const updatedTables = [...prev, newArea];
+              return updatedTables;
+            });
+          }}
+        >
+          add area
+        </button>
+        <br />
+        <button
+          onClick={() => {
             const newTable = {
               id: props.tables.length,
               name: `table_${props.tables.length}`,
