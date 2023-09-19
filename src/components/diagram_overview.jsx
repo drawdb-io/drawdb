@@ -8,7 +8,6 @@ import {
   Form,
   Button,
   Card,
-  TextArea,
   Popover,
   Checkbox,
   Select,
@@ -44,97 +43,98 @@ export default function DiagramOverview(props) {
         >
           {t.fields.map((f, j) => (
             <Form key={j}>
-              <div>
-                <Row
-                  type="flex"
-                  justify="start"
-                  align="middle"
-                  gutter={6}
-                  className="hover:bg-slate-100"
-                >
-                  <Col span={7}>
-                    <Form.Input
-                      field={`name-${j}`}
-                      noLabel={true}
-                      initValue={f.name}
-                      className="m-0"
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <Form.Select
-                      className="w-full"
-                      field={`type-${j}`}
-                      noLabel={true}
-                      optionList={sqlDataTypes.map((value, index) => {
-                        return {
-                          label: value,
-                          value: value,
-                        };
-                      })}
-                      filter
-                      initValue={f.type}
-                    ></Form.Select>
-                  </Col>
-                  <Col span={3}>
-                    <Button type="tertiary" title="Nullable">
-                      ?
-                    </Button>
-                  </Col>
-                  <Col span={3}>
-                    <Button type="tertiary" icon={<IconKeyStroked />}></Button>
-                  </Col>
-                  <Col span={3}>
-                    <Popover
-                      content={
-                        <div className="px-1">
-                          <Form>
-                            <Form.Input
-                              field="default"
-                              label="Default"
-                              initValue={f.default}
-                              trigger="blur"
-                            />
-                            <Form.Input
-                              field="check"
-                              label="Check Expression"
-                              trigger="blur"
-                            />
-                            <div className="flex justify-between items-center my-3">
-                              <label
-                                htmlFor="increment"
-                                className="font-medium"
-                              >
-                                Autoincrement
-                              </label>
-                              <Checkbox
-                                value="increment"
-                                defaultChecked={f.increment}
-                              ></Checkbox>
-                            </div>
-                            <Form.TextArea
-                              field="comment"
-                              label="Comment"
-                              initValue={f.comment}
-                              autosize
-                              rows={2}
-                            />
-                          </Form>
-                          <div className="flex justify-end mt-2">
-                            <Button icon={<IconDeleteStroked />} type="danger">
-                              Delete
-                            </Button>
+              <Row
+                type="flex"
+                justify="start"
+                align="middle"
+                gutter={6}
+                className="hover:bg-slate-100"
+              >
+                <Col span={7}>
+                  <Form.Input
+                    field={`name-${j}`}
+                    noLabel={true}
+                    initValue={f.name}
+                    className="m-0"
+                    placeholder="Name"
+                  />
+                </Col>
+                <Col span={8}>
+                  <Form.Select
+                    className="w-full"
+                    field={`type-${j}`}
+                    noLabel={true}
+                    optionList={sqlDataTypes.map((value, index) => {
+                      return {
+                        label: value,
+                        value: value,
+                      };
+                    })}
+                    filter
+                    initValue={f.type}
+                  ></Form.Select>
+                </Col>
+                <Col span={3}>
+                  <Button type="tertiary" title="Nullable">
+                    ?
+                  </Button>
+                </Col>
+                <Col span={3}>
+                  <Button type="tertiary" icon={<IconKeyStroked />}></Button>
+                </Col>
+                <Col span={3}>
+                  <Popover
+                    content={
+                      <div className="px-1">
+                        <Form>
+                          <Form.Input
+                            field="default"
+                            label="Default"
+                            initValue={f.default}
+                            trigger="blur"
+                            placeholder="Set default"
+                          />
+                          <Form.Input
+                            field="check"
+                            label="Check Expression"
+                            trigger="blur"
+                            placeholder="Set constraint"
+                          />
+                          <div className="flex justify-between items-center my-3">
+                            <label htmlFor="increment" className="font-medium">
+                              Autoincrement
+                            </label>
+                            <Checkbox
+                              value="increment"
+                              defaultChecked={f.increment}
+                            ></Checkbox>
                           </div>
-                        </div>
-                      }
-                      trigger="click"
-                      position="rightTop"
-                      showArrow
-                    >
-                      <Button type="tertiary" icon={<IconMore />}></Button>
-                    </Popover>
-                  </Col>
-                </Row>
-              </div>
+                          <Form.TextArea
+                            field="comment"
+                            label="Comment"
+                            placeholder="Add comment"
+                            initValue={f.comment}
+                            autosize
+                            rows={2}
+                          />
+                        </Form>
+                        <Button
+                          icon={<IconDeleteStroked />}
+                          type="danger"
+                          block
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    }
+                    trigger="click"
+                    position="rightTop"
+                    showArrow
+                  >
+                    <Button type="tertiary" icon={<IconMore />}></Button>
+                  </Popover>
+                </Col>
+              </Row>
             </Form>
           ))}
           {t.indices.length > 0 && (
@@ -185,6 +185,7 @@ export default function DiagramOverview(props) {
                                 label="Name"
                                 initValue={idx.name}
                                 trigger="blur"
+                                placeholder="Index name"
                               />
                             </Form>
                             <Button
@@ -229,7 +230,16 @@ export default function DiagramOverview(props) {
           >
             <Collapse>
               <Collapse.Panel header="Comment" itemKey="1">
-                <TextArea autosize rows={1} />
+                <Form>
+                  <Form.TextArea
+                    field="comment"
+                    noLabel={true}
+                    initValue={t.comment}
+                    autosize
+                    placeholder="Add comment"
+                    rows={1}
+                  />
+                </Form>
               </Collapse.Panel>
             </Collapse>
           </Card>
