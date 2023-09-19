@@ -53,16 +53,27 @@ export default function ControlPanel(props) {
     CODE: 2,
     IMPORT: 3,
   };
+  const ERROR = {
+    NONE: 0,
+    WARNING: 1,
+    ERROR: 2,
+    OK: 3,
+  };
   const [visible, setVisible] = useState(MODAL.NONE);
   const [exportData, setExportData] = useState({
     data: "",
     filename: `diagram_${new Date().toISOString()}`,
     extension: "",
   });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({
+    type: ERROR.NONE,
+    message: "",
+  });
+  const [data, setData] = useState(null);
   const { layout, setLayout } = useContext(LayoutContext);
   const { setSettings } = useContext(SettingsContext);
-  const { relationships, tables, setTables } = useContext(TableContext);
+  const { relationships, tables, setTables, setRelationships } =
+    useContext(TableContext);
   const { notes, setNotes } = useContext(NoteContext);
   const { areas, setAreas } = useContext(AreaContext);
 
@@ -331,6 +342,22 @@ export default function ControlPanel(props) {
     },
   };
 
+  const diagramIsEmpty = () => {
+    return (
+      tables.length === 0 &&
+      relationships.length === 0 &&
+      notes.length === 0 &&
+      areas.length === 0
+    );
+  };
+
+  const overwriteDiagram = () => {
+    setTables(data.tables);
+    setRelationships(data.relationships);
+    setAreas(data.subjectAreas);
+    setNotes(data.notes);
+  };
+
   return (
     <div>
       {layout.header && header()}
@@ -516,6 +543,11 @@ export default function ControlPanel(props) {
             });
             saveAs(blob, `${exportData.filename}.${exportData.extension}`);
           } else if (visible === MODAL.IMPORT) {
+            if (error.type !== ERROR.ERROR) {
+              overwriteDiagram();
+              setData(null);
+              setVisible(MODAL.NONE);
+            }
           }
         }}
         afterClose={() => {
@@ -524,12 +556,17 @@ export default function ControlPanel(props) {
             extension: "",
             filename: `diagram_${new Date().toISOString()}`,
           }));
-          setError(null);
+          setError({
+            type: ERROR.NONE,
+            message: "",
+          });
+          setData(null);
         }}
         onCancel={() => setVisible(MODAL.NONE)}
         centered
         closeOnEsc={true}
         okText={`${visible === MODAL.IMPORT ? "Import" : "Export"}`}
+        okButtonProps={{ disabled: error.type === ERROR.ERROR }}
         cancelText="Cancel"
         width={520}
       >
@@ -550,15 +587,34 @@ export default function ControlPanel(props) {
                     try {
                       jsonObject = JSON.parse(event.target.result);
                     } catch (error) {
-                      setError("Invalid JSON. The file contains an error.");
+                      setError({
+                        type: ERROR.ERROR,
+                        message: "Invalid JSON. The file contains an error.",
+                      });
                       return;
                     }
 
                     if (!diagramObjectIsValid(jsonObject)) {
-                      setError(
-                        "The file is missing necessary properties for a diagram."
-                      );
+                      setError({
+                        type: ERROR.ERROR,
+                        message:
+                          "The file is missing necessary properties for a diagram.",
+                      });
                       return;
+                    }
+
+                    setData(jsonObject);
+                    if (diagramIsEmpty()) {
+                      setError({
+                        type: ERROR.OK,
+                        message: "Everything looks good. You can now import.",
+                      });
+                    } else {
+                      setError({
+                        type: ERROR.WARNING,
+                        message:
+                          "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+                      });
                     }
                   }
                 };
@@ -575,16 +631,42 @@ export default function ControlPanel(props) {
               dragMainText="Click to upload the file or drag and drop the file here"
               dragSubText="Support json"
               accept="application/json,.txt"
-              onRemove={() => setError(null)}
-              onFileChange={() => setError(null)}
+              onRemove={() =>
+                setError({
+                  type: ERROR.NONE,
+                  message: "",
+                })
+              }
+              onFileChange={() =>
+                setError({
+                  type: ERROR.NONE,
+                  message: "",
+                })
+              }
               limit={1}
             ></Upload>
-            {error && (
+            {error.type === ERROR.ERROR ? (
               <Banner
                 type="danger"
                 fullMode={false}
-                description={<div className="text-red-800">{error}</div>}
+                description={
+                  <div className="text-red-800">{error.message}</div>
+                }
               />
+            ) : error.type === ERROR.OK ? (
+              <Banner
+                type="info"
+                fullMode={false}
+                description={<div>{error.message}</div>}
+              />
+            ) : (
+              error.type === ERROR.WARNING && (
+                <Banner
+                  type="warning"
+                  fullMode={false}
+                  description={<div>{error.message}</div>}
+                />
+              )
             )}
           </div>
         ) : exportData.data !== "" || exportData.data ? (
