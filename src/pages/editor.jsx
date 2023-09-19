@@ -257,6 +257,14 @@ export default function Editor(props) {
     setAreas((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
     );
+    if (id === selectedElement.id) {
+      setSelectedElement({
+        element: ObjectType.NONE,
+        id: -1,
+        openDialogue: false,
+        openCollapse: false,
+      });
+    }
   };
 
   const deleteNote = (id, addToHistory = true) => {
@@ -274,6 +282,14 @@ export default function Editor(props) {
     setNotes((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
     );
+    if (id === selectedElement.id) {
+      setSelectedElement({
+        element: ObjectType.NONE,
+        id: -1,
+        openDialogue: false,
+        openCollapse: false,
+      });
+    }
   };
 
   const deleteRelationship = (id, addToHistory = true) => {
