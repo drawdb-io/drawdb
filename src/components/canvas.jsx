@@ -3,6 +3,7 @@ import { useDrop } from "react-dnd";
 import Table from "./table";
 import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
 import Area from "./area";
+import Relationship from "./relationship";
 
 export default function Canvas(props) {
   const ObjectType = {
@@ -303,111 +304,7 @@ export default function Canvas(props) {
               strokeDasharray="8,8"
             />
           )}
-          {props.relationships.map((e, i) => {
-            const r = 16;
-            const offsetX = 8;
-            const tableWidth = 240;
-            const midX = (e.endX + e.startX + tableWidth) / 2;
-            const endX =
-              e.endX + tableWidth < e.startX
-                ? e.endX + tableWidth - offsetX * 2
-                : e.endX;
-
-            let path = "";
-
-            if (e.startY <= e.endY) {
-              if (e.startX + tableWidth < e.endX) {
-                path = `M ${e.startX + tableWidth - offsetX * 2} ${
-                  e.startY
-                } L ${midX - r} ${e.startY} A ${r} ${r} 0 0 ${1} ${midX} ${
-                  e.startY + r
-                } L ${midX} ${e.endY - r} A ${r} ${r} 0 0 ${0} ${midX + r} ${
-                  e.endY
-                } L ${endX} ${e.endY}`;
-              } else if (e.endX < e.startX + tableWidth && e.startX < e.endX) {
-                path = `M ${e.startX + tableWidth - 2 * offsetX} ${
-                  e.startY
-                } L ${e.endX + tableWidth} ${e.startY} A ${r} ${r} 0 0 ${1} ${
-                  e.endX + tableWidth + r
-                } ${e.startY + r} L ${e.endX + tableWidth + r} ${
-                  e.endY - r
-                } A ${r} ${r} 0 0 1 ${e.endX + tableWidth} ${e.endY} L ${
-                  e.endX + tableWidth - 2 * offsetX
-                } ${e.endY}`;
-              } else if (
-                e.endX + tableWidth > e.startX &&
-                e.endX + tableWidth < e.startX + tableWidth
-              ) {
-                path = `M ${e.startX} ${e.startY} L ${e.endX - r} ${
-                  e.startY
-                } A ${r} ${r} 0 0 ${0} ${e.endX - r - r} ${e.startY + r} L ${
-                  e.endX - r - r
-                } ${e.endY - r} A ${r} ${r} 0 0 0 ${e.endX - r} ${e.endY} L ${
-                  e.endX
-                } ${e.endY}`;
-              } else {
-                path = `M ${e.startX} ${e.startY} L ${midX + r} ${
-                  e.startY
-                } A ${r} ${r} 0 0 ${0} ${midX} ${e.startY + r} L ${midX} ${
-                  e.endY - r
-                } A ${r} ${r} 0 0 ${1} ${midX - r} ${e.endY} L ${endX} ${
-                  e.endY
-                }`;
-              }
-            } else {
-              if (e.startX + tableWidth < e.endX) {
-                path = `M ${e.startX + tableWidth - offsetX * 2} ${
-                  e.startY
-                } L ${midX - r} ${e.startY} A ${r} ${r} 0 0 ${0} ${midX} ${
-                  e.startY - r
-                } L ${midX} ${e.endY + r} A ${r} ${r} 0 0 ${1} ${midX + r} ${
-                  e.endY
-                } L ${endX} ${e.endY}`;
-              } else if (
-                e.startX + tableWidth > e.endX &&
-                e.startX + tableWidth < e.endX + tableWidth
-              ) {
-                path = `M ${e.startX} ${e.startY} L ${e.startX - r} ${
-                  e.startY
-                } A ${r} ${r} 0 0 ${1} ${e.startX - r - r} ${e.startY - r} L ${
-                  e.startX - r - r
-                } ${e.endY + r} A ${r} ${r} 0 0 ${1} ${e.startX - r} ${
-                  e.endY
-                } L ${endX} ${e.endY}`;
-              } else if (e.startX > e.endX && e.startX < e.endX + tableWidth) {
-                path = `M ${e.startX + tableWidth - 2 * offsetX} ${
-                  e.startY
-                } L ${e.startX + tableWidth - 2 * offsetX + r} ${
-                  e.startY
-                } A ${r} ${r} 0 0 0 ${
-                  e.startX + tableWidth - 2 * offsetX + r + r
-                } ${e.startY - r} L ${
-                  e.startX + tableWidth - 2 * offsetX + r + r
-                } ${e.endY + r} A ${r} ${r} 0 0 0 ${
-                  e.startX + tableWidth - 2 * offsetX + r
-                } ${e.endY} L ${e.endX + tableWidth - 2 * offsetX} ${e.endY}`;
-              } else {
-                path = `M ${e.startX} ${e.startY} L ${midX + r} ${
-                  e.startY
-                } A ${r} ${r} 0 0 ${1} ${midX} ${e.startY - r} L ${midX} ${
-                  e.endY + r
-                } A ${r} ${r} 0 0 ${0} ${midX - r} ${e.endY} L ${endX} ${
-                  e.endY
-                }`;
-              }
-            }
-
-            return (
-              <path
-                key={i}
-                d={path}
-                stroke="gray"
-                fill="none"
-                strokeWidth={2.5}
-                onClick={() => {}}
-              />
-            );
-          })}
+          {props.relationships.map((e, i) => <Relationship data={e}/>)}
         </svg>
       </div>
     </div>
