@@ -1,5 +1,6 @@
 import { Validator } from "jsonschema";
 import { ddbSchema, jsonSchema } from "../schemas";
+import { sqlDataTypes } from "../data/data";
 
 function enterFullscreen() {
   const element = document.documentElement;
@@ -47,6 +48,45 @@ function dataURItoBlob(dataUrl) {
   return new Blob([intArray], { type: mimeString });
 }
 
+function getJsonType(f) {
+  if (!sqlDataTypes.includes(f.type)) {
+    return '{ "type" : "object", additionalProperties : true }';
+  }
+  switch (f.type) {
+    case "INT":
+    case "SMALLINT":
+    case "BIGINT":
+      return '{ "type" : "integer" }';
+    case "DECIMAL":
+    case "NUMERIC":
+    case "REAL":
+    case "FLOAT":
+      return '{ "type" : "number" }';
+    case "BOOLEAN":
+      return '{ "type" : "boolean" }';
+    case "JSON":
+      return '{ "type" : "object", "additionalProperties" : true }';
+    case "ENUM":
+      return `{\n\t\t\t\t\t"type" : "string",\n\t\t\t\t\t"enum" : [${f.values
+        .map((v) => `"${v}"`)
+        .join(", ")}]\n\t\t\t\t}`;
+    case "SET":
+      return `{\n\t\t\t\t\t"type": "array",\n\t\t\t\t\t"items": {\n\t\t\t\t\t\t"type": "string",\n\t\t\t\t\t\t"enum": [${f.values
+        .map((v) => `"${v}"`)
+        .join(", ")}]\n\t\t\t\t\t}\n\t\t\t\t}`;
+    default:
+      return '{ "type" : "string"}';
+  }
+}
+
+function generateSchema(type) {
+  return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
+    .map((f) => `"${f.name}" : ${getJsonType(f)}`)
+    .join(
+      ",\n\t\t\t\t"
+    )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
+}
+
 function getTypeString(field, dbms = "mysql") {
   if (dbms === "mysql") {
     if (field.type === "UUID") {
@@ -60,6 +100,9 @@ function getTypeString(field, dbms = "mysql") {
     }
     if (field.type === "SET" || field.type === "ENUM") {
       return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
+    }
+    if (!sqlDataTypes.includes(field.type)) {
+      return "JSON";
     }
     return field.type;
   } else if (dbms === "postgres") {
@@ -138,7 +181,13 @@ function jsonToMySQL(obj) {
                   : ""
               }${
                 field.check === "" || !hasCheck(field.type)
-                  ? ""
+                  ? !sqlDataTypes.includes(field.type)
+                    ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
+                        obj.types.find(
+                          (t) => t.name === field.type.toLowerCase()
+                        )
+                      )}", \`${field.name}\`))`
+                    : ""
                   : ` CHECK(${field.check})`
               }`
           )
@@ -177,19 +226,32 @@ function jsonToMySQL(obj) {
 }
 
 function jsonToPostgreSQL(obj) {
-  return `${obj.types.map(
-    (type) =>
-      `${type.fields
-        .filter((f) => f.type === "ENUM" || f.type === "SET")
-        .map(
-          (f) =>
-            `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-              .map((v) => `'${v}'`)
-              .join(", ")});\n`
-        )}CREATE TYPE ${type.name} AS (\n${type.fields
+  return `${obj.types.map((type) => {
+    const typeStatements = type.fields
+      .filter((f) => f.type === "ENUM" || f.type === "SET")
+      .map(
+        (f) =>
+          `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+            .map((v) => `'${v}'`)
+            .join(", ")});\n`
+      );
+    if (typeStatements.length > 0) {
+      return (
+        typeStatements.join("") +
+        `${
+          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        }CREATE TYPE ${type.name} AS (\n${type.fields
+          .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+          .join("\n")}\n);`
+      );
+    } else {
+      return `${
+        type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+      }CREATE TYPE ${type.name} AS (\n${type.fields
         .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
-        .join("\n")}\n);`
-  )}\n${obj.tables
+        .join("\n")}\n);`;
+    }
+  })}\n${obj.tables
     .map(
       (table) =>
         `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${
