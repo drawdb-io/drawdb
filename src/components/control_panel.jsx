@@ -49,7 +49,7 @@ export default function ControlPanel() {
         break;
     }
   };
-
+  
   return (
     <>
       {showToolBar && (
@@ -152,6 +152,7 @@ export default function ControlPanel() {
           </div>
         </nav>
       )}
+      
       <div className="p-1 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700">
         <div className="flex justify-start items-center">
           <div className="relative">
