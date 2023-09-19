@@ -669,6 +669,7 @@ export default function Table(props) {
                               name: "",
                               type: "",
                               default: "",
+                              check: "",
                               primary: false,
                               unique: false,
                               notNull: false,

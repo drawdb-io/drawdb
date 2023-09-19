@@ -529,6 +529,7 @@ export default function TableOverview(props) {
                             name: "",
                             type: "",
                             default: "",
+                            check: "",
                             primary: false,
                             unique: false,
                             notNull: false,
