@@ -1,5 +1,5 @@
 import { Validator } from "jsonschema";
-import { jsonSchema } from "../schemas";
+import { ddbSchema, jsonSchema } from "../schemas";
 
 const enterFullscreen = () => {
   const element = document.documentElement;
@@ -26,8 +26,17 @@ const exitFullscreen = () => {
   }
 };
 
-const diagramObjectIsValid = (obj) => {
+const jsonDiagramIsValid = (obj) => {
   return new Validator().validate(obj, jsonSchema).valid;
 };
 
-export { enterFullscreen, exitFullscreen, diagramObjectIsValid };
+const ddbDiagramIsValid = (obj) => {
+  return new Validator().validate(obj, ddbSchema).valid;
+};
+
+export {
+  enterFullscreen,
+  exitFullscreen,
+  jsonDiagramIsValid,
+  ddbDiagramIsValid,
+};

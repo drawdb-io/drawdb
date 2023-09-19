@@ -29,9 +29,10 @@ import {
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
-  diagramObjectIsValid,
+  jsonDiagramIsValid,
   enterFullscreen,
   exitFullscreen,
+  ddbDiagramIsValid,
 } from "../utils";
 import {
   AreaContext,
@@ -200,7 +201,7 @@ export default function ControlPanel(props) {
                   author: "Unnamed",
                   project: "Untitled",
                   filename: "Untitled",
-                  date: Date().toISOString(),
+                  date: new Date().toISOString(),
                   tables: tables,
                   relationships: relationships,
                   notes: notes,
@@ -604,19 +605,18 @@ export default function ControlPanel(props) {
 
                 const reader = new FileReader();
                 reader.onload = function (event) {
+                  let jsonObject = null;
+                  try {
+                    jsonObject = JSON.parse(event.target.result);
+                  } catch (error) {
+                    setError({
+                      type: ERROR.ERROR,
+                      message: "The file contains an error.",
+                    });
+                    return;
+                  }
                   if (f.type === "application/json") {
-                    let jsonObject = null;
-                    try {
-                      jsonObject = JSON.parse(event.target.result);
-                    } catch (error) {
-                      setError({
-                        type: ERROR.ERROR,
-                        message: "Invalid JSON. The file contains an error.",
-                      });
-                      return;
-                    }
-
-                    if (!diagramObjectIsValid(jsonObject)) {
+                    if (!jsonDiagramIsValid(jsonObject)) {
                       setError({
                         type: ERROR.ERROR,
                         message:
@@ -624,20 +624,28 @@ export default function ControlPanel(props) {
                       });
                       return;
                     }
-
-                    setData(jsonObject);
-                    if (diagramIsEmpty()) {
+                  } else if (f.name.split(".").pop() === "ddb") {
+                    if (!ddbDiagramIsValid(jsonObject)) {
                       setError({
-                        type: ERROR.OK,
-                        message: "Everything looks good. You can now import.",
-                      });
-                    } else {
-                      setError({
-                        type: ERROR.WARNING,
+                        type: ERROR.ERROR,
                         message:
-                          "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+                          "The file is missing necessary properties for a diagram.",
                       });
+                      return;
                     }
+                  }
+                  setData(jsonObject);
+                  if (diagramIsEmpty()) {
+                    setError({
+                      type: ERROR.OK,
+                      message: "Everything looks good. You can now import.",
+                    });
+                  } else {
+                    setError({
+                      type: ERROR.WARNING,
+                      message:
+                        "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+                    });
                   }
                 };
                 reader.readAsText(f);
@@ -652,7 +660,7 @@ export default function ControlPanel(props) {
               draggable={true}
               dragMainText="Click to upload the file or drag and drop the file here"
               dragSubText="Support json"
-              accept="application/json,.txt"
+              accept="application/json,.ddb"
               onRemove={() =>
                 setError({
                   type: ERROR.NONE,

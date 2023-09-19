@@ -141,4 +141,15 @@ const jsonSchema = {
   required: ["tables", "relationships", "notes", "subjectAreas"],
 };
 
-export { jsonSchema };
+const ddbSchema = {
+  type: "object",
+  properties: {
+    author: { type: "string" },
+    project: { type: "string" },
+    filename: { type: "string" },
+    date: { type: "string" },
+    ...jsonSchema.properties,
+  },
+};
+
+export { jsonSchema, ddbSchema };
