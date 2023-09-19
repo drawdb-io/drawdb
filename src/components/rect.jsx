@@ -1,5 +1,4 @@
 import { React, useState } from "react";
-import Node from "./node";
 import sqlDataTypes from "./sql_types";
 import {
   IconEdit,
@@ -20,7 +19,6 @@ import {
 } from "@douyinfe/semi-ui";
 
 const Rect = (props) => {
-  const [node, setNode] = useState(Node.NONE);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
   const [name, setName] = useState("New Table");
@@ -207,7 +205,10 @@ const Rect = (props) => {
                     setHoveredField(-1);
                   }}
                 >
-                  <div>{e.name}</div>
+                  <div>
+                    <button className="w-[10px] h-[10px] bg-green-600 rounded-full me-2"></button>
+                    {e.name}
+                  </div>
                   <div className="text-slate-600">
                     {hoveredField === i ? (
                       <div>
@@ -241,82 +242,7 @@ const Rect = (props) => {
           })}
         </div>
       </foreignObject>
-      <circle
-        id="TOP"
-        cx={props.x + props.width / 2}
-        cy={props.y}
-        r={5}
-        onClick={(e) => {
-          setNode(Node.TOP);
-          props.setLinks([
-            ...props.links,
-            {
-              rect: props.id,
-              node: Node.TOP,
-              x: props.x + props.width / 2,
-              y: props.y,
-            },
-          ]);
-        }}
-        style={{ fill: node === Node.TOP ? "green" : "black" }}
-      />
-      <circle
-        id="LEFT"
-        cx={props.x}
-        cy={props.y + height / 2}
-        r={5}
-        onClick={(e) => {
-          setNode(Node.LEFT);
-          props.setLinks([
-            ...props.links,
-            {
-              rect: props.id,
-              node: Node.LEFT,
-              x: props.x,
-              y: props.y + height / 2,
-            },
-          ]);
-        }}
-        style={{ fill: node === Node.LEFT ? "green" : "black" }}
-      />
-      <circle
-        id="RIGHT"
-        cx={props.x + props.width}
-        cy={props.y + height / 2}
-        r={5}
-        onClick={(e) => {
-          setNode(Node.RIGHT);
-          props.setLinks([
-            ...props.links,
-            {
-              rect: props.id,
-              node: Node.RIGHT,
-              x: props.x + props.width,
-              y: props.y + height / 2,
-            },
-          ]);
-        }}
-        style={{ fill: node === Node.RIGHT ? "green" : "black" }}
-      />
-      <circle
-        id="BOTTOM"
-        cx={props.x + props.width / 2}
-        cy={props.y + height}
-        r={5}
-        onClick={(e) => {
-          setNode(Node.BOTTOM);
-          props.setLinks([
-            ...props.links,
-            {
-              rect: props.id,
-              node: Node.BOTTOM,
-              x: props.x + props.width / 2,
-              y: props.y + height,
-            },
-          ]);
-        }}
-        style={{ fill: node === Node.BOTTOM ? "green" : "black" }}
-      />
+
       <Modal
         title="Add new field"
         visible={visible}

@@ -1,12 +1,11 @@
 import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Rect from "./rect";
-import Node from "./node";
+
 
 export default function Canvas(props) {
   const [dragging, setDragging] = useState(-1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [links, setLinks] = useState([]);
   const [onRect, setOnRect] = useState(false);
   const [panning, setPanning] = useState(false);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
@@ -37,12 +36,7 @@ export default function Canvas(props) {
       }));
       props.setRectangles(updatedRectangles);
 
-      const updatedLinks = links.map((link) => ({
-        ...link,
-        x: link.x + dx,
-        y: link.y + dy,
-      }));
-      setLinks(updatedLinks);
+     
     } else if (dragging >= 0) {
       const { clientX, clientY } = e;
       const updatedRectangles = props.rectangles.map((rect) => {
@@ -52,47 +46,7 @@ export default function Canvas(props) {
             x: clientX - offset.x,
             y: clientY - offset.y,
           };
-          const updatedLinks = links.map((link) => {
-            let updatedLink = link;
-            if (link.rect === updatedRect.id) {
-              switch (link.node) {
-                case Node.TOP:
-                  updatedLink = {
-                    ...link,
-                    x: updatedRect.x + updatedRect.width / 2,
-                    y: updatedRect.y,
-                  };
-                  break;
-                case Node.BOTTOM:
-                  updatedLink = {
-                    ...link,
-                    x: updatedRect.x + updatedRect.width / 2,
-                    y: updatedRect.y + updatedRect.height,
-                  };
-                  break;
-                case Node.LEFT:
-                  updatedLink = {
-                    ...link,
-                    x: updatedRect.x,
-                    y: updatedRect.y + updatedRect.height / 2,
-                  };
-                  break;
-                case Node.RIGHT:
-                  updatedLink = {
-                    ...link,
-                    x: updatedRect.x + updatedRect.width,
-                    y: updatedRect.y + updatedRect.height / 2,
-                  };
-                  break;
-                default:
-                  break;
-              }
-            }
-            return updatedLink;
-          });
-
-          setLinks(updatedLinks);
-          return updatedRect;
+         return updatedRect;
         }
         return rect;
       });
@@ -201,13 +155,13 @@ export default function Canvas(props) {
               width={rectangle.width}
               height={rectangle.height}
               setOnRect={setOnRect}
-              links={links}
-              setLinks={setLinks}
+              // links={links}
+              // setLinks={setLinks}
               onMouseDown={(e) => handleMouseDownRect(e, rectangle.id)}
               onDelete={deleteTable}
             />
           ))}
-          {links.map(
+          {/* {links.map(
             (link, index) =>
               links.length >= 2 &&
               index % 2 === 0 &&
@@ -222,7 +176,7 @@ export default function Canvas(props) {
                   strokeDasharray="5,5"
                 />
               )
-          )}
+          )} */}
         </svg>
       </div>
     </div>
