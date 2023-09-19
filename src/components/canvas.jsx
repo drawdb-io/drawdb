@@ -79,9 +79,9 @@ export default function Canvas(props) {
         endY: e.clientY - offsetY,
       });
     } else if (
-      dragging[0] === ObjectType.NONE &&
       panning &&
-      areaResize === -1
+      dragging[0] === ObjectType.NONE &&
+      areaResize.id === -1
     ) {
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
