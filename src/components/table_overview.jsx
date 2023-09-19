@@ -1,9 +1,16 @@
-import { React, useContext, useState } from "react";
-import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
+import { React, useContext, useState, useRef } from "react";
+import {
+  Action,
+  ObjectType,
+  defaultTableTheme,
+  sqlDataTypes,
+  tableThemes,
+} from "../data/data";
 import {
   Collapse,
   Row,
   Col,
+  Input,
   Form,
   Button,
   Card,
@@ -26,12 +33,15 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TableContext } from "../pages/editor";
+import { TableContext, UndoRedoContext } from "../pages/editor";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [value, setValue] = useState("");
   const { tables, setTables, addTable, deleteTable } = useContext(TableContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const [editField, setEditField] = useState({});
+  const selectRef = useRef(null);
   const [filteredResult, setFilteredResult] = useState(
     tables.map((t) => {
       return t.name;
@@ -132,10 +142,6 @@ export default function TableOverview(props) {
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
                 {t.fields.map((f, j) => (
-                  <Form
-                    key={j}
-                    onChange={(value) => updatedField(i, j, value.values)}
-                  >
                     <Row
                       type="flex"
                       justify="start"
@@ -144,19 +150,47 @@ export default function TableOverview(props) {
                       className="hover:bg-slate-100"
                     >
                       <Col span={7}>
-                        <Form.Input
+                        <Input
                           field="name"
-                          noLabel={true}
-                          initValue={f.name}
+                          value={f.name}
                           className="m-0"
                           placeholder="Name"
+                          onChange={(value) =>
+                            updatedField(i, j, { name: value })
+                          }
+                          onFocus={(e) =>
+                            setEditField({
+                              tid: i,
+                              fid: j,
+                              values: { name: e.target.value },
+                            })
+                          }
+                          onBlur={(e) => {
+                            if (e.target.value === editField.name) return;
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.TABLE,
+                                component: "field",
+                                data: {
+                                  undo: editField,
+                                  redo: {
+                                    tid: i,
+                                    fid: j,
+                                    values: { name: e.target.value },
+                                  },
+                                },
+                              },
+                            ]);
+                            setRedoStack([]);
+                            setEditField({});
+                          }}
                         />
                       </Col>
                       <Col span={8}>
-                        <Form.Select
+                        <Select
                           className="w-full"
-                          field="type"
-                          noLabel={true}
                           optionList={sqlDataTypes.map((value, index) => {
                             return {
                               label: value,
@@ -164,9 +198,39 @@ export default function TableOverview(props) {
                             };
                           })}
                           filter
-                          initValue={f.type}
+                          value={f.type}
+                          ref={selectRef}
                           placeholder="Type"
-                        ></Form.Select>
+                          onChange={(value) => {
+                            updatedField(i, j, { type: value });
+                            if (value === editField.type) return;
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.TABLE,
+                                component: "field",
+                                data: {
+                                  undo: editField,
+                                  redo: {
+                                    tid: i,
+                                    fid: j,
+                                    values: { type: value },
+                                  },
+                                },
+                              },
+                            ]);
+                            setRedoStack([]);
+                            setEditField({});
+                          }}
+                          onFocus={() => {
+                            setEditField({
+                              tid: i,
+                              fid: j,
+                              values: { type: selectRef.current.props.value },
+                            });
+                          }}
+                        ></Select>
                       </Col>
                       <Col span={3}>
                         <Button
@@ -289,7 +353,7 @@ export default function TableOverview(props) {
                         </Popover>
                       </Col>
                     </Row>
-                  </Form>
+            
                 ))}
                 {t.indices.length > 0 && (
                   <Card

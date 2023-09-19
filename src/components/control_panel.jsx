@@ -113,6 +113,22 @@ export default function ControlPanel(props) {
     setNotes(data.notes);
   };
 
+  const updatedField = (tid, fid, updatedValues) => {
+    setTables((prev) =>
+      prev.map((table, i) => {
+        if (tid === i) {
+          return {
+            ...table,
+            fields: table.fields.map((field, j) =>
+              fid === j ? { ...field, ...updatedValues } : field
+            ),
+          };
+        }
+        return table;
+      })
+    );
+  };
+
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack.pop();
@@ -168,10 +184,14 @@ export default function ControlPanel(props) {
             return n;
           })
         );
+      }else if(a.element===ObjectType.TABLE){
+        if(a.component==="field"){
+          console.log(a);
+          updatedField(a.data.undo.tid, a.data.undo.fid, a.data.undo.values)
+        }
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
-      console.log(a)
       setSettings((prev) => ({
         ...prev,
         pan: a.data.undo
@@ -235,6 +255,11 @@ export default function ControlPanel(props) {
             return n;
           })
         );
+      } else if(a.element===ObjectType.TABLE){
+        if(a.component==="field"){
+          console.log(a);
+          updatedField(a.data.redo.tid, a.data.redo.fid, a.data.redo.values)
+        }
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {

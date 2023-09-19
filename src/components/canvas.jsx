@@ -48,10 +48,7 @@ export default function Canvas(props) {
   });
   const [panning, setPanning] = useState({ state: false, x: 0, y: 0 });
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
-  const [areaResize, setAreaResize] = useState({
-    id: -1,
-    dir: "none",
-  });
+  const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
   const [initCoords, setInitCoords] = useState({
     x: 0,
     y: 0,
@@ -244,7 +241,7 @@ export default function Canvas(props) {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    // NOTE: consider just saving the offset to sub and add in undo redo 
+    // NOTE: consider just saving the offset to sub and add in undo redo
     if (panning.state && didPan()) {
       setUndoStack((prev) => [
         ...prev,
