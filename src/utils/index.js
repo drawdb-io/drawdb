@@ -384,7 +384,7 @@ function validateDiagram(diagram) {
       } else if (field.type === "ENUM" || field.type === "SET") {
         if (!field.values || field.values.length === 0) {
           issues.push(
-            `"${field.name}" field of table "${table.name}" is of type ${field.type} but values have been specified`
+            `"${field.name}" field of table "${table.name}" is of type ${field.type} but no values have been specified`
           );
         }
       }
@@ -432,6 +432,53 @@ function validateDiagram(diagram) {
     if (!hasPrimaryKey) {
       issues.push(`Table "${table.name}" has no primary key`);
     }
+  });
+
+  const duplicateTypeNames = {};
+  diagram.types.forEach((type) => {
+    if (type.name === "") {
+      issues.push(`Declared a type with no name`);
+    }
+
+    if (duplicateTypeNames[type.name]) {
+      issues.push(`Duplicate types by the name "${type.name}"`);
+    } else {
+      duplicateTypeNames[type.name] = true;
+    }
+
+    if (type.fields.length === 0) {
+      issues.push(`Declared an empty type "${type.name}" with no fields`);
+      return;
+    }
+
+    const duplicateFieldNames = {};
+    type.fields.forEach((field) => {
+      if (field.name === "") {
+        issues.push(`Empty field name in type "${type.name}"`);
+      }
+
+      if (field.type === "") {
+        issues.push(`Empty field type in "${type.name}"`);
+      } else if (field.type === "ENUM" || field.type === "SET") {
+        if (!field.values || field.values.length === 0) {
+          issues.push(
+            `"${field.name}" field of type "${type.name}" is of type ${field.type} but no values have been specified`
+          );
+        }
+      }
+
+      if (field.type === "DOUBLE" && field.size !== "") {
+        issues.push(
+          `Specifying number of digits for floating point data types is deprecated.`
+        );
+      }
+
+      if (duplicateFieldNames[field.name]) {
+        issues.push(`Duplicate type fields in "${type.name}"`);
+      } else {
+        duplicateFieldNames[field.name] = true;
+      }
+    });
   });
 
   const duplicateFKName = {};

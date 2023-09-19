@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
-import { SettingsContext, TableContext } from "../pages/editor";
+import { SettingsContext, TableContext, TypeContext } from "../pages/editor";
 import { validateDiagram, arrayIsEqual } from "../utils";
 
 export default function Issues() {
   const { settings } = useContext(SettingsContext);
+  const { types } = useContext(TypeContext);
   const { tables, relationships } = useContext(TableContext);
   const [issues, setIssues] = useState([]);
 
@@ -13,6 +14,7 @@ export default function Issues() {
       const newIssues = validateDiagram({
         tables: tables,
         relationships: relationships,
+        types: types,
       });
 
       if (!arrayIsEqual(newIssues, issues)) {
@@ -21,7 +23,7 @@ export default function Issues() {
     };
 
     findIssues();
-  }, [tables, relationships, issues]);
+  }, [tables, relationships, issues, types]);
 
   return (
     <Collapse style={{ width: "100%" }}>
