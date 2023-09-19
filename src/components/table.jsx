@@ -16,7 +16,7 @@ import {
   IconColorPalette,
 } from "@douyinfe/semi-icons";
 import {
-  // Modal,
+  Popconfirm,
   Select,
   Card,
   Form,
@@ -731,14 +731,10 @@ export default function Table(props) {
         </div>
         <div className="text-slate-400">
           {hoveredField === index ? (
-            <Button
-              theme="solid"
-              size="small"
-              style={{
-                opacity: "0.7",
-                backgroundColor: "#d42020",
-              }}
-              onClick={(ev) => {
+            <Popconfirm
+              title="Are you sure you want to delete this field?"
+              content="This modification will be irreversible"
+              onConfirm={() =>
                 setTables((prev) => {
                   const updatedTables = [...prev];
                   const updatedFields = [
@@ -747,10 +743,20 @@ export default function Table(props) {
                   updatedFields.splice(index, 1);
                   updatedTables[props.tableData.id].fields = [...updatedFields];
                   return updatedTables;
-                });
-              }}
-              icon={<IconMinus />}
-            ></Button>
+                })
+              }
+              onCancel={() => {}}
+            >
+              <Button
+                theme="solid"
+                size="small"
+                style={{
+                  opacity: "0.7",
+                  backgroundColor: "#d42020",
+                }}
+                icon={<IconMinus />}
+              ></Button>
+            </Popconfirm>
           ) : (
             fieldData.type
           )}
