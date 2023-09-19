@@ -1,5 +1,5 @@
 import { React, useState } from "react";
-import {sqlDataTypes} from "../data/data";
+import { sqlDataTypes } from "../data/data";
 import {
   IconEdit,
   IconDelete,
@@ -33,6 +33,7 @@ export default function Table(props) {
     unique: false,
     notNull: false,
     increment: false,
+    comment: "",
   });
 
   const handleEditField = () => {
@@ -50,6 +51,7 @@ export default function Table(props) {
       unique: false,
       notNull: false,
       increment: false,
+      comment: "",
     });
     setEditFieldVisible(-1);
   };
@@ -71,6 +73,7 @@ export default function Table(props) {
       unique: false,
       notNull: false,
       increment: false,
+      comment: "",
     });
     setVisible(false);
   };
@@ -200,6 +203,10 @@ export default function Table(props) {
                       <strong>Default :</strong>{" "}
                       {e.default === "" ? "Not set" : e.default}
                     </p>
+                    <p className="text-slate-600">
+                      <strong>Comment :</strong>{" "}
+                      {e.default === "" ? "Not comment" : e.comment}
+                    </p>
                   </div>
                 }
                 position="right"
@@ -282,7 +289,9 @@ export default function Table(props) {
             );
           })}
           <div className="h-[36px] p-2">
-           { props.tableData.comment===""? "No comment": props.tableData.comment}
+            {props.tableData.comment === ""
+              ? "No comment"
+              : props.tableData.comment}
           </div>
         </div>
       </foreignObject>
@@ -325,6 +334,7 @@ export default function Table(props) {
                   };
                 })}
               ></Form.Select>
+              <Form.Input field="comment" label="Comment" className="w-full" />
               <div className="flex justify-around mt-2">
                 <Checkbox
                   value="primary"
@@ -426,6 +436,16 @@ export default function Table(props) {
                     : ""
                 }
               ></Form.Select>
+              <Form.Input
+                field="comment"
+                label="Comment"
+                trigger="blur"
+                initValue={
+                  editFieldVisible !== -1
+                    ? props.tableData.fields[editFieldVisible].comment
+                    : ""
+                }
+              />
               <div className="flex justify-around mt-2">
                 <Checkbox
                   value="primary"

@@ -173,6 +173,7 @@ export default function Canvas(props) {
               unique: true,
               notNull: true,
               increment: true,
+              comment: "",
             },
           ],
           comment: "",
