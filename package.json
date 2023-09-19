@@ -18,6 +18,7 @@
     "react-hotkeys-hook": "^4.4.1",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.1",
+    "socket.io-client": "^4.7.2",
     "url": "^0.11.1",
     "web-vitals": "^2.1.4"
   },
@@ -46,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "tailwindcss": "^3.3.2"
   }
 }

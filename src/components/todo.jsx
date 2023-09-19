@@ -104,6 +104,7 @@ export default function Todo() {
             <Dropdown.Menu>
               {Object.values(SortOrder).map((order) => (
                 <Dropdown.Item
+                  key={order}
                   onClick={() => {
                     setSortOrder(order);
                     sort(order);

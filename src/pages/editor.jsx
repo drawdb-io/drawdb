@@ -10,6 +10,7 @@ import {
   Action,
   ObjectType,
 } from "../data/data";
+import { socket } from "../data/socket";
 
 export const LayoutContext = createContext();
 export const TableContext = createContext();
@@ -20,6 +21,7 @@ export const SettingsContext = createContext();
 export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
 export const TaskContext = createContext();
+export const MessageContext = createContext();
 
 export default function Editor(props) {
   const [tables, setTables] = useState([]);
@@ -49,6 +51,7 @@ export default function Editor(props) {
     showGrid: true,
   });
   const [tasks, setTasks] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
   const [selectedElement, setSelectedElement] = useState({
@@ -395,6 +398,19 @@ export default function Editor(props) {
 
   useEffect(() => {
     document.title = "Editor - drawDB";
+
+    socket.connect();
+
+    const onConnect = () => console.log(`You connected with id: ${socket.id}`);
+    const onRecieve = (value) => setMessages((prev) => [...prev, value]);
+
+    socket.on("connect", onConnect);
+    socket.on("recieve-message", onRecieve);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("recieve-message", onRecieve);
+    };
   }, []);
 
   return (
@@ -449,7 +465,13 @@ export default function Editor(props) {
                             />
                           )}
                           <Canvas />
-                          {layout.services && <Sidebar />}
+                          {layout.services && (
+                            <MessageContext.Provider
+                              value={{ messages, setMessages }}
+                            >
+                              <Sidebar />
+                            </MessageContext.Provider>
+                          )}
                         </div>
                       </div>
                     </TaskContext.Provider>

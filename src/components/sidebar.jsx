@@ -7,6 +7,7 @@ import todo from "../assets/calendar.png";
 import { Tooltip, SideSheet, List } from "@douyinfe/semi-ui";
 import { UndoRedoContext } from "../pages/editor";
 import Todo from "./todo";
+import Chat from "./chat";
 
 export default function Sidebar() {
   const SidesheetType = {
@@ -54,6 +55,8 @@ export default function Sidebar() {
         return renderTimeline();
       case SidesheetType.TODO:
         return <Todo />;
+      case SidesheetType.CHAT:
+        return <Chat />;
       default:
         break;
     }
@@ -117,8 +120,10 @@ export default function Sidebar() {
       return (
         <List>
           {[...undoStack].reverse().map((e) => (
-            <List.Item style={{ padding: "4px 18px 4px 18px" }}
-            className="hover:bg-slate-100">
+            <List.Item
+              style={{ padding: "4px 18px 4px 18px" }}
+              className="hover:bg-slate-100"
+            >
               <div className="flex items-center py-1 w-full">
                 <i className="block fa-regular fa-circle fa-xs"></i>
                 <div className="ms-2">{e.message}</div>
