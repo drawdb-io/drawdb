@@ -10,6 +10,7 @@ import html2canvas from "html2canvas";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
+import DiagramOverview from "./diagram_overview";
 
 const myTheme = createTheme({
   dark: "light",
@@ -26,16 +27,18 @@ const myTheme = createTheme({
 });
 
 export default function EditorPanel(props) {
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState("1");
   const map = useRef(new Map());
 
   const tabList = [
-    { tab: "Overview", itemKey: 1 },
-    { tab: "Shapes", itemKey: 2 },
-    { tab: "Editor", itemKey: 3 },
+    { tab: "Overview", itemKey: "1" },
+    { tab: "Shapes", itemKey: "2" },
+    { tab: "Editor", itemKey: "3" },
   ];
   const contentList = [
-    <div>Overview</div>,
+    <div>
+      <DiagramOverview tables={props.tables} />
+    </div>,
     <div>
       <Shape />
     </div>,
@@ -54,10 +57,11 @@ export default function EditorPanel(props) {
 
   return (
     <ResizableBox
-      width={window.innerWidth * 0.2}
+      className="shadow-xl"
+      width={window.innerWidth * 0.23}
       height={window.innerHeight}
       resizeHandles={["e"]}
-      minConstraints={[window.innerWidth * 0.2, window.innerHeight]}
+      minConstraints={[window.innerWidth * 0.23, window.innerHeight]}
       maxConstraints={[Infinity, Infinity]}
       axis="x"
     >
@@ -69,7 +73,7 @@ export default function EditorPanel(props) {
             setTab(key);
           }}
         >
-          {contentList[tab -1]}
+          {contentList[parseInt(tab) - 1]}
         </Tabs>
 
         <button

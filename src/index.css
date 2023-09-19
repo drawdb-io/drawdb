@@ -13,3 +13,14 @@ body {
 .bg-blue {
   background-color: #124559;
 }
+
+.semi-form-vertical .semi-form-field {
+  margin: 0;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  overflow: hidden;
+}
+
+.semi-card .semi-collapse-item{
+  border: none !important;
+}
