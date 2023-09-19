@@ -40,7 +40,7 @@ export default function EditorPanel(props) {
   ];
   const contentList = [
     <div>
-      <TableOverview tables={props.tables} setTables={props.setTables} />
+      <TableOverview tables={props.tables} setTables={props.setTables} handleDelete={props.handleDelete}/>
     </div>,
     <div>
       <ReferenceOverview

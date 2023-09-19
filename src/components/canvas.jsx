@@ -159,12 +159,6 @@ export default function Canvas(props) {
     setLinking(false);
   };
 
-  const deleteTable = (id) => {
-    const updatedTables = [...props.tables];
-    updatedTables.splice(id, 1);
-    props.setTables(updatedTables);
-  };
-
   const handleGripField = (id) => {
     setPanning(false);
     setDragging([ObjectType.NONE, -1]);
@@ -300,7 +294,7 @@ export default function Canvas(props) {
               onMouseDown={(e) =>
                 handleMouseDownRect(e, table.id, ObjectType.TABLE)
               }
-              onDelete={deleteTable}
+              handleDelete={props.handleDelete}
             />
           ))}
           {linking && (

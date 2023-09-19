@@ -13,6 +13,15 @@ export default function Editor(props) {
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
 
+  const deleteTable = (id) => {
+    let updatedTables = [...tables];
+    updatedTables.splice(id, 1);
+    updatedTables = updatedTables.length>0? updatedTables.map((t, i) => ({ ...t, id: i })):[];
+    setTables(updatedTables);
+    console.log(tables);
+  };
+
+
   return (
     <>
       <Header name={props.name} />
@@ -28,6 +37,7 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
+            handleDelete={deleteTable}
           />
           <Canvas
             tables={tables}
@@ -38,6 +48,7 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
+            handleDelete={deleteTable}
           />
         </DndProvider>
         <Sidebar />

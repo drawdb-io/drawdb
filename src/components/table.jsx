@@ -157,7 +157,7 @@ export default function Table(props) {
                   okText="Delete"
                   onConfirm={() => {
                     Toast.success(`Table deleted!`);
-                    props.onDelete(props.id);
+                    props.handleDelete(props.id);
                   }}
                   onCancel={() => {}}
                 >

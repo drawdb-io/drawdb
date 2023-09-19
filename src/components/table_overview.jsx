@@ -12,6 +12,7 @@ import {
   Checkbox,
   Select,
   AutoComplete,
+  Toast
 } from "@douyinfe/semi-ui";
 import {
   IconMore,
@@ -25,7 +26,7 @@ import {
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const [indexActiveKeyTable, setIndexActiveKeyTable] = useState("");
+  const [indexActiveKeyTable, setIndexActiveKeyTable] = useState([]);
 
   const updateColor = (id, c) => {
     const updatedTables = [...props.tables];
@@ -70,7 +71,7 @@ export default function TableOverview(props) {
               onChange={(v) => handleChange(v)}
               onSelect={(v) => {
                 const { id, name } = props.tables.find((t) => t.name === v);
-                setIndexActiveKeyTable(`${id}`);
+                setIndexActiveKeyTable([`${id}`]);
                 document
                   .getElementById(`${name}_scroll_id`)
                   .scrollIntoView({ behavior: "smooth" });
@@ -83,9 +84,13 @@ export default function TableOverview(props) {
               icon={<IconPlus />}
               block
               onClick={() => {
+                const id =
+                  props.tables.length === 0
+                    ? 0
+                    : props.tables[props.tables.length - 1].id + 1;
                 const newTable = {
-                  id: props.tables.length,
-                  name: `table_${props.tables.length}`,
+                  id: id,
+                  name: `table_${id}`,
                   x: 0,
                   y: 0,
                   fields: [
@@ -118,10 +123,10 @@ export default function TableOverview(props) {
       </div>
       <Collapse
         activeKey={indexActiveKeyTable}
-        onChange={(i) => setIndexActiveKeyTable(i)}
+        onChange={(k) => setIndexActiveKeyTable(k)}
       >
         {props.tables.map((t, i) => (
-          <div id={`${t.name}_scroll_id`} key={i}>
+          <div id={`${t.name}_scroll_id`} key={t.id}>
             <Collapse.Panel
               header={
                 <div>
@@ -307,15 +312,18 @@ export default function TableOverview(props) {
                               icon={<IconDeleteStroked />}
                               type="danger"
                               block
-                              onClick={() => {
-                                const updatedTables = [...props.tables];
-                                const updatedFields = [...t.fields];
-                                updatedFields.splice(j, 1);
-                                updatedTables[i] = {
-                                  ...t,
-                                  fields: [...updatedFields],
-                                };
-                                props.setTables(updatedTables);
+                              onClick={(ev) => {
+                                props.setTables((prev) => {
+                                  const updatedTables = [...prev];
+                                  const updatedFields = [
+                                    ...updatedTables[t.id].fields,
+                                  ];
+                                  updatedFields.splice(j, 1);
+                                  updatedTables[t.id].fields = [
+                                    ...updatedFields,
+                                  ];
+                                  return updatedTables;
+                                });
                               }}
                             >
                               Delete
@@ -342,7 +350,7 @@ export default function TableOverview(props) {
                     activeKey={indexActiveKey}
                     onChange={(itemKey) => setIndexActiveKey(itemKey)}
                   >
-                    <Collapse.Panel header="Indices" itemKey="1">
+                    <Collapse.Panel header="Indices" itemKey="1" accordion>
                       {t.indices.map((idx, k) => (
                         <div
                           className="flex justify-between items-center mb-2"
@@ -526,7 +534,7 @@ export default function TableOverview(props) {
                     ></Button>
                   </Popover>
                 </Col>
-                <Col span={8}>
+                <Col span={7}>
                   <Button
                     block
                     onClick={() => {
@@ -545,7 +553,7 @@ export default function TableOverview(props) {
                     Add index
                   </Button>
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                   <Button
                     onClick={() => {
                       const updatedTables = [...props.tables];
@@ -568,6 +576,16 @@ export default function TableOverview(props) {
                   >
                     Add field
                   </Button>
+                </Col>
+                <Col span={3}>
+                  <Button
+                    icon={<IconDeleteStroked />}
+                    type="danger"
+                    onClick={() => {
+                      Toast.success(`Table deleted!`);
+                      props.handleDelete(i);
+                    }}
+                  ></Button>
                 </Col>
               </Row>
             </Collapse.Panel>
