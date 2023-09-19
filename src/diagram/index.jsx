@@ -13,8 +13,8 @@ function Diagram() {
         color: "#F1F92A",
       },
       model: graph,
-      height: window.height,
-      width: window.width,
+      height: window.innerHeight,
+      width: "100%",
       gridSize: 1,
       interactive: true,
     });
@@ -36,7 +36,7 @@ function Diagram() {
 
   return (
     <>
-      <div id="canvas" className="h-screen w-screen" ref={canvas} />
+      <div id="canvas" className="max-w-full h-full" ref={canvas} />
     </>
   );
 }
