@@ -36,7 +36,7 @@ const Rect = (props) => {
     name: "Students",
   };
 
-  const height = fields.length * 36 + (fields.length - 1) * 2 + 40 + 2;
+  const height = fields.length * 36 + 40 + 2;
 
   return (
     <g>
@@ -114,7 +114,14 @@ const Rect = (props) => {
                       <button className="btn bg-sky-800 text-white text-xs py-1 px-2 me-2 opacity-80">
                         <IconEdit />
                       </button>
-                      <button className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80">
+                      <button
+                        className="btn bg-red-800 text-white text-xs py-1 px-2 opacity-80"
+                        onClick={(e) => {
+                          const updatedFields = [...fields];
+                          updatedFields.splice(i, 1);
+                          setFields(updatedFields);
+                        }}
+                      >
                         <IconMinus />
                       </button>
                     </div>
