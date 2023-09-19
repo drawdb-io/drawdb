@@ -59,7 +59,7 @@ function jsonToSQL(obj) {
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
               }\` ${field.type}${
-                field.length !== "n/a"
+                field.length !== ""
                   ? `(${field.length})`
                   : field.type === "ENUM" || field.type === "SET"
                   ? `(${field.values.map((v) => `"${v}"`).join(", ")})`
@@ -67,15 +67,37 @@ function jsonToSQL(obj) {
               }${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${field.default}` : ""
-              },`
+                field.default !== ""
+                  ? ` DEFAULT ${
+                      (field.type === "VARCHAR" || field.type === "ENUM") &&
+                      field.default.toLowerCase() !== "null"
+                        ? `"${field.default}"`
+                        : `${field.default}`
+                    }`
+                  : ""
+              }${field.check === "" ? "" : ` CHECK (${field.check})`}`
           )
-          .join("\n")}\n\tPRIMARY KEY(${table.fields
-          .filter((f) => f.primary)
-          .map((f) => `\`${f.name}\``)
-          .join(", ")})\n);`
+          .join(",\n")}${
+          table.fields.filter((f) => f.primary).length > 0
+            ? `,\n\tPRIMARY KEY(${table.fields
+                .filter((f) => f.primary)
+                .map((f) => `\`${f.name}\``)
+                .join(", ")})`
+            : ""
+        }\n);\n${
+          table.indices.length > 0
+            ? `${table.indices.map(
+                (i) =>
+                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
+                    i.name
+                  }\`\nON \`${table.name}\` (${i.fields
+                    .map((f) => `\`${f}\``)
+                    .join(", ")});`
+              )}`
+            : ""
+        }`
     )
-    .join("\n");
+    .join("\n\n");
 }
 
 export {

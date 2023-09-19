@@ -185,7 +185,7 @@ export default function TableOverview(props) {
                               value === "SMALLINT");
                           updateField(i, j, {
                             type: value,
-                            length: value === "VARCHAR" ? 255 : "n/a",
+                            length: value === "VARCHAR" ? 255 : "",
                             increment: incr,
                           });
                         }}
@@ -359,6 +359,7 @@ export default function TableOverview(props) {
                               className="my-2"
                               placeholder="Set constraint"
                               value={f.check}
+                              disabled={f.increment}
                               onChange={(value) =>
                                 updateField(i, j, { check: value })
                               }
@@ -386,7 +387,7 @@ export default function TableOverview(props) {
                               <div className="font-medium">Unique</div>
                               <Checkbox
                                 value="unique"
-                                defaultChecked={f.unique}
+                                checked={f.unique}
                                 onChange={(checkedValues) => {
                                   setUndoStack((prev) => [
                                     ...prev,
@@ -418,7 +419,7 @@ export default function TableOverview(props) {
                               <div className="font-medium">Autoincrement</div>
                               <Checkbox
                                 value="increment"
-                                defaultChecked={f.increment}
+                                checked={f.increment}
                                 disabled={
                                   !(
                                     f.type === "INT" ||
@@ -583,12 +584,54 @@ export default function TableOverview(props) {
                             <Popover
                               content={
                                 <div className="px-1">
+                                  <div className="font-semibold mb-1">
+                                    Index name:{" "}
+                                  </div>
                                   <Input
-                                    className="my-2"
                                     value={idx.name}
                                     placeholder="Index name"
                                     disabled
                                   />
+                                  <div className="flex justify-between items-center my-3">
+                                    <div className="font-medium">Unique</div>
+                                    <Checkbox
+                                      value="unique"
+                                      checked={idx.unique}
+                                      onChange={(checkedValues) => {
+                                        setUndoStack((prev) => [
+                                          ...prev,
+                                          {
+                                            action: Action.EDIT,
+                                            element: ObjectType.TABLE,
+                                            component: "index",
+                                            tid: i,
+                                            iid: k,
+                                            undo: {
+                                              [checkedValues.target.value]:
+                                                !checkedValues.target.checked,
+                                            },
+                                            redo: {
+                                              [checkedValues.target.value]:
+                                                checkedValues.target.checked,
+                                            },
+                                          },
+                                        ]);
+                                        setRedoStack([]);
+                                        updateTable(i, {
+                                          indices: t.indices.map((index) =>
+                                            index.id === k
+                                              ? {
+                                                  ...index,
+                                                  [checkedValues.target.value]:
+                                                    checkedValues.target
+                                                      .checked,
+                                                }
+                                              : index
+                                          ),
+                                        });
+                                      }}
+                                    ></Checkbox>
+                                  </div>
                                   <Button
                                     icon={<IconDeleteStroked />}
                                     type="danger"
@@ -804,6 +847,7 @@ export default function TableOverview(props) {
                             {
                               id: t.indices.length,
                               name: `index_${t.indices.length}`,
+                              unique: false,
                               fields: [],
                             },
                           ],
@@ -835,7 +879,7 @@ export default function TableOverview(props) {
                               default: "",
                               check: "",
                               primary: false,
-                              length: "n/a",
+                              length: "",
                               unique: false,
                               notNull: false,
                               increment: false,

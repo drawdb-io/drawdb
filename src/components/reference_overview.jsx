@@ -201,7 +201,7 @@ export default function ReferenceOverview(props) {
                     </label>
                     <Checkbox
                       value="mandetory"
-                      defaultChecked={r.mandetory}
+                      checked={r.mandetory}
                       onChange={(checkedValues) =>
                         setRelationships((prev) =>
                           prev.map((e, idx) =>

@@ -43,12 +43,13 @@ const tableSchema = {
         type: "object",
         properties: {
           name: { type: "string" },
+          unique: { type: "boolean" },
           fields: {
             type: "array",
             items: { type: "string" },
           },
         },
-        required: ["name", "fields"],
+        required: ["name", "unique", "fields"],
       },
     },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },

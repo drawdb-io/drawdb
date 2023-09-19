@@ -87,7 +87,7 @@ export default function Editor(props) {
               unique: true,
               notNull: true,
               increment: true,
-              length: "n/a",
+              length: "",
               comment: "",
               id: 0,
             },
