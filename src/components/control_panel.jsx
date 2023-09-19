@@ -23,7 +23,7 @@ import {
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import { enterFullscreen, exitFullscreen } from "../utils";
-import { LayoutContext } from "../pages/editor";
+import { LayoutContext, SettingsContext } from "../pages/editor";
 
 export default function ControlPanel(props) {
   const [visible, setVisible] = useState(false);
@@ -33,6 +33,7 @@ export default function ControlPanel(props) {
   );
   const [extension, setExtension] = useState("");
   const { layout, setLayout } = useContext(LayoutContext);
+  const { setSettings } = useContext(SettingsContext);
 
   const menu = {
     File: {
@@ -173,7 +174,9 @@ export default function ControlPanel(props) {
       },
       "Strict mode": {
         children: [],
-        function: () => {},
+        function: () => {
+          setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
+        },
       },
       "Reset view": {
         children: [],
