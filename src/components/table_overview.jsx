@@ -1,8 +1,7 @@
-import { React, useState } from "react";
+import { React, useState, memo } from "react";
 import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
 import {
   Collapse,
-  Input,
   Row,
   Col,
   Form,
@@ -12,7 +11,7 @@ import {
   Checkbox,
   Select,
   AutoComplete,
-  Toast
+  Toast,
 } from "@douyinfe/semi-ui";
 import {
   IconMore,
@@ -24,9 +23,9 @@ import {
   IconSearch,
 } from "@douyinfe/semi-icons";
 
-export default function TableOverview(props) {
+const TableOverview = memo(function TableOverView(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const [indexActiveKeyTable, setIndexActiveKeyTable] = useState([]);
+  const [tableActiveKey, setTableActiveKey] = useState("");
 
   const updateColor = (id, c) => {
     const updatedTables = [...props.tables];
@@ -71,7 +70,7 @@ export default function TableOverview(props) {
               onChange={(v) => handleChange(v)}
               onSelect={(v) => {
                 const { id, name } = props.tables.find((t) => t.name === v);
-                setIndexActiveKeyTable([`${id}`]);
+                setTableActiveKey(`${id}`);
                 document
                   .getElementById(`${name}_scroll_id`)
                   .scrollIntoView({ behavior: "smooth" });
@@ -122,29 +121,32 @@ export default function TableOverview(props) {
         </Row>
       </div>
       <Collapse
-        activeKey={indexActiveKeyTable}
-        onChange={(k) => setIndexActiveKeyTable(k)}
+        activeKey={tableActiveKey}
+        onChange={(k) => setTableActiveKey(k)}
+        accordion
       >
         {props.tables.map((t, i) => (
           <div id={`${t.name}_scroll_id`} key={t.id}>
-            <Collapse.Panel
-              header={
-                <div>
-                  <Input defaultValue={t.name} borderless />
-                </div>
-              }
-              itemKey={`${t.id}`}
-            >
+            <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
               {t.fields.map((f, j) => (
                 <Form
                   key={j}
                   onChange={(value) => {
-                    const updatedTables = [...props.tables];
-                    updatedTables[i].fields = updatedTables[i].fields.map(
-                      (field, index) =>
-                        index === j ? { ...field, ...value.values } : field
-                    );
-                    props.setTables(updatedTables);
+                    props.setTables((prev) => {
+                      return prev.map((p, idx) => {
+                        if (idx === i) {
+                          return {
+                            ...p,
+                            fields: p.fields.map((field, index) =>
+                              index === j
+                                ? { ...field, ...value.values }
+                                : field
+                            ),
+                          };
+                        }
+                        return p;
+                      });
+                    });
                   }}
                 >
                   <Row
@@ -176,6 +178,7 @@ export default function TableOverview(props) {
                         })}
                         filter
                         initValue={f.type}
+                        placeholder="Type"
                       ></Form.Select>
                     </Col>
                     <Col span={3}>
@@ -583,7 +586,12 @@ export default function TableOverview(props) {
                     type="danger"
                     onClick={() => {
                       Toast.success(`Table deleted!`);
-                      props.handleDelete(i);
+                      props.setTables((prev) => {
+                        return prev
+                          .filter((e) => e.id !== i)
+                          .map((e, idx) => ({ ...e, id: idx }));
+                      });
+                      setTableActiveKey("");
                     }}
                   ></Button>
                 </Col>
@@ -594,4 +602,6 @@ export default function TableOverview(props) {
       </Collapse>
     </>
   );
-}
+});
+
+export default TableOverview;

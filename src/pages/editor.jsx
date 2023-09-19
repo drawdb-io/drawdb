@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
@@ -13,14 +13,13 @@ export default function Editor(props) {
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
 
-  const deleteTable = (id) => {
-    let updatedTables = [...tables];
-    updatedTables.splice(id, 1);
-    updatedTables = updatedTables.length>0? updatedTables.map((t, i) => ({ ...t, id: i })):[];
-    setTables(updatedTables);
-    console.log(tables);
-  };
+  useEffect(() => {
+    console.log("changed: ", tables);
+  }, [tables]);
 
+  // const handleDelete = useCallback((id)=>{
+  //   setTables(prev=>prev.filter(e=>e.id!==id).map((e, i)=>({...e, id: i})))
+  // }, [])
 
   return (
     <>
@@ -37,7 +36,7 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
-            handleDelete={deleteTable}
+            // handleDelete={handleDelete}
           />
           <Canvas
             tables={tables}
@@ -48,7 +47,6 @@ export default function Editor(props) {
             setRelationships={setRelationships}
             areas={areas}
             setAreas={setAreas}
-            handleDelete={deleteTable}
           />
         </DndProvider>
         <Sidebar />

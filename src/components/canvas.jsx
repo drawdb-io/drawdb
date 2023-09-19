@@ -294,7 +294,6 @@ export default function Canvas(props) {
               onMouseDown={(e) =>
                 handleMouseDownRect(e, table.id, ObjectType.TABLE)
               }
-              handleDelete={props.handleDelete}
             />
           ))}
           {linking && (

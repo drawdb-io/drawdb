@@ -21,7 +21,7 @@ import {
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const [name, setName] = useState(props.tableData.name);
+  // const [name, setName] = useState(props.tableData.name);
   const [visible, setVisible] = useState(false);
   const [editFieldVisible, setEditFieldVisible] = useState(-1);
 
@@ -127,16 +127,16 @@ export default function Table(props) {
                   })
                 }
               >
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                <div
+                  // type="text"
+                  // value={name}
+                  // onChange={(e) => setName(e.target.value)}
                   className={`p-1 select-text w-[100px] bg-gray-400 focus:bg-gray-200 ${
-                    name < 1
+                    false
                       ? "ring-2 ring-red-600"
                       : "focus:ring-2 focus:ring-sky-500 "
                   }`}
-                />
+                >{props.tableData.name}</div>
               </form>
             }
             {isHovered && (
@@ -157,7 +157,7 @@ export default function Table(props) {
                   okText="Delete"
                   onConfirm={() => {
                     Toast.success(`Table deleted!`);
-                    props.handleDelete(props.id);
+                    console.log("table.jsx ", props.id);
                   }}
                   onCancel={() => {}}
                 >
