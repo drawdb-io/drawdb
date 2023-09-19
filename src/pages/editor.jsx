@@ -1,16 +1,25 @@
-import { React, useState, useMemo } from "react";
+import React, { useState } from "react";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { dia } from "jointjs";
-import DrawArea from "../components/draw_area";
+import Canvas from "../components/draw_area";
 import EditorPanel from "../components/editor_panel";
 
+// class Graph {
+//   constructor() {
+//     this.nodes = [];
+//   }
+
+//   setNodes(nodes) {
+//     this.nodes = nodes;
+//   }
+// }
+
 export default function Editor(props) {
-  const graph = useMemo(() => new dia.Graph(), []);
   const [code, setCode] = useState("");
+  const [rectangles, setRectangles] = useState([]);
 
   return (
     <>
@@ -18,8 +27,18 @@ export default function Editor(props) {
       <ControlPanel />
       <div className="flex h-full">
         <DndProvider backend={HTML5Backend}>
-          <EditorPanel graph={graph} code={code} setCode={setCode}/>
-          <DrawArea graph={graph} code={code} setCode={setCode}/>
+          <EditorPanel
+            rectangles={rectangles}
+            setRectangles={setRectangles}
+            code={code}
+            setCode={setCode}
+          />
+          <Canvas
+            rectangles={rectangles}
+            setRectangles={setRectangles}
+            code={code}
+            setCode={setCode}
+          />
         </DndProvider>
         <Sidebar />
       </div>

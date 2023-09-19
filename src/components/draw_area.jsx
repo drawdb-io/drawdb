@@ -1,47 +1,89 @@
-import React, { useEffect, useRef } from "react";
-import { dia, shapes } from "jointjs";
+import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
+import Rect from "./rect";
 
-export default function DrawArea(props) {
+export default function Canvas(props) {
+  const [dragging, setDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
   const canvas = useRef(null);
 
-  const [, drop] = useDrop(() => ({
-    accept: "CARD",
-    drop: (item, monitor) => {
-      const offset = monitor.getClientOffset();
-      const canvasRect = canvas.current.getBoundingClientRect();
-      const x = offset.x - canvasRect.left - item.size.width * 0.5;
-      const y = offset.y - canvasRect.top - item.size.height * 0.5;
-      if (item.type === "rect") {
-        const rect = new shapes.standard.Rectangle();
-        rect.position(x, y);
-        rect.resize(item.size.width, item.size.height);
-        rect.attr(item.attrs);
-        rect.addTo(props.graph);
-        props.setCode((prevCode) => `create table hi\n\n${prevCode}`);
-      }
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
-
-  useEffect(() => {
-    new dia.Paper({
-      el: document.getElementById("canvas"),
-      background: {
-        color: "#aec3b0",
-      },
-      model: props.graph,
-      width: "100%",
-      gridSize: 1,
-      interactive: true,
+  const handleMouseDown = (event, id) => {
+    const { clientX, clientY } = event;
+    const rectangle = props.rectangles.find((rect) => rect.id === id);
+    setOffset({
+      x: clientX - rectangle.x,
+      y: clientY - rectangle.y,
     });
-  }, [props.graph]);
+    setDragging(id);
+  };
+
+  const handleMouseMove = (event) => {
+    if (dragging === false) return;
+    const { clientX, clientY } = event;
+    const updatedRectangles = props.rectangles.map((rect) => {
+      if (rect.id === dragging) {
+        return {
+          ...rect,
+          x: clientX - offset.x,
+          y: clientY - offset.y,
+        };
+      }
+      return rect;
+    });
+    props.setRectangles(updatedRectangles);
+  };
+
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: "CARD",
+      drop: (item, monitor) => {
+        const offset = monitor.getClientOffset();
+        const canvasRect = canvas.current.getBoundingClientRect();
+        const x = offset.x - canvasRect.left - 100 * 0.5;
+        const y = offset.y - canvasRect.top - 100 * 0.5;
+        const newRectangle = {
+          id: props.rectangles.length + 1,
+          x,
+          y,
+          width: 100,
+          height: 100,
+          label: `rect ${props.rectangles.length + 1}`,
+        };
+        props.setRectangles([...props.rectangles, newRectangle]);
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    [props.rectangles]
+  );
 
   return (
-    <div ref={drop} className="flex-grow">
-      <div id="canvas" ref={canvas}></div>
+    <div ref={drop} className="flex-grow" id="canvas">
+      <div ref={canvas} className="w-full h-screen">
+        <svg
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          style={{ width: "100%", height: "100%" }}
+        >
+          {props.rectangles.map((rectangle) => (
+            <Rect
+              key={rectangle.id}
+              x={rectangle.x}
+              y={rectangle.y}
+              label={rectangle.label}
+              width={rectangle.width}
+              height={rectangle.height}
+              onMouseDown={(event) => handleMouseDown(event, rectangle.id)}
+            />
+          ))}
+        </svg>
+      </div>
     </div>
   );
 }

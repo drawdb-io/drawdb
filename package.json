@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@arco-design/web-react": "^2.48.2",
     "@codemirror/lang-sql": "^6.5.0",
     "@lezer/highlight": "^1.1.5",
     "@testing-library/jest-dom": "^5.16.5",

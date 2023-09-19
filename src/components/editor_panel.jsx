@@ -49,20 +49,15 @@ export default function EditorPanel(props) {
         <br />
         <button
           onClick={() => {
-            const rect = new shapes.standard.Rectangle();
-            rect.position(100, 100);
-            rect.resize(100, 40);
-            rect.attr({
-              body: {
-                fill: "#7039FF",
-              },
-              label: {
-                text: "hi",
-                fill: "white",
-              },
-            });
-            rect.addTo(props.graph);
-            props.setCode((prevCode) => `create table hi\n\n${prevCode}`);
+            const newRectangle = {
+              id: props.rectangles.length + 1,
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              label: `rect ${props.rectangles.length + 1}`,
+            };
+            props.setRectangles([...props.rectangles, newRectangle]);
           }}
         >
           add
