@@ -100,4 +100,19 @@ const tableThemes = [
 
 const defaultTableTheme = "#9e9e9e";
 
-export { menu, sqlDataTypes, tableThemes, defaultTableTheme };
+const Cardinality = {
+  ONE_TO_ONE: "One to one",
+  ONE_TO_MANY: "One to many",
+  MANY_TO_ONE: "Many to one",
+  MANY_TO_MANY: "Many to many",
+};
+
+const Constraint = {
+  none: "None",
+  restrict: "Restrict",
+  cascade: "Cascade",
+  setNull: "Set null",
+  setDefault: "Set default",
+};
+
+export { menu, sqlDataTypes, tableThemes, defaultTableTheme, Cardinality, Constraint };

@@ -1,25 +1,9 @@
 import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import Table from "./table";
-import { defaultTableTheme } from "../data/data";
+import { defaultTableTheme, Cardinality, Constraint } from "../data/data";
 
 export default function Canvas(props) {
-  const Cardinality = {
-    NONE: -1,
-    ONE_TO_ONE: 0,
-    ONE_TO_MANY: 1,
-    MANY_TO_ONE: 2,
-    MANY_TO_MANY: 3,
-  };
-
-  const Constraint = {
-    none: "None",
-    restrict: "Restrict",
-    cascade: "Cascade",
-    setNull: "Set null",
-    setDefault: "Set default",
-  };
-
   const [dragging, setDragging] = useState(-1);
   const [linking, setLinking] = useState(false);
   const [line, setLine] = useState({
@@ -32,7 +16,7 @@ export default function Canvas(props) {
     endX: 0,
     endY: 0,
     name: "",
-    cardinality: Cardinality.NONE,
+    cardinality: Cardinality.ONE_TO_MANY,
     updateConstraint: Constraint.none,
     deleteConstraint: Constraint.none,
     mandatory: false,
