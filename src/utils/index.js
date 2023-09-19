@@ -47,6 +47,36 @@ function dataURItoBlob(dataUrl) {
   return new Blob([intArray], { type: mimeString });
 }
 
+function getTypeString(field) {
+  if (field.type === "UUID") {
+    return `VARCHAR(36)`;
+  }
+  if (isSized(field.type)) {
+    return `${field.type}(${field.size})`;
+  }
+  if (hasPrecision(field.type) && field.size !== "") {
+    return `${field.type}${field.size}`;
+  }
+  if (field.type === "SET" || field.type === "ENUM") {
+    return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
+  }
+  return field.type;
+}
+
+function hasQuotes(type) {
+  return [
+    "CHAR",
+    "VARCHAR",
+    "BINARY",
+    "VARBINARY",
+    "ENUM",
+    "DATE",
+    "TIME",
+    "TIMESTAMP",
+    "DATETIME",
+  ].includes(type);
+}
+
 function jsonToSQL(obj) {
   return `${obj.tables
     .map(
@@ -58,18 +88,12 @@ function jsonToSQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
-              }\` ${field.type}${
-                field.type === "VARCHAR"
-                  ? `(${field.length})`
-                  : field.type === "ENUM" || field.type === "SET"
-                  ? `(${field.values.map((v) => `"${v}"`).join(", ")})`
-                  : ""
-              }${field.notNull ? " NOT NULL" : ""}${
+              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${
-                      (field.type === "VARCHAR" || field.type === "ENUM") &&
+                      hasQuotes(field.type) &&
                       field.default.toLowerCase() !== "null"
                         ? `"${field.default}"`
                         : `${field.default}`
@@ -115,6 +139,37 @@ function arrayIsEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
+function isSized(type) {
+  return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT", "FLOAT"].includes(
+    type
+  );
+}
+
+function hasPrecision(type) {
+  return ["DOUBLE", "NUMERIC", "DECIMAL"].includes(type);
+}
+
+function getSize(type) {
+  switch (type) {
+    case "CHAR":
+    case "BINARY":
+      return 1;
+    case "VARCHAR":
+    case "VARBINARY":
+      return 255;
+    case "TEXT":
+      return 65535;
+    default:
+      return "";
+  }
+}
+
+function validateDateStr(str) {
+  return /^(?!0000)(?!00)(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9]|3[01])|(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31))$/.test(
+    str
+  );
+}
+
 function checkDefault(field) {
   if (field.default === "") return true;
 
@@ -122,17 +177,51 @@ function checkDefault(field) {
     case "INT":
     case "BIGINT":
     case "SMALLINT":
-      return /^\d*$/.test(field.default);
+      return /^-?\d*$/.test(field.default);
     case "ENUM":
     case "SET":
       return field.values.includes(field.default);
     case "CHAR":
     case "VARCHAR":
-      return field.default.length <= field.length;
+      return field.default.length <= field.size;
+    case "BINARY":
+    case "VARBINARY":
+      return (
+        field.default.length <= field.size && /^[01]+$/.test(field.default)
+      );
     case "BOOLEAN":
       return (
         field.default.trim() === "false" || field.default.trim() === "true"
       );
+    case "FLOAT":
+    case "DECIMAL":
+    case "DOUBLE":
+    case "NUMERIC":
+    case "REAL":
+      return /^-?\d*.?\d+$/.test(field.default);
+    case "DATE":
+      return validateDateStr(field.default);
+    case "TIME":
+      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
+    case "TIMESTAMP":
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const content = field.default.split(" ");
+      const date = content[0].split("-");
+
+      return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
+    case "DATETIME":
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
     default:
       return true;
   }
@@ -177,6 +266,18 @@ function validateDiagram(diagram) {
       if (!checkDefault(field)) {
         issues.push(
           `Default value for field "${field.name}" in table "${table.name}" does not match its type.`
+        );
+      }
+
+      if (field.notNull && field.default.toLowerCase() === "null") {
+        issues.push(
+          `"${field.name}" field of table "${table.name}" is NOT NULL but has default NULL`
+        );
+      }
+
+      if (field.type === "DOUBLE" && field.size !== "") {
+        issues.push(
+          `Specifying number of digits for floating point data types is deprecated.`
         );
       }
 
@@ -254,4 +355,8 @@ export {
   jsonToSQL,
   validateDiagram,
   arrayIsEqual,
+  isSized,
+  getSize,
+  hasPrecision,
+  validateDateStr,
 };

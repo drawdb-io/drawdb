@@ -41,6 +41,7 @@ import {
   TableContext,
   UndoRedoContext,
 } from "../pages/editor";
+import { getSize, hasPrecision, isSized } from "../utils";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -380,34 +381,35 @@ export default function Table(props) {
                     if (value === "ENUM" || value === "SET") {
                       updateField(props.tableData.id, j, {
                         type: value,
+                        default: "",
                         values: [],
                         increment: incr,
                       });
-                    } else if (value === "VARCHAR") {
+                    } else if (isSized(value) || hasPrecision(value)) {
                       updateField(props.tableData.id, j, {
                         type: value,
-                        length: 255,
+                        size: getSize(value),
                         increment: incr,
                       });
                     } else if (
-                      f.type === "BLOB" ||
-                      f.type === "JSON" ||
-                      f.type === "GEOMETRY" ||
-                      f.type === "TEXT" ||
+                      value === "BLOB" ||
+                      value === "JSON" ||
+                      value === "UUID" ||
+                      value === "TEXT" ||
                       incr
                     ) {
                       updateField(props.tableData.id, j, {
                         type: value,
                         increment: incr,
                         default: "",
-                        length: "",
+                        size: "",
                         values: [],
                       });
                     } else {
                       updateField(props.tableData.id, j, {
                         type: value,
                         increment: incr,
-                        length: "",
+                        size: "",
                         values: [],
                       });
                     }
@@ -481,8 +483,8 @@ export default function Table(props) {
                         disabled={
                           f.type === "BLOB" ||
                           f.type === "JSON" ||
-                          f.type === "GEOMETRY" ||
                           f.type === "TEXT" ||
+                          f.type === "UUID" ||
                           f.increment
                         }
                         onChange={(value) =>
@@ -556,26 +558,23 @@ export default function Table(props) {
                           />
                         </>
                       )}
-                      {(f.type === "VARCHAR" || f.type === "CHAR") && (
+                      {isSized(f.type) && (
                         <>
-                          <div className="font-semibold">Length</div>
+                          <div className="font-semibold">Size</div>
                           <InputNumber
                             className="my-2 w-full"
                             placeholder="Set length"
-                            value={f.length}
-                            validateStatus={
-                              f.length === "" ? "error" : "default"
-                            }
+                            value={f.size}
                             onChange={(value) =>
                               updateField(props.tableData.id, j, {
-                                length: value,
+                                size: value,
                               })
                             }
                             onFocus={(e) =>
-                              setEditField({ length: e.target.value })
+                              setEditField({ size: e.target.value })
                             }
                             onBlur={(e) => {
-                              if (e.target.value === editField.length) return;
+                              if (e.target.value === editField.size) return;
                               setUndoStack((prev) => [
                                 ...prev,
                                 {
@@ -585,8 +584,48 @@ export default function Table(props) {
                                   tid: props.tableData.id,
                                   fid: j,
                                   undo: editField,
-                                  redo: { length: e.target.value },
-                                  message: `Edit table field length to "${e.target.value}"`,
+                                  redo: { size: e.target.value },
+                                  message: `Edit table field size to ${e.target.value}`,
+                                },
+                              ]);
+                              setRedoStack([]);
+                            }}
+                          />
+                        </>
+                      )}
+                      {hasPrecision(f.type) && (
+                        <>
+                          <div className="font-semibold">Precision</div>
+                          <Input
+                            className="my-2 w-full"
+                            placeholder="Set precision: (size, d)"
+                            validateStatus={
+                              /^\(\d+,\s*\d+\)$|^$/.test(f.size)
+                                ? "default"
+                                : "error"
+                            }
+                            value={f.size}
+                            onChange={(value) =>
+                              updateField(props.tableData.id, j, {
+                                size: value,
+                              })
+                            }
+                            onFocus={(e) =>
+                              setEditField({ size: e.target.value })
+                            }
+                            onBlur={(e) => {
+                              if (e.target.value === editField.size) return;
+                              setUndoStack((prev) => [
+                                ...prev,
+                                {
+                                  action: Action.EDIT,
+                                  element: ObjectType.TABLE,
+                                  component: "field",
+                                  tid: props.tableData.id,
+                                  fid: j,
+                                  undo: editField,
+                                  redo: { size: e.target.value },
+                                  message: `Edit table field precision to ${e.target.value}`,
                                 },
                               ]);
                               setRedoStack([]);

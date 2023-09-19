@@ -36,6 +36,7 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { SelectContext, TableContext, UndoRedoContext } from "../pages/editor";
+import { getSize, hasPrecision, isSized } from "../utils";
 
 export default function TableOverview(props) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
@@ -226,34 +227,35 @@ export default function TableOverview(props) {
                           if (value === "ENUM" || value === "SET") {
                             updateField(i, j, {
                               type: value,
+                              default: "",
                               values: [],
                               increment: incr,
                             });
-                          } else if (value === "VARCHAR") {
+                          } else if (isSized(value) || hasPrecision(value)) {
                             updateField(i, j, {
                               type: value,
-                              length: 255,
+                              size: getSize(value),
                               increment: incr,
                             });
                           } else if (
-                            f.type === "BLOB" ||
-                            f.type === "JSON" ||
-                            f.type === "GEOMETRY" ||
-                            f.type === "TEXT" ||
+                            value === "BLOB" ||
+                            value === "JSON" ||
+                            value === "UUID" ||
+                            value === "TEXT" ||
                             incr
                           ) {
-                            updateField(props.tableData.id, j, {
+                            updateField(t.id, j, {
                               type: value,
                               increment: incr,
                               default: "",
-                              length: "",
+                              size: "",
                               values: [],
                             });
                           } else {
                             updateField(i, j, {
                               type: value,
                               increment: incr,
-                              length: "",
+                              size: "",
                               values: [],
                             });
                           }
@@ -327,8 +329,8 @@ export default function TableOverview(props) {
                               disabled={
                                 f.type === "BLOB" ||
                                 f.type === "JSON" ||
-                                f.type === "GEOMETRY" ||
                                 f.type === "TEXT" ||
+                                f.type === "UUID" ||
                                 f.increment
                               }
                               onChange={(value) =>
@@ -403,24 +405,21 @@ export default function TableOverview(props) {
                                 />
                               </>
                             )}
-                            {(f.type === "VARCHAR" || f.type === "CHAR") && (
+                            {isSized(f.type) && (
                               <>
-                                <div className="font-semibold">Length</div>
+                                <div className="font-semibold">Size</div>
                                 <InputNumber
                                   className="my-2 w-full"
                                   placeholder="Set length"
-                                  validateStatus={
-                                    f.length === "" ? "error" : "default"
-                                  }
-                                  value={f.length}
+                                  value={f.size}
                                   onChange={(value) =>
-                                    updateField(i, j, { length: value })
+                                    updateField(i, j, { size: value })
                                   }
                                   onFocus={(e) =>
-                                    setEditField({ length: e.target.value })
+                                    setEditField({ size: e.target.value })
                                   }
                                   onBlur={(e) => {
-                                    if (e.target.value === editField.length)
+                                    if (e.target.value === editField.size)
                                       return;
                                     setUndoStack((prev) => [
                                       ...prev,
@@ -431,8 +430,47 @@ export default function TableOverview(props) {
                                         tid: i,
                                         fid: j,
                                         undo: editField,
-                                        redo: { length: e.target.value },
-                                        message: `Edit table field length to ${e.target.value}`,
+                                        redo: { size: e.target.value },
+                                        message: `Edit table field size to ${e.target.value}`,
+                                      },
+                                    ]);
+                                    setRedoStack([]);
+                                  }}
+                                />
+                              </>
+                            )}
+                            {hasPrecision(f.type) && (
+                              <>
+                                <div className="font-semibold">Precision</div>
+                                <Input
+                                  className="my-2 w-full"
+                                  placeholder="Set precision: (size, d)"
+                                  validateStatus={
+                                    /^\(\d+,\s*\d+\)$|^$/.test(f.size)
+                                      ? "default"
+                                      : "error"
+                                  }
+                                  value={f.size}
+                                  onChange={(value) =>
+                                    updateField(i, j, { size: value })
+                                  }
+                                  onFocus={(e) =>
+                                    setEditField({ size: e.target.value })
+                                  }
+                                  onBlur={(e) => {
+                                    if (e.target.value === editField.size)
+                                      return;
+                                    setUndoStack((prev) => [
+                                      ...prev,
+                                      {
+                                        action: Action.EDIT,
+                                        element: ObjectType.TABLE,
+                                        component: "field",
+                                        tid: i,
+                                        fid: j,
+                                        undo: editField,
+                                        redo: { size: e.target.value },
+                                        message: `Edit table field precision to ${e.target.value}`,
                                       },
                                     ]);
                                     setRedoStack([]);
@@ -601,11 +639,9 @@ export default function TableOverview(props) {
                                     .filter(
                                       (e) =>
                                         !(
-                                          (e.startTableId ===
-                                            props.tableData.id &&
+                                          (e.startTableId === t.id &&
                                             e.startFieldId === j) ||
-                                          (e.endTableId ===
-                                            props.tableData.id &&
+                                          (e.endTableId === t.id &&
                                             e.endFieldId === j)
                                         )
                                     )
