@@ -134,10 +134,11 @@ export default function TableOverview(props) {
           tables.map((t, i) => (
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel header={<div>{t.name}</div>} itemKey={`${t.id}`}>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center mb-2.5">
                   <div className="text-md font-semibold">Name: </div>
                   <Input
                     value={t.name}
+                    validateStatus={t.name === "" ? "error" : "default"}
                     placeholder="Name"
                     className="ms-2"
                     onChange={(value) => updateTable(t.id, { name: value })}
@@ -165,6 +166,7 @@ export default function TableOverview(props) {
                     <Col span={7}>
                       <Input
                         value={f.name}
+                        validateStatus={f.name === "" ? "error" : "default"}
                         placeholder="Name"
                         onChange={(value) => updateField(i, j, { name: value })}
                         onFocus={(e) => setEditField({ name: e.target.value })}
@@ -190,7 +192,7 @@ export default function TableOverview(props) {
                     <Col span={8}>
                       <Select
                         className="w-full"
-                        optionList={sqlDataTypes.map((value, index) => {
+                        optionList={sqlDataTypes.map((value) => {
                           return {
                             label: value,
                             value: value,
@@ -198,6 +200,7 @@ export default function TableOverview(props) {
                         })}
                         filter
                         value={f.type}
+                        validateStatus={f.type === "" ? "error" : "default"}
                         placeholder="Type"
                         onChange={(value) => {
                           if (value === f.type) return;
@@ -332,6 +335,11 @@ export default function TableOverview(props) {
                                 <TagInput
                                   separator={[",", ", ", " ,"]}
                                   value={f.values}
+                                  validateStatus={
+                                    !f.values || f.values.length === 0
+                                      ? "error"
+                                      : "default"
+                                  }
                                   className="my-2"
                                   placeholder="Use ',' for batch input"
                                   onChange={(v) =>
@@ -372,6 +380,9 @@ export default function TableOverview(props) {
                                 <InputNumber
                                   className="my-2 w-full"
                                   placeholder="Set length"
+                                  validateStatus={
+                                    f.length === "" ? "error" : "default"
+                                  }
                                   value={f.length}
                                   onChange={(value) =>
                                     updateField(i, j, { length: value })
@@ -611,6 +622,9 @@ export default function TableOverview(props) {
                             <Select
                               placeholder="Select fields"
                               multiple
+                              validateStatus={
+                                idx.fields.length === 0 ? "error" : "default"
+                              }
                               optionList={t.fields.map((e) => ({
                                 value: e.name,
                                 label: e.name,

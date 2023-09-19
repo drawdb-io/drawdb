@@ -288,6 +288,7 @@ export default function Table(props) {
           <div className="text-md font-semibold">Name: </div>
           <Input
             value={props.tableData.name}
+            validateStatus={props.tableData.name === "" ? "error" : "default"}
             placeholder="Name"
             className="mx-2 mb-1"
             onChange={(value) =>
@@ -345,7 +346,7 @@ export default function Table(props) {
               <Col span={8}>
                 <Select
                   className="w-full"
-                  optionList={sqlDataTypes.map((value, index) => {
+                  optionList={sqlDataTypes.map((value) => {
                     return {
                       label: value,
                       value: value,
@@ -353,6 +354,7 @@ export default function Table(props) {
                   })}
                   filter
                   value={f.type}
+                  validateStatus={f.type === "" ? "error" : "default"}
                   placeholder="Type"
                   onChange={(value) => {
                     if (value === f.type) return;
@@ -486,6 +488,11 @@ export default function Table(props) {
                           <TagInput
                             separator={[",", ", ", " ,"]}
                             value={f.values}
+                            validateStatus={
+                              !f.values || f.values.length === 0
+                                ? "error"
+                                : "default"
+                            }
                             className="my-2"
                             placeholder="Use ',' for batch input"
                             onChange={(v) =>
@@ -527,6 +534,9 @@ export default function Table(props) {
                             className="my-2 w-full"
                             placeholder="Set length"
                             value={f.length}
+                            validateStatus={
+                              f.length === "" ? "error" : "default"
+                            }
                             onChange={(value) =>
                               updateField(props.tableData.id, j, {
                                 length: value,
@@ -754,6 +764,9 @@ export default function Table(props) {
                   <Select
                     placeholder="Select fields"
                     multiple
+                    validateStatus={
+                      idx.fields.length === 0 ? "error" : "default"
+                    }
                     optionList={props.tableData.fields.map((e) => ({
                       value: e.name,
                       label: e.name,
