@@ -88,321 +88,6 @@ export default function ControlPanel(props) {
   const { undoStack, redoStack, setUndoStack, setRedoStack } =
     useContext(UndoRedoContext);
 
-  const menu = {
-    File: {
-      New: {
-        children: [],
-        function: () => console.log("New"),
-      },
-      "New window": {
-        children: [],
-        function: () => {},
-      },
-      Save: {
-        children: [],
-        function: () => {},
-      },
-      "Save as": {
-        children: [],
-        function: () => {},
-      },
-      Share: {
-        children: [],
-        function: () => {},
-      },
-      Rename: {
-        children: [],
-        function: () => {},
-      },
-      Import: {
-        children: [],
-        function: () => {
-          setVisible(MODAL.IMPORT);
-        },
-      },
-      "Export as": {
-        children: [
-          {
-            PNG: () => {
-              toPng(document.getElementById("canvas")).then(function (dataUrl) {
-                setExportData((prev) => ({
-                  ...prev,
-                  data: dataUrl,
-                  extension: "png",
-                }));
-              });
-              setVisible(MODAL.IMG);
-            },
-          },
-          {
-            JPEG: () => {
-              toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "jpeg",
-                  }));
-                }
-              );
-              setVisible(MODAL.IMG);
-            },
-          },
-          {
-            JSON: () => {
-              setVisible(MODAL.CODE);
-
-              const result = JSON.stringify(
-                {
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                },
-                null,
-                2
-              );
-              setExportData((prev) => ({
-                ...prev,
-                data: result,
-                extension: "json",
-              }));
-            },
-          },
-          {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                }
-              );
-              setVisible(MODAL.IMG);
-            },
-          },
-          {
-            PDF: () => {
-              const canvas = document.getElementById("canvas");
-              toJpeg(canvas).then(function (dataUrl) {
-                const doc = new jsPDF("l", "px", [
-                  canvas.offsetWidth,
-                  canvas.offsetHeight,
-                ]);
-                doc.addImage(
-                  dataUrl,
-                  "jpeg",
-                  0,
-                  0,
-                  canvas.offsetWidth,
-                  canvas.offsetHeight
-                );
-                doc.save(`${exportData.filename}.pdf`);
-              });
-            },
-          },
-          {
-            DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  project: "Untitled",
-                  filename: "Untitled",
-                  date: new Date().toISOString(),
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                },
-                null,
-                2
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
-              });
-              saveAs(blob, `${exportData.filename}.ddb`);
-            },
-          },
-        ],
-        function: () => {},
-      },
-      "Export source": {
-        children: [
-          { MySQL: () => {} },
-          { PostgreSQL: () => {} },
-          { DBML: () => {} },
-        ],
-        function: () => {},
-      },
-      Properties: {
-        children: [],
-        function: () => {},
-      },
-      Close: {
-        children: [],
-        function: () => {},
-      },
-    },
-    Edit: {
-      Undo: {
-        children: [],
-        function: () => {},
-      },
-      Redo: {
-        children: [],
-        function: () => {},
-      },
-      Clear: {
-        children: [],
-        function: () => {
-          setTables([]);
-          setRelationships([]);
-          setAreas([]);
-          setNotes([]);
-        },
-      },
-      Cut: {
-        children: [],
-        function: () => {},
-      },
-      Copy: {
-        children: [],
-        function: () => {},
-      },
-      Paste: {
-        children: [],
-        function: () => {},
-      },
-      "Copy as image": {
-        children: [],
-        function: () => {
-          toPng(document.getElementById("canvas")).then(function (dataUrl) {
-            const blob = dataURItoBlob(dataUrl);
-            navigator.clipboard
-              .write([new ClipboardItem({ "image/png": blob })])
-              .then(() => {
-                Toast.success("Copied to clipboard.");
-              })
-              .catch((error) => {
-                Toast.error("Could not copy to clipboard.");
-              });
-          });
-        },
-      },
-      Delete: {
-        children: [],
-        function: () => {},
-      },
-      "Edit table": {
-        children: [],
-        function: () => {},
-      },
-    },
-    View: {
-      Toolbar: {
-        children: [],
-        function: () => {},
-      },
-      Grid: {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid })),
-      },
-      Sidebar: {
-        children: [],
-        function: () => {},
-      },
-      Editor: {
-        children: [],
-        function: () => {},
-      },
-      "Strict mode": {
-        children: [],
-        function: () => {
-          setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
-          Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
-        },
-      },
-      "Field summary": {
-        children: [],
-        function: () => {
-          setSettings((prev) => ({
-            ...prev,
-            showFieldSummary: !prev.showFieldSummary,
-          }));
-          Toast.success(
-            `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
-          );
-        },
-      },
-      "Reset view": {
-        children: [],
-        function: () => {},
-      },
-      "View schema": {
-        children: [],
-        function: () => {},
-      },
-      Theme: {
-        children: [{ Light: () => {} }, { Dark: () => {} }],
-        function: () => {},
-      },
-      "Zoom in": {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 })),
-      },
-      "Zoom out": {
-        children: [],
-        function: () =>
-          setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 })),
-      },
-      Fullscreen: {
-        children: [],
-        function: enterFullscreen,
-      },
-    },
-    Logs: {
-      "Open logs": {
-        children: [],
-        function: () => {},
-      },
-      "Commit changes": {
-        children: [],
-        function: () => {},
-      },
-      "Revert changes": {
-        children: [],
-        function: () => {},
-      },
-      "View commits": {
-        children: [],
-        function: () => {},
-      },
-    },
-    Help: {
-      Shortcuts: {
-        children: [],
-        function: () => {},
-      },
-      "Ask us on discord": {
-        children: [],
-        function: () => {},
-      },
-      "Tweet us": {
-        children: [],
-        function: () => {},
-      },
-      "Found a bug": {
-        children: [],
-        function: () => {},
-      },
-    },
-  };
-
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
 
@@ -591,7 +276,7 @@ export default function ControlPanel(props) {
           { ...a, x: tables[a.id].x, y: tables[a.id].y },
         ]);
         moveTable(a.id, a.x, a.y);
-      }else if (a.element === ObjectType.AREA) {
+      } else if (a.element === ObjectType.AREA) {
         setUndoStack((prev) => [
           ...prev,
           { ...a, x: areas[a.id].x, y: areas[a.id].y },
@@ -605,6 +290,333 @@ export default function ControlPanel(props) {
         moveNote(a.id, a.x, a.y);
       }
     }
+  };
+
+  const menu = {
+    File: {
+      New: {
+        children: [],
+        function: () => console.log("New"),
+      },
+      "New window": {
+        children: [],
+        function: () => {},
+      },
+      Save: {
+        children: [],
+        function: () => {},
+      },
+      "Save as": {
+        children: [],
+        function: () => {},
+      },
+      Share: {
+        children: [],
+        function: () => {},
+      },
+      Rename: {
+        children: [],
+        function: () => {},
+      },
+      Import: {
+        children: [],
+        function: () => {
+          setVisible(MODAL.IMPORT);
+        },
+      },
+      "Export as": {
+        children: [
+          {
+            PNG: () => {
+              toPng(document.getElementById("canvas")).then(function (dataUrl) {
+                setExportData((prev) => ({
+                  ...prev,
+                  data: dataUrl,
+                  extension: "png",
+                }));
+              });
+              setVisible(MODAL.IMG);
+            },
+          },
+          {
+            JPEG: () => {
+              toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "jpeg",
+                  }));
+                }
+              );
+              setVisible(MODAL.IMG);
+            },
+          },
+          {
+            JSON: () => {
+              setVisible(MODAL.CODE);
+
+              const result = JSON.stringify(
+                {
+                  tables: tables,
+                  relationships: relationships,
+                  notes: notes,
+                  subjectAreas: areas,
+                },
+                null,
+                2
+              );
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "json",
+              }));
+            },
+          },
+          {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
+                }
+              );
+              setVisible(MODAL.IMG);
+            },
+          },
+          {
+            PDF: () => {
+              const canvas = document.getElementById("canvas");
+              toJpeg(canvas).then(function (dataUrl) {
+                const doc = new jsPDF("l", "px", [
+                  canvas.offsetWidth,
+                  canvas.offsetHeight,
+                ]);
+                doc.addImage(
+                  dataUrl,
+                  "jpeg",
+                  0,
+                  0,
+                  canvas.offsetWidth,
+                  canvas.offsetHeight
+                );
+                doc.save(`${exportData.filename}.pdf`);
+              });
+            },
+          },
+          {
+            DRAWDB: () => {
+              const result = JSON.stringify(
+                {
+                  author: "Unnamed",
+                  project: "Untitled",
+                  filename: "Untitled",
+                  date: new Date().toISOString(),
+                  tables: tables,
+                  relationships: relationships,
+                  notes: notes,
+                  subjectAreas: areas,
+                },
+                null,
+                2
+              );
+              const blob = new Blob([result], {
+                type: "text/plain;charset=utf-8",
+              });
+              saveAs(blob, `${exportData.filename}.ddb`);
+            },
+          },
+        ],
+        function: () => {},
+      },
+      "Export source": {
+        children: [
+          { MySQL: () => {} },
+          { PostgreSQL: () => {} },
+          { DBML: () => {} },
+        ],
+        function: () => {},
+      },
+      Properties: {
+        children: [],
+        function: () => {},
+      },
+      Close: {
+        children: [],
+        function: () => {},
+      },
+    },
+    Edit: {
+      Undo: {
+        children: [],
+        function: undo,
+      },
+      Redo: {
+        children: [],
+        function: redo,
+      },
+      Clear: {
+        children: [],
+        function: () => {
+          setTables([]);
+          setRelationships([]);
+          setAreas([]);
+          setNotes([]);
+        },
+      },
+      Edit: {
+        children: [],
+        function: () => {},
+      },
+      Cut: {
+        children: [],
+        function: () => {},
+      },
+      Copy: {
+        children: [],
+        function: () => {},
+      },
+      Paste: {
+        children: [],
+        function: () => {},
+      },
+      Duplicate: {
+        children: [],
+        function: () => {},
+      },
+      Delete: {
+        children: [],
+        function: () => {},
+      },
+      "Copy as image": {
+        children: [],
+        function: () => {
+          toPng(document.getElementById("canvas")).then(function (dataUrl) {
+            const blob = dataURItoBlob(dataUrl);
+            navigator.clipboard
+              .write([new ClipboardItem({ "image/png": blob })])
+              .then(() => {
+                Toast.success("Copied to clipboard.");
+              })
+              .catch((error) => {
+                Toast.error("Could not copy to clipboard.");
+              });
+          });
+        },
+      },
+    },
+    View: {
+      Header: {
+        children: [],
+        function: () =>
+          setLayout((prev) => ({ ...prev, header: !prev.header })),
+      },
+      Sidebar: {
+        children: [],
+        function: () =>
+          setLayout((prev) => ({ ...prev, sidebar: !prev.sidebar })),
+      },
+      Issues: {
+        children: [],
+        function: () =>
+          setLayout((prev) => ({ ...prev, issues: !prev.issues })),
+      },
+      Services: {
+        children: [],
+        function: () =>
+          setLayout((prev) => ({ ...prev, services: !prev.services })),
+      },
+      "Strict mode": {
+        children: [],
+        function: () => {
+          setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
+          Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
+        },
+      },
+      "Field summary": {
+        children: [],
+        function: () => {
+          setSettings((prev) => ({
+            ...prev,
+            showFieldSummary: !prev.showFieldSummary,
+          }));
+          Toast.success(
+            `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
+          );
+        },
+      },
+      "Reset view": {
+        children: [],
+        function: () => {},
+      },
+      "View schema": {
+        children: [],
+        function: () => {},
+      },
+      Grid: {
+        children: [],
+        function: () =>
+          setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid })),
+      },
+      Theme: {
+        children: [{ Light: () => {} }, { Dark: () => {} }],
+        function: () => {},
+      },
+      "Zoom in": {
+        children: [],
+        function: () =>
+          setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 })),
+      },
+      "Zoom out": {
+        children: [],
+        function: () =>
+          setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 })),
+      },
+      Fullscreen: {
+        children: [],
+        function: enterFullscreen,
+      },
+    },
+    Logs: {
+      "Open logs": {
+        children: [],
+        function: () => {},
+      },
+      "Commit changes": {
+        children: [],
+        function: () => {},
+      },
+      "Revert changes": {
+        children: [],
+        function: () => {},
+      },
+      "View commits": {
+        children: [],
+        function: () => {},
+      },
+    },
+    Help: {
+      Shortcuts: {
+        children: [],
+        function: () => {},
+      },
+      "Ask us on discord": {
+        children: [],
+        function: () => {},
+      },
+      "Tweet us": {
+        children: [],
+        function: () => {},
+      },
+      "Found a bug": {
+        children: [],
+        function: () => {},
+      },
+    },
   };
 
   return (
