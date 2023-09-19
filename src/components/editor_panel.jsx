@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useContext } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { createTheme } from "@uiw/codemirror-themes";
 import { sql } from "@codemirror/lang-sql";
@@ -10,6 +10,8 @@ import TableOverview from "./table_overview";
 import ReferenceOverview from "./reference_overview";
 import AreaOverview from "./area_overview";
 // import { TableContext } from "../pages/editor";
+import { Tab } from "../data/data";
+import { TabContext } from "../pages/editor";
 
 const myTheme = createTheme({
   dark: "light",
@@ -26,16 +28,15 @@ const myTheme = createTheme({
 });
 
 const EditorPanel = (props) => {
-  const [tab, setTab] = useState("1");
   // const map = useRef(new Map());
-  // const {tables, setTables} = useContext(TableContext);
+  const {tab, setTab} = useContext(TabContext);
 
   const tabList = [
-    { tab: "Tables", itemKey: "1" },
-    { tab: "Relationships", itemKey: "2" },
-    { tab: "Subject Areas", itemKey: "3" },
-    { tab: "Shapes", itemKey: "4" },
-    { tab: "Editor", itemKey: "5" },
+    { tab: "Tables", itemKey: Tab.tables },
+    { tab: "Relationships", itemKey: Tab.relationships },
+    { tab: "Subject Areas", itemKey: Tab.subject_areas },
+    { tab: "Shapes", itemKey: Tab.shapes },
+    { tab: "Editor", itemKey: Tab.editor },
   ];
   const contentList = [
     <TableOverview
@@ -61,6 +62,7 @@ const EditorPanel = (props) => {
       <div style={{ width: `${props.width}px` }} className="overflow-y-auto">
         <Tabs
           type="card"
+          activeKey={tab}
           tabList={tabList}
           onChange={(key) => {
             setTab(key);

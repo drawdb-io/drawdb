@@ -1,5 +1,10 @@
 import { React, useState, useContext } from "react";
-import { sqlDataTypes, tableThemes, defaultTableTheme } from "../data/data";
+import {
+  sqlDataTypes,
+  tableThemes,
+  defaultTableTheme,
+  Tab,
+} from "../data/data";
 import {
   IconEdit,
   IconPlus,
@@ -24,7 +29,7 @@ import {
   SideSheet,
   Toast,
 } from "@douyinfe/semi-ui";
-import { LayoutContext, TableContext } from "../pages/editor";
+import { LayoutContext, TabContext, TableContext } from "../pages/editor";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -32,6 +37,7 @@ export default function Table(props) {
   const [visible, setVisible] = useState(false);
   const { layout } = useContext(LayoutContext);
   const { setTables } = useContext(TableContext);
+  const { tab, setTab } = useContext(TabContext);
 
   const height = props.tableData.fields.length * 36 + 50 + 3;
 
@@ -112,6 +118,8 @@ export default function Table(props) {
                     if (!layout.sidebar) {
                       setVisible(true);
                     } else {
+                      setTab(Tab.tables);
+                      if (tab !== Tab.tables) return;
                       props.setSelectedTable(`${props.tableData.id}`);
                       document
                         .getElementById(`scroll_table_${props.tableData.id}`)

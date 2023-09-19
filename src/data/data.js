@@ -57,6 +57,14 @@ const Constraint = {
   setDefault: "Set default",
 };
 
+const Tab = {
+  tables: "1",
+  relationships: "2",
+  subject_areas: "3",
+  shapes: "4",
+  editor: "5",
+};
+
 export {
   bgBlue,
   sqlDataTypes,
@@ -64,4 +72,5 @@ export {
   defaultTableTheme,
   Cardinality,
   Constraint,
+  Tab
 };
