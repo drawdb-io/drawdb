@@ -8,23 +8,14 @@ import {
   Button,
   Checkbox,
 } from "@douyinfe/semi-ui";
-import { IconRowsStroked, IconDeleteStroked } from "@douyinfe/semi-icons";
+import {
+  IconRowsStroked,
+  IconDeleteStroked,
+  IconLoopTextStroked,
+} from "@douyinfe/semi-icons";
 import { Cardinality, Constraint } from "../data/data";
 
-// import { Table } from "@douyinfe/semi-ui";
-
 export default function ReferenceOverview(props) {
-  //   const columns = [
-  //     {
-  //       title: "Primary",
-  //       dataIndex: "primary",
-  //     },
-  //     {
-  //       title: "Foreign",
-  //       dataIndex: "foreign",
-  //     },
-  //   ];
-
   return (
     <Collapse>
       {props.relationships.map((r, i) => (
@@ -39,25 +30,19 @@ export default function ReferenceOverview(props) {
         >
           <Form>
             <Form.Input initValue={r.name} field="name" label="Name" />
-
-            {/* <Table
-              columns={columns}
-              dataSource={[
-                {
-                  key: "1",
-                  primary: props.tables[r.startTableId].name,
-                  foreign: props.tables[r.endTableId].name,
-                },
-                {
-                  key: "2",
-                  primary: props.tables[r.startTableId].fields[r.startFieldId].name,
-                  foreign: props.tables[r.endTableId].fields[r.endFieldId].name,
-                },
-              ]}
-              pagination={false}
-              bordered
-            /> */}
-
+            <div className="flex justify-between items-center my-1">
+              <div className="me-1">
+                <strong>Primary: </strong>
+                {props.tables[r.startTableId].name}
+              </div>
+              <div className="mx-1">
+                <strong>Foreign: </strong>
+                {props.tables[r.endTableId].name}
+              </div>
+              <div className="ms-1">
+                <Button icon={<IconLoopTextStroked />}>Swap</Button>
+              </div>
+            </div>
             <Form.Select
               optionList={Object.values(Cardinality).map((v) => ({
                 label: v,
@@ -94,7 +79,7 @@ export default function ReferenceOverview(props) {
                 ></Form.Select>
               </Col>
             </Row>
-            <div className="flex justify-between items-center my-3">
+            <div className="flex justify-between items-center my-2">
               <label htmlFor="unique" className="font-medium text-black">
                 Mandetory
               </label>
