@@ -15,7 +15,7 @@ import Note from "./note";
 export default function Canvas(props) {
   const { tables, updateTable, relationships, addRelationship } =
     useContext(TableContext);
-  const { areas, setAreas, updateArea } = useContext(AreaContext);
+  const { areas, updateArea } = useContext(AreaContext);
   const { notes, updateNote } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
@@ -118,8 +118,8 @@ export default function Canvas(props) {
       dragging.element === ObjectType.NONE &&
       areaResize.id === -1
     ) {
-      const dx = (e.clientX - panOffset.x) / settings.zoom;
-      const dy = (e.clientY - panOffset.y) / settings.zoom;
+      const dx = e.clientX - panOffset.x;
+      const dy = e.clientY - panOffset.y;
       setSettings((prev) => ({
         ...prev,
         pan: { x: prev.pan.x + dx, y: prev.pan.y + dy },
@@ -169,20 +169,12 @@ export default function Canvas(props) {
         newHeight = initCoords.height + (mouseY - initCoords.mouseY);
       }
 
-      setAreas((prev) =>
-        prev.map((a) => {
-          if (a.id === areaResize.id) {
-            return {
-              ...a,
-              x: newX,
-              y: newY,
-              width: newWidth,
-              height: newHeight,
-            };
-          }
-          return a;
-        })
-      );
+      updateArea(areaResize.id, {
+        x: newX,
+        y: newY,
+        width: newWidth,
+        height: newHeight,
+      });
     }
   };
 
@@ -379,6 +371,7 @@ export default function Canvas(props) {
               transform: `translate(${settings.pan.x}px, ${settings.pan.y}px) scale(${settings.zoom})`,
               transformOrigin: "top left",
             }}
+            id="diagram"
           >
             {areas.map((a) => (
               <Area

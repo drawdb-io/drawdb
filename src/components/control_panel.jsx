@@ -404,6 +404,24 @@ export default function ControlPanel(props) {
   };
   const resetView = () =>
     setSettings((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
+  const fitWindow = () => {
+    const diagram = document.getElementById("diagram").getBoundingClientRect();
+    const canvas = document.getElementById("canvas").getBoundingClientRect();
+
+    const scaleX = canvas.width / diagram.width;
+    const scaleY = canvas.height / diagram.height;
+
+    const scale = Math.min(scaleX, scaleY);
+
+    const translateX = canvas.width / 2;
+    const translateY = canvas.height / 2;
+
+    setSettings((prev) => ({
+      ...prev,
+      zoom: scale,
+      pan: { x: translateX, y: translateY },
+    }));
+  };
 
   const menu = {
     File: {
@@ -691,6 +709,7 @@ export default function ControlPanel(props) {
   });
   useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
   useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
+  useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
   return (
     <div>
@@ -700,11 +719,17 @@ export default function ControlPanel(props) {
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
           <Dropdown
-            style={{ width: "180px" }}
+            style={{ width: "240px" }}
             position="bottomLeft"
             render={
               <Dropdown.Menu>
-                <Dropdown.Item>Fit window</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={fitWindow}
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>Fit window / Reset</div>
+                  <div className="text-gray-400">Ctrl+Alt+W</div>
+                </Dropdown.Item>
                 <Dropdown.Divider />
                 {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
                   <Dropdown.Item
