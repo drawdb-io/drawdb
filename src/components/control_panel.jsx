@@ -236,9 +236,9 @@ export default function ControlPanel(props) {
   };
 
   return (
-    <>
+    <div>
       {props.layout.header && header()}
-      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 mx-6 text-slate-700 select-none">
+      <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 sm:mx-1 md:mx-6 text-slate-700 select-none overflow-x-hidden">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />
@@ -276,8 +276,9 @@ export default function ControlPanel(props) {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded">
-              zoom <IconCaretdown />
+            <div className="py-1 px-2 hover:bg-slate-200 rounded flex">
+              <div>zoom</div>
+              <IconCaretdown />
             </div>
           </Dropdown>
           <button
@@ -313,8 +314,9 @@ export default function ControlPanel(props) {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-slate-200 rounded">
-              <i className="fa-solid fa-plus"></i> <IconCaretdown />
+            <div className="py-1 px-2 hover:bg-slate-200 flex">
+              <i className="fa-solid fa-plus"></i>
+              <IconCaretdown />
             </div>
           </Dropdown>
           <button className="py-1 px-2 hover:bg-slate-200 rounded" title="Edit">
@@ -380,7 +382,7 @@ export default function ControlPanel(props) {
           />
         </Form>
       </Modal>
-    </>
+    </div>
   );
 
   function header() {
@@ -678,7 +680,7 @@ export default function ControlPanel(props) {
         }
         trigger="click"
       >
-        <div className="py-1 px-2 hover:bg-slate-200 rounded">
+        <div className="py-1 px-2 hover:bg-slate-200 rounded flex items-center align-middle">
           <i className="fa-solid fa-table-list"></i> <IconCaretdown />
         </div>
       </Dropdown>

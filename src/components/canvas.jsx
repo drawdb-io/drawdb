@@ -235,8 +235,8 @@ export default function Canvas(props) {
   );
 
   return (
-    <div ref={drop} className="flex-grow" id="canvas" >
-      <div ref={canvas} className="w-full h-screen">
+    <div ref={drop} className="flex-grow h-full" id="canvas">
+      <div ref={canvas} className="w-full h-full">
         <svg
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}

@@ -54,8 +54,8 @@ const EditorPanel = (props) => {
   ];
 
   return (
-    <div className="h-screen flex overflow-clip relative">
-      <div style={{ width: `${props.width}px` }}>
+    <div className="flex h-full">
+      <div style={{ width: `${props.width}px` }} className="overflow-y-auto">
         <Tabs
           type="card"
           tabList={tabList}
@@ -143,7 +143,7 @@ const EditorPanel = (props) => {
         </button>
       </div>
       <div
-        className={`flex justify-center items-center p-1 h-full hover:bg-slate-300 cursor-col-resize ${
+        className={`flex justify-center items-center p-1 h-auto hover:bg-slate-300 cursor-col-resize ${
           props.resize ? "bg-slate-300" : ""
         }`}
         onMouseDown={() => props.setResize(true)}

@@ -32,10 +32,10 @@ export default function Editor(props) {
   };
 
   return (
-    <>
+    <div className="h-[100vh] overflow-hidden">
       <ControlPanel layout={layout} setLayout={setLayout} />
       <div
-        className={`flex h-full`}
+        className={`flex h-[calc(100vh-123.93px)]`}
         onMouseUp={() => setResize(false)}
         onMouseMove={dragHandler}
       >
@@ -56,6 +56,7 @@ export default function Editor(props) {
             />
           )}
           <Canvas
+          width={window.innerWidth-width-8}
             tables={tables}
             setTables={setTables}
             code={code}
@@ -68,6 +69,6 @@ export default function Editor(props) {
         </DndProvider>
         {layout.services && <Sidebar />}
       </div>
-    </>
+    </div>
   );
 }
