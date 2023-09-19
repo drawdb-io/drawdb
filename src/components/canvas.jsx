@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
-import Rect from "./rect";
+import Table from "./table";
 
 export default function Canvas(props) {
   const [dragging, setDragging] = useState(-1);
@@ -180,7 +180,7 @@ export default function Canvas(props) {
 
           <rect width="100%" height="100%" fill="url(#grid)" />
           {props.tables.map((table, i) => (
-            <Rect
+            <Table
               key={table.id}
               id={i}
               tableData={table}

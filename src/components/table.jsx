@@ -18,7 +18,7 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 
-const Rect = (props) => {
+export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
   const [name, setName] = useState(props.tableData.name);
@@ -455,6 +455,4 @@ const Rect = (props) => {
       </Modal>
     </g>
   );
-};
-
-export default Rect;
+}

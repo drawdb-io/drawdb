@@ -4,7 +4,7 @@ import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import Canvas from "../components/draw_area";
+import Canvas from "../components/canvas";
 import EditorPanel from "../components/editor_panel";
 
 export default function Editor(props) {
