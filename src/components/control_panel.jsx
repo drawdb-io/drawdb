@@ -195,33 +195,18 @@ export default function ControlPanel() {
       },
       Fullscreen: {
         children: [],
-        function: () => {},
-      },
-    },
-    Insert: {
-      "New table": {
-        children: [],
-        function: () => {},
-      },
-      "New relationship": {
-        children: [],
-        function: () => {},
-      },
-      Note: {
-        children: [],
-        function: () => {},
-      },
-      Image: {
-        children: [],
-        function: () => {},
-      },
-      Textbox: {
-        children: [],
-        function: () => {},
-      },
-      Shape: {
-        children: [],
-        function: () => {},
+        function: () => {
+          const element = document.documentElement;
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        },
       },
     },
     Logs: {
@@ -334,7 +319,7 @@ export default function ControlPanel() {
                         </Dropdown.Menu>
                       }
                     >
-                      <div className="px-3 py-1 hover:bg-gray-100">
+                      <div className="px-3 py-1 hover:bg-gray-100 rounded-md">
                         {category}
                       </div>
                     </Dropdown>
@@ -411,7 +396,7 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-gray-300">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
               <i className="fa-solid fa-table-list"></i> <IconCaretdown />
             </div>
           </Dropdown>
@@ -450,21 +435,33 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-gray-300">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
               zoom <IconCaretdown />
             </div>
           </Dropdown>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Zoom in">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Zoom in"
+          >
             <i className="fa-solid fa-magnifying-glass-plus"></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Zoom out">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Zoom out"
+          >
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button className="py-1 px-2 hover:bg-gray-300" title="Undo">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Undo"
+          >
             <i className="fa-solid fa-rotate-left "></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Redo">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Redo"
+          >
             <i className="fa-solid fa-rotate-right"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
@@ -481,21 +478,33 @@ export default function ControlPanel() {
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover:bg-gray-300">
+            <div className="py-1 px-2 hover:bg-slate-200 rounded-md">
               <i className="fa-solid fa-plus"></i> <IconCaretdown />
             </div>
           </Dropdown>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Edit">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Edit"
+          >
             <i className="fa-solid fa-pen-to-square"></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Delete">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Delete"
+          >
             <i className="fa-solid fa-trash"></i>
           </button>
           <Divider layout="vertical" margin="8px" />
-          <button className="py-1 px-2 hover:bg-gray-300" title="Save">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Save"
+          >
             <i className="fa-regular fa-floppy-disk"></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Commit">
+          <button
+            className="py-1 px-2 hover:bg-slate-200 rounded-md"
+            title="Commit"
+          >
             <i className="fa-solid fa-code-branch"></i>
           </button>
         </div>

@@ -80,6 +80,7 @@ const EditorPanel = (props) => {
           onChange={(key) => {
             setTab(key);
           }}
+          collapsible
         >
           {contentList[parseInt(tab) - 1]}
         </Tabs>
