@@ -45,12 +45,7 @@ import {
   UndoRedoContext,
 } from "../pages/editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
-import {
-  defaultTableTheme,
-  defaultNoteTheme,
-  ObjectType,
-  Action,
-} from "../data/data";
+import { ObjectType, Action } from "../data/data";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import jsPDF from "jspdf";
@@ -62,7 +57,7 @@ export default function ControlPanel(props) {
     CODE: 2,
     IMPORT: 3,
   };
-  const ERROR = {
+  const STATUS = {
     NONE: 0,
     WARNING: 1,
     ERROR: 2,
@@ -75,16 +70,27 @@ export default function ControlPanel(props) {
     extension: "",
   });
   const [error, setError] = useState({
-    type: ERROR.NONE,
+    type: STATUS.NONE,
     message: "",
   });
   const [data, setData] = useState(null);
   const { layout, setLayout } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
-  const { relationships, tables, setTables, setRelationships } =
-    useContext(TableContext);
-  const { notes, setNotes } = useContext(NoteContext);
-  const { areas, setAreas } = useContext(AreaContext);
+  const {
+    relationships,
+    tables,
+    setTables,
+    addTable,
+    moveTable,
+    deleteTable,
+    setRelationships,
+    addRelationship,
+    deleteRelationship,
+  } = useContext(TableContext);
+  const { notes, setNotes, moveNote, addNote, deleteNote } =
+    useContext(NoteContext);
+  const { areas, setAreas, moveArea, addArea, deleteArea } =
+    useContext(AreaContext);
   const { undoStack, redoStack, setUndoStack, setRedoStack } =
     useContext(UndoRedoContext);
 
@@ -107,155 +113,18 @@ export default function ControlPanel(props) {
     setNotes(data.notes);
   };
 
-  const addTable = () => {
-    setTables((prev) => [
-      ...prev,
-      {
-        id: prev.length,
-        name: `table_${prev.length}`,
-        x: -settings.pan.x,
-        y: -settings.pan.y,
-        fields: [
-          {
-            name: "id",
-            type: "UUID",
-            default: "",
-            check: "",
-            primary: true,
-            unique: true,
-            notNull: true,
-            increment: true,
-            comment: "",
-          },
-        ],
-        comment: "",
-        indices: [],
-        color: defaultTableTheme,
-      },
-    ]);
-  };
-
-  const addArea = () => {
-    setAreas((prev) => [
-      ...prev,
-      {
-        id: prev.length,
-        name: `area_${prev.length}`,
-        x: -settings.pan.x,
-        y: -settings.pan.y,
-        width: 200,
-        height: 200,
-        color: defaultTableTheme,
-      },
-    ]);
-  };
-
-  const addNote = () => {
-    setNotes((prev) => [
-      ...prev,
-      {
-        id: prev.length,
-        x: -settings.pan.x,
-        y: -settings.pan.y,
-        title: `note_${prev.length}`,
-        content: "",
-        color: defaultNoteTheme,
-        height: 88,
-      },
-    ]);
-  };
-
-  const moveTable = (id, x, y) => {
-    setTables((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          setRelationships((prev) =>
-            prev.map((r) => {
-              if (r.startTableId === id) {
-                return {
-                  ...r,
-                  startX: x + 15,
-                  startY: y + r.startFieldId * 36 + 69,
-                };
-              } else if (r.endTableId === id) {
-                return {
-                  ...r,
-                  endX: x + 15,
-                  endY: y + r.endFieldId * 36 + 69,
-                };
-              }
-              return r;
-            })
-          );
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
-  const moveArea = (id, x, y) => {
-    setAreas((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
-  const moveNote = (id, x, y) => {
-    setNotes((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          return {
-            ...t,
-            x: x,
-            y: y,
-          };
-        }
-        return t;
-      })
-    );
-  };
-
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack.pop();
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        setTables((prev) =>
-          prev
-            .filter((e) => e.id !== prev.length - 1)
-            .map((e, i) => ({ ...e, id: i }))
-        );
+        deleteTable(tables[tables.length - 1].id, false);
       } else if (a.element === ObjectType.AREA) {
-        setAreas((prev) =>
-          prev
-            .filter((e) => e.id !== prev.length - 1)
-            .map((e, i) => ({ ...e, id: i }))
-        );
+        deleteArea(areas[areas.length - 1].id, false);
       } else if (a.element === ObjectType.NOTE) {
-        setNotes((prev) =>
-          prev
-            .filter((e) => e.id !== prev.length - 1)
-            .map((e, i) => ({ ...e, id: i }))
-        );
+        deleteNote(notes[notes.length - 1].id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev
-            .filter((e) => e.id !== a.data.id)
-            .map((e, idx) => ({ ...e, id: idx }))
-        );
+        deleteRelationship(a.data.id, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -280,17 +149,13 @@ export default function ControlPanel(props) {
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        setTables((prev) => {
-          const temp = prev.slice();
-          temp.splice(a.data.id, 0, a.data);
-          return temp.map((t, i) => ({ ...t, id: i }));
-        });
+        addTable(false, a.data);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) => {
-          const temp = prev.slice();
-          temp.splice(a.data.id, 0, a.data);
-          return temp.map((t, i) => ({ ...t, id: i }));
-        });
+        addRelationship(false, a.data);
+      } else if (a.element === ObjectType.NOTE) {
+        addNote(false, a.data);
+      } else if (a.element === ObjectType.AREA) {
+        addArea(false, a.data);
       }
       setRedoStack((prev) => [...prev, a]);
     }
@@ -301,17 +166,13 @@ export default function ControlPanel(props) {
     const a = redoStack.pop();
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        addTable();
+        addTable(false);
       } else if (a.element === ObjectType.AREA) {
-        addArea();
+        addArea(false);
       } else if (a.element === ObjectType.NOTE) {
-        addNote();
+        addNote(false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) => {
-          const temp = prev.slice();
-          temp.splice(a.data.id, 0, a.data);
-          return temp.map((t, i) => ({ ...t, id: i }));
-        });
+        addRelationship(false, a.data);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -336,17 +197,13 @@ export default function ControlPanel(props) {
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        setTables((prev) =>
-          prev
-            .filter((t) => t.id !== a.data.id)
-            .map((t, i) => ({ ...t, id: i }))
-        );
+        deleteTable(a.data.id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev
-            .filter((t) => t.id !== a.data.id)
-            .map((t, i) => ({ ...t, id: i }))
-        );
+        deleteRelationship(a.data.id, false);
+      } else if (a.element === ObjectType.NOTE) {
+        deleteNote(a.data.id, false);
+      } else if (a.element === ObjectType.AREA) {
+        deleteArea(a.data.id, false);
       }
       setUndoStack((prev) => [...prev, a]);
     }
@@ -772,51 +629,21 @@ export default function ControlPanel(props) {
           <button
             className="flex items-center py-1 px-2 hover:bg-slate-200 rounded"
             title="Add new table"
-            onClick={() => {
-              addTable();
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.ADD,
-                  element: ObjectType.TABLE,
-                },
-              ]);
-              setRedoStack([]);
-            }}
+            onClick={() => addTable()}
           >
             <IconAddTable />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add subject area"
-            onClick={() => {
-              addArea();
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.ADD,
-                  element: ObjectType.AREA,
-                },
-              ]);
-              setRedoStack([]);
-            }}
+            onClick={() => addArea()}
           >
             <IconAddArea />
           </button>
           <button
             className="py-1 px-2 hover:bg-slate-200 rounded flex items-center"
             title="Add new note"
-            onClick={() => {
-              addNote();
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.ADD,
-                  element: ObjectType.NOTE,
-                },
-              ]);
-              setRedoStack([]);
-            }}
+            onClick={() => addNote()}
           >
             <IconAddNote />
           </button>
@@ -856,7 +683,7 @@ export default function ControlPanel(props) {
             });
             saveAs(blob, `${exportData.filename}.${exportData.extension}`);
           } else if (visible === MODAL.IMPORT) {
-            if (error.type !== ERROR.ERROR) {
+            if (error.type !== STATUS.ERROR) {
               setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
               overwriteDiagram();
               setData(null);
@@ -873,7 +700,7 @@ export default function ControlPanel(props) {
             filename: `diagram_${new Date().toISOString()}`,
           }));
           setError({
-            type: ERROR.NONE,
+            type: STATUS.NONE,
             message: "",
           });
           setData(null);
@@ -885,7 +712,7 @@ export default function ControlPanel(props) {
         okButtonProps={{
           disabled:
             (visible === MODAL.IMPORT &&
-              (error.type === ERROR.ERROR || !data)) ||
+              (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
               !exportData.data),
         }}
@@ -909,7 +736,7 @@ export default function ControlPanel(props) {
                     jsonObject = JSON.parse(event.target.result);
                   } catch (error) {
                     setError({
-                      type: ERROR.ERROR,
+                      type: STATUS.ERROR,
                       message: "The file contains an error.",
                     });
                     return;
@@ -917,7 +744,7 @@ export default function ControlPanel(props) {
                   if (f.type === "application/json") {
                     if (!jsonDiagramIsValid(jsonObject)) {
                       setError({
-                        type: ERROR.ERROR,
+                        type: STATUS.ERROR,
                         message:
                           "The file is missing necessary properties for a diagram.",
                       });
@@ -926,7 +753,7 @@ export default function ControlPanel(props) {
                   } else if (f.name.split(".").pop() === "ddb") {
                     if (!ddbDiagramIsValid(jsonObject)) {
                       setError({
-                        type: ERROR.ERROR,
+                        type: STATUS.ERROR,
                         message:
                           "The file is missing necessary properties for a diagram.",
                       });
@@ -936,12 +763,12 @@ export default function ControlPanel(props) {
                   setData(jsonObject);
                   if (diagramIsEmpty()) {
                     setError({
-                      type: ERROR.OK,
+                      type: STATUS.OK,
                       message: "Everything looks good. You can now import.",
                     });
                   } else {
                     setError({
-                      type: ERROR.WARNING,
+                      type: STATUS.WARNING,
                       message:
                         "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
                     });
@@ -962,19 +789,19 @@ export default function ControlPanel(props) {
               accept="application/json,.ddb"
               onRemove={() =>
                 setError({
-                  type: ERROR.NONE,
+                  type: STATUS.NONE,
                   message: "",
                 })
               }
               onFileChange={() =>
                 setError({
-                  type: ERROR.NONE,
+                  type: STATUS.NONE,
                   message: "",
                 })
               }
               limit={1}
             ></Upload>
-            {error.type === ERROR.ERROR ? (
+            {error.type === STATUS.ERROR ? (
               <Banner
                 type="danger"
                 fullMode={false}
@@ -982,14 +809,14 @@ export default function ControlPanel(props) {
                   <div className="text-red-800">{error.message}</div>
                 }
               />
-            ) : error.type === ERROR.OK ? (
+            ) : error.type === STATUS.OK ? (
               <Banner
                 type="info"
                 fullMode={false}
                 description={<div>{error.message}</div>}
               />
             ) : (
-              error.type === ERROR.WARNING && (
+              error.type === STATUS.WARNING && (
                 <Banner
                   type="warning"
                   fullMode={false}

@@ -22,8 +22,8 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
-import { TableContext, UndoRedoContext } from "../pages/editor";
+import { Cardinality, Constraint } from "../data/data";
+import { TableContext } from "../pages/editor";
 
 export default function ReferenceOverview(props) {
   const columns = [
@@ -36,8 +36,8 @@ export default function ReferenceOverview(props) {
       dataIndex: "foreign",
     },
   ];
-  const { tables, relationships, setRelationships } = useContext(TableContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { tables, relationships, setRelationships, deleteRelationship } =
+    useContext(TableContext);
   const [refActiveIndex, setRefActiveIndex] = useState("");
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -233,22 +233,7 @@ export default function ReferenceOverview(props) {
                       icon={<IconDeleteStroked />}
                       block
                       type="danger"
-                      onClick={() => {
-                        setUndoStack((prev) => [
-                          ...prev,
-                          {
-                            action: Action.DELETE,
-                            element: ObjectType.RELATIONSHIP,
-                            data: relationships[i],
-                          },
-                        ]);
-                        setRelationships((prev) =>
-                          prev
-                            .filter((e) => e.id !== i)
-                            .map((e, idx) => ({ ...e, id: idx }))
-                        );
-                        setRedoStack([]);
-                      }}
+                      onClick={() => deleteRelationship(r.id, true)}
                     >
                       Delete
                     </Button>

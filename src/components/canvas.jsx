@@ -13,10 +13,10 @@ import {
 import Note from "./note";
 
 export default function Canvas(props) {
-  const { tables, setTables, relationships, setRelationships } =
+  const { tables, moveTable, relationships, addRelationship } =
     useContext(TableContext);
-  const { areas, setAreas } = useContext(AreaContext);
-  const { notes, setNotes } = useContext(NoteContext);
+  const { areas, setAreas, moveArea } = useContext(AreaContext);
+  const { notes, moveNote } = useContext(NoteContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [dragging, setDragging] = useState({
@@ -126,66 +126,21 @@ export default function Canvas(props) {
       }));
       setPanOffset({ x: e.clientX, y: e.clientY });
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
-      const updatedTables = tables.map((t) => {
-        if (t.id === dragging.id) {
-          return {
-            ...t,
-            x: e.clientX / settings.zoom - offset.x,
-            y: e.clientY / settings.zoom - offset.y,
-          };
-        }
-        return t;
-      });
-      setTables(updatedTables);
-      setRelationships((prev) =>
-        prev.map((r) => {
-          if (r.startTableId === dragging.id) {
-            return {
-              ...r,
-              startX: tables[r.startTableId].x + 15,
-              startY: tables[r.startTableId].y + r.startFieldId * 36 + 50 + 19,
-            };
-          } else if (r.endTableId === dragging.id) {
-            return {
-              ...r,
-              endX: tables[r.endTableId].x + 15,
-              endY: tables[r.endTableId].y + r.endFieldId * 36 + 50 + 19,
-            };
-          }
-          return r;
-        })
-      );
+      const dx = e.clientX / settings.zoom - offset.x;
+      const dy = e.clientY / settings.zoom - offset.y;
+      moveTable(dragging.id, dx, dy);
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
       areaResize.id === -1
     ) {
-      setAreas((prev) =>
-        prev.map((t) => {
-          if (t.id === dragging.id) {
-            const updatedArea = {
-              ...t,
-              x: e.clientX / settings.zoom - offset.x,
-              y: e.clientY / settings.zoom - offset.y,
-            };
-            return updatedArea;
-          }
-          return t;
-        })
-      );
+      const dx = e.clientX / settings.zoom - offset.x;
+      const dy = e.clientY / settings.zoom - offset.y;
+      moveArea(dragging.id, dx, dy);
     } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
-      setNotes((prev) =>
-        prev.map((t) => {
-          if (t.id === dragging.id) {
-            return {
-              ...t,
-              x: e.clientX / settings.zoom - offset.x,
-              y: e.clientY / settings.zoom - offset.y,
-            };
-          }
-          return t;
-        })
-      );
+      const dx = e.clientX / settings.zoom - offset.x;
+      const dy = e.clientY / settings.zoom - offset.y;
+      moveNote(dragging.id, dx, dy);
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
 
@@ -237,15 +192,30 @@ export default function Canvas(props) {
     setCursor("grabbing");
   };
 
-  const coordsDidUpdate = () => {
-    return !(
-      dragging.prevX === tables[dragging.id].x &&
-      dragging.prevY === tables[dragging.id].y
-    );
+  const coordsDidUpdate = (element) => {
+    switch (element) {
+      case ObjectType.TABLE:
+        return !(
+          dragging.prevX === tables[dragging.id].x &&
+          dragging.prevY === tables[dragging.id].y
+        );
+      case ObjectType.AREA:
+        return !(
+          dragging.prevX === areas[dragging.id].x &&
+          dragging.prevY === areas[dragging.id].y
+        );
+      case ObjectType.NOTE:
+        return !(
+          dragging.prevX === notes[dragging.id].x &&
+          dragging.prevY === notes[dragging.id].y
+        );
+      default:
+        return false;
+    }
   };
 
   const handleMouseUp = (e) => {
-    if (dragging.element !== ObjectType.NONE && coordsDidUpdate()) {
+    if (coordsDidUpdate(dragging.element)) {
       setUndoStack((prev) => [
         ...prev,
         {
@@ -289,38 +259,25 @@ export default function Canvas(props) {
     )
       return;
 
-    setRelationships((prev) => {
-      const newRelationship = {
-        ...line,
-        endTableId: onRect.tableId,
-        endFieldId: onRect.field,
-        endX: tables[onRect.tableId].x + 15,
-        endY: tables[onRect.tableId].y + onRect.field * 36 + 50 + 19,
-        name: `${tables[line.startTableId].name}_to_${
-          tables[onRect.tableId].name
-        }`,
-        id: prev.length,
-      };
-      setUndoStack((prevUndo) => [
-        ...prevUndo,
-        {
-          action: Action.ADD,
-          element: ObjectType.RELATIONSHIP,
-          data: newRelationship,
-        },
-      ]);
-      setRedoStack([]);
-      return [...prev, newRelationship];
+    addRelationship(true, {
+      ...line,
+      endTableId: onRect.tableId,
+      endFieldId: onRect.field,
+      endX: tables[onRect.tableId].x + 15,
+      endY: tables[onRect.tableId].y + onRect.field * 36 + 69,
+      name: `${tables[line.startTableId].name}_to_${
+        tables[onRect.tableId].name
+      }`,
+      id: relationships.length,
     });
   };
 
   const handleMouseWheel = (e) => {
     e.preventDefault();
-    if (e.deltaY <= 0) {
-      setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.05 }));
-    } else {
-      setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.05 }));
-    }
+    setSettings((prev) => ({
+      ...prev,
+      zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
+    }));
   };
 
   useEffect(() => {

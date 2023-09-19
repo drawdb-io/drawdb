@@ -23,7 +23,7 @@ import { defaultTableTheme, tableThemes } from "../data/data";
 import { AreaContext } from "../pages/editor";
 
 export default function AreaOverview(props) {
-  const { areas, setAreas } = useContext(AreaContext);
+  const { areas, setAreas, addArea, deleteArea } = useContext(AreaContext);
 
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -79,22 +79,7 @@ export default function AreaOverview(props) {
           />
         </Col>
         <Col span={8}>
-          <Button
-            icon={<IconPlus />}
-            block
-            onClick={() => {
-              const newArea = {
-                id: areas.length,
-                name: `area_${areas.length}`,
-                x: 0,
-                y: 0,
-                width: 200,
-                height: 200,
-                color: defaultTableTheme,
-              };
-              setAreas((prev) => [...prev, newArea]);
-            }}
-          >
+          <Button icon={<IconPlus />} block onClick={() => addArea()}>
             Add area
           </Button>
         </Col>
@@ -208,13 +193,8 @@ export default function AreaOverview(props) {
                   onClick={(e) => {
                     e.stopPropagation();
                     Toast.success(`Area deleted!`);
-                    setAreas((prev) =>
-                      prev
-                        .filter((e) => e.id !== i)
-                        .map((e, idx) => ({ ...e, id: idx }))
-                    );
+                    deleteArea(i, true);
                   }}
-                  //   className="delete-button"
                 ></Button>
               </Col>
             </Row>

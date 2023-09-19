@@ -24,7 +24,7 @@ import { NoteContext } from "../pages/editor";
 import { defaultNoteTheme, noteThemes } from "../data/data";
 
 export default function NotesOverview(props) {
-  const { notes, setNotes } = useContext(NoteContext);
+  const { notes, setNotes, addNote, deleteNote } = useContext(NoteContext);
   const [value, setValue] = useState("");
   const [activeKey, setActiveKey] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -78,22 +78,7 @@ export default function NotesOverview(props) {
           />
         </Col>
         <Col span={8}>
-          <Button
-            icon={<IconPlus />}
-            block
-            onClick={() => {
-              const newNote = {
-                id: notes.length,
-                x: 0,
-                y: 0,
-                title: `note_${notes.length}`,
-                content: "",
-                color: defaultNoteTheme,
-                height: 88,
-              };
-              setNotes((prev) => [...prev, newNote]);
-            }}
-          >
+          <Button icon={<IconPlus />} block onClick={() => addNote()}>
             Add note
           </Button>
         </Col>
@@ -189,11 +174,7 @@ export default function NotesOverview(props) {
                     type="danger"
                     onClick={() => {
                       Toast.success(`Note deleted!`);
-                      setNotes((prev) =>
-                        prev
-                          .filter((e) => e.id !== i)
-                          .map((e, idx) => ({ ...e, id: idx }))
-                      );
+                      deleteNote(i, true);
                     }}
                   ></Button>
                 </div>

@@ -40,7 +40,7 @@ export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
   const [visible, setVisible] = useState(false);
   const { layout } = useContext(LayoutContext);
-  const { setTables } = useContext(TableContext);
+  const { setTables, deleteTable } = useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
 
@@ -180,11 +180,7 @@ export default function Table(props) {
                         style={{ marginTop: "8px" }}
                         onClick={() => {
                           Toast.success(`Table deleted!`);
-                          setTables((prev) =>
-                            prev
-                              .filter((e) => e.id !== props.tableData.id)
-                              .map((e, idx) => ({ ...e, id: idx }))
-                          );
+                          deleteTable(props.tableData.id);
                           props.setSelectedTable("");
                         }}
                       >
@@ -683,11 +679,7 @@ export default function Table(props) {
                 type="danger"
                 onClick={() => {
                   Toast.success(`Table deleted!`);
-                  setTables((prev) =>
-                    prev
-                      .filter((e) => e.id !== props.tableData.id)
-                      .map((e, idx) => ({ ...e, id: idx }))
-                  );
+                  deleteTable(props.tableData.id);
                   props.setSelectedTable("");
                   setVisible(false);
                 }}
