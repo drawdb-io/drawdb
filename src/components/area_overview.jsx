@@ -222,8 +222,7 @@ export default function AreaOverview(props) {
                 <Button
                   icon={<IconDeleteStroked />}
                   type="danger"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={() => {
                     Toast.success(`Area deleted!`);
                     deleteArea(i, true);
                   }}

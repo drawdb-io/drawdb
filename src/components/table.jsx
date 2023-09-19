@@ -22,7 +22,6 @@ import {
   Input,
   TextArea,
   Card,
-  Form,
   Checkbox,
   Row,
   Col,
@@ -42,12 +41,10 @@ import {
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
-  const [indexActiveKey, setIndexActiveKey] = useState("");
   const [hoveredField, setHoveredField] = useState(-1);
   const [visible, setVisible] = useState(false);
   const { layout } = useContext(LayoutContext);
-  const { setTables, deleteTable, updateTable, updateField } =
-    useContext(TableContext);
+  const { deleteTable, updateTable, updateField } = useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useContext(SettingsContext);
 
@@ -813,7 +810,6 @@ export default function Table(props) {
               <Button
                 block
                 onClick={() => {
-                  setIndexActiveKey("1");
                   setUndoStack((prev) => [
                     ...prev,
                     {

@@ -102,8 +102,6 @@ export default function NotesOverview(props) {
             >
               <div className="flex justify-between align-top">
                 <TextArea
-                  field="content"
-                  label="Content"
                   placeholder="Add content"
                   value={n.content}
                   autosize

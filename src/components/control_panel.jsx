@@ -161,14 +161,7 @@ export default function ControlPanel(props) {
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
       if (a.element === ObjectType.AREA) {
-        setAreas((prev) =>
-          prev.map((n) => {
-            if (n.id === a.aid) {
-              return { ...n, ...a.undo };
-            }
-            return n;
-          })
-        );
+        updateArea(a.aid, a.undo);
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.undo);
       } else if (a.element === ObjectType.TABLE) {
@@ -293,14 +286,7 @@ export default function ControlPanel(props) {
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
       if (a.element === ObjectType.AREA) {
-        setAreas((prev) =>
-          prev.map((n) => {
-            if (n.id === a.aid) {
-              return { ...n, ...a.redo };
-            }
-            return n;
-          })
-        );
+        updateArea(a.aid, a.redo);
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.redo);
       } else if (a.element === ObjectType.TABLE) {
