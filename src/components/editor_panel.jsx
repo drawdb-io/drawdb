@@ -52,7 +52,7 @@ export default function EditorPanel(props) {
               id: props.rectangles.length + 1,
               x: 0,
               y: 0,
-              width: 100,
+              width: 240,
               height: 100,
               label: `rect ${props.rectangles.length + 1}`,
             };
@@ -95,7 +95,7 @@ export default function EditorPanel(props) {
                     id: props.rectangles.length + 1,
                     x: 0,
                     y: 0,
-                    width: 100,
+                    width: 240,
                     height: 100,
                     label: `rect ${props.rectangles.length + 1}`,
                   };

@@ -35,9 +35,11 @@ export default function ControlPanel() {
         break;
       case Tool.ZOOM:
         setOpenZoom((prev) => !prev);
+        setOpenAdd(false);
         break;
       case Tool.ADD:
         setOpenAdd((prev) => !prev);
+        setOpenZoom(false);
         break;
       default:
         break;
@@ -143,7 +145,7 @@ export default function ControlPanel() {
           <button className="py-1 px-2 hover:bg-gray-300" title="Zoom out">
             <i className="fa-solid fa-magnifying-glass-minus"></i>
           </button>
-          <button className="py-1 px-2 hover:bg-gray-300" title="Undi">
+          <button className="py-1 px-2 hover:bg-gray-300" title="Undo">
             <i className="fa-solid fa-rotate-left "></i>
           </button>
           <button className="py-1 px-2 hover:bg-gray-300" title="Redo">
