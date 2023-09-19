@@ -1,4 +1,4 @@
-import { React } from "react";
+import { React, useState } from "react";
 import { defaultTableTheme, sqlDataTypes, tableThemes } from "../data/data";
 import {
   Collapse,
@@ -11,6 +11,7 @@ import {
   TextArea,
   Popover,
   Checkbox,
+  Select,
 } from "@douyinfe/semi-ui";
 import {
   IconMore,
@@ -21,6 +22,8 @@ import {
 } from "@douyinfe/semi-icons";
 
 export default function DiagramOverview(props) {
+  const [indexActiveKey, setIndexActiveKey] = useState("");
+
   const updateColor = (id, c) => {
     const updatedTables = [...props.tables];
     updatedTables[id] = { ...updatedTables[id], color: c };
@@ -134,17 +137,91 @@ export default function DiagramOverview(props) {
               </div>
             </Form>
           ))}
-          <Card
-            bodyStyle={{ padding: "4px" }}
-            style={{ marginTop: "12px", marginBottom: "12px" }}
-            headerLine={false}
-          >
-            <Collapse>
-              <Collapse.Panel header="Indices" itemKey="1">
-                <p>indices</p>
-              </Collapse.Panel>
-            </Collapse>
-          </Card>
+          {t.indices.length > 0 && (
+            <Card
+              bodyStyle={{ padding: "4px" }}
+              style={{ marginTop: "12px", marginBottom: "12px" }}
+              headerLine={false}
+            >
+              <Collapse
+                activeKey={indexActiveKey}
+                onChange={(itemKey) => setIndexActiveKey(itemKey)}
+              >
+                <Collapse.Panel header="Indices" itemKey="1">
+                  {t.indices.map((idx, k) => (
+                    <div
+                      className="flex justify-between items-center mb-2"
+                      key={k}
+                    >
+                      <Select
+                        placeholder="Select fields"
+                        multiple
+                        optionList={t.fields.map((e) => ({
+                          value: e.name,
+                          label: e.name,
+                        }))}
+                        className="w-full"
+                        defaultValue={idx.fields}
+                        onChange={(value) => {
+                          const updatedTables = [...props.tables];
+                          const updatedIndices = [...t.indices];
+                          updatedIndices[k] = {
+                            name: `${value.join("_")}_index`,
+                            fields: [...value],
+                          };
+                          updatedTables[i] = {
+                            ...t,
+                            indices: [...updatedIndices],
+                          };
+                          props.setTables(updatedTables);
+                        }}
+                      />
+                      <Popover
+                        content={
+                          <div className="px-1">
+                            <Form>
+                              <Form.Input
+                                field="name"
+                                label="Name"
+                                initValue={idx.name}
+                                trigger="blur"
+                              />
+                            </Form>
+                            <Button
+                              icon={<IconDeleteStroked />}
+                              type="danger"
+                              block
+                              onClick={() => {
+                                const updatedTables = [...props.tables];
+                                const updatedIndices = [...t.indices];
+                                updatedIndices.splice(k, 1);
+                                updatedTables[i] = {
+                                  ...t,
+                                  indices: [...updatedIndices],
+                                };
+                                props.setTables(updatedTables);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        }
+                        trigger="click"
+                        position="rightTop"
+                        showArrow
+                      >
+                        <Button
+                          icon={<IconMore />}
+                          type="tertiary"
+                          style={{ marginLeft: "12px" }}
+                        ></Button>
+                      </Popover>
+                    </div>
+                  ))}
+                </Collapse.Panel>
+              </Collapse>
+            </Card>
+          )}
           <Card
             bodyStyle={{ padding: "4px" }}
             style={{ marginTop: "12px", marginBottom: "12px" }}
@@ -220,7 +297,23 @@ export default function DiagramOverview(props) {
               </Popover>
             </Col>
             <Col span={8}>
-              <Button block>Add index</Button>
+              <Button
+                block
+                onClick={() => {
+                  setIndexActiveKey("1");
+                  const updatedTables = [...props.tables];
+                  updatedTables[i] = {
+                    ...t,
+                    indices: [
+                      ...t.indices,
+                      { name: `index_${t.indices.length}`, fields: [] },
+                    ],
+                  };
+                  props.setTables(updatedTables);
+                }}
+              >
+                Add index
+              </Button>
             </Col>
             <Col span={8}>
               <Button block>Add field</Button>
