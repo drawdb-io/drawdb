@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -22,6 +22,7 @@ import {
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import { enterFullscreen, exitFullscreen } from "../utils";
+import { LayoutContext } from "../pages/editor";
 
 export default function ControlPanel(props) {
   const [visible, setVisible] = useState(false);
@@ -30,6 +31,7 @@ export default function ControlPanel(props) {
     `diagram_${new Date().toISOString()}`
   );
   const [extension, setExtension] = useState("");
+  const {layout, setLayout} = useContext(LayoutContext);
 
   const menu = {
     File: {
@@ -237,7 +239,7 @@ export default function ControlPanel(props) {
 
   return (
     <div>
-      {props.layout.header && header()}
+      {layout.header && header()}
       <div className="p-2 px-5 flex justify-between items-center rounded-xl bg-slate-100 my-1 sm:mx-1 md:mx-6 text-slate-700 select-none overflow-x-hidden">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
@@ -341,10 +343,10 @@ export default function ControlPanel(props) {
         </div>
         <button
           onClick={(e) =>
-            props.setLayout((prev) => ({ ...prev, header: !prev.header }))
+            setLayout((prev) => ({ ...prev, header: !prev.header }))
           }
         >
-          {props.layout.header ? <IconChevronUp /> : <IconChevronDown />}
+          {layout.header ? <IconChevronUp /> : <IconChevronDown />}
         </button>
       </div>
       <Modal
@@ -511,14 +513,14 @@ export default function ControlPanel(props) {
           <Dropdown.Menu>
             <Dropdown.Item
               icon={
-                props.layout.header ? (
+                layout.header ? (
                   <IconCheckboxTick />
                 ) : (
                   <div className="px-2"></div>
                 )
               }
               onClick={() =>
-                props.setLayout((prev) => ({
+                setLayout((prev) => ({
                   ...prev,
                   header: !prev.header,
                 }))
@@ -532,14 +534,14 @@ export default function ControlPanel(props) {
                 <Dropdown.Menu>
                   <Dropdown.Item
                     icon={
-                      props.layout.tables ? (
+                      layout.tables ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
                       )
                     }
                     onClick={() =>
-                      props.setLayout((prev) => ({
+                      setLayout((prev) => ({
                         ...prev,
                         tables: !prev.tables,
                       }))
@@ -549,14 +551,14 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
-                      props.layout.relationships ? (
+                      layout.relationships ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
                       )
                     }
                     onClick={() =>
-                      props.setLayout((prev) => ({
+                      setLayout((prev) => ({
                         ...prev,
                         relationships: !prev.relationships,
                       }))
@@ -566,14 +568,14 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
-                      props.layout.issues ? (
+                      layout.issues ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
                       )
                     }
                     onClick={() =>
-                      props.setLayout((prev) => ({
+                      setLayout((prev) => ({
                         ...prev,
                         issues: !prev.issues,
                       }))
@@ -583,14 +585,14 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
-                      props.layout.editor ? (
+                      layout.editor ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
                       )
                     }
                     onClick={() =>
-                      props.setLayout((prev) => ({
+                      setLayout((prev) => ({
                         ...prev,
                         editor: !prev.editor,
                       }))
@@ -600,14 +602,14 @@ export default function ControlPanel(props) {
                   </Dropdown.Item>
                   <Dropdown.Item
                     icon={
-                      props.layout.shapes ? (
+                      layout.shapes ? (
                         <IconCheckboxTick />
                       ) : (
                         <div className="px-2"></div>
                       )
                     }
                     onClick={() =>
-                      props.setLayout((prev) => ({
+                      setLayout((prev) => ({
                         ...prev,
                         shapes: !prev.shapes,
                       }))
@@ -620,14 +622,14 @@ export default function ControlPanel(props) {
             >
               <Dropdown.Item
                 icon={
-                  props.layout.sidebar ? (
+                  layout.sidebar ? (
                     <IconCheckboxTick />
                   ) : (
                     <div className="px-2"></div>
                   )
                 }
                 onClick={() =>
-                  props.setLayout((prev) => ({
+                  setLayout((prev) => ({
                     ...prev,
                     sidebar: !prev.sidebar,
                   }))
@@ -638,14 +640,14 @@ export default function ControlPanel(props) {
             </Dropdown>
             <Dropdown.Item
               icon={
-                props.layout.services ? (
+                layout.services ? (
                   <IconCheckboxTick />
                 ) : (
                   <div className="px-2"></div>
                 )
               }
               onClick={() =>
-                props.setLayout((prev) => ({
+                setLayout((prev) => ({
                   ...prev,
                   services: !prev.services,
                 }))
@@ -656,19 +658,19 @@ export default function ControlPanel(props) {
             <Dropdown.Divider />
             <Dropdown.Item
               icon={
-                props.layout.fullscreen ? (
+                layout.fullscreen ? (
                   <IconCheckboxTick />
                 ) : (
                   <div className="px-2"></div>
                 )
               }
               onClick={() => {
-                if (props.layout.fullscreen) {
+                if (layout.fullscreen) {
                   exitFullscreen();
                 } else {
                   enterFullscreen();
                 }
-                props.setLayout((prev) => ({
+                setLayout((prev) => ({
                   ...prev,
                   fullscreen: !prev.fullscreen,
                 }));

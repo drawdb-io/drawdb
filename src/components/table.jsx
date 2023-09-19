@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 // import { sqlDataTypes } from "../data/data";
 import { IconEdit, IconPlus, IconMore, IconMinus } from "@douyinfe/semi-icons";
 import {
@@ -10,12 +10,15 @@ import {
   Popover,
   Tag,
   Button,
+  SideSheet,
 } from "@douyinfe/semi-ui";
+import { LayoutContext } from "../pages/editor";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  // const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const {layout} = useContext(LayoutContext);
   // const [editFieldVisible, setEditFieldVisible] = useState(-1);
   // const [field, setField] = useState({
   //   name: "",
@@ -73,6 +76,7 @@ export default function Table(props) {
                     opacity: "0.7",
                     marginRight: "6px",
                   }}
+                  onClick={() => setVisible(true)}
                 ></Button>
                 <Button
                   icon={<IconPlus />}
@@ -106,11 +110,16 @@ export default function Table(props) {
                         ) : (
                           <div>
                             {props.tableData.indices.map((index, k) => (
-                              <div className="flex items-center my-1 px-2 py-1 rounded bg-gray-100" key={k}>
+                              <div
+                                className="flex items-center my-1 px-2 py-1 rounded bg-gray-100"
+                                key={k}
+                              >
                                 <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
                                 <div>
                                   {index.fields.map((f) => (
-                                    <Tag color="blue" key={f} className="me-1">{f}</Tag>
+                                    <Tag color="blue" key={f} className="me-1">
+                                      {f}
+                                    </Tag>
                                   ))}
                                 </div>
                               </div>
@@ -250,6 +259,14 @@ export default function Table(props) {
           })}
         </div>
       </foreignObject>
+      <SideSheet
+        title="Sidesheet"
+        visible={visible && !layout.sidebar}
+        onCancel={() => setVisible((prev) => !prev)}
+      >
+        <p>This is the content of a basic sidesheet.</p>
+        <p>Here is more content...</p>
+      </SideSheet>
     </g>
   );
 }

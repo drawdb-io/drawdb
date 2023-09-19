@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 import Sidebar from "../components/sidebar";
 import ControlPanel from "../components/control_panel";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Canvas from "../components/canvas";
 import EditorPanel from "../components/editor_panel";
+
+export const LayoutContext = createContext();
 
 export default function Editor(props) {
   const [code, setCode] = useState("");
@@ -31,21 +33,38 @@ export default function Editor(props) {
     if (w > 340) setWidth(w);
   };
 
+  const value = {layout, setLayout};
+
   return (
-    <div className="h-[100vh] overflow-hidden">
-      <ControlPanel layout={layout} setLayout={setLayout} />
-      <div
-        className={
-          layout.header
-            ? `flex h-[calc(100vh-123.93px)]`
-            : `flex h-[calc(100vh-51.97px)]`
-        }
-        onMouseUp={() => setResize(false)}
-        onMouseMove={dragHandler}
-      >
-        <DndProvider backend={HTML5Backend}>
-          {layout.sidebar && (
-            <EditorPanel
+    <LayoutContext.Provider value={value}>
+      <div className="h-[100vh] overflow-hidden">
+        <ControlPanel/>
+        <div
+          className={
+            layout.header
+              ? `flex h-[calc(100vh-123.93px)]`
+              : `flex h-[calc(100vh-51.97px)]`
+          }
+          onMouseUp={() => setResize(false)}
+          onMouseMove={dragHandler}
+        >
+          <DndProvider backend={HTML5Backend}>
+            {layout.sidebar && (
+              <EditorPanel
+                tables={tables}
+                setTables={setTables}
+                code={code}
+                setCode={setCode}
+                relationships={relationships}
+                setRelationships={setRelationships}
+                areas={areas}
+                setAreas={setAreas}
+                resize={resize}
+                setResize={setResize}
+                width={width}
+              />
+            )}
+            <Canvas
               tables={tables}
               setTables={setTables}
               code={code}
@@ -54,24 +73,11 @@ export default function Editor(props) {
               setRelationships={setRelationships}
               areas={areas}
               setAreas={setAreas}
-              resize={resize}
-              setResize={setResize}
-              width={width}
             />
-          )}
-          <Canvas
-            tables={tables}
-            setTables={setTables}
-            code={code}
-            setCode={setCode}
-            relationships={relationships}
-            setRelationships={setRelationships}
-            areas={areas}
-            setAreas={setAreas}
-          />
-        </DndProvider>
-        {layout.services && <Sidebar />}
+          </DndProvider>
+          {layout.services && <Sidebar />}
+        </div>
       </div>
-    </div>
+    </LayoutContext.Provider>
   );
 }
