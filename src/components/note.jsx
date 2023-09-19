@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
-import { NoteContext } from "../pages/editor";
+import React, { useContext, useState } from "react";
+import { NoteContext, UndoRedoContext } from "../pages/editor";
+import { Action, ObjectType } from "../data/data";
 
 export default function Note(props) {
   const { setNotes } = useContext(NoteContext);
   const w = 180;
   const r = 3;
   const fold = 24;
-
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const [editField, setEditField] = useState({});
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${props.data.id}`);
     textarea.style.height = "0";
@@ -69,6 +71,31 @@ export default function Note(props) {
             id={`note_${props.data.id}`}
             value={props.data.content}
             onChange={handleChange}
+            onFocus={(e) =>
+              setEditField({
+                content: e.target.value,
+                height: props.data.height,
+              })
+            }
+            onBlur={(e) => {
+              if (e.target.value === editField.name) return;
+              const textarea = document.getElementById(`note_${props.data.id}`);
+              textarea.style.height = "0";
+              textarea.style.height = textarea.scrollHeight + "px";
+              const newHeight = textarea.scrollHeight + 16 + 20 + 4;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.NOTE,
+                  nid: props.data.id,
+                  undo: editField,
+                  redo: { content: e.target.value, height: newHeight },
+                },
+              ]);
+              setRedoStack([]);
+              setEditField({});
+            }}
             className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
             style={{ backgroundColor: props.data.color }}
           ></textarea>

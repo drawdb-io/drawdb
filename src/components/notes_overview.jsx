@@ -20,12 +20,14 @@ import {
   IconSearch,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import { NoteContext } from "../pages/editor";
-import { defaultNoteTheme, noteThemes } from "../data/data";
+import { NoteContext, UndoRedoContext } from "../pages/editor";
+import { noteThemes, Action, ObjectType } from "../data/data";
 
 export default function NotesOverview(props) {
   const { notes, setNotes, addNote, deleteNote } = useContext(NoteContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [value, setValue] = useState("");
+  const [editField, setEditField] = useState({});
   const [activeKey, setActiveKey] = useState("");
   const [filteredResult, setFilteredResult] = useState(
     notes.map((t) => {
@@ -123,24 +125,35 @@ export default function NotesOverview(props) {
                     const newHeight = textarea.scrollHeight + 16 + 20 + 4;
                     updateNote(n.id, { height: newHeight, content: value });
                   }}
+                  onFocus={(e) =>
+                    setEditField({ content: e.target.value, height: n.height })
+                  }
+                  onBlur={(e) => {
+                    if (e.target.value === editField.name) return;
+                    const textarea = document.getElementById(`note_${n.id}`);
+                    textarea.style.height = "0";
+                    textarea.style.height = textarea.scrollHeight + "px";
+                    const newHeight = textarea.scrollHeight + 16 + 20 + 4;
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.NOTE,
+                        nid: i,
+                        undo: editField,
+                        redo: { content: e.target.value, height: newHeight },
+                      },
+                    ]);
+                    setRedoStack([]);
+                    setEditField({});
+                  }}
                   rows={3}
                 />
                 <div className="ms-2">
                   <Popover
                     content={
                       <div>
-                        <div className="flex justify-between items-center p-2">
-                          <div className="font-medium">Theme</div>
-                          <Button
-                            type="tertiary"
-                            size="small"
-                            onClick={() =>
-                              updateNote(i, { color: defaultNoteTheme })
-                            }
-                          >
-                            Clear
-                          </Button>
-                        </div>
+                        <div className="font-medium">Theme</div>
                         <hr />
                         <div className="py-3">
                           {noteThemes.map((c) => (
@@ -148,7 +161,20 @@ export default function NotesOverview(props) {
                               key={c}
                               style={{ backgroundColor: c }}
                               className="p-3 rounded-full mx-1"
-                              onClick={() => updateNote(i, { color: c })}
+                              onClick={() => {
+                                setUndoStack((prev) => [
+                                  ...prev,
+                                  {
+                                    action: Action.EDIT,
+                                    element: ObjectType.NOTE,
+                                    nid: i,
+                                    undo: { color: n.color },
+                                    redo: { color: c },
+                                  },
+                                ]);
+                                setRedoStack([]);
+                                updateNote(i, { color: c });
+                              }}
                             >
                               {n.color === c ? (
                                 <IconCheckboxTick style={{ color: "white" }} />

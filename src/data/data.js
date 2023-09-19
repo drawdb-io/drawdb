@@ -39,7 +39,7 @@ const tableThemes = [
   "#ff9159",
 ];
 
-const noteThemes = ["#ffdfd9", "#ffffc7", "#cffcb1", "#c7d2ff", "#e7c7ff"];
+const noteThemes = ["#ffdfd9", "#fcf7ac", "#cffcb1", "#c7d2ff", "#e7c7ff"];
 
 const defaultTableTheme = "#175e7a";
 const defaultNoteTheme = "#fcf7ac";

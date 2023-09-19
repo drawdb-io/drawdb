@@ -169,6 +169,15 @@ export default function ControlPanel(props) {
             return n;
           })
         );
+      } else if (a.element === ObjectType.NOTE) {
+        setNotes((prev) =>
+          prev.map((n) => {
+            if (n.id === a.nid) {
+              return { ...n, ...a.undo };
+            }
+            return n;
+          })
+        );
       } else if (a.element === ObjectType.TABLE) {
         if (a.component === "field") {
           updateField(a.data.undo.tid, a.data.undo.fid, a.data.undo.values);
@@ -313,6 +322,15 @@ export default function ControlPanel(props) {
         setAreas((prev) =>
           prev.map((n) => {
             if (n.id === a.aid) {
+              return { ...n, ...a.redo };
+            }
+            return n;
+          })
+        );
+      } else if (a.element === ObjectType.NOTE) {
+        setNotes((prev) =>
+          prev.map((n) => {
+            if (n.id === a.nid) {
               return { ...n, ...a.redo };
             }
             return n;
