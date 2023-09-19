@@ -6,7 +6,7 @@ import { sql } from "@codemirror/lang-sql";
 import { tags as t } from "@lezer/highlight";
 import Shape from "./shape";
 import { saveAs } from "file-saver";
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 import { Parser } from "node-sql-parser";
 import { Tabs } from "@douyinfe/semi-ui";
 import "react-resizable/css/styles.css";
@@ -165,10 +165,8 @@ const EditorPanel = (props) => {
         <br />
         <button
           onClick={() => {
-            html2canvas(document.getElementById("canvas")).then((canvas) => {
-              canvas.toBlob((blob) => {
-                saveAs(blob, "image.png");
-              });
+            toPng(document.getElementById("canvas")).then(function (dataUrl) {
+              saveAs(dataUrl, "canvas.png");
             });
           }}
         >
