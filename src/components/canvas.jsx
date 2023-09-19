@@ -185,7 +185,7 @@ export default function Canvas(props) {
         name: `${props.tables[line.startTableId].name}_to_${
           props.tables[onRect.tableId].name
         }`,
-        id: prev.length
+        id: prev.length,
       },
     ]);
   };
@@ -245,35 +245,30 @@ export default function Canvas(props) {
         >
           <defs>
             <pattern
-              id="smallGrid"
-              width="10"
-              height="10"
+              id="pattern-circles"
+              x="0"
+              y="0"
+              width="24"
+              height="24"
               patternUnits="userSpaceOnUse"
+              patternContentUnits="userSpaceOnUse"
             >
-              <path
-                d="M 10 0 L 0 0 0 10"
-                fill="none"
-                stroke="lightblue"
-                strokeWidth="0.5"
-              />
-            </pattern>
-            <pattern
-              id="grid"
-              width="100"
-              height="100"
-              patternUnits="userSpaceOnUse"
-            >
-              <rect width="100" height="100" fill="url(#smallGrid)" />
-              <path
-                d="M 100 0 L 0 0 0 100"
-                fill="none"
-                stroke="lightblue"
-                strokeWidth="1"
-              />
+              <circle
+                id="pattern-circle"
+                cx="4"
+                cy="4"
+                r="0.85"
+                fill="rgb(99, 152, 191)"
+              ></circle>
             </pattern>
           </defs>
-
-          <rect width="100%" height="100%" fill="url(#grid)" />
+          <rect
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="url(#pattern-circles)"
+          ></rect>
           {props.areas.map((a) => (
             <Area
               key={a.id}
@@ -305,7 +300,9 @@ export default function Canvas(props) {
               strokeDasharray="8,8"
             />
           )}
-          {props.relationships.map((e, i) => <Relationship key={i} data={e}/>)}
+          {props.relationships.map((e, i) => (
+            <Relationship key={i} data={e} />
+          ))}
         </svg>
       </div>
     </div>
