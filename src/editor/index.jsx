@@ -90,7 +90,6 @@ function Diagram(props) {
   const canvas = useRef(null);
 
   useEffect(() => {
-    // const graph = new dia.Graph();
     new dia.Paper({
       el: document.getElementById("canvas"),
       background: {
@@ -102,20 +101,6 @@ function Diagram(props) {
       gridSize: 1,
       interactive: true,
     });
-
-    const rect = new shapes.standard.Rectangle();
-    rect.position(100, 100);
-    rect.resize(100, 40);
-    rect.attr({
-      body: {
-        fill: "#7039FF",
-      },
-      label: {
-        text: "hi",
-        fill: "white",
-      },
-    });
-    rect.addTo(props.graph);
   });
 
   return <div id="canvas" ref={canvas} />;
@@ -124,6 +109,8 @@ function Diagram(props) {
 export default function Editor(props) {
   const graph = useMemo(() => new dia.Graph(), []);
   const [editor, setEditor] = useState(true);
+  const [code, setCode] = useState("");
+
   useEffect(() => {}, [graph]);
   return (
     <>
@@ -146,7 +133,7 @@ export default function Editor(props) {
             >
               change view
             </button>
-
+            <br />
             <button
               onClick={() => {
                 const rect = new shapes.standard.Rectangle();
@@ -162,12 +149,14 @@ export default function Editor(props) {
                   },
                 });
                 rect.addTo(graph);
+                setCode(`${code}\n\ncreate table hi`);
               }}
             >
               add
             </button>
             {editor ? (
               <CodeMirror
+                value={code}
                 height="100%"
                 theme={myTheme}
                 extensions={[sql()]}
