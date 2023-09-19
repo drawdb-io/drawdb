@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import chatIcon from "../assets/chat.png";
 import botIcon from "../assets/bot.png";
 import teamIcon from "../assets/group.png";
 import timeLine from "../assets/process.png";
 import todo from "../assets/calendar.png";
-import { Tooltip, SideSheet, List } from "@douyinfe/semi-ui";
-import { UndoRedoContext } from "../pages/editor";
+import { Tooltip, SideSheet, List, Badge } from "@douyinfe/semi-ui";
+import { MessageContext, UndoRedoContext } from "../pages/editor";
 import Todo from "./todo";
 import Chat from "./chat";
 
@@ -19,7 +19,10 @@ export default function Sidebar() {
     BOT: 5,
   };
   const { undoStack } = useContext(UndoRedoContext);
+  const { messages } = useContext(MessageContext);
   const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
+  const [seen, setSeen] = useState(0)
+  const [count, setCount] = useState(messages.length-seen);
 
   const getTitle = (type) => {
     switch (type) {
@@ -62,16 +65,31 @@ export default function Sidebar() {
     }
   };
 
+  useEffect(() => {
+    if (sidesheet !== SidesheetType.CHAT) {
+      setCount((c) => messages.length - seen);
+    }
+  }, [messages.length, seen, sidesheet, SidesheetType.CHAT]);
+
   return (
     <>
-      <div className="px-3 py-3 shadow-lg h-full select-none">
+      <div className="ps-3 pe-4 py-4 shadow-lg h-full select-none">
         <Tooltip content="Chat">
-          <button
-            className="block"
-            onClick={() => setSidesheet(SidesheetType.CHAT)}
+          <Badge
+            count={count === 0 ? null : count}
+            overflowCount={99}
+            type="danger"
           >
-            <img src={chatIcon} className="w-8 mb-5" alt="chat icon" />
-          </button>
+            <button
+              className="block"
+              onClick={() => {
+                setSidesheet(SidesheetType.CHAT);
+                setSeen(messages.length);
+              }}
+            >
+              <img src={chatIcon} className="w-8 mb-5" alt="chat icon" />
+            </button>
+          </Badge>
         </Tooltip>
         <Tooltip content="Team">
           <button className="block">
@@ -104,6 +122,7 @@ export default function Sidebar() {
         visible={sidesheet !== SidesheetType.NONE}
         onCancel={() => {
           setSidesheet(SidesheetType.NONE);
+          setSeen(messages.length);
         }}
         width={340}
         title={getTitle(sidesheet)}
