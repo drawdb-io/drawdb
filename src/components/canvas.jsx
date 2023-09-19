@@ -12,6 +12,7 @@ import {
   SelectContext,
 } from "../pages/editor";
 import Note from "./note";
+import { Toast } from "@douyinfe/semi-ui";
 
 export default function Canvas(props) {
   const { tables, updateTable, relationships, addRelationship } =
@@ -326,6 +327,13 @@ export default function Canvas(props) {
     if (onRect.tableId < 0) return;
     if (onRect.field < 0) return;
     if (
+      tables[line.startTableId].fields[line.startFieldId].type !==
+      tables[onRect.tableId].fields[onRect.field].type
+    ) {
+      Toast.info("Cannot connect");
+      return;
+    }
+    if (
       line.startTableId === onRect.tableId &&
       line.startFieldId === onRect.field
     )
@@ -339,9 +347,7 @@ export default function Canvas(props) {
       endY: tables[onRect.tableId].y + onRect.field * 36 + 69,
       name: `${tables[line.startTableId].name}_FK_${
         tables[line.startTableId].fields[line.startFieldId].name
-      }_to_${
-        tables[onRect.tableId].fields[onRect.field].name
-      }`,
+      }_to_${tables[onRect.tableId].fields[onRect.field].name}`,
       id: relationships.length,
     });
   };

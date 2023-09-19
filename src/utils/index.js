@@ -309,11 +309,23 @@ function validateDiagram(diagram) {
   });
 
   const duplicateFKName = {};
-  diagram.relationships.forEach((relationship) => {
-    if (duplicateFKName[relationship.name]) {
-      issues.push(`Duplicate relationship by the name "${relationship.name}"`);
+  diagram.relationships.forEach((r) => {
+    if (duplicateFKName[r.name]) {
+      issues.push(`Duplicate reference by the name "${r.name}"`);
     } else {
-      duplicateFKName[relationship.name] = true;
+      duplicateFKName[r.name] = true;
+    }
+
+    if (
+      diagram.tables[r.startTableId].fields[r.startFieldId].type !==
+      diagram.tables[r.endTableId].fields[r.endFieldId].type
+    ) {
+      issues.push(`Referencing column "${
+        diagram.tables[r.endTableId].fields[r.endFieldId].name
+      }" and referenced column "${
+        diagram.tables[r.startTableId].fields[r.startFieldId].name
+      }" are incompatible.
+      `);
     }
   });
 
