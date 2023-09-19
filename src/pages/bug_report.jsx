@@ -80,68 +80,70 @@ export default function BugReport() {
         } my-1`}
       />
       <div className="grid grid-cols-12 gap-8 my-6 mx-8">
-        <div className="col-span-4 card-theme p-5 rounded-md">
-          <div className="flex items-center">
-            <IconPaperclip />
-            <div className="font-bold ms-1">Describe the bug </div>
+        <div className="col-span-4">
+          <div className="card-theme p-6 rounded-md">
+            <div className="flex items-center">
+              <IconPaperclip />
+              <div className="font-bold ms-1">Describe the bug </div>
+            </div>
+            <div className="text-sm mt-1">
+              Please provide a clear and concise description of what the bug is.
+            </div>
+            <div className="flex items-center mt-3">
+              <IconPaperclip />
+              <div className="font-bold ms-1">Steps to reproduce the bug </div>
+            </div>
+            <div className="text-sm mt-1">
+              Please provide the steps of how to reproduce the bug.
+            </div>
+            <div className="flex items-center mt-3">
+              <IconPaperclip />
+              <div className="font-bold ms-1">Expected behaviour</div>
+            </div>
+            <div className="text-sm mt-1">
+              Tell us what you expected to see vs what you saw.
+            </div>
+            <div className="flex items-center mt-3">
+              <IconPaperclip />
+              <div className="font-bold ms-1">Your browser and device</div>
+            </div>
+            <div className="text-sm mt-1">
+              What web browser and device did you encounter the bug on.
+            </div>
+            <div className="flex items-center mt-3">
+              <IconPaperclip />
+              <div className="font-bold ms-1">Screenshots</div>
+            </div>
+            <div className="text-sm mt-1">
+              Add any relevant images if possible.
+            </div>
+            <div className="flex items-center justify-center my-2">
+              <hr
+                className={`${
+                  theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+                } flex-grow`}
+              />
+              <div className="text-sm font-semibold m-2">Alternatively</div>
+              <hr
+                className={`${
+                  theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+                } flex-grow`}
+              />
+            </div>
+            <Button
+              block
+              icon={<IconGithubLogo />}
+              style={{ backgroundColor: "#239144", color: "white" }}
+              onClick={() => {
+                window.open(
+                  "https://github.com/drawdb-io/drawdb-issues/issues",
+                  "_self"
+                );
+              }}
+            >
+              Add an issue
+            </Button>
           </div>
-          <div className="text-sm mt-1">
-            Please provide a clear and concise description of what the bug is.
-          </div>
-          <div className="flex items-center mt-3">
-            <IconPaperclip />
-            <div className="font-bold ms-1">Steps to reproduce the bug </div>
-          </div>
-          <div className="text-sm mt-1">
-            Please provide the steps of how to reproduce the bug.
-          </div>
-          <div className="flex items-center mt-3">
-            <IconPaperclip />
-            <div className="font-bold ms-1">Expected behaviour</div>
-          </div>
-          <div className="text-sm mt-1">
-            Tell us what you expected to see vs what you saw.
-          </div>
-          <div className="flex items-center mt-3">
-            <IconPaperclip />
-            <div className="font-bold ms-1">Your browser and device</div>
-          </div>
-          <div className="text-sm mt-1">
-            What web browser and device did you encounter the bug on.
-          </div>
-          <div className="flex items-center mt-3">
-            <IconPaperclip />
-            <div className="font-bold ms-1">Screenshots</div>
-          </div>
-          <div className="text-sm mt-1">
-            Add any relevant images if possible.
-          </div>
-          <div className="flex items-center justify-center my-2">
-            <hr
-              className={`${
-                theme === "dark" ? "border-zinc-700" : "border-zinc-300"
-              } flex-grow`}
-            />
-            <div className="text-sm font-semibold m-2">Alternatively</div>
-            <hr
-              className={`${
-                theme === "dark" ? "border-zinc-700" : "border-zinc-300"
-              } flex-grow`}
-            />
-          </div>
-          <Button
-            block
-            icon={<IconGithubLogo />}
-            style={{ backgroundColor: "#239144", color: "white" }}
-            onClick={() => {
-              window.open(
-                "https://github.com/drawdb-io/drawdb-issues/issues",
-                "_self"
-              );
-            }}
-          >
-            Add an issue
-          </Button>
         </div>
         <div className="col-span-8">
           <Banner
@@ -159,7 +161,7 @@ export default function BugReport() {
           />
           <div className="p-5 mt-6 card-theme rounded-md">
             <Input placeholder="Title" />
-            <RichEditor />
+            <RichEditor theme={theme} />
             <Upload
               action="#"
               beforeUpload={({ file, fileList }) => {}}
