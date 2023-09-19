@@ -184,6 +184,23 @@ export default function Table(props) {
                           </div>
                         )}
                       </div>
+                      <Button
+                        icon={<IconDeleteStroked />}
+                        type="danger"
+                        block
+                        style={{ marginTop: "8px" }}
+                        onClick={() => {
+                          Toast.success(`Table deleted!`);
+                          setTables((prev) =>
+                            prev
+                              .filter((e) => e.id !== props.tableData.id)
+                              .map((e, idx) => ({ ...e, id: idx }))
+                          );
+                          props.setSelectedTable("");
+                        }}
+                      >
+                        Delete table
+                      </Button>
                     </div>
                   }
                   position="rightTop"
