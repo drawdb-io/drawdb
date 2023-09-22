@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 test.html
+.env.dev
+.env

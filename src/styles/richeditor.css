@@ -7,7 +7,7 @@
 }
 
 .editor-container {
-  margin: 20px auto 20px auto;
+  margin: 16px auto 16px auto;
   border-radius: 6px;
   color: var(--semi-color-text-1);
   background-color: rgba(var(--semi-grey-1), 1);
@@ -24,7 +24,7 @@
 }
 
 .editor-input {
-  min-height: 150px;
+  min-height: 160px;
   resize: none;
   font-size: 15px;
   position: relative;
@@ -195,6 +195,7 @@
   padding: 0;
   margin: 0;
   margin-left: 16px;
+  list-style-type: circle;
 }
 
 .editor-listitem {

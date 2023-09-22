@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
-import { Banner, Button, Input, Upload } from "@douyinfe/semi-ui";
+import { Banner, Button, Input, Upload, Toast } from "@douyinfe/semi-ui";
 import {
   IconSun,
   IconMoon,
@@ -13,36 +13,90 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { editorConfig } from "../data/editor_config";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
+import axios from "axios";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
+  const [data, setData] = useState({
+    title: "",
+    attachments: [],
+  });
+
+  const onFileChange = (fileList) => {
+    const attachments = [];
+
+    const processFile = (index) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const dataUri = event.target.result;
+        attachments.push({ path: dataUri, filename: fileList[index].name });
+      };
+
+      reader.readAsDataURL(fileList[index].fileInstance);
+    };
+
+    fileList.forEach((_, i) => processFile(i));
+
+    setData((prev) => ({
+      ...prev,
+      attachments: attachments,
+    }));
+  };
 
   const onSubmit = useCallback(
     (e) => {
       editor.update(() => {
-        const tmp = $generateHtmlFromNodes(editor);
-        console.log(tmp);
+        const sendMail = async () => {
+          await axios
+            .post(`${process.env.REACT_APP_BACKEND_URL}/report_bug`, {
+              subject: data.title,
+              message: $generateHtmlFromNodes(editor),
+              attachments: data.attachments,
+            })
+            .then((res) => Toast.success("Bug reported!"))
+            .catch((err) => Toast.error("Oops! Something went wrong."));
+        };
+        sendMail();
       });
     },
-    [editor]
+    [editor, data]
   );
 
   return (
     <div className="p-5 mt-6 card-theme rounded-md">
-      <Input placeholder="Title" />
+      <Input
+        placeholder="Title"
+        value={data.title}
+        onChange={(v) => setData((prev) => ({ ...prev, title: v }))}
+      />
       <RichEditor theme={theme} />
       <Upload
         action="#"
-        beforeUpload={({ file, fileList }) => {}}
+        onChange={(info) => onFileChange(info.fileList)}
+        beforeUpload={({ file, fileList }) => {
+          return {
+            autoRemove: false,
+            fileInstance: file.fileInstance,
+            status: "success",
+            shouldUpload: false,
+          };
+        }}
         draggable={true}
         dragMainText="Click to upload the file or drag and drop the file here"
-        dragSubText="Support json"
-        accept="application/json,.ddb"
-        onRemove={() => {}}
-        onFileChange={() => {}}
-        limit={5}
+        dragSubText="Upload up to 3 images"
+        accept="image/*"
+        limit={3}
       ></Upload>
-      <Button onClick={onSubmit}>Submit</Button>
+      <div className="pt-4 flex justify-between items-center">
+        <div className="text-sm opacity-80">
+          <i className="fa-brands fa-markdown me-1"></i>Styling with markdown is
+          supported
+        </div>
+        <Button onClick={onSubmit} style={{ padding: "16px 24px" }}>
+          Submit
+        </Button>
+      </div>
     </div>
   );
 }
