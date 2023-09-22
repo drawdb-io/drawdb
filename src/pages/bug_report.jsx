@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
-import { Banner, Button, Input, Upload, Toast } from "@douyinfe/semi-ui";
+import { Banner, Button, Input, Upload, Toast, Spin } from "@douyinfe/semi-ui";
 import {
   IconSun,
   IconMoon,
@@ -13,6 +13,7 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { editorConfig } from "../data/editor_config";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
+import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
 
 function Form({ theme }) {
@@ -21,6 +22,20 @@ function Form({ theme }) {
     title: "",
     attachments: [],
   });
+  const [loading, setLoading] = useState(false);
+  const uploadRef = useRef();
+
+  const resetForm = () => {
+    setData({
+      title: "",
+      attachments: [],
+    });
+    setLoading(false);
+
+    if (uploadRef.current) {
+      uploadRef.current.clear();
+    }
+  };
 
   const onFileChange = (fileList) => {
     const attachments = [];
@@ -46,6 +61,7 @@ function Form({ theme }) {
 
   const onSubmit = useCallback(
     (e) => {
+      setLoading(true);
       editor.update(() => {
         const sendMail = async () => {
           await axios
@@ -54,8 +70,15 @@ function Form({ theme }) {
               message: $generateHtmlFromNodes(editor),
               attachments: data.attachments,
             })
-            .then((res) => Toast.success("Bug reported!"))
-            .catch((err) => Toast.error("Oops! Something went wrong."));
+            .then((res) => {
+              Toast.success("Bug reported!");
+              editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+              resetForm();
+            })
+            .catch((err) => {
+              Toast.error("Oops! Something went wrong.");
+              setLoading(false);
+            });
         };
         sendMail();
       });
@@ -73,8 +96,9 @@ function Form({ theme }) {
       <RichEditor theme={theme} />
       <Upload
         action="#"
+        ref={uploadRef}
         onChange={(info) => onFileChange(info.fileList)}
-        beforeUpload={({ file, fileList }) => {
+        beforeUpload={({ file }) => {
           return {
             autoRemove: false,
             fileInstance: file.fileInstance,
@@ -93,9 +117,18 @@ function Form({ theme }) {
           <i className="fa-brands fa-markdown me-1"></i>Styling with markdown is
           supported
         </div>
-        <Button onClick={onSubmit} style={{ padding: "16px 24px" }}>
-          Submit
-        </Button>
+        <div className="flex items-center">
+          <Button
+            onClick={onSubmit}
+            style={{ padding: "16px 24px" }}
+            disabled={loading || data.title === "" || !data.title}
+          >
+            Submit
+          </Button>
+          <div className={loading ? "ms-2" : "hidden"}>
+            <Spin />
+          </div>
+        </div>
       </div>
     </div>
   );

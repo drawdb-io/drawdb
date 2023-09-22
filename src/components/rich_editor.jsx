@@ -6,6 +6,7 @@ import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { TRANSFORMERS } from "@lexical/markdown";
 
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
@@ -36,6 +37,7 @@ export default function RichEditor({ theme }) {
         <AutoLinkPlugin />
         <ListMaxIndentLevelPlugin maxDepth={7} />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        <ClearEditorPlugin/>
       </div>
     </div>
   );
