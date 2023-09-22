@@ -203,8 +203,8 @@ export default function BugReport() {
           theme === "dark" ? "border-zinc-700" : "border-zinc-300"
         } my-1`}
       />
-      <div className="grid grid-cols-12 gap-8 my-6 mx-8">
-        <div className="col-span-4">
+      <div className="grid grid-cols-12 gap-8 my-6 mx-8 sm:mx-3">
+        <div className="col-span-4 md:col-span-12 lg:col-span-4">
           <div className="card-theme p-6 rounded-md">
             <div className="flex items-center">
               <IconPaperclip />
@@ -269,7 +269,7 @@ export default function BugReport() {
             </Button>
           </div>
         </div>
-        <div className="col-span-8">
+        <div className="col-span-8 md:col-span-12 lg:col-span-8">
           <Banner
             fullMode={false}
             type="info"
