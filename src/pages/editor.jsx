@@ -454,7 +454,7 @@ export default function Editor(props) {
     );
 
   useEffect(() => {
-    document.title = "Editor - drawDB";
+    document.title = "Editor | drawDB";
 
     socket.connect();
 

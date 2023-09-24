@@ -21,7 +21,7 @@ export default function LandingPage() {
         </div>
       )}
       <div>
-        <div className="py-5 px-6 flex justify-between">
+        <div className="py-5 px-6 flex justify-between items-center">
           <div className="flex items-center justify-start">
             <Link to="/">
               <img src={logo} alt="logo" className="me-2" />
@@ -42,9 +42,17 @@ export default function LandingPage() {
               Download
             </Link>
           </div>
-          <button className="px-6 py-2 bg-[#386b8f] text-white font-semibold rounded">
-            Log in
-          </button>
+          <div>
+            <Link to="" className="me-5 font-semibold">
+              Log in
+            </Link>
+            <Link
+              to="/signup"
+              className="px-5 py-2.5 bg-[#386b8f] hover:bg-[#4e8bb6] text-white font-semibold rounded-md"
+            >
+              Sign up
+            </Link>
+          </div>
         </div>
         <hr />
       </div>

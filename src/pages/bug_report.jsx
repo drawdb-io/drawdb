@@ -151,7 +151,7 @@ export default function BugReport() {
         body.setAttribute("theme-mode", "light");
       }
     }
-    document.title = "Report a bug - drawDB";
+    document.title = "Report a bug | drawDB";
     document.body.setAttribute("class", "theme");
   }, [setTheme]);
 

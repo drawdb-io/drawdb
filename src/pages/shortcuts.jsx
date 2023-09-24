@@ -81,7 +81,7 @@ export default function Shortcuts() {
         body.setAttribute("theme-mode", "light");
       }
     }
-    document.title = "Shortcuts - drawDB";
+    document.title = "Shortcuts | drawDB";
     document.body.setAttribute("class", "theme");
   }, [setTheme]);
 
