@@ -4,6 +4,7 @@ import logo from "../assets/logo_light_46.png";
 import ReCAPTCHA from "react-google-recaptcha";
 import { IconEyeClosedSolid, IconEyeOpened } from "@douyinfe/semi-icons";
 import { Banner } from "@douyinfe/semi-ui";
+import axios from "axios";
 
 export default function SignUp() {
   const [formValues, setFormValues] = useState({
@@ -21,7 +22,18 @@ export default function SignUp() {
       [e.target.name]: e.target.value,
     }));
 
-  const onSubmit = () => console.log(formValues);
+  const onSubmit = async () => {
+    await axios
+      .post(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+        username: formValues.username,
+        email: formValues.email,
+        password: formValues.password,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {});
+  };
 
   useEffect(() => {
     document.title = "Create account | drawDB";
@@ -29,8 +41,8 @@ export default function SignUp() {
 
   return (
     <div className="grid grid-cols-5 h-screen select-none">
-      <div className="bg-indigo-300 col-span-3 overflow-y-hidden"></div>
-      <div className="col-span-2 flex flex-col justify-center items-center my-6">
+      <div className="bg-indigo-300 col-span-3 sm:hidden md:hidden lg:col-span-2 overflow-y-hidden"></div>
+      <div className="col-span-2 lg:col-span-3 sm:col-span-full md:col-span-full flex flex-col justify-center items-center my-6 mx-2">
         <Link to="/">
           <img src={logo} alt="logo" className="mx-auto h-[38px]" />
         </Link>
@@ -139,7 +151,7 @@ export default function SignUp() {
           </div>
           <button className="w-full px-3 py-2.5 mt-2 bg-[#386b8f] hover:bg-[#4e8bb6] rounded text-white text-sm font-semibold">
             Google
-          </button>{" "}
+          </button>
           <button className="w-full px-3 py-2.5 my-2 bg-[#386b8f] hover:bg-[#4e8bb6] rounded text-white text-sm font-semibold">
             Github
           </button>

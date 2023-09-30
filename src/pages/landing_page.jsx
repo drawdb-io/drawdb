@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
 import logo from "../assets/logo_light_46.png";
 
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
+
+  useEffect(()=>{
+    document.title = "drawDB | Online database diagram editor and SQL generator"
+  })
 
   return (
     <div>
@@ -48,7 +52,7 @@ export default function LandingPage() {
             </Link>
             <Link
               to="/signup"
-              className="px-5 py-2.5 bg-[#386b8f] hover:bg-[#4e8bb6] text-white font-semibold rounded-md"
+              className="px-6 py-3 bg-[#386b8f] hover:bg-[#4e8bb6] text-white font-semibold rounded-md"
             >
               Sign up
             </Link>
