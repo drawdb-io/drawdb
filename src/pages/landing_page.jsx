@@ -47,7 +47,7 @@ export default function LandingPage() {
             </Link>
           </div>
           <div>
-            <Link to="" className="me-5 font-semibold">
+            <Link to="/login" className="me-5 font-semibold">
               Log in
             </Link>
             <Link

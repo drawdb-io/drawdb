@@ -5,6 +5,7 @@ import Survey from "./pages/survey";
 import Shortcuts from "./pages/shortcuts";
 import BugReport from "./pages/bug_report";
 import SignUp from "./pages/signup";
+import Login from "./pages/login";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/shortcuts" element={<Shortcuts />} />
         <Route path="/bug_report" element={<BugReport />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );
