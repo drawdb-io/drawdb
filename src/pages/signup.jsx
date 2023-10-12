@@ -42,7 +42,7 @@ export default function SignUp() {
   return (
     <div className="grid grid-cols-5 h-screen select-none">
       <div className="bg-indigo-300 col-span-3 sm:hidden md:hidden lg:col-span-2 overflow-y-hidden"></div>
-      <div className="col-span-2 lg:col-span-3 sm:col-span-full md:col-span-full flex flex-col justify-center items-center my-6 mx-2">
+      <div className="col-span-2 lg:col-span-3 sm:col-span-full md:col-span-full flex flex-col justify-center items-center my-6">
         <Link to="/">
           <img src={logo} alt="logo" className="mx-auto h-[38px]" />
         </Link>

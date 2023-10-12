@@ -93,7 +93,7 @@ function Form({ theme }) {
         value={data.title}
         onChange={(v) => setData((prev) => ({ ...prev, title: v }))}
       />
-      <RichEditor theme={theme} />
+      <RichEditor theme={theme} placeholder={"Describe the bug"} />
       <Upload
         action="#"
         ref={uploadRef}

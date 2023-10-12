@@ -978,8 +978,8 @@ export default function ControlPanel(props) {
       "Report a bug": {
         function: () => window.open("/bug_report", "_blank"),
       },
-      "Suggest a feature": {
-        function: () => {},
+      "Give feedback": {
+        function: () => window.open("/survey", "_blank"),
       },
     },
   };

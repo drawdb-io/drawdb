@@ -6,7 +6,7 @@ import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { TRANSFORMERS } from "@lexical/markdown";
 
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
@@ -15,18 +15,18 @@ import CodeHighlightPlugin from "../plugins/CodeHighlightPlugin";
 import AutoLinkPlugin from "../plugins/AutoLinkPlugin";
 import "../styles/richeditor.css";
 
-function Placeholder() {
-  return <div className="editor-placeholder">Describe the bug</div>;
+function Placeholder({ text }) {
+  return <div className="editor-placeholder">{text || ""}</div>;
 }
 
-export default function RichEditor({ theme }) {
+export default function RichEditor({ theme, placeholder }) {
   return (
     <div className="editor-container">
       <ToolbarPlugin theme={theme} />
       <div className="editor-inner">
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" />}
-          placeholder={<Placeholder />}
+          placeholder={<Placeholder text={placeholder} />}
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
@@ -37,7 +37,7 @@ export default function RichEditor({ theme }) {
         <AutoLinkPlugin />
         <ListMaxIndentLevelPlugin maxDepth={7} />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        <ClearEditorPlugin/>
+        <ClearEditorPlugin />
       </div>
     </div>
   );
