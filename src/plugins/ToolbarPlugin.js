@@ -39,30 +39,29 @@ import {
   getDefaultCodeLanguage,
   getCodeLanguages,
 } from "@lexical/code";
+import { Dropdown } from "@douyinfe/semi-ui";
+import "../styles/richeditor.css";
 
 const LowPriority = 1;
 
-const supportedBlockTypes = new Set([
-  "paragraph",
-  "quote",
-  "code",
-  "h1",
-  "h2",
-  "ul",
-  "ol",
-]);
+const blockTypeToIcon = {
+  code: "bi-code-slash",
+  h1: "bi-type-h1",
+  h2: "bi-type-h2",
+  ol: "bi-list-ol",
+  paragraph: "bi-text-paragraph",
+  quote: "bi-chat-square-quote",
+  ul: "bi-list-ul",
+};
 
 const blockTypeToBlockName = {
-  code: "Code Block",
+  paragraph: "Paragraph",
   h1: "Large Heading",
   h2: "Small Heading",
-  h3: "Heading",
-  h4: "Heading",
-  h5: "Heading",
-  ol: "Numbered List",
-  paragraph: "Paragraph",
-  quote: "Quote",
   ul: "Bulleted List",
+  ol: "Numbered List",
+  code: "Code Block",
+  quote: "Quote",
 };
 
 function Divider() {
@@ -252,83 +251,38 @@ function getSelectedNode(selection) {
   }
 }
 
-function BlockOptionsDropdownList({
-  editor,
-  blockType,
-  toolbarRef,
-  setShowBlockOptionsDropDown,
-  theme,
-}) {
-  const dropDownRef = useRef(null);
-
-  useEffect(() => {
-    const toolbar = toolbarRef.current;
-    const dropDown = dropDownRef.current;
-
-    if (toolbar !== null && dropDown !== null) {
-      const { top, left } = toolbar.getBoundingClientRect();
-      dropDown.style.top = `${top + 40}px`;
-      dropDown.style.left = `${left}px`;
-    }
-  }, [dropDownRef, toolbarRef]);
-
-  useEffect(() => {
-    const dropDown = dropDownRef.current;
-    const toolbar = toolbarRef.current;
-
-    if (dropDown !== null && toolbar !== null) {
-      const handle = (event) => {
-        const target = event.target;
-
-        if (!dropDown.contains(target) && !toolbar.contains(target)) {
-          setShowBlockOptionsDropDown(false);
-        }
-      };
-      document.addEventListener("click", handle);
-
-      return () => {
-        document.removeEventListener("click", handle);
-      };
-    }
-  }, [dropDownRef, setShowBlockOptionsDropDown, toolbarRef]);
-
+function BlockOptionsDropdownList({ editor, blockType }) {
   const formatParagraph = () => {
     if (blockType !== "paragraph") {
       editor.update(() => {
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createParagraphNode());
         }
       });
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatLargeHeading = () => {
     if (blockType !== "h1") {
       editor.update(() => {
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createHeadingNode("h1"));
         }
       });
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatSmallHeading = () => {
     if (blockType !== "h2") {
       editor.update(() => {
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createHeadingNode("h2"));
         }
       });
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatBulletList = () => {
@@ -337,7 +291,6 @@ function BlockOptionsDropdownList({
     } else {
       editor.dispatchCommand(REMOVE_LIST_COMMAND);
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatNumberedList = () => {
@@ -346,81 +299,90 @@ function BlockOptionsDropdownList({
     } else {
       editor.dispatchCommand(REMOVE_LIST_COMMAND);
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatQuote = () => {
     if (blockType !== "quote") {
       editor.update(() => {
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createQuoteNode());
         }
       });
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   const formatCode = () => {
     if (blockType !== "code") {
       editor.update(() => {
         const selection = $getSelection();
-
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createCodeNode());
         }
       });
     }
-    setShowBlockOptionsDropDown(false);
   };
 
   return (
-    <div className="dropdown" ref={dropDownRef}>
-      <button className="item" onClick={formatParagraph}>
-        <span className={`icon paragraph${theme === "dark" ? "-dark" : ""}`} />
-        <span className="text">Paragraph</span>
-        {blockType === "paragraph" && <span className="active" />}
+    <Dropdown
+      trigger="click"
+      clickToHide
+      render={
+        <Dropdown.Menu>
+          <Dropdown.Item
+            onClick={formatParagraph}
+            icon={<i className={`bi ${blockTypeToIcon.paragraph}`} />}
+          >
+            Paragraph
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatLargeHeading}
+            icon={<i className={`bi ${blockTypeToIcon.h1}`} />}
+          >
+            Large Heading
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatSmallHeading}
+            icon={<i className={`bi ${blockTypeToIcon.h2}`} />}
+          >
+            Small Heading
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatBulletList}
+            icon={<i className={`bi ${blockTypeToIcon.ul}`} />}
+          >
+            Bullet List
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatNumberedList}
+            icon={<i className={`bi ${blockTypeToIcon.ol}`} />}
+          >
+            Numbered List
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatQuote}
+            icon={<i className={`bi ${blockTypeToIcon.quote}`} />}
+          >
+            Quote
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={formatCode}
+            icon={<i className={`bi ${blockTypeToIcon.code}`} />}
+          >
+            Code Block
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      }
+    >
+      <button
+        className="flex mx-2 justify-center items-center"
+        aria-label="Formatting Options"
+      >
+        <i className={`bi ${blockTypeToIcon[blockType]} me-3`} />
+        <span className="me-3 text-sm">{blockTypeToBlockName[blockType]}</span>
+        <i className="bi bi-chevron-down" />
       </button>
-      <button className="item" onClick={formatLargeHeading}>
-        <span
-          className={`icon large-heading${theme === "dark" ? "-dark" : ""}`}
-        />
-        <span className="text">Large Heading</span>
-        {blockType === "h1" && <span className="active" />}
-      </button>
-      <button className="item" onClick={formatSmallHeading}>
-        <span
-          className={`icon small-heading${theme === "dark" ? "-dark" : ""}`}
-        />
-        <span className="text">Small Heading</span>
-        {blockType === "h2" && <span className="active" />}
-      </button>
-      <button className="item" onClick={formatBulletList}>
-        <span
-          className={`icon bullet-list${theme === "dark" ? "-dark" : ""}`}
-        />
-        <span className="text">Bullet List</span>
-        {blockType === "ul" && <span className="active" />}
-      </button>
-      <button className="item" onClick={formatNumberedList}>
-        <span
-          className={`icon numbered-list${theme === "dark" ? "-dark" : ""}`}
-        />
-        <span className="text">Numbered List</span>
-        {blockType === "ol" && <span className="active" />}
-      </button>
-      <button className="item" onClick={formatQuote}>
-        <span className={`icon quote${theme === "dark" ? "-dark" : ""}`} />
-        <span className="text">Quote</span>
-        {blockType === "quote" && <span className="active" />}
-      </button>
-      <button className="item" onClick={formatCode}>
-        <span className={`icon code${theme === "dark" ? "-dark" : ""}`} />
-        <span className="text">Code Block</span>
-        {blockType === "code" && <span className="active" />}
-      </button>
-    </div>
+    </Dropdown>
   );
 }
 
@@ -432,8 +394,6 @@ export default function ToolbarPlugin(props) {
   const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState("paragraph");
   const [selectedElementKey, setSelectedElementKey] = useState(null);
-  const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
-    useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
   const [, setIsRTL] = useState(false);
   const [isLink, setIsLink] = useState(false);
@@ -469,7 +429,7 @@ export default function ToolbarPlugin(props) {
           }
         }
       }
-      // Update text format
+
       setIsBold(selection.hasFormat("bold"));
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
@@ -477,7 +437,6 @@ export default function ToolbarPlugin(props) {
       setIsCode(selection.hasFormat("code"));
       setIsRTL($isParentElementRTL(selection));
 
-      // Update links
       const node = getSelectedNode(selection);
       const parent = node.getParent();
       if ($isLinkNode(parent) || $isLinkNode(node)) {
@@ -549,131 +508,91 @@ export default function ToolbarPlugin(props) {
     <div className="toolbar" ref={toolbarRef}>
       <button
         disabled={!canUndo}
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND);
-        }}
+        onClick={() => editor.dispatchCommand(UNDO_COMMAND)}
         className="toolbar-item spaced"
         aria-label="Undo"
       >
-        <i className={`format ${theme === "dark" ? "undo-dark" : "undo"}`} />
+        <i
+          className={`bi bi-arrow-counterclockwise ${
+            canUndo ? "" : "opacity-30"
+          }`}
+        />
       </button>
       <button
         disabled={!canRedo}
-        onClick={() => {
-          editor.dispatchCommand(REDO_COMMAND);
-        }}
+        onClick={() => editor.dispatchCommand(REDO_COMMAND)}
         className="toolbar-item"
         aria-label="Redo"
       >
-        <i className={`format ${theme === "dark" ? "redo-dark" : "redo"}`} />
+        <i className={`bi bi-arrow-clockwise ${canRedo ? "" : "opacity-30"}`} />
       </button>
       <Divider />
-      {supportedBlockTypes.has(blockType) && (
-        <>
-          <button
-            className="toolbar-item block-controls"
-            onClick={() =>
-              setShowBlockOptionsDropDown(!showBlockOptionsDropDown)
-            }
-            aria-label="Formatting Options"
-          >
-            <span
-              className={
-                "icon block-type " +
-                blockType +
-                (theme === "dark" ? "-dark" : "")
-              }
-            />
-            <span className="text">{blockTypeToBlockName[blockType]}</span>
-            <i className={`chevron-down${theme === "dark" ? "-dark" : ""}`} />
-          </button>
-          {showBlockOptionsDropDown &&
-            createPortal(
-              <BlockOptionsDropdownList
-                editor={editor}
-                blockType={blockType}
-                toolbarRef={toolbarRef}
-                setShowBlockOptionsDropDown={setShowBlockOptionsDropDown}
-                theme={theme}
-              />,
-              document.body
-            )}
-          <Divider />
-        </>
-      )}
+      <BlockOptionsDropdownList
+        editor={editor}
+        blockType={blockType}
+      />
+      <Divider />
       {blockType === "code" ? (
-        <>
+        <div className="flex items-center">
           <Select
             className="toolbar-item code-language"
             onChange={onCodeLanguageSelect}
             options={codeLanguges}
             value={codeLanguage}
           />
-          <i
-            className={`chevron-down${theme === "dark" ? "-dark" : ""} inside`}
-          />
-        </>
+          <i className="bi bi-chevron-down" />
+        </div>
       ) : (
         <>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-            }}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
             className={"toolbar-item spaced " + (isBold ? "active" : "")}
             aria-label="Format Bold"
           >
-            <i className={`format bold${theme === "dark" ? "-dark" : ""}`} />
+            <i className="bi bi-type-bold" />
           </button>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-            }}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")
+            }
             className={"toolbar-item spaced " + (isItalic ? "active" : "")}
             aria-label="Format Italics"
           >
-            <i className={`format italic${theme === "dark" ? "-dark" : ""}`} />
+            <i className="bi bi-type-italic" />
           </button>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-            }}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")
+            }
             className={"toolbar-item spaced " + (isUnderline ? "active" : "")}
             aria-label="Format Underline"
           >
-            <i
-              className={`format underline${theme === "dark" ? "-dark" : ""}`}
-            />
+            <i className="bi bi-type-underline" />
           </button>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
-            }}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")
+            }
             className={
               "toolbar-item spaced " + (isStrikethrough ? "active" : "")
             }
             aria-label="Format Strikethrough"
           >
-            <i
-              className={`format strikethrough${
-                theme === "dark" ? "-dark" : ""
-              }`}
-            />
+            <i className="bi bi-type-strikethrough" />
           </button>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-            }}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code")}
             className={"toolbar-item spaced " + (isCode ? "active" : "")}
             aria-label="Insert Code"
           >
-            <i className={`format code${theme === "dark" ? "-dark" : ""}`} />
+            <i className="bi bi-code-slash" />
           </button>
           <button
             onClick={insertLink}
             className={"toolbar-item spaced " + (isLink ? "active" : "")}
             aria-label="Insert Link"
           >
-            <i className={`format link${theme === "dark" ? "-dark" : ""}`} />
+            <i className="bi bi-link" />
           </button>
           {isLink &&
             createPortal(
@@ -682,30 +601,22 @@ export default function ToolbarPlugin(props) {
             )}
           <Divider />
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-            }}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left")
+            }
             className="toolbar-item spaced"
             aria-label="Left Align"
           >
-            <i
-              className={`format ${
-                theme === "dark" ? "left-align-dark" : "left-align"
-              }`}
-            />
+            <i className="bi bi-text-left" />
           </button>
           <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
-            }}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center")
+            }
             className="toolbar-item spaced"
             aria-label="Center Align"
           >
-            <i
-              className={`format ${
-                theme === "dark" ? "center-align-dark" : "center-align"
-              }`}
-            />
+            <i className="bi bi-text-center" />
           </button>
           <button
             onClick={() => {
@@ -714,11 +625,7 @@ export default function ToolbarPlugin(props) {
             className="toolbar-item spaced"
             aria-label="Right Align"
           >
-            <i
-              className={`format ${
-                theme === "dark" ? "right-align-dark" : "right-align"
-              }`}
-            />
+            <i className="bi bi-text-right" />
           </button>
           <button
             onClick={() => {
@@ -727,12 +634,8 @@ export default function ToolbarPlugin(props) {
             className="toolbar-item"
             aria-label="Justify Align"
           >
-            <i
-              className={`format ${
-                theme === "dark" ? "justify-align-dark" : "justify-align"
-              }`}
-            />
-          </button>{" "}
+            <i className="bi bi-justify" />
+          </button>
         </>
       )}
     </div>

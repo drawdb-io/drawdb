@@ -50,7 +50,16 @@ function SurveyForm({ theme }) {
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setForm({});
+    setForm({
+      satisfaction: 5,
+      ease: 5,
+      wouldRecommend: 5,
+      hadDifficulty: "",
+      difficulty: "",
+      triedOtherApps: "",
+      comparison: "",
+      occupation: "",
+    });
     setLoading(false);
   };
 
@@ -62,9 +71,9 @@ function SurveyForm({ theme }) {
           await axios
             .post(`${process.env.REACT_APP_BACKEND_URL}/report_bug`, {
               subject: `[SURVEY]: ${new Date().toDateString()}`,
-              message: `${Object.keys(questions).map(
+              message: `${Object.keys(form).map(
                 (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
-              )}<div>Anything else?</div>${$generateHtmlFromNodes(editor)}`,
+              )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(editor)}`,
             })
             .then((res) => {
               Toast.success("Thanks for the feedback!");
@@ -138,6 +147,7 @@ function SurveyForm({ theme }) {
         <div className="font-semibold ms-1 mb-3">{questions.hadDifficulty}</div>
         <RadioGroup
           direction="vertical"
+          value={form.hadDifficulty}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, hadDifficulty: e.target.value }))
           }
@@ -151,6 +161,8 @@ function SurveyForm({ theme }) {
           <div className="font-semibold ms-1 mb-3">{questions.difficulty}</div>
           <TextArea
             rows={2}
+            placeholder="Tell us more"
+            value={form.difficulty}
             onChange={(v) => setForm((prev) => ({ ...prev, difficulty: v }))}
           />
         </div>
@@ -161,6 +173,7 @@ function SurveyForm({ theme }) {
         </div>
         <RadioGroup
           direction="vertical"
+          value={form.triedOtherApps}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, triedOtherApps: e.target.value }))
           }
@@ -174,6 +187,8 @@ function SurveyForm({ theme }) {
           <div className="font-semibold ms-1 mb-3">{questions.comparison}</div>
           <TextArea
             rows={2}
+            placeholder="Tell us more"
+            value={form.comparison}
             onChange={(v) => setForm((prev) => ({ ...prev, comparison: v }))}
           />
         </div>
@@ -188,6 +203,7 @@ function SurveyForm({ theme }) {
           ]}
           className="w-full"
           placeholder="Occupation"
+          value={form.occupation}
           onSelect={(v) => setForm((prev) => ({ ...prev, occupation: v }))}
         />
       </div>
