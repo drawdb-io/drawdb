@@ -65,8 +65,8 @@ function Form({ theme }) {
       editor.update(() => {
         const sendMail = async () => {
           await axios
-            .post(`${process.env.REACT_APP_BACKEND_URL}/report_bug`, {
-              subject: data.title,
+            .post(`${process.env.REACT_APP_BACKEND_URL}/send_email`, {
+              subject: `[BUG REPORT]: ${data.title}`,
               message: $generateHtmlFromNodes(editor),
               attachments: data.attachments,
             })
