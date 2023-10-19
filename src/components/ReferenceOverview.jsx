@@ -22,7 +22,7 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { Cardinality, Constraint, Action, ObjectType } from "../data/data";
-import { TableContext, UndoRedoContext } from "../pages/editor";
+import { TableContext, UndoRedoContext } from "../pages/Editor";
 
 export default function ReferenceOverview(props) {
   const columns = [

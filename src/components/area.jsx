@@ -19,7 +19,7 @@ import {
   SettingsContext,
   TabContext,
   UndoRedoContext,
-} from "../pages/editor";
+} from "../pages/Editor";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);

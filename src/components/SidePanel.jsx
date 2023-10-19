@@ -1,15 +1,15 @@
 import { React, useContext } from "react";
 import { Tabs } from "@douyinfe/semi-ui";
-import TableOverview from "./table_overview";
-import ReferenceOverview from "./reference_overview";
-import AreaOverview from "./area_overview";
+import TableOverview from "./TableOverview";
+import ReferenceOverview from "./ReferenceOverview";
+import AreaOverview from "./AreaOverview";
 import { Tab } from "../data/data";
-import { LayoutContext, TabContext } from "../pages/editor";
-import NotesOverview from "./notes_overview";
-import Issues from "./issues";
-import TypesOverview from "./types_overview";
+import { LayoutContext, TabContext } from "../pages/Editor";
+import NotesOverview from "./NotesOverview";
+import Issues from "./Issues";
+import TypesOverview from "./TypesOverview";
 
-const EditorPanel = (props) => {
+const SidePanel = (props) => {
   const { tab, setTab } = useContext(TabContext);
   const { layout } = useContext(LayoutContext);
 
@@ -65,4 +65,4 @@ const EditorPanel = (props) => {
   );
 };
 
-export default EditorPanel;
+export default SidePanel;

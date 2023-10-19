@@ -21,7 +21,7 @@ import {
   IconSearch,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import { NoteContext, UndoRedoContext } from "../pages/editor";
+import { NoteContext, UndoRedoContext } from "../pages/Editor";
 import { noteThemes, Action, ObjectType } from "../data/data";
 
 export default function NotesOverview(props) {

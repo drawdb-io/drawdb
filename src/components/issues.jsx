@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
-import { SettingsContext, TableContext, TypeContext } from "../pages/editor";
+import { SettingsContext, TableContext, TypeContext } from "../pages/Editor";
 import { validateDiagram, arrayIsEqual } from "../utils";
 
 export default function Issues() {

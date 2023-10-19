@@ -5,7 +5,7 @@ import {
   UndoRedoContext,
   TabContext,
   SelectContext,
-} from "../pages/editor";
+} from "../pages/Editor";
 import { Action, ObjectType, noteThemes, Tab } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {

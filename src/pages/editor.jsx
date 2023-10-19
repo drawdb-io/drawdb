@@ -1,8 +1,8 @@
 import React, { useState, createContext, useEffect } from "react";
-import Sidebar from "../components/sidebar";
-import ControlPanel from "../components/control_panel";
-import Canvas from "../components/canvas";
-import EditorPanel from "../components/editor_panel";
+import Sidebar from "../components/Sidebar";
+import ControlPanel from "../components/ControlPanel";
+import Canvas from "../components/Canvas";
+import SidePanel from "../components/SidePanel";
 import {
   Tab,
   defaultTableTheme,
@@ -568,7 +568,7 @@ export default function Editor(props) {
                             onMouseMove={dragHandler}
                           >
                             {layout.sidebar && (
-                              <EditorPanel
+                              <SidePanel
                                 resize={resize}
                                 setResize={setResize}
                                 width={width}

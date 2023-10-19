@@ -1,8 +1,8 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
-import Table from "./table";
+import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
-import Area from "./area";
-import Relationship from "./relationship";
+import Area from "./Area";
+import Relationship from "./Relationship";
 import {
   AreaContext,
   NoteContext,
@@ -10,8 +10,8 @@ import {
   TableContext,
   UndoRedoContext,
   SelectContext,
-} from "../pages/editor";
-import Note from "./note";
+} from "../pages/Editor";
+import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 
 export default function Canvas(props) {

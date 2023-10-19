@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Button, Input, Tag, Avatar } from "@douyinfe/semi-ui";
 import { IconSend } from "@douyinfe/semi-icons";
 import { socket } from "../data/socket";
-import { MessageContext } from "../pages/editor";
+import { MessageContext } from "../pages/Editor";
 
 export default function Chat() {
   const [message, setMessage] = useState("");

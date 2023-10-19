@@ -13,7 +13,7 @@ import {
   TextArea,
 } from "@douyinfe/semi-ui";
 import { IconSun, IconMoon } from "@douyinfe/semi-icons";
-import RichEditor from "../components/rich_editor";
+import RichEditor from "../components/RichEditor";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { editorConfig } from "../data/editor_config";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";

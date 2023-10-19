@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Editor from "./pages/editor";
-import LandingPage from "./pages/landing_page";
-import Survey from "./pages/survey";
-import Shortcuts from "./pages/shortcuts";
-import BugReport from "./pages/bug_report";
-import SignUp from "./pages/signup";
-import Login from "./pages/login";
+import Editor from "./pages/Editor";
+import LandingPage from "./pages/LandingPage";
+import Survey from "./pages/Survey";
+import BugReport from "./pages/BugReport";
+import SignUp from "./pages/Signup";
+import Shortcuts from "./pages/Shortcuts"
+import Login from "./pages/Login";
 
 function App() {
   return (

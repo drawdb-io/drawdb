@@ -27,7 +27,7 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TypeContext, UndoRedoContext } from "../pages/editor";
+import { TypeContext, UndoRedoContext } from "../pages/Editor";
 import { isSized, hasPrecision, getSize } from "../utils";
 
 export default function TableOverview(props) {

@@ -50,13 +50,13 @@ import {
   TableContext,
   TypeContext,
   UndoRedoContext,
-} from "../pages/editor";
-import { IconAddTable, IconAddArea, IconAddNote } from "./custom_icons";
+} from "../pages/Editor";
+import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
 import { ObjectType, Action, Tab } from "../data/data";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
-import { areaSchema, noteSchema, tableSchema } from "../schemas";
+import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 
 export default function ControlPanel(props) {

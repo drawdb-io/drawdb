@@ -10,9 +10,9 @@ import {
   MessageContext,
   SettingsContext,
   UndoRedoContext,
-} from "../pages/editor";
-import Todo from "./todo";
-import Chat from "./chat";
+} from "../pages/Editor";
+import Todo from "./Todo";
+import Chat from "./Chat";
 
 export default function Sidebar() {
   const SidesheetType = {

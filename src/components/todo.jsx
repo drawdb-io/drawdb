@@ -19,7 +19,7 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { TaskContext } from "../pages/editor";
+import { TaskContext } from "../pages/Editor";
 export default function Todo() {
   const Priority = {
     NONE: 0,

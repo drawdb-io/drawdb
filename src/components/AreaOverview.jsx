@@ -25,7 +25,7 @@ import {
   Action,
   ObjectType,
 } from "../data/data";
-import { AreaContext, UndoRedoContext } from "../pages/editor";
+import { AreaContext, UndoRedoContext } from "../pages/Editor";
 
 export default function AreaOverview(props) {
   const { areas, addArea, deleteArea, updateArea } = useContext(AreaContext);

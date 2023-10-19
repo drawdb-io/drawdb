@@ -41,7 +41,7 @@ import {
   TableContext,
   TypeContext,
   UndoRedoContext,
-} from "../pages/editor";
+} from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 
 export default function Table(props) {
