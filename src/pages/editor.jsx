@@ -24,6 +24,7 @@ export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
 export const TaskContext = createContext();
 export const MessageContext = createContext();
+export const BotMessageContext = createContext();
 export const TypeContext = createContext();
 
 export default function Editor(props) {
@@ -57,6 +58,9 @@ export default function Editor(props) {
   });
   const [tasks, setTasks] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [botMessages, setBotMessages] = useState([
+    { sender: "bot", message: "Hey there! How can I help you?" },
+  ]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
   const [selectedElement, setSelectedElement] = useState({
@@ -579,7 +583,11 @@ export default function Editor(props) {
                               <MessageContext.Provider
                                 value={{ messages, setMessages }}
                               >
-                                <Sidebar />
+                                <BotMessageContext.Provider
+                                  value={{ botMessages, setBotMessages }}
+                                >
+                                  <Sidebar />
+                                </BotMessageContext.Provider>
                               </MessageContext.Provider>
                             )}
                           </div>

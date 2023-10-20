@@ -7,12 +7,14 @@ import timeLineDark from "../assets/process_dark.png";
 import todo from "../assets/calendar.png";
 import { Tooltip, SideSheet, List, Badge } from "@douyinfe/semi-ui";
 import {
+  BotMessageContext,
   MessageContext,
   SettingsContext,
   UndoRedoContext,
 } from "../pages/Editor";
 import Todo from "./Todo";
 import Chat from "./Chat";
+import DrawBot from "./DrawBot";
 
 export default function Sidebar() {
   const SidesheetType = {
@@ -26,9 +28,12 @@ export default function Sidebar() {
   const { undoStack } = useContext(UndoRedoContext);
   const { messages } = useContext(MessageContext);
   const { settings } = useContext(SettingsContext);
+  const { botMessages } = useContext(BotMessageContext);
   const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
   const [seen, setSeen] = useState(0);
+  const [seenBot, setSeenBot] = useState(0);
   const [count, setCount] = useState(messages.length - seen);
+  const [botCount, setBotCount] = useState(botMessages.length - seenBot);
 
   const getTitle = (type) => {
     switch (type) {
@@ -40,21 +45,28 @@ export default function Sidebar() {
               className="w-7"
               alt="chat icon"
             />
-            <div className="ms-3">Timeline</div>
+            <div className="ms-3 text-lg">Timeline</div>
           </div>
         );
       case SidesheetType.CHAT:
         return (
           <div className="flex items-center">
             <img src={chatIcon} className="w-7" alt="chat icon" />
-            <div className="ms-3">Chat</div>
+            <div className="ms-3 text-lg">Chat</div>
           </div>
         );
       case SidesheetType.TODO:
         return (
           <div className="flex items-center">
             <img src={todo} className="w-7" alt="todo icon" />
-            <div className="ms-3">To-do list</div>
+            <div className="ms-3 text-lg">To-do list</div>
+          </div>
+        );
+      case SidesheetType.BOT:
+        return (
+          <div className="flex items-center">
+            <img src={botIcon} className="w-7" alt="todo icon" />
+            <div className="ms-3 text-lg">drawBOT</div>
           </div>
         );
       default:
@@ -70,6 +82,8 @@ export default function Sidebar() {
         return <Todo />;
       case SidesheetType.CHAT:
         return <Chat />;
+      case SidesheetType.BOT:
+        return <DrawBot />;
       default:
         break;
     }
@@ -77,9 +91,20 @@ export default function Sidebar() {
 
   useEffect(() => {
     if (sidesheet !== SidesheetType.CHAT) {
-      setCount((c) => messages.length - seen);
+      setCount(messages.length - seen);
     }
-  }, [messages.length, seen, sidesheet, SidesheetType.CHAT]);
+    if (sidesheet !== SidesheetType.BOT) {
+      setBotCount(botMessages.length - seenBot);
+    }
+  }, [
+    sidesheet,
+    seen,
+    messages.length,
+    SidesheetType.CHAT,
+    seenBot,
+    botMessages.length,
+    SidesheetType.BOT,
+  ]);
 
   return (
     <>
@@ -126,17 +151,33 @@ export default function Sidebar() {
             />
           </button>
         </Tooltip>
-        <Tooltip content="Botle">
-          <button className="block">
-            <img src={botIcon} className="w-8 mb-5" alt="chat icon" />
-          </button>
+        <Tooltip content="drawBOT">
+          <Badge
+            count={botCount === 0 ? null : botCount}
+            overflowCount={99}
+            type="danger"
+          >
+            <button
+              className="block"
+              onClick={() => {
+                setSidesheet(SidesheetType.BOT);
+                setSeenBot(botMessages.length);
+              }}
+            >
+              <img src={botIcon} className="w-8 mb-5" alt="chat icon" />
+            </button>
+          </Badge>
         </Tooltip>
       </div>
       <SideSheet
         visible={sidesheet !== SidesheetType.NONE}
         onCancel={() => {
+          if (sidesheet === SidesheetType.CHAT) {
+            setSeen(messages.length);
+          } else if (sidesheet === SidesheetType.BOT) {
+            setSeenBot(botMessages.length);
+          }
           setSidesheet(SidesheetType.NONE);
-          setSeen(messages.length);
         }}
         width={340}
         title={getTitle(sidesheet)}
