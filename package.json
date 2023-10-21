@@ -10,6 +10,8 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.0",
+    "dexie": "^3.2.4",
+    "dexie-react-hooks": "^1.1.6",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.11",
     "jsonschema": "^1.4.1",
