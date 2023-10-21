@@ -12,7 +12,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/editor" element={<Editor name="Untitled" />} />
+        <Route path="/editor" element={<Editor />} />
         <Route path="/survey" element={<Survey />} />
         <Route path="/shortcuts" element={<Shortcuts />} />
         <Route path="/bug_report" element={<BugReport />} />

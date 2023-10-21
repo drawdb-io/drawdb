@@ -10,6 +10,7 @@ import {
   IconUndo,
   IconRedo,
   IconRowsStroked,
+  IconEdit,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -65,6 +66,7 @@ export default function ControlPanel(props) {
     IMG: 1,
     CODE: 2,
     IMPORT: 3,
+    RENAME: 4,
   };
   const STATUS = {
     NONE: 0,
@@ -73,6 +75,9 @@ export default function ControlPanel(props) {
     OK: 3,
   };
   const [visible, setVisible] = useState(MODAL.NONE);
+  const [title, setTitle] = useState("Untitled Diagram");
+  const [prevTitle, setPrevTitle] = useState(title);
+  const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
     filename: `diagram_${new Date().toISOString()}`,
@@ -672,7 +677,10 @@ export default function ControlPanel(props) {
         function: () => {},
       },
       Rename: {
-        function: () => {},
+        function: () => {
+          setVisible(MODAL.RENAME);
+          setPrevTitle(title);
+        },
       },
       Import: {
         function: fileImport,
@@ -1009,35 +1017,228 @@ export default function ControlPanel(props) {
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
+  const getModalTitle = () => {
+    switch (visible) {
+      case MODAL.IMPORT:
+        return "Import diagram";
+      case MODAL.CODE:
+        return "Export diagram";
+      case MODAL.IMG:
+        return "Export image";
+      case MODAL.RENAME:
+        return "Rename diagram";
+      default:
+        return "";
+    }
+  };
+
+  const getOkText = () => {
+    switch (visible) {
+      case MODAL.IMPORT:
+        return "Import";
+      case MODAL.CODE:
+      case MODAL.IMG:
+        return "Export";
+      case MODAL.RENAME:
+        return "Rename";
+      default:
+        return "";
+    }
+  };
+
+  const getModalOnOk = () => {
+    switch (visible) {
+      case MODAL.IMG:
+        saveAs(
+          exportData.data,
+          `${exportData.filename}.${exportData.extension}`
+        );
+        return;
+      case MODAL.CODE:
+        const blob = new Blob([exportData.data], {
+          type: "application/json",
+        });
+        saveAs(blob, `${exportData.filename}.${exportData.extension}`);
+        return;
+      case MODAL.IMPORT:
+        if (error.type !== STATUS.ERROR) {
+          setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+          overwriteDiagram();
+          setData(null);
+          setVisible(MODAL.NONE);
+          setUndoStack([]);
+          setRedoStack([]);
+        }
+        return;
+      default:
+        setVisible(MODAL.NONE);
+        return;
+    }
+  };
+
+  const importModalBody = () => {
+    return (
+      <>
+        <Upload
+          action="#"
+          beforeUpload={({ file, fileList }) => {
+            const f = fileList[0].fileInstance;
+            if (!f) {
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              let jsonObject = null;
+              try {
+                jsonObject = JSON.parse(event.target.result);
+              } catch (error) {
+                setError({
+                  type: STATUS.ERROR,
+                  message: "The file contains an error.",
+                });
+                return;
+              }
+              if (f.type === "application/json") {
+                if (!jsonDiagramIsValid(jsonObject)) {
+                  setError({
+                    type: STATUS.ERROR,
+                    message:
+                      "The file is missing necessary properties for a diagram.",
+                  });
+                  return;
+                }
+              } else if (f.name.split(".").pop() === "ddb") {
+                if (!ddbDiagramIsValid(jsonObject)) {
+                  setError({
+                    type: STATUS.ERROR,
+                    message:
+                      "The file is missing necessary properties for a diagram.",
+                  });
+                  return;
+                }
+              }
+              setData(jsonObject);
+              if (diagramIsEmpty()) {
+                setError({
+                  type: STATUS.OK,
+                  message: "Everything looks good. You can now import.",
+                });
+              } else {
+                setError({
+                  type: STATUS.WARNING,
+                  message:
+                    "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+                });
+              }
+            };
+            reader.readAsText(f);
+
+            return {
+              autoRemove: false,
+              fileInstance: file.fileInstance,
+              status: "success",
+              shouldUpload: false,
+            };
+          }}
+          draggable={true}
+          dragMainText="Drag and drop the file here or click to upload."
+          dragSubText="Support json and ddb"
+          accept="application/json,.ddb"
+          onRemove={() =>
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            })
+          }
+          onFileChange={() =>
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            })
+          }
+          limit={1}
+        ></Upload>
+        {error.type === STATUS.ERROR ? (
+          <Banner
+            type="danger"
+            fullMode={false}
+            description={<div className="text-red-800">{error.message}</div>}
+          />
+        ) : error.type === STATUS.OK ? (
+          <Banner
+            type="info"
+            fullMode={false}
+            description={<div>{error.message}</div>}
+          />
+        ) : (
+          error.type === STATUS.WARNING && (
+            <Banner
+              type="warning"
+              fullMode={false}
+              description={<div>{error.message}</div>}
+            />
+          )
+        )}
+      </>
+    );
+  };
+
+  const getModalBody = () => {
+    if (visible === MODAL.IMPORT) {
+      return importModalBody();
+    }
+    if (visible === MODAL.RENAME) {
+      return (
+        <Input
+          placeholder="Diagram name"
+          value={title}
+          onChange={(v) => setTitle(v)}
+        />
+      );
+    }
+    if (exportData.data !== "" || exportData.data) {
+      return (
+        <>
+          {visible === MODAL.IMG ? (
+            <Image src={exportData.data} alt="Diagram" height={280} />
+          ) : (
+            <Editor
+              height="360px"
+              value={exportData.data}
+              language={exportData.extension}
+              options={{ readOnly: true }}
+              theme={settings.mode === "light" ? "light" : "vs-dark"}
+            />
+          )}
+          <div className="text-sm font-semibold mt-2">Filename:</div>
+          <Input
+            value={exportData.filename}
+            placeholder="Filename"
+            suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
+            onChange={(value) =>
+              setExportData((prev) => ({ ...prev, filename: value }))
+            }
+            field="filename"
+          />
+        </>
+      );
+    } else {
+      return (
+        <div className="text-center my-3">
+          <Spin tip="Loading..." size="large" />
+        </div>
+      );
+    }
+  };
+
   return (
     <>
       {layout.header && header()}
       {toolbar()}
       <Modal
-        title={`${visible === MODAL.IMPORT ? "Import" : "Export"} diagram`}
+        title={getModalTitle()}
         visible={visible !== MODAL.NONE}
-        onOk={() => {
-          if (visible === MODAL.IMG) {
-            saveAs(
-              exportData.data,
-              `${exportData.filename}.${exportData.extension}`
-            );
-          } else if (visible === MODAL.CODE) {
-            const blob = new Blob([exportData.data], {
-              type: "application/json",
-            });
-            saveAs(blob, `${exportData.filename}.${exportData.extension}`);
-          } else if (visible === MODAL.IMPORT) {
-            if (error.type !== STATUS.ERROR) {
-              setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
-              overwriteDiagram();
-              setData(null);
-              setVisible(MODAL.NONE);
-              setUndoStack([]);
-              setRedoStack([]);
-            }
-          }
-        }}
+        onOk={getModalOnOk}
         afterClose={() => {
           setExportData((prev) => ({
             data: "",
@@ -1050,10 +1251,13 @@ export default function ControlPanel(props) {
           });
           setData(null);
         }}
-        onCancel={() => setVisible(MODAL.NONE)}
+        onCancel={() => {
+          if (visible === MODAL.RENAME) setTitle(prevTitle);
+          setVisible(MODAL.NONE);
+        }}
         centered
         closeOnEsc={true}
-        okText={`${visible === MODAL.IMPORT ? "Import" : "Export"}`}
+        okText={getOkText()}
         okButtonProps={{
           disabled:
             (visible === MODAL.IMPORT &&
@@ -1064,140 +1268,7 @@ export default function ControlPanel(props) {
         cancelText="Cancel"
         width={600}
       >
-        {visible === MODAL.IMPORT ? (
-          <div>
-            <Upload
-              action="#"
-              beforeUpload={({ file, fileList }) => {
-                const f = fileList[0].fileInstance;
-                if (!f) {
-                  return;
-                }
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                  let jsonObject = null;
-                  try {
-                    jsonObject = JSON.parse(event.target.result);
-                  } catch (error) {
-                    setError({
-                      type: STATUS.ERROR,
-                      message: "The file contains an error.",
-                    });
-                    return;
-                  }
-                  if (f.type === "application/json") {
-                    if (!jsonDiagramIsValid(jsonObject)) {
-                      setError({
-                        type: STATUS.ERROR,
-                        message:
-                          "The file is missing necessary properties for a diagram.",
-                      });
-                      return;
-                    }
-                  } else if (f.name.split(".").pop() === "ddb") {
-                    if (!ddbDiagramIsValid(jsonObject)) {
-                      setError({
-                        type: STATUS.ERROR,
-                        message:
-                          "The file is missing necessary properties for a diagram.",
-                      });
-                      return;
-                    }
-                  }
-                  setData(jsonObject);
-                  if (diagramIsEmpty()) {
-                    setError({
-                      type: STATUS.OK,
-                      message: "Everything looks good. You can now import.",
-                    });
-                  } else {
-                    setError({
-                      type: STATUS.WARNING,
-                      message:
-                        "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
-                    });
-                  }
-                };
-                reader.readAsText(f);
-
-                return {
-                  autoRemove: false,
-                  fileInstance: file.fileInstance,
-                  status: "success",
-                  shouldUpload: false,
-                };
-              }}
-              draggable={true}
-              dragMainText="Click to upload the file or drag and drop the file here"
-              dragSubText="Support json"
-              accept="application/json,.ddb"
-              onRemove={() =>
-                setError({
-                  type: STATUS.NONE,
-                  message: "",
-                })
-              }
-              onFileChange={() =>
-                setError({
-                  type: STATUS.NONE,
-                  message: "",
-                })
-              }
-              limit={1}
-            ></Upload>
-            {error.type === STATUS.ERROR ? (
-              <Banner
-                type="danger"
-                fullMode={false}
-                description={
-                  <div className="text-red-800">{error.message}</div>
-                }
-              />
-            ) : error.type === STATUS.OK ? (
-              <Banner
-                type="info"
-                fullMode={false}
-                description={<div>{error.message}</div>}
-              />
-            ) : (
-              error.type === STATUS.WARNING && (
-                <Banner
-                  type="warning"
-                  fullMode={false}
-                  description={<div>{error.message}</div>}
-                />
-              )
-            )}
-          </div>
-        ) : exportData.data !== "" || exportData.data ? (
-          <>
-            {visible === MODAL.IMG ? (
-              <Image src={exportData.data} alt="Diagram" height={280} />
-            ) : (
-              <Editor
-                height="360px"
-                value={exportData.data}
-                language={exportData.extension}
-                options={{ readOnly: true }}
-                theme={settings.mode === "light" ? "light" : "vs-dark"}
-              />
-            )}
-            <div className="text-sm font-semibold mt-2">Filename:</div>
-            <Input
-              value={exportData.filename}
-              placeholder="Filename"
-              suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
-              onChange={(value) =>
-                setExportData((prev) => ({ ...prev, filename: value }))
-              }
-              field="filename"
-            />
-          </>
-        ) : (
-          <div className="text-center my-3">
-            <Spin tip="Loading..." size="large" />
-          </div>
-        )}
+        {getModalBody()}
       </Modal>
     </>
   );
@@ -1360,7 +1431,17 @@ export default function ControlPanel(props) {
             />
           </Link>
           <div className="ms-1 mt-1">
-            <div className="text-xl ms-3">Project1 / Untitled</div>
+            <div className="flex items-center">
+              <div
+                className="text-xl ms-3 me-1"
+                onMouseEnter={() => setShowEditName(true)}
+                onMouseLeave={() => setShowEditName(false)}
+                onClick={() => setVisible(MODAL.RENAME)}
+              >
+                {title}
+              </div>
+              {(showEditName || visible === MODAL.RENAME) && <IconEdit />}
+            </div>
             <div className="flex justify-between items-center">
               <div className="flex justify-start text-md select-none me-2">
                 {Object.keys(menu).map((category) => (
