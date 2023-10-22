@@ -667,6 +667,9 @@ export default function ControlPanel(props) {
       "New window": {
         function: () => {},
       },
+      Open: {
+        function: () => {},
+      },
       Save: {
         function: () => {},
       },

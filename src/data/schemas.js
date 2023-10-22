@@ -32,7 +32,6 @@ const tableSchema = {
           "notNull",
           "increment",
           "comment",
-          "length",
         ],
       },
     },

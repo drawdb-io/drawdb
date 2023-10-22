@@ -35,7 +35,7 @@ export default function Issues() {
             overflowCount={99}
             className="mt-1"
           >
-            <div className="pe-3">
+            <div className="pe-3 select-none">
               <i className="fa-solid fa-triangle-exclamation me-2 text-yellow-500"></i>
               Issues
             </div>
