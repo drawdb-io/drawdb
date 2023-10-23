@@ -53,7 +53,6 @@ const avatarThemes = [
   "lime",
   "orange",
   "pink",
-  "rain",
   "red",
   "teal",
   "violet",

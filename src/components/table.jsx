@@ -69,16 +69,8 @@ export default function Table(props) {
         height={height}
         className="drop-shadow-lg rounded-md cursor-move"
         onMouseDown={props.onMouseDown}
-        onMouseEnter={() => {
-          setIsHovered(true);
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          props.setOnRect({
-            tableId: -1,
-            field: -2,
-          });
-        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div
           className={`border-2 ${
