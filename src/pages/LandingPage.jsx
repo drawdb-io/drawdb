@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
-import logo from "../assets/logo_light_46.png";
+import Navbar from "../components/Navbar";
 
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
 
-  useEffect(()=>{
-    document.title = "drawDB | Online database diagram editor and SQL generator"
-  })
+  useEffect(() => {
+    document.body.setAttribute("theme-mode", "light");
+    document.title =
+      "drawDB | Online database diagram editor and SQL generator";
+  });
 
   return (
     <div>
@@ -24,42 +26,7 @@ export default function LandingPage() {
           </div>
         </div>
       )}
-      <div>
-        <div className="py-5 px-6 flex justify-between items-center">
-          <div className="flex items-center justify-start">
-            <Link to="/">
-              <img src={logo} alt="logo" className="me-2" />
-            </Link>
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
-              Features
-            </Link>
-            <Link
-              to="/editor"
-              className="ms-4 text-lg font-semibold hover:text-indigo-700"
-            >
-              Editor
-            </Link>
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
-              Templates
-            </Link>
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
-              Download
-            </Link>
-          </div>
-          <div>
-            <Link to="/login" className="me-5 font-semibold">
-              Log in
-            </Link>
-            <Link
-              to="/signup"
-              className="px-6 py-3 bg-[#386b8f] hover:bg-[#4e8bb6] text-white font-semibold rounded-md"
-            >
-              Sign up
-            </Link>
-          </div>
-        </div>
-        <hr />
-      </div>
+      <Navbar />
     </div>
   );
 }
