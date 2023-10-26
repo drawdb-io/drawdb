@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
 import Navbar from "../components/Navbar";
-import { useLiveQuery } from "dexie-react-hooks";
+
 import { db } from "../data/db";
 
 export default function LandingPage() {
@@ -17,11 +17,6 @@ export default function LandingPage() {
         console.error("Failed to clear the database:", error);
       });
   };
-
-  const diagrams = useLiveQuery(() => db.diagrams.toArray());
-  useEffect(() => {
-    console.log(diagrams);
-  }, [diagrams]);
 
   useEffect(() => {
     document.body.setAttribute("theme-mode", "light");

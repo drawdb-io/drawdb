@@ -60,6 +60,7 @@ import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -68,6 +69,7 @@ export default function ControlPanel(props) {
     CODE: 2,
     IMPORT: 3,
     RENAME: 4,
+    OPEN: 5,
   };
   const STATUS = {
     NONE: 0,
@@ -75,6 +77,7 @@ export default function ControlPanel(props) {
     ERROR: 2,
     OK: 3,
   };
+  const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
   const [title, setTitle] = useState("Untitled Diagram");
   const [prevTitle, setPrevTitle] = useState(title);
@@ -660,9 +663,13 @@ export default function ControlPanel(props) {
     del();
   };
   const save = () => {
-    console.log("saving");
+    const lastModified = new Date();
     db.diagrams.add({
       name: title,
+      lastModified:
+        lastModified.toLocaleDateString() +
+        " " +
+        lastModified.toLocaleTimeString(),
       tables: tables,
       references: relationships,
       types: types,
@@ -670,6 +677,7 @@ export default function ControlPanel(props) {
       areas: areas,
     });
   };
+  const open = () => setVisible(MODAL.OPEN);
 
   const menu = {
     File: {
@@ -680,7 +688,8 @@ export default function ControlPanel(props) {
         function: () => {},
       },
       Open: {
-        function: () => {},
+        function: open,
+        shortcut: "Ctrl+O",
       },
       Save: {
         function: save,
@@ -1011,6 +1020,8 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
   useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
+  useHotkeys("ctrl+s, meta+s", save, { preventDefault: true });
+  useHotkeys("ctrl+o, meta+o", open, { preventDefault: true });
   useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
   useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
   useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
@@ -1043,6 +1054,8 @@ export default function ControlPanel(props) {
         return "Export image";
       case MODAL.RENAME:
         return "Rename diagram";
+      case MODAL.OPEN:
+        return "Open diagram";
       default:
         return "";
     }
@@ -1057,6 +1070,8 @@ export default function ControlPanel(props) {
         return "Export";
       case MODAL.RENAME:
         return "Rename";
+      case MODAL.OPEN:
+        return "Open";
       default:
         return "";
     }
@@ -1210,6 +1225,55 @@ export default function ControlPanel(props) {
           value={title}
           onChange={(v) => setTitle(v)}
         />
+      );
+    }
+    if (visible === MODAL.OPEN) {
+      return (
+        <div>
+          {diagrams.length === 0 ? (
+            <Banner
+              fullMode={false}
+              type="info"
+              bordered
+              icon={null}
+              closeIcon={null}
+              description={<div>You have no saved diagrams.</div>}
+            />
+          ) : (
+            <>
+              <table className="w-full text-left">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Last Modified</th>
+                    <th>Size</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {diagrams?.map((d) => {
+                    const size = JSON.stringify(d).length;
+                    let sizeStr;
+                    if (size >= 1024 && size < 1024 * 1024)
+                      sizeStr = (size / 1024).toFixed(1) + "KB";
+                    else if (size >= 1024 * 1024)
+                      sizeStr = (size / (1024 * 1024)).toFixed(1) + "MB";
+                    else sizeStr = size + "B";
+                    return (
+                      <tr key={d.id} className="hover-1">
+                        <td className="py-1">
+                          <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60"></i>
+                          {d.name}
+                        </td>
+                        <td className="py-1">{d.lastModified}</td>
+                        <td className="py-1">{sizeStr}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
       );
     }
     if (exportData.data !== "" || exportData.data) {
