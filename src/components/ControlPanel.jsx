@@ -59,6 +59,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
+import { db } from "../data/db";
 
 export default function ControlPanel(props) {
   const MODAL = {
@@ -658,6 +659,17 @@ export default function ControlPanel(props) {
     copy();
     del();
   };
+  const save = () => {
+    console.log("saving");
+    db.diagrams.add({
+      name: title,
+      tables: tables,
+      references: relationships,
+      types: types,
+      notes: notes,
+      areas: areas,
+    });
+  };
 
   const menu = {
     File: {
@@ -671,7 +683,8 @@ export default function ControlPanel(props) {
         function: () => {},
       },
       Save: {
-        function: () => {},
+        function: save,
+        shortcut: "Ctrl+S",
       },
       "Save as": {
         function: () => {},
@@ -1401,7 +1414,10 @@ export default function ControlPanel(props) {
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content="Save" position="bottom">
-            <button className="py-1 px-2 hover-2 rounded flex items-center">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={save}
+            >
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
