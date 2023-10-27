@@ -583,7 +583,7 @@ export default function Editor(props) {
                         }}
                       >
                         <div className="h-[100vh] overflow-hidden theme">
-                          <ControlPanel />
+                          <ControlPanel diagramId={id} setDiagramId={setId}/>
                           <div
                             className={
                               layout.header

@@ -62,7 +62,7 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 
-export default function ControlPanel(props) {
+export default function ControlPanel({ diagramId, setDiagramId }) {
   const MODAL = {
     NONE: 0,
     IMG: 1,
@@ -70,6 +70,7 @@ export default function ControlPanel(props) {
     IMPORT: 3,
     RENAME: 4,
     OPEN: 5,
+    SAVEAS: 6,
   };
   const STATUS = {
     NONE: 0,
@@ -80,8 +81,9 @@ export default function ControlPanel(props) {
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
   const [title, setTitle] = useState("Untitled Diagram");
-  const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [prevTitle, setPrevTitle] = useState(title);
+  const [saveAsTitle, setSaveAsTitle] = useState(title);
+  const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
@@ -675,16 +677,20 @@ export default function ControlPanel(props) {
     });
   };
   const open = () => setVisible(MODAL.OPEN);
-  const loadDiagram = (id) => {
-    db.diagrams
+  const saveDiagramAs = () => setVisible(MODAL.SAVEAS);
+  const loadDiagram = async (id) => {
+    await db.diagrams
       .get(id)
       .then((diagram) => {
         if (diagram) {
+          setDiagramId(diagram.id);
           setTitle(diagram.name);
           setTables(diagram.tables);
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
+          setUndoStack([]);
+          setRedoStack([]);
         } else {
           Toast.error("Oops! Something went wrong.");
         }
@@ -711,7 +717,8 @@ export default function ControlPanel(props) {
         shortcut: "Ctrl+S",
       },
       "Save as": {
-        function: () => {},
+        function: saveDiagramAs,
+        shortcut: "Ctrl+Shift+S",
       },
       Share: {
         function: () => {},
@@ -720,6 +727,23 @@ export default function ControlPanel(props) {
         function: () => {
           setVisible(MODAL.RENAME);
           setPrevTitle(title);
+        },
+      },
+      "Delete diagram": {
+        function: async () => {
+          await db.diagrams
+            .delete(diagramId)
+            .then(() => {
+              setDiagramId(0);
+              setTitle("Untitled diagram");
+              setTables([]);
+              setRelationships([]);
+              setAreas([]);
+              setNotes([]);
+              setUndoStack([]);
+              setRedoStack([]);
+            })
+            .catch((e) => Toast.error("Oops! Something went wrong."));
         },
       },
       Import: {
@@ -876,7 +900,7 @@ export default function ControlPanel(props) {
       Properties: {
         function: () => {},
       },
-      Close: {
+      Exit: {
         function: () => {},
       },
     },
@@ -1052,6 +1076,9 @@ export default function ControlPanel(props) {
   useHotkeys("ctrl+shift+f, meta+shift+f", viewFieldSummary, {
     preventDefault: true,
   });
+  useHotkeys("ctrl+shift+s, meta+shift+s", saveDiagramAs, {
+    preventDefault: true,
+  });
   useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
   useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
   useHotkeys("ctrl+h, meta+h", () => window.open("/shortcuts", "_blank"), {
@@ -1071,6 +1098,8 @@ export default function ControlPanel(props) {
         return "Rename diagram";
       case MODAL.OPEN:
         return "Open diagram";
+      case MODAL.SAVEAS:
+        return "Save as";
       default:
         return "";
     }
@@ -1087,8 +1116,10 @@ export default function ControlPanel(props) {
         return "Rename";
       case MODAL.OPEN:
         return "Open";
+      case MODAL.SAVEAS:
+        return "Save as";
       default:
-        return "";
+        return "Confirm";
     }
   };
 
@@ -1119,6 +1150,18 @@ export default function ControlPanel(props) {
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;
         loadDiagram(selectedDiagramId);
+        setVisible(MODAL.NONE);
+        return;
+      case MODAL.SAVEAS:
+        db.diagrams.add({
+          name: saveAsTitle,
+          lastModified: new Date(),
+          tables: tables,
+          references: relationships,
+          types: types,
+          notes: notes,
+          areas: areas,
+        });
         setVisible(MODAL.NONE);
         return;
       default:
@@ -1244,6 +1287,15 @@ export default function ControlPanel(props) {
           placeholder="Diagram name"
           value={title}
           onChange={(v) => setTitle(v)}
+        />
+      );
+    }
+    if (visible === MODAL.SAVEAS) {
+      return (
+        <Input
+          placeholder="Diagram name"
+          value={saveAsTitle}
+          onChange={(v) => setSaveAsTitle(v)}
         />
       );
     }
@@ -1382,7 +1434,8 @@ export default function ControlPanel(props) {
               (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
               !exportData.data) ||
-            (visible === MODAL.OPEN && selectedDiagramId === 0),
+            (visible === MODAL.RENAME && title === "") ||
+            (visible === MODAL.SAVEAS && saveAsTitle === ""),
         }}
         cancelText="Cancel"
         width={600}
