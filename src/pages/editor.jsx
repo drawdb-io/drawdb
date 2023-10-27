@@ -12,6 +12,7 @@ import {
   ObjectType,
 } from "../data/data";
 import { socket } from "../data/socket";
+import { db } from "../data/db";
 import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 
 export const LayoutContext = createContext();
@@ -28,6 +29,7 @@ export const BotMessageContext = createContext();
 export const TypeContext = createContext();
 
 export default function Editor(props) {
+  const [id, setId] = useState(0);
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -459,6 +461,26 @@ export default function Editor(props) {
 
   useEffect(() => {
     document.title = "Editor | drawDB";
+
+    const loadLatestDiagram = async () => {
+      await db.diagrams
+        .orderBy("lastModified")
+        .last()
+        .then((d) => {
+          if (d) {
+            setId(d.id);
+            setTables(d.tables);
+            setRelationships(d.references);
+            setNotes(d.notes);
+            setAreas(d.areas);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    loadLatestDiagram();
 
     socket.connect();
 
