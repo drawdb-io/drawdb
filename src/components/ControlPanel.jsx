@@ -80,6 +80,7 @@ export default function ControlPanel(props) {
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
   const [title, setTitle] = useState("Untitled Diagram");
+  const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [prevTitle, setPrevTitle] = useState(title);
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
@@ -663,13 +664,9 @@ export default function ControlPanel(props) {
     del();
   };
   const save = () => {
-    const lastModified = new Date();
     db.diagrams.add({
       name: title,
-      lastModified:
-        lastModified.toLocaleDateString() +
-        " " +
-        lastModified.toLocaleTimeString(),
+      lastModified: new Date(),
       tables: tables,
       references: relationships,
       types: types,
@@ -678,6 +675,24 @@ export default function ControlPanel(props) {
     });
   };
   const open = () => setVisible(MODAL.OPEN);
+  const loadDiagram = (id) => {
+    db.diagrams
+      .get(id)
+      .then((diagram) => {
+        if (diagram) {
+          setTitle(diagram.name);
+          setTables(diagram.tables);
+          setRelationships(diagram.references);
+          setAreas(diagram.areas);
+          setNotes(diagram.notes);
+        } else {
+          Toast.error("Oops! Something went wrong.");
+        }
+      })
+      .catch(() => {
+        Toast.error("Oops! Couldn't load diagram.");
+      });
+  };
 
   const menu = {
     File: {
@@ -1101,6 +1116,11 @@ export default function ControlPanel(props) {
           setRedoStack([]);
         }
         return;
+      case MODAL.OPEN:
+        if (selectedDiagramId === 0) return;
+        loadDiagram(selectedDiagramId);
+        setVisible(MODAL.NONE);
+        return;
       default:
         setVisible(MODAL.NONE);
         return;
@@ -1241,7 +1261,7 @@ export default function ControlPanel(props) {
             />
           ) : (
             <>
-              <table className="w-full text-left">
+              <table className="w-full text-left border-separate border-spacing-x-0">
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -1259,12 +1279,30 @@ export default function ControlPanel(props) {
                       sizeStr = (size / (1024 * 1024)).toFixed(1) + "MB";
                     else sizeStr = size + "B";
                     return (
-                      <tr key={d.id} className="hover-1">
+                      <tr
+                        key={d.id}
+                        className={`${
+                          selectedDiagramId === d.id
+                            ? "bg-sky-400 bg-opacity-20"
+                            : "hover-1"
+                        }`}
+                        onClick={() => {
+                          setSelectedDiagramId(d.id);
+                        }}
+                        onDoubleClick={() => {
+                          loadDiagram(d.id);
+                          setVisible(MODAL.NONE);
+                        }}
+                      >
                         <td className="py-1">
                           <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60"></i>
                           {d.name}
                         </td>
-                        <td className="py-1">{d.lastModified}</td>
+                        <td className="py-1">
+                          {d.lastModified.toLocaleDateString() +
+                            " " +
+                            d.lastModified.toLocaleTimeString()}
+                        </td>
                         <td className="py-1">{sizeStr}</td>
                       </tr>
                     );
@@ -1343,7 +1381,8 @@ export default function ControlPanel(props) {
             (visible === MODAL.IMPORT &&
               (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
-              !exportData.data),
+              !exportData.data) ||
+            (visible === MODAL.OPEN && selectedDiagramId === 0),
         }}
         cancelText="Cancel"
         width={600}
