@@ -666,15 +666,29 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
     del();
   };
   const save = () => {
-    db.diagrams.add({
-      name: title,
-      lastModified: new Date(),
-      tables: tables,
-      references: relationships,
-      types: types,
-      notes: notes,
-      areas: areas,
-    });
+    if (diagramId === 0) {
+      db.diagrams
+        .add({
+          name: title,
+          lastModified: new Date(),
+          tables: tables,
+          references: relationships,
+          types: types,
+          notes: notes,
+          areas: areas,
+        })
+        .then((id) => setDiagramId(id));
+    } else {
+      db.diagrams.update(diagramId, {
+        name: title,
+        lastModified: new Date(),
+        tables: tables,
+        references: relationships,
+        types: types,
+        notes: notes,
+        areas: areas,
+      });
+    }
   };
   const open = () => setVisible(MODAL.OPEN);
   const saveDiagramAs = () => setVisible(MODAL.SAVEAS);
@@ -1091,7 +1105,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
       case MODAL.IMPORT:
         return "Import diagram";
       case MODAL.CODE:
-        return "Export diagram";
+        return "Export source";
       case MODAL.IMG:
         return "Export image";
       case MODAL.RENAME:

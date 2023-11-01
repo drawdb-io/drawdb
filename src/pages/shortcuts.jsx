@@ -5,6 +5,13 @@ import { AutoComplete, Button } from "@douyinfe/semi-ui";
 import { IconSearch, IconSun, IconMoon } from "@douyinfe/semi-icons";
 
 const shortcuts = [
+  { shortcut: "CTRL+S", title: "Save diagram", description: "" },
+  { shortcut: "CTRL+Shift+S", title: "Save diagram as", description: "" },
+  {
+    shortcut: "CTRL+O",
+    title: "Open a diagram",
+    description: "Load a saved diagram",
+  },
   { shortcut: "CTRL+C", title: "Copy selected element", description: "" },
   { shortcut: "CTRL+V", title: "Paste selected element", description: "" },
   { shortcut: "CTRL+X", title: "Cut selected element", description: "" },
@@ -179,6 +186,14 @@ export default function Shortcuts() {
             )}
           </div>
         ))}
+      </div>
+      <hr
+        className={`${
+          theme === "dark" ? "border-zinc-700" : "border-zinc-300"
+        } my-1`}
+      />
+      <div className="text-center text-sm py-3">
+        &copy; 2024 <strong>drawDB</strong> - All right reserved.
       </div>
     </>
   );
