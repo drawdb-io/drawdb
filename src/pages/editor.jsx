@@ -480,7 +480,13 @@ export default function Editor(props) {
         });
     };
 
-    loadLatestDiagram();
+    const args = localStorage.getItem("args");
+    if (!args || args === "-1") {
+      loadLatestDiagram();
+    } else {
+      console.log("Loading template with id", args);
+      localStorage.setItem("args", "-1");
+    }
 
     socket.connect();
 
@@ -583,7 +589,7 @@ export default function Editor(props) {
                         }}
                       >
                         <div className="h-[100vh] overflow-hidden theme">
-                          <ControlPanel diagramId={id} setDiagramId={setId}/>
+                          <ControlPanel diagramId={id} setDiagramId={setId} />
                           <div
                             className={
                               layout.header

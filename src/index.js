@@ -8,11 +8,11 @@ import en_US from "@douyinfe/semi-ui/lib/es/locale/source/en_US";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <LocaleProvider locale={en_US}>
       <App />
     </LocaleProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

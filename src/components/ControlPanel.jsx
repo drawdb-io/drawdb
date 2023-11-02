@@ -11,6 +11,7 @@ import {
   IconRedo,
   IconRowsStroked,
   IconEdit,
+  IconPlus,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -71,6 +72,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
     RENAME: 4,
     OPEN: 5,
     SAVEAS: 6,
+    NEW: 7,
   };
   const STATUS = {
     NONE: 0,
@@ -84,6 +86,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
   const [prevTitle, setPrevTitle] = useState(title);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
@@ -713,11 +716,15 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         Toast.error("Oops! Couldn't load diagram.");
       });
   };
+  const createNewDiagram = (id) => {
+    localStorage.setItem("args", `${id}`);
+    window.open("/editor", "_blank");
+  };
 
   const menu = {
     File: {
       New: {
-        function: () => {},
+        function: () => setVisible(MODAL.NEW),
       },
       "New window": {
         function: () => {},
@@ -1114,6 +1121,8 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         return "Open diagram";
       case MODAL.SAVEAS:
         return "Save as";
+      case MODAL.NEW:
+        return "New diagram";
       default:
         return "";
     }
@@ -1132,6 +1141,8 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         return "Open";
       case MODAL.SAVEAS:
         return "Save as";
+      case MODAL.NEW:
+        return "Create";
       default:
         return "Confirm";
     }
@@ -1166,6 +1177,10 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         loadDiagram(selectedDiagramId);
         setVisible(MODAL.NONE);
         return;
+      case MODAL.RENAME:
+        setPrevTitle(title);
+        setVisible(MODAL.NONE);
+        return;
       case MODAL.SAVEAS:
         db.diagrams.add({
           name: saveAsTitle,
@@ -1177,6 +1192,10 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
           areas: areas,
         });
         setVisible(MODAL.NONE);
+        return;
+      case MODAL.NEW:
+        setVisible(MODAL.NONE);
+        createNewDiagram(selectedTemplateId);
         return;
       default:
         setVisible(MODAL.NONE);
@@ -1291,127 +1310,164 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
     );
   };
 
+  const newModalBody = () => (
+    <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
+      <div>
+        <div
+          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
+            settings.mode === "light"
+              ? "hover:border-blue-500"
+              : "hover:border-white"
+          } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
+          onClick={() => setSelectedTemplateId(0)}
+        >
+          <IconPlus style={{ color: "#fff" }} size="extra-large" />
+        </div>
+        <div className="text-center mt-1">Blank</div>
+      </div>
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+        <div key={i}>
+          <div
+            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
+              settings.mode === "light"
+                ? "hover:border-blue-500"
+                : "hover:border-white"
+            } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
+            onClick={() => setSelectedTemplateId(i)}
+          >
+            +
+          </div>
+          <div className="text-center mt-1">Template {i}</div>
+        </div>
+      ))}
+    </div>
+  );
+
   const getModalBody = () => {
-    if (visible === MODAL.IMPORT) {
-      return importModalBody();
-    }
-    if (visible === MODAL.RENAME) {
-      return (
-        <Input
-          placeholder="Diagram name"
-          value={title}
-          onChange={(v) => setTitle(v)}
-        />
-      );
-    }
-    if (visible === MODAL.SAVEAS) {
-      return (
-        <Input
-          placeholder="Diagram name"
-          value={saveAsTitle}
-          onChange={(v) => setSaveAsTitle(v)}
-        />
-      );
-    }
-    if (visible === MODAL.OPEN) {
-      return (
-        <div>
-          {diagrams.length === 0 ? (
-            <Banner
-              fullMode={false}
-              type="info"
-              bordered
-              icon={null}
-              closeIcon={null}
-              description={<div>You have no saved diagrams.</div>}
-            />
-          ) : (
-            <>
-              <table className="w-full text-left border-separate border-spacing-x-0">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Last Modified</th>
-                    <th>Size</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {diagrams?.map((d) => {
-                    const size = JSON.stringify(d).length;
-                    let sizeStr;
-                    if (size >= 1024 && size < 1024 * 1024)
-                      sizeStr = (size / 1024).toFixed(1) + "KB";
-                    else if (size >= 1024 * 1024)
-                      sizeStr = (size / (1024 * 1024)).toFixed(1) + "MB";
-                    else sizeStr = size + "B";
-                    return (
-                      <tr
-                        key={d.id}
-                        className={`${
-                          selectedDiagramId === d.id
-                            ? "bg-sky-400 bg-opacity-20"
-                            : "hover-1"
-                        }`}
-                        onClick={() => {
-                          setSelectedDiagramId(d.id);
-                        }}
-                        onDoubleClick={() => {
-                          loadDiagram(d.id);
-                          setVisible(MODAL.NONE);
-                        }}
-                      >
-                        <td className="py-1">
-                          <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60"></i>
-                          {d.name}
-                        </td>
-                        <td className="py-1">
-                          {d.lastModified.toLocaleDateString() +
-                            " " +
-                            d.lastModified.toLocaleTimeString()}
-                        </td>
-                        <td className="py-1">{sizeStr}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </>
-          )}
-        </div>
-      );
-    }
-    if (exportData.data !== "" || exportData.data) {
-      return (
-        <>
-          {visible === MODAL.IMG ? (
-            <Image src={exportData.data} alt="Diagram" height={280} />
-          ) : (
-            <Editor
-              height="360px"
-              value={exportData.data}
-              language={exportData.extension}
-              options={{ readOnly: true }}
-              theme={settings.mode === "light" ? "light" : "vs-dark"}
-            />
-          )}
-          <div className="text-sm font-semibold mt-2">Filename:</div>
+    switch (visible) {
+      case MODAL.IMPORT:
+        return importModalBody();
+      case MODAL.NEW:
+        return newModalBody();
+      case MODAL.RENAME:
+        return (
           <Input
-            value={exportData.filename}
-            placeholder="Filename"
-            suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
-            onChange={(value) =>
-              setExportData((prev) => ({ ...prev, filename: value }))
-            }
-            field="filename"
+            placeholder="Diagram name"
+            value={title}
+            onChange={(v) => setTitle(v)}
           />
-        </>
-      );
-    } else {
-      return (
-        <div className="text-center my-3">
-          <Spin tip="Loading..." size="large" />
-        </div>
-      );
+        );
+      case MODAL.OPEN:
+        return (
+          <div>
+            {diagrams.length === 0 ? (
+              <Banner
+                fullMode={false}
+                type="info"
+                bordered
+                icon={null}
+                closeIcon={null}
+                description={<div>You have no saved diagrams.</div>}
+              />
+            ) : (
+              <>
+                <table className="w-full text-left border-separate border-spacing-x-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Last Modified</th>
+                      <th>Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {diagrams?.map((d) => {
+                      const size = JSON.stringify(d).length;
+                      let sizeStr;
+                      if (size >= 1024 && size < 1024 * 1024)
+                        sizeStr = (size / 1024).toFixed(1) + "KB";
+                      else if (size >= 1024 * 1024)
+                        sizeStr = (size / (1024 * 1024)).toFixed(1) + "MB";
+                      else sizeStr = size + "B";
+                      return (
+                        <tr
+                          key={d.id}
+                          className={`${
+                            selectedDiagramId === d.id
+                              ? "bg-sky-400 bg-opacity-20"
+                              : "hover-1"
+                          }`}
+                          onClick={() => {
+                            setSelectedDiagramId(d.id);
+                          }}
+                          onDoubleClick={() => {
+                            loadDiagram(d.id);
+                            setVisible(MODAL.NONE);
+                          }}
+                        >
+                          <td className="py-1">
+                            <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60"></i>
+                            {d.name}
+                          </td>
+                          <td className="py-1">
+                            {d.lastModified.toLocaleDateString() +
+                              " " +
+                              d.lastModified.toLocaleTimeString()}
+                          </td>
+                          <td className="py-1">{sizeStr}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </>
+            )}
+          </div>
+        );
+      case MODAL.SAVEAS:
+        return (
+          <Input
+            placeholder="Diagram name"
+            value={saveAsTitle}
+            onChange={(v) => setSaveAsTitle(v)}
+          />
+        );
+      case MODAL.CODE:
+      case MODAL.IMG:
+        if (exportData.data !== "" || exportData.data) {
+          return (
+            <>
+              {visible === MODAL.IMG ? (
+                <Image src={exportData.data} alt="Diagram" height={280} />
+              ) : (
+                <Editor
+                  height="360px"
+                  value={exportData.data}
+                  language={exportData.extension}
+                  options={{ readOnly: true }}
+                  theme={settings.mode === "light" ? "light" : "vs-dark"}
+                />
+              )}
+              <div className="text-sm font-semibold mt-2">Filename:</div>
+              <Input
+                value={exportData.filename}
+                placeholder="Filename"
+                suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
+                onChange={(value) =>
+                  setExportData((prev) => ({ ...prev, filename: value }))
+                }
+                field="filename"
+              />
+            </>
+          );
+        } else {
+          return (
+            <div className="text-center my-3">
+              <Spin tip="Loading..." size="large" />
+            </div>
+          );
+        }
+      default:
+        return <></>;
     }
   };
 
