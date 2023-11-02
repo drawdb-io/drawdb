@@ -703,6 +703,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
           setDiagramId(diagram.id);
           setTitle(diagram.name);
           setTables(diagram.tables);
+          setTypes(diagram.types)
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
@@ -727,7 +728,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         function: () => setVisible(MODAL.NEW),
       },
       "New window": {
-        function: () => {},
+        function: () => window.open("/editor", "_blank"),
       },
       Open: {
         function: open,
@@ -761,6 +762,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
               setRelationships([]);
               setAreas([]);
               setNotes([]);
+              setTypes([]);
               setUndoStack([]);
               setRedoStack([]);
             })
@@ -802,7 +804,6 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
           {
             JSON: () => {
               setVisible(MODAL.CODE);
-
               const result = JSON.stringify(
                 {
                   tables: tables,
@@ -861,8 +862,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
               const result = JSON.stringify(
                 {
                   author: "Unnamed",
-                  project: "Untitled",
-                  filename: "Untitled",
+                  filename: title,
                   date: new Date().toISOString(),
                   tables: tables,
                   relationships: relationships,
@@ -1051,9 +1051,6 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
         function: () => {},
       },
       "Revert changes": {
-        function: () => {},
-      },
-      "View commits": {
         function: () => {},
       },
     },
@@ -1393,7 +1390,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
                           key={d.id}
                           className={`${
                             selectedDiagramId === d.id
-                              ? "bg-sky-400 bg-opacity-20"
+                              ? "bg-blue-300 bg-opacity-30"
                               : "hover-1"
                           }`}
                           onClick={() => {
