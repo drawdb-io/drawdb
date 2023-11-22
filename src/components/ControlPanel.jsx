@@ -63,7 +63,12 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 
-export default function ControlPanel({ diagramId, setDiagramId }) {
+export default function ControlPanel({
+  diagramId,
+  setDiagramId,
+  title,
+  setTitle,
+}) {
   const MODAL = {
     NONE: 0,
     IMG: 1,
@@ -82,7 +87,6 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
   };
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
-  const [title, setTitle] = useState("Untitled Diagram");
   const [prevTitle, setPrevTitle] = useState(title);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
@@ -703,12 +707,13 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
           setDiagramId(diagram.id);
           setTitle(diagram.name);
           setTables(diagram.tables);
-          setTypes(diagram.types)
+          setTypes(diagram.types);
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
           setUndoStack([]);
           setRedoStack([]);
+          window.name = `d ${diagram.id}`;
         } else {
           Toast.error("Oops! Something went wrong.");
         }
@@ -1367,7 +1372,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
                 description={<div>You have no saved diagrams.</div>}
               />
             ) : (
-              <>
+              <div className="max-h-[360px]">
                 <table className="w-full text-left border-separate border-spacing-x-0">
                   <thead>
                     <tr>
@@ -1416,7 +1421,7 @@ export default function ControlPanel({ diagramId, setDiagramId }) {
                     })}
                   </tbody>
                 </table>
-              </>
+              </div>
             )}
           </div>
         );

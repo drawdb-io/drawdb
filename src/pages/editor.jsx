@@ -30,6 +30,7 @@ export const TypeContext = createContext();
 
 export default function Editor(props) {
   const [id, setId] = useState(0);
+  const [title, setTitle] = useState("Untitled Diagram");
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -473,6 +474,30 @@ export default function Editor(props) {
             setRelationships(d.references);
             setNotes(d.notes);
             setAreas(d.areas);
+            setTypes(d.types);
+          }
+          window.name = `d ${d.id}`;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    const loadDiagram = async (id) => {
+      await db.diagrams
+        .get(id)
+        .then((diagram) => {
+          if (diagram) {
+            setId(diagram.id);
+            setTitle(diagram.name);
+            setTables(diagram.tables);
+            setTypes(diagram.types);
+            setRelationships(diagram.references);
+            setAreas(diagram.areas);
+            setNotes(diagram.notes);
+            setUndoStack([]);
+            setRedoStack([]);
+            window.name = `d ${diagram.id}`;
           }
         })
         .catch((error) => {
@@ -482,7 +507,13 @@ export default function Editor(props) {
 
     const args = localStorage.getItem("args");
     if (!args || args === "-1") {
-      loadLatestDiagram();
+      if (window.name === "") {
+        console.log("Loading the latest diagram");
+        loadLatestDiagram();
+      } else {
+        const did = parseInt(window.name.split(" ")[1]);
+        loadDiagram(did);
+      }
     } else {
       console.log("Loading template with id", args);
       localStorage.setItem("args", "-1");
@@ -589,7 +620,12 @@ export default function Editor(props) {
                         }}
                       >
                         <div className="h-[100vh] overflow-hidden theme">
-                          <ControlPanel diagramId={id} setDiagramId={setId} />
+                          <ControlPanel
+                            diagramId={id}
+                            setDiagramId={setId}
+                            title={title}
+                            setTitle={setTitle}
+                          />
                           <div
                             className={
                               layout.header
