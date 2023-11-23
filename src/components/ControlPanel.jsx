@@ -923,7 +923,7 @@ export default function ControlPanel({
         ],
         function: () => {},
       },
-      Properties: {
+      Settings: {
         function: () => {},
       },
       Exit: {
