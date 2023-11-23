@@ -924,7 +924,24 @@ export default function ControlPanel({
         function: () => {},
       },
       Settings: {
-        function: () => {},
+        children: [
+          {
+            Autosave: () =>
+              setSettings((prev) => {
+                Toast.success(
+                  `Autosave is ${settings.autosave ? "off" : "on"}`
+                );
+                return { ...prev, autosave: !prev.autosave };
+              }),
+          },
+          {
+            Panning: () =>
+              setSettings((prev) => {
+                Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
+                return { ...prev, panning: !prev.panning };
+              }),
+          },
+        ],
       },
       Exit: {
         function: () => {},

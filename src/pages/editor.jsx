@@ -58,6 +58,8 @@ export default function Editor(props) {
     pan: { x: 0, y: 0 },
     showGrid: true,
     mode: "light",
+    autosave: true,
+    panning: true,
   });
   const [tasks, setTasks] = useState([]);
   const [messages, setMessages] = useState([]);

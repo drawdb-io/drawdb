@@ -127,6 +127,9 @@ export default function Canvas(props) {
       dragging.element === ObjectType.NONE &&
       areaResize.id === -1
     ) {
+      if (!settings.panning) {
+        return;
+      }
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
       setSettings((prev) => ({
