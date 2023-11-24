@@ -10,6 +10,7 @@ import {
   avatarThemes,
   Action,
   ObjectType,
+  State,
 } from "../data/data";
 import { socket } from "../data/socket";
 import { db } from "../data/db";
@@ -31,6 +32,8 @@ export const TypeContext = createContext();
 export default function Editor(props) {
   const [id, setId] = useState(0);
   const [title, setTitle] = useState("Untitled Diagram");
+  const [state, setState] = useState(State.NONE);
+  const [lastSaved, setLastSaved] = useState("");
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -463,6 +466,70 @@ export default function Editor(props) {
     );
 
   useEffect(() => {
+    if (
+      tables.length === 0 &&
+      areas.length === 0 &&
+      notes.length === 0 &&
+      types.length === 0
+    )
+      return;
+
+    if (settings.autosave) {
+      setState(State.SAVING);
+    }
+  }, [
+    undoStack,
+    redoStack,
+    settings.autosave,
+    tables.length,
+    areas.length,
+    notes.length,
+    types.length,
+  ]);
+
+  useEffect(() => {
+    const save = async () => {
+      if (state !== State.SAVING) {
+        return;
+      }
+      if (id === 0 && window.name === "") {
+        db.diagrams
+          .add({
+            name: title,
+            lastModified: new Date(),
+            tables: tables,
+            references: relationships,
+            types: types,
+            notes: notes,
+            areas: areas,
+          })
+          .then((id) => {
+            setId(id);
+            window.name = `d ${id}`;
+            setState(State.SAVED);
+            setLastSaved(new Date().toLocaleString());
+          });
+      } else {
+        db.diagrams
+          .update(id, {
+            name: title,
+            lastModified: new Date(),
+            tables: tables,
+            references: relationships,
+            types: types,
+            notes: notes,
+            areas: areas,
+          })
+          .then(() => {
+            setState(State.SAVED);
+            setLastSaved(new Date().toLocaleString());
+          });
+      }
+    };
+    save();
+  }, [tables, relationships, notes, areas, types, title, id, state]);
+
+  useEffect(() => {
     document.title = "Editor | drawDB";
 
     const loadLatestDiagram = async () => {
@@ -477,8 +544,10 @@ export default function Editor(props) {
             setNotes(d.notes);
             setAreas(d.areas);
             setTypes(d.types);
+            window.name = `d ${d.id}`;
+          } else {
+            window.name = "";
           }
-          window.name = `d ${d.id}`;
         })
         .catch((error) => {
           console.log(error);
@@ -500,6 +569,8 @@ export default function Editor(props) {
             setUndoStack([]);
             setRedoStack([]);
             window.name = `d ${diagram.id}`;
+          } else {
+            window.name = "";
           }
         })
         .catch((error) => {
@@ -627,6 +698,10 @@ export default function Editor(props) {
                             setDiagramId={setId}
                             title={title}
                             setTitle={setTitle}
+                            state={state}
+                            setState={setState}
+                            lastSaved={lastSaved}
+                            setLastSaved={setLastSaved}
                           />
                           <div
                             className={
@@ -644,7 +719,7 @@ export default function Editor(props) {
                                 width={width}
                               />
                             )}
-                            <Canvas />
+                            <Canvas state={state} setState={setState} />
                             {layout.services && (
                               <MessageContext.Provider
                                 value={{ messages, setMessages }}

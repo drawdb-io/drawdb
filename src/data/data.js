@@ -103,6 +103,13 @@ const Action = {
   PAN: 4,
 };
 
+const State = {
+  NONE: 0,
+  SAVING: 1,
+  SAVED: 2,
+  LOADING: 3,
+};
+
 export {
   bgBlue,
   sqlDataTypes,
@@ -116,4 +123,5 @@ export {
   Tab,
   ObjectType,
   Action,
+  State,
 };

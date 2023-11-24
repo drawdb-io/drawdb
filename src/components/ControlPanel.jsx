@@ -54,7 +54,7 @@ import {
   UndoRedoContext,
 } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
-import { ObjectType, Action, Tab } from "../data/data";
+import { ObjectType, Action, Tab, State } from "../data/data";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
@@ -68,6 +68,10 @@ export default function ControlPanel({
   setDiagramId,
   title,
   setTitle,
+  state,
+  setState,
+  lastSaved,
+  setLastSaved,
 }) {
   const MODAL = {
     NONE: 0,
@@ -672,31 +676,7 @@ export default function ControlPanel({
     copy();
     del();
   };
-  const save = () => {
-    if (diagramId === 0) {
-      db.diagrams
-        .add({
-          name: title,
-          lastModified: new Date(),
-          tables: tables,
-          references: relationships,
-          types: types,
-          notes: notes,
-          areas: areas,
-        })
-        .then((id) => setDiagramId(id));
-    } else {
-      db.diagrams.update(diagramId, {
-        name: title,
-        lastModified: new Date(),
-        tables: tables,
-        references: relationships,
-        types: types,
-        notes: notes,
-        areas: areas,
-      });
-    }
-  };
+  const save = () => setState(State.SAVING);
   const open = () => setVisible(MODAL.OPEN);
   const saveDiagramAs = () => setVisible(MODAL.SAVEAS);
   const loadDiagram = async (id) => {
@@ -1682,6 +1662,21 @@ export default function ControlPanel({
     );
   }
 
+  function getState() {
+    switch (state) {
+      case State.NONE:
+        return "No changes"
+      case State.LOADING:
+        return "Loading . . .";
+      case State.SAVED:
+        return `Last saved ${lastSaved}`;
+      case State.SAVING:
+        return "Saving . . .";
+      default:
+        return "";
+    }
+  }
+
   function header() {
     return (
       <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
@@ -1783,8 +1778,16 @@ export default function ControlPanel({
                   </Dropdown>
                 ))}
               </div>
-              <Button size="small" type="tertiary">
-                Last saved {new Date().toISOString()}
+              <Button
+                size="small"
+                type="tertiary"
+                icon={
+                  state === State.LOADING || state === State.SAVING ? (
+                    <Spin size="small" />
+                  ) : null
+                }
+              >
+                {getState()}
               </Button>
             </div>
           </div>
