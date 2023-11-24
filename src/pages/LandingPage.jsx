@@ -3,20 +3,8 @@ import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
 import Navbar from "../components/Navbar";
 
-import { db } from "../data/db";
-
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
-
-  const clearDatabase = () => {
-    db.delete()
-      .then(() => {
-        console.log("Database cleared.");
-      })
-      .catch((error) => {
-        console.error("Failed to clear the database:", error);
-      });
-  };
 
   useEffect(() => {
     document.body.setAttribute("theme-mode", "light");
@@ -39,7 +27,6 @@ export default function LandingPage() {
         </div>
       )}
       <Navbar />
-      <button onClick={clearDatabase}>delete db</button>
     </div>
   );
 }

@@ -754,6 +754,18 @@ export default function ControlPanel({
             .catch((e) => Toast.error("Oops! Something went wrong."));
         },
       },
+      "Flush storage": {
+        function: async () => {
+          db.delete()
+            .then(() => {
+              Toast.success("Storage flushed");
+              window.location.reload(false);
+            })
+            .catch((error) => {
+              Toast.error("Oops! Something went wrong.");
+            });
+        },
+      },
       Import: {
         function: fileImport,
         shortcut: "Ctrl+I",
@@ -1665,7 +1677,7 @@ export default function ControlPanel({
   function getState() {
     switch (state) {
       case State.NONE:
-        return "No changes"
+        return "No changes";
       case State.LOADING:
         return "Loading . . .";
       case State.SAVED:
