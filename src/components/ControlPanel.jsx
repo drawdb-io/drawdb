@@ -713,7 +713,10 @@ export default function ControlPanel({
         function: () => setVisible(MODAL.NEW),
       },
       "New window": {
-        function: () => window.open("/editor", "_blank"),
+        function: () => {
+          const newWindow = window.open("/editor", "_blank");
+          newWindow.name = window.name;
+        },
       },
       Open: {
         function: open,
