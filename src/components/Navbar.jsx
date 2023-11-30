@@ -9,7 +9,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="py-5 px-6 sm:px-4 flex justify-between items-center">
+      <div className="py-5 px-8 sm:px-4 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <Link to="/">
             <img src={logo} alt="logo" className="me-2 sm:h-[32px]" />
@@ -24,7 +24,10 @@ export default function Navbar() {
             >
               Editor
             </Link>
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
+            <Link
+              to="/templates"
+              className="ms-4 text-lg font-semibold hover:text-indigo-700"
+            >
               Templates
             </Link>
             <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
@@ -68,7 +71,10 @@ export default function Navbar() {
           Editor
         </Link>
         <hr />
-        <Link className="hover:bg-zinc-100 block p-3 text-lg font-semibold">
+        <Link
+          to="/templates"
+          className="hover:bg-zinc-100 block p-3 text-lg font-semibold"
+        >
           Templates
         </Link>
         <hr />

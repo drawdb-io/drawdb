@@ -6,6 +6,7 @@ import BugReport from "./pages/BugReport";
 import SignUp from "./pages/Signup";
 import Shortcuts from "./pages/Shortcuts"
 import Login from "./pages/Login";
+import Templates from "./pages/Templates";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/bug_report" element={<BugReport />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/templates" element={<Templates />} />
       </Routes>
     </Router>
   );
