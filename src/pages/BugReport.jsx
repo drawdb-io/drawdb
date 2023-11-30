@@ -173,7 +173,7 @@ export default function BugReport() {
 
   return (
     <>
-      <div className="sm:py-3 py-5 px-6 flex justify-between items-center">
+      <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <img
             src={theme === "dark" ? logo_dark : logo_light}
@@ -203,7 +203,7 @@ export default function BugReport() {
           theme === "dark" ? "border-zinc-700" : "border-zinc-300"
         } my-1`}
       />
-      <div className="grid grid-cols-12 gap-8 my-6 mx-8 sm:mx-3">
+      <div className="grid grid-cols-12 gap-8 my-6 mx-20 sm:mx-6">
         <div className="col-span-4 md:col-span-12 lg:col-span-4">
           <div className="card-theme p-6 rounded-md">
             <div className="flex items-center">

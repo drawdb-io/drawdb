@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export default function Templates() {
   return (
     <div>
-      <div className="sm:py-3 py-5 px-6 flex justify-between items-center select-none">
+      <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center select-none">
         <div className="flex items-center justify-start">
           <Link to="/">
             <img

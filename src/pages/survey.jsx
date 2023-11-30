@@ -73,7 +73,9 @@ function SurveyForm({ theme }) {
               subject: `[SURVEY]: ${new Date().toDateString()}`,
               message: `${Object.keys(form).map(
                 (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
-              )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(editor)}`,
+              )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
+                editor
+              )}`,
             })
             .then((res) => {
               Toast.success("Thanks for the feedback!");
@@ -272,7 +274,7 @@ export default function Survey() {
 
   return (
     <>
-      <div className="sm:py-3 py-5 md:px-8 px-8 flex justify-between items-center">
+      <div className="sm:py-3 py-5 md:px-8 px-20 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <img
             src={theme === "dark" ? logo_dark : logo_light}

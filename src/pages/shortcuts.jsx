@@ -110,7 +110,7 @@ export default function Shortcuts() {
 
   return (
     <>
-      <div className="sm:py-3 py-5 px-6 flex justify-between items-center">
+      <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <img
             src={theme === "dark" ? logo_dark : logo_light}
@@ -167,7 +167,7 @@ export default function Shortcuts() {
           onSelect={(v) => {}}
         ></AutoComplete>
       </div>
-      <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 m-6 gap-5 select-none">
+      <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 my-6 mx-20 sm:mx-6 gap-5 select-none">
         {shortcuts.map((s, i) => (
           <div className="p-3 card-theme rounded" key={i}>
             <div className="flex justify-between sm:text-sm">
