@@ -9,8 +9,8 @@ import { calcPath } from "../utils";
 function Thumbnail({ diagram }) {
   const zoom = 0.3;
   return (
-    <div className="w-full select-none">
-      <svg className="bg-white w-full">
+    <div className="w-full select-none h-[190px]">
+      <svg className="bg-white w-full h-full rounded-t-md">
         <defs>
           <pattern
             id="pattern-circles"
@@ -80,7 +80,9 @@ function Thumbnail({ diagram }) {
                     </div>
                     {table.fields.map((f, j) => (
                       <div
-                        className="flex justify-between items-center py-[2px] px-[3px]"
+                        className={`flex justify-between items-center py-[2px] px-[3px] ${
+                          j < table.fields.length - 1 ? "border-b" : ""
+                        }`}
                         key={j}
                       >
                         <div className="flex items-center justify-start">
@@ -164,56 +166,71 @@ export default function Templates() {
 
   return (
     <div>
-      <div className="sm:py-3 py-5 px-12 xl:px-20 sm:px-6 flex justify-between items-center select-none">
-        <div className="flex items-center justify-start">
-          <Link to="/">
-            <img
-              src={logo_light}
-              alt="logo"
-              className="me-2 sm:h-[28px] md:h-[46px]"
-            />
-          </Link>
-          <div className="ms-4 sm:text-sm xl:text-xl text-xl font-semibold">
-            Templates
+      <div className="min-h-screen">
+        <div className="sm:py-3 py-5 px-12 xl:px-20 sm:px-6 flex justify-between items-center select-none">
+          <div className="flex items-center justify-start">
+            <Link to="/">
+              <img
+                src={logo_light}
+                alt="logo"
+                className="me-2 sm:h-[28px] md:h-[46px]"
+              />
+            </Link>
+            <div className="ms-4 sm:text-sm xl:text-xl text-xl font-semibold">
+              Templates
+            </div>
           </div>
+        </div>
+        <hr className="border-zinc-300" />
+        <div className="xl:px-20 sm:px-6 px-12 py-6">
+          <div className="w-full md:w-[75%] xl:w-[50%] mb-2">
+            <div className="text-2xl sm:text-lg font-semibold mb-2 text-neutral-800">
+              Database schema templates
+            </div>
+            <div className="text-sm text-neutral-700">
+              A compilation of database entity relationship diagrams to give you
+              a quick start or inspire your application's architecture.
+            </div>
+          </div>
+          <Tabs>
+            <TabPane
+              tab={<span className="mx-2">Default templates</span>}
+              itemKey="1"
+            >
+              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-4 my-3">
+                {templates?.map((t, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
+                  >
+                    <Thumbnail diagram={t} />
+                    <div className="px-4 py-3">
+                      <div className="flex justify-between">
+                        <div className="text-lg font-bold text-zinc-700">
+                          {t.title}
+                        </div>
+                        <button className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
+                          <i className="fa-solid fa-code-fork"></i>
+                        </button>
+                      </div>
+                      <div>{t.description}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabPane>
+            <TabPane
+              tab={<span className="mx-2">Your templates</span>}
+              itemKey="2"
+            >
+              <div className=" flex flex-col h-full">Your templates</div>
+            </TabPane>
+          </Tabs>
         </div>
       </div>
-      <hr className="border-zinc-300" />
-      <div className="xl:px-20 sm:px-6 px-12 py-6">
-        <div className="w-full md:w-[75%] xl:w-[50%] mb-2">
-          <div className="text-2xl sm:text-lg font-semibold mb-2 text-neutral-800">
-            Database schema templates
-          </div>
-          <div className="text-sm text-neutral-700">
-            A compilation of database entity relationship diagrams to give you a
-            quick start or inspire your application's architecture.
-          </div>
-        </div>
-        <Tabs>
-          <TabPane
-            tab={<span className="mx-2">Default templates</span>}
-            itemKey="1"
-          >
-            <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-4 my-3">
-              {templates?.map((t, i) => (
-                <div
-                  key={i}
-                  className="p-4 bg-gray-200 hover:translate-y-[-6px] transition-all duration-300"
-                >
-                  <Thumbnail diagram={t} />
-                  <div>{t.title}</div>
-                  <div>{t.description}</div>
-                </div>
-              ))}
-            </div>
-          </TabPane>
-          <TabPane
-            tab={<span className="mx-2">Your templates</span>}
-            itemKey="2"
-          >
-            Your templates
-          </TabPane>
-        </Tabs>
+      <hr className="border-zinc-300 my-1" />
+      <div className="text-center text-sm py-3">
+        &copy; 2024 <strong>drawDB</strong> - All right reserved.
       </div>
     </div>
   );
