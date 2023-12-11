@@ -4,10 +4,12 @@ import { Link } from "react-router-dom";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../data/db";
+import { calcPath } from "../utils";
 
-function cardCanvas(diagram) {
+function Thumbnail({ diagram }) {
+  const zoom = 0.3;
   return (
-    <div className="w-full">
+    <div className="w-full select-none">
       <svg className="bg-white w-full">
         <defs>
           <pattern
@@ -36,25 +38,35 @@ function cardCanvas(diagram) {
           fill="url(#pattern-circles)"
         ></rect>
         <g id="diagram">
-          {/* {diagram.areas.map((a) => (
-              <Area
-                key={a.id}
-                areaData={a}
-                onMouseDown={(e) => {}}
-                setResize={null}
-                initCoords={null}
-                setInitCoords={null}
-                zoom={null}
-              ></Area>
-            ))} */}
-          {diagram.tables.map((table, i) => {
+          {diagram.subjectAreas?.map((a) => (
+            <foreignObject
+              key={a.id}
+              x={a.x * zoom}
+              y={a.y * zoom}
+              width={a.width > 0 ? a.width * zoom : 0}
+              height={a.height > 0 ? a.height * zoom : 0}
+            >
+              <div
+                className={`border border-slate-400 w-full h-full rounded-sm relative`}
+              >
+                <div
+                  className="opacity-40 w-fill h-full"
+                  style={{ backgroundColor: a.color }}
+                />
+              </div>
+              <div className="text-color absolute top-[4px] left-[6px] select-none text-[4px]">
+                {a.name}
+              </div>
+            </foreignObject>
+          ))}
+          {diagram.tables?.map((table, i) => {
             const height = table.fields.length * 36 + 50 + 7;
             return (
               <foreignObject
-                x={table.x * 0.3}
-                y={table.y * 0.3}
-                width={200 * 0.3}
-                height={height * 0.3}
+                x={table.x * zoom}
+                y={table.y * zoom}
+                width={200 * zoom}
+                height={height * zoom}
                 key={i}
               >
                 <div className="border-[1px] rounded-[3px] border-zinc-300 text-[4px] bg-zinc-100">
@@ -85,19 +97,58 @@ function cardCanvas(diagram) {
               </foreignObject>
             );
           })}
-          {/* 
-            {diagram.relationships.map((e, i) => (
-              <Relationship key={i} data={e} />
-            ))}
-            {diagram.notes.map((n) => (
-              <Note
-                key={n.id}
-                data={n}
-                onMouseDown={(e) =>
-                  {}
-                }
-              ></Note>
-            ))} */}
+          {diagram.relationships?.map((e, i) => (
+            <path
+              d={calcPath(e.startX, e.endX, e.startY, e.endY, zoom)}
+              fill="none"
+              strokeWidth={1}
+              stroke="gray"
+            />
+          ))}
+          {diagram.notes?.map((n) => {
+            const x = n.x * zoom;
+            const y = n.y * zoom;
+            const w = 180 * zoom;
+            const r = 3 * zoom;
+            const fold = 24 * zoom;
+            const h = n.height * zoom;
+            return (
+              <g>
+                <path
+                  d={`M${x + fold} ${y} L${x + w - r} ${y} A${r} ${r} 0 0 1 ${
+                    x + w
+                  } ${y + r} L${x + w} ${y + h - r} A${r} ${r} 0 0 1 ${
+                    x + w - r
+                  } ${y + h} L${x + r} ${y + h} A${r} ${r} 0 0 1 ${x} ${
+                    y + h - r
+                  } L${x} ${y + fold}`}
+                  fill={n.color}
+                  stroke="rgb(168 162 158)"
+                  strokeLinejoin="round"
+                  strokeWidth="0.5"
+                />
+                <path
+                  d={`M${x} ${y + fold} L${x + fold - r} ${
+                    y + fold
+                  } A${r} ${r} 0 0 0 ${x + fold} ${y + fold - r} L${
+                    x + fold
+                  } ${y} L${x} ${y + fold} Z`}
+                  fill={n.color}
+                  stroke={"rgb(168 162 158)"}
+                  strokeLinejoin="round"
+                  strokeWidth="0.5"
+                />
+                <foreignObject x={x} y={y} width={w} height={h}>
+                  <div className="text-gray-900 w-full h-full px-[4px] py-[2px] text-[4px]">
+                    <label htmlFor={`note_${n.id}`} className="ms-[6px]">
+                      {n.title}
+                    </label>
+                    <div className="text-[4px] mt-[2px]">{n.content}</div>
+                  </div>
+                </foreignObject>
+              </g>
+            );
+          })}
         </g>
       </svg>
     </div>
@@ -149,7 +200,7 @@ export default function Templates() {
                   key={i}
                   className="p-4 bg-gray-200 hover:translate-y-[-6px] transition-all duration-300"
                 >
-                  {cardCanvas(t)}
+                  <Thumbnail diagram={t} />
                   <div>{t.title}</div>
                   <div>{t.description}</div>
                 </div>
