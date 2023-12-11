@@ -28,6 +28,8 @@ const t1 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 1",
+  description: "Lorem ipsum",
 };
 
 const t2 = {
@@ -60,6 +62,8 @@ const t2 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 2",
+  description: "Lorem ipsum",
 };
 
 const t3 = {
@@ -92,6 +96,8 @@ const t3 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 3",
+  description: "Lorem ipsum",
 };
 
 const t4 = {
@@ -124,6 +130,8 @@ const t4 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 4",
+  description: "Lorem ipsum",
 };
 
 const t5 = {
@@ -156,6 +164,8 @@ const t5 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 5",
+  description: "Lorem ipsum",
 };
 
 const t6 = {
@@ -188,6 +198,8 @@ const t6 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 6",
+  description: "Lorem ipsum",
 };
 
 const t7 = {
@@ -220,6 +232,8 @@ const t7 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 7",
+  description: "Lorem ipsum",
 };
 
 const t8 = {
@@ -252,6 +266,8 @@ const t8 = {
   notes: [],
   subjectAreas: [],
   types: [],
+  title: "Template 8",
+  description: "Lorem ipsum",
 };
 
 const templateSeeds = [t1, t2, t3, t4, t5, t6, t7, t8];
