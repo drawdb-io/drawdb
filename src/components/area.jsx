@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Popover, Input, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,

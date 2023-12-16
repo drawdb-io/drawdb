@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
@@ -29,7 +29,7 @@ export const MessageContext = createContext();
 export const BotMessageContext = createContext();
 export const TypeContext = createContext();
 
-export default function Editor(props) {
+export default function Editor() {
   const [id, setId] = useState(0);
   const [title, setTitle] = useState("Untitled Diagram");
   const [state, setState] = useState(State.NONE);

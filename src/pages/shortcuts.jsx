@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
 import { AutoComplete, Button } from "@douyinfe/semi-ui";
@@ -144,7 +144,7 @@ export default function Shortcuts() {
                 <div className="p-3 popover-theme">No shortcuts found</div>
               }
               onChange={(v) => setValue(v)}
-              onSelect={(v) => {}}
+              onSelect={() => {}}
             ></AutoComplete>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function Shortcuts() {
             <div className="p-3 popover-theme">No shortcuts found</div>
           }
           onChange={(v) => setValue(v)}
-          onSelect={(v) => {}}
+          onSelect={() => {}}
         ></AutoComplete>
       </div>
       <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 my-6 mx-20 sm:mx-6 gap-5 select-none">

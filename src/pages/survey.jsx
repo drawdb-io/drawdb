@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
 import {
@@ -64,12 +64,12 @@ function SurveyForm({ theme }) {
   };
 
   const onSubmit = useCallback(
-    (e) => {
+    () => {
       setLoading(true);
       editor.update(() => {
         const sendMail = async () => {
           await axios
-            .post(`${process.env.REACT_APP_BACKEND_URL}/send_email`, {
+            .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
               subject: `[SURVEY]: ${new Date().toDateString()}`,
               message: `${Object.keys(form).map(
                 (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
@@ -77,12 +77,12 @@ function SurveyForm({ theme }) {
                 editor
               )}`,
             })
-            .then((res) => {
+            .then(() => {
               Toast.success("Thanks for the feedback!");
               editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
               resetForm();
             })
-            .catch((err) => {
+            .catch(() => {
               Toast.error("Oops! Something went wrong.");
               setLoading(false);
             });

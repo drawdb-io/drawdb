@@ -1,60 +1,46 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "client-vite",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "@douyinfe/semi-ui": "^2.36.0",
-    "@lexical/react": "^0.12.2",
-    "@monaco-editor/react": "^4.5.1",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.5.0",
+    "@douyinfe/semi-ui": "^2.49.0",
+    "@lexical/react": "^0.12.5",
+    "@monaco-editor/react": "^4.6.0",
+    "axios": "^1.6.2",
     "dexie": "^3.2.4",
-    "dexie-react-hooks": "^1.1.6",
+    "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.11",
     "jsonschema": "^1.4.1",
     "jspdf": "^2.5.1",
-    "lexical": "^0.12.2",
-    "node-sql-parser": "^4.7.0",
+    "lexical": "^0.12.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",
     "react-hotkeys-hook": "^4.4.1",
-    "react-router-dom": "^6.11.2",
-    "react-scripts": "5.0.1",
+    "react-router": "^6.21.0",
+    "react-router-dom": "^6.21.0",
     "socket.io-client": "^4.7.2",
-    "unique-names-generator": "^4.7.1",
-    "url": "^0.11.1",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "tailwindcss": "^3.3.2"
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "vite": "^5.0.8"
   }
 }

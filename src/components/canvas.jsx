@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./Area";
@@ -14,7 +14,7 @@ import {
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 
-export default function Canvas(props) {
+export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } =
     useContext(TableContext);
   const { areas, updateArea } = useContext(AreaContext);
@@ -255,7 +255,7 @@ export default function Canvas(props) {
     }
   };
 
-  const handleMouseUp = (e) => {
+  const handleMouseUp = () => {
     if (coordsDidUpdate(dragging.element)) {
       const info = getMoveInfo();
       setUndoStack((prev) => [
@@ -320,7 +320,7 @@ export default function Canvas(props) {
     });
   };
 
-  const handleGripField = (id) => {
+  const handleGripField = () => {
     setPanning(false);
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinking(true);

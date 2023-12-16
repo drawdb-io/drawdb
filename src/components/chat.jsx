@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Input, Tag, Avatar } from "@douyinfe/semi-ui";
 import { IconSend } from "@douyinfe/semi-icons";
 import { socket } from "../data/socket";

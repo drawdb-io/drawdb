@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { SettingsContext, TableContext, TypeContext } from "../pages/Editor";
 import { validateDiagram, arrayIsEqual } from "../utils";

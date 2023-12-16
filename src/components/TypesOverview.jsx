@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Action, ObjectType, sqlDataTypes } from "../data/data";
 import {
   Collapse,
@@ -30,7 +30,7 @@ import {
 import { TypeContext, UndoRedoContext } from "../pages/Editor";
 import { isSized, hasPrecision, getSize } from "../utils";
 
-export default function TableOverview(props) {
+export default function TableOverview() {
   const [value, setValue] = useState("");
   const { types, addType, deleteType, updateType } = useContext(TypeContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
@@ -268,10 +268,10 @@ export default function TableOverview(props) {
                                       ),
                                     })
                                   }
-                                  onFocus={(e) =>
+                                  onFocus={() =>
                                     setEditField({ values: f.values })
                                   }
-                                  onBlur={(e) => {
+                                  onBlur={() => {
                                     if (
                                       JSON.stringify(editField.values) ===
                                       JSON.stringify(f.values)

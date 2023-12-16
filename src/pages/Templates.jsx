@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import { Link } from "react-router-dom";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
@@ -101,6 +101,7 @@ function Thumbnail({ diagram }) {
           })}
           {diagram.relationships?.map((e, i) => (
             <path
+              key={i}
               d={calcPath(e.startX, e.endX, e.startY, e.endY, zoom)}
               fill="none"
               strokeWidth={1}
@@ -115,7 +116,7 @@ function Thumbnail({ diagram }) {
             const fold = 24 * zoom;
             const h = n.height * zoom;
             return (
-              <g>
+              <g key={n.id}>
                 <path
                   d={`M${x + fold} ${y} L${x + w - r} ${y} A${r} ${r} 0 0 1 ${
                     x + w
@@ -189,7 +190,7 @@ export default function Templates() {
             </div>
             <div className="text-sm text-neutral-700">
               A compilation of database entity relationship diagrams to give you
-              a quick start or inspire your application's architecture.
+              a quick start or inspire your application&apos;s architecture.
             </div>
           </div>
           <Tabs>

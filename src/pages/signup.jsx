@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo_light_46.png";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -24,7 +24,7 @@ export default function SignUp() {
 
   const onSubmit = async () => {
     await axios
-      .post(`${process.env.REACT_APP_BACKEND_URL}/signup`, {
+      .post(`${import.meta.env.VITE_API_BACKEND_URL}/signup`, {
         username: formValues.username,
         email: formValues.email,
         password: formValues.password,
@@ -32,7 +32,7 @@ export default function SignUp() {
       .then((res) => {
         console.log(res);
       })
-      .catch((err) => {});
+      .catch(() => {});
   };
 
   useEffect(() => {
@@ -109,7 +109,9 @@ export default function SignUp() {
               bordered
               style={{ marginBottom: "12px" }}
               title={
-                <div className="font-bold text-sm">Password isn't secure</div>
+                <div className="font-bold text-sm">
+                  Password isn&apos;t secure
+                </div>
               }
               description={
                 <div className="w-[236px]">
@@ -124,7 +126,7 @@ export default function SignUp() {
             ></Banner>
           )}
           <ReCAPTCHA
-            sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY}
+            sitekey={import.meta.env.VITE_API_CAPTCHA_SITE_KEY}
             onChange={() =>
               setFormValues((prev) => ({ ...prev, captcha: true }))
             }

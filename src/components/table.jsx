@@ -1,4 +1,4 @@
-import { React, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   sqlDataTypes,
   tableThemes,
@@ -535,8 +535,8 @@ export default function Table(props) {
                                 values: v,
                               })
                             }
-                            onFocus={(e) => setEditField({ values: f.values })}
-                            onBlur={(e) => {
+                            onFocus={() => setEditField({ values: f.values })}
+                            onBlur={() => {
                               if (
                                 JSON.stringify(editField.values) ===
                                 JSON.stringify(f.values)
@@ -1238,7 +1238,7 @@ export default function Table(props) {
         <div className={`${hoveredField === index ? "text-zinc-400" : ""}`}>
           <button
             className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
-            onMouseDown={(ev) => {
+            onMouseDown={() => {
               props.handleGripField(index);
               props.setLine((prev) => ({
                 ...prev,

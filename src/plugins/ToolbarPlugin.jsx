@@ -456,7 +456,7 @@ export default function ToolbarPlugin(props) {
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
-        (_payload, newEditor) => {
+        () => {
           updateToolbar();
           return false;
         },

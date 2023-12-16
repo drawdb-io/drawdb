@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Empty,
   Row,
@@ -24,7 +24,7 @@ import {
 import { NoteContext, UndoRedoContext } from "../pages/Editor";
 import { noteThemes, Action, ObjectType } from "../data/data";
 
-export default function NotesOverview(props) {
+export default function NotesOverview() {
   const { notes, updateNote, addNote, deleteNote } = useContext(NoteContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [value, setValue] = useState("");

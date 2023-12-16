@@ -1,4 +1,4 @@
-import { React, useContext } from "react";
+import { useContext } from "react";
 import { Tabs } from "@douyinfe/semi-ui";
 import TableOverview from "./TableOverview";
 import ReferenceOverview from "./ReferenceOverview";
@@ -21,11 +21,11 @@ const SidePanel = (props) => {
     { tab: "Types", itemKey: Tab.types },
   ];
   const contentList = [
-    <TableOverview />,
-    <ReferenceOverview />,
-    <AreaOverview />,
-    <NotesOverview />,
-    <TypesOverview />,
+    <TableOverview key={1}/>,
+    <ReferenceOverview key={2}/>,
+    <AreaOverview key={3}/>,
+    <NotesOverview key={4}/>,
+    <TypesOverview key={5}/>,
   ];
 
   return (

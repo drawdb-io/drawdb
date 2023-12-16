@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo_light_46.png";
 import { IconEyeClosedSolid, IconEyeOpened } from "@douyinfe/semi-icons";
@@ -19,14 +19,14 @@ export default function Login() {
 
   const onSubmit = async () => {
     await axios
-      .post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+      .post(`${import.meta.env.VITE_API_BACKEND_URL}/login`, {
         email: formValues.email,
         password: formValues.password,
       })
       .then((res) => {
         console.log(res);
       })
-      .catch((err) => {});
+      .catch(() => {});
   };
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function Login() {
             Log in
           </button>
           <div className="text-sm text-center">
-            Don't have an account?
+            Don&apos;t have an account?
             <Link
               to="/signup"
               className="ms-2 font-semibold text-indigo-700 hover:underline"

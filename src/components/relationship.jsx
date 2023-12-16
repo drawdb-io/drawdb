@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { useState } from "react";
 import { calcPath } from "../utils";
 
 export default function Relationship(props) {

@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Action,
   ObjectType,
@@ -43,7 +43,7 @@ import {
 } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 
-export default function TableOverview(props) {
+export default function TableOverview() {
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const [value, setValue] = useState("");
   const {
@@ -392,10 +392,10 @@ export default function TableOverview(props) {
                                   onChange={(v) =>
                                     updateField(i, j, { values: v })
                                   }
-                                  onFocus={(e) =>
+                                  onFocus={() =>
                                     setEditField({ values: f.values })
                                   }
-                                  onBlur={(e) => {
+                                  onBlur={() => {
                                     if (
                                       JSON.stringify(editField.values) ===
                                       JSON.stringify(f.values)

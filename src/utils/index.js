@@ -403,7 +403,7 @@ function checkDefault(field) {
       return validateDateStr(field.default);
     case "TIME":
       return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
-    case "TIMESTAMP":
+    case "TIMESTAMP": {
       if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
         return true;
       }
@@ -414,7 +414,8 @@ function checkDefault(field) {
       const date = content[0].split("-");
 
       return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
-    case "DATETIME":
+    }
+    case "DATETIME": {
       if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
         return false;
       }
@@ -422,6 +423,7 @@ function checkDefault(field) {
       const d = c[0].split("-");
 
       return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    }
     default:
       return true;
   }

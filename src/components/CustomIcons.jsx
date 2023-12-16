@@ -1,5 +1,3 @@
-import React from "react";
-
 export function IconAddTable({ theme }) {
   return (
     <svg height="26" width="26">

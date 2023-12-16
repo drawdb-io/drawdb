@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -71,7 +71,6 @@ export default function ControlPanel({
   state,
   setState,
   lastSaved,
-  setLastSaved,
 }) {
   const MODAL = {
     NONE: 0,
@@ -209,7 +208,7 @@ export default function ControlPanel({
           updateField(a.tid, a.fid, a.undo);
         } else if (a.component === "field_delete") {
           setTables((prev) =>
-            prev.map((t, i) => {
+            prev.map((t) => {
               if (t.id === a.tid) {
                 const temp = t.fields.slice();
                 temp.splice(a.data.id, 0, a.data);
@@ -243,7 +242,7 @@ export default function ControlPanel({
           });
         } else if (a.component === "index_delete") {
           setTables((prev) =>
-            prev.map((table, i) => {
+            prev.map((table) => {
               if (table.id === a.tid) {
                 const temp = table.indices.slice();
                 temp.splice(a.data.id, 0, a.data);
@@ -488,7 +487,7 @@ export default function ControlPanel({
         .then(() => {
           Toast.success("Copied to clipboard.");
         })
-        .catch((e) => {
+        .catch(() => {
           Toast.error("Could not copy to clipboard.");
         });
     });
@@ -617,21 +616,21 @@ export default function ControlPanel({
       case ObjectType.TABLE:
         navigator.clipboard
           .writeText(JSON.stringify({ ...tables[selectedElement.id] }))
-          .catch((e) => {
+          .catch(() => {
             Toast.error("Could not copy");
           });
         break;
       case ObjectType.NOTE:
         navigator.clipboard
           .writeText(JSON.stringify({ ...notes[selectedElement.id] }))
-          .catch((e) => {
+          .catch(() => {
             Toast.error("Could not copy");
           });
         break;
       case ObjectType.AREA:
         navigator.clipboard
           .writeText(JSON.stringify({ ...areas[selectedElement.id] }))
-          .catch((e) => {
+          .catch(() => {
             Toast.error("Could not copy");
           });
         break;
@@ -754,7 +753,7 @@ export default function ControlPanel({
               setUndoStack([]);
               setRedoStack([]);
             })
-            .catch((e) => Toast.error("Oops! Something went wrong."));
+            .catch(() => Toast.error("Oops! Something went wrong."));
         },
       },
       "Flush storage": {
@@ -764,7 +763,7 @@ export default function ControlPanel({
               Toast.success("Storage flushed");
               window.location.reload(false);
             })
-            .catch((error) => {
+            .catch(() => {
               Toast.error("Oops! Something went wrong.");
             });
         },
@@ -1170,12 +1169,13 @@ export default function ControlPanel({
           `${exportData.filename}.${exportData.extension}`
         );
         return;
-      case MODAL.CODE:
+      case MODAL.CODE: {
         const blob = new Blob([exportData.data], {
           type: "application/json",
         });
         saveAs(blob, `${exportData.filename}.${exportData.extension}`);
         return;
+      }
       case MODAL.IMPORT:
         if (error.type !== STATUS.ERROR) {
           setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
@@ -1494,7 +1494,7 @@ export default function ControlPanel({
         visible={visible !== MODAL.NONE}
         onOk={getModalOnOk}
         afterClose={() => {
-          setExportData((prev) => ({
+          setExportData(() => ({
             data: "",
             extension: "",
             filename: `diagram_${new Date().toISOString()}`,

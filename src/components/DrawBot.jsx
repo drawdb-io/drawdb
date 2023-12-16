@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Input, Avatar } from "@douyinfe/semi-ui";
 import { IconSend } from "@douyinfe/semi-icons";
 import { BotMessageContext } from "../pages/Editor";

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Empty,
   Row,
@@ -27,7 +27,7 @@ import {
 } from "../data/data";
 import { AreaContext, UndoRedoContext } from "../pages/Editor";
 
-export default function AreaOverview(props) {
+export default function AreaOverview() {
   const { areas, addArea, deleteArea, updateArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [editField, setEditField] = useState({});

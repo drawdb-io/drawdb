@@ -351,7 +351,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .link-edit {
-  background-image: url(/public/images/icons/pencil-fill.svg);
+  background-image: url(/images/icons/pencil-fill.svg);
   background-size: 16px;
   background-position: center;
   background-repeat: no-repeat;
@@ -365,7 +365,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .link-edit-dark {
-  background-image: url(/public/images/icons/pencil-fill-dark.svg);
+  background-image: url(/images/icons/pencil-fill-dark.svg);
   background-size: 16px;
   background-position: center;
   background-repeat: no-repeat;

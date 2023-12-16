@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import chatIcon from "../assets/chat.png";
 import botIcon from "../assets/bot.png";
 import teamIcon from "../assets/group.png";
@@ -193,8 +193,9 @@ export default function Sidebar() {
     if (undoStack.length > 0) {
       return (
         <List className="sidesheet-theme">
-          {[...undoStack].reverse().map((e) => (
+          {[...undoStack].reverse().map((e, i) => (
             <List.Item
+              key={i}
               style={{ padding: "4px 18px 4px 18px" }}
               className="hover-1"
             >

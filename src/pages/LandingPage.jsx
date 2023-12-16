@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
 import Navbar from "../components/Navbar";

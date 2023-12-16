@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   AutoComplete,
   Collapse,
@@ -24,7 +24,7 @@ import {
 import { Cardinality, Constraint, Action, ObjectType } from "../data/data";
 import { TableContext, UndoRedoContext } from "../pages/Editor";
 
-export default function ReferenceOverview(props) {
+export default function ReferenceOverview() {
   const columns = [
     {
       title: "Primary",

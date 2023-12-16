@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
 import { Banner, Button, Input, Upload, Toast, Spin } from "@douyinfe/semi-ui";
@@ -59,32 +59,29 @@ function Form({ theme }) {
     }));
   };
 
-  const onSubmit = useCallback(
-    (e) => {
-      setLoading(true);
-      editor.update(() => {
-        const sendMail = async () => {
-          await axios
-            .post(`${process.env.REACT_APP_BACKEND_URL}/send_email`, {
-              subject: `[BUG REPORT]: ${data.title}`,
-              message: $generateHtmlFromNodes(editor),
-              attachments: data.attachments,
-            })
-            .then((res) => {
-              Toast.success("Bug reported!");
-              editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-              resetForm();
-            })
-            .catch((err) => {
-              Toast.error("Oops! Something went wrong.");
-              setLoading(false);
-            });
-        };
-        sendMail();
-      });
-    },
-    [editor, data]
-  );
+  const onSubmit = useCallback(() => {
+    setLoading(true);
+    editor.update(() => {
+      const sendMail = async () => {
+        await axios
+          .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
+            subject: `[BUG REPORT]: ${data.title}`,
+            message: $generateHtmlFromNodes(editor),
+            attachments: data.attachments,
+          })
+          .then(() => {
+            Toast.success("Bug reported!");
+            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+            resetForm();
+          })
+          .catch(() => {
+            Toast.error("Oops! Something went wrong.");
+            setLoading(false);
+          });
+      };
+      sendMail();
+    });
+  }, [editor, data]);
 
   return (
     <div className="p-5 mt-6 card-theme rounded-md">
@@ -277,7 +274,7 @@ export default function BugReport() {
             closeIcon={null}
             description={
               <div>
-                We value your feedback! If you've encountered a bug or issue
+                We value your feedback! If you&apos;ve encountered a bug or issue
                 while using our platform, please help us improve by reporting
                 it. Your input is invaluable in making our service better.
               </div>
