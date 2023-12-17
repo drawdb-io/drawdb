@@ -206,9 +206,10 @@ export default function Table(props) {
                     icon={<IconMore />}
                     type="tertiary"
                     size="small"
-                    theme="solid"
                     style={{
                       opacity: "0.7",
+                      backgroundColor: "grey",
+                      color: "white",
                     }}
                   ></Button>
                 </Popover>

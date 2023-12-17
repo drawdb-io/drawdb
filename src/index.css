@@ -21,6 +21,26 @@
   border: none !important;
 }
 
+.semi-button.semi-button-light {
+  background-color: rgba(var(--semi-grey-1), 1);
+}
+
+.semi-button.semi-button-light:hover {
+  background-color: rgba(var(--semi-grey-2), 1);
+}
+
+.semi-button.semi-button-primary:not(.semi-button-light):not(
+    .semi-button-borderless
+  ) {
+  background-color: rgba(var(--semi-blue-5), 1);
+}
+
+.semi-button.semi-button-primary:not(.semi-button-light):not(
+    .semi-button-borderless
+  ):hover {
+  background-color: rgba(var(--semi-blue-6), 1);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
