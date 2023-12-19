@@ -5,7 +5,7 @@ const db = new Dexie("drawDB");
 
 db.version(2).stores({
   diagrams: "++id, lastModified",
-  templates: "++id",
+  templates: "++id, custom",
 });
 
 db.on("populate", (transaction) => {

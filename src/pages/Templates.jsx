@@ -1,19 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import { Link } from "react-router-dom";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../data/db";
 import { calcPath } from "../utils";
 
-function Thumbnail({ diagram }) {
+function Thumbnail({ diagram, i }) {
   const zoom = 0.3;
   return (
-    <div className="w-full select-none h-[190px]">
+    <div className="w-full select-none">
       <svg className="bg-white w-full h-full rounded-t-md">
         <defs>
           <pattern
-            id="pattern-circles"
+            id={"pattern-circles-" + i}
             x="0"
             y="0"
             width="10"
@@ -22,7 +21,7 @@ function Thumbnail({ diagram }) {
             patternContentUnits="userSpaceOnUse"
           >
             <circle
-              id="pattern-circle"
+              id={"pattern-circle-" + i}
               cx="2"
               cy="2"
               r="0.4"
@@ -35,9 +34,9 @@ function Thumbnail({ diagram }) {
           y="0"
           width="100%"
           height="100%"
-          fill="url(#pattern-circles)"
+          fill={"url(#pattern-circles-" + i + ")"}
         ></rect>
-        <g id="diagram">
+        <g>
           {diagram.subjectAreas?.map((a) => (
             <foreignObject
               key={a.id}
@@ -159,10 +158,19 @@ function Thumbnail({ diagram }) {
 }
 
 export default function Templates() {
-  const templates = useLiveQuery(() => db.templates.toArray());
+  const [defaultTemplates, setDefaultTemplates] = useState([]);
+  const [customTemplates, setCustomTemplates] = useState([]);
 
   useEffect(() => {
     document.title = "Templates | drawDB";
+    const loadTemplates = async () => {
+      const def = await db.templates.where({ custom: 0 }).toArray();
+      setDefaultTemplates(def);
+      const custom = await db.templates.where({ custom: 1 }).toArray();
+      setCustomTemplates(custom);
+    };
+
+    loadTemplates();
   }, []);
 
   return (
@@ -198,13 +206,13 @@ export default function Templates() {
               tab={<span className="mx-2">Default templates</span>}
               itemKey="1"
             >
-              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-4 my-3">
-                {templates?.map((t, i) => (
+              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
+                {defaultTemplates?.map((t, i) => (
                   <div
                     key={i}
                     className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
                   >
-                    <Thumbnail diagram={t} />
+                    <Thumbnail diagram={t} i={"1" + i} />
                     <div className="px-4 py-3">
                       <div className="flex justify-between">
                         <div className="text-lg font-bold text-zinc-700">
@@ -224,7 +232,26 @@ export default function Templates() {
               tab={<span className="mx-2">Your templates</span>}
               itemKey="2"
             >
-              <div className=" flex flex-col h-full">Your templates</div>
+              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
+                {customTemplates?.map((c, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
+                  >
+                    <Thumbnail diagram={c} i={"2" + i} />
+                    <div className="px-4 py-3 w-full">
+                      <div className="flex justify-between">
+                        <div className="text-lg font-bold text-zinc-700">
+                          {c.title}
+                        </div>
+                        <button className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
+                          <i className="fa-solid fa-code-fork"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </TabPane>
           </Tabs>
         </div>

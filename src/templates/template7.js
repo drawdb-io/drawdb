@@ -311,4 +311,5 @@ export const template7 = {
   title: "Template 7",
   description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam nulla illo pariatur nostrum.",
+  custom: 0,
 };

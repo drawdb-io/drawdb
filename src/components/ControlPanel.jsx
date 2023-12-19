@@ -729,6 +729,23 @@ export default function ControlPanel({
         function: saveDiagramAs,
         shortcut: "Ctrl+Shift+S",
       },
+      "Save as template": {
+        function: () => {
+          db.templates
+            .add({
+              title: title,
+              tables: tables,
+              relationships: relationships,
+              types: types,
+              notes: notes,
+              subjectAreas: areas,
+              custom: 1,
+            })
+            .then(() => {
+              Toast.success("Template saved!");
+            });
+        },
+      },
       Share: {
         function: () => {},
       },
@@ -754,18 +771,6 @@ export default function ControlPanel({
               setRedoStack([]);
             })
             .catch(() => Toast.error("Oops! Something went wrong."));
-        },
-      },
-      "Flush storage": {
-        function: async () => {
-          db.delete()
-            .then(() => {
-              Toast.success("Storage flushed");
-              window.location.reload(false);
-            })
-            .catch(() => {
-              Toast.error("Oops! Something went wrong.");
-            });
         },
       },
       Import: {
@@ -934,6 +939,18 @@ export default function ControlPanel({
                 Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
                 return { ...prev, panning: !prev.panning };
               }),
+          },
+          {
+            "Flush storage": async () => {
+              db.delete()
+                .then(() => {
+                  Toast.success("Storage flushed");
+                  window.location.reload(false);
+                })
+                .catch(() => {
+                  Toast.error("Oops! Something went wrong.");
+                });
+            },
           },
         ],
       },

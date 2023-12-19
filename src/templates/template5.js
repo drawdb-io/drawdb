@@ -265,4 +265,5 @@ export const template5 = {
   title: "Template 5",
   description:
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam nulla illo pariatur nostrum.",
+  custom: 0,
 };
