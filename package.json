@@ -28,7 +28,8 @@
     "react-router": "^6.21.0",
     "react-router-dom": "^6.21.0",
     "socket.io-client": "^4.7.2",
-    "unique-names-generator": "^4.7.1"
+    "unique-names-generator": "^4.7.1",
+    "url": "^0.11.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

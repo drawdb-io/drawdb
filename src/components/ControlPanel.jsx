@@ -1245,10 +1245,10 @@ export default function ControlPanel({
               return;
             }
             const reader = new FileReader();
-            reader.onload = function (event) {
+            reader.onload = async (e) => {
               let jsonObject = null;
               try {
-                jsonObject = JSON.parse(event.target.result);
+                jsonObject = JSON.parse(e.target.result);
               } catch (error) {
                 setError({
                   type: STATUS.ERROR,

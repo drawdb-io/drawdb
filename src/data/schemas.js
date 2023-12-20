@@ -19,7 +19,7 @@ const tableSchema = {
           notNull: { type: "boolean" },
           increment: { type: "boolean" },
           comment: { type: "string" },
-          length: { type: ["string", "number"] },
+          size: { type: ["string", "number"] },
           values: { type: "array", items: { type: "string" } },
         },
         required: [
