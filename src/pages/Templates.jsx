@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import logo_light from "../assets/logo_light_46.png";
 import { Link } from "react-router-dom";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
+import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { db } from "../data/db";
+import { useLiveQuery } from "dexie-react-hooks";
 import { calcPath } from "../utils";
 
 function Thumbnail({ diagram, i }) {
@@ -158,19 +160,19 @@ function Thumbnail({ diagram, i }) {
 }
 
 export default function Templates() {
-  const [defaultTemplates, setDefaultTemplates] = useState([]);
-  const [customTemplates, setCustomTemplates] = useState([]);
+  const defaultTemplates = useLiveQuery(() =>
+    db.templates.where({ custom: 0 }).toArray()
+  );
+  const customTemplates = useLiveQuery(() =>
+    db.templates.where({ custom: 1 }).toArray()
+  );
+
+  const deleteTemplate = async (id) => {
+    await db.templates.delete(id);
+  };
 
   useEffect(() => {
     document.title = "Templates | drawDB";
-    const loadTemplates = async () => {
-      const def = await db.templates.where({ custom: 0 }).toArray();
-      setDefaultTemplates(def);
-      const custom = await db.templates.where({ custom: 1 }).toArray();
-      setCustomTemplates(custom);
-    };
-
-    loadTemplates();
   }, []);
 
   return (
@@ -206,7 +208,7 @@ export default function Templates() {
               tab={<span className="mx-2">Default templates</span>}
               itemKey="1"
             >
-              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
+              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-10 my-6">
                 {defaultTemplates?.map((t, i) => (
                   <div
                     key={i}
@@ -244,8 +246,24 @@ export default function Templates() {
                         <div className="text-lg font-bold text-zinc-700">
                           {c.title}
                         </div>
-                        <button className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
-                          <i className="fa-solid fa-code-fork"></i>
+                        <div>
+                          <button className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
+                            <i className="fa-solid fa-code-fork"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex justify-around mt-2">
+                        <button className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500">
+                          <i className="bi bi-pencil-fill"></i>
+                          <div className="ms-1.5 font-semibold">Edit</div>
+                        </button>
+                        <div className="border-l border-gray-300 mx-2" />
+                        <button
+                          className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-red-500"
+                          onClick={() => deleteTemplate(c.id)}
+                        >
+                          <IconDeleteStroked />
+                          <div className="ms-1.5 font-semibold">Delete</div>
                         </button>
                       </div>
                     </div>
