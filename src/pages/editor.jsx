@@ -578,20 +578,27 @@ export default function Editor() {
         });
     };
 
-    const args = localStorage.getItem("args");
-    if (!args || args === "-1") {
-      if (window.name === "") {
-        console.log("Loading the latest diagram");
-        loadLatestDiagram();
-      } else {
-        const did = parseInt(window.name.split(" ")[1]);
-        loadDiagram(did);
-      }
+    if (window.name == "") {
+      console.log("Loading the latest diagram");
+      loadLatestDiagram();
     } else {
-      console.log("Loading template with id", args);
-      localStorage.setItem("args", "-1");
+      const name = window.name.split(" ");
+      const op = name[0];
+      const did = parseInt(name[1]);
+      switch (op) {
+        case "d": {
+          loadDiagram(did);
+          break;
+        }
+        case "lt": {
+          console.log("Loading template with id", did);
+          break;
+        }
+        default:
+          break;
+      }
     }
-
+    
     socket.connect();
 
     const onConnect = () => {

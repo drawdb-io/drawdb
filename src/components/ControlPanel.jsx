@@ -702,8 +702,8 @@ export default function ControlPanel({
       });
   };
   const createNewDiagram = (id) => {
-    localStorage.setItem("args", `${id}`);
-    window.open("/editor", "_blank");
+    const newWindow = window.open("/editor");
+    newWindow.name = "lt " + id;
   };
 
   const menu = {

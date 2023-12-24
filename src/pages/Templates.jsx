@@ -171,6 +171,10 @@ export default function Templates() {
     await db.templates.delete(id);
   };
 
+  const editTemplate = (id) => {
+    console.log(id);
+  };
+
   useEffect(() => {
     document.title = "Templates | drawDB";
   }, []);
@@ -253,7 +257,10 @@ export default function Templates() {
                         </div>
                       </div>
                       <div className="flex justify-around mt-2">
-                        <button className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500">
+                        <button
+                          className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500"
+                          onClick={() => editTemplate(c.id)}
+                        >
                           <i className="bi bi-pencil-fill"></i>
                           <div className="ms-1.5 font-semibold">Edit</div>
                         </button>
