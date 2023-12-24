@@ -1432,6 +1432,7 @@ export default function ControlPanel({
                           }}
                           onDoubleClick={() => {
                             loadDiagram(d.id);
+                            window.name = "d " + d.id;
                             setVisible(MODAL.NONE);
                           }}
                         >
@@ -1704,6 +1705,8 @@ export default function ControlPanel({
         return `Last saved ${lastSaved}`;
       case State.SAVING:
         return "Saving . . .";
+      case State.ERROR:
+        return "Failed to save";
       default:
         return "";
     }
@@ -1729,6 +1732,7 @@ export default function ControlPanel({
                 onMouseLeave={() => setShowEditName(false)}
                 onClick={() => setVisible(MODAL.RENAME)}
               >
+                {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
                 {title}
               </div>
               {(showEditName || visible === MODAL.RENAME) && <IconEdit />}

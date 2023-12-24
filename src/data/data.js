@@ -108,6 +108,7 @@ const State = {
   SAVING: 1,
   SAVED: 2,
   LOADING: 3,
+  ERROR: 4,
 };
 
 export {

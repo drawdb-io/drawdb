@@ -172,7 +172,8 @@ export default function Templates() {
   };
 
   const editTemplate = (id) => {
-    console.log(id);
+    const newWindow = window.open("/editor", "_blank");
+    newWindow.name = "t " + id;
   };
 
   useEffect(() => {

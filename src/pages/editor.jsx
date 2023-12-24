@@ -408,7 +408,7 @@ export default function Editor() {
     );
   };
 
-  const updateNote = (id, values, addToHistory = true) => {
+  const updateNote = (id, values) => {
     setNotes((prev) =>
       prev.map((t) => {
         if (t.id === id) {
@@ -488,45 +488,68 @@ export default function Editor() {
   ]);
 
   useEffect(() => {
-    const save = async () => {
+    const save = async (diagram = true) => {
       if (state !== State.SAVING) {
         return;
       }
-      if (id === 0 && window.name === "") {
-        db.diagrams
-          .add({
-            name: title,
-            lastModified: new Date(),
-            tables: tables,
-            references: relationships,
-            types: types,
-            notes: notes,
-            areas: areas,
-          })
-          .then((id) => {
-            setId(id);
-            window.name = `d ${id}`;
-            setState(State.SAVED);
-            setLastSaved(new Date().toLocaleString());
-          });
+      if (diagram) {
+        if (id === 0 && window.name === "") {
+          db.diagrams
+            .add({
+              name: title,
+              lastModified: new Date(),
+              tables: tables,
+              references: relationships,
+              types: types,
+              notes: notes,
+              areas: areas,
+            })
+            .then((id) => {
+              setId(id);
+              window.name = `d ${id}`;
+              setState(State.SAVED);
+              setLastSaved(new Date().toLocaleString());
+            });
+        } else {
+          db.diagrams
+            .update(id, {
+              name: title,
+              lastModified: new Date(),
+              tables: tables,
+              references: relationships,
+              types: types,
+              notes: notes,
+              areas: areas,
+            })
+            .then(() => {
+              setState(State.SAVED);
+              setLastSaved(new Date().toLocaleString());
+            });
+        }
       } else {
-        db.diagrams
+        db.templates
           .update(id, {
-            name: title,
-            lastModified: new Date(),
+            title: title,
             tables: tables,
-            references: relationships,
+            relationships: relationships,
             types: types,
             notes: notes,
-            areas: areas,
+            subjectAreas: areas,
           })
           .then(() => {
             setState(State.SAVED);
             setLastSaved(new Date().toLocaleString());
+          })
+          .catch(() => {
+            setState(State.ERROR);
           });
       }
     };
-    save();
+    const name = window.name.split(" ");
+    const op = name[0];
+    const diagram = window.name === "" || op === "d";
+
+    save(diagram);
   }, [tables, relationships, notes, areas, types, title, id, state]);
 
   useEffect(() => {
@@ -578,6 +601,27 @@ export default function Editor() {
         });
     };
 
+    const loadTemplate = async (id) => {
+      await db.templates
+        .get(id)
+        .then((diagram) => {
+          if (diagram) {
+            setId(diagram.id);
+            setTitle(diagram.title);
+            setTables(diagram.tables);
+            setTypes(diagram.types);
+            setRelationships(diagram.relationships);
+            setAreas(diagram.subjectAreas);
+            setNotes(diagram.notes);
+            setUndoStack([]);
+            setRedoStack([]);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
     if (window.name == "") {
       console.log("Loading the latest diagram");
       loadLatestDiagram();
@@ -594,11 +638,15 @@ export default function Editor() {
           console.log("Loading template with id", did);
           break;
         }
+        case "t": {
+          loadTemplate(did);
+          break;
+        }
         default:
           break;
       }
     }
-    
+
     socket.connect();
 
     const onConnect = () => {
