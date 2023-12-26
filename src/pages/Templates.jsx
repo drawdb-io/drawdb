@@ -176,6 +176,11 @@ export default function Templates() {
     newWindow.name = "t " + id;
   };
 
+  const forkTemplate = (id) => {
+    const newWindow = window.open("/editor", "_blank");
+    newWindow.name = "lt " + id;
+  };
+
   useEffect(() => {
     document.title = "Templates | drawDB";
   }, []);
@@ -225,7 +230,10 @@ export default function Templates() {
                         <div className="text-lg font-bold text-zinc-700">
                           {t.title}
                         </div>
-                        <button className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
+                        <button
+                          className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
+                          onClick={() => forkTemplate(t.id)}
+                        >
                           <i className="fa-solid fa-code-fork"></i>
                         </button>
                       </div>
@@ -252,7 +260,10 @@ export default function Templates() {
                           {c.title}
                         </div>
                         <div>
-                          <button className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300">
+                          <button
+                            className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
+                            onClick={() => forkTemplate(c.id)}
+                          >
                             <i className="fa-solid fa-code-fork"></i>
                           </button>
                         </div>

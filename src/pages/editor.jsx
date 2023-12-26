@@ -493,7 +493,10 @@ export default function Editor() {
         return;
       }
       if (diagram) {
-        if (id === 0 && window.name === "") {
+        if (
+          (id === 0 && window.name === "") ||
+          window.name.split(" ")[0] === "lt"
+        ) {
           db.diagrams
             .add({
               name: title,
@@ -547,7 +550,7 @@ export default function Editor() {
     };
     const name = window.name.split(" ");
     const op = name[0];
-    const diagram = window.name === "" || op === "d";
+    const diagram = window.name === "" || op === "d" || op === "lt";
 
     save(diagram);
   }, [tables, relationships, notes, areas, types, title, id, state]);
@@ -635,7 +638,7 @@ export default function Editor() {
           break;
         }
         case "lt": {
-          console.log("Loading template with id", did);
+          loadTemplate(did);
           break;
         }
         case "t": {
