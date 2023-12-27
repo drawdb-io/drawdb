@@ -803,23 +803,45 @@ export default function Table(props) {
                             },
                           ]);
                           setRedoStack([]);
-                          setRelationships((prev) =>
-                            prev
-                              .filter(
-                                (e) =>
-                                  !(
-                                    (e.startTableId === props.tableData.id &&
-                                      e.startFieldId === j) ||
-                                    (e.endTableId === props.tableData.id &&
-                                      e.endFieldId === j)
-                                  )
-                              )
-                              .map((e, i) => ({ ...e, id: i }))
-                          );
+                          setRelationships((prev) => {
+                            return prev.map((e) => {
+                              if (
+                                e.startTableId === props.tableData.id &&
+                                e.startFieldId > f.id
+                              ) {
+                                return {
+                                  ...e,
+                                  startFieldId: e.startFieldId - 1,
+                                  startX: props.tableData.x + 15,
+                                  startY:
+                                    props.tableData.y +
+                                    (e.startFieldId - 1) * 36 +
+                                    50 +
+                                    19,
+                                };
+                              }
+                              if (
+                                e.endTableId === props.tableData.id &&
+                                e.endFieldId > f.id
+                              ) {
+                                return {
+                                  ...e,
+                                  endFieldId: e.endFieldId - 1,
+                                  endX: props.tableData.x + 15,
+                                  endY:
+                                    props.tableData.y +
+                                    (e.endFieldId - 1) * 36 +
+                                    50 +
+                                    19,
+                                };
+                              }
+                              return e;
+                            });
+                          });
                           updateTable(props.tableData.id, {
                             fields: props.tableData.fields
                               .filter((field) => field.id !== j)
-                              .map((e, i) => ({ ...e, id: i })),
+                              .map((e, k) => ({ ...e, id: k })),
                           });
                         }}
                       >
@@ -1285,10 +1307,44 @@ export default function Table(props) {
                     )
                     .map((e, i) => ({ ...e, id: i }))
                 );
+                setRelationships((prev) => {
+                  return prev.map((e) => {
+                    if (
+                      e.startTableId === props.tableData.id &&
+                      e.startFieldId > fieldData.id
+                    ) {
+                      return {
+                        ...e,
+                        startFieldId: e.startFieldId - 1,
+                        startX: props.tableData.x + 15,
+                        startY:
+                          props.tableData.y +
+                          (e.startFieldId - 1) * 36 +
+                          50 +
+                          19,
+                      };
+                    }
+                    if (
+                      e.endTableId === props.tableData.id &&
+                      e.endFieldId > fieldData.id
+                    ) {
+                      return {
+                        ...e,
+                        endFieldId: e.endFieldId - 1,
+                        endX: props.tableData.x + 15,
+                        endY:
+                          props.tableData.y + (e.endFieldId - 1) * 36 + 50 + 19,
+                      };
+                    }
+                    return e;
+                  });
+                });
                 updateTable(props.tableData.id, {
                   fields: props.tableData.fields
                     .filter((e) => e.id !== fieldData.id)
-                    .map((t, i) => ({ ...t, id: i })),
+                    .map((t, i) => {
+                      return { ...t, id: i };
+                    }),
                 });
               }}
               onCancel={() => {}}

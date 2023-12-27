@@ -207,6 +207,27 @@ export default function ControlPanel({
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
         } else if (a.component === "field_delete") {
+          setRelationships((prev) => {
+            return prev.map((e) => {
+              if (e.startTableId === a.tid && e.startFieldId > a.data.id) {
+                return {
+                  ...e,
+                  startFieldId: e.startFieldId + 1,
+                  startX: tables[a.tid].x + 15,
+                  startY: tables[a.tid].y + (e.startFieldId + 1) * 36 + 50 + 19,
+                };
+              }
+              if (e.endTableId === a.tid && e.endFieldId > a.data.id) {
+                return {
+                  ...e,
+                  endFieldId: e.endFieldId + 1,
+                  endX: tables[a.tid].x + 15,
+                  endY: tables[a.tid].y + (e.endFieldId + 1) * 36 + 50 + 19,
+                };
+              }
+              return e;
+            });
+          });
           setTables((prev) =>
             prev.map((t) => {
               if (t.id === a.tid) {
@@ -358,6 +379,27 @@ export default function ControlPanel({
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.redo);
         } else if (a.component === "field_delete") {
+          setRelationships((prev) => {
+            return prev.map((e) => {
+              if (e.startTableId === a.tid && e.startFieldId > a.data.id) {
+                return {
+                  ...e,
+                  startFieldId: e.startFieldId - 1,
+                  startX: tables[a.tid].x + 15,
+                  startY: tables[a.tid].y + (e.startFieldId - 1) * 36 + 50 + 19,
+                };
+              }
+              if (e.endTableId === a.tid && e.endFieldId > a.data.id) {
+                return {
+                  ...e,
+                  endFieldId: e.endFieldId - 1,
+                  endX: tables[a.tid].x + 15,
+                  endY: tables[a.tid].y + (e.endFieldId - 1) * 36 + 50 + 19,
+                };
+              }
+              return e;
+            });
+          });
           updateTable(a.tid, {
             fields: tables[a.tid].fields
               .filter((field) => field.id !== a.data.id)
@@ -1391,7 +1433,7 @@ export default function ControlPanel({
       case MODAL.OPEN:
         return (
           <div>
-            {diagrams.length === 0 ? (
+            {diagrams?.length === 0 ? (
               <Banner
                 fullMode={false}
                 type="info"

@@ -671,6 +671,41 @@ export default function TableOverview() {
                                     )
                                     .map((e, i) => ({ ...e, id: i }))
                                 );
+                                setRelationships((prev) => {
+                                  return prev.map((e) => {
+                                    if (
+                                      e.startTableId === t.id &&
+                                      e.startFieldId > f.id
+                                    ) {
+                                      return {
+                                        ...e,
+                                        startFieldId: e.startFieldId - 1,
+                                        startX: t.x + 15,
+                                        startY:
+                                          t.y +
+                                          (e.startFieldId - 1) * 36 +
+                                          50 +
+                                          19,
+                                      };
+                                    }
+                                    if (
+                                      e.endTableId === t.id &&
+                                      e.endFieldId > f.id
+                                    ) {
+                                      return {
+                                        ...e,
+                                        endFieldId: e.endFieldId - 1,
+                                        endX: t.x + 15,
+                                        endY:
+                                          t.y +
+                                          (e.endFieldId - 1) * 36 +
+                                          50 +
+                                          19,
+                                      };
+                                    }
+                                    return e;
+                                  });
+                                });
                                 updateTable(i, {
                                   fields: t.fields
                                     .filter((field) => field.id !== j)
