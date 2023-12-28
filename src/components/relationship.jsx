@@ -22,7 +22,9 @@ export default function Relationship(props) {
           props.data.startX,
           props.data.endX,
           props.data.startY,
-          props.data.endY
+          props.data.endY,
+          props.data.startFieldId,
+          props.data.endFieldId
         )}
         stroke={hovered ? "blue" : "gray"}
         fill="none"

@@ -607,16 +607,18 @@ function validateDiagram(diagram) {
   return issues;
 }
 
-const calcPath = (x1, x2, y1, y2, zoom = 1) => {
+const calcPath = (x1, x2, y1, y2, startFieldId, endFieldId, zoom = 1) => {
   x1 *= zoom;
   x2 *= zoom;
   y1 *= zoom;
   y2 *= zoom;
-  let r = 16 * zoom;
-  const offsetX = 8 * zoom;
   const tableWidth = 200 * zoom;
+  let r = 10 * zoom;
+  const offsetX = 8 * zoom;
   const midX = (x2 + x1 + tableWidth) / 2;
   const endX = x2 + tableWidth < x1 ? x2 + tableWidth - offsetX * 2 : x2;
+  const startTableY = y1 - startFieldId * 36 - 50 - 18;
+  // const endTableY = y2 - endFieldId * 36 - 50;
 
   if (Math.abs(y1 - y2) <= 36 * zoom) {
     r = Math.abs(y2 - y1) / 3;
@@ -648,9 +650,9 @@ const calcPath = (x1, x2, y1, y2, zoom = 1) => {
         x2 + tableWidth - 2 * offsetX
       } ${y2}`;
     } else if (x2 + tableWidth >= x1 && x2 + tableWidth <= x1 + tableWidth) {
-      return `M ${x1} ${y1} L ${x2 - r} ${y1} A ${r} ${r} 0 0 ${0} ${
-        x2 - r - r
-      } ${y1 + r} L ${x2 - r - r} ${y2 - r} A ${r} ${r} 0 0 0 ${
+      return `M ${x1} ${y1} L ${x2 - r} ${y1} A ${r} ${r} 0 0 0 ${x2 - r - r} ${
+        y1 + r
+      } L ${x2 - r - r} ${y2 - r} A ${r} ${r} 0 0 0 ${
         x2 - r
       } ${y2} L ${x2} ${y2}`;
     } else {
@@ -668,12 +670,32 @@ const calcPath = (x1, x2, y1, y2, zoom = 1) => {
         y2 + r
       } A ${r} ${r} 0 0 1 ${midX + r} ${y2} L ${endX} ${y2}`;
     } else if (x1 + tableWidth >= x2 && x1 + tableWidth <= x2 + tableWidth) {
-      return `M ${x1} ${y1} L ${x1 - r} ${y1} A ${r} ${r} 0 0 1 ${x1 - r - r} ${
-        y1 - r
-      } L ${x1 - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${
-        x1 - r
+      // this for the overlap remember
+      if (startTableY < y2) {
+        return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${
+          x1 - r - r - r
+        } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${
+          x1 - r - r
+        } ${y2} L ${x1 - r - 4} ${y2}`;
+      }
+      return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${
+        x1 - r - r - r
+      } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${
+        x1 - r - r
       } ${y2} L ${endX} ${y2}`;
     } else if (x1 >= x2 && x1 <= x2 + tableWidth) {
+      // this for the overlap remember
+      if (startTableY < y2) {
+        return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${
+          x1 + tableWidth - 2 * offsetX + r
+        } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${
+          y1 - r
+        } L ${x1 + tableWidth - 2 * offsetX + r + r} ${
+          y2 + r
+        } A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r} ${y2} L ${
+          x1 + tableWidth - 16
+        } ${y2}`;
+      }
       return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${
         x1 + tableWidth - 2 * offsetX + r
       } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${

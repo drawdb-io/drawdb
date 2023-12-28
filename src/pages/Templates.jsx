@@ -103,7 +103,15 @@ function Thumbnail({ diagram, i }) {
           {diagram.relationships?.map((e, i) => (
             <path
               key={i}
-              d={calcPath(e.startX, e.endX, e.startY, e.endY, zoom)}
+              d={calcPath(
+                e.startX,
+                e.endX,
+                e.startY,
+                e.endY,
+                e.startFieldId,
+                e.endFieldId,
+                zoom
+              )}
               fill="none"
               strokeWidth={1}
               stroke="gray"
