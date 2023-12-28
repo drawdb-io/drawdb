@@ -1,8 +1,45 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { calcPath } from "../utils";
+import { Cardinality } from "../data/data";
 
 export default function Relationship(props) {
   const [hovered, setHovered] = useState(false);
+  const pathRef = useRef();
+
+  let cardinalityStart = "1";
+  let cardinalityEnd = "1";
+
+  switch (props.data.cardinality) {
+    case Cardinality.MANY_TO_ONE:
+      cardinalityStart = "n";
+      cardinalityEnd = "1";
+      break;
+    case Cardinality.ONE_TO_MANY:
+      cardinalityStart = "1";
+      cardinalityEnd = "n";
+      break;
+    case Cardinality.ONE_TO_ONE:
+      cardinalityStart = "1";
+      cardinalityEnd = "1";
+      break;
+    default:
+      break;
+  }
+
+  let cardinalityStartX = 0;
+  let cardinalityEndX = 0;
+  let cardinalityStartY = 0;
+  let cardinalityEndY = 0;
+
+  if (pathRef.current) {
+    const pathLength = pathRef.current.getTotalLength();
+    const point1 = pathRef.current.getPointAtLength(32);
+    cardinalityStartX = point1.x;
+    cardinalityStartY = point1.y;
+    const point2 = pathRef.current.getPointAtLength(pathLength - 32);
+    cardinalityEndX = point2.x;
+    cardinalityEndY = point2.y;
+  }
 
   return (
     <g>
@@ -18,6 +55,7 @@ export default function Relationship(props) {
         </filter>
       </defs>
       <path
+        ref={pathRef}
         d={calcPath(
           props.data.startX,
           props.data.endX,
@@ -34,6 +72,46 @@ export default function Relationship(props) {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       />
+      {pathRef.current && (
+        <>
+          <circle
+            cx={cardinalityStartX}
+            cy={cardinalityStartY}
+            r="12"
+            fill="grey"
+          ></circle>
+          <text
+            x={cardinalityStartX}
+            y={cardinalityStartY}
+            fill="white"
+            strokeWidth="0.5"
+            textAnchor="middle"
+            alignmentBaseline="middle"
+          >
+            {cardinalityStart}
+          </text>
+        </>
+      )}
+      {pathRef.current && (
+        <>
+          <circle
+            cx={cardinalityEndX}
+            cy={cardinalityEndY}
+            r="12"
+            fill="grey"
+          ></circle>
+          <text
+            x={cardinalityEndX}
+            y={cardinalityEndY}
+            fill="white"
+            strokeWidth="0.5"
+            textAnchor="middle"
+            alignmentBaseline="middle"
+          >
+            {cardinalityEnd}
+          </text>
+        </>
+      )}
     </g>
   );
 }
