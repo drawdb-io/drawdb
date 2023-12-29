@@ -63,6 +63,7 @@ export default function Editor() {
     mode: "light",
     autosave: true,
     panning: true,
+    showCardinality: true,
   });
   const [tasks, setTasks] = useState([]);
   const [messages, setMessages] = useState([]);

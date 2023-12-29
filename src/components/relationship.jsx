@@ -1,9 +1,11 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { calcPath } from "../utils";
 import { Cardinality } from "../data/data";
+import { SettingsContext } from "../pages/Editor";
 
 export default function Relationship(props) {
   const [hovered, setHovered] = useState(false);
+  const { settings } = useContext(SettingsContext);
   const pathRef = useRef();
 
   let cardinalityStart = "1";
@@ -31,18 +33,20 @@ export default function Relationship(props) {
   let cardinalityStartY = 0;
   let cardinalityEndY = 0;
 
+  const length = 32;
+
   if (pathRef.current) {
     const pathLength = pathRef.current.getTotalLength();
-    const point1 = pathRef.current.getPointAtLength(32);
+    const point1 = pathRef.current.getPointAtLength(length);
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
-    const point2 = pathRef.current.getPointAtLength(pathLength - 32);
+    const point2 = pathRef.current.getPointAtLength(pathLength - length);
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
   }
 
   return (
-    <g>
+    <g className="select-none">
       <defs>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow
@@ -72,7 +76,7 @@ export default function Relationship(props) {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       />
-      {pathRef.current && (
+      {pathRef.current && settings.showCardinality && (
         <>
           <circle
             cx={cardinalityStartX}
@@ -90,10 +94,6 @@ export default function Relationship(props) {
           >
             {cardinalityStart}
           </text>
-        </>
-      )}
-      {pathRef.current && (
-        <>
           <circle
             cx={cardinalityEndX}
             cy={cardinalityEndY}

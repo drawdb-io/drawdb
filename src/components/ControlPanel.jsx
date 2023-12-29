@@ -1077,9 +1077,16 @@ export default function ControlPanel({
         function: resetView,
         shortcut: "Ctrl+R",
       },
-      Grid: {
+      "Show grid": {
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
+      },
+      "Show cardinality": {
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showCardinality: !prev.showCardinality,
+          })),
       },
       Theme: {
         children: [
