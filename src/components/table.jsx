@@ -100,9 +100,9 @@ export default function Table(props) {
                 ? props.tableData.name.length < 10
                   ? props.tableData.name
                   : `${props.tableData.name.substring(0, 10)}...`
-                : props.tableData.name.length < 14
+                : props.tableData.name.length < 16
                 ? props.tableData.name
-                : `${props.tableData.name.substring(0, 14)}...`}
+                : `${props.tableData.name.substring(0, 16)}...`}
             </div>
             {isHovered && (
               <div className="flex justify-end items-center mx-2">
