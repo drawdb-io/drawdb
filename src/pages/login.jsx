@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/icon_dark_64.png";
 import google_logo from "../assets/google.png";
 import github_logo from "../assets/github.png";
@@ -7,12 +7,16 @@ import axios from "axios";
 import Canvas from "../components/AuthCanvas";
 import { diagram } from "../data/loginDiagram";
 
+import { useCookies } from "react-cookie";
+
 export default function Login() {
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [, setCookie] = useCookies(["logged_in", "username"]);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormValues((prev) => ({
@@ -22,11 +26,22 @@ export default function Login() {
 
   const onSubmit = async () => {
     await axios
-      .post(`${import.meta.env.VITE_API_BACKEND_URL}/login`, {
-        email: formValues.email,
-        password: formValues.password,
+      .post(
+        `${import.meta.env.VITE_API_BACKEND_URL}/login`,
+        {
+          email: formValues.email,
+          password: formValues.password,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setCookie("logged_in", true, { path: "/", maxAge: 1000 * 60 * 60 });
+        setCookie("username", res.data.username, {
+          path: "/",
+          maxAge: 1000 * 60 * 60,
+        });
+        navigate("/");
       })
-      .then(() => {})
       .catch(() => {});
   };
 
@@ -41,8 +56,8 @@ export default function Login() {
           <div className="text-2xl font-bold text-zinc-800 tracking-wide">
             Welcome back!
           </div>
-          <div className="flex items-center my-6 gap-4 font-semibold text-sm">
-            <button className="w-full flex gap-2 justify-center items-center px-3 py-2 rounded-md border border-zinc-300 hover:bg-neutral-100 transition-all duration-300">
+          <div className="flex items-center sm:block my-6 gap-4 font-semibold text-sm">
+            <button className="sm:mb-2 w-full flex gap-2 justify-center items-center px-3 py-2 rounded-md border border-zinc-300 hover:bg-neutral-100 transition-all duration-300">
               <img src={google_logo} width={22} />
               <div>Log in with Google</div>
             </button>
