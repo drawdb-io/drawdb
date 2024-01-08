@@ -35,10 +35,13 @@ export default function Login() {
         { withCredentials: true }
       )
       .then((res) => {
-        setCookie("logged_in", true, { path: "/", maxAge: 1000 * 60 * 60 });
+        setCookie("logged_in", true, {
+          path: "/",
+          expires: new Date(Date.parse(res.data.session.cookie.expires)),
+        });
         setCookie("username", res.data.username, {
           path: "/",
-          maxAge: 1000 * 60 * 60,
+          expires: new Date(Date.parse(res.data.session.cookie.expires)),
         });
         navigate("/");
       })
