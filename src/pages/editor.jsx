@@ -7,14 +7,14 @@ import {
   Tab,
   defaultTableTheme,
   defaultNoteTheme,
-  avatarThemes,
+  // avatarThemes,
   Action,
   ObjectType,
   State,
 } from "../data/data";
 import { socket } from "../data/socket";
 import { db } from "../data/db";
-import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
+// import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 
 export const LayoutContext = createContext();
 export const TableContext = createContext();
@@ -435,14 +435,10 @@ export default function Editor() {
                     ...r,
                     startX: updatedValues.x + 15,
                     startY: updatedValues.y + r.startFieldId * 36 + 69,
-                    endX: tables[r.endTableId].x + 15,
-                    endY: tables[r.endTableId].y + r.endFieldId * 36 + 69,
                   };
                 } else if (r.endTableId === id) {
                   return {
                     ...r,
-                    startX: tables[r.startTableId].x + 15,
-                    startY: tables[r.startTableId].y + r.startFieldId * 36 + 69,
                     endX: updatedValues.x + 15,
                     endY: updatedValues.y + r.endFieldId * 36 + 69,
                   };
@@ -557,10 +553,18 @@ export default function Editor() {
   }, [tables, relationships, notes, areas, types, title, id, state]);
 
   useEffect(() => {
+    if (socket && undoStack[undoStack.length - 1])
+      socket.emit("send-changes", undoStack[undoStack.length - 1]);
+  }, [undoStack]);
+  useEffect(() => {
+    if (socket && redoStack[redoStack.length - 1])
+      socket.emit("send-reversed-changes", redoStack[redoStack.length - 1]);
+  }, [redoStack]);
+  useEffect(() => {
     document.title = "Editor | drawDB";
 
-    const loadLatestDiagram = async () => {
-      await db.diagrams
+    const loadLatestDiagram = () => {
+      db.diagrams
         .orderBy("lastModified")
         .last()
         .then((d) => {
@@ -581,8 +585,8 @@ export default function Editor() {
         });
     };
 
-    const loadDiagram = async (id) => {
-      await db.diagrams
+    const loadDiagram = (id) => {
+      db.diagrams
         .get(id)
         .then((diagram) => {
           if (diagram) {
@@ -605,8 +609,8 @@ export default function Editor() {
         });
     };
 
-    const loadTemplate = async (id) => {
-      await db.templates
+    const loadTemplate = (id) => {
+      db.templates
         .get(id)
         .then((diagram) => {
           if (diagram) {
@@ -651,40 +655,6 @@ export default function Editor() {
       }
     }
 
-    socket.connect();
-
-    const onConnect = () => {
-      const name = uniqueNamesGenerator({
-        dictionaries: [colors, animals],
-        separator: " ",
-        style: "capital",
-      });
-      const color =
-        avatarThemes[Math.floor(Math.random() * avatarThemes.length)];
-      socket.emit("new-user", name, color);
-      setMessages((prev) => [
-        ...prev,
-        { message: `You joined as ${name}`, type: "note", action: "join" },
-      ]);
-    };
-    const onRecieve = (value) =>
-      setMessages((prev) => [{ ...value, type: "message" }, ...prev]);
-    const onUserConnected = (name) =>
-      setMessages((prev) => [
-        { message: `${name} just joined`, type: "note", action: "join" },
-        ...prev,
-      ]);
-    const onUserDisconnected = (name) =>
-      setMessages((prev) => [
-        { message: `${name} left`, type: "note", action: "leave" },
-        ...prev,
-      ]);
-
-    socket.on("connect", onConnect);
-    socket.on("recieve-message", onRecieve);
-    socket.on("user-connected", onUserConnected);
-    socket.on("user-disconnected", onUserDisconnected);
-
     const theme = localStorage.getItem("theme");
     if (theme === "dark") {
       setSettings((prev) => ({ ...prev, mode: "dark" }));
@@ -700,13 +670,291 @@ export default function Editor() {
       }
     }
 
+    socket.connect();
+
+    // const onConnect = () => {
+    //   const name = uniqueNamesGenerator({
+    //     dictionaries: [colors, animals],
+    //     separator: " ",
+    //     style: "capital",
+    //   });
+    //   const color =
+    //     avatarThemes[Math.floor(Math.random() * avatarThemes.length)];
+    //   socket.emit("new-user", name, color);
+    //   setMessages((prev) => [
+    //     ...prev,
+    //     { message: `You joined as ${name}`, type: "note", action: "join" },
+    //   ]);
+    // };
+    // const onRecieve = (value) =>
+    //   setMessages((prev) => [{ ...value, type: "message" }, ...prev]);
+    // const onUserConnected = (name) =>
+    //   setMessages((prev) => [
+    //     { message: `${name} just joined`, type: "note", action: "join" },
+    //     ...prev,
+    //   ]);
+    // const onUserDisconnected = (name) =>
+    //   setMessages((prev) => [
+    //     { message: `${name} left`, type: "note", action: "leave" },
+    //     ...prev,
+    //   ]);
+
+    // socket.on("connect", onConnect);
+    // socket.on("recieve-message", onRecieve);
+    // socket.on("user-connected", onUserConnected);
+    // socket.on("user-disconnected", onUserDisconnected);
+
+    const applyChange = (delta) => {
+      if (delta.action === Action.ADD) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            addTable(false);
+            return;
+          case ObjectType.AREA:
+            addArea(false);
+            return;
+          case ObjectType.NOTE:
+            addNote(false);
+            return;
+          case ObjectType.RELATIONSHIP:
+            addRelationship(false, delta.data);
+            return;
+          case ObjectType.TYPE:
+            addType(false);
+            return;
+        }
+      } else if (delta.action === Action.MOVE) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            updateTable(delta.id, { x: delta.toX, y: delta.toY }, true);
+            return;
+          case ObjectType.AREA:
+            updateArea(delta.id, { x: delta.toX, y: delta.toY });
+            return;
+          case ObjectType.NOTE:
+            updateNote(delta.id, { x: delta.toX, y: delta.toY });
+            return;
+        }
+      } else if (delta.action === Action.DELETE) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            deleteTable(delta.data.id, false);
+            return;
+          case ObjectType.RELATIONSHIP:
+            deleteRelationship(delta.data.id, false);
+            return;
+          case ObjectType.AREA:
+            deleteArea(delta.data.id, false);
+            return;
+          case ObjectType.NOTE:
+            deleteNote(delta.data.id, false);
+            return;
+          case ObjectType.TYPE:
+            deleteType(delta.id, false);
+            return;
+        }
+      } else if (delta.action === Action.EDIT) {
+        switch (delta.element) {
+          case ObjectType.AREA:
+            updateArea(delta.aid, delta.redo);
+            return;
+          case ObjectType.RELATIONSHIP:
+            setRelationships((prev) =>
+              prev.map((e, idx) =>
+                idx === delta.rid ? { ...e, ...delta.redo } : e
+              )
+            );
+            return;
+          case ObjectType.NOTE:
+            updateNote(delta.nid, delta.redo);
+            return;
+          case ObjectType.TABLE:
+            if (delta.component === "field") {
+              updateField(delta.tid, delta.fid, delta.redo);
+            } else if (delta.component === "field_delete") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    setRelationships((prev) => {
+                      return prev.map((e) => {
+                        if (
+                          e.startTableId === delta.tid &&
+                          e.startFieldId > delta.data.id
+                        ) {
+                          return {
+                            ...e,
+                            startFieldId: e.startFieldId - 1,
+                            startX: t.x + 15,
+                            startY: t.y + (e.startFieldId - 1) * 36 + 50 + 19,
+                          };
+                        }
+                        if (
+                          e.endTableId === delta.tid &&
+                          e.endFieldId > delta.data.id
+                        ) {
+                          return {
+                            ...e,
+                            endFieldId: e.endFieldId - 1,
+                            endX: t.x + 15,
+                            endY: t.y + (e.endFieldId - 1) * 36 + 50 + 19,
+                          };
+                        }
+                        return e;
+                      });
+                    });
+                    return {
+                      ...t,
+                      fields: t.fields
+                        .filter((field) => field.id !== delta.data.id)
+                        .map((e, i) => ({ ...e, id: i })),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_add") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      fields: [
+                        ...t.fields,
+                        {
+                          name: "",
+                          type: "",
+                          default: "",
+                          check: "",
+                          primary: false,
+                          unique: false,
+                          notNull: false,
+                          increment: false,
+                          comment: "",
+                          id: t.fields.length,
+                        },
+                      ],
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "index_add") {
+              setTables((prev) =>
+                prev.map((table) => {
+                  if (table.id === delta.tid) {
+                    return {
+                      ...table,
+                      indices: [
+                        ...table.indices,
+                        {
+                          id: table.indices.length,
+                          name: `index_${table.indices.length}`,
+                          fields: [],
+                        },
+                      ],
+                    };
+                  }
+                  return table;
+                })
+              );
+            } else if (delta.component === "index") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      indices: t.indices.map((index) =>
+                        index.id === delta.iid
+                          ? {
+                              ...index,
+                              ...delta.redo,
+                            }
+                          : index
+                      ),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "index_delete") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      indices: t.indices
+                        .filter((e) => e.id !== delta.data.id)
+                        .map((x, i) => ({ ...x, id: i })),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "self") {
+              updateTable(delta.tid, delta.redo, false);
+            }
+            return;
+          case ObjectType.TYPE:
+            if (delta.component === "field") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    return {
+                      ...t,
+                      fields: t.fields.map((e, j) =>
+                        j === delta.fid ? { ...e, ...delta.redo } : e
+                      ),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_add") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    return {
+                      ...t,
+                      fields: [...t.fields, { name: "", type: "" }],
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_delete") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    return {
+                      ...t,
+                      fields: t.fields.filter((field, j) => j !== delta.fid),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "self") {
+              updateType(delta.tid, delta.redo);
+            }
+            return;
+        }
+      }
+    };
+
+    const reverseChange = (delta) => {
+      console.log(delta);
+    };
+    socket.on("recieve-changes", (delta) => applyChange(delta));
+    socket.on("recieve-reversed-changes", (delta) => reverseChange(delta));
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("recieve-message", onRecieve);
-      socket.off("user-connected", onUserConnected);
-      socket.off("user-disconnected", onUserDisconnected);
+      // socket.off("connect", onConnect);
+      // socket.off("recieve-message", onRecieve);
+      // socket.off("user-connected", onUserConnected);
+      // socket.off("user-disconnected", onUserDisconnected);
+      socket.off("recieve-changes", applyChange);
       socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

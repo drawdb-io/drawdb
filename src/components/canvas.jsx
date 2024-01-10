@@ -265,6 +265,8 @@ export default function Canvas() {
           element: dragging.element,
           x: dragging.prevX,
           y: dragging.prevY,
+          toX: info.x,
+          toY: info.y,
           id: dragging.id,
           message: `Move ${info.name} to (${info.x}, ${info.y})`,
         },
