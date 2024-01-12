@@ -14,6 +14,7 @@ import {
 } from "../data/data";
 import { socket } from "../data/socket";
 import { db } from "../data/db";
+// import { flipAction } from "../utils";
 // import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 
 export const LayoutContext = createContext();
@@ -72,6 +73,7 @@ export default function Editor() {
   ]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
+  const [historyCount, setHistoryCount] = useState(0);
   const [selectedElement, setSelectedElement] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -482,6 +484,7 @@ export default function Editor() {
     areas.length,
     notes.length,
     types.length,
+    relationships.length
   ]);
 
   useEffect(() => {
@@ -553,13 +556,13 @@ export default function Editor() {
   }, [tables, relationships, notes, areas, types, title, id, state]);
 
   useEffect(() => {
-    if (socket && undoStack[undoStack.length - 1])
-      socket.emit("send-changes", undoStack[undoStack.length - 1]);
-  }, [undoStack]);
-  useEffect(() => {
-    if (socket && redoStack[redoStack.length - 1])
-      socket.emit("send-reversed-changes", redoStack[redoStack.length - 1]);
-  }, [redoStack]);
+    if (socket) {
+      if (historyCount < undoStack.length) {
+        socket.emit("send-changes", undoStack[undoStack.length - 1]);
+      }
+    }
+  }, [undoStack, historyCount]);
+
   useEffect(() => {
     document.title = "Editor | drawDB";
 
@@ -705,6 +708,8 @@ export default function Editor() {
     // socket.on("user-disconnected", onUserDisconnected);
 
     const applyChange = (delta) => {
+      // console.log("apply: ", delta)
+      if (!delta) return;
       if (delta.action === Action.ADD) {
         switch (delta.element) {
           case ObjectType.TABLE:
@@ -866,9 +871,9 @@ export default function Editor() {
                       indices: t.indices.map((index) =>
                         index.id === delta.iid
                           ? {
-                              ...index,
-                              ...delta.redo,
-                            }
+                            ...index,
+                            ...delta.redo,
+                          }
                           : index
                       ),
                     };
@@ -942,8 +947,193 @@ export default function Editor() {
     };
 
     const reverseChange = (delta) => {
-      console.log(delta);
+      // console.log("reverse: ", delta);
+      if (delta.action === Action.ADD) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            setTables(prev => prev.filter((e, i) => i !== prev.length - 1));
+            return;
+          case ObjectType.RELATIONSHIP:
+            setRelationships(prev => prev.filter((e, i) => i !== prev.length - 1));
+            return;
+          case ObjectType.AREA:
+            setAreas(prev => prev.filter((e, i) => i !== prev.length - 1));
+            return;
+          case ObjectType.NOTE:
+            setNotes(prev => prev.filter((e, i) => i !== prev.length - 1));
+            return;
+          case ObjectType.TYPE:
+            setTypes(prev => prev.filter((e, i) => i !== prev.length - 1));
+            return;
+        }
+      } else if (delta.action === Action.MOVE) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            updateTable(delta.id, { x: delta.x, y: delta.y }, true);
+            return;
+          case ObjectType.AREA:
+            updateArea(delta.id, { x: delta.x, y: delta.y });
+            return;
+          case ObjectType.NOTE:
+            updateNote(delta.id, { x: delta.x, y: delta.y });
+            return;
+        }
+      } else if (delta.action === Action.DELETE) {
+        switch (delta.element) {
+          case ObjectType.TABLE:
+            addTable(false, delta.data);
+            return;
+          case ObjectType.AREA:
+            addArea(false, delta.data);
+            return;
+          case ObjectType.NOTE:
+            addNote(false, delta.data);
+            return;
+          case ObjectType.RELATIONSHIP:
+            addRelationship(false, delta.data);
+            return;
+          case ObjectType.TYPE:
+            addType(false, delta.data);
+            return;
+        }
+      } else if (delta.action === Action.EDIT) {
+        switch (delta.element) {
+          case ObjectType.AREA:
+            updateArea(delta.aid, delta.undo);
+            return;
+          case ObjectType.RELATIONSHIP:
+            setRelationships((prev) =>
+              prev.map((e, idx) =>
+                idx === delta.rid ? { ...e, ...delta.undo } : e
+              )
+            );
+            return;
+          case ObjectType.NOTE:
+            updateNote(delta.nid, delta.undo);
+            return;
+          case ObjectType.TABLE:
+            if (delta.component === "field") {
+              updateField(delta.tid, delta.fid, delta.undo);
+            } else if (delta.component === "field_delete") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    const temp = t.fields.slice();
+                    temp.splice(delta.data.id, 0, delta.data);
+                    return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_add") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      fields: t.fields.filter((f) => f.id !== t.fields.length - 1).map((f, i) => ({ ...f, id: i })),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "index_add") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      indices: t.indices.filter((f) => f.id !== t.indices.length - 1).map((f, i) => ({ ...f, id: i })),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "index") {
+              setTables((prev) =>
+                prev.map((t) => {
+                  if (t.id === delta.tid) {
+                    return {
+                      ...t,
+                      indices: t.indices.map((index) =>
+                        index.id === delta.iid
+                          ? {
+                            ...index,
+                            ...delta.undo,
+                          }
+                          : index
+                      ),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "index_delete") {
+              setTables((prev) =>
+                prev.map((table) => {
+                  if (table.id === delta.tid) {
+                    const temp = table.indices.slice();
+                    temp.splice(delta.data.id, 0, delta.data);
+                    return {
+                      ...table,
+                      indices: temp.map((t, i) => ({ ...t, id: i })),
+                    };
+                  }
+                  return table;
+                })
+              );
+            } else if (delta.component === "self") {
+              updateTable(delta.tid, delta.undo, false);
+            }
+            return;
+          case ObjectType.TYPE:
+            if (delta.component === "field") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    return {
+                      ...t,
+                      fields: t.fields.map((e, j) =>
+                        j === delta.fid ? { ...e, ...delta.undo } : e
+                      ),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_add") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    return {
+                      ...t,
+                      fields: t.fields.filter(
+                        (e, i) => i !== t.fields.length - 1
+                      ),
+                    };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "field_delete") {
+              setTypes((prev) =>
+                prev.map((t, i) => {
+                  if (i === delta.tid) {
+                    const temp = t.fields.slice();
+                    temp.splice(delta.fid, 0, delta.data);
+                    return { ...t, fields: temp };
+                  }
+                  return t;
+                })
+              );
+            } else if (delta.component === "self") {
+              updateType(delta.tid, delta.undo);
+            }
+            return;
+        }
+      }
     };
+
     socket.on("recieve-changes", (delta) => applyChange(delta));
     socket.on("recieve-reversed-changes", (delta) => reverseChange(delta));
     return () => {
@@ -951,6 +1141,7 @@ export default function Editor() {
       // socket.off("recieve-message", onRecieve);
       // socket.off("user-connected", onUserConnected);
       // socket.off("user-disconnected", onUserDisconnected);
+      socket.off("recieve-reversed-changes", reverseChange);
       socket.off("recieve-changes", applyChange);
       socket.disconnect();
     };
@@ -982,7 +1173,7 @@ export default function Editor() {
             <TabContext.Provider value={{ tab, setTab }}>
               <SettingsContext.Provider value={{ settings, setSettings }}>
                 <UndoRedoContext.Provider
-                  value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
+                  value={{ undoStack, redoStack, setUndoStack, setRedoStack, setHistoryCount }}
                 >
                   <SelectContext.Provider
                     value={{ selectedElement, setSelectedElement }}

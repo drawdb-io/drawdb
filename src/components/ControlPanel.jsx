@@ -62,6 +62,7 @@ import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { socket } from "../data/socket";
 
 export default function ControlPanel({
   diagramId,
@@ -125,7 +126,7 @@ export default function ControlPanel({
     useContext(NoteContext);
   const { areas, setAreas, updateArea, addArea, deleteArea } =
     useContext(AreaContext);
-  const { undoStack, redoStack, setUndoStack, setRedoStack } =
+  const { undoStack, redoStack, setUndoStack, setRedoStack, setHistoryCount } =
     useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const { tab, setTab } = useContext(TabContext);
@@ -151,7 +152,11 @@ export default function ControlPanel({
 
   const undo = () => {
     if (undoStack.length === 0) return;
-    const a = undoStack.pop();
+    setHistoryCount(undoStack.length)
+    const a = undoStack[undoStack.length - 1];
+    if (socket && a)
+      socket.emit("send-reversed-changes", a);
+    setUndoStack(prev => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         deleteTable(tables[tables.length - 1].id, false);
@@ -255,9 +260,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index
             ),
           });
@@ -323,7 +328,8 @@ export default function ControlPanel({
 
   const redo = () => {
     if (redoStack.length === 0) return;
-    const a = redoStack.pop();
+    const a = redoStack[redoStack.length - 1];
+    setRedoStack(prev => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         addTable(false);
@@ -447,9 +453,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index
             ),
           });
@@ -499,6 +505,7 @@ export default function ControlPanel({
       }));
       setUndoStack((prev) => [...prev, a]);
     }
+    setHistoryCount(undoStack.length)
   };
 
   const fileImport = () => setVisible(MODAL.IMPORT);
@@ -789,7 +796,7 @@ export default function ControlPanel({
         },
       },
       Share: {
-        function: () => {},
+        function: () => { },
       },
       Rename: {
         function: () => {
@@ -926,7 +933,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       "Export source": {
         children: [
@@ -960,9 +967,9 @@ export default function ControlPanel({
               }));
             },
           },
-          { DBML: () => {} },
+          { DBML: () => { } },
         ],
-        function: () => {},
+        function: () => { },
       },
       Settings: {
         children: [
@@ -997,7 +1004,7 @@ export default function ControlPanel({
         ],
       },
       Exit: {
-        function: () => {},
+        function: () => { },
       },
     },
     Edit: {
@@ -1111,7 +1118,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       "Zoom in": {
         function: zoomIn,
@@ -1127,13 +1134,13 @@ export default function ControlPanel({
     },
     Logs: {
       "Open logs": {
-        function: () => {},
+        function: () => { },
       },
       "Commit changes": {
-        function: () => {},
+        function: () => { },
       },
       "Revert changes": {
-        function: () => {},
+        function: () => { },
       },
     },
     Help: {
@@ -1142,10 +1149,10 @@ export default function ControlPanel({
         shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
-        function: () => {},
+        function: () => { },
       },
       "Tweet us": {
-        function: () => {},
+        function: () => { },
       },
       "Report a bug": {
         function: () => window.open("/bug_report", "_blank"),
@@ -1394,11 +1401,10 @@ export default function ControlPanel({
     <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
       <div>
         <div
-          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
-            settings.mode === "light"
-              ? "hover:border-blue-500"
-              : "hover:border-white"
-          } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
+          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${settings.mode === "light"
+            ? "hover:border-blue-500"
+            : "hover:border-white"
+            } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
           onClick={() => setSelectedTemplateId(0)}
         >
           <IconPlus style={{ color: "#fff" }} size="extra-large" />
@@ -1408,11 +1414,10 @@ export default function ControlPanel({
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <div key={i}>
           <div
-            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
-              settings.mode === "light"
-                ? "hover:border-blue-500"
-                : "hover:border-white"
-            } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
+            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${settings.mode === "light"
+              ? "hover:border-blue-500"
+              : "hover:border-white"
+              } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
             onClick={() => setSelectedTemplateId(i)}
           >
             +
@@ -1471,11 +1476,10 @@ export default function ControlPanel({
                       return (
                         <tr
                           key={d.id}
-                          className={`${
-                            selectedDiagramId === d.id
-                              ? "bg-blue-300 bg-opacity-30"
-                              : "hover-1"
-                          }`}
+                          className={`${selectedDiagramId === d.id
+                            ? "bg-blue-300 bg-opacity-30"
+                            : "hover-1"
+                            }`}
                           onClick={() => {
                             setSelectedDiagramId(d.id);
                           }}
