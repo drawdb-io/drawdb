@@ -64,8 +64,6 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { socket } from "../data/socket";
-import { useCookies } from "react-cookie";
-import axios from "axios";
 
 export default function ControlPanel({
   diagramId,
@@ -85,7 +83,6 @@ export default function ControlPanel({
     OPEN: 5,
     SAVEAS: 6,
     NEW: 7,
-    SHARE: 8,
   };
   const STATUS = {
     NONE: 0,
@@ -110,8 +107,6 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const [cookies] = useCookies(["logged_in"]);
-  const [addPeople, setAddPeople] = useState([])
   const { layout, setLayout } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const {
@@ -801,9 +796,6 @@ export default function ControlPanel({
             });
         },
       },
-      Share: {
-        function: () => setVisible(MODAL.SHARE),
-      },
       Rename: {
         function: () => {
           setVisible(MODAL.RENAME);
@@ -1138,17 +1130,6 @@ export default function ControlPanel({
         function: enterFullscreen,
       },
     },
-    Logs: {
-      "Open logs": {
-        function: () => { },
-      },
-      "Commit changes": {
-        function: () => { },
-      },
-      "Revert changes": {
-        function: () => { },
-      },
-    },
     Help: {
       Shortcuts: {
         function: () => window.open("/shortcuts", "_blank"),
@@ -1215,8 +1196,6 @@ export default function ControlPanel({
         return "Save as";
       case MODAL.NEW:
         return "New diagram";
-      case MODAL.SHARE:
-        return "Share \"" + title + '"'
       default:
         return "";
     }
@@ -1559,31 +1538,6 @@ export default function ControlPanel({
             </div>
           );
         }
-      case MODAL.SHARE:
-        if (cookies.logged_in) {
-          return <div>
-            <TagInput
-              placeholder='Add people'
-              onChange={v => setAddPeople(v)}
-              size="large"
-            />
-            <div className="my-3 text-base font-semibold">People with access</div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar alt="hi" size="default">hi</Avatar>
-                <div>
-                  <div>Username (you)</div>
-                  <div className="opacity-60">Email@gmail.com</div>
-                </div>
-              </div>
-              <div className="opacity-60">Owner</div>
-            </div>
-          </div>
-        } else {
-          return <div>
-            You&apos;ll need to <Link to="/login" target="_blank" className="text-blue-600 font-bold hover:underline">log in</Link> before you can share this diagram.
-          </div>
-        }
       default:
         return <></>;
     }
@@ -1913,37 +1867,6 @@ export default function ControlPanel({
               </Button>
             </div>
           </div>
-        </div>
-        <div className="flex justify-around items-center text-md me-8">
-          <AvatarGroup maxCount={3} size="default">
-            <Avatar color="red" alt="Lisa LeBlanc">
-              LL
-            </Avatar>
-            <Avatar color="green" alt="Caroline Xiao">
-              CX
-            </Avatar>
-            <Avatar color="amber" alt="Rafal Matin">
-              RM
-            </Avatar>
-            <Avatar alt="Zank Lance">ZL</Avatar>
-            <Avatar alt="Youself Zhang">YZ</Avatar>
-          </AvatarGroup>
-          <Button
-            type="primary"
-            style={{
-              fontSize: "16px",
-              marginLeft: "12px",
-              marginRight: "12px",
-            }}
-            size="large"
-            icon={<IconShareStroked />}
-            onClick={() => setVisible(MODAL.SHARE)}
-          >
-            Share
-          </Button>
-          <Avatar size="default" alt="Buni Zhang">
-            BZ
-          </Avatar>
         </div>
       </nav>
     );
