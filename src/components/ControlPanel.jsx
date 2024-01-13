@@ -64,7 +64,7 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { socket } from "../data/socket";
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 import axios from "axios";
 
 export default function ControlPanel({
@@ -110,7 +110,7 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const [cookies] = useCookies(["logged_in"]);
+  // const [cookies] = useCookies(["logged_in"]);
   const [addPeople, setAddPeople] = useState([])
   const { layout, setLayout } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
@@ -1293,26 +1293,29 @@ export default function ControlPanel({
         createNewDiagram(selectedTemplateId);
         return;
       case MODAL.SHARE:
-        await axios
-          .post(
-            `${import.meta.env.VITE_API_BACKEND_URL}/share`,
-            {
-              people: addPeople,
-              diagram: {
-                name: title,
-                tables: tables,
-                references: relationships,
-                types: types,
-                notes: notes,
-                areas: areas,
-              }
-            },
-            { withCredentials: true }
-          )
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((e) => console.log(e));
+        // if (cookies.logged_in) {
+          await axios
+            .post(
+              `${import.meta.env.VITE_API_BACKEND_URL}/share`,
+              {
+                people: addPeople,
+                diagram: JSON.stringify({
+                  name: title,
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  notes: notes,
+                  areas: areas,
+                })
+              },
+              // { withCredentials: true }
+            )
+            .then((res) => {
+              console.log(res)
+              // window.location = window.location + '/sup'
+            })
+            .catch((e) => console.log(e));
+        // }
         setVisible(MODAL.NONE)
         return;
       default:
@@ -1583,7 +1586,7 @@ export default function ControlPanel({
           );
         }
       case MODAL.SHARE:
-        if (cookies.logged_in) {
+        // if (cookies.logged_in) {
           return <div>
             <TagInput
               placeholder='Add people'
@@ -1602,11 +1605,11 @@ export default function ControlPanel({
               <div className="opacity-60">Owner</div>
             </div>
           </div>
-        } else {
-          return <div>
-            You&apos;ll need to <Link to="/login" target="_blank" className="text-blue-600 font-bold hover:underline">log in</Link> before you can share this diagram.
-          </div>
-        }
+        // } else {
+        //   return <div>
+        //     You&apos;ll need to <Link to="/login" target="_blank" className="text-blue-600 font-bold hover:underline">log in</Link> before you can share this diagram.
+        //   </div>
+        // }
       default:
         return <></>;
     }
