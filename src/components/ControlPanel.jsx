@@ -30,6 +30,7 @@ import {
   Upload,
   Banner,
   Toast,
+  TagInput,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -63,6 +64,8 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { socket } from "../data/socket";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 export default function ControlPanel({
   diagramId,
@@ -82,6 +85,7 @@ export default function ControlPanel({
     OPEN: 5,
     SAVEAS: 6,
     NEW: 7,
+    SHARE: 8,
   };
   const STATUS = {
     NONE: 0,
@@ -106,6 +110,8 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
+  const [cookies] = useCookies(["logged_in"]);
+  const [addPeople, setAddPeople] = useState([])
   const { layout, setLayout } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const {
@@ -796,7 +802,7 @@ export default function ControlPanel({
         },
       },
       Share: {
-        function: () => { },
+        function: () => setVisible(MODAL.SHARE),
       },
       Rename: {
         function: () => {
@@ -1209,6 +1215,8 @@ export default function ControlPanel({
         return "Save as";
       case MODAL.NEW:
         return "New diagram";
+      case MODAL.SHARE:
+        return "Share \"" + title + '"'
       default:
         return "";
     }
@@ -1234,7 +1242,7 @@ export default function ControlPanel({
     }
   };
 
-  const getModalOnOk = () => {
+  const getModalOnOk = async () => {
     switch (visible) {
       case MODAL.IMG:
         saveAs(
@@ -1283,6 +1291,29 @@ export default function ControlPanel({
       case MODAL.NEW:
         setVisible(MODAL.NONE);
         createNewDiagram(selectedTemplateId);
+        return;
+      case MODAL.SHARE:
+        await axios
+          .post(
+            `${import.meta.env.VITE_API_BACKEND_URL}/share`,
+            {
+              people: addPeople,
+              diagram: {
+                name: title,
+                tables: tables,
+                references: relationships,
+                types: types,
+                notes: notes,
+                areas: areas,
+              }
+            },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((e) => console.log(e));
+        setVisible(MODAL.NONE)
         return;
       default:
         setVisible(MODAL.NONE);
@@ -1550,6 +1581,31 @@ export default function ControlPanel({
               <Spin tip="Loading..." size="large" />
             </div>
           );
+        }
+      case MODAL.SHARE:
+        if (cookies.logged_in) {
+          return <div>
+            <TagInput
+              placeholder='Add people'
+              onChange={v => setAddPeople(v)}
+              size="large"
+            />
+            <div className="my-3 text-base font-semibold">People with access</div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar alt="hi" size="default">hi</Avatar>
+                <div>
+                  <div>Username (you)</div>
+                  <div className="opacity-60">Email@gmail.com</div>
+                </div>
+              </div>
+              <div className="opacity-60">Owner</div>
+            </div>
+          </div>
+        } else {
+          return <div>
+            You&apos;ll need to <Link to="/login" target="_blank" className="text-blue-600 font-bold hover:underline">log in</Link> before you can share this diagram.
+          </div>
         }
       default:
         return <></>;
@@ -1904,6 +1960,7 @@ export default function ControlPanel({
             }}
             size="large"
             icon={<IconShareStroked />}
+            onClick={() => setVisible(MODAL.SHARE)}
           >
             Share
           </Button>
