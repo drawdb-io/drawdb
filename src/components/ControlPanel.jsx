@@ -1292,29 +1292,6 @@ export default function ControlPanel({
         setVisible(MODAL.NONE);
         createNewDiagram(selectedTemplateId);
         return;
-      case MODAL.SHARE:
-        await axios
-          .post(
-            `${import.meta.env.VITE_API_BACKEND_URL}/share`,
-            {
-              people: addPeople,
-              diagram: {
-                name: title,
-                tables: tables,
-                references: relationships,
-                types: types,
-                notes: notes,
-                areas: areas,
-              }
-            },
-            { withCredentials: true }
-          )
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((e) => console.log(e));
-        setVisible(MODAL.NONE)
-        return;
       default:
         setVisible(MODAL.NONE);
         return;
