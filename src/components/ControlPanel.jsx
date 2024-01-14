@@ -972,38 +972,7 @@ export default function ControlPanel({
         ],
         function: () => { },
       },
-      Settings: {
-        children: [
-          {
-            Autosave: () =>
-              setSettings((prev) => {
-                Toast.success(
-                  `Autosave is ${settings.autosave ? "off" : "on"}`
-                );
-                return { ...prev, autosave: !prev.autosave };
-              }),
-          },
-          {
-            Panning: () =>
-              setSettings((prev) => {
-                Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
-                return { ...prev, panning: !prev.panning };
-              }),
-          },
-          {
-            "Flush storage": async () => {
-              db.delete()
-                .then(() => {
-                  Toast.success("Storage flushed");
-                  window.location.reload(false);
-                })
-                .catch(() => {
-                  Toast.error("Oops! Something went wrong.");
-                });
-            },
-          },
-        ],
-      },
+
       Exit: {
         function: () => { },
       },
@@ -1129,15 +1098,36 @@ export default function ControlPanel({
         function: enterFullscreen,
       },
     },
+    Settings: {
+      Autosave: () =>
+        setSettings((prev) => {
+          Toast.success(
+            `Autosave is ${settings.autosave ? "off" : "on"}`
+          );
+          return { ...prev, autosave: !prev.autosave };
+        }),
+      Panning: () =>
+        setSettings((prev) => {
+          Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
+          return { ...prev, panning: !prev.panning };
+        }),
+      "Flush storage": async () => {
+        db.delete()
+          .then(() => {
+            Toast.success("Storage flushed");
+            window.location.reload(false);
+          })
+          .catch(() => {
+            Toast.error("Oops! Something went wrong.");
+          });
+      },
+    },
     Help: {
       Shortcuts: {
         function: () => window.open("/shortcuts", "_blank"),
         shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
-        function: () => { },
-      },
-      "Tweet us": {
         function: () => { },
       },
       "Report a bug": {
