@@ -64,7 +64,6 @@ import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { socket } from "../data/socket";
 import Todo from "./Todo";
 
 export default function ControlPanel({
@@ -135,7 +134,7 @@ export default function ControlPanel({
     useContext(NoteContext);
   const { areas, setAreas, updateArea, addArea, deleteArea } =
     useContext(AreaContext);
-  const { undoStack, redoStack, setUndoStack, setRedoStack, setHistoryCount } =
+  const { undoStack, redoStack, setUndoStack, setRedoStack } =
     useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const { tab, setTab } = useContext(TabContext);
@@ -161,10 +160,7 @@ export default function ControlPanel({
 
   const undo = () => {
     if (undoStack.length === 0) return;
-    setHistoryCount(undoStack.length)
     const a = undoStack[undoStack.length - 1];
-    if (socket && a)
-      socket.emit("send-reversed-changes", a);
     setUndoStack(prev => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
@@ -514,7 +510,6 @@ export default function ControlPanel({
       }));
       setUndoStack((prev) => [...prev, a]);
     }
-    setHistoryCount(undoStack.length)
   };
 
   const fileImport = () => setVisible(MODAL.IMPORT);
