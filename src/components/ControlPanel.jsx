@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
-  IconShareStroked,
   IconChevronUp,
   IconChevronDown,
   IconCheckboxTick,
@@ -16,8 +15,6 @@ import {
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
 import {
-  Avatar,
-  AvatarGroup,
   Button,
   Divider,
   Dropdown,
@@ -30,8 +27,12 @@ import {
   Upload,
   Banner,
   Toast,
-  TagInput,
+  SideSheet,
+  List,
 } from "@douyinfe/semi-ui";
+import timeLine from "../assets/process.png";
+import timeLineDark from "../assets/process_dark.png";
+import todo from "../assets/calendar.png";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
@@ -64,8 +65,7 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { socket } from "../data/socket";
-import { useCookies } from "react-cookie";
-import axios from "axios";
+import Todo from "./Todo";
 
 export default function ControlPanel({
   diagramId,
@@ -85,7 +85,6 @@ export default function ControlPanel({
     OPEN: 5,
     SAVEAS: 6,
     NEW: 7,
-    SHARE: 8,
   };
   const STATUS = {
     NONE: 0,
@@ -93,8 +92,14 @@ export default function ControlPanel({
     ERROR: 2,
     OK: 3,
   };
+  const SIDESHEET = {
+    NONE: 0,
+    TODO: 1,
+    TIMELINE: 2,
+  };
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
+  const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
@@ -110,8 +115,6 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const [cookies] = useCookies(["logged_in"]);
-  const [addPeople, setAddPeople] = useState([])
   const { layout, setLayout } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const {
@@ -801,9 +804,6 @@ export default function ControlPanel({
             });
         },
       },
-      Share: {
-        function: () => setVisible(MODAL.SHARE),
-      },
       Rename: {
         function: () => {
           setVisible(MODAL.RENAME);
@@ -1074,10 +1074,6 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
-      Services: {
-        function: () =>
-          setLayout((prev) => ({ ...prev, services: !prev.services })),
-      },
       "Strict mode": {
         function: viewStrictMode,
         shortcut: "Ctrl+Shift+M",
@@ -1136,17 +1132,6 @@ export default function ControlPanel({
       },
       Fullscreen: {
         function: enterFullscreen,
-      },
-    },
-    Logs: {
-      "Open logs": {
-        function: () => { },
-      },
-      "Commit changes": {
-        function: () => { },
-      },
-      "Revert changes": {
-        function: () => { },
       },
     },
     Help: {
@@ -1215,8 +1200,6 @@ export default function ControlPanel({
         return "Save as";
       case MODAL.NEW:
         return "New diagram";
-      case MODAL.SHARE:
-        return "Share \"" + title + '"'
       default:
         return "";
     }
@@ -1559,31 +1542,6 @@ export default function ControlPanel({
             </div>
           );
         }
-      case MODAL.SHARE:
-        if (cookies.logged_in) {
-          return <div>
-            <TagInput
-              placeholder='Add people'
-              onChange={v => setAddPeople(v)}
-              size="large"
-            />
-            <div className="my-3 text-base font-semibold">People with access</div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar alt="hi" size="default">hi</Avatar>
-                <div>
-                  <div>Username (you)</div>
-                  <div className="opacity-60">Email@gmail.com</div>
-                </div>
-              </div>
-              <div className="opacity-60">Owner</div>
-            </div>
-          </div>
-        } else {
-          return <div>
-            You&apos;ll need to <Link to="/login" target="_blank" className="text-blue-600 font-bold hover:underline">log in</Link> before you can share this diagram.
-          </div>
-        }
       default:
         return <></>;
     }
@@ -1630,8 +1588,84 @@ export default function ControlPanel({
       >
         {getModalBody()}
       </Modal>
+      <SideSheet
+        visible={sidesheet !== SIDESHEET.NONE}
+        onCancel={() => {
+          setSidesheet(SIDESHEET.NONE);
+        }}
+        width={340}
+        title={getTitle(sidesheet)}
+        style={{ paddingBottom: "16px" }}
+        bodyStyle={{ padding: "0px" }}
+      >
+        {getContent(sidesheet)}
+      </SideSheet>
     </>
   );
+
+  function getTitle(type) {
+    switch (type) {
+      case SIDESHEET.TIMELINE:
+        return (
+          <div className="flex items-center">
+            <img
+              src={settings.mode === "light" ? timeLine : timeLineDark}
+              className="w-7"
+              alt="chat icon"
+            />
+            <div className="ms-3 text-lg">Timeline</div>
+          </div>
+        );
+      case SIDESHEET.TODO:
+        return (
+          <div className="flex items-center">
+            <img src={todo} className="w-7" alt="todo icon" />
+            <div className="ms-3 text-lg">To-do list</div>
+          </div>
+        );
+      default:
+        break;
+    }
+  }
+
+  function getContent(type) {
+    switch (type) {
+      case SIDESHEET.TIMELINE:
+        return renderTimeline();
+      case SIDESHEET.TODO:
+        return <Todo />;
+      default:
+        break;
+    }
+  }
+
+  function renderTimeline() {
+    if (undoStack.length > 0) {
+      return (
+        <List className="sidesheet-theme">
+          {[...undoStack].reverse().map((e, i) => (
+            <List.Item
+              key={i}
+              style={{ padding: "4px 18px 4px 18px" }}
+              className="hover-1"
+            >
+              <div className="flex items-center py-1 w-full">
+                <i className="block fa-regular fa-circle fa-xs"></i>
+                <div className="ms-2">{e.message}</div>
+              </div>
+            </List.Item>
+          ))}
+        </List>
+      );
+    } else {
+      return (
+        <div className="m-5 sidesheet-theme">
+          No activity was recorded. You have not added anything to your diagram
+          yet.
+        </div>
+      );
+    }
+  }
 
   function toolbar() {
     return (
@@ -1765,9 +1799,14 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
-          <Tooltip content="Commit" position="bottom">
-            <button className="py-1 px-2 hover-2 rounded text-xl">
-              <i className="fa-solid fa-code-branch"></i>
+          <Tooltip content="Timeline" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TIMELINE)}>
+              <i className="fa-solid fa-timeline"></i>
+            </button>
+          </Tooltip>
+          <Tooltip content="To-do" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TODO)}>
+              <i className="fa-regular fa-calendar-check"></i>
             </button>
           </Tooltip>
         </div>
@@ -1914,37 +1953,6 @@ export default function ControlPanel({
             </div>
           </div>
         </div>
-        <div className="flex justify-around items-center text-md me-8">
-          <AvatarGroup maxCount={3} size="default">
-            <Avatar color="red" alt="Lisa LeBlanc">
-              LL
-            </Avatar>
-            <Avatar color="green" alt="Caroline Xiao">
-              CX
-            </Avatar>
-            <Avatar color="amber" alt="Rafal Matin">
-              RM
-            </Avatar>
-            <Avatar alt="Zank Lance">ZL</Avatar>
-            <Avatar alt="Youself Zhang">YZ</Avatar>
-          </AvatarGroup>
-          <Button
-            type="primary"
-            style={{
-              fontSize: "16px",
-              marginLeft: "12px",
-              marginRight: "12px",
-            }}
-            size="large"
-            icon={<IconShareStroked />}
-            onClick={() => setVisible(MODAL.SHARE)}
-          >
-            Share
-          </Button>
-          <Avatar size="default" alt="Buni Zhang">
-            BZ
-          </Avatar>
-        </div>
       </nav>
     );
   }
@@ -1991,19 +1999,6 @@ export default function ControlPanel({
               onClick={() => invertLayout("issues")}
             >
               Issues
-            </Dropdown.Item>
-
-            <Dropdown.Item
-              icon={
-                layout.services ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
-              }
-              onClick={() => invertLayout("services")}
-            >
-              Services
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item

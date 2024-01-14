@@ -1,5 +1,5 @@
 import { useState, createContext, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
+
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
@@ -67,10 +67,6 @@ export default function Editor() {
     showCardinality: true,
   });
   const [tasks, setTasks] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [botMessages, setBotMessages] = useState([
-    { sender: "bot", message: "Hey there! How can I help you?" },
-  ]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
   const [historyCount, setHistoryCount] = useState(0);
@@ -1218,17 +1214,6 @@ export default function Editor() {
                               />
                             )}
                             <Canvas state={state} setState={setState} />
-                            {layout.services && (
-                              <MessageContext.Provider
-                                value={{ messages, setMessages }}
-                              >
-                                <BotMessageContext.Provider
-                                  value={{ botMessages, setBotMessages }}
-                                >
-                                  <Sidebar />
-                                </BotMessageContext.Provider>
-                              </MessageContext.Provider>
-                            )}
                           </div>
                         </div>
                       </TypeContext.Provider>
