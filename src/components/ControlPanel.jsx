@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
-  IconShareStroked,
   IconChevronUp,
   IconChevronDown,
   IconCheckboxTick,
@@ -16,8 +15,6 @@ import {
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
 import {
-  Avatar,
-  AvatarGroup,
   Button,
   Divider,
   Dropdown,
@@ -30,8 +27,12 @@ import {
   Upload,
   Banner,
   Toast,
-  TagInput,
+  SideSheet,
+  List,
 } from "@douyinfe/semi-ui";
+import timeLine from "../assets/process.png";
+import timeLineDark from "../assets/process_dark.png";
+import todo from "../assets/calendar.png";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
@@ -64,6 +65,7 @@ import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { socket } from "../data/socket";
+import Todo from "./Todo";
 
 export default function ControlPanel({
   diagramId,
@@ -90,8 +92,14 @@ export default function ControlPanel({
     ERROR: 2,
     OK: 3,
   };
+  const SIDESHEET = {
+    NONE: 0,
+    TODO: 1,
+    TIMELINE: 2,
+  };
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
   const [visible, setVisible] = useState(MODAL.NONE);
+  const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
@@ -1066,10 +1074,6 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
-      Services: {
-        function: () =>
-          setLayout((prev) => ({ ...prev, services: !prev.services })),
-      },
       "Strict mode": {
         function: viewStrictMode,
         shortcut: "Ctrl+Shift+M",
@@ -1584,8 +1588,84 @@ export default function ControlPanel({
       >
         {getModalBody()}
       </Modal>
+      <SideSheet
+        visible={sidesheet !== SIDESHEET.NONE}
+        onCancel={() => {
+          setSidesheet(SIDESHEET.NONE);
+        }}
+        width={340}
+        title={getTitle(sidesheet)}
+        style={{ paddingBottom: "16px" }}
+        bodyStyle={{ padding: "0px" }}
+      >
+        {getContent(sidesheet)}
+      </SideSheet>
     </>
   );
+
+  function getTitle(type) {
+    switch (type) {
+      case SIDESHEET.TIMELINE:
+        return (
+          <div className="flex items-center">
+            <img
+              src={settings.mode === "light" ? timeLine : timeLineDark}
+              className="w-7"
+              alt="chat icon"
+            />
+            <div className="ms-3 text-lg">Timeline</div>
+          </div>
+        );
+      case SIDESHEET.TODO:
+        return (
+          <div className="flex items-center">
+            <img src={todo} className="w-7" alt="todo icon" />
+            <div className="ms-3 text-lg">To-do list</div>
+          </div>
+        );
+      default:
+        break;
+    }
+  }
+
+  function getContent(type) {
+    switch (type) {
+      case SIDESHEET.TIMELINE:
+        return renderTimeline();
+      case SIDESHEET.TODO:
+        return <Todo />;
+      default:
+        break;
+    }
+  }
+
+  function renderTimeline() {
+    if (undoStack.length > 0) {
+      return (
+        <List className="sidesheet-theme">
+          {[...undoStack].reverse().map((e, i) => (
+            <List.Item
+              key={i}
+              style={{ padding: "4px 18px 4px 18px" }}
+              className="hover-1"
+            >
+              <div className="flex items-center py-1 w-full">
+                <i className="block fa-regular fa-circle fa-xs"></i>
+                <div className="ms-2">{e.message}</div>
+              </div>
+            </List.Item>
+          ))}
+        </List>
+      );
+    } else {
+      return (
+        <div className="m-5 sidesheet-theme">
+          No activity was recorded. You have not added anything to your diagram
+          yet.
+        </div>
+      );
+    }
+  }
 
   function toolbar() {
     return (
@@ -1719,9 +1799,14 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
-          <Tooltip content="Commit" position="bottom">
-            <button className="py-1 px-2 hover-2 rounded text-xl">
-              <i className="fa-solid fa-code-branch"></i>
+          <Tooltip content="Timeline" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TIMELINE)}>
+              <i className="fa-solid fa-timeline"></i>
+            </button>
+          </Tooltip>
+          <Tooltip content="To-do" position="bottom">
+            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TODO)}>
+              <i className="fa-regular fa-calendar-check"></i>
             </button>
           </Tooltip>
         </div>
@@ -1914,19 +1999,6 @@ export default function ControlPanel({
               onClick={() => invertLayout("issues")}
             >
               Issues
-            </Dropdown.Item>
-
-            <Dropdown.Item
-              icon={
-                layout.services ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
-              }
-              onClick={() => invertLayout("services")}
-            >
-              Services
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
