@@ -15,36 +15,22 @@ export default function Navbar() {
             <img src={logo} alt="logo" className="me-2 sm:h-[32px]" />
           </Link>
           <div className="md:hidden">
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
+            <Link className="ms-6 text-lg font-semibold hover:text-indigo-700">
               Features
             </Link>
             <Link
               to="/editor"
-              className="ms-4 text-lg font-semibold hover:text-indigo-700"
+              className="ms-6 text-lg font-semibold hover:text-indigo-700"
             >
               Editor
             </Link>
             <Link
               to="/templates"
-              className="ms-4 text-lg font-semibold hover:text-indigo-700"
+              className="ms-6 text-lg font-semibold hover:text-indigo-700"
             >
               Templates
             </Link>
-            <Link className="ms-4 text-lg font-semibold hover:text-indigo-700">
-              Download
-            </Link>
           </div>
-        </div>
-        <div className="md:hidden">
-          <Link to="/login" className="me-5 font-semibold">
-            Log in
-          </Link>
-          <Link
-            to="/signup"
-            className="px-6 py-3 bg-[#386b8f] hover:bg-[#4e8bb6] text-white font-semibold rounded-md"
-          >
-            Sign up
-          </Link>
         </div>
         <button
           onClick={() => setOpenMenu((prev) => !prev)}
@@ -60,34 +46,24 @@ export default function Navbar() {
         onCancel={() => setOpenMenu(false)}
         width={window.innerWidth}
       >
-        <Link className="hover:bg-zinc-100 block p-3 text-lg font-semibold">
+        <Link className="hover:bg-zinc-100 block p-3 text-base font-semibold">
           Features
         </Link>
         <hr />
         <Link
           to="/editor"
-          className="hover:bg-zinc-100 block p-3 text-lg font-semibold"
+          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
         >
           Editor
         </Link>
         <hr />
         <Link
           to="/templates"
-          className="hover:bg-zinc-100 block p-3 text-lg font-semibold"
+          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
         >
           Templates
         </Link>
         <hr />
-        <Link className="hover:bg-zinc-100 block p-3 text-lg font-semibold">
-          Download
-        </Link>
-        <hr />
-        <Link
-          to="/login"
-          className="hover:bg-zinc-100 block p-3 text-lg font-semibold text-indigo-700"
-        >
-          Log in
-        </Link>
       </SideSheet>
     </>
   );

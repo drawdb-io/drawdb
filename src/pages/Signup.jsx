@@ -5,7 +5,7 @@ import google_logo from "../assets/google.png";
 import github_logo from "../assets/github.png";
 import axios from "axios";
 import { Toast } from "@douyinfe/semi-ui";
-import Canvas from "../components/AuthCanvas";
+import Canvas from "../components/SimpleCanvas";
 import { diagram } from "../data/signupDiagram";
 
 export default function SignUp() {

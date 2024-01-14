@@ -4,7 +4,7 @@ import logo from "../assets/icon_dark_64.png";
 import google_logo from "../assets/google.png";
 import github_logo from "../assets/github.png";
 import axios from "axios";
-import Canvas from "../components/AuthCanvas";
+import Canvas from "../components/SimpleCanvas";
 import { diagram } from "../data/loginDiagram";
 
 import { useCookies } from "react-cookie";
