@@ -1,4 +1,4 @@
-const xOffset = window.innerWidth * 0.57 * 0.09;
+const xOffset = window.innerWidth * 0.65;
 export const diagram = {
   tables: [
     {

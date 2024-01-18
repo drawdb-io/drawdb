@@ -19,9 +19,8 @@ function Table({ table, grab }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`border-2 ${
-          isHovered ? "border-dashed border-blue-500" : "border-zinc-300"
-        } select-none rounded-lg w-full bg-zinc-100 text-zinc-800`}
+        className={`border-2 ${isHovered ? "border-dashed border-blue-500" : "border-zinc-300"
+          } select-none rounded-lg w-full bg-zinc-100 text-zinc-800`}
       >
         <div
           className={`h-[10px] w-full rounded-t-md`}
@@ -33,9 +32,8 @@ function Table({ table, grab }) {
         {table.fields.map((e, i) => (
           <div
             key={i}
-            className={`${
-              i === table.fields.length - 1 ? "" : "border-b border-gray-400"
-            } h-[36px] px-2 py-1 flex justify-between`}
+            className={`${i === table.fields.length - 1 ? "" : "border-b border-gray-400"
+              } h-[36px] px-2 py-1 flex justify-between`}
             onMouseEnter={() => setHoveredField(i)}
             onMouseLeave={() => setHoveredField(-1)}
           >
@@ -139,7 +137,7 @@ function Relationship({ relationship }) {
   );
 }
 
-export default function Canvas({ diagram }) {
+export default function SimpleCanvas({ diagram, zoom }) {
   const [tables, setTables] = useState(diagram.tables);
   const [relationships, setRelationships] = useState(diagram.relationships);
   const [dragging, setDragging] = useState(-1);
@@ -233,12 +231,17 @@ export default function Canvas({ diagram }) {
         height="100%"
         fill="url(#pattern-circles)"
       ></rect>
-      {tables.map((t, i) => (
-        <Table key={i} table={t} grab={(e) => grabTable(e, i)} />
-      ))}
-      {relationships.map((r, i) => (
-        <Relationship key={i} relationship={r} />
-      ))}
+      <g style={{
+        transform: `scale(${zoom})`,
+        transformOrigin: "top left",
+      }}>
+        {tables.map((t, i) => (
+          <Table key={i} table={t} grab={(e) => grabTable(e, i)} />
+        ))}
+        {relationships.map((r, i) => (
+          <Relationship key={i} relationship={r} />
+        ))}
+      </g>
     </svg>
   );
 }
