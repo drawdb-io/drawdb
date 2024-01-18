@@ -64,6 +64,7 @@ import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
 
 export default function ControlPanel({
@@ -84,6 +85,7 @@ export default function ControlPanel({
     OPEN: 5,
     SAVEAS: 6,
     NEW: 7,
+    IMPORT_SRC: 8,
   };
   const STATUS = {
     NONE: 0,
@@ -823,9 +825,12 @@ export default function ControlPanel({
             .catch(() => Toast.error("Oops! Something went wrong."));
         },
       },
-      Import: {
+      "Import diagram": {
         function: fileImport,
         shortcut: "Ctrl+I",
+      },
+      "Import from source": {
+        function: () => setVisible(MODAL.IMPORT_SRC)
       },
       "Export as": {
         children: [
@@ -1172,6 +1177,7 @@ export default function ControlPanel({
   const getModalTitle = () => {
     switch (visible) {
       case MODAL.IMPORT:
+      case MODAL.IMPORT_SRC:
         return "Import diagram";
       case MODAL.CODE:
         return "Export source";
@@ -1193,6 +1199,7 @@ export default function ControlPanel({
   const getOkText = () => {
     switch (visible) {
       case MODAL.IMPORT:
+      case MODAL.IMPORT_SRC:
         return "Import";
       case MODAL.CODE:
       case MODAL.IMG:
@@ -1234,6 +1241,9 @@ export default function ControlPanel({
           setUndoStack([]);
           setRedoStack([]);
         }
+        return;
+      case MODAL.IMPORT_SRC:
+        setVisible(MODAL.NONE)
         return;
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;
@@ -1373,6 +1383,76 @@ export default function ControlPanel({
     );
   };
 
+  const importSrcModalBody = () => {
+    return (
+      <>
+        <Upload
+          action="#"
+          beforeUpload={({ file, fileList }) => {
+            const f = fileList[0].fileInstance;
+            if (!f) {
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+              console.log(e.target.result);
+              const parser = new Parser();
+              const ast = parser.astify(e.target.result);
+              console.log(ast);
+            };
+            reader.readAsText(f);
+
+            return {
+              autoRemove: false,
+              fileInstance: file.fileInstance,
+              status: "success",
+              shouldUpload: false,
+            };
+          }}
+          draggable={true}
+          dragMainText="Drag and drop the file here or click to upload."
+          dragSubText="Upload an sql file to autogenerate your tables and columns."
+          accept=".sql"
+          onRemove={() =>
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            })
+          }
+          onFileChange={() =>
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            })
+          }
+          limit={1}
+        ></Upload>
+
+        {error.type === STATUS.ERROR ? (
+          <Banner
+            type="danger"
+            fullMode={false}
+            description={<div className="text-red-800">{error.message}</div>}
+          />
+        ) : error.type === STATUS.OK ? (
+          <Banner
+            type="info"
+            fullMode={false}
+            description={<div>{error.message}</div>}
+          />
+        ) : (
+          error.type === STATUS.WARNING && (
+            <Banner
+              type="warning"
+              fullMode={false}
+              description={<div>{error.message}</div>}
+            />
+          )
+        )}
+      </>
+    );
+  };
+
   const newModalBody = () => (
     <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
       <div>
@@ -1408,6 +1488,8 @@ export default function ControlPanel({
     switch (visible) {
       case MODAL.IMPORT:
         return importModalBody();
+      case MODAL.IMPORT_SRC:
+        return importSrcModalBody();
       case MODAL.NEW:
         return newModalBody();
       case MODAL.RENAME:
