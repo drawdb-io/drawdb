@@ -1222,85 +1222,6 @@ export default function ControlPanel({
     }
   };
 
-  /**
-   * 
-   * {
-        "id": 0,
-        "name": "table_4",
-        "x": 50,
-        "y": 83,
-        "fields": [
-          {
-            "name": "id",
-            "type": "INT",
-            "default": "",
-            "check": "",
-            "primary": true,
-            "unique": true,
-            "notNull": true,
-            "increment": true,
-            "comment": "",
-            "id": 0
-          },
-          {
-            "name": "name",
-            "type": "NUMERIC",
-            "default": "",
-            "check": "",
-            "primary": false,
-            "unique": false,
-            "notNull": false,
-            "increment": false,
-            "comment": "",
-            "id": 1,
-            "size": ""
-          }
-        ],
-        "comment": "",
-        "indices": [],
-        "color": "#175e7a"
-      },
-      {
-      "id": 1,
-      "name": "table_1",
-      "x": 360,
-      "y": 181,
-      "fields": [
-        {
-          "name": "id",
-          "type": "INT",
-          "default": "",
-          "check": "",
-          "primary": true,
-          "unique": true,
-          "notNull": true,
-          "increment": true,
-          "comment": "",
-          "id": 0
-        },
-        {
-          "name": "kk",
-          "type": "INT",
-          "default": "",
-          "check": "",
-          "primary": false,
-          "unique": false,
-          "notNull": false,
-          "increment": false,
-          "comment": "",
-          "id": 1
-        },
-        {
-          "id": 2,
-          "size": "12"
-        }
-      ],
-      "comment": "",
-      "indices": [],
-      "color": "#175e7a"
-    }
-   */
-
   const parseSQLAndLoadDiagram = () => {
     const parser = new Parser();
     let ast = null;
@@ -1312,61 +1233,90 @@ export default function ControlPanel({
       console.log(err);
       return;
     }
+
     const tables = [];
 
     ast.forEach(((e) => {
       console.log(JSON.stringify(e))
-      if (e.type === "create" && e.keyword === "table") {
-        const table = {};
-        table.name = e.table[0].table;
-        table.color = "#175e7a";
-        table.fields = [];
-        table.indices = [];
-        table.x = 0;
-        table.y = 0;
-        e.create_definitions.forEach((d) => {
-          if (d.resource === "column") {
-            const field = {};
-            field.name = d.column.column;
-            field.type = d.definition.dataType;
-            field.comment = "";
-            field.unique = false;
-            if (d.unique) field.unique = true;
-            field.auto_increment = false;
-            if (d.auto_increment) field.auto_increment = true;
-            field.notNull = false;
-            if (d.nullable) field.notNull = true;
-            field.primary = false;
-            if (d.primary_key) field.primary = true;
-            field.default = "";
-            if (d.default_val) field.default = d.default_val.value.value;
-            if (d.definition["length"]) field.size = d.definition["length"];
-
-            if (d.check) {
-              let check = "";
-              if (d.check.definition[0].left.column) {
-                check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.value;
-              } else {
-                check = d.check.definition[0].left.value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+      if (e.type === "create") {
+        if (e.keyword === "table") {
+          const table = {};
+          table.name = e.table[0].table;
+          table.comment = "";
+          table.color = "#175e7a";
+          table.fields = [];
+          table.indices = [];
+          table.x = 0;
+          table.y = 0;
+          e.create_definitions.forEach((d) => {
+            if (d.resource === "column") {
+              const field = {};
+              field.name = d.column.column;
+              field.type = d.definition.dataType;
+              field.comment = "";
+              field.unique = false;
+              if (d.unique) field.unique = true;
+              field.auto_increment = false;
+              if (d.auto_increment) field.auto_increment = true;
+              field.notNull = false;
+              if (d.nullable) field.notNull = true;
+              field.primary = false;
+              if (d.primary_key) field.primary = true;
+              field.default = "";
+              if (d.default_val) field.default = d.default_val.value.value;
+              if (d.definition["length"]) field.size = d.definition["length"];
+              field.check = "";
+              if (d.check) {
+                let check = "";
+                if (d.check.definition[0].left.column) {
+                  let value = d.check.definition[0].right.value;
+                  if (d.check.definition[0].right.type === "double_quote_string" || d.check.definition[0].right.type === "single_quote_string")
+                    value = '\'' + value + '\''
+                  check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + value;
+                } else {
+                  let value = d.check.definition[0].right.value;
+                  if (d.check.definition[0].left.type === "double_quote_string" || d.check.definition[0].left.type === "single_quote_string")
+                    value = '\'' + value + '\''
+                  check = value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+                }
+                field.check = check;
               }
-              field.check = check;
-            }
 
-            table.fields.push(field);
-          } else if (d.resource === "constraint") {
-            if (d.constraint_type === "primary key") {
-              d.definition.forEach(c => {
-                table.fields.forEach((f) => {
-                  if (f.name === c.column && !f.primary) {
-                    f.primary = true;
-                  }
-                })
-              });
+              table.fields.push(field);
+            } else if (d.resource === "constraint") {
+              if (d.constraint_type === "primary key") {
+                d.definition.forEach(c => {
+                  table.fields.forEach((f) => {
+                    if (f.name === c.column && !f.primary) {
+                      f.primary = true;
+                    }
+                  })
+                });
+              }
             }
-          }
-        });
+          });
+          tables.push(table);
+        }
+        else if (e.keyword === "index") {
+          const index = {};
+          index.name = e.index;
+          index.unique = false;
+          if (e.index_type === "unique") index.unique = true;
+          index.fields = [];
+          e.index_columns.forEach(f => index.fields.push(f.column));
 
-        tables.push(table);
+          let found = -1;
+          tables.forEach((t, i) => {
+            if (found !== -1) return;
+            if (t.name === e.table.table) {
+              t.indices.push(index);
+              found = i;
+            }
+          });
+
+          if (found !== -1)
+            tables[found].indices.forEach((i, j) => i.id = j);
+        }
       }
     }))
 
