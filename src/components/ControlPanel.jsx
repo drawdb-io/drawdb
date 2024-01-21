@@ -29,6 +29,8 @@ import {
   Toast,
   SideSheet,
   List,
+  Select,
+  Checkbox,
 } from "@douyinfe/semi-ui";
 import timeLine from "../assets/process.png";
 import timeLineDark from "../assets/process_dark.png";
@@ -64,6 +66,7 @@ import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
 import { Editor } from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
 
 export default function ControlPanel({
@@ -84,6 +87,7 @@ export default function ControlPanel({
     OPEN: 5,
     SAVEAS: 6,
     NEW: 7,
+    IMPORT_SRC: 8,
   };
   const STATUS = {
     NONE: 0,
@@ -823,9 +827,15 @@ export default function ControlPanel({
             .catch(() => Toast.error("Oops! Something went wrong."));
         },
       },
-      Import: {
+      "Import diagram": {
         function: fileImport,
         shortcut: "Ctrl+I",
+      },
+      "Import from source": {
+        function: () => {
+          setData({ src: "", overwrite: true, dbms: "MySQL" });
+          setVisible(MODAL.IMPORT_SRC)
+        }
       },
       "Export as": {
         children: [
@@ -1172,6 +1182,7 @@ export default function ControlPanel({
   const getModalTitle = () => {
     switch (visible) {
       case MODAL.IMPORT:
+      case MODAL.IMPORT_SRC:
         return "Import diagram";
       case MODAL.CODE:
         return "Export source";
@@ -1193,6 +1204,7 @@ export default function ControlPanel({
   const getOkText = () => {
     switch (visible) {
       case MODAL.IMPORT:
+      case MODAL.IMPORT_SRC:
         return "Import";
       case MODAL.CODE:
       case MODAL.IMG:
@@ -1209,6 +1221,165 @@ export default function ControlPanel({
         return "Confirm";
     }
   };
+
+  /**
+   * 
+   * {
+        "id": 0,
+        "name": "table_4",
+        "x": 50,
+        "y": 83,
+        "fields": [
+          {
+            "name": "id",
+            "type": "INT",
+            "default": "",
+            "check": "",
+            "primary": true,
+            "unique": true,
+            "notNull": true,
+            "increment": true,
+            "comment": "",
+            "id": 0
+          },
+          {
+            "name": "name",
+            "type": "NUMERIC",
+            "default": "",
+            "check": "",
+            "primary": false,
+            "unique": false,
+            "notNull": false,
+            "increment": false,
+            "comment": "",
+            "id": 1,
+            "size": ""
+          }
+        ],
+        "comment": "",
+        "indices": [],
+        "color": "#175e7a"
+      },
+      {
+      "id": 1,
+      "name": "table_1",
+      "x": 360,
+      "y": 181,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "kk",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1
+        },
+        {
+          "id": 2,
+          "size": "12"
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    }
+   */
+
+  const parseSQLAndLoadDiagram = () => {
+    const parser = new Parser();
+    let ast = null;
+    try {
+      console.log(data.dbms)
+      ast = parser.astify(data.src, { database: data.dbms });
+    } catch (err) {
+      Toast.error("Could not parse the sql file. Make sure there are no syntax errors.");
+      console.log(err);
+      return;
+    }
+    const tables = [];
+
+    ast.forEach(((e) => {
+      console.log(JSON.stringify(e))
+      if (e.type === "create" && e.keyword === "table") {
+        const table = {};
+        table.name = e.table[0].table;
+        table.color = "#175e7a";
+        table.fields = [];
+        table.indices = [];
+        table.x = 0;
+        table.y = 0;
+        e.create_definitions.forEach((d) => {
+          if (d.resource === "column") {
+            const field = {};
+            field.name = d.column.column;
+            field.type = d.definition.dataType;
+            field.comment = "";
+            field.unique = false;
+            if (d.unique) field.unique = true;
+            field.auto_increment = false;
+            if (d.auto_increment) field.auto_increment = true;
+            field.notNull = false;
+            if (d.nullable) field.notNull = true;
+            field.primary = false;
+            if (d.primary_key) field.primary = true;
+            field.default = "";
+            if (d.default_val) field.default = d.default_val.value.value;
+            if (d.definition["length"]) field.size = d.definition["length"];
+
+            if (d.check) {
+              let check = "";
+              if (d.check.definition[0].left.column) {
+                check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.value;
+              } else {
+                check = d.check.definition[0].left.value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+              }
+              field.check = check;
+            }
+
+            table.fields.push(field);
+          } else if (d.resource === "constraint") {
+            if (d.constraint_type === "primary key") {
+              d.definition.forEach(c => {
+                table.fields.forEach((f) => {
+                  if (f.name === c.column && !f.primary) {
+                    f.primary = true;
+                  }
+                })
+              });
+            }
+          }
+        });
+
+        tables.push(table);
+      }
+    }))
+
+    tables.forEach((e, i) => {
+      e.id = i;
+      e.fields.forEach((f, j) => {
+        f.id = j;
+      })
+    })
+
+    setTables(tables)
+    console.log(tables);
+  }
 
   const getModalOnOk = async () => {
     switch (visible) {
@@ -1234,6 +1405,10 @@ export default function ControlPanel({
           setUndoStack([]);
           setRedoStack([]);
         }
+        return;
+      case MODAL.IMPORT_SRC:
+        parseSQLAndLoadDiagram();
+        setVisible(MODAL.NONE)
         return;
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;
@@ -1373,6 +1548,70 @@ export default function ControlPanel({
     );
   };
 
+  const importSrcModalBody = () => {
+    return (
+      <>
+        <Upload
+          action="#"
+          beforeUpload={({ file, fileList }) => {
+            const f = fileList[0].fileInstance;
+            if (!f) {
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+              setData(prev => ({ ...prev, src: e.target.result }))
+            };
+            reader.readAsText(f);
+
+            return {
+              autoRemove: false,
+              fileInstance: file.fileInstance,
+              status: "success",
+              shouldUpload: false,
+            };
+          }}
+          draggable={true}
+          dragMainText="Drag and drop the file here or click to upload."
+          dragSubText="Upload an sql file to autogenerate your tables and columns."
+          accept=".sql"
+          onRemove={() => {
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            });
+            setData(prev => ({ ...prev, src: "" }));
+          }
+          }
+          onFileChange={() =>
+            setError({
+              type: STATUS.NONE,
+              message: "",
+            })
+          }
+          limit={1}
+        ></Upload>
+        <div className="my-2">
+          <div className="text-sm font-semibold mb-1">Select DBMS</div>
+          <Select defaultValue="MySQL"
+            optionList={[
+              { value: 'MySQL', label: 'MySQL' },
+              { value: 'Postgresql', label: 'PostgreSQL' },
+            ]}
+            onChange={(e) => setData(prev => ({ ...prev, dbms: e }))}
+            className="w-full"></Select>
+          <Checkbox aria-label="overwrite checkbox"
+            checked={data.overwrite}
+            defaultChecked
+            onChange={e => setData(prev => ({ ...prev, overwrite: e.target.checked }))}
+            className="my-2">
+            Overwrite existing diagram
+          </Checkbox>
+        </div>
+      </>
+    );
+  };
+
   const newModalBody = () => (
     <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
       <div>
@@ -1408,6 +1647,8 @@ export default function ControlPanel({
     switch (visible) {
       case MODAL.IMPORT:
         return importModalBody();
+      case MODAL.IMPORT_SRC:
+        return importSrcModalBody();
       case MODAL.NEW:
         return newModalBody();
       case MODAL.RENAME:
@@ -1560,13 +1801,14 @@ export default function ControlPanel({
         closeOnEsc={true}
         okText={getOkText()}
         okButtonProps={{
-          disabled:
+          disabled: (error && error.type && error.type === STATUS.ERROR) ||
             (visible === MODAL.IMPORT &&
               (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
               !exportData.data) ||
             (visible === MODAL.RENAME && title === "") ||
-            (visible === MODAL.SAVEAS && saveAsTitle === ""),
+            (visible === MODAL.SAVEAS && saveAsTitle === "") ||
+            (visible === MODAL.IMPORT_SRC && data.src === ""),
         }}
         cancelText="Cancel"
         width={600}

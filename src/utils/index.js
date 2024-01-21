@@ -95,8 +95,8 @@ function getTypeString(field, dbms = "mysql") {
     if (isSized(field.type)) {
       return `${field.type}(${field.size})`;
     }
-    if (hasPrecision(field.type) && field.size !== "") {
-      return `${field.type}${field.size}`;
+    if (hasPrecision(field.type)) {
+      return `${field.type}${field.size ? `(${field.size})` : ""}`;
     }
     if (field.type === "SET" || field.type === "ENUM") {
       return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
@@ -132,8 +132,8 @@ function getTypeString(field, dbms = "mysql") {
         field.type === "BINARY"
           ? "bit"
           : field.type === "VARBINARY"
-          ? "bit varying"
-          : field.type.toLowerCase();
+            ? "bit varying"
+            : field.type.toLowerCase();
       return `${type}(${field.size})`;
     }
     if (hasPrecision(field.type) && field.size !== "") {
@@ -161,68 +161,56 @@ function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
+        `${table.comment === "" ? "" : `/* ${table.comment} */\n`
         }CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
-                field.name
-              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
-                field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `"${field.default}"`
-                        : `${field.default}`
-                    }`
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${field.name
+              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${field.increment ? " AUTO_INCREMENT" : ""
+              }${field.unique ? " UNIQUE" : ""}${field.default !== ""
+                ? ` DEFAULT ${hasQuotes(field.type) &&
+                  field.default.toLowerCase() !== "null"
+                  ? `"${field.default}"`
+                  : `${field.default}`
+                }`
+                : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? !sqlDataTypes.includes(field.type)
+                  ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase()
+                    )
+                  )}", \`${field.name}\`))`
                   : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
-                  ? !sqlDataTypes.includes(field.type)
-                    ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
-                        obj.types.find(
-                          (t) => t.name === field.type.toLowerCase()
-                        )
-                      )}", \`${field.name}\`))`
-                    : ""
-                  : ` CHECK(${field.check})`
+                : ` CHECK(${field.check})`
               }`
           )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `\`${f.name}\``)
-                .join(", ")})`
+              .filter((f) => f.primary)
+              .map((f) => `\`${f.name}\``)
+              .join(", ")})`
             : ""
-        }\n);\n${
-          table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`
-              )}`
-            : ""
+        }\n);\n${table.indices.length > 0
+          ? `\n${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`
+          )}`
+          : ""
         }`
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE \`${
-          obj.tables[r.startTableId].name
-        }\`\nADD FOREIGN KEY(\`${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
-    )
-    .join("\n")}`;
+      .map(
+        (r) =>
+          `ALTER TABLE \`${obj.tables[r.startTableId].name
+          }\`\nADD FOREIGN KEY(\`${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+      )
+      .join("\n")}`;
 }
 
 function jsonToPostgreSQL(obj) {
@@ -238,86 +226,73 @@ function jsonToPostgreSQL(obj) {
     if (typeStatements.length > 0) {
       return (
         typeStatements.join("") +
-        `${
-          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        `${type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
         }CREATE TYPE ${type.name} AS (\n${type.fields
           .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
           .join("\n")}\n);`
       );
     } else {
-      return `${
-        type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-      }CREATE TYPE ${type.name} AS (\n${type.fields
-        .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
-        .join("\n")}\n);`;
+      return `${type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        }CREATE TYPE ${type.name} AS (\n${type.fields
+          .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+          .join("\n")}\n);`;
     }
   })}\n${obj.tables
     .map(
       (table) =>
-        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${
-          table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
-            .length > 0
-            ? `${table.fields
-                .filter((f) => f.type === "ENUM" || f.type === "SET")
-                .map(
-                  (f) =>
-                    `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-                      .map((v) => `'${v}'`)
-                      .join(", ")});\n\n`
-                )}`
-            : ""
+        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
+          .length > 0
+          ? `${table.fields
+            .filter((f) => f.type === "ENUM" || f.type === "SET")
+            .map(
+              (f) =>
+                `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+                  .map((v) => `'${v}'`)
+                  .join(", ")});\n\n`
+            )}`
+          : ""
         }CREATE TABLE "${table.name}" (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
-                field.name
-              }" ${getTypeString(field, "postgres")}${
-                field.notNull ? " NOT NULL" : ""
-              }${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `'${field.default}'`
-                        : `${field.default}`
-                    }`
-                  : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
-                  ? ""
-                  : ` CHECK(${field.check})`
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${field.name
+              }" ${getTypeString(field, "postgres")}${field.notNull ? " NOT NULL" : ""
+              }${field.default !== ""
+                ? ` DEFAULT ${hasQuotes(field.type) &&
+                  field.default.toLowerCase() !== "null"
+                  ? `'${field.default}'`
+                  : `${field.default}`
+                }`
+                : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? ""
+                : ` CHECK(${field.check})`
               }`
           )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `"${f.name}"`)
-                .join(", ")})`
+              .filter((f) => f.primary)
+              .map((f) => `"${f.name}"`)
+              .join(", ")})`
             : ""
-        }\n);\n${
-          table.indices.length > 0
-            ? `${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`
-              )}`
-            : ""
+        }\n);\n${table.indices.length > 0
+          ? `${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name
+              }"\nON "${table.name}" (${i.fields
+                .map((f) => `"${f}"`)
+                .join(", ")});`
+          )}`
+          : ""
         }`
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${obj.tables[r.endTableId].name}"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
-    )
-    .join("\n")}`;
+      .map(
+        (r) =>
+          `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }") REFERENCES "${obj.tables[r.endTableId].name}"("${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+      )
+      .join("\n")}`;
 }
 
 function arrayIsEqual(arr1, arr2) {
@@ -325,13 +300,13 @@ function arrayIsEqual(arr1, arr2) {
 }
 
 function isSized(type) {
-  return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT", "FLOAT"].includes(
+  return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT"].includes(
     type
   );
 }
 
 function hasPrecision(type) {
-  return ["DOUBLE", "NUMERIC", "DECIMAL"].includes(type);
+  return ["DOUBLE", "NUMERIC", "DECIMAL", "FLOAT"].includes(type);
 }
 
 function hasCheck(type) {
@@ -569,11 +544,9 @@ function validateDiagram(diagram) {
       diagram.tables[r.startTableId].fields[r.startFieldId].type !==
       diagram.tables[r.endTableId].fields[r.endFieldId].type
     ) {
-      issues.push(`Referencing column "${
-        diagram.tables[r.endTableId].fields[r.endFieldId].name
-      }" and referenced column "${
-        diagram.tables[r.startTableId].fields[r.startFieldId].name
-      }" are incompatible.
+      issues.push(`Referencing column "${diagram.tables[r.endTableId].fields[r.endFieldId].name
+        }" and referenced column "${diagram.tables[r.startTableId].fields[r.startFieldId].name
+        }" are incompatible.
       `);
     }
   });
@@ -632,81 +605,56 @@ const calcPath = (x1, x2, y1, y2, startFieldId, endFieldId, zoom = 1) => {
 
   if (y1 <= y2) {
     if (x1 + tableWidth <= x2) {
-      return `M ${x1 + tableWidth - offsetX * 2} ${y1} L ${
-        midX - r
-      } ${y1} A ${r} ${r} 0 0 1 ${midX} ${y1 + r} L ${midX} ${
-        y2 - r
-      } A ${r} ${r} 0 0 0 ${midX + r} ${y2} L ${endX} ${y2}`;
+      return `M ${x1 + tableWidth - offsetX * 2} ${y1} L ${midX - r
+        } ${y1} A ${r} ${r} 0 0 1 ${midX} ${y1 + r} L ${midX} ${y2 - r
+        } A ${r} ${r} 0 0 0 ${midX + r} ${y2} L ${endX} ${y2}`;
     } else if (x2 <= x1 + tableWidth && x1 <= x2) {
-      return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${
-        x2 + tableWidth
-      } ${y1} A ${r} ${r} 0 0 1 ${x2 + tableWidth + r} ${y1 + r} L ${
-        x2 + tableWidth + r
-      } ${y2 - r} A ${r} ${r} 0 0 1 ${x2 + tableWidth} ${y2} L ${
-        x2 + tableWidth - 2 * offsetX
-      } ${y2}`;
+      return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x2 + tableWidth
+        } ${y1} A ${r} ${r} 0 0 1 ${x2 + tableWidth + r} ${y1 + r} L ${x2 + tableWidth + r
+        } ${y2 - r} A ${r} ${r} 0 0 1 ${x2 + tableWidth} ${y2} L ${x2 + tableWidth - 2 * offsetX
+        } ${y2}`;
     } else if (x2 + tableWidth >= x1 && x2 + tableWidth <= x1 + tableWidth) {
-      return `M ${x1} ${y1} L ${x2 - r} ${y1} A ${r} ${r} 0 0 0 ${x2 - r - r} ${
-        y1 + r
-      } L ${x2 - r - r} ${y2 - r} A ${r} ${r} 0 0 0 ${
-        x2 - r
-      } ${y2} L ${x2} ${y2}`;
+      return `M ${x1} ${y1} L ${x2 - r} ${y1} A ${r} ${r} 0 0 0 ${x2 - r - r} ${y1 + r
+        } L ${x2 - r - r} ${y2 - r} A ${r} ${r} 0 0 0 ${x2 - r
+        } ${y2} L ${x2} ${y2}`;
     } else {
-      return `M ${x1} ${y1} L ${midX + r} ${y1} A ${r} ${r} 0 0 0 ${midX} ${
-        y1 + r
-      } L ${midX} ${y2 - r} A ${r} ${r} 0 0 1 ${
-        midX - r
-      } ${y2} L ${endX} ${y2}`;
+      return `M ${x1} ${y1} L ${midX + r} ${y1} A ${r} ${r} 0 0 0 ${midX} ${y1 + r
+        } L ${midX} ${y2 - r} A ${r} ${r} 0 0 1 ${midX - r
+        } ${y2} L ${endX} ${y2}`;
     }
   } else {
     if (x1 + tableWidth <= x2) {
-      return `M ${x1 + tableWidth - offsetX * 2} ${y1} L ${
-        midX - r
-      } ${y1} A ${r} ${r} 0 0 0 ${midX} ${y1 - r} L ${midX} ${
-        y2 + r
-      } A ${r} ${r} 0 0 1 ${midX + r} ${y2} L ${endX} ${y2}`;
+      return `M ${x1 + tableWidth - offsetX * 2} ${y1} L ${midX - r
+        } ${y1} A ${r} ${r} 0 0 0 ${midX} ${y1 - r} L ${midX} ${y2 + r
+        } A ${r} ${r} 0 0 1 ${midX + r} ${y2} L ${endX} ${y2}`;
     } else if (x1 + tableWidth >= x2 && x1 + tableWidth <= x2 + tableWidth) {
       // this for the overlap remember
       if (startTableY < y2) {
-        return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${
-          x1 - r - r - r
-        } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${
-          x1 - r - r
-        } ${y2} L ${x1 - r - 4} ${y2}`;
+        return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${x1 - r - r - r
+          } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${x1 - r - r
+          } ${y2} L ${x1 - r - 4} ${y2}`;
       }
-      return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${
-        x1 - r - r - r
-      } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${
-        x1 - r - r
-      } ${y2} L ${endX} ${y2}`;
+      return `M ${x1} ${y1} L ${x1 - r - r} ${y1} A ${r} ${r} 0 0 1 ${x1 - r - r - r
+        } ${y1 - r} L ${x1 - r - r - r} ${y2 + r} A ${r} ${r} 0 0 1 ${x1 - r - r
+        } ${y2} L ${endX} ${y2}`;
     } else if (x1 >= x2 && x1 <= x2 + tableWidth) {
       // this for the overlap remember
       if (startTableY < y2) {
-        return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${
-          x1 + tableWidth - 2 * offsetX + r
-        } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${
-          y1 - r
-        } L ${x1 + tableWidth - 2 * offsetX + r + r} ${
-          y2 + r
-        } A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r} ${y2} L ${
-          x1 + tableWidth - 16
-        } ${y2}`;
+        return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x1 + tableWidth - 2 * offsetX + r
+          } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${y1 - r
+          } L ${x1 + tableWidth - 2 * offsetX + r + r} ${y2 + r
+          } A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r} ${y2} L ${x1 + tableWidth - 16
+          } ${y2}`;
       }
-      return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${
-        x1 + tableWidth - 2 * offsetX + r
-      } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${
-        y1 - r
-      } L ${x1 + tableWidth - 2 * offsetX + r + r} ${
-        y2 + r
-      } A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r} ${y2} L ${
-        x2 + tableWidth - 2 * offsetX
-      } ${y2}`;
+      return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x1 + tableWidth - 2 * offsetX + r
+        } ${y1} A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r + r} ${y1 - r
+        } L ${x1 + tableWidth - 2 * offsetX + r + r} ${y2 + r
+        } A ${r} ${r} 0 0 0 ${x1 + tableWidth - 2 * offsetX + r} ${y2} L ${x2 + tableWidth - 2 * offsetX
+        } ${y2}`;
     } else {
-      return `M ${x1} ${y1} L ${midX + r} ${y1} A ${r} ${r} 0 0 1 ${midX} ${
-        y1 - r
-      } L ${midX} ${y2 + r} A ${r} ${r} 0 0 0 ${
-        midX - r
-      } ${y2} L ${endX} ${y2}`;
+      return `M ${x1} ${y1} L ${midX + r} ${y1} A ${r} ${r} 0 0 1 ${midX} ${y1 - r
+        } L ${midX} ${y2 + r} A ${r} ${r} 0 0 0 ${midX - r
+        } ${y2} L ${endX} ${y2}`;
     }
   }
 };
