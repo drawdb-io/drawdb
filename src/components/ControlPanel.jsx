@@ -29,6 +29,8 @@ import {
   Toast,
   SideSheet,
   List,
+  Select,
+  Checkbox,
 } from "@douyinfe/semi-ui";
 import timeLine from "../assets/process.png";
 import timeLineDark from "../assets/process_dark.png";
@@ -830,7 +832,10 @@ export default function ControlPanel({
         shortcut: "Ctrl+I",
       },
       "Import from source": {
-        function: () => setVisible(MODAL.IMPORT_SRC)
+        function: () => {
+          setData({ src: "", overwrite: true, dbms: "MySQL" });
+          setVisible(MODAL.IMPORT_SRC)
+        }
       },
       "Export as": {
         children: [
@@ -1217,6 +1222,165 @@ export default function ControlPanel({
     }
   };
 
+  /**
+   * 
+   * {
+        "id": 0,
+        "name": "table_4",
+        "x": 50,
+        "y": 83,
+        "fields": [
+          {
+            "name": "id",
+            "type": "INT",
+            "default": "",
+            "check": "",
+            "primary": true,
+            "unique": true,
+            "notNull": true,
+            "increment": true,
+            "comment": "",
+            "id": 0
+          },
+          {
+            "name": "name",
+            "type": "NUMERIC",
+            "default": "",
+            "check": "",
+            "primary": false,
+            "unique": false,
+            "notNull": false,
+            "increment": false,
+            "comment": "",
+            "id": 1,
+            "size": ""
+          }
+        ],
+        "comment": "",
+        "indices": [],
+        "color": "#175e7a"
+      },
+      {
+      "id": 1,
+      "name": "table_1",
+      "x": 360,
+      "y": 181,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": 0
+        },
+        {
+          "name": "kk",
+          "type": "INT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "id": 1
+        },
+        {
+          "id": 2,
+          "size": "12"
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    }
+   */
+
+  const parseSQLAndLoadDiagram = () => {
+    const parser = new Parser();
+    let ast = null;
+    try {
+      console.log(data.dbms)
+      ast = parser.astify(data.src, { database: data.dbms });
+    } catch (err) {
+      Toast.error("Could not parse the sql file. Make sure there are no syntax errors.");
+      console.log(err);
+      return;
+    }
+    const tables = [];
+
+    ast.forEach(((e) => {
+      console.log(JSON.stringify(e))
+      if (e.type === "create" && e.keyword === "table") {
+        const table = {};
+        table.name = e.table[0].table;
+        table.color = "#175e7a";
+        table.fields = [];
+        table.indices = [];
+        table.x = 0;
+        table.y = 0;
+        e.create_definitions.forEach((d) => {
+          if (d.resource === "column") {
+            const field = {};
+            field.name = d.column.column;
+            field.type = d.definition.dataType;
+            field.comment = "";
+            field.unique = false;
+            if (d.unique) field.unique = true;
+            field.auto_increment = false;
+            if (d.auto_increment) field.auto_increment = true;
+            field.notNull = false;
+            if (d.nullable) field.notNull = true;
+            field.primary = false;
+            if (d.primary_key) field.primary = true;
+            field.default = "";
+            if (d.default_val) field.default = d.default_val.value.value;
+            if (d.definition["length"]) field.size = d.definition["length"];
+
+            if (d.check) {
+              let check = "";
+              if (d.check.definition[0].left.column) {
+                check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.value;
+              } else {
+                check = d.check.definition[0].left.value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+              }
+              field.check = check;
+            }
+
+            table.fields.push(field);
+          } else if (d.resource === "constraint") {
+            if (d.constraint_type === "primary key") {
+              d.definition.forEach(c => {
+                table.fields.forEach((f) => {
+                  if (f.name === c.column && !f.primary) {
+                    f.primary = true;
+                  }
+                })
+              });
+            }
+          }
+        });
+
+        tables.push(table);
+      }
+    }))
+
+    tables.forEach((e, i) => {
+      e.id = i;
+      e.fields.forEach((f, j) => {
+        f.id = j;
+      })
+    })
+
+    setTables(tables)
+    console.log(tables);
+  }
+
   const getModalOnOk = async () => {
     switch (visible) {
       case MODAL.IMG:
@@ -1243,6 +1407,7 @@ export default function ControlPanel({
         }
         return;
       case MODAL.IMPORT_SRC:
+        parseSQLAndLoadDiagram();
         setVisible(MODAL.NONE)
         return;
       case MODAL.OPEN:
@@ -1395,10 +1560,7 @@ export default function ControlPanel({
             }
             const reader = new FileReader();
             reader.onload = async (e) => {
-              console.log(e.target.result);
-              const parser = new Parser();
-              const ast = parser.astify(e.target.result);
-              console.log(ast);
+              setData(prev => ({ ...prev, src: e.target.result }))
             };
             reader.readAsText(f);
 
@@ -1413,11 +1575,13 @@ export default function ControlPanel({
           dragMainText="Drag and drop the file here or click to upload."
           dragSubText="Upload an sql file to autogenerate your tables and columns."
           accept=".sql"
-          onRemove={() =>
+          onRemove={() => {
             setError({
               type: STATUS.NONE,
               message: "",
-            })
+            });
+            setData(prev => ({ ...prev, src: "" }));
+          }
           }
           onFileChange={() =>
             setError({
@@ -1427,28 +1591,23 @@ export default function ControlPanel({
           }
           limit={1}
         ></Upload>
-
-        {error.type === STATUS.ERROR ? (
-          <Banner
-            type="danger"
-            fullMode={false}
-            description={<div className="text-red-800">{error.message}</div>}
-          />
-        ) : error.type === STATUS.OK ? (
-          <Banner
-            type="info"
-            fullMode={false}
-            description={<div>{error.message}</div>}
-          />
-        ) : (
-          error.type === STATUS.WARNING && (
-            <Banner
-              type="warning"
-              fullMode={false}
-              description={<div>{error.message}</div>}
-            />
-          )
-        )}
+        <div className="my-2">
+          <div className="text-sm font-semibold mb-1">Select DBMS</div>
+          <Select defaultValue="MySQL"
+            optionList={[
+              { value: 'MySQL', label: 'MySQL' },
+              { value: 'Postgresql', label: 'PostgreSQL' },
+            ]}
+            onChange={(e) => setData(prev => ({ ...prev, dbms: e }))}
+            className="w-full"></Select>
+          <Checkbox aria-label="overwrite checkbox"
+            checked={data.overwrite}
+            defaultChecked
+            onChange={e => setData(prev => ({ ...prev, overwrite: e.target.checked }))}
+            className="my-2">
+            Overwrite existing diagram
+          </Checkbox>
+        </div>
       </>
     );
   };
@@ -1642,13 +1801,14 @@ export default function ControlPanel({
         closeOnEsc={true}
         okText={getOkText()}
         okButtonProps={{
-          disabled:
+          disabled: (error && error.type && error.type === STATUS.ERROR) ||
             (visible === MODAL.IMPORT &&
               (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
               !exportData.data) ||
             (visible === MODAL.RENAME && title === "") ||
-            (visible === MODAL.SAVEAS && saveAsTitle === ""),
+            (visible === MODAL.SAVEAS && saveAsTitle === "") ||
+            (visible === MODAL.IMPORT_SRC && data.src === ""),
         }}
         cancelText="Cancel"
         width={600}
