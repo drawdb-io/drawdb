@@ -58,7 +58,7 @@ import {
   UndoRedoContext,
 } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
-import { ObjectType, Action, Tab, State } from "../data/data";
+import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
@@ -982,7 +982,6 @@ export default function ControlPanel({
         ],
         function: () => { },
       },
-
       Exit: {
         function: () => { },
       },
@@ -1235,6 +1234,7 @@ export default function ControlPanel({
     }
 
     const tables = [];
+    const relationships = [];
 
     ast.forEach(((e) => {
       console.log(JSON.stringify(e))
@@ -1296,6 +1296,12 @@ export default function ControlPanel({
             }
           });
           tables.push(table);
+          tables.forEach((e, i) => {
+            e.id = i;
+            e.fields.forEach((f, j) => {
+              f.id = j;
+            })
+          })
         }
         else if (e.keyword === "index") {
           const index = {};
@@ -1317,18 +1323,97 @@ export default function ControlPanel({
           if (found !== -1)
             tables[found].indices.forEach((i, j) => i.id = j);
         }
+      } else if (e.type === "alter") {
+        if (e.expr[0].action === "add" && e.expr[0].create_definitions.constraint_type === "FOREIGN KEY") {
+          const relationship = {};
+          const startTable = e.table[0].table;
+          const startField = e.expr[0].create_definitions.definition[0].column;
+          const endTable = e.expr[0].create_definitions.reference_definition.table[0].table;
+          const endField = e.expr[0].create_definitions.reference_definition.definition[0].column;
+          let updateConstraint = "No action";
+          let deleteConstraint = "No action";
+          e.expr[0].create_definitions.reference_definition.on_action.forEach(c => {
+            if (c.type === "on update") {
+              updateConstraint = c.value.value;
+              updateConstraint = updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
+            } else if (c.type === "on delete") {
+              deleteConstraint = c.value.value;
+              deleteConstraint = deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+            }
+          });
+
+          let startTableId = -1;
+          let startFieldId = -1;
+          let endTableId = -1;
+          let endFieldId = -1;
+
+          tables.forEach(t => {
+            if (t.name === startTable) {
+              startTableId = t.id;
+              return;
+            }
+
+            if (t.name === endTable) {
+              endTableId = t.id;
+            }
+          })
+
+          if (startTableId === -1 || endTableId === -1) return;
+
+          tables[startTableId].fields.forEach(f => {
+            if (f.name === startField) {
+              startFieldId = f.id;
+              return;
+            }
+
+            if (f.name === endField) {
+              endFieldId = f.id;
+            }
+          })
+
+          if (startFieldId === -1 || endFieldId === -1) return;
+
+          const startX = tables[startTableId].x + 15;
+          const startY = tables[startTableId].y + startFieldId * 36 + 69;
+          const endX = tables[endTableId].x + 15;
+          const endY = tables[endTableId].y + endFieldId * 36 + 69;
+
+          relationship.mandetory = false;
+
+          relationship.name = startTable + "_" + startField + "_fk";
+          relationship.startTableId = startTableId;
+          relationship.startFieldId = startFieldId;
+          relationship.endTableId = endTableId;
+          relationship.endFieldId = endFieldId;
+          relationship.updateConstraint = updateConstraint;
+          relationship.deleteConstraint = deleteConstraint;
+          relationship.cardinality = Cardinality.ONE_TO_ONE;
+          relationship.startX = startX;
+          relationship.startY = startY;
+          relationship.endX = endX;
+          relationship.endY = endY;
+          relationships.push(relationship);
+
+          relationships.forEach((r, i) => r.id = i);
+        }
       }
-    }))
+    }));
 
-    tables.forEach((e, i) => {
-      e.id = i;
-      e.fields.forEach((f, j) => {
-        f.id = j;
-      })
-    })
+    if (data.overwrite) {
+      setTables(tables);
+      setRelationships(relationships);
+      setNotes([]);
+      setAreas([]);
+      setTypes([]);
+      setUndoStack([]);
+      setRedoStack([]);
+    } else {
+      setTables(prev => [...prev, ...tables]);
+      setRelationships(prev => [...prev, ...relationships])
+    }
 
-    setTables(tables)
     console.log(tables);
+    console.log(relationships);
   }
 
   const getModalOnOk = async () => {
