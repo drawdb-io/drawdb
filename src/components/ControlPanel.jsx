@@ -58,7 +58,7 @@ import {
   UndoRedoContext,
 } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
-import { ObjectType, Action, Tab, State } from "../data/data";
+import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
@@ -982,7 +982,6 @@ export default function ControlPanel({
         ],
         function: () => { },
       },
-
       Exit: {
         function: () => { },
       },
@@ -1222,85 +1221,6 @@ export default function ControlPanel({
     }
   };
 
-  /**
-   * 
-   * {
-        "id": 0,
-        "name": "table_4",
-        "x": 50,
-        "y": 83,
-        "fields": [
-          {
-            "name": "id",
-            "type": "INT",
-            "default": "",
-            "check": "",
-            "primary": true,
-            "unique": true,
-            "notNull": true,
-            "increment": true,
-            "comment": "",
-            "id": 0
-          },
-          {
-            "name": "name",
-            "type": "NUMERIC",
-            "default": "",
-            "check": "",
-            "primary": false,
-            "unique": false,
-            "notNull": false,
-            "increment": false,
-            "comment": "",
-            "id": 1,
-            "size": ""
-          }
-        ],
-        "comment": "",
-        "indices": [],
-        "color": "#175e7a"
-      },
-      {
-      "id": 1,
-      "name": "table_1",
-      "x": 360,
-      "y": 181,
-      "fields": [
-        {
-          "name": "id",
-          "type": "INT",
-          "default": "",
-          "check": "",
-          "primary": true,
-          "unique": true,
-          "notNull": true,
-          "increment": true,
-          "comment": "",
-          "id": 0
-        },
-        {
-          "name": "kk",
-          "type": "INT",
-          "default": "",
-          "check": "",
-          "primary": false,
-          "unique": false,
-          "notNull": false,
-          "increment": false,
-          "comment": "",
-          "id": 1
-        },
-        {
-          "id": 2,
-          "size": "12"
-        }
-      ],
-      "comment": "",
-      "indices": [],
-      "color": "#175e7a"
-    }
-   */
-
   const parseSQLAndLoadDiagram = () => {
     const parser = new Parser();
     let ast = null;
@@ -1312,73 +1232,188 @@ export default function ControlPanel({
       console.log(err);
       return;
     }
+
     const tables = [];
+    const relationships = [];
 
     ast.forEach(((e) => {
       console.log(JSON.stringify(e))
-      if (e.type === "create" && e.keyword === "table") {
-        const table = {};
-        table.name = e.table[0].table;
-        table.color = "#175e7a";
-        table.fields = [];
-        table.indices = [];
-        table.x = 0;
-        table.y = 0;
-        e.create_definitions.forEach((d) => {
-          if (d.resource === "column") {
-            const field = {};
-            field.name = d.column.column;
-            field.type = d.definition.dataType;
-            field.comment = "";
-            field.unique = false;
-            if (d.unique) field.unique = true;
-            field.auto_increment = false;
-            if (d.auto_increment) field.auto_increment = true;
-            field.notNull = false;
-            if (d.nullable) field.notNull = true;
-            field.primary = false;
-            if (d.primary_key) field.primary = true;
-            field.default = "";
-            if (d.default_val) field.default = d.default_val.value.value;
-            if (d.definition["length"]) field.size = d.definition["length"];
-
-            if (d.check) {
-              let check = "";
-              if (d.check.definition[0].left.column) {
-                check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.value;
-              } else {
-                check = d.check.definition[0].left.value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+      if (e.type === "create") {
+        if (e.keyword === "table") {
+          const table = {};
+          table.name = e.table[0].table;
+          table.comment = "";
+          table.color = "#175e7a";
+          table.fields = [];
+          table.indices = [];
+          table.x = 0;
+          table.y = 0;
+          e.create_definitions.forEach((d) => {
+            if (d.resource === "column") {
+              const field = {};
+              field.name = d.column.column;
+              field.type = d.definition.dataType;
+              field.comment = "";
+              field.unique = false;
+              if (d.unique) field.unique = true;
+              field.auto_increment = false;
+              if (d.auto_increment) field.auto_increment = true;
+              field.notNull = false;
+              if (d.nullable) field.notNull = true;
+              field.primary = false;
+              if (d.primary_key) field.primary = true;
+              field.default = "";
+              if (d.default_val) field.default = d.default_val.value.value;
+              if (d.definition["length"]) field.size = d.definition["length"];
+              field.check = "";
+              if (d.check) {
+                let check = "";
+                if (d.check.definition[0].left.column) {
+                  let value = d.check.definition[0].right.value;
+                  if (d.check.definition[0].right.type === "double_quote_string" || d.check.definition[0].right.type === "single_quote_string")
+                    value = '\'' + value + '\''
+                  check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + value;
+                } else {
+                  let value = d.check.definition[0].right.value;
+                  if (d.check.definition[0].left.type === "double_quote_string" || d.check.definition[0].left.type === "single_quote_string")
+                    value = '\'' + value + '\''
+                  check = value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+                }
+                field.check = check;
               }
-              field.check = check;
+
+              table.fields.push(field);
+            } else if (d.resource === "constraint") {
+              if (d.constraint_type === "primary key") {
+                d.definition.forEach(c => {
+                  table.fields.forEach((f) => {
+                    if (f.name === c.column && !f.primary) {
+                      f.primary = true;
+                    }
+                  })
+                });
+              }
+            }
+          });
+          tables.push(table);
+          tables.forEach((e, i) => {
+            e.id = i;
+            e.fields.forEach((f, j) => {
+              f.id = j;
+            })
+          })
+        }
+        else if (e.keyword === "index") {
+          const index = {};
+          index.name = e.index;
+          index.unique = false;
+          if (e.index_type === "unique") index.unique = true;
+          index.fields = [];
+          e.index_columns.forEach(f => index.fields.push(f.column));
+
+          let found = -1;
+          tables.forEach((t, i) => {
+            if (found !== -1) return;
+            if (t.name === e.table.table) {
+              t.indices.push(index);
+              found = i;
+            }
+          });
+
+          if (found !== -1)
+            tables[found].indices.forEach((i, j) => i.id = j);
+        }
+      } else if (e.type === "alter") {
+        if (e.expr[0].action === "add" && e.expr[0].create_definitions.constraint_type === "FOREIGN KEY") {
+          const relationship = {};
+          const startTable = e.table[0].table;
+          const startField = e.expr[0].create_definitions.definition[0].column;
+          const endTable = e.expr[0].create_definitions.reference_definition.table[0].table;
+          const endField = e.expr[0].create_definitions.reference_definition.definition[0].column;
+          let updateConstraint = "No action";
+          let deleteConstraint = "No action";
+          e.expr[0].create_definitions.reference_definition.on_action.forEach(c => {
+            if (c.type === "on update") {
+              updateConstraint = c.value.value;
+              updateConstraint = updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
+            } else if (c.type === "on delete") {
+              deleteConstraint = c.value.value;
+              deleteConstraint = deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+            }
+          });
+
+          let startTableId = -1;
+          let startFieldId = -1;
+          let endTableId = -1;
+          let endFieldId = -1;
+
+          tables.forEach(t => {
+            if (t.name === startTable) {
+              startTableId = t.id;
+              return;
             }
 
-            table.fields.push(field);
-          } else if (d.resource === "constraint") {
-            if (d.constraint_type === "primary key") {
-              d.definition.forEach(c => {
-                table.fields.forEach((f) => {
-                  if (f.name === c.column && !f.primary) {
-                    f.primary = true;
-                  }
-                })
-              });
+            if (t.name === endTable) {
+              endTableId = t.id;
             }
-          }
-        });
+          })
 
-        tables.push(table);
+          if (startTableId === -1 || endTableId === -1) return;
+
+          tables[startTableId].fields.forEach(f => {
+            if (f.name === startField) {
+              startFieldId = f.id;
+              return;
+            }
+
+            if (f.name === endField) {
+              endFieldId = f.id;
+            }
+          })
+
+          if (startFieldId === -1 || endFieldId === -1) return;
+
+          const startX = tables[startTableId].x + 15;
+          const startY = tables[startTableId].y + startFieldId * 36 + 69;
+          const endX = tables[endTableId].x + 15;
+          const endY = tables[endTableId].y + endFieldId * 36 + 69;
+
+          relationship.mandetory = false;
+
+          relationship.name = startTable + "_" + startField + "_fk";
+          relationship.startTableId = startTableId;
+          relationship.startFieldId = startFieldId;
+          relationship.endTableId = endTableId;
+          relationship.endFieldId = endFieldId;
+          relationship.updateConstraint = updateConstraint;
+          relationship.deleteConstraint = deleteConstraint;
+          relationship.cardinality = Cardinality.ONE_TO_ONE;
+          relationship.startX = startX;
+          relationship.startY = startY;
+          relationship.endX = endX;
+          relationship.endY = endY;
+          relationships.push(relationship);
+
+          relationships.forEach((r, i) => r.id = i);
+        }
       }
-    }))
+    }));
 
-    tables.forEach((e, i) => {
-      e.id = i;
-      e.fields.forEach((f, j) => {
-        f.id = j;
-      })
-    })
+    if (data.overwrite) {
+      setTables(tables);
+      setRelationships(relationships);
+      setNotes([]);
+      setAreas([]);
+      setTypes([]);
+      setUndoStack([]);
+      setRedoStack([]);
+    } else {
+      setTables(prev => [...prev, ...tables]);
+      setRelationships(prev => [...prev, ...relationships])
+    }
 
-    setTables(tables)
     console.log(tables);
+    console.log(relationships);
   }
 
   const getModalOnOk = async () => {
