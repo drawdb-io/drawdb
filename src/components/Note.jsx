@@ -17,7 +17,6 @@ import {
 export default function Note(props) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
-  const [saved, setSaved] = useState(false);
   const w = 180;
   const r = 3;
   const fold = 24;
@@ -108,7 +107,7 @@ export default function Note(props) {
               })
             }
             onBlur={(e) => {
-              if (e.target.value === editField.name) return;
+              if (e.target.value === editField.content) return;
               const textarea = document.getElementById(`note_${props.data.id}`);
               textarea.style.height = "0";
               textarea.style.height = textarea.scrollHeight + "px";
@@ -162,7 +161,6 @@ export default function Note(props) {
                         }
                         onFocus={(e) => setEditField({ title: e.target.value })}
                         onBlur={(e) => {
-                          setSaved(true);
                           if (e.target.value === editField.title) return;
                           setUndoStack((prev) => [
                             ...prev,
@@ -172,7 +170,7 @@ export default function Note(props) {
                               nid: props.data.id,
                               undo: editField,
                               redo: { title: e.target.value },
-                              message: `Edit note title to "${e.target.name}"`,
+                              message: `Edit note title to "${e.target.value}"`,
                             },
                           ]);
                           setRedoStack([]);
@@ -237,30 +235,6 @@ export default function Note(props) {
                         }}
                       >
                         Delete
-                      </Button>
-                      <Button
-                        block
-                        style={{ marginLeft: "8px" }}
-                        onClick={() => {
-                          if (!saved) {
-                            if (props.data.name === editField.name) return;
-                            setUndoStack((prev) => [
-                              ...prev,
-                              {
-                                action: Action.EDIT,
-                                element: ObjectType.NOTE,
-                                aid: props.data.id,
-                                undo: editField,
-                                redo: { title: props.data.title },
-                                message: `Edit note title to "${props.data.title}"`,
-                              },
-                            ]);
-                            setRedoStack([]);
-                            setSaved(false);
-                          }
-                        }}
-                      >
-                        Save
                       </Button>
                     </div>
                   </div>
