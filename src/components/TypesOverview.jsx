@@ -84,8 +84,8 @@ export default function TableOverview() {
           <Popover
             content={
               <div className="w-[300px] text-sm popover-theme">
-                This feature is meant for object-relational DBSMs like
-                PostgreSQL. However, if used for relational DBSMs, a JSON type
+                This feature is meant for object-relational DBMSs like
+                PostgreSQL. However, if used for relational DBMSs, a JSON type
                 will be generated with the custom type schema.
               </div>
             }
@@ -217,10 +217,10 @@ export default function TableOverview() {
                               fields: t.fields.map((e, id) =>
                                 id === j
                                   ? {
-                                      ...f,
-                                      type: value,
-                                      values: f.values ? [...f.values] : [],
-                                    }
+                                    ...f,
+                                    type: value,
+                                    values: f.values ? [...f.values] : [],
+                                  }
                                   : e
                               ),
                             });
