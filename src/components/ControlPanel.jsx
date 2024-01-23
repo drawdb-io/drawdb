@@ -1235,9 +1235,9 @@ export default function ControlPanel({
 
     const tables = [];
     const relationships = [];
+    const inlineForeignKeys = [];
 
     ast.forEach(((e) => {
-      console.log(JSON.stringify(e))
       if (e.type === "create") {
         if (e.keyword === "table") {
           const table = {};
@@ -1292,6 +1292,8 @@ export default function ControlPanel({
                     }
                   })
                 });
+              } else if (d.constraint_type === "FOREIGN KEY") {
+                inlineForeignKeys.push({ ...d, startTable: e.table[0].table })
               }
             }
           });
@@ -1398,6 +1400,79 @@ export default function ControlPanel({
         }
       }
     }));
+
+    inlineForeignKeys.forEach((fk) => {
+      const relationship = {};
+      const startTable = fk.startTable;
+      const startField = fk.definition[0].column;
+      const endTable = fk.reference_definition.table[0].table;
+      const endField = fk.reference_definition.definition[0].column;
+      let updateConstraint = "No action";
+      let deleteConstraint = "No action";
+      fk.reference_definition.on_action.forEach(c => {
+        if (c.type === "on update") {
+          updateConstraint = c.value.value;
+          updateConstraint = updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
+        } else if (c.type === "on delete") {
+          deleteConstraint = c.value.value;
+          deleteConstraint = deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+        }
+      });
+
+      let startTableId = -1;
+      let startFieldId = -1;
+      let endTableId = -1;
+      let endFieldId = -1;
+
+      tables.forEach(t => {
+        if (t.name === startTable) {
+          startTableId = t.id;
+          return;
+        }
+
+        if (t.name === endTable) {
+          endTableId = t.id;
+        }
+      })
+
+      if (startTableId === -1 || endTableId === -1) return;
+
+      tables[startTableId].fields.forEach(f => {
+        if (f.name === startField) {
+          startFieldId = f.id;
+          return;
+        }
+
+        if (f.name === endField) {
+          endFieldId = f.id;
+        }
+      })
+
+      if (startFieldId === -1 || endFieldId === -1) return;
+
+      const startX = tables[startTableId].x + 15;
+      const startY = tables[startTableId].y + startFieldId * 36 + 69;
+      const endX = tables[endTableId].x + 15;
+      const endY = tables[endTableId].y + endFieldId * 36 + 69;
+
+      relationship.mandetory = false;
+
+      relationship.name = startTable + "_" + startField + "_fk";
+      relationship.startTableId = startTableId;
+      relationship.startFieldId = startFieldId;
+      relationship.endTableId = endTableId;
+      relationship.endFieldId = endFieldId;
+      relationship.updateConstraint = updateConstraint;
+      relationship.deleteConstraint = deleteConstraint;
+      relationship.cardinality = Cardinality.ONE_TO_ONE;
+      relationship.startX = startX;
+      relationship.startY = startY;
+      relationship.endX = endX;
+      relationship.endY = endY;
+      relationships.push(relationship);
+    });
+    
+    relationships.forEach((r, i) => r.id = i);
 
     if (data.overwrite) {
       setTables(tables);
