@@ -1562,7 +1562,7 @@ export default function ControlPanel({
           <Banner
             type="danger"
             fullMode={false}
-            description={<div className="text-red-800">{error.message}</div>}
+            description={<div>{error.message}</div>}
           />
         ) : error.type === STATUS.OK ? (
           <Banner
