@@ -1266,7 +1266,6 @@ export default function Table(props) {
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (
-
             <Button
               theme="solid"
               size="small"

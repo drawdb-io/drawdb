@@ -223,7 +223,7 @@ export default function ControlPanel({
         } else if (a.component === "field_delete") {
           setRelationships((prev) => {
             return prev.map((e) => {
-              if (e.startTableId === a.tid && e.startFieldId > a.data.id) {
+              if (e.startTableId === a.tid && e.startFieldId >= a.data.id) {
                 return {
                   ...e,
                   startFieldId: e.startFieldId + 1,
@@ -231,7 +231,7 @@ export default function ControlPanel({
                   startY: tables[a.tid].y + (e.startFieldId + 1) * 36 + 50 + 19,
                 };
               }
-              if (e.endTableId === a.tid && e.endFieldId > a.data.id) {
+              if (e.endTableId === a.tid && e.endFieldId >= a.data.id) {
                 return {
                   ...e,
                   endFieldId: e.endFieldId + 1,
@@ -1256,8 +1256,8 @@ export default function ControlPanel({
               field.comment = "";
               field.unique = false;
               if (d.unique) field.unique = true;
-              field.auto_increment = false;
-              if (d.auto_increment) field.auto_increment = true;
+              field.increment = false;
+              if (d.auto_increment) field.increment = true;
               field.notNull = false;
               if (d.nullable) field.notNull = true;
               field.primary = false;
