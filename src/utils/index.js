@@ -599,7 +599,7 @@ const calcPath = (x1, x2, y1, y2, startFieldId, endFieldId, zoom = 1) => {
       if (x1 + tableWidth <= x2)
         return `M ${x1 + tableWidth - 2 * offsetX} ${y1} L ${x2} ${y2 + 0.1}`;
       else if (x2 + tableWidth < x1)
-        return `M ${x2 + tableWidth - 2 * offsetX} ${y2} L ${x1} ${y1 + 0.1}`;
+        return `M ${x1} ${y1} L ${x2 + tableWidth - 2 * offsetX} ${y2 + 0.1}`;
     }
   }
 
