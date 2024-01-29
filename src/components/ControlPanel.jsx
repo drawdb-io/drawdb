@@ -1108,27 +1108,33 @@ export default function ControlPanel({
       },
     },
     Settings: {
-      Autosave: () =>
-        setSettings((prev) => {
-          Toast.success(
-            `Autosave is ${settings.autosave ? "off" : "on"}`
-          );
-          return { ...prev, autosave: !prev.autosave };
-        }),
-      Panning: () =>
-        setSettings((prev) => {
-          Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
-          return { ...prev, panning: !prev.panning };
-        }),
-      "Flush storage": async () => {
-        db.delete()
-          .then(() => {
-            Toast.success("Storage flushed");
-            window.location.reload(false);
-          })
-          .catch(() => {
-            Toast.error("Oops! Something went wrong.");
-          });
+      Autosave: {
+        function: () =>
+          setSettings((prev) => {
+            Toast.success(
+              `Autosave is ${settings.autosave ? "off" : "on"}`
+            );
+            return { ...prev, autosave: !prev.autosave };
+          }),
+      },
+      Panning: {
+        function: () =>
+          setSettings((prev) => {
+            Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
+            return { ...prev, panning: !prev.panning };
+          }),
+      },
+      "Flush storage": {
+        function: async () => {
+          db.delete()
+            .then(() => {
+              Toast.success("Storage flushed");
+              window.location.reload(false);
+            })
+            .catch(() => {
+              Toast.error("Oops! Something went wrong.");
+            });
+        },
       },
     },
     Help: {
@@ -1471,7 +1477,7 @@ export default function ControlPanel({
       relationship.endY = endY;
       relationships.push(relationship);
     });
-    
+
     relationships.forEach((r, i) => r.id = i);
 
     if (data.overwrite) {
