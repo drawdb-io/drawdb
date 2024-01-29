@@ -5,6 +5,7 @@ import SimpleCanvas from "../components/SimpleCanvas"
 import Navbar from "../components/Navbar";
 import { diagram } from "../data/heroDiagram"
 import Reveal from "../animations/Reveal";
+import { Steps } from "@douyinfe/semi-ui";
 
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
@@ -60,7 +61,54 @@ export default function LandingPage() {
         </div>
       </div>
       <div id="learn-more">
-        more stuff
+        <div className="bg-zinc-100 py-10 px-24">
+          <div className="text-2xl text-slate-900 font-bold text-center mb-5">Entity-Relationship diagrams simplified</div>
+          <Steps type="basic" current={3}>
+            <Steps.Step title="Create tables" description="Define tables with the necessary fields and indices." />
+            <Steps.Step title="Add relationships" description="Build relationships by simply dragging" />
+            <Steps.Step title="Export" description="Export to your preferred SQL flavor" />
+          </Steps>
+          <div className="mt-16 text-center w-[75%] sm:w-[80%] mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
+            <div className="text-2xl font-bold text-slate-900 mb-8">
+              Why drawDB?
+            </div>
+            <div className="grid grid-cols-3 gap-4 ">
+              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                <span className="text-white bg-green-400 rounded-full py-2.5 px-3">
+                  <i className="fa-solid fa-credit-card"></i>
+                </span>
+                <div className="mt-6 text-lg font-semibold text-slate-700">
+                  Free
+                </div>
+                <div className="text-sm mt-3">drawDB is completely free of charge.</div>
+              </div>
+              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                <span className="text-white bg-blue-400 rounded-full py-2.5 px-3">
+                  <i className="fa-solid fa-user-xmark"></i>
+                </span>
+                <div className="mt-6 text-lg font-semibold text-slate-700">
+                  No registration
+                </div>
+                <div className="text-sm mt-3">No need to sign up or login. Just jump into development.</div>
+              </div>
+              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                <span className="text-white bg-emerald-400 rounded-full py-2.5 px-3">
+                  <i className="fa-regular fa-star "></i>
+                </span>
+                <div className="mt-6 text-lg font-semibold text-slate-700">
+                  Simple to use
+                </div>
+                <div className="text-sm mt-3">
+                  Intuitive design that&apos;s easy to navigate.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr className="border-zinc-300" />
+      <div className="text-center text-sm py-3">
+        &copy; 2024 <strong>drawDB</strong> - All right reserved.
       </div>
     </div>
   );
