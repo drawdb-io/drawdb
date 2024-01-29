@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import logo_light from "../assets/logo_light_46.png";
+import template_screenshot from "../assets/template_screenshot.png"
 import { Link } from "react-router-dom";
-import { Tabs, TabPane } from "@douyinfe/semi-ui";
+import { Tabs, TabPane, Banner, Steps } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -81,9 +82,8 @@ function Thumbnail({ diagram, i }) {
                     </div>
                     {table.fields.map((f, j) => (
                       <div
-                        className={`flex justify-between items-center py-[2px] px-[3px] ${
-                          j < table.fields.length - 1 ? "border-b" : ""
-                        }`}
+                        className={`flex justify-between items-center py-[2px] px-[3px] ${j < table.fields.length - 1 ? "border-b" : ""
+                          }`}
                         key={j}
                       >
                         <div className="flex items-center justify-start">
@@ -127,24 +127,19 @@ function Thumbnail({ diagram, i }) {
             return (
               <g key={n.id}>
                 <path
-                  d={`M${x + fold} ${y} L${x + w - r} ${y} A${r} ${r} 0 0 1 ${
-                    x + w
-                  } ${y + r} L${x + w} ${y + h - r} A${r} ${r} 0 0 1 ${
-                    x + w - r
-                  } ${y + h} L${x + r} ${y + h} A${r} ${r} 0 0 1 ${x} ${
-                    y + h - r
-                  } L${x} ${y + fold}`}
+                  d={`M${x + fold} ${y} L${x + w - r} ${y} A${r} ${r} 0 0 1 ${x + w
+                    } ${y + r} L${x + w} ${y + h - r} A${r} ${r} 0 0 1 ${x + w - r
+                    } ${y + h} L${x + r} ${y + h} A${r} ${r} 0 0 1 ${x} ${y + h - r
+                    } L${x} ${y + fold}`}
                   fill={n.color}
                   stroke="rgb(168 162 158)"
                   strokeLinejoin="round"
                   strokeWidth="0.5"
                 />
                 <path
-                  d={`M${x} ${y + fold} L${x + fold - r} ${
-                    y + fold
-                  } A${r} ${r} 0 0 0 ${x + fold} ${y + fold - r} L${
-                    x + fold
-                  } ${y} L${x} ${y + fold} Z`}
+                  d={`M${x} ${y + fold} L${x + fold - r} ${y + fold
+                    } A${r} ${r} 0 0 0 ${x + fold} ${y + fold - r} L${x + fold
+                    } ${y} L${x} ${y + fold} Z`}
                   fill={n.color}
                   stroke={"rgb(168 162 158)"}
                   strokeLinejoin="round"
@@ -255,48 +250,81 @@ export default function Templates() {
               tab={<span className="mx-2">Your templates</span>}
               itemKey="2"
             >
-              <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
-                {customTemplates?.map((c, i) => (
-                  <div
-                    key={i}
-                    className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
-                  >
-                    <Thumbnail diagram={c} i={"2" + i} />
-                    <div className="px-4 py-3 w-full">
-                      <div className="flex justify-between">
-                        <div className="text-lg font-bold text-zinc-700">
-                          {c.title}
-                        </div>
-                        <div>
-                          <button
-                            className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
-                            onClick={() => forkTemplate(c.id)}
-                          >
-                            <i className="fa-solid fa-code-fork"></i>
-                          </button>
+              {
+                customTemplates?.length > 0 ?
+                  <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
+                    {customTemplates?.map((c, i) => (
+                      <div
+                        key={i}
+                        className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
+                      >
+                        <Thumbnail diagram={c} i={"2" + i} />
+                        <div className="px-4 py-3 w-full">
+                          <div className="flex justify-between">
+                            <div className="text-lg font-bold text-zinc-700">
+                              {c.title}
+                            </div>
+                            <div>
+                              <button
+                                className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
+                                onClick={() => forkTemplate(c.id)}
+                              >
+                                <i className="fa-solid fa-code-fork"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex justify-around mt-2">
+                            <button
+                              className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500"
+                              onClick={() => editTemplate(c.id)}
+                            >
+                              <i className="bi bi-pencil-fill"></i>
+                              <div className="ms-1.5 font-semibold">Edit</div>
+                            </button>
+                            <div className="border-l border-gray-300 mx-2" />
+                            <button
+                              className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-red-500"
+                              onClick={() => deleteTemplate(c.id)}
+                            >
+                              <IconDeleteStroked />
+                              <div className="ms-1.5 font-semibold">Delete</div>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex justify-around mt-2">
-                        <button
-                          className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500"
-                          onClick={() => editTemplate(c.id)}
-                        >
-                          <i className="bi bi-pencil-fill"></i>
-                          <div className="ms-1.5 font-semibold">Edit</div>
-                        </button>
-                        <div className="border-l border-gray-300 mx-2" />
-                        <button
-                          className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-red-500"
-                          onClick={() => deleteTemplate(c.id)}
-                        >
-                          <IconDeleteStroked />
-                          <div className="ms-1.5 font-semibold">Delete</div>
-                        </button>
+                    ))}
+                  </div> :
+                  <div className="py-5">
+                    <Banner
+                      fullMode={false}
+                      type="info"
+                      bordered
+                      icon={null}
+                      closeIcon={null}
+                      description={<div>You have no custom templates saved.</div>}
+                    />
+                    <div className="grid grid-cols-5 sm:grid-cols-1 gap-4 place-content-center my-4">
+                      <img src={template_screenshot} className="border col-span-3 sm:cols-span-1 rounded" />
+                      <div className="col-span-2 sm:cols-span-1">
+                        <div className="text-xl font-bold my-4">How to save a template</div>
+                        <Steps direction="vertical" style={{ margin: "12px" }}>
+                          <Steps.Step
+                            title="Build a diagram"
+                            description="Build the template in the editor"
+                          />
+                          <Steps.Step
+                            title="Save as template"
+                            description="Editor > File > Save as template"
+                          />
+                          <Steps.Step
+                            title="Load a template"
+                            description="Fork a template to build on"
+                          />
+                        </Steps>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+              }
             </TabPane>
           </Tabs>
         </div>
