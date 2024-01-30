@@ -7,7 +7,6 @@ import {
   Col,
   Select,
   Button,
-  Checkbox,
   Popover,
   Table,
 } from "@douyinfe/semi-ui";
@@ -119,13 +118,11 @@ export default function ReferenceOverview() {
                             dataSource={[
                               {
                                 key: "1",
-                                foreign: `${tables[r.startTableId].name}(${
-                                  tables[r.startTableId].fields[r.startFieldId]
-                                    .name
-                                })`,
-                                primary: `${tables[r.endTableId].name}(${
-                                  tables[r.endTableId].fields[r.endFieldId].name
-                                })`,
+                                foreign: `${tables[r.startTableId].name}(${tables[r.startTableId].fields[r.startFieldId]
+                                  .name
+                                  })`,
+                                primary: `${tables[r.endTableId].name}(${tables[r.endTableId].fields[r.endFieldId].name
+                                  })`,
                               },
                             ]}
                             pagination={false}
@@ -163,12 +160,12 @@ export default function ReferenceOverview() {
                                   prev.map((e, idx) =>
                                     idx === i
                                       ? {
-                                          ...e,
-                                          startTableId: e.endTableId,
-                                          startFieldId: e.endFieldId,
-                                          endTableId: e.startTableId,
-                                          endFieldId: e.startFieldId,
-                                        }
+                                        ...e,
+                                        startTableId: e.endTableId,
+                                        startFieldId: e.endFieldId,
+                                        endTableId: e.startTableId,
+                                        endFieldId: e.startFieldId,
+                                      }
                                       : e
                                   )
                                 );
@@ -277,44 +274,6 @@ export default function ReferenceOverview() {
                     ></Select>
                   </Col>
                 </Row>
-                <div className="flex justify-between items-center my-3">
-                  <div className="font-semibold">Mandetory</div>
-                  <Checkbox
-                    value="mandetory"
-                    checked={r.mandetory}
-                    onChange={(checkedValues) => {
-                      setUndoStack((prev) => [
-                        ...prev,
-                        {
-                          action: Action.EDIT,
-                          element: ObjectType.RELATIONSHIP,
-                          rid: i,
-                          undo: {
-                            [checkedValues.target.value]:
-                              !checkedValues.target.checked,
-                          },
-                          redo: {
-                            [checkedValues.target.value]:
-                              checkedValues.target.checked,
-                          },
-                          message: `Make foreign key mandetory`,
-                        },
-                      ]);
-                      setRedoStack([]);
-                      setRelationships((prev) =>
-                        prev.map((e, idx) =>
-                          idx === i
-                            ? {
-                                ...e,
-                                [checkedValues.target.value]:
-                                  checkedValues.target.checked,
-                              }
-                            : e
-                        )
-                      );
-                    }}
-                  ></Checkbox>
-                </div>
                 <Button
                   icon={<IconDeleteStroked />}
                   block
