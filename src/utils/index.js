@@ -295,6 +295,89 @@ function jsonToPostgreSQL(obj) {
       .join("\n")}`;
 }
 
+function getSQLiteType(field) {
+  switch (field.type) {
+    case "INT":
+    case "SMALLINT":
+    case "BIGINT":
+    case "BOOLEAN":
+      return "INTEGER";
+    case "DECIMAL":
+    case "NUMERIC":
+    case "FLOAT":
+    case "DOUBLE":
+    case "REAL":
+      return "REAL";
+    case "CHAR":
+    case "VARCHAR":
+    case "UUID":
+    case "TEXT":
+    case "DATE":
+    case "TIME":
+    case "TIMESTAMP":
+    case "DATETIME":
+    case "BINARY":
+    case "VARBINARY":
+      return "TEXT";
+    case "ENUM":
+      return `TEXT CHECK("${field.name}" in (${field.values.map(v => `'${v}'`).join(", ")}))`;
+    default:
+      return "BLOB";
+  }
+}
+
+function getInlineFK(table, obj) {
+  let fk = "";
+  obj.references.forEach(r => {
+    if (fk !== "") return;
+    if (r.startTableId === table.id) {
+      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${obj.tables[r.endTableId].name}"("${obj.tables[r.endTableId].fields[r.endFieldId].name}")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
+    }
+  })
+  return fk;
+}
+
+function jsonToSQLite(obj) {
+  return obj.tables
+    .map(
+      (table) => {
+        const inlineFK = getInlineFK(table, obj);
+        return `${table.comment === "" ? "" : `/* ${table.comment} */\n`
+          }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
+            .map(
+              (field) =>
+                `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${field.name
+                }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${field.unique ? " UNIQUE" : ""}${field.default !== ""
+                  ? ` DEFAULT ${hasQuotes(field.type) &&
+                    field.default.toLowerCase() !== "null"
+                    ? `'${field.default}'`
+                    : `${field.default}`
+                  }`
+                  : ""
+                }${field.check === "" || !hasCheck(field.type) ?
+                  "" : ` CHECK(${field.check})`
+                }`
+            )
+            .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
+              ? `,\n\tPRIMARY KEY(${table.fields
+                .filter((f) => f.primary)
+                .map((f) => `"${f.name}"`)
+                .join(", ")})${inlineFK !== "" ? ',\n' : ''}`
+              : ""
+          }\t${inlineFK}\n);\n${table.indices.length > 0
+            ? `${table.indices.map(
+              (i) =>
+                `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${i.name
+                }"\nON "${table.name}" (${i.fields
+                  .map((f) => `"${f}"`)
+                  .join(", ")});`
+            ).join("\n")}`
+            : ""
+          }`
+      }
+    ).join("\n");
+}
+
 function arrayIsEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
@@ -675,4 +758,5 @@ export {
   validateDateStr,
   hasCheck,
   calcPath,
+  jsonToSQLite
 };

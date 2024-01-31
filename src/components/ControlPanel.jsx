@@ -45,6 +45,7 @@ import {
   dataURItoBlob,
   jsonToMySQL,
   jsonToPostgreSQL,
+  jsonToSQLite
 } from "../utils";
 import {
   AreaContext,
@@ -967,6 +968,21 @@ export default function ControlPanel({
             PostgreSQL: () => {
               setVisible(MODAL.CODE);
               const src = jsonToPostgreSQL({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
+          {
+            SQLite: () => {
+              setVisible(MODAL.CODE);
+              const src = jsonToSQLite({
                 tables: tables,
                 references: relationships,
                 types: types,
