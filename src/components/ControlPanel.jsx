@@ -1067,6 +1067,17 @@ export default function ControlPanel({
         function: viewStrictMode,
         shortcut: "Ctrl+Shift+M",
       },
+      "Presentation mode": {
+        function: () => {
+          setLayout(prev => ({ 
+            ...prev,
+            header: false, 
+            sidebar: false,
+            toolbar: false,
+          }));
+          enterFullscreen();
+        }
+      },
       "Field summary": {
         function: viewFieldSummary,
         shortcut: "Ctrl+Shift+F",
@@ -1476,8 +1487,6 @@ export default function ControlPanel({
       const startY = tables[startTableId].y + startFieldId * 36 + 69;
       const endX = tables[endTableId].x + 15;
       const endY = tables[endTableId].y + endFieldId * 36 + 69;
-
-      relationship.mandetory = false;
 
       relationship.name = startTable + "_" + startField + "_fk";
       relationship.startTableId = startTableId;
@@ -1908,7 +1917,7 @@ export default function ControlPanel({
   return (
     <>
       {layout.header && header()}
-      {toolbar()}
+      {layout.toolbar && toolbar()}
       <Modal
         title={getModalTitle()}
         visible={visible !== MODAL.NONE}
@@ -2028,7 +2037,7 @@ export default function ControlPanel({
 
   function toolbar() {
     return (
-      <div className="py-1 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-x-hidden toolbar-theme">
+      <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
         <div className="flex justify-start items-center">
           {layoutDropdown()}
           <Divider layout="vertical" margin="8px" />

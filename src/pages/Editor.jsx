@@ -11,6 +11,8 @@ import {
   State,
 } from "../data/data";
 import { db } from "../data/db";
+import { Divider, Tooltip } from "@douyinfe/semi-ui";
+import { exitFullscreen } from "../utils";
 
 export const LayoutContext = createContext();
 export const TableContext = createContext();
@@ -42,12 +44,8 @@ export default function Editor() {
     header: true,
     sidebar: true,
     services: true,
-    tables: true,
-    areas: true,
-    relationships: true,
     issues: true,
-    editor: true,
-    notes: true,
+    toolbar: true,
     fullscreen: false,
   });
   const [settings, setSettings] = useState({
@@ -698,7 +696,7 @@ export default function Editor() {
                           deleteType,
                         }}
                       >
-                        <div className="h-[100vh] overflow-hidden theme">
+                        <div className="h-[100vh] flex flex-col overflow-hidden theme">
                           <ControlPanel
                             diagramId={id}
                             setDiagramId={setId}
@@ -710,11 +708,7 @@ export default function Editor() {
                             setLastSaved={setLastSaved}
                           />
                           <div
-                            className={
-                              layout.header
-                                ? `flex h-[calc(100vh-120px)]`
-                                : `flex h-[calc(100vh-52px)]`
-                            }
+                            className="flex h-full"
                             onMouseUp={() => setResize(false)}
                             onMouseMove={dragHandler}
                           >
@@ -725,7 +719,49 @@ export default function Editor() {
                                 width={width}
                               />
                             )}
-                            <Canvas state={state} setState={setState} />
+                            <div className="relative w-full h-full">
+                              <Canvas state={state} setState={setState} />
+                              {
+                                !(layout.sidebar || layout.toolbar || layout.header) &&
+                                <div className="fixed right-5 bottom-4 flex gap-2">
+                                  <div className="popover-theme flex rounded-lg items-center">
+                                    <button
+                                      className="px-3 py-2"
+                                      onClick={() =>
+                                        setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+                                      }>
+                                      <i className="bi bi-dash-lg"></i>
+                                    </button>
+                                    <Divider align="center" layout="vertical" />
+                                    <div className="px-3 py-2">{parseInt(settings.zoom * 100)}%</div>
+                                    <Divider align="center" layout="vertical" />
+                                    <button
+                                      className="px-3 py-2"
+                                      onClick={() =>
+                                        setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
+                                      }>
+                                      <i className="bi bi-plus-lg"></i>
+                                    </button>
+                                  </div>
+                                  <Tooltip content="Exit">
+                                    <button
+                                      className="px-3 py-2 rounded-lg popover-theme"
+                                      onClick={() => {
+                                        setLayout(prev => ({
+                                          ...prev,
+                                          sidebar: true,
+                                          toolbar: true,
+                                          header: true,
+                                        }));
+                                        exitFullscreen();
+                                      }}
+                                    >
+                                      <i className="bi bi-fullscreen-exit"></i>
+                                    </button>
+                                  </Tooltip>
+                                </div>
+                              }
+                            </div>
                           </div>
                         </div>
                       </TypeContext.Provider>
