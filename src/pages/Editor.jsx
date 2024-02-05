@@ -708,7 +708,7 @@ export default function Editor() {
                             setLastSaved={setLastSaved}
                           />
                           <div
-                            className="flex h-full"
+                            className="flex h-full overflow-y-auto"
                             onMouseUp={() => setResize(false)}
                             onMouseMove={dragHandler}
                           >
@@ -719,7 +719,7 @@ export default function Editor() {
                                 width={width}
                               />
                             )}
-                            <div className="relative w-full h-full">
+                            <div className="relative w-full h-full overflow-hidden">
                               <Canvas state={state} setState={setState} />
                               {
                                 !(layout.sidebar || layout.toolbar || layout.header) &&
