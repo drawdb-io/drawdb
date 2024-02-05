@@ -46,7 +46,8 @@ import {
   jsonToMySQL,
   jsonToPostgreSQL,
   jsonToSQLite,
-  jsonToMariaDB
+  jsonToMariaDB,
+  jsonToSQLServer
 } from "../utils";
 import {
   AreaContext,
@@ -1010,7 +1011,21 @@ export default function ControlPanel({
               }));
             },
           },
-          { DBML: () => { } },
+          {
+            "SQL Server": () => {
+              setVisible(MODAL.CODE);
+              const src = jsonToSQLServer({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            }
+          },
         ],
         function: () => { },
       },

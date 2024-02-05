@@ -433,6 +433,10 @@ function jsonToMariaDB(obj) {
       .join("\n")}`;
 }
 
+function jsonToSQLServer(obj) {
+  return "TODO";
+}
+
 function arrayIsEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
@@ -702,9 +706,9 @@ function validateDiagram(diagram) {
     visited.push(tableId);
     visitedTables.add(tableId);
 
-    diagram.relationships.forEach((relationship) => {
-      if (relationship.startTableId === tableId) {
-        checkCircularRelationships(relationship.endTableId, [...visited]);
+    diagram.relationships.forEach((r) => {
+      if (r.startTableId === tableId && r.startTableId !== r.endTableId) {
+        checkCircularRelationships(r.endTableId, [...visited]);
       }
     });
   }
@@ -815,4 +819,5 @@ export {
   calcPath,
   jsonToSQLite,
   jsonToMariaDB,
+  jsonToSQLServer,
 };

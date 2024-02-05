@@ -420,20 +420,16 @@ export default function Editor() {
           if (updateRelationships) {
             setRelationships((prev) =>
               prev.map((r) => {
+                let newR = { ...r };
                 if (r.startTableId === id) {
-                  return {
-                    ...r,
-                    startX: updatedValues.x + 15,
-                    startY: updatedValues.y + r.startFieldId * 36 + 69,
-                  };
-                } else if (r.endTableId === id) {
-                  return {
-                    ...r,
-                    endX: updatedValues.x + 15,
-                    endY: updatedValues.y + r.endFieldId * 36 + 69,
-                  };
+                  newR.startX = updatedValues.x + 15;
+                  newR.startY = updatedValues.y + r.startFieldId * 36 + 69;
                 }
-                return r;
+                if (r.endTableId === id) {
+                  newR.endX = updatedValues.x + 15;
+                  newR.endY = updatedValues.y + r.endFieldId * 36 + 69;
+                }
+                return newR;
               })
             );
           }
