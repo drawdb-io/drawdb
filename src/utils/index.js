@@ -49,14 +49,10 @@ function dataURItoBlob(dataUrl) {
 }
 
 function getJsonType(f) {
-  if (!sqlDataTypes.includes(f.type)) {
-    return '{ "type" : "object", additionalProperties : true }';
-  }
   switch (f.type) {
     case "INT":
     case "SMALLINT":
     case "BIGINT":
-      return '{ "type" : "integer" }';
     case "DECIMAL":
     case "NUMERIC":
     case "REAL":
@@ -80,7 +76,7 @@ function getJsonType(f) {
 }
 
 function generateSchema(type) {
-  return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
+  return `{\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
     .map((f) => `"${f.name}" : ${getJsonType(f)}`)
     .join(
       ",\n\t\t\t\t"
@@ -376,6 +372,62 @@ function jsonToSQLite(obj) {
           }`
       }
     ).join("\n");
+}
+
+function jsonToMariaDB(obj) {
+  return `${obj.tables
+    .map(
+      (table) =>
+        `${table.comment === "" ? "" : `/* ${table.comment} */\n`
+        }CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
+          .map(
+            (field) =>
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${field.name
+              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${field.increment ? " AUTO_INCREMENT" : ""
+              }${field.unique ? " UNIQUE" : ""}${field.default !== ""
+                ? ` DEFAULT ${hasQuotes(field.type) &&
+                  field.default.toLowerCase() !== "null"
+                  ? `"${field.default}"`
+                  : `${field.default}`
+                }`
+                : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? !sqlDataTypes.includes(field.type)
+                  ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase()
+                    )
+                  )}', \`${field.name}\`))`
+                  : ""
+                : ` CHECK(${field.check})`
+              }`
+          )
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
+            ? `,\n\tPRIMARY KEY(${table.fields
+              .filter((f) => f.primary)
+              .map((f) => `\`${f.name}\``)
+              .join(", ")})`
+            : ""
+        }\n);${table.indices.length > 0
+          ? `\n${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`
+          )}`
+          : ""
+        }`
+    )
+    .join("\n")}\n${obj.references
+      .map(
+        (r) =>
+          `ALTER TABLE \`${obj.tables[r.startTableId].name
+          }\`\nADD FOREIGN KEY(\`${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+      )
+      .join("\n")}`;
 }
 
 function arrayIsEqual(arr1, arr2) {
@@ -758,5 +810,6 @@ export {
   validateDateStr,
   hasCheck,
   calcPath,
-  jsonToSQLite
+  jsonToSQLite,
+  jsonToMariaDB,
 };

@@ -45,7 +45,8 @@ import {
   dataURItoBlob,
   jsonToMySQL,
   jsonToPostgreSQL,
-  jsonToSQLite
+  jsonToSQLite,
+  jsonToMariaDB
 } from "../utils";
 import {
   AreaContext,
@@ -994,6 +995,21 @@ export default function ControlPanel({
               }));
             },
           },
+          {
+            MariaDB: () => {
+              setVisible(MODAL.CODE);
+              const src = jsonToMariaDB({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
           { DBML: () => { } },
         ],
         function: () => { },
@@ -1069,9 +1085,9 @@ export default function ControlPanel({
       },
       "Presentation mode": {
         function: () => {
-          setLayout(prev => ({ 
+          setLayout(prev => ({
             ...prev,
-            header: false, 
+            header: false,
             sidebar: false,
             toolbar: false,
           }));
