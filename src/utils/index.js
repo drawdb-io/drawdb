@@ -49,6 +49,9 @@ function dataURItoBlob(dataUrl) {
 }
 
 function getJsonType(f) {
+  if (!sqlDataTypes.includes(f.type)) {
+    return '{ "type" : "object", additionalProperties : true }';
+  }
   switch (f.type) {
     case "INT":
     case "SMALLINT":
@@ -76,7 +79,7 @@ function getJsonType(f) {
 }
 
 function generateSchema(type) {
-  return `{\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
+  return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
     .map((f) => `"${f.name}" : ${getJsonType(f)}`)
     .join(
       ",\n\t\t\t\t"
