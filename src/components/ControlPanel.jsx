@@ -47,7 +47,7 @@ import {
   jsonToPostgreSQL,
   jsonToSQLite,
   jsonToMariaDB,
-  jsonToSQLServer
+  jsonToSQLServer,
 } from "../utils";
 import {
   AreaContext,
@@ -66,7 +66,7 @@ import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
-import { Editor } from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
@@ -168,7 +168,7 @@ export default function ControlPanel({
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack[undoStack.length - 1];
-    setUndoStack(prev => prev.filter((e, i) => i !== prev.length - 1));
+    setUndoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         deleteTable(tables[tables.length - 1].id, false);
@@ -272,9 +272,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                  ...index,
-                  ...a.undo,
-                }
+                    ...index,
+                    ...a.undo,
+                  }
                 : index
             ),
           });
@@ -341,7 +341,7 @@ export default function ControlPanel({
   const redo = () => {
     if (redoStack.length === 0) return;
     const a = redoStack[redoStack.length - 1];
-    setRedoStack(prev => prev.filter((e, i) => i !== prev.length - 1));
+    setRedoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         addTable(false);
@@ -465,9 +465,9 @@ export default function ControlPanel({
             indices: tables[a.tid].indices.map((index) =>
               index.id === a.iid
                 ? {
-                  ...index,
-                  ...a.redo,
-                }
+                    ...index,
+                    ...a.redo,
+                  }
                 : index
             ),
           });
@@ -837,8 +837,8 @@ export default function ControlPanel({
       "Import from source": {
         function: () => {
           setData({ src: "", overwrite: true, dbms: "MySQL" });
-          setVisible(MODAL.IMPORT_SRC)
-        }
+          setVisible(MODAL.IMPORT_SRC);
+        },
       },
       "Export as": {
         children: [
@@ -947,7 +947,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => { },
+        function: () => {},
       },
       "Export source": {
         children: [
@@ -1024,13 +1024,13 @@ export default function ControlPanel({
                 data: src,
                 extension: "sql",
               }));
-            }
+            },
           },
         ],
-        function: () => { },
+        function: () => {},
       },
       Exit: {
-        function: () => { },
+        function: () => {},
       },
     },
     Edit: {
@@ -1100,14 +1100,14 @@ export default function ControlPanel({
       },
       "Presentation mode": {
         function: () => {
-          setLayout(prev => ({
+          setLayout((prev) => ({
             ...prev,
             header: false,
             sidebar: false,
             toolbar: false,
           }));
           enterFullscreen();
-        }
+        },
       },
       "Field summary": {
         function: viewFieldSummary,
@@ -1151,7 +1151,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => { },
+        function: () => {},
       },
       "Zoom in": {
         function: zoomIn,
@@ -1169,9 +1169,7 @@ export default function ControlPanel({
       Autosave: {
         function: () =>
           setSettings((prev) => {
-            Toast.success(
-              `Autosave is ${settings.autosave ? "off" : "on"}`
-            );
+            Toast.success(`Autosave is ${settings.autosave ? "off" : "on"}`);
             return { ...prev, autosave: !prev.autosave };
           }),
       },
@@ -1201,7 +1199,7 @@ export default function ControlPanel({
         shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
-        function: () => { },
+        function: () => {},
       },
       "Report a bug": {
         function: () => window.open("/bug_report", "_blank"),
@@ -1289,10 +1287,12 @@ export default function ControlPanel({
     const parser = new Parser();
     let ast = null;
     try {
-      console.log(data.dbms)
+      console.log(data.dbms);
       ast = parser.astify(data.src, { database: data.dbms });
     } catch (err) {
-      Toast.error("Could not parse the sql file. Make sure there are no syntax errors.");
+      Toast.error(
+        "Could not parse the sql file. Make sure there are no syntax errors."
+      );
       console.log(err);
       return;
     }
@@ -1301,7 +1301,7 @@ export default function ControlPanel({
     const relationships = [];
     const inlineForeignKeys = [];
 
-    ast.forEach(((e) => {
+    ast.forEach((e) => {
       if (e.type === "create") {
         if (e.keyword === "table") {
           const table = {};
@@ -1334,14 +1334,31 @@ export default function ControlPanel({
                 let check = "";
                 if (d.check.definition[0].left.column) {
                   let value = d.check.definition[0].right.value;
-                  if (d.check.definition[0].right.type === "double_quote_string" || d.check.definition[0].right.type === "single_quote_string")
-                    value = '\'' + value + '\''
-                  check = d.check.definition[0].left.column + " " + d.check.definition[0].operator + " " + value;
+                  if (
+                    d.check.definition[0].right.type ===
+                      "double_quote_string" ||
+                    d.check.definition[0].right.type === "single_quote_string"
+                  )
+                    value = "'" + value + "'";
+                  check =
+                    d.check.definition[0].left.column +
+                    " " +
+                    d.check.definition[0].operator +
+                    " " +
+                    value;
                 } else {
                   let value = d.check.definition[0].right.value;
-                  if (d.check.definition[0].left.type === "double_quote_string" || d.check.definition[0].left.type === "single_quote_string")
-                    value = '\'' + value + '\''
-                  check = value + " " + d.check.definition[0].operator + " " + d.check.definition[0].right.column;
+                  if (
+                    d.check.definition[0].left.type === "double_quote_string" ||
+                    d.check.definition[0].left.type === "single_quote_string"
+                  )
+                    value = "'" + value + "'";
+                  check =
+                    value +
+                    " " +
+                    d.check.definition[0].operator +
+                    " " +
+                    d.check.definition[0].right.column;
                 }
                 field.check = check;
               }
@@ -1349,15 +1366,15 @@ export default function ControlPanel({
               table.fields.push(field);
             } else if (d.resource === "constraint") {
               if (d.constraint_type === "primary key") {
-                d.definition.forEach(c => {
+                d.definition.forEach((c) => {
                   table.fields.forEach((f) => {
                     if (f.name === c.column && !f.primary) {
                       f.primary = true;
                     }
-                  })
+                  });
                 });
               } else if (d.constraint_type === "FOREIGN KEY") {
-                inlineForeignKeys.push({ ...d, startTable: e.table[0].table })
+                inlineForeignKeys.push({ ...d, startTable: e.table[0].table });
               }
             }
           });
@@ -1366,16 +1383,15 @@ export default function ControlPanel({
             e.id = i;
             e.fields.forEach((f, j) => {
               f.id = j;
-            })
-          })
-        }
-        else if (e.keyword === "index") {
+            });
+          });
+        } else if (e.keyword === "index") {
           const index = {};
           index.name = e.index;
           index.unique = false;
           if (e.index_type === "unique") index.unique = true;
           index.fields = [];
-          e.index_columns.forEach(f => index.fields.push(f.column));
+          e.index_columns.forEach((f) => index.fields.push(f.column));
 
           let found = -1;
           tables.forEach((t, i) => {
@@ -1386,34 +1402,45 @@ export default function ControlPanel({
             }
           });
 
-          if (found !== -1)
-            tables[found].indices.forEach((i, j) => i.id = j);
+          if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
         }
       } else if (e.type === "alter") {
-        if (e.expr[0].action === "add" && e.expr[0].create_definitions.constraint_type === "FOREIGN KEY") {
+        if (
+          e.expr[0].action === "add" &&
+          e.expr[0].create_definitions.constraint_type === "FOREIGN KEY"
+        ) {
           const relationship = {};
           const startTable = e.table[0].table;
           const startField = e.expr[0].create_definitions.definition[0].column;
-          const endTable = e.expr[0].create_definitions.reference_definition.table[0].table;
-          const endField = e.expr[0].create_definitions.reference_definition.definition[0].column;
+          const endTable =
+            e.expr[0].create_definitions.reference_definition.table[0].table;
+          const endField =
+            e.expr[0].create_definitions.reference_definition.definition[0]
+              .column;
           let updateConstraint = "No action";
           let deleteConstraint = "No action";
-          e.expr[0].create_definitions.reference_definition.on_action.forEach(c => {
-            if (c.type === "on update") {
-              updateConstraint = c.value.value;
-              updateConstraint = updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
-            } else if (c.type === "on delete") {
-              deleteConstraint = c.value.value;
-              deleteConstraint = deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+          e.expr[0].create_definitions.reference_definition.on_action.forEach(
+            (c) => {
+              if (c.type === "on update") {
+                updateConstraint = c.value.value;
+                updateConstraint =
+                  updateConstraint[0].toUpperCase() +
+                  updateConstraint.substring(1);
+              } else if (c.type === "on delete") {
+                deleteConstraint = c.value.value;
+                deleteConstraint =
+                  deleteConstraint[0].toUpperCase() +
+                  deleteConstraint.substring(1);
+              }
             }
-          });
+          );
 
           let startTableId = -1;
           let startFieldId = -1;
           let endTableId = -1;
           let endFieldId = -1;
 
-          tables.forEach(t => {
+          tables.forEach((t) => {
             if (t.name === startTable) {
               startTableId = t.id;
               return;
@@ -1422,11 +1449,11 @@ export default function ControlPanel({
             if (t.name === endTable) {
               endTableId = t.id;
             }
-          })
+          });
 
           if (startTableId === -1 || endTableId === -1) return;
 
-          tables[startTableId].fields.forEach(f => {
+          tables[startTableId].fields.forEach((f) => {
             if (f.name === startField) {
               startFieldId = f.id;
               return;
@@ -1435,7 +1462,7 @@ export default function ControlPanel({
             if (f.name === endField) {
               endFieldId = f.id;
             }
-          })
+          });
 
           if (startFieldId === -1 || endFieldId === -1) return;
 
@@ -1460,10 +1487,10 @@ export default function ControlPanel({
           relationship.endY = endY;
           relationships.push(relationship);
 
-          relationships.forEach((r, i) => r.id = i);
+          relationships.forEach((r, i) => (r.id = i));
         }
       }
-    }));
+    });
 
     inlineForeignKeys.forEach((fk) => {
       const relationship = {};
@@ -1473,13 +1500,15 @@ export default function ControlPanel({
       const endField = fk.reference_definition.definition[0].column;
       let updateConstraint = "No action";
       let deleteConstraint = "No action";
-      fk.reference_definition.on_action.forEach(c => {
+      fk.reference_definition.on_action.forEach((c) => {
         if (c.type === "on update") {
           updateConstraint = c.value.value;
-          updateConstraint = updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
+          updateConstraint =
+            updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
         } else if (c.type === "on delete") {
           deleteConstraint = c.value.value;
-          deleteConstraint = deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+          deleteConstraint =
+            deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
         }
       });
 
@@ -1488,7 +1517,7 @@ export default function ControlPanel({
       let endTableId = -1;
       let endFieldId = -1;
 
-      tables.forEach(t => {
+      tables.forEach((t) => {
         if (t.name === startTable) {
           startTableId = t.id;
           return;
@@ -1497,11 +1526,11 @@ export default function ControlPanel({
         if (t.name === endTable) {
           endTableId = t.id;
         }
-      })
+      });
 
       if (startTableId === -1 || endTableId === -1) return;
 
-      tables[startTableId].fields.forEach(f => {
+      tables[startTableId].fields.forEach((f) => {
         if (f.name === startField) {
           startFieldId = f.id;
           return;
@@ -1510,7 +1539,7 @@ export default function ControlPanel({
         if (f.name === endField) {
           endFieldId = f.id;
         }
-      })
+      });
 
       if (startFieldId === -1 || endFieldId === -1) return;
 
@@ -1534,7 +1563,7 @@ export default function ControlPanel({
       relationships.push(relationship);
     });
 
-    relationships.forEach((r, i) => r.id = i);
+    relationships.forEach((r, i) => (r.id = i));
 
     if (data.overwrite) {
       setTables(tables);
@@ -1545,13 +1574,13 @@ export default function ControlPanel({
       setUndoStack([]);
       setRedoStack([]);
     } else {
-      setTables(prev => [...prev, ...tables]);
-      setRelationships(prev => [...prev, ...relationships])
+      setTables((prev) => [...prev, ...tables]);
+      setRelationships((prev) => [...prev, ...relationships]);
     }
 
     console.log(tables);
     console.log(relationships);
-  }
+  };
 
   const getModalOnOk = async () => {
     switch (visible) {
@@ -1580,7 +1609,7 @@ export default function ControlPanel({
         return;
       case MODAL.IMPORT_SRC:
         parseSQLAndLoadDiagram();
-        setVisible(MODAL.NONE)
+        setVisible(MODAL.NONE);
         return;
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;
@@ -1732,7 +1761,7 @@ export default function ControlPanel({
             }
             const reader = new FileReader();
             reader.onload = async (e) => {
-              setData(prev => ({ ...prev, src: e.target.result }))
+              setData((prev) => ({ ...prev, src: e.target.result }));
             };
             reader.readAsText(f);
 
@@ -1752,9 +1781,8 @@ export default function ControlPanel({
               type: STATUS.NONE,
               message: "",
             });
-            setData(prev => ({ ...prev, src: "" }));
-          }
-          }
+            setData((prev) => ({ ...prev, src: "" }));
+          }}
           onFileChange={() =>
             setError({
               type: STATUS.NONE,
@@ -1765,18 +1793,24 @@ export default function ControlPanel({
         ></Upload>
         <div className="my-2">
           <div className="text-sm font-semibold mb-1">Select DBMS</div>
-          <Select defaultValue="MySQL"
+          <Select
+            defaultValue="MySQL"
             optionList={[
-              { value: 'MySQL', label: 'MySQL' },
-              { value: 'Postgresql', label: 'PostgreSQL' },
+              { value: "MySQL", label: "MySQL" },
+              { value: "Postgresql", label: "PostgreSQL" },
             ]}
-            onChange={(e) => setData(prev => ({ ...prev, dbms: e }))}
-            className="w-full"></Select>
-          <Checkbox aria-label="overwrite checkbox"
+            onChange={(e) => setData((prev) => ({ ...prev, dbms: e }))}
+            className="w-full"
+          ></Select>
+          <Checkbox
+            aria-label="overwrite checkbox"
             checked={data.overwrite}
             defaultChecked
-            onChange={e => setData(prev => ({ ...prev, overwrite: e.target.checked }))}
-            className="my-2">
+            onChange={(e) =>
+              setData((prev) => ({ ...prev, overwrite: e.target.checked }))
+            }
+            className="my-2"
+          >
             Overwrite existing diagram
           </Checkbox>
         </div>
@@ -1788,10 +1822,11 @@ export default function ControlPanel({
     <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
       <div>
         <div
-          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${settings.mode === "light"
-            ? "hover:border-blue-500"
-            : "hover:border-white"
-            } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
+          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
+            settings.mode === "light"
+              ? "hover:border-blue-500"
+              : "hover:border-white"
+          } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
           onClick={() => setSelectedTemplateId(0)}
         >
           <IconPlus style={{ color: "#fff" }} size="extra-large" />
@@ -1801,10 +1836,11 @@ export default function ControlPanel({
       {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
         <div key={i}>
           <div
-            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${settings.mode === "light"
-              ? "hover:border-blue-500"
-              : "hover:border-white"
-              } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
+            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
+              settings.mode === "light"
+                ? "hover:border-blue-500"
+                : "hover:border-white"
+            } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
             onClick={() => setSelectedTemplateId(i)}
           >
             +
@@ -1865,10 +1901,11 @@ export default function ControlPanel({
                       return (
                         <tr
                           key={d.id}
-                          className={`${selectedDiagramId === d.id
-                            ? "bg-blue-300 bg-opacity-30"
-                            : "hover-1"
-                            }`}
+                          className={`${
+                            selectedDiagramId === d.id
+                              ? "bg-blue-300 bg-opacity-30"
+                              : "hover-1"
+                          }`}
                           onClick={() => {
                             setSelectedDiagramId(d.id);
                           }}
@@ -1973,7 +2010,8 @@ export default function ControlPanel({
         closeOnEsc={true}
         okText={getOkText()}
         okButtonProps={{
-          disabled: (error && error.type && error.type === STATUS.ERROR) ||
+          disabled:
+            (error && error.type && error.type === STATUS.ERROR) ||
             (visible === MODAL.IMPORT &&
               (error.type === STATUS.ERROR || !data)) ||
             ((visible === MODAL.IMG || visible === MODAL.CODE) &&
@@ -2199,12 +2237,18 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Tooltip content="Timeline" position="bottom">
-            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TIMELINE)}>
+            <button
+              className="py-1 px-2 hover-2 rounded text-xl"
+              onClick={() => setSidesheet(SIDESHEET.TIMELINE)}
+            >
               <i className="fa-solid fa-timeline"></i>
             </button>
           </Tooltip>
           <Tooltip content="To-do" position="bottom">
-            <button className="py-1 px-2 hover-2 rounded text-xl" onClick={() => setSidesheet(SIDESHEET.TODO)}>
+            <button
+              className="py-1 px-2 hover-2 rounded text-xl"
+              onClick={() => setSidesheet(SIDESHEET.TODO)}
+            >
               <i className="fa-regular fa-calendar-check"></i>
             </button>
           </Tooltip>

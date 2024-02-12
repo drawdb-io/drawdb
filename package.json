@@ -26,13 +26,9 @@
     "react": "^18.2.0",
     "react-cookie": "^7.0.1",
     "react-dom": "^18.2.0",
-    "react-google-recaptcha": "^3.1.0",
     "react-hotkeys-hook": "^4.4.1",
     "react-icons": "^4.12.0",
-    "react-router": "^6.21.0",
     "react-router-dom": "^6.21.0",
-    "socket.io-client": "^4.7.2",
-    "unique-names-generator": "^4.7.1",
     "url": "^0.11.1"
   },
   "devDependencies": {
@@ -46,6 +42,9 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
-    "vite": "^5.0.8"
+    "vite": "^5.0.11"
+  },
+  "overrides": {
+    "follow-redirects": "^1.15.4"
   }
 }
