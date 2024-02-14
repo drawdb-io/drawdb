@@ -1012,7 +1012,7 @@ export default function ControlPanel({
             },
           },
           {
-            "SQL Server": () => {
+            "MSSQL": () => {
               setVisible(MODAL.CODE);
               const src = jsonToSQLServer({
                 tables: tables,

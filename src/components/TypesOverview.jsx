@@ -83,14 +83,28 @@ export default function TableOverview() {
         <Col span={3}>
           <Popover
             content={
-              <div className="w-[300px] text-sm popover-theme">
-                This feature is meant for object-relational DBMSs like
-                PostgreSQL. However, if used for relational DBMSs, a JSON type
-                will be generated with the custom type schema.
+              <div className="w-[240px] text-sm space-y-2 popover-theme">
+                <div>
+                  This feature is meant for object-relational databases like{" "}
+                  <strong>PostgreSQL</strong>.
+                </div>
+                <div>
+                  If used for <strong>MySQL</strong> or <strong>MariaDB</strong>{" "}
+                  a <code>JSON</code> type will be generated with the
+                  corresponding json validation check.
+                </div>
+                <div>
+                  If used for <strong>SQLite</strong> it will be translated to a{" "}
+                  <code>BLOB</code>.
+                </div>
+                <div>
+                  If used for <strong>MSSQL</strong> a type alias to the first
+                  field will be generated.
+                </div>
               </div>
             }
             showArrow
-            position="right"
+            position="rightTop"
           >
             <Button theme="borderless" icon={<IconInfoCircle />} />
           </Popover>
@@ -217,10 +231,10 @@ export default function TableOverview() {
                               fields: t.fields.map((e, id) =>
                                 id === j
                                   ? {
-                                    ...f,
-                                    type: value,
-                                    values: f.values ? [...f.values] : [],
-                                  }
+                                      ...f,
+                                      type: value,
+                                      values: f.values ? [...f.values] : [],
+                                    }
                                   : e
                               ),
                             });
