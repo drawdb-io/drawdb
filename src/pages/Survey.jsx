@@ -20,6 +20,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function SurveyForm({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -63,35 +64,32 @@ function SurveyForm({ theme }) {
     setLoading(false);
   };
 
-  const onSubmit = useCallback(
-    () => {
-      setLoading(true);
-      editor.update(() => {
-        const sendMail = async () => {
-          await axios
-            .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
-              subject: `[SURVEY]: ${new Date().toDateString()}`,
-              message: `${Object.keys(form).map(
-                (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
-              )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
-                editor
-              )}`,
-            })
-            .then(() => {
-              Toast.success("Thanks for the feedback!");
-              editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-              resetForm();
-            })
-            .catch(() => {
-              Toast.error("Oops! Something went wrong.");
-              setLoading(false);
-            });
-        };
-        sendMail();
-      });
-    },
-    [editor, form, questions]
-  );
+  const onSubmit = useCallback(() => {
+    setLoading(true);
+    editor.update(() => {
+      const sendMail = async () => {
+        await axios
+          .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
+            subject: `[SURVEY]: ${new Date().toDateString()}`,
+            message: `${Object.keys(form).map(
+              (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
+            )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
+              editor
+            )}`,
+          })
+          .then(() => {
+            Toast.success("Thanks for the feedback!");
+            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+            resetForm();
+          })
+          .catch(() => {
+            Toast.error("Oops! Something went wrong.");
+            setLoading(false);
+          });
+      };
+      sendMail();
+    });
+  }, [editor, form, questions]);
 
   return (
     <div className="py-5 px-8 mt-6 card-theme rounded-md">
@@ -276,11 +274,13 @@ export default function Survey() {
     <>
       <div className="sm:py-3 py-5 md:px-8 px-20 flex justify-between items-center">
         <div className="flex items-center justify-start">
-          <img
-            src={theme === "dark" ? logo_dark : logo_light}
-            alt="logo"
-            className="me-2 sm:h-[28px] md:h-[46px]"
-          />
+          <Link to="/">
+            <img
+              src={theme === "dark" ? logo_dark : logo_light}
+              alt="logo"
+              className="me-2 sm:h-[28px] md:h-[46px]"
+            />
+          </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
             Share your feedback
           </div>

@@ -15,6 +15,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -172,11 +173,13 @@ export default function BugReport() {
     <>
       <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center">
         <div className="flex items-center justify-start">
-          <img
-            src={theme === "dark" ? logo_dark : logo_light}
-            alt="logo"
-            className="me-2 sm:h-[28px] md:h-[46px]"
-          />
+          <Link to="/">
+            <img
+              src={theme === "dark" ? logo_dark : logo_light}
+              alt="logo"
+              className="me-2 sm:h-[28px] md:h-[46px]"
+            />
+          </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
             Report a bug
           </div>
@@ -274,9 +277,10 @@ export default function BugReport() {
             closeIcon={null}
             description={
               <div>
-                We value your feedback! If you&apos;ve encountered a bug or issue
-                while using our platform, please help us improve by reporting
-                it. Your input is invaluable in making our service better.
+                We value your feedback! If you&apos;ve encountered a bug or
+                issue while using our platform, please help us improve by
+                reporting it. Your input is invaluable in making our service
+                better.
               </div>
             }
           />

@@ -3,6 +3,7 @@ import logo_light from "../assets/logo_light_46.png";
 import logo_dark from "../assets/logo_dark_46.png";
 import { AutoComplete, Button } from "@douyinfe/semi-ui";
 import { IconSearch, IconSun, IconMoon } from "@douyinfe/semi-icons";
+import { Link } from "react-router-dom";
 
 const shortcuts = [
   { shortcut: "CTRL+S", title: "Save diagram", description: "" },
@@ -112,11 +113,13 @@ export default function Shortcuts() {
     <>
       <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center">
         <div className="flex items-center justify-start">
-          <img
-            src={theme === "dark" ? logo_dark : logo_light}
-            alt="logo"
-            className="me-2 sm:h-[28px] md:h-[46px]"
-          />
+          <Link to="/">
+            <img
+              src={theme === "dark" ? logo_dark : logo_light}
+              alt="logo"
+              className="me-2 sm:h-[28px] md:h-[46px]"
+            />
+          </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
             Keyboard shortcuts
           </div>
