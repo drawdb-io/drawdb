@@ -11,6 +11,7 @@ import postgres_icon from "../assets/postgres.png";
 import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
 import sql_server_icon from "../assets/sql-server.png";
+import discord from "../assets/discord.png";
 
 const features = [
   {
@@ -176,7 +177,7 @@ export default function LandingPage() {
             </Reveal>
             <div className="mt-4 flex gap-4 justify-center font-semibold">
               <button
-                className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-200"
+                className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
                 onClick={() =>
                   document
                     .getElementById("learn-more")
@@ -305,6 +306,54 @@ export default function LandingPage() {
             className="opacity-70 hover:opacity-100 transition-all duration-300 h-24"
           />
         </div>
+        <div className="mt-16 mb-2 text-2xl font-bold text-center">
+          Reach out to us
+        </div>
+        <div className="text-lg text-center mb-4">
+          Your feedback is important to us. Share your thoughts and help us
+          improve.
+        </div>
+        <div className="px-36 text-center">
+          <div className="w-full flex gap-8">
+            <Link
+              to="/survey"
+              className="w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
+            >
+              <div>Take a survey</div>
+              <i className="bi bi-arrow-right"></i>
+            </Link>
+            <Link
+              to="/bug_report"
+              className="w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
+            >
+              <div>Report a bug</div>
+              <i className="bi bi-arrow-right"></i>
+            </Link>
+          </div>
+          <div className="mt-10">
+            Connect with us at
+            <a href="mailto:drawdb@outlook.com" className="text-blue-500 font-semibold hover:underline ms-1.5">
+              drawdb@outlook.com
+            </a>
+          </div>
+          <a
+            className="inline-block mt-2"
+            href="https://discord.gg/CUr9s9KH6X"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className="bg-[#5865f2] hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-8 py-4 rounded-lg">
+              <img src={discord} className="h-8" />
+              <div className="text-lg text-white font-bold">
+                Join us on Discord
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold">
+        Attention! The diagrams are saved in your browser. Before clearing the
+        browser make sure to back up your data.
       </div>
       <hr className="border-zinc-300" />
       <div className="text-center text-sm py-3">
