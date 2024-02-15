@@ -1,11 +1,137 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IconCrossStroked } from "@douyinfe/semi-icons";
-import SimpleCanvas from "../components/SimpleCanvas"
+import SimpleCanvas from "../components/SimpleCanvas";
 import Navbar from "../components/Navbar";
-import { diagram } from "../data/heroDiagram"
+import { diagram } from "../data/heroDiagram";
 import Reveal from "../animations/Reveal";
 import { Steps } from "@douyinfe/semi-ui";
+import mysql_icon from "../assets/mysql.png";
+import postgres_icon from "../assets/postgres.png";
+import sqlite_icon from "../assets/sqlite.png";
+import mariadb_icon from "../assets/mariadb.png";
+import sql_server_icon from "../assets/sql-server.png";
+
+const features = [
+  {
+    title: "Export",
+    content: (
+      <div>
+        Export the DDL script to run on your database or export the diagram as a
+        JSON or an image.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Import",
+    content: (
+      <div>
+        Already have a diagram? Import a DDL script*, or a JSON file to generate
+        or a diagram.
+      </div>
+    ),
+    footer: "*Only MySQL supported, more coming soon.",
+  },
+  {
+    title: "Customizable workspace",
+    content: (
+      <div>
+        Customize the UI to fit your preferences. Select the components you want
+        in your view.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Keyboard shortcuts",
+    content: (
+      <div>
+        Speed up development with keyboard shortuts. See all available shortcuts
+        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
+          here
+        </Link>
+        .
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Templates",
+    content: (
+      <div>
+        Start off with pre-built templates. Get a quick start or get inspirition
+        for your design.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Custom Templates",
+    content: (
+      <div>
+        Have boilerplate structures? Save time by saving them as templates and
+        load them when needed.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Robust editor",
+    content: (
+      <div>
+        Undo, redo, copy, paste, duplacate and more. Add tables, subject areas,
+        and notes.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Issue detection",
+    content: (
+      <div>
+        Detect and tackle errors in the diagram to make sure the scripts are
+        correct.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Relational databases",
+    content: (
+      <div>
+        We support 5 relational databases - MySQL, PostgreSQL, SQLite, MariaDB,
+        SQL Server.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Object-Relational databases",
+    content: (
+      <div>
+        Add custom types for object-relational databases, or create custom JSON
+        schemes and alias types.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Presentation mode",
+    content: (
+      <div>
+        Present your diagrams on a big screen during team meetings and
+        discussions.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Track todos",
+    content: <div>Keep track of tasks and mark them done when finished.</div>,
+    footer: "",
+  },
+];
 
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
@@ -44,16 +170,25 @@ export default function LandingPage() {
                 </h1>
               </div>
               <div className="text-lg font-semibold mt-3">
-                Free, simple, and intuitive database design tool and SQL generator.
+                Free, simple, and intuitive database design tool and SQL
+                generator.
               </div>
             </Reveal>
             <div className="mt-4 flex gap-4 justify-center font-semibold">
-              <button className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-200" onClick={() => document
-                .getElementById("learn-more")
-                .scrollIntoView({ behavior: "smooth" })}>
+              <button
+                className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-200"
+                onClick={() =>
+                  document
+                    .getElementById("learn-more")
+                    .scrollIntoView({ behavior: "smooth" })
+                }
+              >
                 Learn more
               </button>
-              <Link to="/editor" className="bg-slate-700 text-white px-4 py-2 rounded shadow-lg hover:bg-slate-600 transition-all duration-200">
+              <Link
+                to="/editor"
+                className="bg-slate-700 text-white px-4 py-2 rounded shadow-lg hover:bg-slate-600 transition-all duration-200"
+              >
                 Try it for yourself
               </Link>
             </div>
@@ -61,12 +196,23 @@ export default function LandingPage() {
         </div>
       </div>
       <div id="learn-more">
-        <div className="bg-zinc-100 py-10 px-24">
-          <div className="text-2xl text-slate-900 font-bold text-center mb-5">Entity-Relationship diagrams simplified</div>
+        <div className="bg-zinc-100 py-10 px-24 rounded-b-[40px]">
+          <div className="text-2xl text-slate-900 font-bold text-center mb-5">
+            Entity-Relationship diagrams simplified
+          </div>
           <Steps type="basic" current={3}>
-            <Steps.Step title="Create tables" description="Define tables with the necessary fields and indices." />
-            <Steps.Step title="Add relationships" description="Build relationships by simply dragging" />
-            <Steps.Step title="Export" description="Export to your preferred SQL flavor" />
+            <Steps.Step
+              title="Create tables"
+              description="Define tables with the necessary fields and indices."
+            />
+            <Steps.Step
+              title="Add relationships"
+              description="Build relationships by simply dragging"
+            />
+            <Steps.Step
+              title="Export"
+              description="Export to your preferred SQL flavor"
+            />
           </Steps>
           <div className="mt-16 text-center w-[75%] sm:w-[80%] mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
             <div className="text-2xl font-bold text-slate-900 mb-8">
@@ -80,7 +226,9 @@ export default function LandingPage() {
                 <div className="mt-6 text-lg font-semibold text-slate-700">
                   Free
                 </div>
-                <div className="text-sm mt-3">drawDB is completely free of charge.</div>
+                <div className="text-sm mt-3">
+                  drawDB is completely free of charge.
+                </div>
               </div>
               <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
                 <span className="text-white bg-blue-400 rounded-full py-2.5 px-3">
@@ -89,7 +237,9 @@ export default function LandingPage() {
                 <div className="mt-6 text-lg font-semibold text-slate-700">
                   No registration
                 </div>
-                <div className="text-sm mt-3">No need to sign up or login. Just jump into development.</div>
+                <div className="text-sm mt-3">
+                  No need to sign up or login. Just jump into development.
+                </div>
               </div>
               <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
                 <span className="text-white bg-emerald-400 rounded-full py-2.5 px-3">
@@ -104,6 +254,56 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div id="features" className="py-10 px-36">
+        <div className="text-2xl font-bold text-center">
+          Here is what drawDB offers
+        </div>
+        <div className="text-sm opacity-75 text-center">
+          More coming soon...
+        </div>
+        <div className="grid grid-cols-3 gap-8 mt-6">
+          {features.map((f, i) => (
+            <div
+              key={i}
+              className="rounded-xl hover:bg-zinc-100 border shadow-sm hover:-translate-y-2 transition-all duration-300"
+            >
+              <div className="bg-sky-700 py-1 rounded-t-xl" />
+              <div className="px-8 py-4 ">
+                <div className="text-lg font-semibold mb-3">{f.title}</div>
+                {f.content}
+                <div className="mt-2 text-xs opacity-60">{f.footer}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-zinc-100 py-10 px-32 rounded-t-[40px]">
+        <div className="text-center text-2xl font-bold">
+          We support these DBMS
+        </div>
+        <div className="grid grid-cols-5 place-items-center items-baseline">
+          <img
+            src={mysql_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-20"
+          />
+          <img
+            src={postgres_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 "
+          />
+          <img
+            src={sqlite_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
+          />
+          <img
+            src={mariadb_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
+          />
+          <img
+            src={sql_server_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-24"
+          />
         </div>
       </div>
       <hr className="border-zinc-300" />

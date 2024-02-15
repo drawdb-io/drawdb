@@ -15,7 +15,14 @@ export default function Navbar() {
             <img src={logo} alt="logo" className="me-2 sm:h-[32px]" />
           </Link>
           <div className="md:hidden">
-            <Link className="ms-6 text-lg font-semibold hover:text-indigo-700">
+            <Link
+              className="ms-6 text-lg font-semibold hover:text-indigo-700"
+              onClick={() =>
+                document
+                  .getElementById("features")
+                  .scrollIntoView({ behavior: "smooth" })
+              }
+            >
               Features
             </Link>
             <Link
