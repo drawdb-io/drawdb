@@ -10,7 +10,6 @@ import {
   IconRedo,
   IconRowsStroked,
   IconEdit,
-  IconPlus,
 } from "@douyinfe/semi-icons";
 import { Link } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
@@ -71,6 +70,7 @@ import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
+import { Thumbnail } from "./Thumbnail";
 
 export default function ControlPanel({
   diagramId,
@@ -81,6 +81,7 @@ export default function ControlPanel({
   setState,
   lastSaved,
 }) {
+  const defaultTemplates = useLiveQuery(() => db.templates.toArray());
   const MODAL = {
     NONE: 0,
     IMG: 1,
@@ -1012,7 +1013,7 @@ export default function ControlPanel({
             },
           },
           {
-            "MSSQL": () => {
+            MSSQL: () => {
               setVisible(MODAL.CODE);
               const src = jsonToSQLServer({
                 tables: tables,
@@ -1256,7 +1257,7 @@ export default function ControlPanel({
       case MODAL.SAVEAS:
         return "Save as";
       case MODAL.NEW:
-        return "New diagram";
+        return "Create new diagram";
       default:
         return "";
     }
@@ -1820,32 +1821,28 @@ export default function ControlPanel({
 
   const newModalBody = () => (
     <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
-      <div>
+      <div onClick={() => setSelectedTemplateId(0)}>
         <div
-          className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
-            settings.mode === "light"
-              ? "hover:border-blue-500"
-              : "hover:border-white"
-          } ${selectedTemplateId === 0 && "border-2 border-blue-500"}`}
-          onClick={() => setSelectedTemplateId(0)}
+          className={`rounded-md h-[180px] border-2 hover:border-dashed ${
+            selectedTemplateId === 0 ? "border-blue-400" : "border-zinc-100"
+          }`}
         >
-          <IconPlus style={{ color: "#fff" }} size="extra-large" />
+          <Thumbnail i={0} diagram={{}} zoom={0.24} />
         </div>
         <div className="text-center mt-1">Blank</div>
       </div>
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-        <div key={i}>
+      {defaultTemplates.map((temp, i) => (
+        <div key={i} onClick={() => setSelectedTemplateId(temp.id)}>
           <div
-            className={`h-[180px] w-full bg-blue-400 bg-opacity-30 flex justify-center items-center rounded hover:bg-opacity-40 hover:border-2 hover:border-dashed ${
-              settings.mode === "light"
-                ? "hover:border-blue-500"
-                : "hover:border-white"
-            } ${selectedTemplateId === i && "border-2 border-blue-500"}`}
-            onClick={() => setSelectedTemplateId(i)}
+            className={`rounded-md h-[180px] border-2 hover:border-dashed ${
+              selectedTemplateId === temp.id
+                ? "border-blue-400"
+                : "border-zinc-100"
+            }`}
           >
-            +
+            <Thumbnail i={temp.id} diagram={temp} zoom={0.24} />
           </div>
-          <div className="text-center mt-1">Template {i}</div>
+          <div className="text-center mt-1">{temp.title}</div>
         </div>
       ))}
     </div>
@@ -2021,7 +2018,7 @@ export default function ControlPanel({
             (visible === MODAL.IMPORT_SRC && data.src === ""),
         }}
         cancelText="Cancel"
-        width={600}
+        width={visible === MODAL.NEW ? 740 : 600}
       >
         {getModalBody()}
       </Modal>
