@@ -1203,7 +1203,7 @@ export default function ControlPanel({
         shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
-        function: () => {},
+        function: () => window.open("https://discord.gg/CUr9s9KH6X", "_blank"),
       },
       "Report a bug": {
         function: () => window.open("/bug_report", "_blank"),
