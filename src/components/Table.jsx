@@ -14,7 +14,6 @@ import {
   IconDeleteStroked,
   IconKeyStroked,
   IconCheckboxTick,
-  IconColorPalette,
 } from "@douyinfe/semi-icons";
 import {
   Select,
@@ -72,24 +71,27 @@ export default function Table(props) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div
-          className={`border-2 ${isHovered
+          className={`border-2 ${
+            isHovered
               ? "border-dashed border-blue-500"
               : selectedElement.element === ObjectType.TABLE &&
                 selectedElement.id === props.tableData.id
-                ? "border-blue-500"
-                : "border-slate-400"
-            } select-none rounded-lg w-full ${settings.mode === "light"
+              ? "border-blue-500"
+              : "border-slate-400"
+          } select-none rounded-lg w-full ${
+            settings.mode === "light"
               ? "bg-zinc-100 text-zinc-800"
               : "bg-zinc-800 text-zinc-200"
-            }`}
+          }`}
         >
           <div
             className={`h-[10px] w-full rounded-t-md`}
             style={{ backgroundColor: props.tableData.color }}
           />
           <div
-            className={`font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
-              }`}
+            className={`font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
+              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
+            }`}
           >
             <div className="px-3">
               {isHovered
@@ -97,8 +99,8 @@ export default function Table(props) {
                   ? props.tableData.name
                   : `${props.tableData.name.substring(0, 10)}...`
                 : props.tableData.name.length < 16
-                  ? props.tableData.name
-                  : `${props.tableData.name.substring(0, 16)}...`}
+                ? props.tableData.name
+                : `${props.tableData.name.substring(0, 16)}...`}
             </div>
             {isHovered && (
               <div className="flex justify-end items-center mx-2">
@@ -147,8 +149,9 @@ export default function Table(props) {
                       </div>
                       <div>
                         <strong
-                          className={`${props.tableData.indices.length === 0 ? "" : "block"
-                            }`}
+                          className={`${
+                            props.tableData.indices.length === 0 ? "" : "block"
+                          }`}
                         >
                           Indices :
                         </strong>{" "}
@@ -159,10 +162,11 @@ export default function Table(props) {
                             {props.tableData.indices.map((index, k) => (
                               <div
                                 key={k}
-                                className={`flex items-center my-1 px-2 py-1 rounded ${settings.mode === "light"
+                                className={`flex items-center my-1 px-2 py-1 rounded ${
+                                  settings.mode === "light"
                                     ? "bg-gray-100"
                                     : "bg-zinc-800"
-                                  }`}
+                                }`}
                               >
                                 <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
                                 <div>
@@ -431,8 +435,9 @@ export default function Table(props) {
                         fid: j,
                         undo: { notNull: f.notNull },
                         redo: { notNull: !f.notNull },
-                        message: `Edit table field to${f.notNull ? "" : " not"
-                          } null`,
+                        message: `Edit table field to${
+                          f.notNull ? "" : " not"
+                        } null`,
                       },
                     ]);
                     setRedoStack([]);
@@ -458,8 +463,9 @@ export default function Table(props) {
                         fid: j,
                         undo: { primary: f.primary },
                         redo: { primary: !f.primary },
-                        message: `Edit table field to${f.primary ? " not" : ""
-                          } primary`,
+                        message: `Edit table field to${
+                          f.primary ? " not" : ""
+                        } primary`,
                       },
                     ]);
                     setRedoStack([]);
@@ -691,8 +697,9 @@ export default function Table(props) {
                                   [checkedValues.target.value]:
                                     checkedValues.target.checked,
                                 },
-                                message: `Edit table field to${f.unique ? " not" : ""
-                                  } unique`,
+                                message: `Edit table field to${
+                                  f.unique ? " not" : ""
+                                } unique`,
                               },
                             ]);
                             setRedoStack([]);
@@ -732,8 +739,9 @@ export default function Table(props) {
                                   [checkedValues.target.value]:
                                     checkedValues.target.checked,
                                 },
-                                message: `Edit table field to${f.primary ? " not" : ""
-                                  } auto increment`,
+                                message: `Edit table field to${
+                                  f.primary ? " not" : ""
+                                } auto increment`,
                               },
                             ]);
                             setRedoStack([]);
@@ -896,10 +904,10 @@ export default function Table(props) {
                         indices: props.tableData.indices.map((index) =>
                           index.id === k
                             ? {
-                              ...index,
-                              fields: [...value],
-                              name: `${value.join("_")}_index`,
-                            }
+                                ...index,
+                                fields: [...value],
+                                name: `${value.join("_")}_index`,
+                              }
                             : index
                         ),
                       });
@@ -936,8 +944,9 @@ export default function Table(props) {
                                     [checkedValues.target.value]:
                                       checkedValues.target.checked,
                                   },
-                                  message: `Edit table field to${idx.unique ? " not" : ""
-                                    } unique`,
+                                  message: `Edit table field to${
+                                    idx.unique ? " not" : ""
+                                  } unique`,
                                 },
                               ]);
                               setRedoStack([]);
@@ -945,10 +954,10 @@ export default function Table(props) {
                                 indices: props.tableData.indices.map((index) =>
                                   index.id === k
                                     ? {
-                                      ...index,
-                                      [checkedValues.target.value]:
-                                        checkedValues.target.checked,
-                                    }
+                                        ...index,
+                                        [checkedValues.target.value]:
+                                          checkedValues.target.checked,
+                                      }
                                     : index
                                 ),
                               });
@@ -1038,7 +1047,7 @@ export default function Table(props) {
               <Popover
                 content={
                   <div>
-                    <div className="flex justify-between items-center p-2">
+                    <div className="flex justify-between items-center p-2 popover-theme">
                       <div className="font-medium">Theme</div>
                       <Button
                         type="tertiary"
@@ -1141,7 +1150,10 @@ export default function Table(props) {
                 position="bottomLeft"
                 showArrow
               >
-                <Button type="tertiary" icon={<IconColorPalette />}></Button>
+                <div
+                  className="h-[32px] w-[32px] rounded"
+                  style={{ backgroundColor: props.tableData.color }}
+                />
               </Popover>
             </Col>
             <Col span={7}>
@@ -1231,10 +1243,11 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`${index === props.tableData.fields.length - 1
+        className={`${
+          index === props.tableData.fields.length - 1
             ? ""
             : "border-b border-gray-400"
-          } h-[36px] px-2 py-1 flex justify-between`}
+        } h-[36px] px-2 py-1 flex justify-between`}
         onMouseEnter={() => {
           setHoveredField(index);
           props.setOnRect({
