@@ -1167,6 +1167,9 @@ export default function ControlPanel({
       },
     },
     Settings: {
+      "Show timeline": {
+        function: () => setSidesheet(SIDESHEET.TIMELINE),
+      },
       Autosave: {
         function: () =>
           setSettings((prev) => {
@@ -2231,14 +2234,6 @@ export default function ControlPanel({
               onClick={save}
             >
               <IconSaveStroked size="extra-large" />
-            </button>
-          </Tooltip>
-          <Tooltip content="Timeline" position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded text-xl"
-              onClick={() => setSidesheet(SIDESHEET.TIMELINE)}
-            >
-              <i className="fa-solid fa-timeline"></i>
             </button>
           </Tooltip>
           <Tooltip content="To-do" position="bottom">
