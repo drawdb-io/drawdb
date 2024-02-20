@@ -160,10 +160,11 @@ export default function LandingPage() {
         )}
         <Navbar />
         <div className="flex-1 flex-col relative">
-          <div className="h-full">
+          <div className="h-full md:hidden">
             <SimpleCanvas diagram={diagram} zoom={0.85} />
           </div>
-          <div className="absolute left-0 top-[50%] translate-y-[-50%] p-8 text-zinc-800 text-center">
+          <div className="hidden md:block h-full bg-dots"></div>
+          <div className="absolute left-0 top-[50%] translate-y-[-50%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 text-center">
             <Reveal>
               <div className="text-4xl font-bold tracking-wide">
                 <h1 className="py-1 bg-gradient-to-r from-slate-700 from-10% via-slate-500 to-slate-700 inline-block text-transparent bg-clip-text">
@@ -197,29 +198,31 @@ export default function LandingPage() {
         </div>
       </div>
       <div id="learn-more">
-        <div className="bg-zinc-100 py-10 px-24 rounded-b-[40px]">
-          <div className="text-2xl text-slate-900 font-bold text-center mb-5">
+        <div className="bg-zinc-100 py-10 px-24 md:px-8 rounded-b-[40px]">
+          <div className="text-2xl text-slate-900 font-bold text-center mb-5 md:hidden">
             Entity-Relationship diagrams simplified
           </div>
-          <Steps type="basic" current={3}>
-            <Steps.Step
-              title="Create tables"
-              description="Define tables with the necessary fields and indices."
-            />
-            <Steps.Step
-              title="Add relationships"
-              description="Build relationships by simply dragging"
-            />
-            <Steps.Step
-              title="Export"
-              description="Export to your preferred SQL flavor"
-            />
-          </Steps>
-          <div className="mt-16 text-center w-[75%] sm:w-[80%] mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
+          <div className="md:hidden">
+            <Steps type="basic" current={3}>
+              <Steps.Step
+                title="Create tables"
+                description="Define tables with the necessary fields and indices."
+              />
+              <Steps.Step
+                title="Add relationships"
+                description="Build relationships by simply dragging"
+              />
+              <Steps.Step
+                title="Export"
+                description="Export to your preferred SQL flavor"
+              />
+            </Steps>
+          </div>
+          <div className="mt-16 text-center w-[75%] sm:w-full mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
             <div className="text-2xl font-bold text-slate-900 mb-8">
               Why drawDB?
             </div>
-            <div className="grid grid-cols-3 gap-4 ">
+            <div className="grid grid-cols-3 gap-4 md:grid-cols-1">
               <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
                 <span className="text-white bg-green-400 rounded-full py-2.5 px-3">
                   <i className="fa-solid fa-credit-card"></i>
@@ -257,14 +260,14 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div id="features" className="py-10 px-36">
+      <div id="features" className="py-10 px-36 md:px-8">
         <div className="text-2xl font-bold text-center">
           Here is what drawDB offers
         </div>
         <div className="text-sm opacity-75 text-center">
           More coming soon...
         </div>
-        <div className="grid grid-cols-3 gap-8 mt-6">
+        <div className="grid grid-cols-3 gap-8 mt-6 md:grid-cols-2 sm:grid-cols-1">
           {features.map((f, i) => (
             <div
               key={i}
@@ -280,18 +283,18 @@ export default function LandingPage() {
           ))}
         </div>
       </div>
-      <div className="bg-zinc-100 py-10 px-32 rounded-t-[40px]">
-        <div className="text-center text-2xl font-bold">
+      <div className="bg-zinc-100 py-10 px-32 md:px-8 rounded-t-[40px]">
+        <div className="text-center text-2xl font-bold mb-4">
           We support these DBMS
         </div>
-        <div className="grid grid-cols-5 place-items-center items-baseline">
+        <div className="grid grid-cols-5 place-items-center items-baseline sm:grid-cols-1 sm:gap-4">
           <img
             src={mysql_icon}
             className="opacity-70 hover:opacity-100 transition-all duration-300 h-20"
           />
           <img
             src={postgres_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 "
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-12"
           />
           <img
             src={sqlite_icon}
@@ -313,8 +316,8 @@ export default function LandingPage() {
           Your feedback is important to us. Share your thoughts and help us
           improve.
         </div>
-        <div className="px-36 text-center">
-          <div className="w-full flex gap-8">
+        <div className="px-36 text-center md:px-8">
+          <div className="w-full flex gap-8 sm:block">
             <Link
               to="/survey"
               className="w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
@@ -324,7 +327,7 @@ export default function LandingPage() {
             </Link>
             <Link
               to="/bug_report"
-              className="w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
+              className="sm:mt-2 w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
             >
               <div>Report a bug</div>
               <i className="bi bi-arrow-right"></i>
@@ -332,7 +335,10 @@ export default function LandingPage() {
           </div>
           <div className="mt-10">
             Connect with us at
-            <a href="mailto:drawdb@outlook.com" className="text-blue-500 font-semibold hover:underline ms-1.5">
+            <a
+              href="mailto:drawdb@outlook.com"
+              className="text-blue-500 font-semibold hover:underline ms-1.5"
+            >
               drawdb@outlook.com
             </a>
           </div>
@@ -351,7 +357,7 @@ export default function LandingPage() {
           </a>
         </div>
       </div>
-      <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold">
+      <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold px-3">
         Attention! The diagrams are saved in your browser. Before clearing the
         browser make sure to back up your data.
       </div>

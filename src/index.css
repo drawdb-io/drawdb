@@ -105,3 +105,10 @@
 .table-border {
   border-color: rgba(var(--semi-grey-2), 1);
 }
+
+.bg-dots {
+  background-color: white;
+  opacity: 0.8;
+  background-image: radial-gradient(rgb(118, 118, 209) 1px, white 1px);
+  background-size: 20px 20px;
+}
