@@ -440,6 +440,9 @@ export default function Canvas() {
                 zoom={settings.zoom}
               ></Area>
             ))}
+            {relationships.map((e, i) => (
+              <Relationship key={i} data={e} />
+            ))}
             {tables.map((table) => (
               <Table
                 key={table.id}
@@ -467,9 +470,6 @@ export default function Canvas() {
                 strokeDasharray="8,8"
               />
             )}
-            {relationships.map((e, i) => (
-              <Relationship key={i} data={e} />
-            ))}
             {notes.map((n) => (
               <Note
                 key={n.id}
