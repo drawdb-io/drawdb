@@ -453,7 +453,8 @@ export default function Editor() {
       tables.length === 0 &&
       areas.length === 0 &&
       notes.length === 0 &&
-      types.length === 0
+      types.length === 0 &&
+      tasks.length === 0
     )
       return;
 
@@ -468,7 +469,8 @@ export default function Editor() {
     areas.length,
     notes.length,
     types.length,
-    relationships.length
+    relationships.length,
+    tasks.length,
   ]);
 
   useEffect(() => {
@@ -490,6 +492,7 @@ export default function Editor() {
               types: types,
               notes: notes,
               areas: areas,
+              todos: tasks,
             })
             .then((id) => {
               setId(id);
@@ -507,6 +510,7 @@ export default function Editor() {
               types: types,
               notes: notes,
               areas: areas,
+              todos: tasks,
             })
             .then(() => {
               setState(State.SAVED);
@@ -522,6 +526,7 @@ export default function Editor() {
             types: types,
             notes: notes,
             subjectAreas: areas,
+            todos: tasks,
           })
           .then(() => {
             setState(State.SAVED);
@@ -537,7 +542,7 @@ export default function Editor() {
     const diagram = window.name === "" || op === "d" || op === "lt";
 
     save(diagram);
-  }, [tables, relationships, notes, areas, types, title, id, state]);
+  }, [tables, relationships, notes, areas, types, title, id, state, tasks]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -554,6 +559,7 @@ export default function Editor() {
             setNotes(d.notes);
             setAreas(d.areas);
             setTypes(d.types);
+            setTasks(d.todos);
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
@@ -576,6 +582,7 @@ export default function Editor() {
             setRelationships(diagram.references);
             setAreas(diagram.areas);
             setNotes(diagram.notes);
+            setTasks(diagram.todos);
             setUndoStack([]);
             setRedoStack([]);
             window.name = `d ${diagram.id}`;
@@ -599,6 +606,7 @@ export default function Editor() {
             setTypes(diagram.types);
             setRelationships(diagram.relationships);
             setAreas(diagram.subjectAreas);
+            setTasks(diagram.tasks);
             setNotes(diagram.notes);
             setUndoStack([]);
             setRedoStack([]);
@@ -651,7 +659,7 @@ export default function Editor() {
   }, []);
 
   return (
-    <LayoutContext.Provider value={{ layout, setLayout }}>
+    <LayoutContext.Provider value={{ layout, setLayout, state, setState }}>
       <TableContext.Provider
         value={{
           tables,
@@ -698,8 +706,6 @@ export default function Editor() {
                             setDiagramId={setId}
                             title={title}
                             setTitle={setTitle}
-                            state={state}
-                            setState={setState}
                             lastSaved={lastSaved}
                             setLastSaved={setLastSaved}
                           />
@@ -717,25 +723,38 @@ export default function Editor() {
                             )}
                             <div className="relative w-full h-full overflow-hidden">
                               <Canvas state={state} setState={setState} />
-                              {
-                                !(layout.sidebar || layout.toolbar || layout.header) &&
+                              {!(
+                                layout.sidebar ||
+                                layout.toolbar ||
+                                layout.header
+                              ) && (
                                 <div className="fixed right-5 bottom-4 flex gap-2">
                                   <div className="popover-theme flex rounded-lg items-center">
                                     <button
                                       className="px-3 py-2"
                                       onClick={() =>
-                                        setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
-                                      }>
+                                        setSettings((prev) => ({
+                                          ...prev,
+                                          zoom: prev.zoom / 1.2,
+                                        }))
+                                      }
+                                    >
                                       <i className="bi bi-dash-lg"></i>
                                     </button>
                                     <Divider align="center" layout="vertical" />
-                                    <div className="px-3 py-2">{parseInt(settings.zoom * 100)}%</div>
+                                    <div className="px-3 py-2">
+                                      {parseInt(settings.zoom * 100)}%
+                                    </div>
                                     <Divider align="center" layout="vertical" />
                                     <button
                                       className="px-3 py-2"
                                       onClick={() =>
-                                        setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
-                                      }>
+                                        setSettings((prev) => ({
+                                          ...prev,
+                                          zoom: prev.zoom * 1.2,
+                                        }))
+                                      }
+                                    >
                                       <i className="bi bi-plus-lg"></i>
                                     </button>
                                   </div>
@@ -743,7 +762,7 @@ export default function Editor() {
                                     <button
                                       className="px-3 py-2 rounded-lg popover-theme"
                                       onClick={() => {
-                                        setLayout(prev => ({
+                                        setLayout((prev) => ({
                                           ...prev,
                                           sidebar: true,
                                           toolbar: true,
@@ -756,7 +775,7 @@ export default function Editor() {
                                     </button>
                                   </Tooltip>
                                 </div>
-                              }
+                              )}
                             </div>
                           </div>
                         </div>

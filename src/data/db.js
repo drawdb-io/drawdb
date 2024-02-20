@@ -3,7 +3,7 @@ import { templateSeeds } from "./seeds";
 
 const db = new Dexie("drawDB");
 
-db.version(3).stores({
+db.version(4).stores({
   diagrams: "++id, lastModified",
   templates: "++id, custom",
 });

@@ -77,7 +77,6 @@ export default function ControlPanel({
   setDiagramId,
   title,
   setTitle,
-  state,
   setState,
   lastSaved,
 }) {
@@ -122,7 +121,7 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const { layout, setLayout } = useContext(LayoutContext);
+  const { layout, setLayout, state } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const {
     relationships,

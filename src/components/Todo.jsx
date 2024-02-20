@@ -19,7 +19,8 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { TaskContext } from "../pages/Editor";
+import { LayoutContext, TaskContext } from "../pages/Editor";
+import { State } from "../data/data";
 export default function Todo() {
   const Priority = {
     NONE: 0,
@@ -36,6 +37,7 @@ export default function Todo() {
   const [activeTask, setActiveTask] = useState(-1);
   const [, setSortOrder] = useState(SortOrder.ORIGINAL);
   const { tasks, setTasks, updateTask } = useContext(TaskContext);
+  const { setState } = useContext(LayoutContext);
 
   const priorityLabel = (p) => {
     switch (p) {
@@ -159,9 +161,10 @@ export default function Todo() {
                   <Col span={2}>
                     <Checkbox
                       checked={t.complete}
-                      onChange={(e) =>
-                        updateTask(i, { complete: e.target.checked })
-                      }
+                      onChange={(e) => {
+                        updateTask(i, { complete: e.target.checked });
+                        setState(State.SAVING);
+                      }}
                     ></Checkbox>
                   </Col>
                   <Col span={19}>
@@ -169,6 +172,7 @@ export default function Todo() {
                       placeholder="Title"
                       onChange={(v) => updateTask(i, { title: v })}
                       value={t.title}
+                      onBlur={() => setState(State.SAVING)}
                     ></Input>
                   </Col>
                   <Col span={3}>
@@ -176,12 +180,13 @@ export default function Todo() {
                       content={
                         <div className="p-2 popover-theme">
                           <div className="mb-2 font-semibold">
-                            Set priority:{" "}
+                            Set priority:
                           </div>
                           <RadioGroup
-                            onChange={(e) =>
-                              updateTask(i, { priority: e.target.value })
-                            }
+                            onChange={(e) => {
+                              updateTask(i, { priority: e.target.value });
+                              setState(State.SAVING);
+                            }}
                             value={t.priority}
                             direction="vertical"
                           >
@@ -211,11 +216,12 @@ export default function Todo() {
                             type="danger"
                             block
                             style={{ marginTop: "12px" }}
-                            onClick={() =>
+                            onClick={() => {
                               setTasks((prev) =>
                                 prev.filter((task, j) => i !== j)
-                              )
-                            }
+                              );
+                              setState(State.SAVING);
+                            }}
                           >
                             Delete
                           </Button>
@@ -237,6 +243,7 @@ export default function Todo() {
                         placeholder="Details"
                         onChange={(v) => updateTask(i, { details: v })}
                         value={t.details}
+                        onBlur={() => setState(State.SAVING)}
                       ></TextArea>
                     </Col>
                   </Row>
