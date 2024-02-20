@@ -557,18 +557,20 @@ export default function ControlPanel({
   const fitWindow = () => {
     const diagram = document.getElementById("diagram").getBoundingClientRect();
     const canvas = document.getElementById("canvas").getBoundingClientRect();
+    console.log(diagram);
+    console.log(canvas);
 
     const scaleX = canvas.width / diagram.width;
     const scaleY = canvas.height / diagram.height;
 
     const scale = Math.min(scaleX, scaleY);
 
-    const translateX = canvas.width / 2;
-    const translateY = canvas.height / 2;
+    const translateX = canvas.left;
+    const translateY = canvas.top;
 
     setSettings((prev) => ({
       ...prev,
-      zoom: scale,
+      zoom: scale - 0.01,
       pan: { x: translateX, y: translateY },
     }));
   };

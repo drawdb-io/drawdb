@@ -470,7 +470,7 @@ export default function Editor() {
     notes.length,
     types.length,
     relationships.length,
-    tasks.length,
+    tasks?.length,
   ]);
 
   useEffect(() => {
