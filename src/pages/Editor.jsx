@@ -473,8 +473,9 @@ export default function Editor() {
     tasks?.length,
     settings.pan,
     settings.zoom,
+    title,
   ]);
-  
+
   const save = useCallback(
     async (diagram = true) => {
       if (state !== State.SAVING) {
@@ -565,18 +566,7 @@ export default function Editor() {
     const diagram = window.name === "" || op === "d" || op === "lt";
 
     save(diagram);
-  }, [
-    tables,
-    relationships,
-    notes,
-    areas,
-    types,
-    title,
-    id,
-    state,
-    tasks,
-    save,
-  ]);
+  }, [id, state, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
