@@ -4,7 +4,6 @@ import { IconCrossStroked } from "@douyinfe/semi-icons";
 import SimpleCanvas from "../components/SimpleCanvas";
 import Navbar from "../components/Navbar";
 import { diagram } from "../data/heroDiagram";
-import Reveal from "../animations/Reveal";
 import { Steps } from "@douyinfe/semi-ui";
 import mysql_icon from "../assets/mysql.png";
 import postgres_icon from "../assets/postgres.png";
@@ -12,6 +11,8 @@ import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
+import FadeIn from "../animations/FadeIn";
+import SlideIn from "../animations/SlideIn";
 
 const features = [
   {
@@ -164,8 +165,8 @@ export default function LandingPage() {
             <SimpleCanvas diagram={diagram} zoom={0.85} />
           </div>
           <div className="hidden md:block h-full bg-dots"></div>
-          <div className="absolute left-0 top-[50%] translate-y-[-50%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 text-center">
-            <Reveal>
+          <div className="absolute left-12 top-[50%] translate-y-[-50%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 text-center">
+            <FadeIn duration={0.75}>
               <div className="text-4xl font-bold tracking-wide">
                 <h1 className="py-1 bg-gradient-to-r from-slate-700 from-10% via-slate-500 to-slate-700 inline-block text-transparent bg-clip-text">
                   Draw, Copy, and Paste
@@ -175,7 +176,7 @@ export default function LandingPage() {
                 Free, simple, and intuitive database design tool and SQL
                 generator.
               </div>
-            </Reveal>
+            </FadeIn>
             <div className="mt-4 flex gap-4 justify-center font-semibold">
               <button
                 className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
@@ -199,89 +200,99 @@ export default function LandingPage() {
       </div>
       <div id="learn-more">
         <div className="bg-zinc-100 py-10 px-24 md:px-8 rounded-b-[40px]">
-          <div className="text-2xl text-slate-900 font-bold text-center mb-5 md:hidden">
-            Entity-Relationship diagrams simplified
-          </div>
-          <div className="md:hidden">
-            <Steps type="basic" current={3}>
-              <Steps.Step
-                title="Create tables"
-                description="Define tables with the necessary fields and indices."
-              />
-              <Steps.Step
-                title="Add relationships"
-                description="Build relationships by simply dragging"
-              />
-              <Steps.Step
-                title="Export"
-                description="Export to your preferred SQL flavor"
-              />
-            </Steps>
-          </div>
+          <FadeIn duration={1}>
+            <div className="text-2xl text-slate-900 font-bold text-center mb-5 md:hidden">
+              Entity-Relationship diagrams simplified
+            </div>
+            <div className="md:hidden">
+              <Steps type="basic" current={3}>
+                <Steps.Step
+                  title="Create tables"
+                  description="Define tables with the necessary fields and indices."
+                />
+                <Steps.Step
+                  title="Add relationships"
+                  description="Build relationships by simply dragging"
+                />
+                <Steps.Step
+                  title="Export"
+                  description="Export to your preferred SQL flavor"
+                />
+              </Steps>
+            </div>
+          </FadeIn>
           <div className="mt-16 text-center w-[75%] sm:w-full mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
             <div className="text-2xl font-bold text-slate-900 mb-8">
               Why drawDB?
             </div>
-            <div className="grid grid-cols-3 gap-4 md:grid-cols-1">
-              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                <span className="text-white bg-green-400 rounded-full py-2.5 px-3">
-                  <i className="fa-solid fa-credit-card"></i>
-                </span>
-                <div className="mt-6 text-lg font-semibold text-slate-700">
-                  Free
+            <div className="grid grid-cols-3 gap-4 md:grid-cols-1 h-full">
+              <SlideIn delay={0} duration={0.4} className="h-full">
+                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                  <span className="text-white bg-green-400 rounded-full py-2.5 px-3">
+                    <i className="fa-solid fa-credit-card"></i>
+                  </span>
+                  <div className="mt-6 text-lg font-semibold text-slate-700">
+                    Free
+                  </div>
+                  <div className="text-sm mt-3">
+                    drawDB is completely free of charge.
+                  </div>
                 </div>
-                <div className="text-sm mt-3">
-                  drawDB is completely free of charge.
+              </SlideIn>
+              <SlideIn delay={1 * 0.4} duration={0.4} className="h-full">
+                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                  <span className="text-white bg-blue-400 rounded-full py-2.5 px-3">
+                    <i className="fa-solid fa-user-xmark"></i>
+                  </span>
+                  <div className="mt-6 text-lg font-semibold text-slate-700">
+                    No registration
+                  </div>
+                  <div className="text-sm mt-3">
+                    No need to sign up or login. Just jump into development.
+                  </div>
                 </div>
-              </div>
-              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                <span className="text-white bg-blue-400 rounded-full py-2.5 px-3">
-                  <i className="fa-solid fa-user-xmark"></i>
-                </span>
-                <div className="mt-6 text-lg font-semibold text-slate-700">
-                  No registration
+              </SlideIn>
+              <SlideIn delay={2 * 0.4} duration={0.4} className="h-full">
+                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
+                  <span className="text-white bg-emerald-400 rounded-full py-2.5 px-3">
+                    <i className="fa-regular fa-star "></i>
+                  </span>
+                  <div className="mt-6 text-lg font-semibold text-slate-700">
+                    Simple to use
+                  </div>
+                  <div className="text-sm mt-3">
+                    Intuitive design that&apos;s easy to navigate.
+                  </div>
                 </div>
-                <div className="text-sm mt-3">
-                  No need to sign up or login. Just jump into development.
-                </div>
-              </div>
-              <div className="border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                <span className="text-white bg-emerald-400 rounded-full py-2.5 px-3">
-                  <i className="fa-regular fa-star "></i>
-                </span>
-                <div className="mt-6 text-lg font-semibold text-slate-700">
-                  Simple to use
-                </div>
-                <div className="text-sm mt-3">
-                  Intuitive design that&apos;s easy to navigate.
-                </div>
-              </div>
+              </SlideIn>
             </div>
           </div>
         </div>
       </div>
       <div id="features" className="py-10 px-36 md:px-8">
-        <div className="text-2xl font-bold text-center">
-          Here is what drawDB offers
-        </div>
-        <div className="text-sm opacity-75 text-center">
-          More coming soon...
-        </div>
-        <div className="grid grid-cols-3 gap-8 mt-6 md:grid-cols-2 sm:grid-cols-1">
-          {features.map((f, i) => (
-            <div
-              key={i}
-              className="rounded-xl hover:bg-zinc-100 border shadow-sm hover:-translate-y-2 transition-all duration-300"
-            >
-              <div className="bg-sky-700 py-1 rounded-t-xl" />
-              <div className="px-8 py-4 ">
-                <div className="text-lg font-semibold mb-3">{f.title}</div>
-                {f.content}
-                <div className="mt-2 text-xs opacity-60">{f.footer}</div>
+        <FadeIn duration={1}>
+          <div className="text-2xl font-bold text-center">
+            Here is what drawDB offers
+          </div>
+          <div className="text-sm opacity-75 text-center">
+            More coming soon...
+          </div>
+          <div className="grid grid-cols-3 gap-8 mt-6 md:grid-cols-2 sm:grid-cols-1">
+            {features.map((f, i) => (
+              <div
+                key={i}
+                className="rounded-xl hover:bg-zinc-100 border shadow-sm hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className="bg-sky-700 py-1 rounded-t-xl" />
+                <div className="px-8 py-4 ">
+                  <div className="text-lg font-semibold mb-3">{f.title}</div>
+                  {f.content}
+                  <div className="mt-2 text-xs opacity-60">{f.footer}</div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </FadeIn>
       </div>
       <div className="bg-zinc-100 py-10 px-32 md:px-8 rounded-t-[40px]">
         <div className="text-center text-2xl font-bold mb-4">
