@@ -571,7 +571,7 @@ export default function Editor() {
   useEffect(() => {
     document.title = "Editor | drawDB";
 
-    const loadLatestDiagram = () => {
+    const loadLatestDiagram = async () => {
       db.diagrams
         .orderBy("lastModified")
         .last()
@@ -595,7 +595,7 @@ export default function Editor() {
         });
     };
 
-    const loadDiagram = (id) => {
+    const loadDiagram = async (id) => {
       db.diagrams
         .get(id)
         .then((diagram) => {
@@ -625,7 +625,7 @@ export default function Editor() {
         });
     };
 
-    const loadTemplate = (id) => {
+    const loadTemplate = async (id) => {
       db.templates
         .get(id)
         .then((diagram) => {

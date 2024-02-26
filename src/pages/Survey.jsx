@@ -236,6 +236,8 @@ function SurveyForm({ theme }) {
 export default function Survey() {
   const [theme, setTheme] = useState("");
 
+  useEffect(() => window.scroll(0, 0));
+
   useEffect(() => {
     const t = localStorage.getItem("theme");
     setTheme(t);
@@ -271,7 +273,7 @@ export default function Survey() {
   };
 
   return (
-    <>
+    <div>
       <div className="sm:py-3 py-5 md:px-8 px-20 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <Link to="/">
@@ -329,6 +331,6 @@ export default function Survey() {
       <div className="text-center text-sm py-3">
         &copy; 2024 <strong>drawDB</strong> - All right reserved.
       </div>
-    </>
+    </div>
   );
 }
