@@ -2438,13 +2438,7 @@ export default function ControlPanel({
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
-              icon={
-                layout.fullscreen ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
-              }
+              icon={<div className="px-2"></div>}
               onClick={() => {
                 if (layout.fullscreen) {
                   exitFullscreen();
