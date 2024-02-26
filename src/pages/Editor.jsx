@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useCallback } from "react";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
@@ -471,10 +471,12 @@ export default function Editor() {
     types.length,
     relationships.length,
     tasks?.length,
+    settings.pan,
+    settings.zoom,
   ]);
-
-  useEffect(() => {
-    const save = async (diagram = true) => {
+  
+  const save = useCallback(
+    async (diagram = true) => {
       if (state !== State.SAVING) {
         return;
       }
@@ -493,6 +495,8 @@ export default function Editor() {
               notes: notes,
               areas: areas,
               todos: tasks,
+              pan: settings.pan,
+              zoom: settings.zoom,
             })
             .then((id) => {
               setId(id);
@@ -511,6 +515,8 @@ export default function Editor() {
               notes: notes,
               areas: areas,
               todos: tasks,
+              pan: settings.pan,
+              zoom: settings.zoom,
             })
             .then(() => {
               setState(State.SAVED);
@@ -527,6 +533,8 @@ export default function Editor() {
             notes: notes,
             subjectAreas: areas,
             todos: tasks,
+            pan: settings.pan,
+            zoom: settings.zoom,
           })
           .then(() => {
             setState(State.SAVED);
@@ -536,13 +544,39 @@ export default function Editor() {
             setState(State.ERROR);
           });
       }
-    };
+    },
+    [
+      tables,
+      relationships,
+      notes,
+      areas,
+      types,
+      title,
+      id,
+      state,
+      tasks,
+      settings.zoom,
+      settings.pan,
+    ]
+  );
+  useEffect(() => {
     const name = window.name.split(" ");
     const op = name[0];
     const diagram = window.name === "" || op === "d" || op === "lt";
 
     save(diagram);
-  }, [tables, relationships, notes, areas, types, title, id, state, tasks]);
+  }, [
+    tables,
+    relationships,
+    notes,
+    areas,
+    types,
+    title,
+    id,
+    state,
+    tasks,
+    save,
+  ]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -560,6 +594,7 @@ export default function Editor() {
             setAreas(d.areas);
             setTypes(d.types);
             setTasks(d.todos);
+            setSettings((prev) => ({ ...prev, pan: d.pan, zoom: d.zoom }));
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
@@ -583,6 +618,11 @@ export default function Editor() {
             setAreas(diagram.areas);
             setNotes(diagram.notes);
             setTasks(diagram.todos);
+            setSettings((prev) => ({
+              ...prev,
+              pan: diagram.pan,
+              zoom: diagram.zoom,
+            }));
             setUndoStack([]);
             setRedoStack([]);
             window.name = `d ${diagram.id}`;
@@ -608,6 +648,11 @@ export default function Editor() {
             setAreas(diagram.subjectAreas);
             setTasks(diagram.tasks);
             setNotes(diagram.notes);
+            setSettings((prev) => ({
+              ...prev,
+              pan: diagram.pan,
+              zoom: diagram.zoom,
+            }));
             setUndoStack([]);
             setRedoStack([]);
           }
