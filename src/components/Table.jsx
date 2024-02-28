@@ -1275,7 +1275,9 @@ export default function Table(props) {
               }));
             }}
           ></button>
-          {fieldData.name}
+          {fieldData.name.length < 10
+            ? fieldData.name
+            : fieldData.name.substring(0, 10)}
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (
