@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo_light_46.png";
+import logo from "../assets/logo_light_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 
@@ -12,7 +12,7 @@ export default function Navbar() {
       <div className="py-5 px-8 sm:px-4 flex justify-between items-center">
         <div className="flex items-center justify-start">
           <Link to="/">
-            <img src={logo} alt="logo" className="me-2 sm:h-[32px]" />
+            <img src={logo} alt="logo" className="me-2 h-[48px] sm:h-[32px]" />
           </Link>
           <div className="md:hidden">
             <Link
