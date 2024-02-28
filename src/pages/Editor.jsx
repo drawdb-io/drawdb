@@ -640,8 +640,8 @@ export default function Editor() {
             setNotes(diagram.notes);
             setSettings((prev) => ({
               ...prev,
-              pan: diagram.pan,
-              zoom: diagram.zoom,
+              pan: {x: 0, y: 0},
+              zoom: 1,
             }));
             setUndoStack([]);
             setRedoStack([]);
