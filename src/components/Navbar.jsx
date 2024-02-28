@@ -53,7 +53,15 @@ export default function Navbar() {
         onCancel={() => setOpenMenu(false)}
         width={window.innerWidth}
       >
-        <Link className="hover:bg-zinc-100 block p-3 text-base font-semibold">
+        <Link
+          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          onClick={() => {
+            document
+              .getElementById("features")
+              .scrollIntoView({ behavior: "smooth" });
+            setOpenMenu(false);
+          }}
+        >
           Features
         </Link>
         <hr />
