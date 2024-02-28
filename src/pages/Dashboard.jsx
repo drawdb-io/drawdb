@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import logo_light from "../assets/logo_light_46.png";
-import logo_dark from "../assets/logo_dark_46.png";
+import logo_light from "../assets/logo_light_160.png";
+import logo_dark from "../assets/logo_dark_160.png";
 
 const Page = {
   MY_FILES: 0,

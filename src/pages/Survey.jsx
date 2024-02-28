@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import logo_light from "../assets/logo_light_46.png";
-import logo_dark from "../assets/logo_dark_46.png";
+import logo_light from "../assets/logo_light_160.png";
+import logo_dark from "../assets/logo_dark_160.png";
 import {
   Banner,
   Button,
@@ -280,7 +280,7 @@ export default function Survey() {
             <img
               src={theme === "dark" ? logo_dark : logo_light}
               alt="logo"
-              className="me-2 sm:h-[28px] md:h-[46px]"
+              className="me-2 sm:h-[28px] md:h-[46px] h-[48px]"
             />
           </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">

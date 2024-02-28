@@ -95,12 +95,12 @@ export default function Table(props) {
           >
             <div className="px-3">
               {isHovered
-                ? props.tableData.name.length < 10
+                ? props.tableData.name.length <= 10
                   ? props.tableData.name
                   : `${props.tableData.name.substring(0, 10)}...`
-                : props.tableData.name.length < 16
+                : props.tableData.name.length <= 18
                 ? props.tableData.name
-                : `${props.tableData.name.substring(0, 16)}...`}
+                : `${props.tableData.name.substring(0, 19)}...`}
             </div>
             {isHovered && (
               <div className="flex justify-end items-center mx-2">
@@ -1275,7 +1275,9 @@ export default function Table(props) {
               }));
             }}
           ></button>
-          {fieldData.name}
+          {fieldData.name.length <= 11
+            ? fieldData.name
+            : fieldData.name.substring(0, 11)}
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (

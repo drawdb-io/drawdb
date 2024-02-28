@@ -125,7 +125,7 @@ export function Thumbnail({ diagram, i, zoom }) {
             )}
             fill="none"
             strokeWidth={1}
-            stroke="gray"
+            stroke="#ddd"
           />
         ))}
         {diagram.notes?.map((n) => {

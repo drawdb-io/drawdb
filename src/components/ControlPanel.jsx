@@ -113,7 +113,7 @@ export default function ControlPanel({
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
-    filename: `diagram_${new Date().toISOString()}`,
+    filename: `${title}_${new Date().toISOString()}`,
     extension: "",
   });
   const [error, setError] = useState({
@@ -163,6 +163,9 @@ export default function ControlPanel({
     setRelationships(data.relationships);
     setAreas(data.subjectAreas);
     setNotes(data.notes);
+    if (data.title) {
+      setTitle(data.title);
+    }
   };
 
   const undo = () => {
@@ -880,6 +883,7 @@ export default function ControlPanel({
                   notes: notes,
                   subjectAreas: areas,
                   types: types,
+                  title: title,
                 },
                 null,
                 2
@@ -931,7 +935,7 @@ export default function ControlPanel({
               const result = JSON.stringify(
                 {
                   author: "Unnamed",
-                  filename: title,
+                  title: title,
                   date: new Date().toISOString(),
                   tables: tables,
                   relationships: relationships,
@@ -1995,7 +1999,7 @@ export default function ControlPanel({
           setExportData(() => ({
             data: "",
             extension: "",
-            filename: `diagram_${new Date().toISOString()}`,
+            filename: `${title}_${new Date().toISOString()}`,
           }));
           setError({
             type: STATUS.NONE,

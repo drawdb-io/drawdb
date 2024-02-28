@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import logo_light from "../assets/logo_light_46.png";
+import logo_light from "../assets/logo_light_160.png";
 import template_screenshot from "../assets/template_screenshot.png"
 import { Link } from "react-router-dom";
 import { Tabs, TabPane, Banner, Steps } from "@douyinfe/semi-ui";
@@ -197,7 +197,7 @@ export default function Templates() {
               <img
                 src={logo_light}
                 alt="logo"
-                className="me-2 sm:h-[28px] md:h-[46px]"
+                className="me-2 sm:h-[28px] md:h-[46px] h-[48px]"
               />
             </Link>
             <div className="ms-4 sm:text-sm xl:text-xl text-xl font-semibold">
