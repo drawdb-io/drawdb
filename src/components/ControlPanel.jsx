@@ -113,7 +113,7 @@ export default function ControlPanel({
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
-    filename: `diagram_${new Date().toISOString()}`,
+    filename: `${title}_${new Date().toISOString()}`,
     extension: "",
   });
   const [error, setError] = useState({
@@ -1995,7 +1995,7 @@ export default function ControlPanel({
           setExportData(() => ({
             data: "",
             extension: "",
-            filename: `diagram_${new Date().toISOString()}`,
+            filename: `${title}_${new Date().toISOString()}`,
           }));
           setError({
             type: STATUS.NONE,
