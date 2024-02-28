@@ -161,6 +161,7 @@ const jsonSchema = {
       type: "array",
       items: { ...areaSchema },
     },
+    title: { type: "string" },
   },
   required: ["tables", "relationships", "notes", "subjectAreas"],
 };
@@ -170,7 +171,7 @@ const ddbSchema = {
   properties: {
     author: { type: "string" },
     project: { type: "string" },
-    filename: { type: "string" },
+    title: { type: "string" },
     date: { type: "string" },
     ...jsonSchema.properties,
   },
