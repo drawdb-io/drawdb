@@ -77,7 +77,6 @@ export default function ControlPanel({
   setDiagramId,
   title,
   setTitle,
-  setState,
   lastSaved,
 }) {
   const defaultTemplates = useLiveQuery(() => db.templates.toArray());
@@ -121,7 +120,7 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const { layout, setLayout, state } = useContext(LayoutContext);
+  const { layout, setLayout, state, setState } = useContext(LayoutContext);
   const { settings, setSettings } = useContext(SettingsContext);
   const {
     relationships,
@@ -2235,7 +2234,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content="To-do" position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl"
+              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
               <i className="fa-regular fa-calendar-check"></i>
