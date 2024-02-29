@@ -6,7 +6,7 @@ import {
   TabContext,
   SelectContext,
 } from "../pages/Editor";
-import { Action, ObjectType, noteThemes, Tab } from "../data/data";
+import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,
@@ -22,7 +22,7 @@ export default function Note(props) {
   const fold = 24;
   const { updateNote, deleteNote } = useContext(NoteContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { layout } = useContext(LayoutContext);
+  const { layout, setState } = useContext(LayoutContext);
   const { tab, setTab } = useContext(TabContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
 
@@ -146,6 +146,7 @@ export default function Note(props) {
                     ...prev,
                     openDialogue: false,
                   }));
+                  setState(State.SAVING);
                 }}
                 stopPropagation
                 content={

@@ -11,6 +11,7 @@ import {
   ObjectType,
   tableThemes,
   defaultTableTheme,
+  State,
 } from "../data/data";
 import {
   AreaContext,
@@ -23,9 +24,8 @@ import {
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [editField, setEditField] = useState({});
-  const { layout } = useContext(LayoutContext);
+  const { layout, setState } = useContext(LayoutContext);
   const { settings } = useContext(SettingsContext);
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
@@ -49,7 +49,6 @@ export default function Area(props) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
         setHovered(false);
-        setSaved(false);
       }}
     >
       <foreignObject
@@ -96,6 +95,7 @@ export default function Area(props) {
                   ...prev,
                   openDialogue: false,
                 }));
+                setState(State.SAVING);
               }}
               stopPropagation
               content={
@@ -113,7 +113,6 @@ export default function Area(props) {
                       }
                       onFocus={(e) => setEditField({ name: e.target.value })}
                       onBlur={(e) => {
-                        setSaved(true);
                         if (e.target.value === editField.name) return;
                         setUndoStack((prev) => [
                           ...prev,
@@ -137,11 +136,12 @@ export default function Area(props) {
                             <Button
                               type="tertiary"
                               size="small"
-                              onClick={() =>
+                              onClick={() => {
                                 updateArea(props.areaData.id, {
                                   color: defaultTableTheme,
-                                })
-                              }
+                                });
+                                setState(State.SAVING);
+                              }}
                             >
                               Clear
                             </Button>
@@ -244,30 +244,6 @@ export default function Area(props) {
                       }}
                     >
                       Delete
-                    </Button>
-                    <Button
-                      block
-                      style={{ marginLeft: "8px" }}
-                      onClick={() => {
-                        if (!saved) {
-                          if (props.areaData.name === editField.name) return;
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.AREA,
-                              aid: props.areaData.id,
-                              undo: editField,
-                              redo: { name: props.areaData.name },
-                              message: `Edit area name to ${props.areaData.name}`,
-                            },
-                          ]);
-                          setRedoStack([]);
-                          setSaved(false);
-                        }
-                      }}
-                    >
-                      Save
                     </Button>
                   </div>
                 </div>
