@@ -1630,15 +1630,7 @@ export default function ControlPanel({
         setVisible(MODAL.NONE);
         return;
       case MODAL.SAVEAS:
-        db.diagrams.add({
-          name: saveAsTitle,
-          lastModified: new Date(),
-          tables: tables,
-          references: relationships,
-          types: types,
-          notes: notes,
-          areas: areas,
-        });
+        setTitle(saveAsTitle);
         setVisible(MODAL.NONE);
         return;
       case MODAL.NEW:
