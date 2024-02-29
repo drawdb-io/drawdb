@@ -13,6 +13,7 @@
     "@douyinfe/semi-ui": "^2.51.3",
     "@lexical/react": "^0.12.5",
     "@monaco-editor/react": "^4.6.0",
+    "@vercel/analytics": "^1.2.2",
     "axios": "^1.6.2",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
