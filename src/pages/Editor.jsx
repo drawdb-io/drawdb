@@ -297,14 +297,25 @@ export default function Editor() {
       ]);
       setRedoStack([]);
     }
-    setTables((prev) =>
-      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
-    );
-    setRelationships((prev) =>
-      prev
-        .filter((e) => e.startTableId !== id && e.endTableId !== id)
-        .map((e, i) => ({ ...e, id: i }))
-    );
+    setRelationships((prevR) => {
+      return prevR
+        .filter((e) => !(e.startTableId === id || e.endTableId === id))
+        .map((e, i) => {
+          const newR = { ...e };
+
+          if (e.startTableId > id) {
+            newR.startTableId = e.startTableId - 1;
+          }
+          if (e.endTableId > id) {
+            newR.endTableId = e.endTableId - 1;
+          }
+
+          return { ...newR, id: i };
+        });
+    });
+    setTables((prev) => {
+      return prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }));
+    });
     if (id === selectedElement.id) {
       setSelectedElement({
         element: ObjectType.NONE,
@@ -450,11 +461,11 @@ export default function Editor() {
 
   useEffect(() => {
     if (
-      tables.length === 0 &&
-      areas.length === 0 &&
-      notes.length === 0 &&
-      types.length === 0 &&
-      tasks.length === 0
+      tables?.length === 0 &&
+      areas?.length === 0 &&
+      notes?.length === 0 &&
+      types?.length === 0 &&
+      tasks?.length === 0
     )
       return;
 
@@ -465,11 +476,11 @@ export default function Editor() {
     undoStack,
     redoStack,
     settings.autosave,
-    tables.length,
-    areas.length,
-    notes.length,
-    types.length,
-    relationships.length,
+    tables?.length,
+    areas?.length,
+    notes?.length,
+    types?.length,
+    relationships?.length,
     tasks?.length,
     settings.pan,
     settings.zoom,
@@ -640,7 +651,7 @@ export default function Editor() {
             setNotes(diagram.notes);
             setSettings((prev) => ({
               ...prev,
-              pan: {x: 0, y: 0},
+              pan: { x: 0, y: 0 },
               zoom: 1,
             }));
             setUndoStack([]);
