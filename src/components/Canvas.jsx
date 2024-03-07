@@ -119,8 +119,8 @@ export default function Canvas() {
 
       setLine({
         ...line,
-        endX: (e.clientX - offsetX - settings.pan.x) / settings.zoom,
-        endY: (e.clientY - offsetY - settings.pan.y) / settings.zoom,
+        endX: (e.clientX - offsetX - settings.pan?.x) / settings.zoom,
+        endY: (e.clientY - offsetY - settings.pan?.y) / settings.zoom,
       });
     } else if (
       panning.state &&
@@ -134,7 +134,7 @@ export default function Canvas() {
       const dy = e.clientY - panOffset.y;
       setSettings((prev) => ({
         ...prev,
-        pan: { x: prev.pan.x + dx, y: prev.pan.y + dy },
+        pan: { x: prev.pan?.x + dx, y: prev.pan?.y + dy },
       }));
       setPanOffset({ x: e.clientX, y: e.clientY });
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
@@ -228,7 +228,7 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(settings.pan.x === panning.x && settings.pan.y === panning.y);
+    !(settings.pan?.x === panning.x && settings.pan?.y === panning.y);
 
   const getMoveInfo = () => {
     switch (dragging.element) {
@@ -281,7 +281,7 @@ export default function Canvas() {
           action: Action.PAN,
           undo: { x: panning.x, y: panning.y },
           redo: settings.pan,
-          message: `Move diagram to (${settings.pan.x}, ${settings.pan.y})`,
+          message: `Move diagram to (${settings.pan?.x}, ${settings.pan?.y})`,
         },
       ]);
       setRedoStack([]);
@@ -422,7 +422,7 @@ export default function Canvas() {
           )}
           <g
             style={{
-              transform: `translate(${settings.pan.x}px, ${settings.pan.y}px) scale(${settings.zoom})`,
+              transform: `translate(${settings.pan?.x}px, ${settings.pan?.y}px) scale(${settings.zoom})`,
               transformOrigin: "top left",
             }}
             id="diagram"

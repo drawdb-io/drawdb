@@ -482,7 +482,6 @@ export default function Editor() {
     types?.length,
     relationships?.length,
     tasks?.length,
-    settings.pan,
     settings.zoom,
     title,
   ]);
