@@ -10,7 +10,7 @@ import {
 } from "@douyinfe/semi-icons";
 import RichEditor from "../components/RichEditor";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { editorConfig } from "../data/editor_config";
+import { editorConfig } from "../data/editorConfig";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
