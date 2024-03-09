@@ -6,7 +6,6 @@ import Relationship from "./Relationship";
 import {
   AreaContext,
   NoteContext,
-  SettingsContext,
   TableContext,
   UndoRedoContext,
   SelectContext,
@@ -14,13 +13,14 @@ import {
 } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
+import useSettings from "../hooks/useSettings";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } =
     useContext(TableContext);
   const { areas, updateArea } = useContext(AreaContext);
   const { notes, updateNote } = useContext(NoteContext);
-  const { settings } = useContext(SettingsContext);
+  const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { transform, setTransform } = useContext(TransformContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);

@@ -76,19 +76,7 @@ export default function Shortcuts() {
   };
 
   useEffect(() => {
-    const t = localStorage.getItem("theme");
-    setTheme(t);
-    if (t === "dark") {
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "dark");
-      }
-    } else {
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "light");
-      }
-    }
+    setTheme(localStorage.getItem("theme"));
     document.title = "Shortcuts | drawDB";
     document.body.setAttribute("class", "theme");
   }, [setTheme]);

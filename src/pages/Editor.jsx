@@ -15,13 +15,13 @@ import { Divider, Tooltip } from "@douyinfe/semi-ui";
 import { exitFullscreen } from "../utils";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
+import useSettings from "../hooks/useSettings";
 
 export const StateContext = createContext();
 export const TableContext = createContext();
 export const AreaContext = createContext();
 export const TabContext = createContext();
 export const NoteContext = createContext();
-export const SettingsContext = createContext();
 export const UndoRedoContext = createContext();
 export const SelectContext = createContext();
 export const TaskContext = createContext();
@@ -52,15 +52,7 @@ function WorkSpace() {
   const [width, setWidth] = useState(340);
   const [tab, setTab] = useState(Tab.tables);
   const { layout, setLayout } = useLayout();
-  const [settings, setSettings] = useState({
-    strictMode: false,
-    showFieldSummary: true,
-    showGrid: true,
-    mode: "light",
-    autosave: true,
-    panning: true,
-    showCardinality: true,
-  });
+  const { settings, setSettings } = useSettings();
   const [transform, setTransform] = useState({
     zoom: 1,
     pan: { x: 0, y: 0 },
@@ -94,8 +86,8 @@ function WorkSpace() {
         {
           id: prev.length,
           name: `table_${prev.length}`,
-          x: -settings.pan.x,
-          y: -settings.pan.y,
+          x: -transform.pan.x,
+          y: -transform.pan.y,
           fields: [
             {
               name: "id",
@@ -211,8 +203,8 @@ function WorkSpace() {
         {
           id: prev.length,
           name: `area_${prev.length}`,
-          x: -settings.pan.x,
-          y: -settings.pan.y,
+          x: -transform.pan.x,
+          y: -transform.pan.y,
           width: 200,
           height: 200,
           color: defaultTableTheme,
@@ -244,8 +236,8 @@ function WorkSpace() {
         ...prev,
         {
           id: prev.length,
-          x: -settings.pan.x,
-          y: -settings.pan.y,
+          x: -transform.pan.x,
+          y: -transform.pan.y,
           title: `note_${prev.length}`,
           content: "",
           color: defaultNoteTheme,
@@ -690,22 +682,7 @@ function WorkSpace() {
           break;
       }
     }
-
-    const theme = localStorage.getItem("theme");
-    if (theme === "dark") {
-      setSettings((prev) => ({ ...prev, mode: "dark" }));
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "dark");
-      }
-    } else {
-      setSettings((prev) => ({ ...prev, mode: "light" }));
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "light");
-      }
-    }
-  }, []);
+  }, [setSettings]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
@@ -731,115 +708,107 @@ function WorkSpace() {
               value={{ notes, setNotes, updateNote, addNote, deleteNote }}
             >
               <TabContext.Provider value={{ tab, setTab }}>
-                <SettingsContext.Provider value={{ settings, setSettings }}>
-                  <UndoRedoContext.Provider
-                    value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
+                <UndoRedoContext.Provider
+                  value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
+                >
+                  <SelectContext.Provider
+                    value={{ selectedElement, setSelectedElement }}
                   >
-                    <SelectContext.Provider
-                      value={{ selectedElement, setSelectedElement }}
+                    <TaskContext.Provider
+                      value={{ tasks, setTasks, updateTask }}
                     >
-                      <TaskContext.Provider
-                        value={{ tasks, setTasks, updateTask }}
+                      <TypeContext.Provider
+                        value={{
+                          types,
+                          setTypes,
+                          addType,
+                          updateType,
+                          deleteType,
+                        }}
                       >
-                        <TypeContext.Provider
-                          value={{
-                            types,
-                            setTypes,
-                            addType,
-                            updateType,
-                            deleteType,
-                          }}
-                        >
-                          <div className="h-[100vh] flex flex-col overflow-hidden theme">
-                            <ControlPanel
-                              diagramId={id}
-                              setDiagramId={setId}
-                              title={title}
-                              setTitle={setTitle}
-                              lastSaved={lastSaved}
-                              setLastSaved={setLastSaved}
-                            />
-                            <div
-                              className="flex h-full overflow-y-auto"
-                              onMouseUp={() => setResize(false)}
-                              onMouseMove={dragHandler}
-                            >
-                              {layout.sidebar && (
-                                <SidePanel
-                                  resize={resize}
-                                  setResize={setResize}
-                                  width={width}
-                                />
-                              )}
-                              <div className="relative w-full h-full overflow-hidden">
-                                <Canvas state={state} setState={setState} />
-                                {!(
-                                  layout.sidebar ||
-                                  layout.toolbar ||
-                                  layout.header
-                                ) && (
-                                  <div className="fixed right-5 bottom-4 flex gap-2">
-                                    <div className="popover-theme flex rounded-lg items-center">
-                                      <button
-                                        className="px-3 py-2"
-                                        onClick={() =>
-                                          setTransform((prev) => ({
-                                            ...prev,
-                                            zoom: prev.zoom / 1.2,
-                                          }))
-                                        }
-                                      >
-                                        <i className="bi bi-dash-lg"></i>
-                                      </button>
-                                      <Divider
-                                        align="center"
-                                        layout="vertical"
-                                      />
-                                      <div className="px-3 py-2">
-                                        {parseInt(transform.zoom * 100)}%
-                                      </div>
-                                      <Divider
-                                        align="center"
-                                        layout="vertical"
-                                      />
-                                      <button
-                                        className="px-3 py-2"
-                                        onClick={() =>
-                                          setTransform((prev) => ({
-                                            ...prev,
-                                            zoom: prev.zoom * 1.2,
-                                          }))
-                                        }
-                                      >
-                                        <i className="bi bi-plus-lg"></i>
-                                      </button>
+                        <div className="h-[100vh] flex flex-col overflow-hidden theme">
+                          <ControlPanel
+                            diagramId={id}
+                            setDiagramId={setId}
+                            title={title}
+                            setTitle={setTitle}
+                            lastSaved={lastSaved}
+                            setLastSaved={setLastSaved}
+                          />
+                          <div
+                            className="flex h-full overflow-y-auto"
+                            onMouseUp={() => setResize(false)}
+                            onMouseMove={dragHandler}
+                          >
+                            {layout.sidebar && (
+                              <SidePanel
+                                resize={resize}
+                                setResize={setResize}
+                                width={width}
+                              />
+                            )}
+                            <div className="relative w-full h-full overflow-hidden">
+                              <Canvas state={state} setState={setState} />
+                              {!(
+                                layout.sidebar ||
+                                layout.toolbar ||
+                                layout.header
+                              ) && (
+                                <div className="fixed right-5 bottom-4 flex gap-2">
+                                  <div className="popover-theme flex rounded-lg items-center">
+                                    <button
+                                      className="px-3 py-2"
+                                      onClick={() =>
+                                        setTransform((prev) => ({
+                                          ...prev,
+                                          zoom: prev.zoom / 1.2,
+                                        }))
+                                      }
+                                    >
+                                      <i className="bi bi-dash-lg"></i>
+                                    </button>
+                                    <Divider align="center" layout="vertical" />
+                                    <div className="px-3 py-2">
+                                      {parseInt(transform.zoom * 100)}%
                                     </div>
-                                    <Tooltip content="Exit">
-                                      <button
-                                        className="px-3 py-2 rounded-lg popover-theme"
-                                        onClick={() => {
-                                          setLayout((prev) => ({
-                                            ...prev,
-                                            sidebar: true,
-                                            toolbar: true,
-                                            header: true,
-                                          }));
-                                          exitFullscreen();
-                                        }}
-                                      >
-                                        <i className="bi bi-fullscreen-exit"></i>
-                                      </button>
-                                    </Tooltip>
+                                    <Divider align="center" layout="vertical" />
+                                    <button
+                                      className="px-3 py-2"
+                                      onClick={() =>
+                                        setTransform((prev) => ({
+                                          ...prev,
+                                          zoom: prev.zoom * 1.2,
+                                        }))
+                                      }
+                                    >
+                                      <i className="bi bi-plus-lg"></i>
+                                    </button>
                                   </div>
-                                )}
-                              </div>
+                                  <Tooltip content="Exit">
+                                    <button
+                                      className="px-3 py-2 rounded-lg popover-theme"
+                                      onClick={() => {
+                                        setLayout((prev) => ({
+                                          ...prev,
+                                          sidebar: true,
+                                          toolbar: true,
+                                          header: true,
+                                        }));
+                                        exitFullscreen();
+                                      }}
+                                    >
+                                      <i className="bi bi-fullscreen-exit"></i>
+                                    </button>
+                                  </Tooltip>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </TypeContext.Provider>
-                      </TaskContext.Provider>
-                    </SelectContext.Provider>
-                  </UndoRedoContext.Provider>
-                </SettingsContext.Provider>
+                        </div>
+                      </TypeContext.Provider>
+                    </TaskContext.Provider>
+                  </SelectContext.Provider>
+                </UndoRedoContext.Provider>
               </TabContext.Provider>
             </NoteContext.Provider>
           </AreaContext.Provider>

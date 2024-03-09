@@ -4,39 +4,85 @@ import Survey from "./pages/Survey";
 import BugReport from "./pages/BugReport";
 import Shortcuts from "./pages/Shortcuts";
 import Templates from "./pages/Templates";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import LandingPage from "./pages/LandingPage";
-import LayoutContextProvider from "./context/LayoutContext";
+import SettingsContextProvider from "./context/SettingsContext";
+import useSettings from "./hooks/useSettings";
 
-const Wrapper = ({ children }) => {
+function ThemedPage({ children }) {
+  const { setSettings } = useSettings();
+
+  useLayoutEffect(() => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      setSettings((prev) => ({ ...prev, mode: "dark" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "dark");
+      }
+    } else {
+      setSettings((prev) => ({ ...prev, mode: "light" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "light");
+      }
+    }
+  }, [setSettings]);
+
+  return children;
+}
+
+function RestoreScroll() {
   const location = useLocation();
   useEffect(() => {
     window.scroll(0, 0);
   }, [location.pathname]);
-  return children;
-};
+  return null;
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <Wrapper>
+    <SettingsContextProvider>
+      <BrowserRouter>
+        <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route
             path="/editor"
             element={
-              <LayoutContextProvider>
+              <ThemedPage>
                 <Editor />
-              </LayoutContextProvider>
+              </ThemedPage>
             }
           />
-          <Route path="/survey" element={<Survey />} />
-          <Route path="/shortcuts" element={<Shortcuts />} />
-          <Route path="/bug_report" element={<BugReport />} />
+          <Route
+            path="/survey"
+            element={
+              <ThemedPage>
+                <Survey />
+              </ThemedPage>
+            }
+          />
+          <Route
+            path="/shortcuts"
+            element={
+              <ThemedPage>
+                <Shortcuts />
+              </ThemedPage>
+            }
+          />
+          <Route
+            path="/bug_report"
+            element={
+              <ThemedPage>
+                <BugReport />
+              </ThemedPage>
+            }
+          />
           <Route path="/templates" element={<Templates />} />
         </Routes>
-      </Wrapper>
-    </BrowserRouter>
+      </BrowserRouter>
+    </SettingsContextProvider>
   );
 }
 

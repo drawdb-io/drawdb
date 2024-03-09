@@ -16,19 +16,19 @@ import {
 import {
   AreaContext,
   SelectContext,
-  SettingsContext,
   StateContext,
   TabContext,
   UndoRedoContext,
 } from "../pages/Editor";
 import useLayout from "../hooks/useLayout";
+import useSettings from "../hooks/useSettings";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
   const [editField, setEditField] = useState({});
   const { setState } = useContext(StateContext);
-  const {layout} = useLayout();
-  const { settings } = useContext(SettingsContext);
+  const { layout } = useLayout();
+  const { settings } = useSettings();
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);

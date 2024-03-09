@@ -53,7 +53,6 @@ import {
   NoteContext,
   TransformContext,
   SelectContext,
-  SettingsContext,
   StateContext,
   TabContext,
   TableContext,
@@ -73,6 +72,7 @@ import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
 import { Thumbnail } from "./Thumbnail";
 import useLayout from "../hooks/useLayout";
+import useSettings from "../hooks/useSettings";
 
 export default function ControlPanel({
   diagramId,
@@ -124,7 +124,7 @@ export default function ControlPanel({
   const [data, setData] = useState(null);
   const { state, setState } = useContext(StateContext);
   const { layout, setLayout } = useLayout();
-  const { settings, setSettings } = useContext(SettingsContext);
+  const { settings, setSettings } = useSettings();
   const {
     relationships,
     tables,

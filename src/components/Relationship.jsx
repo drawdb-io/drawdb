@@ -1,11 +1,11 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { calcPath } from "../utils";
 import { Cardinality } from "../data/data";
-import { SettingsContext } from "../pages/Editor";
+import useSettings from "../hooks/useSettings";
 
 export default function Relationship(props) {
   const [hovered, setHovered] = useState(false);
-  const { settings } = useContext(SettingsContext);
+  const { settings } = useSettings();
   const pathRef = useRef();
 
   let cardinalityStart = "1";

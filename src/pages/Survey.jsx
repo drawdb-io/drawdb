@@ -239,19 +239,7 @@ export default function Survey() {
   useEffect(() => window.scroll(0, 0));
 
   useEffect(() => {
-    const t = localStorage.getItem("theme");
-    setTheme(t);
-    if (t === "dark") {
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "dark");
-      }
-    } else {
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "light");
-      }
-    }
+    setTheme(localStorage.getItem("theme"));
     document.title = "Share you feedback | drawDB";
     document.body.setAttribute("class", "theme");
   }, [setTheme]);

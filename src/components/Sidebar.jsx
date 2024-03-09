@@ -9,12 +9,12 @@ import { Tooltip, SideSheet, List, Badge } from "@douyinfe/semi-ui";
 import {
   BotMessageContext,
   MessageContext,
-  SettingsContext,
   UndoRedoContext,
 } from "../pages/Editor";
 import Todo from "./Todo";
 import Chat from "./Chat";
 import DrawBot from "./DrawBot";
+import useSettings from "../hooks/useSettings";
 
 export default function Sidebar() {
   const SidesheetType = {
@@ -27,7 +27,7 @@ export default function Sidebar() {
   };
   const { undoStack } = useContext(UndoRedoContext);
   const { messages } = useContext(MessageContext);
-  const { settings } = useContext(SettingsContext);
+  const { settings } = useSettings();
   const { botMessages } = useContext(BotMessageContext);
   const [sidesheet, setSidesheet] = useState(SidesheetType.NONE);
   const [seen, setSeen] = useState(0);

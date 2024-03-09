@@ -33,7 +33,6 @@ import {
 } from "@douyinfe/semi-ui";
 import {
   SelectContext,
-  SettingsContext,
   TabContext,
   TableContext,
   TypeContext,
@@ -41,6 +40,7 @@ import {
 } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 import useLayout from "../hooks/useLayout";
+import useSettings from "../hooks/useSettings";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -50,7 +50,7 @@ export default function Table(props) {
   const { deleteTable, updateTable, updateField, setRelationships } =
     useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);
-  const { settings } = useContext(SettingsContext);
+  const { settings } = useSettings();
   const { types } = useContext(TypeContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
