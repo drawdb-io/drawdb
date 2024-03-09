@@ -235,11 +235,11 @@ export default function SimpleCanvas({ diagram, zoom }) {
         transform: `scale(${zoom})`,
         transformOrigin: "top left",
       }}>
-        {tables.map((t, i) => (
-          <Table key={i} table={t} grab={(e) => grabTable(e, i)} />
-        ))}
         {relationships.map((r, i) => (
           <Relationship key={i} relationship={r} />
+        ))}
+        {tables.map((t, i) => (
+          <Table key={i} table={t} grab={(e) => grabTable(e, i)} />
         ))}
       </g>
     </svg>
