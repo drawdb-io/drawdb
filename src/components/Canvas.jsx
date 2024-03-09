@@ -10,6 +10,7 @@ import {
   TableContext,
   UndoRedoContext,
   SelectContext,
+  TransformContext,
 } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
@@ -19,8 +20,9 @@ export default function Canvas() {
     useContext(TableContext);
   const { areas, updateArea } = useContext(AreaContext);
   const { notes, updateNote } = useContext(NoteContext);
-  const { settings, setSettings } = useContext(SettingsContext);
+  const { settings } = useContext(SettingsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { transform, setTransform } = useContext(TransformContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
@@ -69,8 +71,8 @@ export default function Canvas() {
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setOffset({
-        x: clientX / settings.zoom - table.x,
-        y: clientY / settings.zoom - table.y,
+        x: clientX / transform.zoom - table.x,
+        y: clientY / transform.zoom - table.y,
       });
       setDragging({
         element: ObjectType.TABLE,
@@ -81,8 +83,8 @@ export default function Canvas() {
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
       setOffset({
-        x: clientX / settings.zoom - area.x,
-        y: clientY / settings.zoom - area.y,
+        x: clientX / transform.zoom - area.x,
+        y: clientY / transform.zoom - area.y,
       });
       setDragging({
         element: ObjectType.AREA,
@@ -93,8 +95,8 @@ export default function Canvas() {
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
       setOffset({
-        x: clientX / settings.zoom - note.x,
-        y: clientY / settings.zoom - note.y,
+        x: clientX / transform.zoom - note.x,
+        y: clientY / transform.zoom - note.y,
       });
       setDragging({
         element: ObjectType.NOTE,
@@ -119,8 +121,8 @@ export default function Canvas() {
 
       setLine({
         ...line,
-        endX: (e.clientX - offsetX - settings.pan?.x) / settings.zoom,
-        endY: (e.clientY - offsetY - settings.pan?.y) / settings.zoom,
+        endX: (e.clientX - offsetX - transform.pan?.x) / transform.zoom,
+        endY: (e.clientY - offsetY - transform.pan?.y) / transform.zoom,
       });
     } else if (
       panning.state &&
@@ -132,26 +134,26 @@ export default function Canvas() {
       }
       const dx = e.clientX - panOffset.x;
       const dy = e.clientY - panOffset.y;
-      setSettings((prev) => ({
+      setTransform((prev) => ({
         ...prev,
         pan: { x: prev.pan?.x + dx, y: prev.pan?.y + dy },
       }));
       setPanOffset({ x: e.clientX, y: e.clientY });
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
-      const dx = e.clientX / settings.zoom - offset.x;
-      const dy = e.clientY / settings.zoom - offset.y;
+      const dx = e.clientX / transform.zoom - offset.x;
+      const dy = e.clientY / transform.zoom - offset.y;
       updateTable(dragging.id, { x: dx, y: dy }, true);
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
       areaResize.id === -1
     ) {
-      const dx = e.clientX / settings.zoom - offset.x;
-      const dy = e.clientY / settings.zoom - offset.y;
+      const dx = e.clientX / transform.zoom - offset.x;
+      const dy = e.clientY / transform.zoom - offset.y;
       updateArea(dragging.id, { x: dx, y: dy });
     } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
-      const dx = e.clientX / settings.zoom - offset.x;
-      const dy = e.clientY / settings.zoom - offset.y;
+      const dx = e.clientX / transform.zoom - offset.x;
+      const dy = e.clientY / transform.zoom - offset.y;
       updateNote(dragging.id, { x: dx, y: dy });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
@@ -160,8 +162,8 @@ export default function Canvas() {
       let newY = initCoords.y;
       let newWidth = initCoords.width;
       let newHeight = initCoords.height;
-      const mouseX = e.clientX / settings.zoom;
-      const mouseY = e.clientY / settings.zoom;
+      const mouseX = e.clientX / transform.zoom;
+      const mouseY = e.clientY / transform.zoom;
       setPanning({ state: false, x: 0, y: 0 });
       if (areaResize.dir === "br") {
         newWidth = initCoords.width + (mouseX - initCoords.mouseX);
@@ -191,7 +193,7 @@ export default function Canvas() {
   };
 
   const handleMouseDown = (e) => {
-    setPanning({ state: true, ...settings.pan });
+    setPanning({ state: true, ...transform.pan });
     setPanOffset({ x: e.clientX, y: e.clientY });
     setCursor("grabbing");
   };
@@ -228,7 +230,7 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(settings.pan?.x === panning.x && settings.pan?.y === panning.y);
+    !(transform.pan?.x === panning.x && transform.pan?.y === panning.y);
 
   const getMoveInfo = () => {
     switch (dragging.element) {
@@ -280,8 +282,8 @@ export default function Canvas() {
         {
           action: Action.PAN,
           undo: { x: panning.x, y: panning.y },
-          redo: settings.pan,
-          message: `Move diagram to (${settings.pan?.x}, ${settings.pan?.y})`,
+          redo: transform.pan,
+          message: `Move diagram to (${transform.pan?.x}, ${transform.pan?.y})`,
         },
       ]);
       setRedoStack([]);
@@ -359,7 +361,7 @@ export default function Canvas() {
 
   const handleMouseWheel = (e) => {
     e.preventDefault();
-    setSettings((prev) => ({
+    setTransform((prev) => ({
       ...prev,
       zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
     }));
@@ -422,7 +424,7 @@ export default function Canvas() {
           )}
           <g
             style={{
-              transform: `translate(${settings.pan?.x}px, ${settings.pan?.y}px) scale(${settings.zoom})`,
+              transform: `translate(${transform.pan?.x}px, ${transform.pan?.y}px) scale(${transform.zoom})`,
               transformOrigin: "top left",
             }}
             id="diagram"
@@ -437,7 +439,7 @@ export default function Canvas() {
                 setResize={setAreaResize}
                 initCoords={initCoords}
                 setInitCoords={setInitCoords}
-                zoom={settings.zoom}
+                zoom={transform.zoom}
               ></Area>
             ))}
             {relationships.map((e, i) => (

@@ -28,6 +28,7 @@ export const TaskContext = createContext();
 export const MessageContext = createContext();
 export const BotMessageContext = createContext();
 export const TypeContext = createContext();
+export const TransformContext = createContext();
 
 export default function Editor() {
   return (
@@ -54,13 +55,15 @@ function WorkSpace() {
   const [settings, setSettings] = useState({
     strictMode: false,
     showFieldSummary: true,
-    zoom: 1,
-    pan: { x: 0, y: 0 },
     showGrid: true,
     mode: "light",
     autosave: true,
     panning: true,
     showCardinality: true,
+  });
+  const [transform, setTransform] = useState({
+    zoom: 1,
+    pan: { x: 0, y: 0 },
   });
   const [tasks, setTasks] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
@@ -485,7 +488,7 @@ function WorkSpace() {
     types?.length,
     relationships?.length,
     tasks?.length,
-    settings.zoom,
+    transform.zoom,
     title,
   ]);
 
@@ -509,8 +512,8 @@ function WorkSpace() {
               notes: notes,
               areas: areas,
               todos: tasks,
-              pan: settings.pan,
-              zoom: settings.zoom,
+              pan: transform.pan,
+              zoom: transform.zoom,
             })
             .then((id) => {
               setId(id);
@@ -529,8 +532,8 @@ function WorkSpace() {
               notes: notes,
               areas: areas,
               todos: tasks,
-              pan: settings.pan,
-              zoom: settings.zoom,
+              pan: transform.pan,
+              zoom: transform.zoom,
             })
             .then(() => {
               setState(State.SAVED);
@@ -547,8 +550,8 @@ function WorkSpace() {
             notes: notes,
             subjectAreas: areas,
             todos: tasks,
-            pan: settings.pan,
-            zoom: settings.zoom,
+            pan: transform.pan,
+            zoom: transform.zoom,
           })
           .then(() => {
             setState(State.SAVED);
@@ -569,8 +572,8 @@ function WorkSpace() {
       id,
       state,
       tasks,
-      settings.zoom,
-      settings.pan,
+      transform.zoom,
+      transform.pan,
     ]
   );
   useEffect(() => {
@@ -597,7 +600,7 @@ function WorkSpace() {
             setAreas(d.areas);
             setTypes(d.types);
             setTasks(d.todos);
-            setSettings((prev) => ({ ...prev, pan: d.pan, zoom: d.zoom }));
+            setTransform({ pan: d.pan, zoom: d.zoom });
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
@@ -621,11 +624,10 @@ function WorkSpace() {
             setAreas(diagram.areas);
             setNotes(diagram.notes);
             setTasks(diagram.todos);
-            setSettings((prev) => ({
-              ...prev,
+            setTransform({
               pan: diagram.pan,
               zoom: diagram.zoom,
-            }));
+            });
             setUndoStack([]);
             setRedoStack([]);
             window.name = `d ${diagram.id}`;
@@ -651,11 +653,10 @@ function WorkSpace() {
             setAreas(diagram.subjectAreas);
             setTasks(diagram.tasks);
             setNotes(diagram.notes);
-            setSettings((prev) => ({
-              ...prev,
-              pan: { x: 0, y: 0 },
+            setTransform({
               zoom: 1,
-            }));
+              pan: { x: 0, y: 0 },
+            });
             setUndoStack([]);
             setRedoStack([]);
           }
@@ -708,134 +709,142 @@ function WorkSpace() {
 
   return (
     <StateContext.Provider value={{ state, setState }}>
-      <TableContext.Provider
-        value={{
-          tables,
-          setTables,
-          addTable,
-          updateTable,
-          updateField,
-          deleteTable,
-          relationships,
-          setRelationships,
-          addRelationship,
-          deleteRelationship,
-        }}
-      >
-        <AreaContext.Provider
-          value={{ areas, setAreas, updateArea, addArea, deleteArea }}
+      <TransformContext.Provider value={{ transform, setTransform }}>
+        <TableContext.Provider
+          value={{
+            tables,
+            setTables,
+            addTable,
+            updateTable,
+            updateField,
+            deleteTable,
+            relationships,
+            setRelationships,
+            addRelationship,
+            deleteRelationship,
+          }}
         >
-          <NoteContext.Provider
-            value={{ notes, setNotes, updateNote, addNote, deleteNote }}
+          <AreaContext.Provider
+            value={{ areas, setAreas, updateArea, addArea, deleteArea }}
           >
-            <TabContext.Provider value={{ tab, setTab }}>
-              <SettingsContext.Provider value={{ settings, setSettings }}>
-                <UndoRedoContext.Provider
-                  value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
-                >
-                  <SelectContext.Provider
-                    value={{ selectedElement, setSelectedElement }}
+            <NoteContext.Provider
+              value={{ notes, setNotes, updateNote, addNote, deleteNote }}
+            >
+              <TabContext.Provider value={{ tab, setTab }}>
+                <SettingsContext.Provider value={{ settings, setSettings }}>
+                  <UndoRedoContext.Provider
+                    value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
                   >
-                    <TaskContext.Provider
-                      value={{ tasks, setTasks, updateTask }}
+                    <SelectContext.Provider
+                      value={{ selectedElement, setSelectedElement }}
                     >
-                      <TypeContext.Provider
-                        value={{
-                          types,
-                          setTypes,
-                          addType,
-                          updateType,
-                          deleteType,
-                        }}
+                      <TaskContext.Provider
+                        value={{ tasks, setTasks, updateTask }}
                       >
-                        <div className="h-[100vh] flex flex-col overflow-hidden theme">
-                          <ControlPanel
-                            diagramId={id}
-                            setDiagramId={setId}
-                            title={title}
-                            setTitle={setTitle}
-                            lastSaved={lastSaved}
-                            setLastSaved={setLastSaved}
-                          />
-                          <div
-                            className="flex h-full overflow-y-auto"
-                            onMouseUp={() => setResize(false)}
-                            onMouseMove={dragHandler}
-                          >
-                            {layout.sidebar && (
-                              <SidePanel
-                                resize={resize}
-                                setResize={setResize}
-                                width={width}
-                              />
-                            )}
-                            <div className="relative w-full h-full overflow-hidden">
-                              <Canvas state={state} setState={setState} />
-                              {!(
-                                layout.sidebar ||
-                                layout.toolbar ||
-                                layout.header
-                              ) && (
-                                <div className="fixed right-5 bottom-4 flex gap-2">
-                                  <div className="popover-theme flex rounded-lg items-center">
-                                    <button
-                                      className="px-3 py-2"
-                                      onClick={() =>
-                                        setSettings((prev) => ({
-                                          ...prev,
-                                          zoom: prev.zoom / 1.2,
-                                        }))
-                                      }
-                                    >
-                                      <i className="bi bi-dash-lg"></i>
-                                    </button>
-                                    <Divider align="center" layout="vertical" />
-                                    <div className="px-3 py-2">
-                                      {parseInt(settings.zoom * 100)}%
-                                    </div>
-                                    <Divider align="center" layout="vertical" />
-                                    <button
-                                      className="px-3 py-2"
-                                      onClick={() =>
-                                        setSettings((prev) => ({
-                                          ...prev,
-                                          zoom: prev.zoom * 1.2,
-                                        }))
-                                      }
-                                    >
-                                      <i className="bi bi-plus-lg"></i>
-                                    </button>
-                                  </div>
-                                  <Tooltip content="Exit">
-                                    <button
-                                      className="px-3 py-2 rounded-lg popover-theme"
-                                      onClick={() => {
-                                        setLayout((prev) => ({
-                                          ...prev,
-                                          sidebar: true,
-                                          toolbar: true,
-                                          header: true,
-                                        }));
-                                        exitFullscreen();
-                                      }}
-                                    >
-                                      <i className="bi bi-fullscreen-exit"></i>
-                                    </button>
-                                  </Tooltip>
-                                </div>
+                        <TypeContext.Provider
+                          value={{
+                            types,
+                            setTypes,
+                            addType,
+                            updateType,
+                            deleteType,
+                          }}
+                        >
+                          <div className="h-[100vh] flex flex-col overflow-hidden theme">
+                            <ControlPanel
+                              diagramId={id}
+                              setDiagramId={setId}
+                              title={title}
+                              setTitle={setTitle}
+                              lastSaved={lastSaved}
+                              setLastSaved={setLastSaved}
+                            />
+                            <div
+                              className="flex h-full overflow-y-auto"
+                              onMouseUp={() => setResize(false)}
+                              onMouseMove={dragHandler}
+                            >
+                              {layout.sidebar && (
+                                <SidePanel
+                                  resize={resize}
+                                  setResize={setResize}
+                                  width={width}
+                                />
                               )}
+                              <div className="relative w-full h-full overflow-hidden">
+                                <Canvas state={state} setState={setState} />
+                                {!(
+                                  layout.sidebar ||
+                                  layout.toolbar ||
+                                  layout.header
+                                ) && (
+                                  <div className="fixed right-5 bottom-4 flex gap-2">
+                                    <div className="popover-theme flex rounded-lg items-center">
+                                      <button
+                                        className="px-3 py-2"
+                                        onClick={() =>
+                                          setTransform((prev) => ({
+                                            ...prev,
+                                            zoom: prev.zoom / 1.2,
+                                          }))
+                                        }
+                                      >
+                                        <i className="bi bi-dash-lg"></i>
+                                      </button>
+                                      <Divider
+                                        align="center"
+                                        layout="vertical"
+                                      />
+                                      <div className="px-3 py-2">
+                                        {parseInt(transform.zoom * 100)}%
+                                      </div>
+                                      <Divider
+                                        align="center"
+                                        layout="vertical"
+                                      />
+                                      <button
+                                        className="px-3 py-2"
+                                        onClick={() =>
+                                          setTransform((prev) => ({
+                                            ...prev,
+                                            zoom: prev.zoom * 1.2,
+                                          }))
+                                        }
+                                      >
+                                        <i className="bi bi-plus-lg"></i>
+                                      </button>
+                                    </div>
+                                    <Tooltip content="Exit">
+                                      <button
+                                        className="px-3 py-2 rounded-lg popover-theme"
+                                        onClick={() => {
+                                          setLayout((prev) => ({
+                                            ...prev,
+                                            sidebar: true,
+                                            toolbar: true,
+                                            header: true,
+                                          }));
+                                          exitFullscreen();
+                                        }}
+                                      >
+                                        <i className="bi bi-fullscreen-exit"></i>
+                                      </button>
+                                    </Tooltip>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </TypeContext.Provider>
-                    </TaskContext.Provider>
-                  </SelectContext.Provider>
-                </UndoRedoContext.Provider>
-              </SettingsContext.Provider>
-            </TabContext.Provider>
-          </NoteContext.Provider>
-        </AreaContext.Provider>
-      </TableContext.Provider>
+                        </TypeContext.Provider>
+                      </TaskContext.Provider>
+                    </SelectContext.Provider>
+                  </UndoRedoContext.Provider>
+                </SettingsContext.Provider>
+              </TabContext.Provider>
+            </NoteContext.Provider>
+          </AreaContext.Provider>
+        </TableContext.Provider>
+      </TransformContext.Provider>
     </StateContext.Provider>
   );
 }

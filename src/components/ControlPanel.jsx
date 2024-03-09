@@ -51,6 +51,7 @@ import {
 import {
   AreaContext,
   NoteContext,
+  TransformContext,
   SelectContext,
   SettingsContext,
   StateContext,
@@ -122,7 +123,7 @@ export default function ControlPanel({
   });
   const [data, setData] = useState(null);
   const { state, setState } = useContext(StateContext);
-  const {layout, setLayout} = useLayout();
+  const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useContext(SettingsContext);
   const {
     relationships,
@@ -146,6 +147,7 @@ export default function ControlPanel({
     useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const { tab, setTab } = useContext(TabContext);
+  const { transform, setTransform } = useContext(TransformContext);
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
@@ -334,7 +336,7 @@ export default function ControlPanel({
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
-      setSettings((prev) => ({
+      setTransform((prev) => ({
         ...prev,
         pan: a.undo,
       }));
@@ -515,7 +517,7 @@ export default function ControlPanel({
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
-      setSettings((prev) => ({
+      setTransform((prev) => ({
         ...prev,
         pan: a.redo,
       }));
@@ -527,9 +529,9 @@ export default function ControlPanel({
   const viewGrid = () =>
     setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
   const zoomIn = () =>
-    setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
+    setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
   const zoomOut = () =>
-    setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
+    setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
   const viewStrictMode = () => {
     setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
     Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
@@ -557,7 +559,7 @@ export default function ControlPanel({
     });
   };
   const resetView = () =>
-    setSettings((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
+    setTransform((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
   const fitWindow = () => {
     const diagram = document.getElementById("diagram").getBoundingClientRect();
     const canvas = document.getElementById("canvas").getBoundingClientRect();
@@ -572,7 +574,7 @@ export default function ControlPanel({
     const translateX = canvas.left;
     const translateY = canvas.top;
 
-    setSettings((prev) => ({
+    setTransform((prev) => ({
       ...prev,
       zoom: scale - 0.01,
       pan: { x: translateX, y: translateY },
@@ -756,6 +758,10 @@ export default function ControlPanel({
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
+          setTransform({
+            pan: diagram.pan,
+            zoom: diagram.zoom,
+          });
           setUndoStack([]);
           setRedoStack([]);
           window.name = `d ${diagram.id}`;
@@ -1609,7 +1615,7 @@ export default function ControlPanel({
       }
       case MODAL.IMPORT:
         if (error.type !== STATUS.ERROR) {
-          setSettings((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+          setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
           overwriteDiagram();
           setData(null);
           setVisible(MODAL.NONE);
@@ -2125,7 +2131,7 @@ export default function ControlPanel({
                   <Dropdown.Item
                     key={i}
                     onClick={() => {
-                      setSettings((prev) => ({ ...prev, zoom: e }));
+                      setTransform((prev) => ({ ...prev, zoom: e }));
                     }}
                   >
                     {Math.floor(e * 100)}%
@@ -2139,7 +2145,7 @@ export default function ControlPanel({
                     placeholder="Zoom"
                     suffix={<div className="p-1">%</div>}
                     onChange={(v) =>
-                      setSettings((prev) => ({
+                      setTransform((prev) => ({
                         ...prev,
                         zoom: parseFloat(v) * 0.01,
                       }))
@@ -2151,7 +2157,9 @@ export default function ControlPanel({
             trigger="click"
           >
             <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
-              <div className="w-[40px]">{Math.floor(settings.zoom * 100)}%</div>
+              <div className="w-[40px]">
+                {Math.floor(transform.zoom * 100)}%
+              </div>
               <div>
                 <IconCaretdown />
               </div>
@@ -2161,7 +2169,7 @@ export default function ControlPanel({
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
-                setSettings((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
+                setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
               }
             >
               <i className="fa-solid fa-magnifying-glass-plus"></i>
@@ -2171,7 +2179,7 @@ export default function ControlPanel({
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
-                setSettings((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+                setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
               }
             >
               <i className="fa-solid fa-magnifying-glass-minus"></i>

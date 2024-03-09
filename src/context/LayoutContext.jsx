@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-export const LayoutContext = createContext();
+export const LayoutContext = createContext(null);
 
 export default function LayoutContextProvider({ children }) {
   const [layout, setLayout] = useState({
