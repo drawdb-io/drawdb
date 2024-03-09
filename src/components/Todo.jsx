@@ -19,7 +19,7 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { LayoutContext, TaskContext } from "../pages/Editor";
+import { StateContext, TaskContext } from "../pages/Editor";
 import { State } from "../data/data";
 export default function Todo() {
   const Priority = {
@@ -37,7 +37,7 @@ export default function Todo() {
   const [activeTask, setActiveTask] = useState(-1);
   const [, setSortOrder] = useState(SortOrder.ORIGINAL);
   const { tasks, setTasks, updateTask } = useContext(TaskContext);
-  const { setState } = useContext(LayoutContext);
+  const { setState } = useContext(StateContext);
 
   const priorityLabel = (p) => {
     switch (p) {

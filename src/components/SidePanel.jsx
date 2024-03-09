@@ -4,14 +4,15 @@ import TableOverview from "./TableOverview";
 import ReferenceOverview from "./ReferenceOverview";
 import AreaOverview from "./AreaOverview";
 import { Tab } from "../data/data";
-import { LayoutContext, TabContext } from "../pages/Editor";
+import { TabContext } from "../pages/Editor";
 import NotesOverview from "./NotesOverview";
 import Issues from "./Issues";
 import TypesOverview from "./TypesOverview";
+import useLayout from "../hooks/useLayout";
 
 const SidePanel = (props) => {
   const { tab, setTab } = useContext(TabContext);
-  const { layout } = useContext(LayoutContext);
+  const { layout } = useLayout();
 
   const tabList = [
     { tab: "Tables", itemKey: Tab.tables },

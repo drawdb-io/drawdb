@@ -26,10 +26,10 @@ import {
   ObjectType,
   State,
 } from "../data/data";
-import { AreaContext, LayoutContext, UndoRedoContext } from "../pages/Editor";
+import { AreaContext, StateContext, UndoRedoContext } from "../pages/Editor";
 
 export default function AreaOverview() {
-  const { setState } = useContext(LayoutContext);
+  const { setState } = useContext(StateContext);
   const { areas, addArea, deleteArea, updateArea } = useContext(AreaContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
   const [editField, setEditField] = useState({});

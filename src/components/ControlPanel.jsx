@@ -50,10 +50,10 @@ import {
 } from "../utils";
 import {
   AreaContext,
-  LayoutContext,
   NoteContext,
   SelectContext,
   SettingsContext,
+  StateContext,
   TabContext,
   TableContext,
   TypeContext,
@@ -71,6 +71,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
 import { Thumbnail } from "./Thumbnail";
+import useLayout from "../hooks/useLayout";
 
 export default function ControlPanel({
   diagramId,
@@ -120,7 +121,8 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const { layout, setLayout, state, setState } = useContext(LayoutContext);
+  const { state, setState } = useContext(StateContext);
+  const {layout, setLayout} = useLayout();
   const { settings, setSettings } = useContext(SettingsContext);
   const {
     relationships,

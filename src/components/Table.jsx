@@ -32,7 +32,6 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 import {
-  LayoutContext,
   SelectContext,
   SettingsContext,
   TabContext,
@@ -41,12 +40,13 @@ import {
   UndoRedoContext,
 } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
+import useLayout from "../hooks/useLayout";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
   const [editField, setEditField] = useState({});
-  const { layout } = useContext(LayoutContext);
+  const { layout } = useLayout();
   const { deleteTable, updateTable, updateField, setRelationships } =
     useContext(TableContext);
   const { tab, setTab } = useContext(TabContext);

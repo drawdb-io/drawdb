@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import {
-  LayoutContext,
   NoteContext,
   UndoRedoContext,
   TabContext,
   SelectContext,
+  StateContext,
 } from "../pages/Editor";
 import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
@@ -13,6 +13,7 @@ import {
   IconDeleteStroked,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
+import useLayout from "../hooks/useLayout";
 
 export default function Note(props) {
   const [editField, setEditField] = useState({});
@@ -22,7 +23,8 @@ export default function Note(props) {
   const fold = 24;
   const { updateNote, deleteNote } = useContext(NoteContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { layout, setState } = useContext(LayoutContext);
+  const { setState } = useContext(StateContext);
+  const { layout } = useLayout();
   const { tab, setTab } = useContext(TabContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
 

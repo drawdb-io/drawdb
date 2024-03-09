@@ -6,6 +6,7 @@ import Shortcuts from "./pages/Shortcuts";
 import Templates from "./pages/Templates";
 import { useEffect } from "react";
 import LandingPage from "./pages/LandingPage";
+import LayoutContextProvider from "./context/LayoutContext";
 
 const Wrapper = ({ children }) => {
   const location = useLocation();
@@ -21,7 +22,14 @@ function App() {
       <Wrapper>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/editor" element={<Editor />} />
+          <Route
+            path="/editor"
+            element={
+              <LayoutContextProvider>
+                <Editor />
+              </LayoutContextProvider>
+            }
+          />
           <Route path="/survey" element={<Survey />} />
           <Route path="/shortcuts" element={<Shortcuts />} />
           <Route path="/bug_report" element={<BugReport />} />

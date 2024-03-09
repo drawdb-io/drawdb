@@ -72,7 +72,7 @@ function Form({ theme }) {
           })
           .then(() => {
             Toast.success("Bug reported!");
-            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
             resetForm();
           })
           .catch(() => {

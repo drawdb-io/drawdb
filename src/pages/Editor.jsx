@@ -13,8 +13,10 @@ import {
 import { db } from "../data/db";
 import { Divider, Tooltip } from "@douyinfe/semi-ui";
 import { exitFullscreen } from "../utils";
+import useLayout from "../hooks/useLayout";
+import LayoutContextProvider from "../context/LayoutContext";
 
-export const LayoutContext = createContext();
+export const StateContext = createContext();
 export const TableContext = createContext();
 export const AreaContext = createContext();
 export const TabContext = createContext();
@@ -28,6 +30,14 @@ export const BotMessageContext = createContext();
 export const TypeContext = createContext();
 
 export default function Editor() {
+  return (
+    <LayoutContextProvider>
+      <WorkSpace />
+    </LayoutContextProvider>
+  );
+}
+
+function WorkSpace() {
   const [id, setId] = useState(0);
   const [title, setTitle] = useState("Untitled Diagram");
   const [state, setState] = useState(State.NONE);
@@ -40,14 +50,7 @@ export default function Editor() {
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
   const [tab, setTab] = useState(Tab.tables);
-  const [layout, setLayout] = useState({
-    header: true,
-    sidebar: true,
-    services: true,
-    issues: true,
-    toolbar: true,
-    fullscreen: false,
-  });
+  const { layout, setLayout } = useLayout();
   const [settings, setSettings] = useState({
     strictMode: false,
     showFieldSummary: true,
@@ -704,7 +707,7 @@ export default function Editor() {
   }, []);
 
   return (
-    <LayoutContext.Provider value={{ layout, setLayout, state, setState }}>
+    <StateContext.Provider value={{ state, setState }}>
       <TableContext.Provider
         value={{
           tables,
@@ -833,6 +836,6 @@ export default function Editor() {
           </NoteContext.Provider>
         </AreaContext.Provider>
       </TableContext.Provider>
-    </LayoutContext.Provider>
+    </StateContext.Provider>
   );
 }
