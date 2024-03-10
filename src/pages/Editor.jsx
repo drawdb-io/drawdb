@@ -11,8 +11,6 @@ import {
   State,
 } from "../data/data";
 import { db } from "../data/db";
-import { Divider, Tooltip } from "@douyinfe/semi-ui";
-import { exitFullscreen } from "../utils";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
 import useSettings from "../hooks/useSettings";
@@ -24,6 +22,7 @@ import useUndoRedo from "../hooks/useUndoRedo";
 import UndoRedoContextProvider from "../context/UndoRedoContext";
 import SelectContextProvider from "../context/SelectContext";
 import useSelect from "../hooks/useSelect";
+import Controls from "../components/Controls";
 
 export const StateContext = createContext();
 export const AreaContext = createContext();
@@ -60,7 +59,7 @@ function WorkSpace() {
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
   const [tab, setTab] = useState(Tab.tables);
-  const { layout, setLayout } = useLayout();
+  const { layout } = useLayout();
   const { settings, setSettings } = useSettings();
   const { transform, setTransform } = useTransform();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -557,52 +556,8 @@ function WorkSpace() {
                   <div className="relative w-full h-full overflow-hidden">
                     <Canvas state={state} setState={setState} />
                     {!(layout.sidebar || layout.toolbar || layout.header) && (
-                      <div className="fixed right-5 bottom-4 flex gap-2">
-                        <div className="popover-theme flex rounded-lg items-center">
-                          <button
-                            className="px-3 py-2"
-                            onClick={() =>
-                              setTransform((prev) => ({
-                                ...prev,
-                                zoom: prev.zoom / 1.2,
-                              }))
-                            }
-                          >
-                            <i className="bi bi-dash-lg"></i>
-                          </button>
-                          <Divider align="center" layout="vertical" />
-                          <div className="px-3 py-2">
-                            {parseInt(transform.zoom * 100)}%
-                          </div>
-                          <Divider align="center" layout="vertical" />
-                          <button
-                            className="px-3 py-2"
-                            onClick={() =>
-                              setTransform((prev) => ({
-                                ...prev,
-                                zoom: prev.zoom * 1.2,
-                              }))
-                            }
-                          >
-                            <i className="bi bi-plus-lg"></i>
-                          </button>
-                        </div>
-                        <Tooltip content="Exit">
-                          <button
-                            className="px-3 py-2 rounded-lg popover-theme"
-                            onClick={() => {
-                              setLayout((prev) => ({
-                                ...prev,
-                                sidebar: true,
-                                toolbar: true,
-                                header: true,
-                              }));
-                              exitFullscreen();
-                            }}
-                          >
-                            <i className="bi bi-fullscreen-exit"></i>
-                          </button>
-                        </Tooltip>
+                      <div className="fixed right-5 bottom-4">
+                        <Controls />
                       </div>
                     )}
                   </div>
