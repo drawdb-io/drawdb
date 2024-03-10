@@ -31,16 +31,13 @@ import {
   SideSheet,
   Toast,
 } from "@douyinfe/semi-ui";
-import {
-  SelectContext,
-  TabContext,
-  TableContext,
-  TypeContext,
-  UndoRedoContext,
-} from "../pages/Editor";
+import { TabContext, TypeContext } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useTables from "../hooks/useTables";
+import useSelect from "../hooks/useSelect";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -48,12 +45,12 @@ export default function Table(props) {
   const [editField, setEditField] = useState({});
   const { layout } = useLayout();
   const { deleteTable, updateTable, updateField, setRelationships } =
-    useContext(TableContext);
+    useTables();
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useSettings();
   const { types } = useContext(TypeContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { selectedElement, setSelectedElement } = useSelect();
 
   const height = props.tableData.fields.length * 36 + 50 + 7;
 

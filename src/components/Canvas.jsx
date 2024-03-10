@@ -3,27 +3,23 @@ import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./Area";
 import Relationship from "./Relationship";
-import {
-  AreaContext,
-  NoteContext,
-  TableContext,
-  UndoRedoContext,
-  SelectContext,
-} from "../pages/Editor";
+import { AreaContext, NoteContext } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 import useSettings from "../hooks/useSettings";
 import useTransform from "../hooks/useTransform";
+import useTables from "../hooks/useTables";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useSelect from "../hooks/useSelect";
 
 export default function Canvas() {
-  const { tables, updateTable, relationships, addRelationship } =
-    useContext(TableContext);
+  const { tables, updateTable, relationships, addRelationship } = useTables();
   const { areas, updateArea } = useContext(AreaContext);
   const { notes, updateNote } = useContext(NoteContext);
   const { settings } = useSettings();
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,

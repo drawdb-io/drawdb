@@ -51,12 +51,9 @@ import {
 import {
   AreaContext,
   NoteContext,
-  SelectContext,
   StateContext,
   TabContext,
-  TableContext,
   TypeContext,
-  UndoRedoContext,
 } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
 import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
@@ -73,6 +70,9 @@ import { Thumbnail } from "./Thumbnail";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useTransform from "../hooks/useTransform";
+import useTables from "../hooks/useTables";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useSelect from "../hooks/useSelect";
 
 export default function ControlPanel({
   diagramId,
@@ -136,16 +136,15 @@ export default function ControlPanel({
     setRelationships,
     addRelationship,
     deleteRelationship,
-  } = useContext(TableContext);
+  } = useTables();
   const { types, addType, deleteType, updateType, setTypes } =
     useContext(TypeContext);
   const { notes, setNotes, updateNote, addNote, deleteNote } =
     useContext(NoteContext);
   const { areas, setAreas, updateArea, addArea, deleteArea } =
     useContext(AreaContext);
-  const { undoStack, redoStack, setUndoStack, setRedoStack } =
-    useContext(UndoRedoContext);
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
+  const { selectedElement, setSelectedElement } = useSelect();
   const { tab, setTab } = useContext(TabContext);
   const { transform, setTransform } = useTransform();
 

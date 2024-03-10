@@ -35,13 +35,11 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import {
-  SelectContext,
-  TableContext,
-  TypeContext,
-  UndoRedoContext,
-} from "../pages/Editor";
+import { TypeContext } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
+import useTables from "../hooks/useTables";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useSelect from "../hooks/useSelect";
 
 export default function TableOverview() {
   const [indexActiveKey, setIndexActiveKey] = useState("");
@@ -53,10 +51,10 @@ export default function TableOverview() {
     updateField,
     updateTable,
     setRelationships,
-  } = useContext(TableContext);
+  } = useTables();
   const { types } = useContext(TypeContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { selectedElement, setSelectedElement } = useSelect();
   const [editField, setEditField] = useState({});
   const [filteredResult, setFilteredResult] = useState(
     tables.map((t) => {

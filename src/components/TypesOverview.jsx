@@ -27,13 +27,14 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TypeContext, UndoRedoContext } from "../pages/Editor";
+import { TypeContext } from "../pages/Editor";
 import { isSized, hasPrecision, getSize } from "../utils";
+import useUndoRedo from "../hooks/useUndoRedo";
 
 export default function TableOverview() {
   const [value, setValue] = useState("");
   const { types, addType, deleteType, updateType } = useContext(TypeContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const [filteredResult, setFilteredResult] = useState(
     types.map((t) => {

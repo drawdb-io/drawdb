@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   AutoComplete,
   Collapse,
@@ -21,7 +21,8 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { Cardinality, Constraint, Action, ObjectType } from "../data/data";
-import { TableContext, UndoRedoContext } from "../pages/Editor";
+import useTables from "../hooks/useTables";
+import useUndoRedo from "../hooks/useUndoRedo";
 
 export default function ReferenceOverview() {
   const columns = [
@@ -35,8 +36,8 @@ export default function ReferenceOverview() {
     },
   ];
   const { tables, relationships, setRelationships, deleteRelationship } =
-    useContext(TableContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+    useTables();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const [refActiveIndex, setRefActiveIndex] = useState("");
   const [value, setValue] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -118,11 +119,13 @@ export default function ReferenceOverview() {
                             dataSource={[
                               {
                                 key: "1",
-                                foreign: `${tables[r.startTableId].name}(${tables[r.startTableId].fields[r.startFieldId]
-                                  .name
-                                  })`,
-                                primary: `${tables[r.endTableId].name}(${tables[r.endTableId].fields[r.endFieldId].name
-                                  })`,
+                                foreign: `${tables[r.startTableId].name}(${
+                                  tables[r.startTableId].fields[r.startFieldId]
+                                    .name
+                                })`,
+                                primary: `${tables[r.endTableId].name}(${
+                                  tables[r.endTableId].fields[r.endFieldId].name
+                                })`,
                               },
                             ]}
                             pagination={false}
@@ -160,12 +163,12 @@ export default function ReferenceOverview() {
                                   prev.map((e, idx) =>
                                     idx === i
                                       ? {
-                                        ...e,
-                                        startTableId: e.endTableId,
-                                        startFieldId: e.endFieldId,
-                                        endTableId: e.startTableId,
-                                        endFieldId: e.startFieldId,
-                                      }
+                                          ...e,
+                                          startTableId: e.endTableId,
+                                          startFieldId: e.endFieldId,
+                                          endTableId: e.startTableId,
+                                          endFieldId: e.startFieldId,
+                                        }
                                       : e
                                   )
                                 );

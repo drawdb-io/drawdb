@@ -13,15 +13,11 @@ import {
   defaultTableTheme,
   State,
 } from "../data/data";
-import {
-  AreaContext,
-  SelectContext,
-  StateContext,
-  TabContext,
-  UndoRedoContext,
-} from "../pages/Editor";
+import { AreaContext, StateContext, TabContext } from "../pages/Editor";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useSelect from "../hooks/useSelect";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
@@ -31,8 +27,8 @@ export default function Area(props) {
   const { settings } = useSettings();
   const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useContext(AreaContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { selectedElement, setSelectedElement } = useSelect();
 
   const handleMouseDown = (e, dir) => {
     props.setResize({ id: props.areaData.id, dir: dir });

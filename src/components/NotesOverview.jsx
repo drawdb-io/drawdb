@@ -21,12 +21,13 @@ import {
   IconSearch,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import { NoteContext, UndoRedoContext } from "../pages/Editor";
+import { NoteContext } from "../pages/Editor";
 import { noteThemes, Action, ObjectType } from "../data/data";
+import useUndoRedo from "../hooks/useUndoRedo";
 
 export default function NotesOverview() {
   const { notes, updateNote, addNote, deleteNote } = useContext(NoteContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const [value, setValue] = useState("");
   const [editField, setEditField] = useState({});
   const [activeKey, setActiveKey] = useState("");

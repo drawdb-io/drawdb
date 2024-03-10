@@ -18,25 +18,31 @@ import LayoutContextProvider from "../context/LayoutContext";
 import useSettings from "../hooks/useSettings";
 import TransformContextProvider from "../context/TransformContext";
 import useTransform from "../hooks/useTransform";
+import useTables from "../hooks/useTables";
+import TablesContextProvider from "../context/TablesContext";
+import useUndoRedo from "../hooks/useUndoRedo";
+import UndoRedoContextProvider from "../context/UndoRedoContext";
+import SelectContextProvider from "../context/SelectContext";
+import useSelect from "../hooks/useSelect";
 
 export const StateContext = createContext();
-export const TableContext = createContext();
 export const AreaContext = createContext();
 export const TabContext = createContext();
 export const NoteContext = createContext();
-export const UndoRedoContext = createContext();
-export const SelectContext = createContext();
 export const TaskContext = createContext();
-export const MessageContext = createContext();
-export const BotMessageContext = createContext();
 export const TypeContext = createContext();
-// export const TransformContext = createContext();
 
 export default function Editor() {
   return (
     <LayoutContextProvider>
       <TransformContextProvider>
-        <WorkSpace />
+        <UndoRedoContextProvider>
+          <SelectContextProvider>
+            <TablesContextProvider>
+              <WorkSpace />
+            </TablesContextProvider>
+          </SelectContextProvider>
+        </UndoRedoContextProvider>
       </TransformContextProvider>
     </LayoutContextProvider>
   );
@@ -47,8 +53,7 @@ function WorkSpace() {
   const [title, setTitle] = useState("Untitled Diagram");
   const [state, setState] = useState(State.NONE);
   const [lastSaved, setLastSaved] = useState("");
-  const [tables, setTables] = useState([]);
-  const [relationships, setRelationships] = useState([]);
+  const { tables, relationships, setTables, setRelationships } = useTables();
   const [areas, setAreas] = useState([]);
   const [notes, setNotes] = useState([]);
   const [types, setTypes] = useState([]);
@@ -58,68 +63,14 @@ function WorkSpace() {
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
   const { transform, setTransform } = useTransform();
+  const { selectedElement, setSelectedElement } = useSelect();
   const [tasks, setTasks] = useState([]);
-  const [undoStack, setUndoStack] = useState([]);
-  const [redoStack, setRedoStack] = useState([]);
-  const [selectedElement, setSelectedElement] = useState({
-    element: ObjectType.NONE,
-    id: -1,
-    openDialogue: false,
-    openCollapse: false,
-  });
+  const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
 
   const dragHandler = (e) => {
     if (!resize) return;
     const w = e.clientX;
     if (w > 340) setWidth(w);
-  };
-
-  const addTable = (addToHistory = true, data) => {
-    if (data) {
-      setTables((prev) => {
-        const temp = prev.slice();
-        temp.splice(data.id, 0, data);
-        return temp.map((t, i) => ({ ...t, id: i }));
-      });
-    } else {
-      setTables((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          name: `table_${prev.length}`,
-          x: -transform.pan.x,
-          y: -transform.pan.y,
-          fields: [
-            {
-              name: "id",
-              type: "INT",
-              default: "",
-              check: "",
-              primary: true,
-              unique: true,
-              notNull: true,
-              increment: true,
-              comment: "",
-              id: 0,
-            },
-          ],
-          comment: "",
-          indices: [],
-          color: defaultTableTheme,
-        },
-      ]);
-    }
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.ADD,
-          element: ObjectType.TABLE,
-          message: `Add new table`,
-        },
-      ]);
-      setRedoStack([]);
-    }
   };
 
   const addType = (addToHistory = true, data) => {
@@ -172,22 +123,6 @@ function WorkSpace() {
   const updateType = (id, values) => {
     setTypes((prev) =>
       prev.map((e, i) => (i === id ? { ...e, ...values } : e))
-    );
-  };
-
-  const updateField = (tid, fid, updatedValues) => {
-    setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
-          return {
-            ...table,
-            fields: table.fields.map((field, j) =>
-              fid === j ? { ...field, ...updatedValues } : field
-            ),
-          };
-        }
-        return table;
-      })
     );
   };
 
@@ -259,72 +194,6 @@ function WorkSpace() {
     }
   };
 
-  const addRelationship = (addToHistory = true, data) => {
-    if (addToHistory) {
-      setRelationships((prev) => {
-        setUndoStack((prevUndo) => [
-          ...prevUndo,
-          {
-            action: Action.ADD,
-            element: ObjectType.RELATIONSHIP,
-            data: data,
-            message: `Add new relationship`,
-          },
-        ]);
-        setRedoStack([]);
-        return [...prev, data];
-      });
-    } else {
-      setRelationships((prev) => {
-        const temp = prev.slice();
-        temp.splice(data.id, 0, data);
-        return temp.map((t, i) => ({ ...t, id: i }));
-      });
-    }
-  };
-
-  const deleteTable = (id, addToHistory = true) => {
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.DELETE,
-          element: ObjectType.TABLE,
-          data: tables[id],
-          message: `Delete table`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-    setRelationships((prevR) => {
-      return prevR
-        .filter((e) => !(e.startTableId === id || e.endTableId === id))
-        .map((e, i) => {
-          const newR = { ...e };
-
-          if (e.startTableId > id) {
-            newR.startTableId = e.startTableId - 1;
-          }
-          if (e.endTableId > id) {
-            newR.endTableId = e.endTableId - 1;
-          }
-
-          return { ...newR, id: i };
-        });
-    });
-    setTables((prev) => {
-      return prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }));
-    });
-    if (id === selectedElement.id) {
-      setSelectedElement({
-        element: ObjectType.NONE,
-        id: -1,
-        openDialogue: false,
-        openCollapse: false,
-      });
-    }
-  };
-
   const deleteArea = (id, addToHistory = true) => {
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -377,24 +246,6 @@ function WorkSpace() {
     }
   };
 
-  const deleteRelationship = (id, addToHistory = true) => {
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.DELETE,
-          element: ObjectType.RELATIONSHIP,
-          data: relationships[id],
-          message: `Delete relationship`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-    setRelationships((prev) =>
-      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
-    );
-  };
-
   const updateArea = (id, values) => {
     setAreas((prev) =>
       prev.map((t) => {
@@ -419,36 +270,6 @@ function WorkSpace() {
           };
         }
         return t;
-      })
-    );
-  };
-
-  const updateTable = (id, updatedValues, updateRelationships = false) => {
-    setTables((prev) =>
-      prev.map((table) => {
-        if (table.id === id) {
-          if (updateRelationships) {
-            setRelationships((prev) =>
-              prev.map((r) => {
-                let newR = { ...r };
-                if (r.startTableId === id) {
-                  newR.startX = updatedValues.x + 15;
-                  newR.startY = updatedValues.y + r.startFieldId * 36 + 69;
-                }
-                if (r.endTableId === id) {
-                  newR.endX = updatedValues.x + 15;
-                  newR.endY = updatedValues.y + r.endFieldId * 36 + 69;
-                }
-                return newR;
-              })
-            );
-          }
-          return {
-            ...table,
-            ...updatedValues,
-          };
-        }
-        return table;
       })
     );
   };
@@ -683,134 +504,114 @@ function WorkSpace() {
           break;
       }
     }
-  }, [setSettings, setTransform]);
+  }, [
+    setSettings,
+    setTransform,
+    setRedoStack,
+    setUndoStack,
+    setRelationships,
+    setTables,
+  ]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
-      <TableContext.Provider
-        value={{
-          tables,
-          setTables,
-          addTable,
-          updateTable,
-          updateField,
-          deleteTable,
-          relationships,
-          setRelationships,
-          addRelationship,
-          deleteRelationship,
-        }}
+      <AreaContext.Provider
+        value={{ areas, setAreas, updateArea, addArea, deleteArea }}
       >
-        <AreaContext.Provider
-          value={{ areas, setAreas, updateArea, addArea, deleteArea }}
+        <NoteContext.Provider
+          value={{ notes, setNotes, updateNote, addNote, deleteNote }}
         >
-          <NoteContext.Provider
-            value={{ notes, setNotes, updateNote, addNote, deleteNote }}
-          >
-            <TabContext.Provider value={{ tab, setTab }}>
-              <UndoRedoContext.Provider
-                value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
-              >
-                <SelectContext.Provider
-                  value={{ selectedElement, setSelectedElement }}
+          <TabContext.Provider value={{ tab, setTab }}>
+            <TypeContext.Provider
+              value={{
+                types,
+                setTypes,
+                addType,
+                updateType,
+                deleteType,
+              }}
+            >
+              <div className="h-[100vh] flex flex-col overflow-hidden theme">
+                <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
+                  <ControlPanel
+                    diagramId={id}
+                    setDiagramId={setId}
+                    title={title}
+                    setTitle={setTitle}
+                    lastSaved={lastSaved}
+                    setLastSaved={setLastSaved}
+                  />
+                </TaskContext.Provider>
+                <div
+                  className="flex h-full overflow-y-auto"
+                  onMouseUp={() => setResize(false)}
+                  onMouseMove={dragHandler}
                 >
-                  <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
-                    <TypeContext.Provider
-                      value={{
-                        types,
-                        setTypes,
-                        addType,
-                        updateType,
-                        deleteType,
-                      }}
-                    >
-                      <div className="h-[100vh] flex flex-col overflow-hidden theme">
-                        <ControlPanel
-                          diagramId={id}
-                          setDiagramId={setId}
-                          title={title}
-                          setTitle={setTitle}
-                          lastSaved={lastSaved}
-                          setLastSaved={setLastSaved}
-                        />
-                        <div
-                          className="flex h-full overflow-y-auto"
-                          onMouseUp={() => setResize(false)}
-                          onMouseMove={dragHandler}
-                        >
-                          {layout.sidebar && (
-                            <SidePanel
-                              resize={resize}
-                              setResize={setResize}
-                              width={width}
-                            />
-                          )}
-                          <div className="relative w-full h-full overflow-hidden">
-                            <Canvas state={state} setState={setState} />
-                            {!(
-                              layout.sidebar ||
-                              layout.toolbar ||
-                              layout.header
-                            ) && (
-                              <div className="fixed right-5 bottom-4 flex gap-2">
-                                <div className="popover-theme flex rounded-lg items-center">
-                                  <button
-                                    className="px-3 py-2"
-                                    onClick={() =>
-                                      setTransform((prev) => ({
-                                        ...prev,
-                                        zoom: prev.zoom / 1.2,
-                                      }))
-                                    }
-                                  >
-                                    <i className="bi bi-dash-lg"></i>
-                                  </button>
-                                  <Divider align="center" layout="vertical" />
-                                  <div className="px-3 py-2">
-                                    {parseInt(transform.zoom * 100)}%
-                                  </div>
-                                  <Divider align="center" layout="vertical" />
-                                  <button
-                                    className="px-3 py-2"
-                                    onClick={() =>
-                                      setTransform((prev) => ({
-                                        ...prev,
-                                        zoom: prev.zoom * 1.2,
-                                      }))
-                                    }
-                                  >
-                                    <i className="bi bi-plus-lg"></i>
-                                  </button>
-                                </div>
-                                <Tooltip content="Exit">
-                                  <button
-                                    className="px-3 py-2 rounded-lg popover-theme"
-                                    onClick={() => {
-                                      setLayout((prev) => ({
-                                        ...prev,
-                                        sidebar: true,
-                                        toolbar: true,
-                                        header: true,
-                                      }));
-                                      exitFullscreen();
-                                    }}
-                                  >
-                                    <i className="bi bi-fullscreen-exit"></i>
-                                  </button>
-                                </Tooltip>
-                              </div>
-                            )}
+                  {layout.sidebar && (
+                    <SidePanel
+                      resize={resize}
+                      setResize={setResize}
+                      width={width}
+                    />
+                  )}
+                  <div className="relative w-full h-full overflow-hidden">
+                    <Canvas state={state} setState={setState} />
+                    {!(layout.sidebar || layout.toolbar || layout.header) && (
+                      <div className="fixed right-5 bottom-4 flex gap-2">
+                        <div className="popover-theme flex rounded-lg items-center">
+                          <button
+                            className="px-3 py-2"
+                            onClick={() =>
+                              setTransform((prev) => ({
+                                ...prev,
+                                zoom: prev.zoom / 1.2,
+                              }))
+                            }
+                          >
+                            <i className="bi bi-dash-lg"></i>
+                          </button>
+                          <Divider align="center" layout="vertical" />
+                          <div className="px-3 py-2">
+                            {parseInt(transform.zoom * 100)}%
                           </div>
+                          <Divider align="center" layout="vertical" />
+                          <button
+                            className="px-3 py-2"
+                            onClick={() =>
+                              setTransform((prev) => ({
+                                ...prev,
+                                zoom: prev.zoom * 1.2,
+                              }))
+                            }
+                          >
+                            <i className="bi bi-plus-lg"></i>
+                          </button>
                         </div>
+                        <Tooltip content="Exit">
+                          <button
+                            className="px-3 py-2 rounded-lg popover-theme"
+                            onClick={() => {
+                              setLayout((prev) => ({
+                                ...prev,
+                                sidebar: true,
+                                toolbar: true,
+                                header: true,
+                              }));
+                              exitFullscreen();
+                            }}
+                          >
+                            <i className="bi bi-fullscreen-exit"></i>
+                          </button>
+                        </Tooltip>
                       </div>
-                    </TypeContext.Provider>
-                  </TaskContext.Provider>
-                </SelectContext.Provider>
-              </UndoRedoContext.Provider>
-            </TabContext.Provider>
-          </NoteContext.Provider>
-        </AreaContext.Provider>
-      </TableContext.Provider>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </TypeContext.Provider>
+          </TabContext.Provider>
+        </NoteContext.Provider>
+      </AreaContext.Provider>
     </StateContext.Provider>
   );
 }

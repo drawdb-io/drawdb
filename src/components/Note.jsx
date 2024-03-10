@@ -1,11 +1,5 @@
 import { useContext, useState } from "react";
-import {
-  NoteContext,
-  UndoRedoContext,
-  TabContext,
-  SelectContext,
-  StateContext,
-} from "../pages/Editor";
+import { NoteContext, TabContext, StateContext } from "../pages/Editor";
 import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
@@ -14,6 +8,8 @@ import {
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
 import useLayout from "../hooks/useLayout";
+import useUndoRedo from "../hooks/useUndoRedo";
+import useSelect from "../hooks/useSelect";
 
 export default function Note(props) {
   const [editField, setEditField] = useState({});
@@ -22,11 +18,11 @@ export default function Note(props) {
   const r = 3;
   const fold = 24;
   const { updateNote, deleteNote } = useContext(NoteContext);
-  const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setState } = useContext(StateContext);
   const { layout } = useLayout();
   const { tab, setTab } = useContext(TabContext);
-  const { selectedElement, setSelectedElement } = useContext(SelectContext);
+  const { selectedElement, setSelectedElement } = useSelect();
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${props.data.id}`);

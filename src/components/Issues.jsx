@@ -1,13 +1,14 @@
 import { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
-import { TableContext, TypeContext } from "../pages/Editor";
+import { TypeContext } from "../pages/Editor";
 import { validateDiagram, arrayIsEqual } from "../utils";
 import useSettings from "../hooks/useSettings";
+import useTables from "../hooks/useTables";
 
 export default function Issues() {
   const { settings } = useSettings();
   const { types } = useContext(TypeContext);
-  const { tables, relationships } = useContext(TableContext);
+  const { tables, relationships } = useTables();
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
