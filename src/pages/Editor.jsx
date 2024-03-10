@@ -16,6 +16,8 @@ import { exitFullscreen } from "../utils";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
 import useSettings from "../hooks/useSettings";
+import TransformContextProvider from "../context/TransformContext";
+import useTransform from "../hooks/useTransform";
 
 export const StateContext = createContext();
 export const TableContext = createContext();
@@ -28,12 +30,14 @@ export const TaskContext = createContext();
 export const MessageContext = createContext();
 export const BotMessageContext = createContext();
 export const TypeContext = createContext();
-export const TransformContext = createContext();
+// export const TransformContext = createContext();
 
 export default function Editor() {
   return (
     <LayoutContextProvider>
-      <WorkSpace />
+      <TransformContextProvider>
+        <WorkSpace />
+      </TransformContextProvider>
     </LayoutContextProvider>
   );
 }
@@ -53,10 +57,7 @@ function WorkSpace() {
   const [tab, setTab] = useState(Tab.tables);
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
-  const [transform, setTransform] = useState({
-    zoom: 1,
-    pan: { x: 0, y: 0 },
-  });
+  const { transform, setTransform } = useTransform();
   const [tasks, setTasks] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
@@ -682,138 +683,134 @@ function WorkSpace() {
           break;
       }
     }
-  }, [setSettings]);
+  }, [setSettings, setTransform]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
-      <TransformContext.Provider value={{ transform, setTransform }}>
-        <TableContext.Provider
-          value={{
-            tables,
-            setTables,
-            addTable,
-            updateTable,
-            updateField,
-            deleteTable,
-            relationships,
-            setRelationships,
-            addRelationship,
-            deleteRelationship,
-          }}
+      <TableContext.Provider
+        value={{
+          tables,
+          setTables,
+          addTable,
+          updateTable,
+          updateField,
+          deleteTable,
+          relationships,
+          setRelationships,
+          addRelationship,
+          deleteRelationship,
+        }}
+      >
+        <AreaContext.Provider
+          value={{ areas, setAreas, updateArea, addArea, deleteArea }}
         >
-          <AreaContext.Provider
-            value={{ areas, setAreas, updateArea, addArea, deleteArea }}
+          <NoteContext.Provider
+            value={{ notes, setNotes, updateNote, addNote, deleteNote }}
           >
-            <NoteContext.Provider
-              value={{ notes, setNotes, updateNote, addNote, deleteNote }}
-            >
-              <TabContext.Provider value={{ tab, setTab }}>
-                <UndoRedoContext.Provider
-                  value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
+            <TabContext.Provider value={{ tab, setTab }}>
+              <UndoRedoContext.Provider
+                value={{ undoStack, redoStack, setUndoStack, setRedoStack }}
+              >
+                <SelectContext.Provider
+                  value={{ selectedElement, setSelectedElement }}
                 >
-                  <SelectContext.Provider
-                    value={{ selectedElement, setSelectedElement }}
-                  >
-                    <TaskContext.Provider
-                      value={{ tasks, setTasks, updateTask }}
+                  <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
+                    <TypeContext.Provider
+                      value={{
+                        types,
+                        setTypes,
+                        addType,
+                        updateType,
+                        deleteType,
+                      }}
                     >
-                      <TypeContext.Provider
-                        value={{
-                          types,
-                          setTypes,
-                          addType,
-                          updateType,
-                          deleteType,
-                        }}
-                      >
-                        <div className="h-[100vh] flex flex-col overflow-hidden theme">
-                          <ControlPanel
-                            diagramId={id}
-                            setDiagramId={setId}
-                            title={title}
-                            setTitle={setTitle}
-                            lastSaved={lastSaved}
-                            setLastSaved={setLastSaved}
-                          />
-                          <div
-                            className="flex h-full overflow-y-auto"
-                            onMouseUp={() => setResize(false)}
-                            onMouseMove={dragHandler}
-                          >
-                            {layout.sidebar && (
-                              <SidePanel
-                                resize={resize}
-                                setResize={setResize}
-                                width={width}
-                              />
-                            )}
-                            <div className="relative w-full h-full overflow-hidden">
-                              <Canvas state={state} setState={setState} />
-                              {!(
-                                layout.sidebar ||
-                                layout.toolbar ||
-                                layout.header
-                              ) && (
-                                <div className="fixed right-5 bottom-4 flex gap-2">
-                                  <div className="popover-theme flex rounded-lg items-center">
-                                    <button
-                                      className="px-3 py-2"
-                                      onClick={() =>
-                                        setTransform((prev) => ({
-                                          ...prev,
-                                          zoom: prev.zoom / 1.2,
-                                        }))
-                                      }
-                                    >
-                                      <i className="bi bi-dash-lg"></i>
-                                    </button>
-                                    <Divider align="center" layout="vertical" />
-                                    <div className="px-3 py-2">
-                                      {parseInt(transform.zoom * 100)}%
-                                    </div>
-                                    <Divider align="center" layout="vertical" />
-                                    <button
-                                      className="px-3 py-2"
-                                      onClick={() =>
-                                        setTransform((prev) => ({
-                                          ...prev,
-                                          zoom: prev.zoom * 1.2,
-                                        }))
-                                      }
-                                    >
-                                      <i className="bi bi-plus-lg"></i>
-                                    </button>
+                      <div className="h-[100vh] flex flex-col overflow-hidden theme">
+                        <ControlPanel
+                          diagramId={id}
+                          setDiagramId={setId}
+                          title={title}
+                          setTitle={setTitle}
+                          lastSaved={lastSaved}
+                          setLastSaved={setLastSaved}
+                        />
+                        <div
+                          className="flex h-full overflow-y-auto"
+                          onMouseUp={() => setResize(false)}
+                          onMouseMove={dragHandler}
+                        >
+                          {layout.sidebar && (
+                            <SidePanel
+                              resize={resize}
+                              setResize={setResize}
+                              width={width}
+                            />
+                          )}
+                          <div className="relative w-full h-full overflow-hidden">
+                            <Canvas state={state} setState={setState} />
+                            {!(
+                              layout.sidebar ||
+                              layout.toolbar ||
+                              layout.header
+                            ) && (
+                              <div className="fixed right-5 bottom-4 flex gap-2">
+                                <div className="popover-theme flex rounded-lg items-center">
+                                  <button
+                                    className="px-3 py-2"
+                                    onClick={() =>
+                                      setTransform((prev) => ({
+                                        ...prev,
+                                        zoom: prev.zoom / 1.2,
+                                      }))
+                                    }
+                                  >
+                                    <i className="bi bi-dash-lg"></i>
+                                  </button>
+                                  <Divider align="center" layout="vertical" />
+                                  <div className="px-3 py-2">
+                                    {parseInt(transform.zoom * 100)}%
                                   </div>
-                                  <Tooltip content="Exit">
-                                    <button
-                                      className="px-3 py-2 rounded-lg popover-theme"
-                                      onClick={() => {
-                                        setLayout((prev) => ({
-                                          ...prev,
-                                          sidebar: true,
-                                          toolbar: true,
-                                          header: true,
-                                        }));
-                                        exitFullscreen();
-                                      }}
-                                    >
-                                      <i className="bi bi-fullscreen-exit"></i>
-                                    </button>
-                                  </Tooltip>
+                                  <Divider align="center" layout="vertical" />
+                                  <button
+                                    className="px-3 py-2"
+                                    onClick={() =>
+                                      setTransform((prev) => ({
+                                        ...prev,
+                                        zoom: prev.zoom * 1.2,
+                                      }))
+                                    }
+                                  >
+                                    <i className="bi bi-plus-lg"></i>
+                                  </button>
                                 </div>
-                              )}
-                            </div>
+                                <Tooltip content="Exit">
+                                  <button
+                                    className="px-3 py-2 rounded-lg popover-theme"
+                                    onClick={() => {
+                                      setLayout((prev) => ({
+                                        ...prev,
+                                        sidebar: true,
+                                        toolbar: true,
+                                        header: true,
+                                      }));
+                                      exitFullscreen();
+                                    }}
+                                  >
+                                    <i className="bi bi-fullscreen-exit"></i>
+                                  </button>
+                                </Tooltip>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </TypeContext.Provider>
-                    </TaskContext.Provider>
-                  </SelectContext.Provider>
-                </UndoRedoContext.Provider>
-              </TabContext.Provider>
-            </NoteContext.Provider>
-          </AreaContext.Provider>
-        </TableContext.Provider>
-      </TransformContext.Provider>
+                      </div>
+                    </TypeContext.Provider>
+                  </TaskContext.Provider>
+                </SelectContext.Provider>
+              </UndoRedoContext.Provider>
+            </TabContext.Provider>
+          </NoteContext.Provider>
+        </AreaContext.Provider>
+      </TableContext.Provider>
     </StateContext.Provider>
   );
 }

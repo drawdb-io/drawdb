@@ -51,7 +51,6 @@ import {
 import {
   AreaContext,
   NoteContext,
-  TransformContext,
   SelectContext,
   StateContext,
   TabContext,
@@ -73,6 +72,7 @@ import Todo from "./Todo";
 import { Thumbnail } from "./Thumbnail";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
+import useTransform from "../hooks/useTransform";
 
 export default function ControlPanel({
   diagramId,
@@ -147,7 +147,7 @@ export default function ControlPanel({
     useContext(UndoRedoContext);
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const { tab, setTab } = useContext(TabContext);
-  const { transform, setTransform } = useContext(TransformContext);
+  const { transform, setTransform } = useTransform();
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));

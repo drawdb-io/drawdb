@@ -9,11 +9,11 @@ import {
   TableContext,
   UndoRedoContext,
   SelectContext,
-  TransformContext,
 } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 import useSettings from "../hooks/useSettings";
+import useTransform from "../hooks/useTransform";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } =
@@ -22,7 +22,7 @@ export default function Canvas() {
   const { notes, updateNote } = useContext(NoteContext);
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useContext(UndoRedoContext);
-  const { transform, setTransform } = useContext(TransformContext);
+  const { transform, setTransform } = useTransform();
   const { selectedElement, setSelectedElement } = useContext(SelectContext);
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
