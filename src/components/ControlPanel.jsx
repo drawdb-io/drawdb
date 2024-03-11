@@ -44,7 +44,6 @@ import {
   jsonToSQLServer,
 } from "../utils/toSQL";
 import {
-  AreaContext,
   NoteContext,
   StateContext,
   TabContext,
@@ -71,6 +70,7 @@ import useSelect from "../hooks/useSelect";
 import { enterFullscreen, exitFullscreen } from "../utils/fullscreen";
 import { ddbDiagramIsValid, jsonDiagramIsValid } from "../utils/validateSchema";
 import { dataURItoBlob } from "../utils/utils";
+import useAreas from "../hooks/useAreas";
 
 export default function ControlPanel({
   diagramId,
@@ -139,8 +139,7 @@ export default function ControlPanel({
     useContext(TypeContext);
   const { notes, setNotes, updateNote, addNote, deleteNote } =
     useContext(NoteContext);
-  const { areas, setAreas, updateArea, addArea, deleteArea } =
-    useContext(AreaContext);
+  const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const { tab, setTab } = useContext(TabContext);

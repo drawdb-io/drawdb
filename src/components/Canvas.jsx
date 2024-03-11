@@ -3,7 +3,7 @@ import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./Area";
 import Relationship from "./Relationship";
-import { AreaContext, NoteContext } from "../pages/Editor";
+import { NoteContext } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 import useSettings from "../hooks/useSettings";
@@ -11,10 +11,11 @@ import useTransform from "../hooks/useTransform";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import useAreas from "../hooks/useAreas";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } = useTables();
-  const { areas, updateArea } = useContext(AreaContext);
+  const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useContext(NoteContext);
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();

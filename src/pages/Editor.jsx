@@ -2,14 +2,7 @@ import { useState, createContext, useEffect, useCallback } from "react";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
-import {
-  Tab,
-  defaultTableTheme,
-  defaultNoteTheme,
-  Action,
-  ObjectType,
-  State,
-} from "../data/data";
+import { Tab, defaultNoteTheme, Action, ObjectType, State } from "../data/data";
 import { db } from "../data/db";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
@@ -21,11 +14,12 @@ import TablesContextProvider from "../context/TablesContext";
 import useUndoRedo from "../hooks/useUndoRedo";
 import UndoRedoContextProvider from "../context/UndoRedoContext";
 import SelectContextProvider from "../context/SelectContext";
+import AreasContextProvider from "../context/AreasContext";
 import useSelect from "../hooks/useSelect";
 import Controls from "../components/Controls";
+import useAreas from "../hooks/useAreas";
 
 export const StateContext = createContext();
-export const AreaContext = createContext();
 export const TabContext = createContext();
 export const NoteContext = createContext();
 export const TaskContext = createContext();
@@ -37,9 +31,11 @@ export default function Editor() {
       <TransformContextProvider>
         <UndoRedoContextProvider>
           <SelectContextProvider>
-            <TablesContextProvider>
-              <WorkSpace />
-            </TablesContextProvider>
+            <AreasContextProvider>
+              <TablesContextProvider>
+                <WorkSpace />
+              </TablesContextProvider>
+            </AreasContextProvider>
           </SelectContextProvider>
         </UndoRedoContextProvider>
       </TransformContextProvider>
@@ -53,7 +49,6 @@ function WorkSpace() {
   const [state, setState] = useState(State.NONE);
   const [lastSaved, setLastSaved] = useState("");
   const { tables, relationships, setTables, setRelationships } = useTables();
-  const [areas, setAreas] = useState([]);
   const [notes, setNotes] = useState([]);
   const [types, setTypes] = useState([]);
   const [resize, setResize] = useState(false);
@@ -63,6 +58,7 @@ function WorkSpace() {
   const { settings, setSettings } = useSettings();
   const { transform, setTransform } = useTransform();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { areas, setAreas } = useAreas();
   const [tasks, setTasks] = useState([]);
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
 
@@ -125,40 +121,6 @@ function WorkSpace() {
     );
   };
 
-  const addArea = (addToHistory = true, data) => {
-    if (data) {
-      setAreas((prev) => {
-        const temp = prev.slice();
-        temp.splice(data.id, 0, data);
-        return temp.map((t, i) => ({ ...t, id: i }));
-      });
-    } else {
-      setAreas((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          name: `area_${prev.length}`,
-          x: -transform.pan.x,
-          y: -transform.pan.y,
-          width: 200,
-          height: 200,
-          color: defaultTableTheme,
-        },
-      ]);
-    }
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.ADD,
-          element: ObjectType.AREA,
-          message: `Add new subject area`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-  };
-
   const addNote = (addToHistory = true, data) => {
     if (data) {
       setNotes((prev) => {
@@ -193,32 +155,6 @@ function WorkSpace() {
     }
   };
 
-  const deleteArea = (id, addToHistory = true) => {
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.DELETE,
-          element: ObjectType.AREA,
-          data: areas[id],
-          message: `Delete subject area`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-    setAreas((prev) =>
-      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
-    );
-    if (id === selectedElement.id) {
-      setSelectedElement({
-        element: ObjectType.NONE,
-        id: -1,
-        openDialogue: false,
-        openCollapse: false,
-      });
-    }
-  };
-
   const deleteNote = (id, addToHistory = true) => {
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -243,20 +179,6 @@ function WorkSpace() {
         openCollapse: false,
       });
     }
-  };
-
-  const updateArea = (id, values) => {
-    setAreas((prev) =>
-      prev.map((t) => {
-        if (t.id === id) {
-          return {
-            ...t,
-            ...values,
-          };
-        }
-        return t;
-      })
-    );
   };
 
   const updateNote = (id, values) => {
@@ -510,63 +432,60 @@ function WorkSpace() {
     setUndoStack,
     setRelationships,
     setTables,
+    setAreas,
   ]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
-      <AreaContext.Provider
-        value={{ areas, setAreas, updateArea, addArea, deleteArea }}
+      <NoteContext.Provider
+        value={{ notes, setNotes, updateNote, addNote, deleteNote }}
       >
-        <NoteContext.Provider
-          value={{ notes, setNotes, updateNote, addNote, deleteNote }}
-        >
-          <TabContext.Provider value={{ tab, setTab }}>
-            <TypeContext.Provider
-              value={{
-                types,
-                setTypes,
-                addType,
-                updateType,
-                deleteType,
-              }}
-            >
-              <div className="h-[100vh] flex flex-col overflow-hidden theme">
-                <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
-                  <ControlPanel
-                    diagramId={id}
-                    setDiagramId={setId}
-                    title={title}
-                    setTitle={setTitle}
-                    lastSaved={lastSaved}
-                    setLastSaved={setLastSaved}
+        <TabContext.Provider value={{ tab, setTab }}>
+          <TypeContext.Provider
+            value={{
+              types,
+              setTypes,
+              addType,
+              updateType,
+              deleteType,
+            }}
+          >
+            <div className="h-[100vh] flex flex-col overflow-hidden theme">
+              <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
+                <ControlPanel
+                  diagramId={id}
+                  setDiagramId={setId}
+                  title={title}
+                  setTitle={setTitle}
+                  lastSaved={lastSaved}
+                  setLastSaved={setLastSaved}
+                />
+              </TaskContext.Provider>
+              <div
+                className="flex h-full overflow-y-auto"
+                onMouseUp={() => setResize(false)}
+                onMouseMove={dragHandler}
+              >
+                {layout.sidebar && (
+                  <SidePanel
+                    resize={resize}
+                    setResize={setResize}
+                    width={width}
                   />
-                </TaskContext.Provider>
-                <div
-                  className="flex h-full overflow-y-auto"
-                  onMouseUp={() => setResize(false)}
-                  onMouseMove={dragHandler}
-                >
-                  {layout.sidebar && (
-                    <SidePanel
-                      resize={resize}
-                      setResize={setResize}
-                      width={width}
-                    />
+                )}
+                <div className="relative w-full h-full overflow-hidden">
+                  <Canvas state={state} setState={setState} />
+                  {!(layout.sidebar || layout.toolbar || layout.header) && (
+                    <div className="fixed right-5 bottom-4">
+                      <Controls />
+                    </div>
                   )}
-                  <div className="relative w-full h-full overflow-hidden">
-                    <Canvas state={state} setState={setState} />
-                    {!(layout.sidebar || layout.toolbar || layout.header) && (
-                      <div className="fixed right-5 bottom-4">
-                        <Controls />
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
-            </TypeContext.Provider>
-          </TabContext.Provider>
-        </NoteContext.Provider>
-      </AreaContext.Provider>
+            </div>
+          </TypeContext.Provider>
+        </TabContext.Provider>
+      </NoteContext.Provider>
     </StateContext.Provider>
   );
 }

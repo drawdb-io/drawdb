@@ -26,12 +26,13 @@ import {
   ObjectType,
   State,
 } from "../data/data";
-import { AreaContext, StateContext } from "../pages/Editor";
+import { StateContext } from "../pages/Editor";
 import useUndoRedo from "../hooks/useUndoRedo";
+import useAreas from "../hooks/useAreas";
 
 export default function AreaOverview() {
   const { setState } = useContext(StateContext);
-  const { areas, addArea, deleteArea, updateArea } = useContext(AreaContext);
+  const { areas, addArea, deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const [value, setValue] = useState("");
