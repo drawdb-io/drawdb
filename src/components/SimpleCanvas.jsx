@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Cardinality } from "../data/data";
-import { calcPath } from "../utils";
+import { calcPath } from "../utils/calcPath";
 
 function Table({ table, grab }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -19,8 +19,9 @@ function Table({ table, grab }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`border-2 ${isHovered ? "border-dashed border-blue-500" : "border-zinc-300"
-          } select-none rounded-lg w-full bg-zinc-100 text-zinc-800`}
+        className={`border-2 ${
+          isHovered ? "border-dashed border-blue-500" : "border-zinc-300"
+        } select-none rounded-lg w-full bg-zinc-100 text-zinc-800`}
       >
         <div
           className={`h-[10px] w-full rounded-t-md`}
@@ -32,8 +33,9 @@ function Table({ table, grab }) {
         {table.fields.map((e, i) => (
           <div
             key={i}
-            className={`${i === table.fields.length - 1 ? "" : "border-b border-gray-400"
-              } h-[36px] px-2 py-1 flex justify-between`}
+            className={`${
+              i === table.fields.length - 1 ? "" : "border-b border-gray-400"
+            } h-[36px] px-2 py-1 flex justify-between`}
             onMouseEnter={() => setHoveredField(i)}
             onMouseLeave={() => setHoveredField(-1)}
           >
@@ -99,9 +101,7 @@ function Relationship({ relationship }) {
           relationship.startX,
           relationship.endX,
           relationship.startY,
-          relationship.endY,
-          relationship.startFieldId,
-          relationship.endFieldId
+          relationship.endY
         )}
         stroke="gray"
         fill="none"
@@ -231,10 +231,12 @@ export default function SimpleCanvas({ diagram, zoom }) {
         height="100%"
         fill="url(#pattern-circles)"
       ></rect>
-      <g style={{
-        transform: `scale(${zoom})`,
-        transformOrigin: "top left",
-      }}>
+      <g
+        style={{
+          transform: `scale(${zoom})`,
+          transformOrigin: "top left",
+        }}
+      >
         {relationships.map((r, i) => (
           <Relationship key={i} relationship={r} />
         ))}

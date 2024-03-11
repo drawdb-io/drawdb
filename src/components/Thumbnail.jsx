@@ -1,4 +1,4 @@
-import { calcPath } from "../utils";
+import { calcPath } from "../utils/calcPath";
 
 export function Thumbnail({ diagram, i, zoom }) {
   const translateX = 32 * zoom;
@@ -119,9 +119,7 @@ export function Thumbnail({ diagram, i, zoom }) {
               e.startX,
               e.endX,
               e.startY - translateY / zoom,
-              e.endY - (translateY / zoom) * 0.5,
-              e.startFieldId,
-              e.endFieldId
+              e.endY - (translateY / zoom) * 0.5
             )}
             fill="none"
             strokeWidth={1}

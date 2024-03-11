@@ -36,7 +36,7 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { TypeContext } from "../pages/Editor";
-import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
+import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";

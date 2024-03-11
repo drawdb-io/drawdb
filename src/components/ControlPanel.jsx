@@ -37,17 +37,12 @@ import todo from "../assets/calendar.png";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
-  jsonDiagramIsValid,
-  enterFullscreen,
-  exitFullscreen,
-  ddbDiagramIsValid,
-  dataURItoBlob,
   jsonToMySQL,
   jsonToPostgreSQL,
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
-} from "../utils";
+} from "../utils/toSQL";
 import {
   AreaContext,
   NoteContext,
@@ -73,6 +68,9 @@ import useTransform from "../hooks/useTransform";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import { enterFullscreen, exitFullscreen } from "../utils/fullscreen";
+import { ddbDiagramIsValid, jsonDiagramIsValid } from "../utils/validateSchema";
+import { dataURItoBlob } from "../utils/utils";
 
 export default function ControlPanel({
   diagramId,

@@ -28,7 +28,7 @@ import {
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
 import { TypeContext } from "../pages/Editor";
-import { isSized, hasPrecision, getSize } from "../utils";
+import { isSized, hasPrecision, getSize } from "../utils/toSQL";
 import useUndoRedo from "../hooks/useUndoRedo";
 
 export default function TableOverview() {

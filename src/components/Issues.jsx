@@ -1,9 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { TypeContext } from "../pages/Editor";
-import { validateDiagram, arrayIsEqual } from "../utils";
+import { validateDiagram } from "../utils/toSQL";
 import useSettings from "../hooks/useSettings";
 import useTables from "../hooks/useTables";
+import { arrayIsEqual } from "../utils/utils";
 
 export default function Issues() {
   const { settings } = useSettings();

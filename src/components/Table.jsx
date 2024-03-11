@@ -32,7 +32,7 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 import { TabContext, TypeContext } from "../pages/Editor";
-import { getSize, hasCheck, hasPrecision, isSized } from "../utils";
+import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useUndoRedo from "../hooks/useUndoRedo";

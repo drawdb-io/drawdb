@@ -1,7 +1,7 @@
 import { Divider, Tooltip } from "@douyinfe/semi-ui";
-import { exitFullscreen } from "../utils";
 import useTransform from "../hooks/useTransform";
 import useLayout from "../hooks/useLayout";
+import { exitFullscreen } from "../utils/fullscreen";
 
 export default function Controls() {
   const { transform, setTransform } = useTransform();

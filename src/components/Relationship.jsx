@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import { calcPath } from "../utils";
 import { Cardinality } from "../data/data";
 import useSettings from "../hooks/useSettings";
+import { calcPath } from "../utils/calcPath";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
@@ -50,14 +50,7 @@ export default function Relationship({ data }) {
     <g className="select-none group">
       <path
         ref={pathRef}
-        d={calcPath(
-          data.startX,
-          data.endX,
-          data.startY,
-          data.endY,
-          data.startFieldId,
-          data.endFieldId
-        )}
+        d={calcPath(data.startX, data.endX, data.startY, data.endY)}
         stroke="gray"
         className="group-hover:stroke-sky-700"
         fill="none"
