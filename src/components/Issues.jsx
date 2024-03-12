@@ -1,10 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { TypeContext } from "../pages/Editor";
-import { validateDiagram } from "../utils/toSQL";
+import { arrayIsEqual } from "../utils/utils";
+import { getIssues } from "../utils/issues";
 import useSettings from "../hooks/useSettings";
 import useTables from "../hooks/useTables";
-import { arrayIsEqual } from "../utils/utils";
 
 export default function Issues() {
   const { settings } = useSettings();
@@ -14,7 +14,7 @@ export default function Issues() {
 
   useEffect(() => {
     const findIssues = async () => {
-      const newIssues = validateDiagram({
+      const newIssues = getIssues({
         tables: tables,
         relationships: relationships,
         types: types,
