@@ -31,13 +31,14 @@ import {
   SideSheet,
   Toast,
 } from "@douyinfe/semi-ui";
-import { TabContext, TypeContext } from "../pages/Editor";
+import { TabContext } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useTables from "../hooks/useTables";
 import useSelect from "../hooks/useSelect";
+import useTypes from "../hooks/useTypes";
 
 export default function Table(props) {
   const [isHovered, setIsHovered] = useState(false);
@@ -48,7 +49,7 @@ export default function Table(props) {
     useTables();
   const { tab, setTab } = useContext(TabContext);
   const { settings } = useSettings();
-  const { types } = useContext(TypeContext);
+  const { types } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
 

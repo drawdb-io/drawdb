@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Action,
   ObjectType,
@@ -35,11 +35,11 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TypeContext } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import useTypes from "../hooks/useTypes";
 
 export default function TableOverview() {
   const [indexActiveKey, setIndexActiveKey] = useState("");
@@ -52,7 +52,7 @@ export default function TableOverview() {
     updateTable,
     setRelationships,
   } = useTables();
-  const { types } = useContext(TypeContext);
+  const { types } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const [editField, setEditField] = useState({});

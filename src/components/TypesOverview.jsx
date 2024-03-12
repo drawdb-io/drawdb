@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Action, ObjectType, sqlDataTypes } from "../data/data";
 import {
   Collapse,
@@ -27,13 +27,13 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { TypeContext } from "../pages/Editor";
 import { isSized, hasPrecision, getSize } from "../utils/toSQL";
 import useUndoRedo from "../hooks/useUndoRedo";
+import useTypes from "../hooks/useTypes";
 
 export default function TableOverview() {
   const [value, setValue] = useState("");
-  const { types, addType, deleteType, updateType } = useContext(TypeContext);
+  const { types, addType, deleteType, updateType } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const [filteredResult, setFilteredResult] = useState(

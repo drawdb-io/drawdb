@@ -2,7 +2,7 @@ import { useState, createContext, useEffect, useCallback } from "react";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
-import { Tab, Action, ObjectType, State } from "../data/data";
+import { Tab, State } from "../data/data";
 import { db } from "../data/db";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
@@ -19,11 +19,12 @@ import Controls from "../components/Controls";
 import useAreas from "../hooks/useAreas";
 import useNotes from "../hooks/useNotes";
 import NotesContextProvider from "../context/NotesContext";
+import useTypes from "../hooks/useTypes";
+import TypesContextProvider from "../context/TypesContext";
 
 export const StateContext = createContext();
 export const TabContext = createContext();
 export const TaskContext = createContext();
-export const TypeContext = createContext();
 
 export default function Editor() {
   return (
@@ -33,9 +34,11 @@ export default function Editor() {
           <SelectContextProvider>
             <AreasContextProvider>
               <NotesContextProvider>
-                <TablesContextProvider>
-                  <WorkSpace />
-                </TablesContextProvider>
+                <TypesContextProvider>
+                  <TablesContextProvider>
+                    <WorkSpace />
+                  </TablesContextProvider>
+                </TypesContextProvider>
               </NotesContextProvider>
             </AreasContextProvider>
           </SelectContextProvider>
@@ -50,7 +53,7 @@ function WorkSpace() {
   const [title, setTitle] = useState("Untitled Diagram");
   const [state, setState] = useState(State.NONE);
   const [lastSaved, setLastSaved] = useState("");
-  const [types, setTypes] = useState([]);
+  const { types, setTypes } = useTypes();
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
   const [tab, setTab] = useState(Tab.tables);
@@ -67,59 +70,6 @@ function WorkSpace() {
     if (!resize) return;
     const w = e.clientX;
     if (w > 340) setWidth(w);
-  };
-
-  const addType = (addToHistory = true, data) => {
-    if (data) {
-      setTypes((prev) => {
-        const temp = prev.slice();
-        temp.splice(data.id, 0, data);
-        return temp;
-      });
-    } else {
-      setTypes((prev) => [
-        ...prev,
-        {
-          name: `type_${prev.length}`,
-          fields: [],
-          comment: "",
-        },
-      ]);
-    }
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.ADD,
-          element: ObjectType.TYPE,
-          message: `Add new type`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-  };
-
-  const deleteType = (id, addToHistory = true) => {
-    if (addToHistory) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.DELETE,
-          element: ObjectType.TYPE,
-          id: id,
-          data: types[id],
-          message: `Delete type`,
-        },
-      ]);
-      setRedoStack([]);
-    }
-    setTypes((prev) => prev.filter((e, i) => i !== id));
-  };
-
-  const updateType = (id, values) => {
-    setTypes((prev) =>
-      prev.map((e, i) => (i === id ? { ...e, ...values } : e))
-    );
   };
 
   const updateTask = (id, values) =>
@@ -361,55 +311,42 @@ function WorkSpace() {
     setTables,
     setAreas,
     setNotes,
+    setTypes,
   ]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
       <TabContext.Provider value={{ tab, setTab }}>
-        <TypeContext.Provider
-          value={{
-            types,
-            setTypes,
-            addType,
-            updateType,
-            deleteType,
-          }}
-        >
-          <div className="h-[100vh] flex flex-col overflow-hidden theme">
-            <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
-              <ControlPanel
-                diagramId={id}
-                setDiagramId={setId}
-                title={title}
-                setTitle={setTitle}
-                lastSaved={lastSaved}
-                setLastSaved={setLastSaved}
-              />
-            </TaskContext.Provider>
-            <div
-              className="flex h-full overflow-y-auto"
-              onMouseUp={() => setResize(false)}
-              onMouseLeave={() => setResize(false)}
-              onMouseMove={handleResize}
-            >
-              {layout.sidebar && (
-                <SidePanel
-                  resize={resize}
-                  setResize={setResize}
-                  width={width}
-                />
+        <div className="h-[100vh] flex flex-col overflow-hidden theme">
+          <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
+            <ControlPanel
+              diagramId={id}
+              setDiagramId={setId}
+              title={title}
+              setTitle={setTitle}
+              lastSaved={lastSaved}
+              setLastSaved={setLastSaved}
+            />
+          </TaskContext.Provider>
+          <div
+            className="flex h-full overflow-y-auto"
+            onMouseUp={() => setResize(false)}
+            onMouseLeave={() => setResize(false)}
+            onMouseMove={handleResize}
+          >
+            {layout.sidebar && (
+              <SidePanel resize={resize} setResize={setResize} width={width} />
+            )}
+            <div className="relative w-full h-full overflow-hidden">
+              <Canvas state={state} setState={setState} />
+              {!(layout.sidebar || layout.toolbar || layout.header) && (
+                <div className="fixed right-5 bottom-4">
+                  <Controls />
+                </div>
               )}
-              <div className="relative w-full h-full overflow-hidden">
-                <Canvas state={state} setState={setState} />
-                {!(layout.sidebar || layout.toolbar || layout.header) && (
-                  <div className="fixed right-5 bottom-4">
-                    <Controls />
-                  </div>
-                )}
-              </div>
             </div>
           </div>
-        </TypeContext.Provider>
+        </div>
       </TabContext.Provider>
     </StateContext.Provider>
   );

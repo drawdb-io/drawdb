@@ -43,11 +43,7 @@ import {
   jsonToMariaDB,
   jsonToSQLServer,
 } from "../utils/toSQL";
-import {
-  StateContext,
-  TabContext,
-  TypeContext,
-} from "../pages/Editor";
+import { StateContext, TabContext } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
 import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
 import jsPDF from "jspdf";
@@ -71,6 +67,7 @@ import { ddbDiagramIsValid, jsonDiagramIsValid } from "../utils/validateSchema";
 import { dataURItoBlob } from "../utils/utils";
 import useAreas from "../hooks/useAreas";
 import useNotes from "../hooks/useNotes";
+import useTypes from "../hooks/useTypes";
 
 export default function ControlPanel({
   diagramId,
@@ -135,10 +132,8 @@ export default function ControlPanel({
     addRelationship,
     deleteRelationship,
   } = useTables();
-  const { types, addType, deleteType, updateType, setTypes } =
-    useContext(TypeContext);
-  const { notes, setNotes, updateNote, addNote, deleteNote } =
-    useNotes();
+  const { types, addType, deleteType, updateType, setTypes } = useTypes();
+  const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
