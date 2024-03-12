@@ -63,7 +63,7 @@ function WorkSpace() {
   const { tables, relationships, setTables, setRelationships } = useTables();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
 
-  const dragHandler = (e) => {
+  const handleResize = (e) => {
     if (!resize) return;
     const w = e.clientX;
     if (w > 340) setWidth(w);
@@ -389,7 +389,8 @@ function WorkSpace() {
             <div
               className="flex h-full overflow-y-auto"
               onMouseUp={() => setResize(false)}
-              onMouseMove={dragHandler}
+              onMouseLeave={() => setResize(false)}
+              onMouseMove={handleResize}
             >
               {layout.sidebar && (
                 <SidePanel
