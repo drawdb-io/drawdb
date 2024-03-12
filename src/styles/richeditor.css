@@ -350,34 +350,6 @@ pre::-webkit-scrollbar-thumb {
   font-family: inherit;
 }
 
-.link-edit {
-  background-image: url(/images/icons/pencil-fill.svg);
-  background-size: 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 35px;
-  vertical-align: -0.25em;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  cursor: pointer;
-}
-
-.link-edit-dark {
-  background-image: url(/images/icons/pencil-fill-dark.svg);
-  background-size: 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 35px;
-  vertical-align: -0.25em;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  cursor: pointer;
-}
-
 .link-editor .link-input a {
   color: rgb(33, 111, 219);
   text-decoration: none;

@@ -82,7 +82,7 @@ function positionEditorElement(editor, rect) {
   }
 }
 
-function FloatingLinkEditor({ editor, theme }) {
+function FloatingLinkEditor({ editor }) {
   const editorRef = useRef(null);
   const inputRef = useRef(null);
   const mouseDownRef = useRef(false);
@@ -206,15 +206,6 @@ function FloatingLinkEditor({ editor, theme }) {
             <a href={linkUrl} target="_blank" rel="noopener noreferrer">
               {linkUrl}
             </a>
-            <div
-              className={`link-edit${theme === "dark" ? "-dark" : ""}`}
-              role="button"
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                setEditMode(true);
-              }}
-            />
           </div>
         </>
       )}
@@ -386,8 +377,7 @@ function BlockOptionsDropdownList({ editor, blockType }) {
   );
 }
 
-export default function ToolbarPlugin(props) {
-  const { theme } = props;
+export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -527,10 +517,7 @@ export default function ToolbarPlugin(props) {
         <i className={`bi bi-arrow-clockwise ${canRedo ? "" : "opacity-30"}`} />
       </button>
       <Divider />
-      <BlockOptionsDropdownList
-        editor={editor}
-        blockType={blockType}
-      />
+      <BlockOptionsDropdownList editor={editor} blockType={blockType} />
       <Divider />
       {blockType === "code" ? (
         <div className="flex items-center">
@@ -596,7 +583,7 @@ export default function ToolbarPlugin(props) {
           </button>
           {isLink &&
             createPortal(
-              <FloatingLinkEditor editor={editor} theme={theme} />,
+              <FloatingLinkEditor editor={editor} />,
               document.body
             )}
           <Divider />
