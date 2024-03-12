@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Empty,
   Row,
@@ -21,12 +21,12 @@ import {
   IconSearch,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import { NoteContext } from "../pages/Editor";
 import { noteThemes, Action, ObjectType } from "../data/data";
 import useUndoRedo from "../hooks/useUndoRedo";
+import useNotes from "../hooks/useNotes";
 
 export default function NotesOverview() {
-  const { notes, updateNote, addNote, deleteNote } = useContext(NoteContext);
+  const { notes, updateNote, addNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [value, setValue] = useState("");
   const [editField, setEditField] = useState({});

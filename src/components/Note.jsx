@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { NoteContext, TabContext, StateContext } from "../pages/Editor";
+import { TabContext, StateContext } from "../pages/Editor";
 import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
@@ -10,6 +10,7 @@ import {
 import useLayout from "../hooks/useLayout";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import useNotes from "../hooks/useNotes";
 
 export default function Note(props) {
   const [editField, setEditField] = useState({});
@@ -17,7 +18,7 @@ export default function Note(props) {
   const w = 180;
   const r = 3;
   const fold = 24;
-  const { updateNote, deleteNote } = useContext(NoteContext);
+  const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setState } = useContext(StateContext);
   const { layout } = useLayout();

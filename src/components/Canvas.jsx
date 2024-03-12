@@ -1,9 +1,8 @@
-import { useContext, useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
 import Area from "./Area";
 import Relationship from "./Relationship";
-import { NoteContext } from "../pages/Editor";
 import Note from "./Note";
 import { Toast } from "@douyinfe/semi-ui";
 import useSettings from "../hooks/useSettings";
@@ -12,11 +11,12 @@ import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 import useAreas from "../hooks/useAreas";
+import useNotes from "../hooks/useNotes";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } = useTables();
   const { areas, updateArea } = useAreas();
-  const { notes, updateNote } = useContext(NoteContext);
+  const { notes, updateNote } = useNotes();
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
