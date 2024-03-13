@@ -21,9 +21,10 @@ import useNotes from "../hooks/useNotes";
 import NotesContextProvider from "../context/NotesContext";
 import useTypes from "../hooks/useTypes";
 import TypesContextProvider from "../context/TypesContext";
+import useTasks from "../hooks/useTasks";
+import TasksContextProvider from "../context/TasksContext";
 
 export const StateContext = createContext();
-export const TaskContext = createContext();
 
 export default function Editor() {
   return (
@@ -31,15 +32,17 @@ export default function Editor() {
       <TransformContextProvider>
         <UndoRedoContextProvider>
           <SelectContextProvider>
-            <AreasContextProvider>
-              <NotesContextProvider>
-                <TypesContextProvider>
-                  <TablesContextProvider>
-                    <WorkSpace />
-                  </TablesContextProvider>
-                </TypesContextProvider>
-              </NotesContextProvider>
-            </AreasContextProvider>
+            <TasksContextProvider>
+              <AreasContextProvider>
+                <NotesContextProvider>
+                  <TypesContextProvider>
+                    <TablesContextProvider>
+                      <WorkSpace />
+                    </TablesContextProvider>
+                  </TypesContextProvider>
+                </NotesContextProvider>
+              </AreasContextProvider>
+            </TasksContextProvider>
           </SelectContextProvider>
         </UndoRedoContextProvider>
       </TransformContextProvider>
@@ -55,7 +58,7 @@ function WorkSpace() {
   const { types, setTypes } = useTypes();
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
-  const [tasks, setTasks] = useState([]);
+  const { tasks, setTasks } = useTasks();
   const { layout } = useLayout();
   const { areas, setAreas } = useAreas();
   const { settings, setSettings } = useSettings();
@@ -69,11 +72,6 @@ function WorkSpace() {
     const w = e.clientX;
     if (w > 340) setWidth(w);
   };
-
-  const updateTask = (id, values) =>
-    setTasks((prev) =>
-      prev.map((task, i) => (id === i ? { ...task, ...values } : task))
-    );
 
   useEffect(() => {
     if (
@@ -209,7 +207,7 @@ function WorkSpace() {
             setNotes(d.notes);
             setAreas(d.areas);
             setTypes(d.types);
-            setTasks(d.todos);
+            setTasks(d.todos ?? []);
             setTransform({ pan: d.pan, zoom: d.zoom });
             window.name = `d ${d.id}`;
           } else {
@@ -233,7 +231,7 @@ function WorkSpace() {
             setRelationships(diagram.references);
             setAreas(diagram.areas);
             setNotes(diagram.notes);
-            setTasks(diagram.todos);
+            setTasks(diagram.todos ?? []);
             setTransform({
               pan: diagram.pan,
               zoom: diagram.zoom,
@@ -261,7 +259,7 @@ function WorkSpace() {
             setTypes(diagram.types);
             setRelationships(diagram.relationships);
             setAreas(diagram.subjectAreas);
-            setTasks(diagram.tasks);
+            setTasks(diagram.todos ?? []);
             setNotes(diagram.notes);
             setTransform({
               zoom: 1,
@@ -310,21 +308,20 @@ function WorkSpace() {
     setAreas,
     setNotes,
     setTypes,
+    setTasks,
   ]);
 
   return (
     <StateContext.Provider value={{ state, setState }}>
       <div className="h-[100vh] flex flex-col overflow-hidden theme">
-        <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
-          <ControlPanel
-            diagramId={id}
-            setDiagramId={setId}
-            title={title}
-            setTitle={setTitle}
-            lastSaved={lastSaved}
-            setLastSaved={setLastSaved}
-          />
-        </TaskContext.Provider>
+        <ControlPanel
+          diagramId={id}
+          setDiagramId={setId}
+          title={title}
+          setTitle={setTitle}
+          lastSaved={lastSaved}
+          setLastSaved={setLastSaved}
+        />
         <div
           className="flex h-full overflow-y-auto"
           onMouseUp={() => setResize(false)}
