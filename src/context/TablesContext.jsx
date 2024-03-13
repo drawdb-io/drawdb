@@ -94,12 +94,12 @@ export default function TablesContextProvider({ children }) {
       return prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }));
     });
     if (id === selectedElement.id) {
-      setSelectedElement({
+      setSelectedElement((prev) => ({
+        ...prev,
         element: ObjectType.NONE,
         id: -1,
-        openDialogue: false,
-        openCollapse: false,
-      });
+        open: false,
+      }));
     }
   };
 
