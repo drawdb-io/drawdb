@@ -13,7 +13,7 @@ import {
   defaultTableTheme,
   State,
 } from "../data/data";
-import { StateContext, TabContext } from "../pages/Editor";
+import { StateContext } from "../pages/Editor";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useUndoRedo from "../hooks/useUndoRedo";
@@ -26,7 +26,6 @@ export default function Area(props) {
   const { setState } = useContext(StateContext);
   const { layout } = useLayout();
   const { settings } = useSettings();
-  const { tab, setTab } = useContext(TabContext);
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -79,20 +78,27 @@ export default function Area(props) {
         {(hovered ||
           (selectedElement.element === ObjectType.AREA &&
             selectedElement.id === props.areaData.id &&
-            selectedElement.openDialogue &&
+            selectedElement.open &&
             !layout.sidebar)) && (
           <div className="absolute top-2 right-3">
             <Popover
               visible={
                 selectedElement.element === ObjectType.AREA &&
                 selectedElement.id === props.areaData.id &&
-                selectedElement.openDialogue &&
+                selectedElement.open &&
                 !layout.sidebar
               }
               onClickOutSide={() => {
+                if (selectedElement.editFromToolbar) {
+                  setSelectedElement((prev) => ({
+                    ...prev,
+                    editFromToolbar: false,
+                  }));
+                  return;
+                }
                 setSelectedElement((prev) => ({
                   ...prev,
-                  openDialogue: false,
+                  open: false,
                 }));
                 setState(State.SAVING);
               }}
@@ -261,18 +267,25 @@ export default function Area(props) {
                 }}
                 onClick={() => {
                   if (layout.sidebar) {
-                    setTab(Tab.subject_areas);
-                    if (tab !== Tab.subject_areas) return;
+                    setSelectedElement((prev) => ({
+                      ...prev,
+                      element: ObjectType.AREA,
+                      id: props.areaData.id,
+                      currentTab: Tab.subject_areas,
+                      open: true,
+                    }));
+                    if (selectedElement.currentTab !== Tab.subject_areas)
+                      return;
                     document
                       .getElementById(`scroll_area_${props.areaData.id}`)
                       .scrollIntoView({ behavior: "smooth" });
                   } else {
-                    setSelectedElement({
+                    setSelectedElement((prev) => ({
+                      ...prev,
                       element: ObjectType.AREA,
                       id: props.areaData.id,
-                      openDialogue: true,
-                      openCollapse: false,
-                    });
+                      open: true,
+                    }));
                   }
                 }}
               ></Button>

@@ -43,7 +43,7 @@ import {
   jsonToMariaDB,
   jsonToSQLServer,
 } from "../utils/toSQL";
-import { StateContext, TabContext } from "../pages/Editor";
+import { StateContext } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
 import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
 import jsPDF from "jspdf";
@@ -137,7 +137,6 @@ export default function ControlPanel({
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
-  const { tab, setTab } = useContext(TabContext);
   const { transform, setTransform } = useTransform();
 
   const invertLayout = (component) =>
@@ -574,54 +573,55 @@ export default function ControlPanel({
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
       if (!layout.sidebar) {
-        setSelectedElement({
-          element: ObjectType.TABLE,
-          id: selectedElement.id,
-          openDialogue: true,
-          openCollapse: false,
-        });
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: true,
+        }));
       } else {
-        setTab(Tab.tables);
-        setSelectedElement({
-          element: ObjectType.TABLE,
-          id: selectedElement.id,
-          openDialogue: false,
-          openCollapse: true,
-        });
-        if (tab !== Tab.tables) return;
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: true,
+          currentTab: Tab.tables,
+        }));
+        if (selectedElement.currentTab !== Tab.tables) return;
         document
           .getElementById(`scroll_table_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
       }
     } else if (selectedElement.element === ObjectType.AREA) {
       if (layout.sidebar) {
-        setTab(Tab.subject_areas);
-        if (tab !== Tab.subject_areas) return;
+        setSelectedElement((prev) => ({
+          ...prev,
+          currentTab: Tab.subject_areas,
+        }));
+        if (selectedElement.currentTab !== Tab.subject_areas) return;
         document
           .getElementById(`scroll_area_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
       } else {
-        setSelectedElement({
-          element: ObjectType.AREA,
-          id: selectedElement.id,
-          openDialogue: true,
-          openCollapse: false,
-        });
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: true,
+          editFromToolbar: true,
+        }));
       }
     } else if (selectedElement.element === ObjectType.NOTE) {
       if (layout.sidebar) {
-        setTab(Tab.notes);
-        if (tab !== Tab.notes) return;
+        setSelectedElement((prev) => ({
+          ...prev,
+          currentTab: Tab.notes,
+          open: false,
+        }));
+        if (selectedElement.currentTab !== Tab.notes) return;
         document
           .getElementById(`scroll_note_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
       } else {
-        setSelectedElement({
-          element: ObjectType.NOTE,
-          id: selectedElement.id,
-          openDialogue: true,
-          openCollapse: false,
-        });
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: true,
+          editFromToolbar: true,
+        }));
       }
     }
   };

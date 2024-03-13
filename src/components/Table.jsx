@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {
   sqlDataTypes,
   tableThemes,
@@ -31,7 +31,6 @@ import {
   SideSheet,
   Toast,
 } from "@douyinfe/semi-ui";
-import { TabContext } from "../pages/Editor";
 import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
@@ -47,7 +46,6 @@ export default function Table(props) {
   const { layout } = useLayout();
   const { deleteTable, updateTable, updateField, setRelationships } =
     useTables();
-  const { tab, setTab } = useContext(TabContext);
   const { settings } = useSettings();
   const { types } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -113,21 +111,21 @@ export default function Table(props) {
                   }}
                   onClick={() => {
                     if (!layout.sidebar) {
-                      setSelectedElement({
+                      setSelectedElement((prev) => ({
+                        ...prev,
                         element: ObjectType.TABLE,
                         id: props.tableData.id,
-                        openDialogue: true,
-                        openCollapse: false,
-                      });
+                        open: true,
+                      }));
                     } else {
-                      setTab(Tab.tables);
-                      setSelectedElement({
+                      setSelectedElement((prev) => ({
+                        ...prev,
+                        currentTab: Tab.tables,
                         element: ObjectType.TABLE,
                         id: props.tableData.id,
-                        openDialogue: false,
-                        openCollapse: true,
-                      });
-                      if (tab !== Tab.tables) return;
+                        open: true,
+                      }));
+                      if (selectedElement.currentTab !== Tab.tables) return;
                       document
                         .getElementById(`scroll_table_${props.tableData.id}`)
                         .scrollIntoView({ behavior: "smooth" });
@@ -266,12 +264,13 @@ export default function Table(props) {
         visible={
           selectedElement.element === ObjectType.TABLE &&
           selectedElement.id === props.tableData.id &&
-          selectedElement.openDialogue
+          selectedElement.open &&
+          !layout.sidebar
         }
         onCancel={() =>
           setSelectedElement((prev) => ({
             ...prev,
-            openDialogue: !prev.openDialogue,
+            open: !prev.open,
           }))
         }
         style={{ paddingBottom: "16px" }}

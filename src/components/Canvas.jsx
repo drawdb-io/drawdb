@@ -102,12 +102,12 @@ export default function Canvas() {
         prevY: note.y,
       });
     }
-    setSelectedElement({
+    setSelectedElement((prev) => ({
+      ...prev,
       element: type,
       id: id,
-      openDialogue: false,
-      openCollapse: false,
-    });
+      open: false,
+    }));
   };
 
   const handleMouseMove = (e) => {
@@ -284,7 +284,12 @@ export default function Canvas() {
         },
       ]);
       setRedoStack([]);
-      setSelectedElement({ element: ObjectType.NONE, id: -1 });
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      }));
     }
     setPanning({ state: false, x: 0, y: 0 });
     setCursor("default");

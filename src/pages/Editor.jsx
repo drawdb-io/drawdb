@@ -2,7 +2,7 @@ import { useState, createContext, useEffect, useCallback } from "react";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
-import { Tab, State } from "../data/data";
+import { State } from "../data/data";
 import { db } from "../data/db";
 import useLayout from "../hooks/useLayout";
 import LayoutContextProvider from "../context/LayoutContext";
@@ -23,7 +23,6 @@ import useTypes from "../hooks/useTypes";
 import TypesContextProvider from "../context/TypesContext";
 
 export const StateContext = createContext();
-export const TabContext = createContext();
 export const TaskContext = createContext();
 
 export default function Editor() {
@@ -56,7 +55,6 @@ function WorkSpace() {
   const { types, setTypes } = useTypes();
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
-  const [tab, setTab] = useState(Tab.tables);
   const [tasks, setTasks] = useState([]);
   const { layout } = useLayout();
   const { areas, setAreas } = useAreas();
@@ -316,38 +314,36 @@ function WorkSpace() {
 
   return (
     <StateContext.Provider value={{ state, setState }}>
-      <TabContext.Provider value={{ tab, setTab }}>
-        <div className="h-[100vh] flex flex-col overflow-hidden theme">
-          <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
-            <ControlPanel
-              diagramId={id}
-              setDiagramId={setId}
-              title={title}
-              setTitle={setTitle}
-              lastSaved={lastSaved}
-              setLastSaved={setLastSaved}
-            />
-          </TaskContext.Provider>
-          <div
-            className="flex h-full overflow-y-auto"
-            onMouseUp={() => setResize(false)}
-            onMouseLeave={() => setResize(false)}
-            onMouseMove={handleResize}
-          >
-            {layout.sidebar && (
-              <SidePanel resize={resize} setResize={setResize} width={width} />
+      <div className="h-[100vh] flex flex-col overflow-hidden theme">
+        <TaskContext.Provider value={{ tasks, setTasks, updateTask }}>
+          <ControlPanel
+            diagramId={id}
+            setDiagramId={setId}
+            title={title}
+            setTitle={setTitle}
+            lastSaved={lastSaved}
+            setLastSaved={setLastSaved}
+          />
+        </TaskContext.Provider>
+        <div
+          className="flex h-full overflow-y-auto"
+          onMouseUp={() => setResize(false)}
+          onMouseLeave={() => setResize(false)}
+          onMouseMove={handleResize}
+        >
+          {layout.sidebar && (
+            <SidePanel resize={resize} setResize={setResize} width={width} />
+          )}
+          <div className="relative w-full h-full overflow-hidden">
+            <Canvas state={state} setState={setState} />
+            {!(layout.sidebar || layout.toolbar || layout.header) && (
+              <div className="fixed right-5 bottom-4">
+                <Controls />
+              </div>
             )}
-            <div className="relative w-full h-full overflow-hidden">
-              <Canvas state={state} setState={setState} />
-              {!(layout.sidebar || layout.toolbar || layout.header) && (
-                <div className="fixed right-5 bottom-4">
-                  <Controls />
-                </div>
-              )}
-            </div>
           </div>
         </div>
-      </TabContext.Provider>
+      </div>
     </StateContext.Provider>
   );
 }

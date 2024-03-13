@@ -89,12 +89,11 @@ export default function TableOverview() {
             onChange={(v) => setValue(v)}
             onSelect={(v) => {
               const { id } = tables.find((t) => t.name === v);
-              setSelectedElement({
-                element: ObjectType.TABLE,
+              setSelectedElement((prev) => ({
+                ...prev,
                 id: id,
-                openDialogue: false,
-                openCollapse: true,
-              });
+                open: true,
+              }));
               document
                 .getElementById(`scroll_table_${id}`)
                 .scrollIntoView({ behavior: "smooth" });
@@ -109,14 +108,13 @@ export default function TableOverview() {
         </Col>
       </Row>
       <Collapse
-        activeKey={selectedElement.openCollapse ? `${selectedElement.id}` : ""}
+        activeKey={selectedElement.open ? `${selectedElement.id}` : ""}
         onChange={(k) =>
-          setSelectedElement({
-            element: ObjectType.TABLE,
+          setSelectedElement((prev) => ({
+            ...prev,
             id: parseInt(k),
-            openDialogue: false,
-            openCollapse: true,
-          })
+            open: true,
+          }))
         }
         accordion
       >

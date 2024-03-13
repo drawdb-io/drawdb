@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { TabContext, StateContext } from "../pages/Editor";
+import { StateContext } from "../pages/Editor";
 import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
@@ -12,25 +12,24 @@ import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 import useNotes from "../hooks/useNotes";
 
-export default function Note(props) {
-  const [editField, setEditField] = useState({});
-  const [hovered, setHovered] = useState(false);
+export default function Note({ data, onMouseDown }) {
   const w = 180;
   const r = 3;
   const fold = 24;
+  const [editField, setEditField] = useState({});
+  const [hovered, setHovered] = useState(false);
+  const { layout } = useLayout();
+  const { setState } = useContext(StateContext);
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { setState } = useContext(StateContext);
-  const { layout } = useLayout();
-  const { tab, setTab } = useContext(TabContext);
   const { selectedElement, setSelectedElement } = useSelect();
 
   const handleChange = (e) => {
-    const textarea = document.getElementById(`note_${props.data.id}`);
+    const textarea = document.getElementById(`note_${data.id}`);
     textarea.style.height = "0";
     textarea.style.height = textarea.scrollHeight + "px";
     const newHeight = textarea.scrollHeight + 41;
-    updateNote(props.data.id, { content: e.target.value, height: newHeight });
+    updateNote(data.id, { content: e.target.value, height: newHeight });
   };
 
   return (
@@ -39,23 +38,21 @@ export default function Note(props) {
       onMouseLeave={() => setHovered(false)}
     >
       <path
-        d={`M${props.data.x + fold} ${props.data.y} L${props.data.x + w - r} ${
-          props.data.y
-        } A${r} ${r} 0 0 1 ${props.data.x + w} ${props.data.y + r} L${
-          props.data.x + w
-        } ${props.data.y + props.data.height - r} A${r} ${r} 0 0 1 ${
-          props.data.x + w - r
-        } ${props.data.y + props.data.height} L${props.data.x + r} ${
-          props.data.y + props.data.height
-        } A${r} ${r} 0 0 1 ${props.data.x} ${
-          props.data.y + props.data.height - r
-        } L${props.data.x} ${props.data.y + fold}`}
-        fill={props.data.color}
+        d={`M${data.x + fold} ${data.y} L${data.x + w - r} ${
+          data.y
+        } A${r} ${r} 0 0 1 ${data.x + w} ${data.y + r} L${data.x + w} ${
+          data.y + data.height - r
+        } A${r} ${r} 0 0 1 ${data.x + w - r} ${data.y + data.height} L${
+          data.x + r
+        } ${data.y + data.height} A${r} ${r} 0 0 1 ${data.x} ${
+          data.y + data.height - r
+        } L${data.x} ${data.y + fold}`}
+        fill={data.color}
         stroke={
           hovered
             ? "rgb(59 130 246)"
             : selectedElement.element === ObjectType.NOTE &&
-              selectedElement.id === props.data.id
+              selectedElement.id === data.id
             ? "rgb(59 130 246)"
             : "rgb(168 162 158)"
         }
@@ -64,19 +61,17 @@ export default function Note(props) {
         strokeWidth="1.2"
       />
       <path
-        d={`M${props.data.x} ${props.data.y + fold} L${
-          props.data.x + fold - r
-        } ${props.data.y + fold} A${r} ${r} 0 0 0 ${props.data.x + fold} ${
-          props.data.y + fold - r
-        } L${props.data.x + fold} ${props.data.y} L${props.data.x} ${
-          props.data.y + fold
-        } Z`}
-        fill={props.data.color}
+        d={`M${data.x} ${data.y + fold} L${data.x + fold - r} ${
+          data.y + fold
+        } A${r} ${r} 0 0 0 ${data.x + fold} ${data.y + fold - r} L${
+          data.x + fold
+        } ${data.y} L${data.x} ${data.y + fold} Z`}
+        fill={data.color}
         stroke={
           hovered
             ? "rgb(59 130 246)"
             : selectedElement.element === ObjectType.NOTE &&
-              selectedElement.id === props.data.id
+              selectedElement.id === data.id
             ? "rgb(59 130 246)"
             : "rgb(168 162 158)"
         }
@@ -85,29 +80,29 @@ export default function Note(props) {
         strokeWidth="1.2"
       />
       <foreignObject
-        x={props.data.x}
-        y={props.data.y}
+        x={data.x}
+        y={data.y}
         width={w}
-        height={props.data.height}
-        onMouseDown={props.onMouseDown}
+        height={data.height}
+        onMouseDown={onMouseDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
-          <label htmlFor={`note_${props.data.id}`} className="ms-5">
-            {props.data.title}
+          <label htmlFor={`note_${data.id}`} className="ms-5">
+            {data.title}
           </label>
           <textarea
-            id={`note_${props.data.id}`}
-            value={props.data.content}
+            id={`note_${data.id}`}
+            value={data.content}
             onChange={handleChange}
             onFocus={(e) =>
               setEditField({
                 content: e.target.value,
-                height: props.data.height,
+                height: data.height,
               })
             }
             onBlur={(e) => {
               if (e.target.value === editField.content) return;
-              const textarea = document.getElementById(`note_${props.data.id}`);
+              const textarea = document.getElementById(`note_${data.id}`);
               textarea.style.height = "0";
               textarea.style.height = textarea.scrollHeight + "px";
               const newHeight = textarea.scrollHeight + 16 + 20 + 4;
@@ -116,7 +111,7 @@ export default function Note(props) {
                 {
                   action: Action.EDIT,
                   element: ObjectType.NOTE,
-                  nid: props.data.id,
+                  nid: data.id,
                   undo: editField,
                   redo: { content: e.target.value, height: newHeight },
                   message: `Edit note content to "${e.target.value}"`,
@@ -125,25 +120,32 @@ export default function Note(props) {
               setRedoStack([]);
             }}
             className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
-            style={{ backgroundColor: props.data.color }}
+            style={{ backgroundColor: data.color }}
           ></textarea>
           {(hovered ||
             (selectedElement.element === ObjectType.NOTE &&
-              selectedElement.id === props.data.id &&
-              selectedElement.openDialogue &&
+              selectedElement.id === data.id &&
+              selectedElement.open &&
               !layout.sidebar)) && (
             <div className="absolute top-2 right-3">
               <Popover
                 visible={
                   selectedElement.element === ObjectType.NOTE &&
-                  selectedElement.id === props.data.id &&
-                  selectedElement.openDialogue &&
+                  selectedElement.id === data.id &&
+                  selectedElement.open &&
                   !layout.sidebar
                 }
                 onClickOutSide={() => {
+                  if (selectedElement.editFromToolbar) {
+                    setSelectedElement((prev) => ({
+                      ...prev,
+                      editFromToolbar: false,
+                    }));
+                    return;
+                  }
                   setSelectedElement((prev) => ({
                     ...prev,
-                    openDialogue: false,
+                    open: false,
                   }));
                   setState(State.SAVING);
                 }}
@@ -153,11 +155,11 @@ export default function Note(props) {
                     <div className="font-semibold mb-2 ms-1">Edit note</div>
                     <div className="w-[280px] flex items-center mb-2">
                       <Input
-                        value={props.data.title}
+                        value={data.title}
                         placeholder="Title"
                         className="me-2"
                         onChange={(value) =>
-                          updateNote(props.data.id, { title: value })
+                          updateNote(data.id, { title: value })
                         }
                         onFocus={(e) => setEditField({ title: e.target.value })}
                         onBlur={(e) => {
@@ -167,7 +169,7 @@ export default function Note(props) {
                             {
                               action: Action.EDIT,
                               element: ObjectType.NOTE,
-                              nid: props.data.id,
+                              nid: data.id,
                               undo: editField,
                               redo: { title: e.target.value },
                               message: `Edit note title to "${e.target.value}"`,
@@ -193,17 +195,17 @@ export default function Note(props) {
                                       {
                                         action: Action.EDIT,
                                         element: ObjectType.NOTE,
-                                        nid: props.data.id,
-                                        undo: { color: props.data.color },
+                                        nid: data.id,
+                                        undo: { color: data.color },
                                         redo: { color: c },
                                         message: `Edit note color to ${c}`,
                                       },
                                     ]);
                                     setRedoStack([]);
-                                    updateNote(props.data.id, { color: c });
+                                    updateNote(data.id, { color: c });
                                   }}
                                 >
-                                  {props.data.color === c ? (
+                                  {data.color === c ? (
                                     <IconCheckboxTick
                                       style={{ color: "white" }}
                                     />
@@ -220,7 +222,7 @@ export default function Note(props) {
                       >
                         <div
                           className="h-[32px] w-[32px] rounded"
-                          style={{ backgroundColor: props.data.color }}
+                          style={{ backgroundColor: data.color }}
                         />
                       </Popover>
                     </div>
@@ -231,7 +233,7 @@ export default function Note(props) {
                         block
                         onClick={() => {
                           Toast.success(`Note deleted!`);
-                          deleteNote(props.data.id, true);
+                          deleteNote(data.id, true);
                         }}
                       >
                         Delete
@@ -253,18 +255,21 @@ export default function Note(props) {
                   }}
                   onClick={() => {
                     if (layout.sidebar) {
-                      setTab(Tab.notes);
-                      if (tab !== Tab.notes) return;
+                      setSelectedElement((prev) => ({
+                        ...prev,
+                        currentTab: Tab.notes,
+                      }));
+                      if (selectedElement.currentTab !== Tab.notes) return;
                       document
-                        .getElementById(`scroll_note_${props.data.id}`)
+                        .getElementById(`scroll_note_${data.id}`)
                         .scrollIntoView({ behavior: "smooth" });
                     } else {
-                      setSelectedElement({
+                      setSelectedElement((prev) => ({
+                        ...prev,
                         element: ObjectType.NOTE,
-                        id: props.data.id,
-                        openDialogue: true,
-                        openCollapse: false,
-                      });
+                        id: data.id,
+                        open: true,
+                      }));
                     }
                   }}
                 ></Button>
