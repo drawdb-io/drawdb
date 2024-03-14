@@ -11,7 +11,7 @@ import {
   IconRowsStroked,
   IconEdit,
 } from "@douyinfe/semi-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import icon from "../assets/icon_dark_64.png";
 import {
   Button,
@@ -138,7 +138,7 @@ export default function ControlPanel({
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
-
+  const navigate = useNavigate();
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
 
@@ -1034,7 +1034,10 @@ export default function ControlPanel({
         function: () => {},
       },
       Exit: {
-        function: () => {},
+        function: () => {
+          save();
+          if (state === State.SAVED) navigate("/");
+        },
       },
     },
     Edit: {
