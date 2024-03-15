@@ -20,7 +20,7 @@ import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
-import { Cardinality, Constraint, Action, ObjectType } from "../data/data";
+import { Cardinality, Constraint, Action, ObjectType } from "../data/constants";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 

@@ -10,9 +10,9 @@ import {
   Action,
   ObjectType,
   tableThemes,
-  defaultTableTheme,
+  defaultBlue,
   State,
-} from "../data/data";
+} from "../data/constants";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useUndoRedo from "../hooks/useUndoRedo";
@@ -143,7 +143,7 @@ export default function Area(props) {
                               size="small"
                               onClick={() => {
                                 updateArea(props.areaData.id, {
-                                  color: defaultTableTheme,
+                                  color: defaultBlue,
                                 });
                                 setSaveState(State.SAVING);
                               }}
@@ -271,11 +271,10 @@ export default function Area(props) {
                       ...prev,
                       element: ObjectType.AREA,
                       id: props.areaData.id,
-                      currentTab: Tab.subject_areas,
+                      currentTab: Tab.AREAS,
                       open: true,
                     }));
-                    if (selectedElement.currentTab !== Tab.subject_areas)
-                      return;
+                    if (selectedElement.currentTab !== Tab.AREAS) return;
                     document
                       .getElementById(`scroll_area_${props.areaData.id}`)
                       .scrollIntoView({ behavior: "smooth" });

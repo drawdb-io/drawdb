@@ -19,7 +19,7 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { State } from "../data/data";
+import { State } from "../data/constants";
 import useTasks from "../hooks/useTasks";
 import useSaveState from "../hooks/useSaveState";
 

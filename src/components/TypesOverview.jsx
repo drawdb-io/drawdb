@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, ObjectType, sqlDataTypes } from "../data/data";
+import { Action, ObjectType, sqlDataTypes } from "../data/constants";
 import {
   Collapse,
   Row,

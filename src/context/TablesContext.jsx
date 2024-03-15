@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Action, ObjectType, defaultTableTheme } from "../data/data";
+import { Action, ObjectType, defaultBlue } from "../data/constants";
 import useTransform from "../hooks/useTransform";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
@@ -44,7 +44,7 @@ export default function TablesContextProvider({ children }) {
           ],
           comment: "",
           indices: [],
-          color: defaultTableTheme,
+          color: defaultBlue,
         },
       ]);
     }

@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { State } from "../data/data";
+import { State } from "../data/constants";
 
 export const SaveStateContext = createContext(null);
 

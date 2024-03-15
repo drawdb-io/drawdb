@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Action, ObjectType, defaultTableTheme } from "../data/data";
+import { Action, ObjectType, defaultBlue } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useTransform from "../hooks/useTransform";
 import useSelect from "../hooks/useSelect";
@@ -29,7 +29,7 @@ export default function AreasContextProvider({ children }) {
           y: -transform.pan.y,
           width: 200,
           height: 200,
-          color: defaultTableTheme,
+          color: defaultBlue,
         },
       ]);
     }

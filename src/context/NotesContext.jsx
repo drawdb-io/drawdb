@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import useTransform from "../hooks/useTransform";
-import { Action, ObjectType, defaultNoteTheme } from "../data/data";
+import { Action, ObjectType, defaultNoteTheme } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 

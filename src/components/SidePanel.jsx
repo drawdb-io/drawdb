@@ -1,5 +1,5 @@
 import { Tabs } from "@douyinfe/semi-ui";
-import { Tab } from "../data/data";
+import { Tab } from "../data/constants";
 import TableOverview from "./TableOverview";
 import ReferenceOverview from "./ReferenceOverview";
 import AreaOverview from "./AreaOverview";
@@ -14,11 +14,11 @@ export default function SidePanel({ width, resize, setResize }) {
   const { selectedElement, setSelectedElement } = useSelect();
 
   const tabList = [
-    { tab: "Tables", itemKey: Tab.tables },
-    { tab: "Relationships", itemKey: Tab.relationships },
-    { tab: "Subject Areas", itemKey: Tab.subject_areas },
-    { tab: "Notes", itemKey: Tab.notes },
-    { tab: "Types", itemKey: Tab.types },
+    { tab: "Tables", itemKey: Tab.TABLES },
+    { tab: "Relationships", itemKey: Tab.RELATIONSHIPS },
+    { tab: "Subject Areas", itemKey: Tab.AREAS },
+    { tab: "Notes", itemKey: Tab.NOTES },
+    { tab: "Types", itemKey: Tab.TYPES },
   ];
   const contentList = [
     <TableOverview key={1} />,

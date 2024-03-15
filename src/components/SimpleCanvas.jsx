@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Cardinality } from "../data/data";
+import { Cardinality } from "../data/constants";
 import { calcPath } from "../utils/calcPath";
 
 function Table({ table, grab }) {

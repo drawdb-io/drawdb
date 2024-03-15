@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import Table from "./Table";
-import { Action, Cardinality, Constraint, ObjectType } from "../data/data";
+import { Action, Cardinality, Constraint, ObjectType } from "../data/constants";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
@@ -39,8 +39,8 @@ export default function Canvas() {
     endY: 0,
     name: "",
     cardinality: Cardinality.ONE_TO_ONE,
-    updateConstraint: Constraint.none,
-    deleteConstraint: Constraint.none,
+    updateConstraint: Constraint.NONE,
+    deleteConstraint: Constraint.NONE,
     mandatory: false,
   });
   const [offset, setOffset] = useState({ x: 0, y: 0 });

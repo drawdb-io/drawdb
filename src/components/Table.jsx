@@ -2,11 +2,11 @@ import { useState } from "react";
 import {
   sqlDataTypes,
   tableThemes,
-  defaultTableTheme,
+  defaultBlue,
   Tab,
   Action,
   ObjectType,
-} from "../data/data";
+} from "../data/constants";
 import {
   IconEdit,
   IconMore,
@@ -120,12 +120,12 @@ export default function Table(props) {
                     } else {
                       setSelectedElement((prev) => ({
                         ...prev,
-                        currentTab: Tab.tables,
+                        currentTab: Tab.TABLES,
                         element: ObjectType.TABLE,
                         id: props.tableData.id,
                         open: true,
                       }));
-                      if (selectedElement.currentTab !== Tab.tables) return;
+                      if (selectedElement.currentTab !== Tab.TABLES) return;
                       document
                         .getElementById(`scroll_table_${props.tableData.id}`)
                         .scrollIntoView({ behavior: "smooth" });
@@ -1058,13 +1058,13 @@ export default function Table(props) {
                               component: "self",
                               tid: props.tableData.id,
                               undo: { color: props.tableData.color },
-                              redo: { color: defaultTableTheme },
+                              redo: { color: defaultBlue },
                               message: `Edit table color to default`,
                             },
                           ]);
                           setRedoStack([]);
                           updateTable(props.tableData.id, {
-                            color: defaultTableTheme,
+                            color: defaultBlue,
                           });
                         }}
                       >

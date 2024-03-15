@@ -1,4 +1,4 @@
-import { sqlDataTypes } from "../data/data";
+import { sqlDataTypes } from "../data/constants";
 
 function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {

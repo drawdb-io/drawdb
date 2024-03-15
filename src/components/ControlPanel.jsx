@@ -44,7 +44,7 @@ import {
   jsonToSQLServer,
 } from "../utils/toSQL";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
-import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
+import { ObjectType, Action, Tab, State, Cardinality } from "../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
@@ -581,9 +581,9 @@ export default function ControlPanel({
         setSelectedElement((prev) => ({
           ...prev,
           open: true,
-          currentTab: Tab.tables,
+          currentTab: Tab.TABLES,
         }));
-        if (selectedElement.currentTab !== Tab.tables) return;
+        if (selectedElement.currentTab !== Tab.TABLES) return;
         document
           .getElementById(`scroll_table_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
@@ -592,9 +592,9 @@ export default function ControlPanel({
       if (layout.sidebar) {
         setSelectedElement((prev) => ({
           ...prev,
-          currentTab: Tab.subject_areas,
+          currentTab: Tab.AREAS,
         }));
-        if (selectedElement.currentTab !== Tab.subject_areas) return;
+        if (selectedElement.currentTab !== Tab.AREAS) return;
         document
           .getElementById(`scroll_area_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });
@@ -609,10 +609,10 @@ export default function ControlPanel({
       if (layout.sidebar) {
         setSelectedElement((prev) => ({
           ...prev,
-          currentTab: Tab.notes,
+          currentTab: Tab.NOTES,
           open: false,
         }));
-        if (selectedElement.currentTab !== Tab.notes) return;
+        if (selectedElement.currentTab !== Tab.NOTES) return;
         document
           .getElementById(`scroll_note_${selectedElement.id}`)
           .scrollIntoView({ behavior: "smooth" });

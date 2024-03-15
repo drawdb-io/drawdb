@@ -20,12 +20,12 @@ import {
   IconDeleteStroked,
 } from "@douyinfe/semi-icons";
 import {
-  defaultTableTheme,
+  defaultBlue,
   tableThemes,
   Action,
   ObjectType,
   State,
-} from "../data/data";
+} from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useAreas from "../hooks/useAreas";
 import useSaveState from "../hooks/useSaveState";
@@ -140,7 +140,7 @@ export default function AreaOverview() {
                           type="tertiary"
                           size="small"
                           onClick={() => {
-                            updateArea(i, { color: defaultTableTheme });
+                            updateArea(i, { color: defaultBlue });
                             setSaveState(State.SAVING);
                           }}
                         >

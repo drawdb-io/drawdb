@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import ControlPanel from "../components/ControlPanel";
 import Canvas from "../components/Canvas";
 import SidePanel from "../components/SidePanel";
-import { State } from "../data/data";
+import { State } from "../data/constants";
 import { db } from "../data/db";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";

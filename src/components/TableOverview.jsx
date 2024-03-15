@@ -2,10 +2,10 @@ import { useState } from "react";
 import {
   Action,
   ObjectType,
-  defaultTableTheme,
+  defaultBlue,
   sqlDataTypes,
   tableThemes,
-} from "../data/data";
+} from "../data/constants";
 import {
   Collapse,
   Row,
@@ -946,12 +946,12 @@ export default function TableOverview() {
                                     component: "self",
                                     tid: i,
                                     undo: { color: t.color },
-                                    redo: { color: defaultTableTheme },
+                                    redo: { color: defaultBlue },
                                     message: `Edit table color to default`,
                                   },
                                 ]);
                                 setRedoStack([]);
-                                updateTable(i, { color: defaultTableTheme });
+                                updateTable(i, { color: defaultBlue });
                               }}
                             >
                               Clear

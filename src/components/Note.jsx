@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
+import { Action, ObjectType, noteThemes, Tab, State } from "../data/constants";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,
@@ -257,9 +257,9 @@ export default function Note({ data, onMouseDown }) {
                     if (layout.sidebar) {
                       setSelectedElement((prev) => ({
                         ...prev,
-                        currentTab: Tab.notes,
+                        currentTab: Tab.NOTES,
                       }));
-                      if (selectedElement.currentTab !== Tab.notes) return;
+                      if (selectedElement.currentTab !== Tab.NOTES) return;
                       document
                         .getElementById(`scroll_note_${data.id}`)
                         .scrollIntoView({ behavior: "smooth" });

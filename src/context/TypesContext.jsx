@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Action, ObjectType } from "../data/data";
+import { Action, ObjectType } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 
 export const TypesContext = createContext(null);
