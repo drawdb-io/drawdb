@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button, Popover, Input, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,
@@ -13,19 +13,19 @@ import {
   defaultTableTheme,
   State,
 } from "../data/data";
-import { StateContext } from "../pages/Editor";
 import useLayout from "../hooks/useLayout";
 import useSettings from "../hooks/useSettings";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 import useAreas from "../hooks/useAreas";
+import useSaveState from "../hooks/useSaveState";
 
 export default function Area(props) {
   const [hovered, setHovered] = useState(false);
   const [editField, setEditField] = useState({});
-  const { setState } = useContext(StateContext);
   const { layout } = useLayout();
   const { settings } = useSettings();
+  const { setSaveState } = useSaveState();
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -100,7 +100,7 @@ export default function Area(props) {
                   ...prev,
                   open: false,
                 }));
-                setState(State.SAVING);
+                setSaveState(State.SAVING);
               }}
               stopPropagation
               content={
@@ -145,7 +145,7 @@ export default function Area(props) {
                                 updateArea(props.areaData.id, {
                                   color: defaultTableTheme,
                                 });
-                                setState(State.SAVING);
+                                setSaveState(State.SAVING);
                               }}
                             >
                               Clear

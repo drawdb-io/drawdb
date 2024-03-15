@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Checkbox,
   Input,
@@ -19,27 +19,29 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { StateContext } from "../pages/Editor";
 import { State } from "../data/data";
 import useTasks from "../hooks/useTasks";
+import useSaveState from "../hooks/useSaveState";
+
+const Priority = {
+  NONE: 0,
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+};
+
+const SortOrder = {
+  ORIGINAL: "My order",
+  PRIORITY: "Priority",
+  COMPLETED: "Completed",
+  ALPHABETICALLY: "Alphabetically",
+};
 
 export default function Todo() {
-  const Priority = {
-    NONE: 0,
-    LOW: 1,
-    MEDIUM: 2,
-    HIGH: 3,
-  };
-  const SortOrder = {
-    ORIGINAL: "My order",
-    PRIORITY: "Priority",
-    COMPLETED: "Completed",
-    ALPHABETICALLY: "Alphabetically",
-  };
   const [activeTask, setActiveTask] = useState(-1);
   const [, setSortOrder] = useState(SortOrder.ORIGINAL);
   const { tasks, setTasks, updateTask } = useTasks();
-  const { setState } = useContext(StateContext);
+  const { setSaveState } = useSaveState();
 
   const priorityLabel = (p) => {
     switch (p) {
@@ -165,7 +167,7 @@ export default function Todo() {
                       checked={t.complete}
                       onChange={(e) => {
                         updateTask(i, { complete: e.target.checked });
-                        setState(State.SAVING);
+                        setSaveState(State.SAVING);
                       }}
                     ></Checkbox>
                   </Col>
@@ -174,7 +176,7 @@ export default function Todo() {
                       placeholder="Title"
                       onChange={(v) => updateTask(i, { title: v })}
                       value={t.title}
-                      onBlur={() => setState(State.SAVING)}
+                      onBlur={() => setSaveState(State.SAVING)}
                     ></Input>
                   </Col>
                   <Col span={3}>
@@ -187,7 +189,7 @@ export default function Todo() {
                           <RadioGroup
                             onChange={(e) => {
                               updateTask(i, { priority: e.target.value });
-                              setState(State.SAVING);
+                              setSaveState(State.SAVING);
                             }}
                             value={t.priority}
                             direction="vertical"
@@ -222,7 +224,7 @@ export default function Todo() {
                               setTasks((prev) =>
                                 prev.filter((task, j) => i !== j)
                               );
-                              setState(State.SAVING);
+                              setSaveState(State.SAVING);
                             }}
                           >
                             Delete
@@ -245,7 +247,7 @@ export default function Todo() {
                         placeholder="Details"
                         onChange={(v) => updateTask(i, { details: v })}
                         value={t.details}
-                        onBlur={() => setState(State.SAVING)}
+                        onBlur={() => setSaveState(State.SAVING)}
                       ></TextArea>
                     </Col>
                   </Row>

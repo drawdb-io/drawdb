@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -43,7 +43,6 @@ import {
   jsonToMariaDB,
   jsonToSQLServer,
 } from "../utils/toSQL";
-import { StateContext } from "../pages/Editor";
 import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
 import { ObjectType, Action, Tab, State, Cardinality } from "../data/data";
 import jsPDF from "jspdf";
@@ -68,6 +67,7 @@ import { dataURItoBlob } from "../utils/utils";
 import useAreas from "../hooks/useAreas";
 import useNotes from "../hooks/useNotes";
 import useTypes from "../hooks/useTypes";
+import useSaveState from "../hooks/useSaveState";
 
 export default function ControlPanel({
   diagramId,
@@ -117,7 +117,7 @@ export default function ControlPanel({
     message: "",
   });
   const [data, setData] = useState(null);
-  const { state, setState } = useContext(StateContext);
+  const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
   const {
@@ -734,7 +734,7 @@ export default function ControlPanel({
     copy();
     del();
   };
-  const save = () => setState(State.SAVING);
+  const save = () => setSaveState(State.SAVING);
   const open = () => setVisible(MODAL.OPEN);
   const saveDiagramAs = () => setVisible(MODAL.SAVEAS);
   const loadDiagram = async (id) => {
@@ -1036,7 +1036,7 @@ export default function ControlPanel({
       Exit: {
         function: () => {
           save();
-          if (state === State.SAVED) navigate("/");
+          if (saveState === State.SAVED) navigate("/");
         },
       },
     },
@@ -2256,7 +2256,7 @@ export default function ControlPanel({
   }
 
   function getState() {
-    switch (state) {
+    switch (saveState) {
       case State.NONE:
         return "No changes";
       case State.LOADING:
@@ -2378,7 +2378,7 @@ export default function ControlPanel({
                 size="small"
                 type="tertiary"
                 icon={
-                  state === State.LOADING || state === State.SAVING ? (
+                  saveState === State.LOADING || saveState === State.SAVING ? (
                     <Spin size="small" />
                   ) : null
                 }

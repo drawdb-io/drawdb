@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { StateContext } from "../pages/Editor";
+import { useState } from "react";
 import { Action, ObjectType, noteThemes, Tab, State } from "../data/data";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
@@ -11,6 +10,7 @@ import useLayout from "../hooks/useLayout";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 import useNotes from "../hooks/useNotes";
+import useSaveState from "../hooks/useSaveState";
 
 export default function Note({ data, onMouseDown }) {
   const w = 180;
@@ -19,7 +19,7 @@ export default function Note({ data, onMouseDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
-  const { setState } = useContext(StateContext);
+  const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -147,7 +147,7 @@ export default function Note({ data, onMouseDown }) {
                     ...prev,
                     open: false,
                   }));
-                  setState(State.SAVING);
+                  setSaveState(State.SAVING);
                 }}
                 stopPropagation
                 content={

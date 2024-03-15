@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Empty,
   Row,
@@ -26,12 +26,12 @@ import {
   ObjectType,
   State,
 } from "../data/data";
-import { StateContext } from "../pages/Editor";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useAreas from "../hooks/useAreas";
+import useSaveState from "../hooks/useSaveState";
 
 export default function AreaOverview() {
-  const { setState } = useContext(StateContext);
+  const { setSaveState } = useSaveState();
   const { areas, addArea, deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -141,7 +141,7 @@ export default function AreaOverview() {
                           size="small"
                           onClick={() => {
                             updateArea(i, { color: defaultTableTheme });
-                            setState(State.SAVING);
+                            setSaveState(State.SAVING);
                           }}
                         >
                           Clear
