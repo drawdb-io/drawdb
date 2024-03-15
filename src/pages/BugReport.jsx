@@ -65,7 +65,7 @@ function Form({ theme }) {
     editor.update(() => {
       const sendMail = async () => {
         await axios
-          .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
+          .post(`${import.meta.env.VITE_BACKEND_URL}/send_email`, {
             subject: `[BUG REPORT]: ${data.title}`,
             message: $generateHtmlFromNodes(editor),
             attachments: data.attachments,

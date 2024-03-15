@@ -69,7 +69,7 @@ function SurveyForm({ theme }) {
     editor.update(() => {
       const sendMail = async () => {
         await axios
-          .post(`${import.meta.env.VITE_API_BACKEND_URL}/send_email`, {
+          .post(`${import.meta.env.VITE_BACKEND_URL}/send_email`, {
             subject: `[SURVEY]: ${new Date().toDateString()}`,
             message: `${Object.keys(form).map(
               (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
