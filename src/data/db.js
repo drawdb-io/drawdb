@@ -1,7 +1,7 @@
 import Dexie from "dexie";
 import { templateSeeds } from "./seeds";
 
-const db = new Dexie("drawDB");
+export const db = new Dexie("drawDB");
 
 db.version(4).stores({
   diagrams: "++id, lastModified",
@@ -11,5 +11,3 @@ db.version(4).stores({
 db.on("populate", (transaction) => {
   transaction.templates.bulkAdd(templateSeeds).catch((e) => console.log(e));
 });
-
-export { db };

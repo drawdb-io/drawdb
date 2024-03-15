@@ -1,4 +1,4 @@
-const calcPath = (x1, x2, y1, y2, zoom = 1) => {
+export function calcPath(x1, x2, y1, y2, zoom = 1) {
   const tableWidth = 200 * zoom;
   if (y1 <= y2) {
     if (x1 + tableWidth <= x2) {
@@ -107,6 +107,4 @@ const calcPath = (x1, x2, y1, y2, zoom = 1) => {
       } ${y2} L ${endX} ${y2}`;
     }
   }
-};
-
-export { calcPath };
+}

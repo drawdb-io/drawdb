@@ -1,6 +1,6 @@
 import { sqlDataTypes } from "../data/constants";
 
-function getJsonType(f) {
+export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
     return '{ "type" : "object", additionalProperties : true }';
   }
@@ -30,7 +30,7 @@ function getJsonType(f) {
   }
 }
 
-function generateSchema(type) {
+export function generateSchema(type) {
   return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
     .map((f) => `"${f.name}" : ${getJsonType(f)}`)
     .join(
@@ -38,7 +38,7 @@ function generateSchema(type) {
     )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
 }
 
-function getTypeString(field, dbms = "mysql", baseType = false) {
+export function getTypeString(field, dbms = "mysql", baseType = false) {
   if (dbms === "mysql") {
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
@@ -131,7 +131,7 @@ function getTypeString(field, dbms = "mysql", baseType = false) {
   }
 }
 
-function hasQuotes(type) {
+export function hasQuotes(type) {
   return [
     "CHAR",
     "VARCHAR",
@@ -145,7 +145,7 @@ function hasQuotes(type) {
   ].includes(type);
 }
 
-function jsonToMySQL(obj) {
+export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -213,7 +213,7 @@ function jsonToMySQL(obj) {
     .join("\n")}`;
 }
 
-function jsonToPostgreSQL(obj) {
+export function jsonToPostgreSQL(obj) {
   return `${obj.types.map((type) => {
     const typeStatements = type.fields
       .filter((f) => f.type === "ENUM" || f.type === "SET")
@@ -308,7 +308,7 @@ function jsonToPostgreSQL(obj) {
     .join("\n")}`;
 }
 
-function getSQLiteType(field) {
+export function getSQLiteType(field) {
   switch (field.type) {
     case "INT":
     case "SMALLINT":
@@ -341,7 +341,7 @@ function getSQLiteType(field) {
   }
 }
 
-function getInlineFK(table, obj) {
+export function getInlineFK(table, obj) {
   let fk = "";
   obj.references.forEach((r) => {
     if (fk !== "") return;
@@ -356,7 +356,7 @@ function getInlineFK(table, obj) {
   return fk;
 }
 
-function jsonToSQLite(obj) {
+export function jsonToSQLite(obj) {
   return obj.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, obj);
@@ -409,7 +409,7 @@ function jsonToSQLite(obj) {
     .join("\n");
 }
 
-function jsonToMariaDB(obj) {
+export function jsonToMariaDB(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -477,7 +477,7 @@ function jsonToMariaDB(obj) {
     .join("\n")}`;
 }
 
-function jsonToSQLServer(obj) {
+export function jsonToSQLServer(obj) {
   return `${obj.types
     .map((type) => {
       return `${
@@ -549,15 +549,15 @@ function jsonToSQLServer(obj) {
     .join("\n")}`;
 }
 
-function isSized(type) {
+export function isSized(type) {
   return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT"].includes(type);
 }
 
-function hasPrecision(type) {
+export function hasPrecision(type) {
   return ["DOUBLE", "NUMERIC", "DECIMAL", "FLOAT"].includes(type);
 }
 
-function hasCheck(type) {
+export function hasCheck(type) {
   return [
     "INT",
     "SMALLINT",
@@ -572,7 +572,7 @@ function hasCheck(type) {
   ].includes(type);
 }
 
-function getSize(type) {
+export function getSize(type) {
   switch (type) {
     case "CHAR":
     case "BINARY":
@@ -586,15 +586,3 @@ function getSize(type) {
       return "";
   }
 }
-
-export {
-  jsonToMySQL,
-  jsonToPostgreSQL,
-  isSized,
-  getSize,
-  hasPrecision,
-  hasCheck,
-  jsonToSQLite,
-  jsonToMariaDB,
-  jsonToSQLServer,
-};

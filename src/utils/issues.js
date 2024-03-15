@@ -63,7 +63,7 @@ function checkDefault(field) {
   }
 }
 
-function getIssues(diagram) {
+export function getIssues(diagram) {
   const issues = [];
   const duplicateTableNames = {};
 
@@ -240,5 +240,3 @@ function getIssues(diagram) {
 
   return issues;
 }
-
-export { validateDateStr, getIssues };

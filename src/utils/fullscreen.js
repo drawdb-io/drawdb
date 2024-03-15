@@ -1,4 +1,4 @@
-function enterFullscreen() {
+export function enterFullscreen() {
   const element = document.documentElement;
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -11,7 +11,7 @@ function enterFullscreen() {
   }
 }
 
-function exitFullscreen() {
+export function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
   } else if (document.mozCancelFullScreen) {
@@ -22,5 +22,3 @@ function exitFullscreen() {
     document.msExitFullscreen();
   }
 }
-
-export { enterFullscreen, exitFullscreen };

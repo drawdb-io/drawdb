@@ -1,4 +1,4 @@
-const tableSchema = {
+export const tableSchema = {
   type: "object",
   properties: {
     id: { type: "integer" },
@@ -56,7 +56,7 @@ const tableSchema = {
   required: ["id", "name", "x", "y", "fields", "comment", "indices", "color"],
 };
 
-const areaSchema = {
+export const areaSchema = {
   type: "object",
   properties: {
     id: { type: "integer" },
@@ -70,7 +70,7 @@ const areaSchema = {
   required: ["id", "name", "x", "y", "width", "height", "color"],
 };
 
-const noteSchema = {
+export const noteSchema = {
   type: "object",
   properties: {
     id: { type: "integer" },
@@ -84,7 +84,7 @@ const noteSchema = {
   required: ["id", "x", "y", "title", "content", "color", "height"],
 };
 
-const typeSchema = {
+export const typeSchema = {
   type: "object",
   properties: {
     name: { type: "string" },
@@ -108,7 +108,7 @@ const typeSchema = {
   required: ["name", "fields", "comment"],
 };
 
-const jsonSchema = {
+export const jsonSchema = {
   type: "object",
   properties: {
     tables: {
@@ -166,7 +166,7 @@ const jsonSchema = {
   required: ["tables", "relationships", "notes", "subjectAreas"],
 };
 
-const ddbSchema = {
+export const ddbSchema = {
   type: "object",
   properties: {
     author: { type: "string" },
@@ -175,13 +175,4 @@ const ddbSchema = {
     date: { type: "string" },
     ...jsonSchema.properties,
   },
-};
-
-export {
-  jsonSchema,
-  ddbSchema,
-  tableSchema,
-  noteSchema,
-  areaSchema,
-  typeSchema,
 };
