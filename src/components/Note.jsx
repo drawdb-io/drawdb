@@ -28,8 +28,48 @@ export default function Note({ data, onMouseDown }) {
     const textarea = document.getElementById(`note_${data.id}`);
     textarea.style.height = "0";
     textarea.style.height = textarea.scrollHeight + "px";
-    const newHeight = textarea.scrollHeight + 41;
+    const newHeight = textarea.scrollHeight + 42;
     updateNote(data.id, { content: e.target.value, height: newHeight });
+  };
+
+  const handleBlur = (e) => {
+    if (e.target.value === editField.content) return;
+    const textarea = document.getElementById(`note_${data.id}`);
+    textarea.style.height = "0";
+    textarea.style.height = textarea.scrollHeight + "px";
+    const newHeight = textarea.scrollHeight + 16 + 20 + 4;
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.NOTE,
+        nid: data.id,
+        undo: editField,
+        redo: { content: e.target.value, height: newHeight },
+        message: `Edit note content to "${e.target.value}"`,
+      },
+    ]);
+    setRedoStack([]);
+  };
+
+  const edit = () => {
+    if (layout.sidebar) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        currentTab: Tab.NOTES,
+      }));
+      if (selectedElement.currentTab !== Tab.NOTES) return;
+      document
+        .getElementById(`scroll_note_${data.id}`)
+        .scrollIntoView({ behavior: "smooth" });
+    } else {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.NOTE,
+        id: data.id,
+        open: true,
+      }));
+    }
   };
 
   return (
@@ -100,28 +140,10 @@ export default function Note({ data, onMouseDown }) {
                 height: data.height,
               })
             }
-            onBlur={(e) => {
-              if (e.target.value === editField.content) return;
-              const textarea = document.getElementById(`note_${data.id}`);
-              textarea.style.height = "0";
-              textarea.style.height = textarea.scrollHeight + "px";
-              const newHeight = textarea.scrollHeight + 16 + 20 + 4;
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.EDIT,
-                  element: ObjectType.NOTE,
-                  nid: data.id,
-                  undo: editField,
-                  redo: { content: e.target.value, height: newHeight },
-                  message: `Edit note content to "${e.target.value}"`,
-                },
-              ]);
-              setRedoStack([]);
-            }}
+            onBlur={handleBlur}
             className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
             style={{ backgroundColor: data.color }}
-          ></textarea>
+          />
           {(hovered ||
             (selectedElement.element === ObjectType.NOTE &&
               selectedElement.id === data.id &&
@@ -253,26 +275,8 @@ export default function Note({ data, onMouseDown }) {
                     backgroundColor: "#2f68ad",
                     opacity: "0.7",
                   }}
-                  onClick={() => {
-                    if (layout.sidebar) {
-                      setSelectedElement((prev) => ({
-                        ...prev,
-                        currentTab: Tab.NOTES,
-                      }));
-                      if (selectedElement.currentTab !== Tab.NOTES) return;
-                      document
-                        .getElementById(`scroll_note_${data.id}`)
-                        .scrollIntoView({ behavior: "smooth" });
-                    } else {
-                      setSelectedElement((prev) => ({
-                        ...prev,
-                        element: ObjectType.NOTE,
-                        id: data.id,
-                        open: true,
-                      }));
-                    }
-                  }}
-                ></Button>
+                  onClick={edit}
+                />
               </Popover>
             </div>
           )}

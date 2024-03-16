@@ -2,13 +2,12 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { TRANSFORMERS } from "@lexical/markdown";
-
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
 import ListMaxIndentLevelPlugin from "../plugins/ListMaxIndentLevelPlugin";
 import CodeHighlightPlugin from "../plugins/CodeHighlightPlugin";

@@ -131,7 +131,7 @@ export default function Table(props) {
                         .scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                ></Button>
+                />
                 <Popover
                   content={
                     <div className="popover-theme">
@@ -205,7 +205,7 @@ export default function Table(props) {
                       backgroundColor: "grey",
                       color: "white",
                     }}
-                  ></Button>
+                  />
                 </Popover>
               </div>
             )}
@@ -469,7 +469,7 @@ export default function Table(props) {
                     updateField(props.tableData.id, j, { primary: !f.primary });
                   }}
                   icon={<IconKeyStroked />}
-                ></Button>
+                />
               </Col>
               <Col span={3}>
                 <Popover
@@ -848,7 +848,7 @@ export default function Table(props) {
                   position="right"
                   showArrow
                 >
-                  <Button type="tertiary" icon={<IconMore />}></Button>
+                  <Button type="tertiary" icon={<IconMore />} />
                 </Popover>
               </Col>
             </Row>
@@ -1000,7 +1000,7 @@ export default function Table(props) {
                       icon={<IconMore />}
                       type="tertiary"
                       style={{ marginLeft: "12px" }}
-                    ></Button>
+                    />
                   </Popover>
                 </div>
               ))}
@@ -1229,7 +1229,7 @@ export default function Table(props) {
                   Toast.success(`Table deleted!`);
                   deleteTable(props.tableData.id);
                 }}
-              ></Button>
+              />
             </Col>
           </Row>
         </div>
@@ -1241,13 +1241,12 @@ export default function Table(props) {
     return (
       <div
         className={`${
-          index === props.tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
+          index === props.tableData.fields.length - 1 ||
+          "border-b border-gray-400"
         } h-[36px] px-2 py-1 flex justify-between`}
         onMouseEnter={() => {
           setHoveredField(index);
-          props.setOnRect({
+          props.setHoveredTable({
             tableId: props.tableData.id,
             field: index,
           });
@@ -1261,7 +1260,7 @@ export default function Table(props) {
             className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
             onMouseDown={() => {
               props.handleGripField(index);
-              props.setLine((prev) => ({
+              props.setLinkingLine((prev) => ({
                 ...prev,
                 startFieldId: index,
                 startTableId: props.tableData.id,
@@ -1271,7 +1270,7 @@ export default function Table(props) {
                 endY: props.tableData.y + index * 36 + 50 + 19,
               }));
             }}
-          ></button>
+          />
           {fieldData.name.length <= 11
             ? fieldData.name
             : fieldData.name.substring(0, 11)}
@@ -1352,7 +1351,7 @@ export default function Table(props) {
                     }),
                 });
               }}
-            ></Button>
+            />
           ) : (
             fieldData.type
           )}

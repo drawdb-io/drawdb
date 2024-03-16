@@ -286,7 +286,7 @@ export default function Survey() {
             }
             theme="borderless"
             onClick={changeTheme}
-          ></Button>
+          />
         </div>
       </div>
       <hr

@@ -39,7 +39,7 @@ export default function Issues() {
             className="mt-1"
           >
             <div className="pe-3 select-none">
-              <i className="fa-solid fa-triangle-exclamation me-2 text-yellow-500"></i>
+              <i className="fa-solid fa-triangle-exclamation me-2 text-yellow-500" />
               Issues
             </div>
           </Badge>

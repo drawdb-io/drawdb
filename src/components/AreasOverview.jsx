@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Empty,
   Row,
   Col,
   AutoComplete,
@@ -9,10 +8,6 @@ import {
   Popover,
   Toast,
 } from "@douyinfe/semi-ui";
-import {
-  IllustrationNoContent,
-  IllustrationNoContentDark,
-} from "@douyinfe/semi-illustrations";
 import {
   IconPlus,
   IconSearch,
@@ -29,26 +24,21 @@ import {
 import useUndoRedo from "../hooks/useUndoRedo";
 import useAreas from "../hooks/useAreas";
 import useSaveState from "../hooks/useSaveState";
+import NoElements from "./NoElements";
 
-export default function AreaOverview() {
+export default function AreasOverview() {
   const { setSaveState } = useSaveState();
   const { areas, addArea, deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
-  const [value, setValue] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [filteredResult, setFilteredResult] = useState(
-    areas.map((t) => {
-      return t.name;
-    })
+    areas.map((t) => t.name)
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      areas
-        .map((t) => {
-          return t.name;
-        })
-        .filter((i) => i.includes(value))
+      areas.map((t) => t.name).filter((i) => i.includes(value))
     );
   };
 
@@ -58,7 +48,7 @@ export default function AreaOverview() {
         <Col span={16}>
           <AutoComplete
             data={filteredResult}
-            value={value}
+            value={searchText}
             showClear
             prefix={<IconSearch />}
             placeholder="Search..."
@@ -66,7 +56,7 @@ export default function AreaOverview() {
               <div className="p-3 popover-theme">No areas found</div>
             }
             onSearch={(v) => handleStringSearch(v)}
-            onChange={(v) => setValue(v)}
+            onChange={(v) => setSearchText(v)}
             onSelect={(v) => {
               const { id } = areas.find((t) => t.name === v);
               document
@@ -77,24 +67,16 @@ export default function AreaOverview() {
           />
         </Col>
         <Col span={8}>
-          <Button icon={<IconPlus />} block onClick={() => addArea()}>
+          <Button icon={<IconPlus />} block onClick={addArea}>
             Add area
           </Button>
         </Col>
       </Row>
       {areas.length <= 0 ? (
-        <div className="select-none mt-2">
-          <Empty
-            image={
-              <IllustrationNoContent style={{ width: 154, height: 154 }} />
-            }
-            darkModeImage={
-              <IllustrationNoContentDark style={{ width: 154, height: 154 }} />
-            }
-            title="No subject areas"
-            description="Add subject areas to compartmentalize tables!"
-          />
-        </div>
+        <NoElements
+          title="No subject areas"
+          text="Add subject areas to organize tables!"
+        />
       ) : (
         <div className="p-2">
           {areas.map((a, i) => (
@@ -236,7 +218,7 @@ export default function AreaOverview() {
                     Toast.success(`Area deleted!`);
                     deleteArea(i, true);
                   }}
-                ></Button>
+                />
               </Col>
             </Row>
           ))}

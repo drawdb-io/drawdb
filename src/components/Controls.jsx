@@ -19,7 +19,7 @@ export default function Controls() {
             }))
           }
         >
-          <i className="bi bi-dash-lg"></i>
+          <i className="bi bi-dash-lg" />
         </button>
         <Divider align="center" layout="vertical" />
         <div className="px-3 py-2">{parseInt(transform.zoom * 100)}%</div>
@@ -33,7 +33,7 @@ export default function Controls() {
             }))
           }
         >
-          <i className="bi bi-plus-lg"></i>
+          <i className="bi bi-plus-lg" />
         </button>
       </div>
       <Tooltip content="Exit">
@@ -49,7 +49,7 @@ export default function Controls() {
             exitFullscreen();
           }}
         >
-          <i className="bi bi-fullscreen-exit"></i>
+          <i className="bi bi-fullscreen-exit" />
         </button>
       </Tooltip>
     </div>

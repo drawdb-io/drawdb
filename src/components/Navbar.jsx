@@ -48,7 +48,9 @@ export default function Navbar() {
       </div>
       <hr />
       <SideSheet
-        title={<img src={logo} alt="logo" className="sm:h-[32px]" />}
+        title={
+          <img src={logo} alt="logo" className="sm:h-[32px] md:h-[42px]" />
+        }
         visible={openMenu}
         onCancel={() => setOpenMenu(false)}
         width={window.innerWidth}

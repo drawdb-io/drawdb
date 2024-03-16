@@ -183,7 +183,7 @@ export default function BugReport() {
             }
             theme="borderless"
             onClick={changeTheme}
-          ></Button>
+          />
         </div>
       </div>
       <hr

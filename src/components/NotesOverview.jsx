@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Empty,
   Row,
   Col,
   Button,
@@ -12,10 +11,6 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 import {
-  IllustrationNoContent,
-  IllustrationNoContentDark,
-} from "@douyinfe/semi-illustrations";
-import {
   IconDeleteStroked,
   IconPlus,
   IconSearch,
@@ -24,26 +19,21 @@ import {
 import { noteThemes, Action, ObjectType } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useNotes from "../hooks/useNotes";
+import NoElements from "./NoElements";
 
 export default function NotesOverview() {
   const { notes, updateNote, addNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const [value, setValue] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [editField, setEditField] = useState({});
   const [activeKey, setActiveKey] = useState("");
   const [filteredResult, setFilteredResult] = useState(
-    notes.map((t) => {
-      return t.title;
-    })
+    notes.map((t) => t.title)
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      notes
-        .map((t) => {
-          return t.title;
-        })
-        .filter((i) => i.includes(value))
+      notes.map((t) => t.title).filter((i) => i.includes(value))
     );
   };
 
@@ -53,7 +43,7 @@ export default function NotesOverview() {
         <Col span={16}>
           <AutoComplete
             data={filteredResult}
-            value={value}
+            value={searchText}
             showClear
             prefix={<IconSearch />}
             placeholder="Search..."
@@ -61,7 +51,7 @@ export default function NotesOverview() {
               <div className="p-3 popover-theme">No notes found</div>
             }
             onSearch={(v) => handleStringSearch(v)}
-            onChange={(v) => setValue(v)}
+            onChange={(v) => setSearchText(v)}
             onSelect={(v) => {
               const { id } = notes.find((t) => t.title === v);
               setActiveKey(`${id}`);
@@ -79,18 +69,7 @@ export default function NotesOverview() {
         </Col>
       </Row>
       {notes.length <= 0 ? (
-        <div className="select-none mt-2">
-          <Empty
-            image={
-              <IllustrationNoContent style={{ width: 154, height: 154 }} />
-            }
-            darkModeImage={
-              <IllustrationNoContentDark style={{ width: 154, height: 154 }} />
-            }
-            title="No text notes"
-            description="Add notes cuz why not!"
-          />
-        </div>
+        <NoElements title="No text notes" text="Add notes cuz why not!" />
       ) : (
         <Collapse
           activeKey={activeKey}
@@ -218,7 +197,7 @@ export default function NotesOverview() {
                       Toast.success(`Note deleted!`);
                       deleteNote(i, true);
                     }}
-                  ></Button>
+                  />
                 </div>
               </div>
             </Collapse.Panel>

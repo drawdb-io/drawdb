@@ -235,7 +235,7 @@ export default function Todo() {
                       showArrow
                       className="w-[180px]"
                     >
-                      <Button icon={<IconMore />} type="tertiary"></Button>
+                      <Button icon={<IconMore />} type="tertiary" />
                     </Popover>
                   </Col>
                 </Row>

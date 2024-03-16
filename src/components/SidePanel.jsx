@@ -1,8 +1,8 @@
 import { Tabs } from "@douyinfe/semi-ui";
 import { Tab } from "../data/constants";
-import TableOverview from "./TableOverview";
-import ReferenceOverview from "./ReferenceOverview";
-import AreaOverview from "./AreaOverview";
+import TablesOverview from "./TablesOverview";
+import RelationshipsOverview from "./RelationshipsOverview";
+import AreasOverview from "./AreasOverview";
 import NotesOverview from "./NotesOverview";
 import TypesOverview from "./TypesOverview";
 import Issues from "./Issues";
@@ -20,12 +20,13 @@ export default function SidePanel({ width, resize, setResize }) {
     { tab: "Notes", itemKey: Tab.NOTES },
     { tab: "Types", itemKey: Tab.TYPES },
   ];
+
   const contentList = [
-    <TableOverview key={1} />,
-    <ReferenceOverview key={2} />,
-    <AreaOverview key={3} />,
-    <NotesOverview key={4} />,
-    <TypesOverview key={5} />,
+    <TablesOverview key="tables" />,
+    <RelationshipsOverview key="relationships" />,
+    <AreasOverview key="areas" />,
+    <NotesOverview key="notes" />,
+    <TypesOverview key="types" />,
   ];
 
   return (
@@ -57,7 +58,7 @@ export default function SidePanel({ width, resize, setResize }) {
       </div>
       <div
         className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
-          resize ? "bg-semi-grey-2" : ""
+          resize && "bg-semi-grey-2"
         }`}
         onMouseDown={() => setResize(true)}
       >

@@ -1725,7 +1725,7 @@ export default function ControlPanel({
             })
           }
           limit={1}
-        ></Upload>
+        />
         {error.type === STATUS.ERROR ? (
           <Banner
             type="danger"
@@ -1803,7 +1803,7 @@ export default function ControlPanel({
             ]}
             onChange={(e) => setData((prev) => ({ ...prev, dbms: e }))}
             className="w-full"
-          ></Select>
+          />
           <Checkbox
             aria-label="overwrite checkbox"
             checked={data.overwrite}
@@ -1914,7 +1914,7 @@ export default function ControlPanel({
                           }}
                         >
                           <td className="py-1">
-                            <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60"></i>
+                            <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60" />
                             {d.name}
                           </td>
                           <td className="py-1">
@@ -2085,7 +2085,7 @@ export default function ControlPanel({
               className="hover-1"
             >
               <div className="flex items-center py-1 w-full">
-                <i className="block fa-regular fa-circle fa-xs"></i>
+                <i className="block fa-regular fa-circle fa-xs" />
                 <div className="ms-2">{e.message}</div>
               </div>
             </List.Item>
@@ -2166,7 +2166,7 @@ export default function ControlPanel({
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
               }
             >
-              <i className="fa-solid fa-magnifying-glass-plus"></i>
+              <i className="fa-solid fa-magnifying-glass-plus" />
             </button>
           </Tooltip>
           <Tooltip content="Zoom out" position="bottom">
@@ -2176,7 +2176,7 @@ export default function ControlPanel({
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
               }
             >
-              <i className="fa-solid fa-magnifying-glass-minus"></i>
+              <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
@@ -2241,7 +2241,7 @@ export default function ControlPanel({
               className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
-              <i className="fa-regular fa-calendar-check"></i>
+              <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
         </div>
@@ -2401,11 +2401,7 @@ export default function ControlPanel({
           <Dropdown.Menu>
             <Dropdown.Item
               icon={
-                layout.header ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
+                layout.header ? <IconCheckboxTick /> : <div className="px-2" />
               }
               onClick={() => invertLayout("header")}
             >
@@ -2413,11 +2409,7 @@ export default function ControlPanel({
             </Dropdown.Item>
             <Dropdown.Item
               icon={
-                layout.sidebar ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
+                layout.sidebar ? <IconCheckboxTick /> : <div className="px-2" />
               }
               onClick={() => invertLayout("sidebar")}
             >
@@ -2425,11 +2417,7 @@ export default function ControlPanel({
             </Dropdown.Item>
             <Dropdown.Item
               icon={
-                layout.issues ? (
-                  <IconCheckboxTick />
-                ) : (
-                  <div className="px-2"></div>
-                )
+                layout.issues ? <IconCheckboxTick /> : <div className="px-2" />
               }
               onClick={() => invertLayout("issues")}
             >
@@ -2437,7 +2425,7 @@ export default function ControlPanel({
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
-              icon={<div className="px-2"></div>}
+              icon={<div className="px-2" />}
               onClick={() => {
                 if (layout.fullscreen) {
                   exitFullscreen();

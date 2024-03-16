@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import Table from "./Table";
 import { Action, Cardinality, Constraint, ObjectType } from "../data/constants";
+import { Toast } from "@douyinfe/semi-ui";
+import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
-import { Toast } from "@douyinfe/semi-ui";
 import useSettings from "../hooks/useSettings";
 import useTransform from "../hooks/useTransform";
 import useTables from "../hooks/useTables";
@@ -28,7 +28,7 @@ export default function Canvas() {
     prevY: 0,
   });
   const [linking, setLinking] = useState(false);
-  const [line, setLine] = useState({
+  const [linkingLink, setLinkingLine] = useState({
     startTableId: -1,
     startFieldId: -1,
     endTableId: -1,
@@ -44,12 +44,17 @@ export default function Canvas() {
     mandatory: false,
   });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [onRect, setOnRect] = useState({
+  const [hoveredTable, setHoveredTable] = useState({
     tableId: -1,
     field: -2,
   });
-  const [panning, setPanning] = useState({ state: false, x: 0, y: 0 });
-  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [panning, setPanning] = useState({
+    isPanning: false,
+    x: 0,
+    y: 0,
+    dx: 0,
+    dy: 0,
+  });
   const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
   const [initCoords, setInitCoords] = useState({
     x: 0,
@@ -63,7 +68,7 @@ export default function Canvas() {
 
   const canvas = useRef(null);
 
-  const handleMouseDownRect = (e, id, type) => {
+  const handleMouseDownOnElement = (e, id, type) => {
     const { clientX, clientY } = e;
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
@@ -72,7 +77,7 @@ export default function Canvas() {
         y: clientY / transform.zoom - table.y,
       });
       setDragging({
-        element: ObjectType.TABLE,
+        element: type,
         id: id,
         prevX: table.x,
         prevY: table.y,
@@ -84,7 +89,7 @@ export default function Canvas() {
         y: clientY / transform.zoom - area.y,
       });
       setDragging({
-        element: ObjectType.AREA,
+        element: type,
         id: id,
         prevX: area.x,
         prevY: area.y,
@@ -96,7 +101,7 @@ export default function Canvas() {
         y: clientY / transform.zoom - note.y,
       });
       setDragging({
-        element: ObjectType.NOTE,
+        element: type,
         id: id,
         prevX: note.x,
         prevY: note.y,
@@ -113,29 +118,26 @@ export default function Canvas() {
   const handleMouseMove = (e) => {
     if (linking) {
       const rect = canvas.current.getBoundingClientRect();
-      const offsetX = rect.left;
-      const offsetY = rect.top;
-
-      setLine({
-        ...line,
-        endX: (e.clientX - offsetX - transform.pan?.x) / transform.zoom,
-        endY: (e.clientY - offsetY - transform.pan?.y) / transform.zoom,
+      setLinkingLine({
+        ...linkingLink,
+        endX: (e.clientX - rect.left - transform.pan?.x) / transform.zoom,
+        endY: (e.clientY - rect.top - transform.pan?.y) / transform.zoom,
       });
     } else if (
-      panning.state &&
+      panning.isPanning &&
       dragging.element === ObjectType.NONE &&
       areaResize.id === -1
     ) {
       if (!settings.panning) {
         return;
       }
-      const dx = e.clientX - panOffset.x;
-      const dy = e.clientY - panOffset.y;
+      const dx = e.clientX - panning.dx;
+      const dy = e.clientY - panning.dy;
       setTransform((prev) => ({
         ...prev,
         pan: { x: prev.pan?.x + dx, y: prev.pan?.y + dy },
       }));
-      setPanOffset({ x: e.clientX, y: e.clientY });
+      setPanning((prev) => ({ ...prev, dx: e.clientX, dy: e.clientY }));
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
       const dx = e.clientX / transform.zoom - offset.x;
       const dy = e.clientY / transform.zoom - offset.y;
@@ -154,44 +156,41 @@ export default function Canvas() {
       updateNote(dragging.id, { x: dx, y: dy });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
-
-      let newX = initCoords.x;
-      let newY = initCoords.y;
-      let newWidth = initCoords.width;
-      let newHeight = initCoords.height;
+      let newDims = { ...initCoords };
+      delete newDims.mouseX;
+      delete newDims.mouseY;
       const mouseX = e.clientX / transform.zoom;
       const mouseY = e.clientY / transform.zoom;
-      setPanning({ state: false, x: 0, y: 0 });
+      setPanning({ isPanning: false, x: 0, y: 0 });
       if (areaResize.dir === "br") {
-        newWidth = initCoords.width + (mouseX - initCoords.mouseX);
-        newHeight = initCoords.height + (mouseY - initCoords.mouseY);
+        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
+        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "tl") {
-        newX = initCoords.x + (mouseX - initCoords.mouseX);
-        newY = initCoords.y + (mouseY - initCoords.mouseY);
-        newWidth = initCoords.width - (mouseX - initCoords.mouseX);
-        newHeight = initCoords.height - (mouseY - initCoords.mouseY);
+        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
+        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
+        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
+        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "tr") {
-        newY = initCoords.y + (mouseY - initCoords.mouseY);
-        newWidth = initCoords.width + (mouseX - initCoords.mouseX);
-        newHeight = initCoords.height - (mouseY - initCoords.mouseY);
+        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
+        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
+        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
       } else if (areaResize.dir === "bl") {
-        newX = initCoords.x + (mouseX - initCoords.mouseX);
-        newWidth = initCoords.width - (mouseX - initCoords.mouseX);
-        newHeight = initCoords.height + (mouseY - initCoords.mouseY);
+        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
+        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
+        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
       }
 
-      updateArea(areaResize.id, {
-        x: newX,
-        y: newY,
-        width: newWidth,
-        height: newHeight,
-      });
+      updateArea(areaResize.id, { ...newDims });
     }
   };
 
   const handleMouseDown = (e) => {
-    setPanning({ state: true, ...transform.pan });
-    setPanOffset({ x: e.clientX, y: e.clientY });
+    setPanning({
+      isPanning: true,
+      ...transform.pan,
+      dx: e.clientX,
+      dy: e.clientY,
+    });
     setCursor("grabbing");
   };
 
@@ -229,7 +228,7 @@ export default function Canvas() {
   const didPan = () =>
     !(transform.pan?.x === panning.x && transform.pan?.y === panning.y);
 
-  const getMoveInfo = () => {
+  const getMovedElementDetails = () => {
     switch (dragging.element) {
       case ObjectType.TABLE:
         return {
@@ -256,7 +255,7 @@ export default function Canvas() {
 
   const handleMouseUp = () => {
     if (coordsDidUpdate(dragging.element)) {
-      const info = getMoveInfo();
+      const info = getMovedElementDetails();
       setUndoStack((prev) => [
         ...prev,
         {
@@ -273,7 +272,7 @@ export default function Canvas() {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    if (panning.state && didPan()) {
+    if (panning.isPanning && didPan()) {
       setUndoStack((prev) => [
         ...prev,
         {
@@ -291,7 +290,7 @@ export default function Canvas() {
         open: false,
       }));
     }
-    setPanning({ state: false, x: 0, y: 0 });
+    setPanning({ isPanning: false, x: 0, y: 0 });
     setCursor("default");
     if (linking) handleLinking();
     setLinking(false);
@@ -333,29 +332,29 @@ export default function Canvas() {
   };
 
   const handleLinking = () => {
-    if (onRect.tableId < 0) return;
-    if (onRect.field < 0) return;
+    if (hoveredTable.tableId < 0) return;
+    if (hoveredTable.field < 0) return;
     if (
-      tables[line.startTableId].fields[line.startFieldId].type !==
-      tables[onRect.tableId].fields[onRect.field].type
+      tables[linkingLink.startTableId].fields[linkingLink.startFieldId].type !==
+      tables[hoveredTable.tableId].fields[hoveredTable.field].type
     ) {
       Toast.info("Cannot connect");
       return;
     }
     if (
-      line.startTableId === onRect.tableId &&
-      line.startFieldId === onRect.field
+      linkingLink.startTableId === hoveredTable.tableId &&
+      linkingLink.startFieldId === hoveredTable.field
     )
       return;
 
     addRelationship(true, {
-      ...line,
-      endTableId: onRect.tableId,
-      endFieldId: onRect.field,
-      endX: tables[onRect.tableId].x + 15,
-      endY: tables[onRect.tableId].y + onRect.field * 36 + 69,
-      name: `${tables[line.startTableId].name}_${
-        tables[line.startTableId].fields[line.startFieldId].name
+      ...linkingLink,
+      endTableId: hoveredTable.tableId,
+      endFieldId: hoveredTable.field,
+      endX: tables[hoveredTable.tableId].x + 15,
+      endY: tables[hoveredTable.tableId].y + hoveredTable.field * 36 + 69,
+      name: `${tables[linkingLink.startTableId].name}_${
+        tables[linkingLink.startTableId].fields[linkingLink.startFieldId].name
       }_fk`,
       id: relationships.length,
     });
@@ -434,14 +433,12 @@ export default function Canvas() {
             {areas.map((a) => (
               <Area
                 key={a.id}
-                areaData={a}
+                data={a}
                 onMouseDown={(e) =>
-                  handleMouseDownRect(e, a.id, ObjectType.AREA)
+                  handleMouseDownOnElement(e, a.id, ObjectType.AREA)
                 }
                 setResize={setAreaResize}
-                initCoords={initCoords}
                 setInitCoords={setInitCoords}
-                zoom={transform.zoom}
               ></Area>
             ))}
             {relationships.map((e, i) => (
@@ -451,11 +448,11 @@ export default function Canvas() {
               <Table
                 key={table.id}
                 tableData={table}
-                setOnRect={setOnRect}
+                setHoveredTable={setHoveredTable}
                 handleGripField={handleGripField}
-                setLine={setLine}
+                setLinkingLine={setLinkingLine}
                 onMouseDown={(e) =>
-                  handleMouseDownRect(e, table.id, ObjectType.TABLE)
+                  handleMouseDownOnElement(e, table.id, ObjectType.TABLE)
                 }
                 active={
                   selectedElement.element === ObjectType.TABLE &&
@@ -469,7 +466,7 @@ export default function Canvas() {
             ))}
             {linking && (
               <path
-                d={`M ${line.startX} ${line.startY} L ${line.endX} ${line.endY}`}
+                d={`M ${linkingLink.startX} ${linkingLink.startY} L ${linkingLink.endX} ${linkingLink.endY}`}
                 stroke="red"
                 strokeDasharray="8,8"
               />
@@ -479,7 +476,7 @@ export default function Canvas() {
                 key={n.id}
                 data={n}
                 onMouseDown={(e) =>
-                  handleMouseDownRect(e, n.id, ObjectType.NOTE)
+                  handleMouseDownOnElement(e, n.id, ObjectType.NOTE)
                 }
               ></Note>
             ))}

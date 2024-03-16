@@ -123,7 +123,7 @@ export default function Shortcuts() {
             }
             theme="borderless"
             onClick={changeTheme}
-          ></Button>
+          />
           <div className="ms-2 lg:inline md:inline sm:hidden">
             <AutoComplete
               prefix={<IconSearch />}

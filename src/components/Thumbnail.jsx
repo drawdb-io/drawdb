@@ -49,9 +49,7 @@ export function Thumbnail({ diagram, i, zoom }) {
             width={a.width > 0 ? a.width : 0}
             height={a.height > 0 ? a.height : 0}
           >
-            <div
-              className={`border border-slate-400 w-full h-full rounded-sm relative`}
-            >
+            <div className="border border-slate-400 w-full h-full rounded-sm relative">
               <div
                 className="opacity-40 w-fill h-full"
                 style={{ backgroundColor: a.color }}
@@ -82,7 +80,7 @@ export function Thumbnail({ diagram, i, zoom }) {
                 <div
                   className="h-2 w-full rounded-t-sm"
                   style={{ backgroundColor: table.color }}
-                ></div>
+                />
                 <div className="rounded-b-[3px]">
                   <div
                     className={`font-bold py-1 px-2 border-b ${
