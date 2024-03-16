@@ -25,7 +25,7 @@ import {
 import { isSized, hasPrecision, getSize } from "../utils/toSQL";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useTypes from "../hooks/useTypes";
-import NoElements from "./NoElements";
+import NoElements from "./Empty";
 
 export default function TypesOverview() {
   const [value, setValue] = useState("");

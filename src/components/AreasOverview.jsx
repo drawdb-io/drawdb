@@ -24,7 +24,7 @@ import {
 import useUndoRedo from "../hooks/useUndoRedo";
 import useAreas from "../hooks/useAreas";
 import useSaveState from "../hooks/useSaveState";
-import NoElements from "./NoElements";
+import Empty from "./Empty";
 
 export default function AreasOverview() {
   const { setSaveState } = useSaveState();
@@ -73,7 +73,7 @@ export default function AreasOverview() {
         </Col>
       </Row>
       {areas.length <= 0 ? (
-        <NoElements
+        <Empty
           title="No subject areas"
           text="Add subject areas to organize tables!"
         />

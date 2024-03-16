@@ -18,7 +18,7 @@ import {
 import { Cardinality, Constraint, Action, ObjectType } from "../data/constants";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
-import NoElements from "./NoElements";
+import Empty from "./Empty";
 
 export default function RelationshipsOverview() {
   const { relationships } = useTables();
@@ -62,7 +62,7 @@ export default function RelationshipsOverview() {
         accordion
       >
         {relationships.length <= 0 ? (
-          <NoElements
+          <Empty
             title="No relationships"
             text="Drag to connect fields and form relationships!"
           />

@@ -35,7 +35,7 @@ import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
 import useTypes from "../hooks/useTypes";
-import NoElements from "./NoElements";
+import NoElements from "./Empty";
 
 export default function TablesOverview() {
   const [searchText, setSearchText] = useState("");

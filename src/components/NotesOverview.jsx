@@ -19,7 +19,7 @@ import {
 import { noteThemes, Action, ObjectType } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useNotes from "../hooks/useNotes";
-import NoElements from "./NoElements";
+import Empty from "./Empty";
 
 export default function NotesOverview() {
   const { notes, updateNote, addNote, deleteNote } = useNotes();
@@ -69,7 +69,7 @@ export default function NotesOverview() {
         </Col>
       </Row>
       {notes.length <= 0 ? (
-        <NoElements title="No text notes" text="Add notes cuz why not!" />
+        <Empty title="No text notes" text="Add notes cuz why not!" />
       ) : (
         <Collapse
           activeKey={activeKey}
