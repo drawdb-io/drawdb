@@ -1351,7 +1351,10 @@ export default function Table(props) {
               }}
             />
           ) : (
-            fieldData.type
+            <div className="flex gap-1 items-center">
+              {fieldData.primary && <IconKeyStroked />}
+              <span>{fieldData.type}</span>
+            </div>
           )}
         </div>
       </div>
