@@ -81,22 +81,16 @@ export default function Table(props) {
           }`}
         >
           <div
-            className={`h-[10px] w-full rounded-t-md`}
+            className="h-[10px] w-full rounded-t-md"
             style={{ backgroundColor: props.tableData.color }}
           />
           <div
-            className={`font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
+            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
               settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
             }`}
           >
-            <div className="px-3">
-              {isHovered
-                ? props.tableData.name.length <= 10
-                  ? props.tableData.name
-                  : `${props.tableData.name.substring(0, 10)}...`
-                : props.tableData.name.length <= 18
-                ? props.tableData.name
-                : `${props.tableData.name.substring(0, 19)}...`}
+            <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
+              {props.tableData.name}
             </div>
             {isHovered && (
               <div className="flex justify-end items-center mx-2">
