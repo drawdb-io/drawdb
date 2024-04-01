@@ -12,7 +12,7 @@ import {
   IconEdit,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
-import icon from "../assets/icon_dark_64.png";
+import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
   Divider,
@@ -31,9 +31,9 @@ import {
   Select,
   Checkbox,
 } from "@douyinfe/semi-ui";
-import timeLine from "../assets/process.png";
-import timeLineDark from "../assets/process_dark.png";
-import todo from "../assets/calendar.png";
+import timeLine from "../../assets/process.png";
+import timeLineDark from "../../assets/process_dark.png";
+import todo from "../../assets/calendar.png";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
@@ -42,32 +42,32 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
-} from "../utils/toSQL";
-import { IconAddTable, IconAddArea, IconAddNote } from "./CustomIcons";
-import { ObjectType, Action, Tab, State, Cardinality } from "../data/constants";
+} from "../../utils/toSQL";
+import { IconAddTable, IconAddArea, IconAddNote } from "../CustomIcons";
+import { ObjectType, Action, Tab, State, Cardinality } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
-import { areaSchema, noteSchema, tableSchema } from "../data/schemas";
+import { areaSchema, noteSchema, tableSchema } from "../../data/schemas";
 import Editor from "@monaco-editor/react";
-import { db } from "../data/db";
+import { db } from "../../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
 import { Thumbnail } from "./Thumbnail";
-import useLayout from "../hooks/useLayout";
-import useSettings from "../hooks/useSettings";
-import useTransform from "../hooks/useTransform";
-import useTables from "../hooks/useTables";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useSelect from "../hooks/useSelect";
-import { enterFullscreen, exitFullscreen } from "../utils/fullscreen";
-import { ddbDiagramIsValid, jsonDiagramIsValid } from "../utils/validateSchema";
-import { dataURItoBlob } from "../utils/utils";
-import useAreas from "../hooks/useAreas";
-import useNotes from "../hooks/useNotes";
-import useTypes from "../hooks/useTypes";
-import useSaveState from "../hooks/useSaveState";
+import useLayout from "../../hooks/useLayout";
+import useSettings from "../../hooks/useSettings";
+import useTransform from "../../hooks/useTransform";
+import useTables from "../../hooks/useTables";
+import useUndoRedo from "../../hooks/useUndoRedo";
+import useSelect from "../../hooks/useSelect";
+import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
+import { ddbDiagramIsValid, jsonDiagramIsValid } from "../../utils/validateSchema";
+import { dataURItoBlob } from "../../utils/utils";
+import useAreas from "../../hooks/useAreas";
+import useNotes from "../../hooks/useNotes";
+import useTypes from "../../hooks/useTypes";
+import useSaveState from "../../hooks/useSaveState";
 
 export default function ControlPanel({
   diagramId,

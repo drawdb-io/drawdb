@@ -3,7 +3,7 @@ import useTransform from "../hooks/useTransform";
 import useLayout from "../hooks/useLayout";
 import { exitFullscreen } from "../utils/fullscreen";
 
-export default function Controls() {
+export default function FloatingControls() {
   const { transform, setTransform } = useTransform();
   const { setLayout } = useLayout();
 

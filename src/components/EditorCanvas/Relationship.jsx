@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import { Cardinality } from "../data/constants";
-import useSettings from "../hooks/useSettings";
-import { calcPath } from "../utils/calcPath";
+import { Cardinality } from "../../data/constants";
+import useSettings from "../../hooks/useSettings";
+import { calcPath } from "../../utils/calcPath";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();

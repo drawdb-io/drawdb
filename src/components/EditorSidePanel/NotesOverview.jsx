@@ -16,9 +16,9 @@ import {
   IconSearch,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import { noteThemes, Action, ObjectType } from "../data/constants";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useNotes from "../hooks/useNotes";
+import { noteThemes, Action, ObjectType } from "../../data/constants";
+import useUndoRedo from "../../hooks/useUndoRedo";
+import useNotes from "../../hooks/useNotes";
 import Empty from "./Empty";
 
 export default function NotesOverview() {

@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { Action, ObjectType, noteThemes, Tab, State } from "../data/constants";
+import { Action, ObjectType, noteThemes, Tab, State } from "../../data/constants";
 import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,
   IconDeleteStroked,
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
-import useLayout from "../hooks/useLayout";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useSelect from "../hooks/useSelect";
-import useNotes from "../hooks/useNotes";
-import useSaveState from "../hooks/useSaveState";
+import useLayout from "../../hooks/useLayout";
+import useUndoRedo from "../../hooks/useUndoRedo";
+import useSelect from "../../hooks/useSelect";
+import useNotes from "../../hooks/useNotes";
+import useSaveState from "../../hooks/useSaveState";
 
 export default function Note({ data, onMouseDown }) {
   const w = 180;

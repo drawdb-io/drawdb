@@ -15,9 +15,9 @@ import {
   IconMore,
   IconSearch,
 } from "@douyinfe/semi-icons";
-import { Cardinality, Constraint, Action, ObjectType } from "../data/constants";
-import useTables from "../hooks/useTables";
-import useUndoRedo from "../hooks/useUndoRedo";
+import { Cardinality, Constraint, Action, ObjectType } from "../../data/constants";
+import useTables from "../../hooks/useTables";
+import useUndoRedo from "../../hooks/useUndoRedo";
 import Empty from "./Empty";
 
 export default function RelationshipsOverview() {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, ObjectType, sqlDataTypes } from "../data/constants";
+import { Action, ObjectType, sqlDataTypes } from "../../data/constants";
 import {
   Collapse,
   Row,
@@ -22,9 +22,9 @@ import {
   IconInfoCircle,
   IconMore,
 } from "@douyinfe/semi-icons";
-import { isSized, hasPrecision, getSize } from "../utils/toSQL";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useTypes from "../hooks/useTypes";
+import { isSized, hasPrecision, getSize } from "../../utils/toSQL";
+import useUndoRedo from "../../hooks/useUndoRedo";
+import useTypes from "../../hooks/useTypes";
 import NoElements from "./Empty";
 
 export default function TypesOverview() {

@@ -8,11 +8,11 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import { TRANSFORMERS } from "@lexical/markdown";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import ToolbarPlugin from "../plugins/ToolbarPlugin";
-import ListMaxIndentLevelPlugin from "../plugins/ListMaxIndentLevelPlugin";
-import CodeHighlightPlugin from "../plugins/CodeHighlightPlugin";
-import AutoLinkPlugin from "../plugins/AutoLinkPlugin";
-import "../styles/richeditor.css";
+import ToolbarPlugin from "./ToolbarPlugin";
+import ListMaxIndentLevelPlugin from "./ListMaxIndentLevelPlugin";
+import CodeHighlightPlugin from "./CodeHighlightPlugin";
+import AutoLinkPlugin from "./AutoLinkPlugin";
+import "./styles/index.css";
 
 function Placeholder({ text }) {
   return <div className="editor-placeholder">{text || ""}</div>;

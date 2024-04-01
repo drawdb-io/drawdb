@@ -12,14 +12,16 @@ import {
   tableThemes,
   defaultBlue,
   State,
-} from "../data/constants";
-import useLayout from "../hooks/useLayout";
-import useSettings from "../hooks/useSettings";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useSelect from "../hooks/useSelect";
-import useAreas from "../hooks/useAreas";
-import useSaveState from "../hooks/useSaveState";
-import useTransform from "../hooks/useTransform";
+} from "../../data/constants";
+import {
+  useLayout,
+  useSettings,
+  useUndoRedo,
+  useSelect,
+  useAreas,
+  useSaveState,
+  useTransform,
+} from "../../hooks";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);

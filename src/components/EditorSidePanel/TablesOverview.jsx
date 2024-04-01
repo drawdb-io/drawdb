@@ -5,7 +5,7 @@ import {
   defaultBlue,
   sqlDataTypes,
   tableThemes,
-} from "../data/constants";
+} from "../../data/constants";
 import {
   Collapse,
   Row,
@@ -30,11 +30,11 @@ import {
   IconPlus,
   IconSearch,
 } from "@douyinfe/semi-icons";
-import { getSize, hasCheck, hasPrecision, isSized } from "../utils/toSQL";
-import useTables from "../hooks/useTables";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useSelect from "../hooks/useSelect";
-import useTypes from "../hooks/useTypes";
+import { getSize, hasCheck, hasPrecision, isSized } from "../../utils/toSQL";
+import useTables from "../../hooks/useTables";
+import useUndoRedo from "../../hooks/useUndoRedo";
+import useSelect from "../../hooks/useSelect";
+import useTypes from "../../hooks/useTypes";
 import NoElements from "./Empty";
 
 export default function TablesOverview() {

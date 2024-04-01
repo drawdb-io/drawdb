@@ -1,4 +1,4 @@
-import { calcPath } from "../utils/calcPath";
+import { calcPath } from "../../utils/calcPath";
 
 export function Thumbnail({ diagram, i, zoom }) {
   const translateX = 32 * zoom;

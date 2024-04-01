@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import ControlPanel from "../components/ControlPanel";
-import Canvas from "../components/Canvas";
-import SidePanel from "../components/SidePanel";
+import ControlPanel from "./EditorHeader/ControlPanel";
+import Canvas from "./EditorCanvas/Canvas";
+import SidePanel from "./EditorSidePanel/SidePanel";
 import { State } from "../data/constants";
 import { db } from "../data/db";
 import useLayout from "../hooks/useLayout";
@@ -9,7 +9,7 @@ import useSettings from "../hooks/useSettings";
 import useTransform from "../hooks/useTransform";
 import useTables from "../hooks/useTables";
 import useUndoRedo from "../hooks/useUndoRedo";
-import Controls from "../components/Controls";
+import FloatingControls from "./FloatingControls";
 import useAreas from "../hooks/useAreas";
 import useNotes from "../hooks/useNotes";
 import useTypes from "../hooks/useTypes";
@@ -302,7 +302,7 @@ export default function WorkSpace() {
           <Canvas saveState={saveState} setSaveState={setSaveState} />
           {!(layout.sidebar || layout.toolbar || layout.header) && (
             <div className="fixed right-5 bottom-4">
-              <Controls />
+              <FloatingControls />
             </div>
           )}
         </div>

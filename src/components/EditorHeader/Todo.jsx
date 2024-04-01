@@ -19,9 +19,9 @@ import {
   IconDeleteStroked,
   IconCaretdown,
 } from "@douyinfe/semi-icons";
-import { State } from "../data/constants";
-import useTasks from "../hooks/useTasks";
-import useSaveState from "../hooks/useSaveState";
+import { State } from "../../data/constants";
+import useTasks from "../../hooks/useTasks";
+import useSaveState from "../../hooks/useSaveState";
 
 const Priority = {
   NONE: 0,

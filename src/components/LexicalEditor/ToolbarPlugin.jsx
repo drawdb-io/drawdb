@@ -40,7 +40,7 @@ import {
   getCodeLanguages,
 } from "@lexical/code";
 import { Dropdown } from "@douyinfe/semi-ui";
-import "../styles/richeditor.css";
+import "./styles/index.css";
 
 const LowPriority = 1;
 
