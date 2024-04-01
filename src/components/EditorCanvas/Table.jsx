@@ -1243,7 +1243,7 @@ export default function Table(props) {
         className={`${
           index === props.tableData.fields.length - 1 ||
           "border-b border-gray-400"
-        } h-[36px] px-2 py-1 flex justify-between`}
+        } h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onMouseEnter={() => {
           setHoveredField(index);
           props.setHoveredTable({
@@ -1255,9 +1255,13 @@ export default function Table(props) {
           setHoveredField(-1);
         }}
       >
-        <div className={`${hoveredField === index ? "text-zinc-400" : ""}`}>
+        <div
+          className={`${
+            hoveredField === index ? "text-zinc-400" : ""
+          } flex items-center gap-2 overflow-hidden`}
+        >
           <button
-            className={`w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
+            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full"
             onMouseDown={() => {
               props.handleGripField(index);
               props.setLinkingLine((prev) => ({
@@ -1271,9 +1275,9 @@ export default function Table(props) {
               }));
             }}
           />
-          {fieldData.name.length <= 11
-            ? fieldData.name
-            : fieldData.name.substring(0, 11)}
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {fieldData.name}
+          </span>
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (
