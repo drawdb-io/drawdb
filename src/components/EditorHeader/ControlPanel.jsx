@@ -28,7 +28,6 @@ import {
   Toast,
   SideSheet,
   List,
-  Select,
   Checkbox,
 } from "@douyinfe/semi-ui";
 import timeLine from "../../assets/process.png";
@@ -44,7 +43,13 @@ import {
   jsonToSQLServer,
 } from "../../utils/toSQL";
 import { IconAddTable, IconAddArea, IconAddNote } from "../CustomIcons";
-import { ObjectType, Action, Tab, State, Cardinality } from "../../data/constants";
+import {
+  ObjectType,
+  Action,
+  Tab,
+  State,
+  Cardinality,
+} from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
@@ -62,7 +67,10 @@ import useTables from "../../hooks/useTables";
 import useUndoRedo from "../../hooks/useUndoRedo";
 import useSelect from "../../hooks/useSelect";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
-import { ddbDiagramIsValid, jsonDiagramIsValid } from "../../utils/validateSchema";
+import {
+  ddbDiagramIsValid,
+  jsonDiagramIsValid,
+} from "../../utils/validateSchema";
 import { dataURItoBlob } from "../../utils/utils";
 import useAreas from "../../hooks/useAreas";
 import useNotes from "../../hooks/useNotes";
@@ -1297,13 +1305,11 @@ export default function ControlPanel({
     const parser = new Parser();
     let ast = null;
     try {
-      console.log(data.dbms);
-      ast = parser.astify(data.src, { database: data.dbms });
+      ast = parser.astify(data.src, { database: "MySQL" });
     } catch (err) {
       Toast.error(
         "Could not parse the sql file. Make sure there are no syntax errors."
       );
-      console.log(err);
       return;
     }
 
@@ -1793,17 +1799,10 @@ export default function ControlPanel({
           }
           limit={1}
         ></Upload>
-        <div className="my-2">
-          <div className="text-sm font-semibold mb-1">Select DBMS</div>
-          <Select
-            defaultValue="MySQL"
-            optionList={[
-              { value: "MySQL", label: "MySQL" },
-              { value: "Postgresql", label: "PostgreSQL" },
-            ]}
-            onChange={(e) => setData((prev) => ({ ...prev, dbms: e }))}
-            className="w-full"
-          />
+        <div>
+          <div className="text-xs mb-3 mt-1 opacity-80">
+            * For the time being loading only MySQL scripts is supported.
+          </div>
           <Checkbox
             aria-label="overwrite checkbox"
             checked={data.overwrite}
@@ -1811,7 +1810,6 @@ export default function ControlPanel({
             onChange={(e) =>
               setData((prev) => ({ ...prev, overwrite: e.target.checked }))
             }
-            className="my-2"
           >
             Overwrite existing diagram
           </Checkbox>
