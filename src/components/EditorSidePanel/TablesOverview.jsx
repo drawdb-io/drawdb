@@ -174,7 +174,14 @@ function TablePanel({ data }) {
 
   return (
     <div id={`scroll_table_${data.id}`}>
-      <Collapse.Panel header={<div>{data.name}</div>} itemKey={`${data.id}`}>
+      <Collapse.Panel
+        header={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {data.name}
+          </div>
+        }
+        itemKey={`${data.id}`}
+      >
         <div className="flex items-center mb-2.5">
           <div className="text-md font-semibold">Name: </div>
           <Input

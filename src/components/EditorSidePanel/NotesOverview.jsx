@@ -78,7 +78,11 @@ export default function NotesOverview() {
         >
           {notes.map((n, i) => (
             <Collapse.Panel
-              header={<div>{n.title}</div>}
+              header={
+                <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {n.title}
+                </div>
+              }
               itemKey={`${n.id}`}
               id={`scroll_note_${n.id}`}
               key={n.id}

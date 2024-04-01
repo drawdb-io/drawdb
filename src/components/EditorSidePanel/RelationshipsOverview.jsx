@@ -15,7 +15,12 @@ import {
   IconMore,
   IconSearch,
 } from "@douyinfe/semi-icons";
-import { Cardinality, Constraint, Action, ObjectType } from "../../data/constants";
+import {
+  Cardinality,
+  Constraint,
+  Action,
+  ObjectType,
+} from "../../data/constants";
 import useTables from "../../hooks/useTables";
 import useUndoRedo from "../../hooks/useUndoRedo";
 import Empty from "./Empty";
@@ -90,7 +95,14 @@ function RelationshipPanel({ data }) {
 
   return (
     <div id={`scroll_ref_${data.id}`}>
-      <Collapse.Panel header={data.name} itemKey={`${data.id}`}>
+      <Collapse.Panel
+        header={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {data.name}
+          </div>
+        }
+        itemKey={`${data.id}`}
+      >
         <div className="flex justify-between items-center mb-3">
           <div className="me-3">
             <span className="font-semibold">Primary: </span>

@@ -119,7 +119,14 @@ function TypePanel({ index, data }) {
 
   return (
     <div id={`scroll_type_${index}`}>
-      <Collapse.Panel header={<div>{data.name}</div>} itemKey={`${index}`}>
+      <Collapse.Panel
+        header={
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {data.name}
+          </div>
+        }
+        itemKey={`${index}`}
+      >
         <div className="flex items-center mb-2.5">
           <div className="text-md font-semibold">Name: </div>
           <Input
