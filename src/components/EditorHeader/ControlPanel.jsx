@@ -1217,7 +1217,7 @@ export default function ControlPanel({
         shortcut: "Ctrl+H",
       },
       "Ask us on discord": {
-        function: () => window.open("https://discord.gg/CUr9s9KH6X", "_blank"),
+        function: () => window.open("https://discord.gg/8y7XUfcqR8", "_blank"),
       },
       "Report a bug": {
         function: () => window.open("/bug_report", "_blank"),
