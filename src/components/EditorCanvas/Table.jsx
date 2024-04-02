@@ -85,117 +85,119 @@ export default function Table(props) {
               settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
             }`}
           >
-            <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className=" px-3 overflow-hidden text-ellipsis whitespace-nowrap">
               {props.tableData.name}
             </div>
-            <div className="invisible group-hover:visible flex justify-end items-center mx-2">
-              <Button
-                icon={<IconEdit />}
-                size="small"
-                theme="solid"
-                style={{
-                  backgroundColor: "#2f68ad",
-                  opacity: "0.7",
-                  marginRight: "6px",
-                }}
-                onClick={() => {
-                  if (!layout.sidebar) {
-                    setSelectedElement((prev) => ({
-                      ...prev,
-                      element: ObjectType.TABLE,
-                      id: props.tableData.id,
-                      open: true,
-                    }));
-                  } else {
-                    setSelectedElement((prev) => ({
-                      ...prev,
-                      currentTab: Tab.TABLES,
-                      element: ObjectType.TABLE,
-                      id: props.tableData.id,
-                      open: true,
-                    }));
-                    if (selectedElement.currentTab !== Tab.TABLES) return;
-                    document
-                      .getElementById(`scroll_table_${props.tableData.id}`)
-                      .scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-              />
-              <Popover
-                content={
-                  <div className="popover-theme">
-                    <div className="mb-2">
-                      <strong>Comment :</strong>{" "}
-                      {props.tableData.comment === "" ? (
-                        "No comment"
-                      ) : (
-                        <div>{props.tableData.comment}</div>
-                      )}
-                    </div>
-                    <div>
-                      <strong
-                        className={`${
-                          props.tableData.indices.length === 0 ? "" : "block"
-                        }`}
-                      >
-                        Indices :
-                      </strong>{" "}
-                      {props.tableData.indices.length === 0 ? (
-                        "No indices"
-                      ) : (
-                        <div>
-                          {props.tableData.indices.map((index, k) => (
-                            <div
-                              key={k}
-                              className={`flex items-center my-1 px-2 py-1 rounded ${
-                                settings.mode === "light"
-                                  ? "bg-gray-100"
-                                  : "bg-zinc-800"
-                              }`}
-                            >
-                              <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
-                              <div>
-                                {index.fields.map((f) => (
-                                  <Tag color="blue" key={f} className="me-1">
-                                    {f}
-                                  </Tag>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <Button
-                      icon={<IconDeleteStroked />}
-                      type="danger"
-                      block
-                      style={{ marginTop: "8px" }}
-                      onClick={() => {
-                        Toast.success(`Table deleted!`);
-                        deleteTable(props.tableData.id);
-                      }}
-                    >
-                      Delete table
-                    </Button>
-                  </div>
-                }
-                position="rightTop"
-                showArrow
-                trigger="click"
-                style={{ width: "200px" }}
-              >
+            <div className="hidden group-hover:block">
+              <div className="flex justify-end items-center mx-2">
                 <Button
-                  icon={<IconMore />}
-                  type="tertiary"
+                  icon={<IconEdit />}
                   size="small"
+                  theme="solid"
                   style={{
+                    backgroundColor: "#2f68ad",
                     opacity: "0.7",
-                    backgroundColor: "grey",
-                    color: "white",
+                    marginRight: "6px",
+                  }}
+                  onClick={() => {
+                    if (!layout.sidebar) {
+                      setSelectedElement((prev) => ({
+                        ...prev,
+                        element: ObjectType.TABLE,
+                        id: props.tableData.id,
+                        open: true,
+                      }));
+                    } else {
+                      setSelectedElement((prev) => ({
+                        ...prev,
+                        currentTab: Tab.TABLES,
+                        element: ObjectType.TABLE,
+                        id: props.tableData.id,
+                        open: true,
+                      }));
+                      if (selectedElement.currentTab !== Tab.TABLES) return;
+                      document
+                        .getElementById(`scroll_table_${props.tableData.id}`)
+                        .scrollIntoView({ behavior: "smooth" });
+                    }
                   }}
                 />
-              </Popover>
+                <Popover
+                  content={
+                    <div className="popover-theme">
+                      <div className="mb-2">
+                        <strong>Comment :</strong>{" "}
+                        {props.tableData.comment === "" ? (
+                          "No comment"
+                        ) : (
+                          <div>{props.tableData.comment}</div>
+                        )}
+                      </div>
+                      <div>
+                        <strong
+                          className={`${
+                            props.tableData.indices.length === 0 ? "" : "block"
+                          }`}
+                        >
+                          Indices :
+                        </strong>{" "}
+                        {props.tableData.indices.length === 0 ? (
+                          "No indices"
+                        ) : (
+                          <div>
+                            {props.tableData.indices.map((index, k) => (
+                              <div
+                                key={k}
+                                className={`flex items-center my-1 px-2 py-1 rounded ${
+                                  settings.mode === "light"
+                                    ? "bg-gray-100"
+                                    : "bg-zinc-800"
+                                }`}
+                              >
+                                <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
+                                <div>
+                                  {index.fields.map((f) => (
+                                    <Tag color="blue" key={f} className="me-1">
+                                      {f}
+                                    </Tag>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        icon={<IconDeleteStroked />}
+                        type="danger"
+                        block
+                        style={{ marginTop: "8px" }}
+                        onClick={() => {
+                          Toast.success(`Table deleted!`);
+                          deleteTable(props.tableData.id);
+                        }}
+                      >
+                        Delete table
+                      </Button>
+                    </div>
+                  }
+                  position="rightTop"
+                  showArrow
+                  trigger="click"
+                  style={{ width: "200px" }}
+                >
+                  <Button
+                    icon={<IconMore />}
+                    type="tertiary"
+                    size="small"
+                    style={{
+                      opacity: "0.7",
+                      backgroundColor: "grey",
+                      color: "white",
+                    }}
+                  />
+                </Popover>
+              </div>
             </div>
           </div>
           {props.tableData.fields.map((e, i) => {
