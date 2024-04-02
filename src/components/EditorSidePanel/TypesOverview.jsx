@@ -74,7 +74,7 @@ export default function TypesOverview() {
             content={
               <div className="w-[240px] text-sm space-y-2 popover-theme">
                 <div>
-                  This feature is meant for object-relational databases like{" "}
+                  This feature is meant for object-relational DBMSs like{" "}
                   <strong>PostgreSQL</strong>.
                 </div>
                 <div>
