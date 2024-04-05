@@ -6,8 +6,7 @@ import AreasOverview from "./AreasOverview";
 import NotesOverview from "./NotesOverview";
 import TypesOverview from "./TypesOverview";
 import Issues from "./Issues";
-import useLayout from "../../hooks/useLayout";
-import useSelect from "../../hooks/useSelect";
+import { useLayout, useSelect } from "../../hooks";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();

@@ -4,17 +4,19 @@ import Canvas from "./EditorCanvas/Canvas";
 import SidePanel from "./EditorSidePanel/SidePanel";
 import { State } from "../data/constants";
 import { db } from "../data/db";
-import useLayout from "../hooks/useLayout";
-import useSettings from "../hooks/useSettings";
-import useTransform from "../hooks/useTransform";
-import useTables from "../hooks/useTables";
-import useUndoRedo from "../hooks/useUndoRedo";
+import {
+  useLayout,
+  useSettings,
+  useTransform,
+  useTables,
+  useUndoRedo,
+  useAreas,
+  useNotes,
+  useTypes,
+  useTasks,
+  useSaveState,
+} from "../hooks/useLayout";
 import FloatingControls from "./FloatingControls";
-import useAreas from "../hooks/useAreas";
-import useNotes from "../hooks/useNotes";
-import useTypes from "../hooks/useTypes";
-import useTasks from "../hooks/useTasks";
-import useSaveState from "../hooks/useSaveState";
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);

@@ -1,6 +1,5 @@
 import { Divider, Tooltip } from "@douyinfe/semi-ui";
-import useTransform from "../hooks/useTransform";
-import useLayout from "../hooks/useLayout";
+import { useTransform, useLayout } from "../hooks";
 import { exitFullscreen } from "../utils/fullscreen";
 
 export default function FloatingControls() {

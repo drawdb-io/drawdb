@@ -21,8 +21,7 @@ import {
   Action,
   ObjectType,
 } from "../../data/constants";
-import useTables from "../../hooks/useTables";
-import useUndoRedo from "../../hooks/useUndoRedo";
+import { useTables, useUndoRedo } from "../../hooks";
 import Empty from "./Empty";
 
 export default function RelationshipsOverview() {

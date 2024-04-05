@@ -21,9 +21,7 @@ import {
   ObjectType,
   State,
 } from "../../data/constants";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useAreas from "../../hooks/useAreas";
-import useSaveState from "../../hooks/useSaveState";
+import { useUndoRedo, useAreas, useSaveState } from "../../hooks";
 import Empty from "./Empty";
 
 export default function AreasOverview() {

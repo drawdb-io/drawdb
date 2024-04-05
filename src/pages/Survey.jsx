@@ -13,14 +13,14 @@ import {
   TextArea,
 } from "@douyinfe/semi-ui";
 import { IconSun, IconMoon } from "@douyinfe/semi-icons";
-import RichEditor from "../components/LexicalEditor/RichEditor";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { editorConfig } from "../data/editorConfig";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
-import axios from "axios";
 import { Link } from "react-router-dom";
+import RichEditor from "../components/LexicalEditor/RichEditor";
+import axios from "axios";
 
 function SurveyForm({ theme }) {
   const [editor] = useLexicalComposerContext();

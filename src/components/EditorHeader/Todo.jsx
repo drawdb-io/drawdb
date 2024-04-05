@@ -20,8 +20,7 @@ import {
   IconCaretdown,
 } from "@douyinfe/semi-icons";
 import { State } from "../../data/constants";
-import useTasks from "../../hooks/useTasks";
-import useSaveState from "../../hooks/useSaveState";
+import { useTasks, useSaveState } from "../../hooks";
 
 const Priority = {
   NONE: 0,

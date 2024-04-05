@@ -32,12 +32,14 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 import { getSize, hasCheck, hasPrecision, isSized } from "../../utils/toSQL";
-import useLayout from "../../hooks/useLayout";
-import useSettings from "../../hooks/useSettings";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useTables from "../../hooks/useTables";
-import useSelect from "../../hooks/useSelect";
-import useTypes from "../../hooks/useTypes";
+import {
+  useLayout,
+  useSettings,
+  useUndoRedo,
+  useTables,
+  useSelect,
+  useTypes,
+} from "../../hooks";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);

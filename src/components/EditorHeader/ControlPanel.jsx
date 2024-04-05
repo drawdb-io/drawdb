@@ -58,12 +58,14 @@ import { db } from "../../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
-import useLayout from "../../hooks/useLayout";
-import useSettings from "../../hooks/useSettings";
-import useTransform from "../../hooks/useTransform";
-import useTables from "../../hooks/useTables";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useSelect from "../../hooks/useSelect";
+import {
+  useLayout,
+  useSettings,
+  useTransform,
+  useTables,
+  useUndoRedo,
+  useSelect,
+} from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import {
   ddbDiagramIsValid,

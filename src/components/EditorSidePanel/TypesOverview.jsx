@@ -23,8 +23,7 @@ import {
   IconMore,
 } from "@douyinfe/semi-icons";
 import { isSized, hasPrecision, getSize } from "../../utils/toSQL";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useTypes from "../../hooks/useTypes";
+import { useUndoRedo, useTypes } from "../../hooks";
 import NoElements from "./Empty";
 
 export default function TypesOverview() {

@@ -31,10 +31,7 @@ import {
   IconSearch,
 } from "@douyinfe/semi-icons";
 import { getSize, hasCheck, hasPrecision, isSized } from "../../utils/toSQL";
-import useTables from "../../hooks/useTables";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useSelect from "../../hooks/useSelect";
-import useTypes from "../../hooks/useTypes";
+import { useTables, useUndoRedo, useSelect, useTypes } from "../../hooks";
 import NoElements from "./Empty";
 
 export default function TablesOverview() {

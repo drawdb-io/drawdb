@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import logo_light from "../assets/logo_light_160.png";
-import template_screenshot from "../assets/template_screenshot.png";
 import { Link } from "react-router-dom";
 import { Tabs, TabPane, Banner, Steps } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { db } from "../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import Thumbnail from "../components/Thumbnail";
+import logo_light from "../assets/logo_light_160.png";
+import template_screenshot from "../assets/template_screenshot.png";
 
 export default function Templates() {
   const defaultTemplates = useLiveQuery(() =>
