@@ -42,7 +42,6 @@ import {
   jsonToMariaDB,
   jsonToSQLServer,
 } from "../../utils/toSQL";
-import { IconAddTable, IconAddArea, IconAddNote } from "../CustomIcons";
 import {
   ObjectType,
   Action,
@@ -59,7 +58,6 @@ import { db } from "../../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
-
 import useLayout from "../../hooks/useLayout";
 import useSettings from "../../hooks/useSettings";
 import useTransform from "../../hooks/useTransform";
@@ -77,6 +75,7 @@ import useNotes from "../../hooks/useNotes";
 import useTypes from "../../hooks/useTypes";
 import useSaveState from "../../hooks/useSaveState";
 import Thumbnail from "../Thumbnail";
+import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 
 export default function ControlPanel({
   diagramId,
@@ -2184,7 +2183,7 @@ export default function ControlPanel({
               className="flex items-center py-1 px-2 hover-2 rounded"
               onClick={() => addTable()}
             >
-              <IconAddTable theme={settings.mode} />
+              <IconAddTable />
             </button>
           </Tooltip>
           <Tooltip content="Add subject area" position="bottom">
@@ -2192,7 +2191,7 @@ export default function ControlPanel({
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addArea()}
             >
-              <IconAddArea theme={settings.mode} />
+              <IconAddArea />
             </button>
           </Tooltip>
           <Tooltip content="Add note" position="bottom">
@@ -2200,7 +2199,7 @@ export default function ControlPanel({
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addNote()}
             >
-              <IconAddNote theme={settings.mode} />
+              <IconAddNote />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
