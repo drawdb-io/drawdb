@@ -797,12 +797,6 @@ export default function Table(props) {
                                 return {
                                   ...e,
                                   startFieldId: e.startFieldId - 1,
-                                  startX: props.tableData.x + 15,
-                                  startY:
-                                    props.tableData.y +
-                                    (e.startFieldId - 1) * 36 +
-                                    50 +
-                                    19,
                                 };
                               }
                               if (
@@ -812,12 +806,6 @@ export default function Table(props) {
                                 return {
                                   ...e,
                                   endFieldId: e.endFieldId - 1,
-                                  endX: props.tableData.x + 15,
-                                  endY:
-                                    props.tableData.y +
-                                    (e.endFieldId - 1) * 36 +
-                                    50 +
-                                    19,
                                 };
                               }
                               return e;
@@ -1314,12 +1302,6 @@ export default function Table(props) {
                       return {
                         ...e,
                         startFieldId: e.startFieldId - 1,
-                        startX: props.tableData.x + 15,
-                        startY:
-                          props.tableData.y +
-                          (e.startFieldId - 1) * 36 +
-                          50 +
-                          19,
                       };
                     }
                     if (
@@ -1329,9 +1311,6 @@ export default function Table(props) {
                       return {
                         ...e,
                         endFieldId: e.endFieldId - 1,
-                        endX: props.tableData.x + 15,
-                        endY:
-                          props.tableData.y + (e.endFieldId - 1) * 36 + 50 + 19,
                       };
                     }
                     return e;

@@ -53,7 +53,7 @@ function Table({ table, grab }) {
   );
 }
 
-function Relationship({ relationship }) {
+function Relationship({ relationship, tables }) {
   const pathRef = useRef();
   let start = { x: 0, y: 0 };
   let end = { x: 0, y: 0 };
@@ -97,19 +97,24 @@ function Relationship({ relationship }) {
     <g className="select-none" onClick={() => console.log(pathRef.current)}>
       <path
         ref={pathRef}
-        d={calcPath(
-          relationship.startX,
-          relationship.endX,
-          relationship.startY,
-          relationship.endY
-        )}
+        d={calcPath({
+          ...relationship,
+          startTable: {
+            x: tables[relationship.startTableId].x,
+            y: tables[relationship.startTableId].y,
+          },
+          endTable: {
+            x: tables[relationship.endTableId].x,
+            y: tables[relationship.endTableId].y,
+          },
+        })}
         stroke="gray"
         fill="none"
         strokeWidth={2}
       />
       {pathRef.current && (
         <>
-          <circle cx={start.x} cy={start.y} r="12" fill="grey"></circle>
+          <circle cx={start.x} cy={start.y} r="12" fill="grey" />
           <text
             x={start.x}
             y={start.y}
@@ -120,7 +125,7 @@ function Relationship({ relationship }) {
           >
             {cardinalityStart}
           </text>
-          <circle cx={end.x} cy={end.y} r="12" fill="grey"></circle>
+          <circle cx={end.x} cy={end.y} r="12" fill="grey" />
           <text
             x={end.x}
             y={end.y}
@@ -139,7 +144,6 @@ function Relationship({ relationship }) {
 
 export default function SimpleCanvas({ diagram, zoom }) {
   const [tables, setTables] = useState(diagram.tables);
-  const [relationships, setRelationships] = useState(diagram.relationships);
   const [dragging, setDragging] = useState(-1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
@@ -156,39 +160,9 @@ export default function SimpleCanvas({ diagram, zoom }) {
       const dx = e.clientX - offset.x;
       const dy = e.clientY - offset.y;
       setTables((prev) =>
-        prev.map((table, i) => {
-          if (i === dragging) {
-            setRelationships((prev) =>
-              prev.map((r) => {
-                if (r.startTableId === i) {
-                  return {
-                    ...r,
-                    startX: dx + 15,
-                    startY: dy + r.startFieldId * 36 + 69,
-                    endX: tables[r.endTableId].x + 15,
-                    endY: tables[r.endTableId].y + r.endFieldId * 36 + 69,
-                  };
-                } else if (r.endTableId === i) {
-                  return {
-                    ...r,
-                    startX: tables[r.startTableId].x + 15,
-                    startY: tables[r.startTableId].y + r.startFieldId * 36 + 69,
-                    endX: dx + 15,
-                    endY: dy + r.endFieldId * 36 + 69,
-                  };
-                }
-                return r;
-              })
-            );
-
-            return {
-              ...table,
-              x: dx,
-              y: dy,
-            };
-          }
-          return table;
-        })
+        prev.map((table, i) =>
+          i === dragging ? { ...table, x: dx, y: dy } : table
+        )
       );
     }
   };
@@ -237,8 +211,8 @@ export default function SimpleCanvas({ diagram, zoom }) {
           transformOrigin: "top left",
         }}
       >
-        {relationships.map((r, i) => (
-          <Relationship key={i} relationship={r} />
+        {diagram.relationships.map((r, i) => (
+          <Relationship key={i} relationship={r} tables={tables} />
         ))}
         {tables.map((t, i) => (
           <Table key={i} table={t} grab={(e) => grabTable(e, i)} />

@@ -1,10 +1,11 @@
 import { useRef } from "react";
 import { Cardinality } from "../../data/constants";
-import useSettings from "../../hooks/useSettings";
 import { calcPath } from "../../utils/calcPath";
+import { useTables, useSettings } from "../../hooks";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
+  const { tables } = useTables();
   const pathRef = useRef();
 
   let cardinalityStart = "1";
@@ -50,7 +51,17 @@ export default function Relationship({ data }) {
     <g className="select-none group">
       <path
         ref={pathRef}
-        d={calcPath(data.startX, data.endX, data.startY, data.endY)}
+        d={calcPath({
+          ...data,
+          startTable: {
+            x: tables[data.startTableId].x,
+            y: tables[data.startTableId].y,
+          },
+          endTable: {
+            x: tables[data.endTableId].x,
+            y: tables[data.endTableId].y,
+          },
+        })}
         stroke="gray"
         className="group-hover:stroke-sky-700"
         fill="none"
@@ -65,7 +76,7 @@ export default function Relationship({ data }) {
             r="12"
             fill="grey"
             className="group-hover:fill-sky-700"
-          ></circle>
+          />
           <text
             x={cardinalityStartX}
             y={cardinalityStartY}
@@ -82,7 +93,7 @@ export default function Relationship({ data }) {
             r="12"
             fill="grey"
             className="group-hover:fill-sky-700"
-          ></circle>
+          />
           <text
             x={cardinalityEndX}
             y={cardinalityEndY}

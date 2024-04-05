@@ -59,7 +59,7 @@ import { db } from "../../data/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Parser } from "node-sql-parser";
 import Todo from "./Todo";
-import { Thumbnail } from "./Thumbnail";
+
 import useLayout from "../../hooks/useLayout";
 import useSettings from "../../hooks/useSettings";
 import useTransform from "../../hooks/useTransform";
@@ -76,6 +76,7 @@ import useAreas from "../../hooks/useAreas";
 import useNotes from "../../hooks/useNotes";
 import useTypes from "../../hooks/useTypes";
 import useSaveState from "../../hooks/useSaveState";
+import Thumbnail from "../Thumbnail";
 
 export default function ControlPanel({
   diagramId,
@@ -210,7 +211,7 @@ export default function ControlPanel({
       if (a.element === ObjectType.TABLE) {
         addTable(false, a.data);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        addRelationship(false, a.data);
+        addRelationship(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
         addNote(false, a.data);
       } else if (a.element === ObjectType.AREA) {
@@ -234,16 +235,12 @@ export default function ControlPanel({
                 return {
                   ...e,
                   startFieldId: e.startFieldId + 1,
-                  startX: tables[a.tid].x + 15,
-                  startY: tables[a.tid].y + (e.startFieldId + 1) * 36 + 50 + 19,
                 };
               }
               if (e.endTableId === a.tid && e.endFieldId >= a.data.id) {
                 return {
                   ...e,
                   endFieldId: e.endFieldId + 1,
-                  endX: tables[a.tid].x + 15,
-                  endY: tables[a.tid].y + (e.endFieldId + 1) * 36 + 50 + 19,
                 };
               }
               return e;
@@ -354,7 +351,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         addNote(false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        addRelationship(false, a.data);
+        addRelationship(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
         addType(false);
       }
@@ -407,16 +404,12 @@ export default function ControlPanel({
                 return {
                   ...e,
                   startFieldId: e.startFieldId - 1,
-                  startX: tables[a.tid].x + 15,
-                  startY: tables[a.tid].y + (e.startFieldId - 1) * 36 + 50 + 19,
                 };
               }
               if (e.endTableId === a.tid && e.endFieldId > a.data.id) {
                 return {
                   ...e,
                   endFieldId: e.endFieldId - 1,
-                  endX: tables[a.tid].x + 15,
-                  endY: tables[a.tid].y + (e.endFieldId - 1) * 36 + 50 + 19,
                 };
               }
               return e;
@@ -1482,13 +1475,6 @@ export default function ControlPanel({
 
           if (startFieldId === -1 || endFieldId === -1) return;
 
-          const startX = tables[startTableId].x + 15;
-          const startY = tables[startTableId].y + startFieldId * 36 + 69;
-          const endX = tables[endTableId].x + 15;
-          const endY = tables[endTableId].y + endFieldId * 36 + 69;
-
-          relationship.mandetory = false;
-
           relationship.name = startTable + "_" + startField + "_fk";
           relationship.startTableId = startTableId;
           relationship.startFieldId = startFieldId;
@@ -1497,10 +1483,6 @@ export default function ControlPanel({
           relationship.updateConstraint = updateConstraint;
           relationship.deleteConstraint = deleteConstraint;
           relationship.cardinality = Cardinality.ONE_TO_ONE;
-          relationship.startX = startX;
-          relationship.startY = startY;
-          relationship.endX = endX;
-          relationship.endY = endY;
           relationships.push(relationship);
 
           relationships.forEach((r, i) => (r.id = i));
@@ -1559,11 +1541,6 @@ export default function ControlPanel({
 
       if (startFieldId === -1 || endFieldId === -1) return;
 
-      const startX = tables[startTableId].x + 15;
-      const startY = tables[startTableId].y + startFieldId * 36 + 69;
-      const endX = tables[endTableId].x + 15;
-      const endY = tables[endTableId].y + endFieldId * 36 + 69;
-
       relationship.name = startTable + "_" + startField + "_fk";
       relationship.startTableId = startTableId;
       relationship.startFieldId = startFieldId;
@@ -1572,10 +1549,6 @@ export default function ControlPanel({
       relationship.updateConstraint = updateConstraint;
       relationship.deleteConstraint = deleteConstraint;
       relationship.cardinality = Cardinality.ONE_TO_ONE;
-      relationship.startX = startX;
-      relationship.startY = startY;
-      relationship.endX = endX;
-      relationship.endY = endY;
       relationships.push(relationship);
     });
 
@@ -1823,10 +1796,10 @@ export default function ControlPanel({
       <div onClick={() => setSelectedTemplateId(0)}>
         <div
           className={`rounded-md h-[180px] border-2 hover:border-dashed ${
-            selectedTemplateId === 0 ? "border-blue-400" : "border-zinc-100"
+            selectedTemplateId === 0 ? "border-blue-400" : "border-zinc-400"
           }`}
         >
-          <Thumbnail i={0} diagram={{}} zoom={0.24} />
+          <Thumbnail i={0} diagram={{}} zoom={0.24} theme={settings.mode} />
         </div>
         <div className="text-center mt-1">Blank</div>
       </div>
@@ -1836,10 +1809,15 @@ export default function ControlPanel({
             className={`rounded-md h-[180px] border-2 hover:border-dashed ${
               selectedTemplateId === temp.id
                 ? "border-blue-400"
-                : "border-zinc-100"
+                : "border-zinc-400"
             }`}
           >
-            <Thumbnail i={temp.id} diagram={temp} zoom={0.24} />
+            <Thumbnail
+              i={temp.id}
+              diagram={temp}
+              zoom={0.24}
+              theme={settings.mode}
+            />
           </div>
           <div className="text-center mt-1">{temp.title}</div>
         </div>

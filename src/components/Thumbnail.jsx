@@ -1,9 +1,7 @@
-import { calcPath } from "../../utils/calcPath";
+import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
+import { calcPath } from "../utils/calcPath";
 
-export function Thumbnail({ diagram, i, zoom }) {
-  const translateX = 32 * zoom;
-  const translateY = 32 * zoom;
-  const theme = localStorage.getItem("theme");
+export default function Thumbnail({ diagram, i, zoom, theme }) {
   return (
     <svg
       className={`${
@@ -38,7 +36,7 @@ export function Thumbnail({ diagram, i, zoom }) {
       ></rect>
       <g
         style={{
-          transform: `translate(${translateX}px, ${translateY}px) scale(${zoom})`,
+          transform: `scale(${zoom})`,
         }}
       >
         {diagram.subjectAreas?.map((a) => (
@@ -60,8 +58,28 @@ export function Thumbnail({ diagram, i, zoom }) {
             </div>
           </foreignObject>
         ))}
+        {diagram.relationships?.map((r, i) => (
+          <path
+            key={i}
+            d={calcPath({
+              ...r,
+              startTable: {
+                x: diagram.tables[r.startTableId].x,
+                y: diagram.tables[r.startTableId].y - tableFieldHeight / 2,
+              },
+              endTable: {
+                x: diagram.tables[r.endTableId].x,
+                y: diagram.tables[r.endTableId].y - tableFieldHeight / 2,
+              },
+            })}
+            fill="none"
+            strokeWidth={2}
+            stroke="gray"
+          />
+        ))}
         {diagram.tables?.map((table, i) => {
-          const height = table.fields.length * 36 + 50 + 7;
+          const height =
+            table.fields.length * tableFieldHeight + tableHeaderHeight + 7;
           return (
             <foreignObject
               x={table.x}
@@ -110,20 +128,6 @@ export function Thumbnail({ diagram, i, zoom }) {
             </foreignObject>
           );
         })}
-        {diagram.relationships?.map((e, i) => (
-          <path
-            key={i}
-            d={calcPath(
-              e.startX,
-              e.endX,
-              e.startY - translateY / zoom,
-              e.endY - (translateY / zoom) * 0.5
-            )}
-            fill="none"
-            strokeWidth={1}
-            stroke="#ddd"
-          />
-        ))}
         {diagram.notes?.map((n) => {
           const x = n.x;
           const y = n.y;

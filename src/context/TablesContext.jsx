@@ -103,33 +103,9 @@ export default function TablesContextProvider({ children }) {
     }
   };
 
-  const updateTable = (id, updatedValues, updateRelationships = false) => {
+  const updateTable = (id, updatedValues) => {
     setTables((prev) =>
-      prev.map((table) => {
-        if (table.id === id) {
-          if (updateRelationships) {
-            setRelationships((prev) =>
-              prev.map((r) => {
-                let newR = { ...r };
-                if (r.startTableId === id) {
-                  newR.startX = updatedValues.x + 15;
-                  newR.startY = updatedValues.y + r.startFieldId * 36 + 69;
-                }
-                if (r.endTableId === id) {
-                  newR.endX = updatedValues.x + 15;
-                  newR.endY = updatedValues.y + r.endFieldId * 36 + 69;
-                }
-                return newR;
-              })
-            );
-          }
-          return {
-            ...table,
-            ...updatedValues,
-          };
-        }
-        return table;
-      })
+      prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t))
     );
   };
 
@@ -149,7 +125,7 @@ export default function TablesContextProvider({ children }) {
     );
   };
 
-  const addRelationship = (addToHistory = true, data) => {
+  const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       setRelationships((prev) => {
         setUndoStack((prevUndo) => [

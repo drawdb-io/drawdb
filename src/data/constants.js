@@ -49,6 +49,9 @@ export const noteThemes = [
 
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
+export const tableHeaderHeight = 50;
+export const tableWidth = 200;
+export const tableFieldHeight = 36;
 
 export const Cardinality = {
   ONE_TO_ONE: "One to one",

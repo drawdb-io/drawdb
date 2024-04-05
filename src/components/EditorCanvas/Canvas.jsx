@@ -1,17 +1,24 @@
 import { useRef, useState, useEffect } from "react";
-import { Action, Cardinality, Constraint, ObjectType } from "../../data/constants";
+import {
+  Action,
+  Cardinality,
+  Constraint,
+  ObjectType,
+} from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
-import useSettings from "../../hooks/useSettings";
-import useTransform from "../../hooks/useTransform";
-import useTables from "../../hooks/useTables";
-import useUndoRedo from "../../hooks/useUndoRedo";
-import useSelect from "../../hooks/useSelect";
-import useAreas from "../../hooks/useAreas";
-import useNotes from "../../hooks/useNotes";
+import {
+  useSettings,
+  useTransform,
+  useTables,
+  useUndoRedo,
+  useSelect,
+  useAreas,
+  useNotes,
+} from "../../hooks";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } = useTables();
@@ -28,7 +35,7 @@ export default function Canvas() {
     prevY: 0,
   });
   const [linking, setLinking] = useState(false);
-  const [linkingLink, setLinkingLine] = useState({
+  const [linkingLine, setLinkingLine] = useState({
     startTableId: -1,
     startFieldId: -1,
     endTableId: -1,
@@ -37,11 +44,6 @@ export default function Canvas() {
     startY: 0,
     endX: 0,
     endY: 0,
-    name: "",
-    cardinality: Cardinality.ONE_TO_ONE,
-    updateConstraint: Constraint.NONE,
-    deleteConstraint: Constraint.NONE,
-    mandatory: false,
   });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
@@ -119,7 +121,7 @@ export default function Canvas() {
     if (linking) {
       const rect = canvas.current.getBoundingClientRect();
       setLinkingLine({
-        ...linkingLink,
+        ...linkingLine,
         endX: (e.clientX - rect.left - transform.pan?.x) / transform.zoom,
         endY: (e.clientY - rect.top - transform.pan?.y) / transform.zoom,
       });
@@ -141,7 +143,7 @@ export default function Canvas() {
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
       const dx = e.clientX / transform.zoom - offset.x;
       const dy = e.clientY / transform.zoom - offset.y;
-      updateTable(dragging.id, { x: dx, y: dy }, true);
+      updateTable(dragging.id, { x: dx, y: dy });
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
@@ -335,29 +337,35 @@ export default function Canvas() {
     if (hoveredTable.tableId < 0) return;
     if (hoveredTable.field < 0) return;
     if (
-      tables[linkingLink.startTableId].fields[linkingLink.startFieldId].type !==
+      tables[linkingLine.startTableId].fields[linkingLine.startFieldId].type !==
       tables[hoveredTable.tableId].fields[hoveredTable.field].type
     ) {
       Toast.info("Cannot connect");
       return;
     }
     if (
-      linkingLink.startTableId === hoveredTable.tableId &&
-      linkingLink.startFieldId === hoveredTable.field
+      linkingLine.startTableId === hoveredTable.tableId &&
+      linkingLine.startFieldId === hoveredTable.field
     )
       return;
 
-    addRelationship(true, {
-      ...linkingLink,
+    const newRelationship = {
+      ...linkingLine,
       endTableId: hoveredTable.tableId,
       endFieldId: hoveredTable.field,
-      endX: tables[hoveredTable.tableId].x + 15,
-      endY: tables[hoveredTable.tableId].y + hoveredTable.field * 36 + 69,
-      name: `${tables[linkingLink.startTableId].name}_${
-        tables[linkingLink.startTableId].fields[linkingLink.startFieldId].name
+      cardinality: Cardinality.ONE_TO_ONE,
+      updateConstraint: Constraint.NONE,
+      deleteConstraint: Constraint.NONE,
+      name: `${tables[linkingLine.startTableId].name}_${
+        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
       }_fk`,
       id: relationships.length,
-    });
+    };
+    delete newRelationship.startX;
+    delete newRelationship.startY;
+    delete newRelationship.endX;
+    delete newRelationship.endY;
+    addRelationship(newRelationship, true);
   };
 
   const handleMouseWheel = (e) => {
@@ -466,7 +474,7 @@ export default function Canvas() {
             ))}
             {linking && (
               <path
-                d={`M ${linkingLink.startX} ${linkingLink.startY} L ${linkingLink.endX} ${linkingLink.endY}`}
+                d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
                 stroke="red"
                 strokeDasharray="8,8"
               />

@@ -149,16 +149,12 @@ function TablePanel({ data }) {
           return {
             ...e,
             startFieldId: e.startFieldId - 1,
-            startX: data.x + 15,
-            startY: data.y + (e.startFieldId - 1) * 36 + 50 + 19,
           };
         }
         if (e.endTableId === data.id && e.endFieldId > field.id) {
           return {
             ...e,
             endFieldId: e.endFieldId - 1,
-            endX: data.x + 15,
-            endY: data.y + (e.endFieldId - 1) * 36 + 50 + 19,
           };
         }
         return e;
