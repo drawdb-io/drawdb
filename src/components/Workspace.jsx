@@ -15,7 +15,7 @@ import {
   useTypes,
   useTasks,
   useSaveState,
-} from "../hooks/useLayout";
+} from "../hooks";
 import FloatingControls from "./FloatingControls";
 
 export default function WorkSpace() {

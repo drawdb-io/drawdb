@@ -27,7 +27,7 @@ export default function Canvas() {
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -234,21 +234,21 @@ export default function Canvas() {
     switch (dragging.element) {
       case ObjectType.TABLE:
         return {
-          name: "table",
-          x: tables[dragging.id].x,
-          y: tables[dragging.id].y,
+          name: tables[dragging.id].name,
+          x: Math.round(tables[dragging.id].x),
+          y: Math.round(tables[dragging.id].y),
         };
       case ObjectType.AREA:
         return {
-          name: "area",
-          x: areas[dragging.id].x,
-          y: areas[dragging.id].y,
+          name: areas[dragging.id].name,
+          x: Math.round(areas[dragging.id].x),
+          y: Math.round(areas[dragging.id].y),
         };
       case ObjectType.NOTE:
         return {
-          name: "note",
-          x: notes[dragging.id].x,
-          y: notes[dragging.id].y,
+          name: notes[dragging.id].title,
+          x: Math.round(notes[dragging.id].x),
+          y: Math.round(notes[dragging.id].y),
         };
       default:
         return false;
@@ -447,7 +447,7 @@ export default function Canvas() {
                 }
                 setResize={setAreaResize}
                 setInitCoords={setInitCoords}
-              ></Area>
+              />
             ))}
             {relationships.map((e, i) => (
               <Relationship key={i} data={e} />
@@ -461,14 +461,6 @@ export default function Canvas() {
                 setLinkingLine={setLinkingLine}
                 onMouseDown={(e) =>
                   handleMouseDownOnElement(e, table.id, ObjectType.TABLE)
-                }
-                active={
-                  selectedElement.element === ObjectType.TABLE &&
-                  selectedElement.id === table.id
-                }
-                moving={
-                  dragging.element === ObjectType.TABLE &&
-                  dragging.id === table.id
                 }
               />
             ))}
@@ -486,7 +478,7 @@ export default function Canvas() {
                 onMouseDown={(e) =>
                   handleMouseDownOnElement(e, n.id, ObjectType.NOTE)
                 }
-              ></Note>
+              />
             ))}
           </g>
         </svg>
