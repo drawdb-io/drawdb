@@ -14,127 +14,6 @@ import discord from "../assets/discord.png";
 import FadeIn from "../animations/FadeIn";
 import SlideIn from "../animations/SlideIn";
 
-const features = [
-  {
-    title: "Export",
-    content: (
-      <div>
-        Export the DDL script to run on your database or export the diagram as a
-        JSON or an image.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Import",
-    content: (
-      <div>
-        Already have a diagram? Import a DDL script*, or a JSON file to generate
-        or a diagram.
-      </div>
-    ),
-    footer: "*Only MySQL supported, more coming soon.",
-  },
-  {
-    title: "Customizable workspace",
-    content: (
-      <div>
-        Customize the UI to fit your preferences. Select the components you want
-        in your view.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Keyboard shortcuts",
-    content: (
-      <div>
-        Speed up development with keyboard shortuts. See all available shortcuts
-        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
-          here
-        </Link>
-        .
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Templates",
-    content: (
-      <div>
-        Start off with pre-built templates. Get a quick start or get inspirition
-        for your design.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Custom Templates",
-    content: (
-      <div>
-        Have boilerplate structures? Save time by saving them as templates and
-        load them when needed.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Robust editor",
-    content: (
-      <div>
-        Undo, redo, copy, paste, duplacate and more. Add tables, subject areas,
-        and notes.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Issue detection",
-    content: (
-      <div>
-        Detect and tackle errors in the diagram to make sure the scripts are
-        correct.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Relational databases",
-    content: (
-      <div>
-        We support 5 relational databases - MySQL, PostgreSQL, SQLite, MariaDB,
-        SQL Server.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Object-Relational databases",
-    content: (
-      <div>
-        Add custom types for object-relational databases, or create custom JSON
-        schemes and alias types.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Presentation mode",
-    content: (
-      <div>
-        Present your diagrams on a big screen during team meetings and
-        discussions.
-      </div>
-    ),
-    footer: "",
-  },
-  {
-    title: "Track todos",
-    content: <div>Keep track of tasks and mark them done when finished.</div>,
-    footer: "",
-  },
-];
-
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
 
@@ -379,3 +258,124 @@ export default function LandingPage() {
     </div>
   );
 }
+
+const features = [
+  {
+    title: "Export",
+    content: (
+      <div>
+        Export the DDL script to run on your database or export the diagram as a
+        JSON or an image.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Import",
+    content: (
+      <div>
+        Already have a diagram? Import a DDL script*, or a JSON file to generate
+        or a diagram.
+      </div>
+    ),
+    footer: "*Only MySQL supported, more coming soon.",
+  },
+  {
+    title: "Customizable workspace",
+    content: (
+      <div>
+        Customize the UI to fit your preferences. Select the components you want
+        in your view.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Keyboard shortcuts",
+    content: (
+      <div>
+        Speed up development with keyboard shortuts. See all available shortcuts
+        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
+          here
+        </Link>
+        .
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Templates",
+    content: (
+      <div>
+        Start off with pre-built templates. Get a quick start or get inspirition
+        for your design.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Custom Templates",
+    content: (
+      <div>
+        Have boilerplate structures? Save time by saving them as templates and
+        load them when needed.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Robust editor",
+    content: (
+      <div>
+        Undo, redo, copy, paste, duplacate and more. Add tables, subject areas,
+        and notes.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Issue detection",
+    content: (
+      <div>
+        Detect and tackle errors in the diagram to make sure the scripts are
+        correct.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Relational databases",
+    content: (
+      <div>
+        We support 5 relational databases - MySQL, PostgreSQL, SQLite, MariaDB,
+        SQL Server.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Object-Relational databases",
+    content: (
+      <div>
+        Add custom types for object-relational databases, or create custom JSON
+        schemes and alias types.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Presentation mode",
+    content: (
+      <div>
+        Present your diagrams on a big screen during team meetings and
+        discussions.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Track todos",
+    content: <div>Keep track of tasks and mark them done when finished.</div>,
+    footer: "",
+  },
+];

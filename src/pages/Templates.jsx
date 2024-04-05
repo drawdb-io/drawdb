@@ -12,6 +12,7 @@ export default function Templates() {
   const defaultTemplates = useLiveQuery(() =>
     db.templates.where({ custom: 0 }).toArray()
   );
+
   const customTemplates = useLiveQuery(() =>
     db.templates.where({ custom: 1 }).toArray()
   );
