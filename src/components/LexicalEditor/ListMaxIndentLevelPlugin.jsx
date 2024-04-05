@@ -1,3 +1,7 @@
+/**
+ * See https://codesandbox.io/p/sandbox/vigilant-kate-5tncvy?file=%2Fsrc%2Fplugins%2FListMaxIndentLevelPlugin.js
+ */
+
 import { $getListDepth, $isListItemNode, $isListNode } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {

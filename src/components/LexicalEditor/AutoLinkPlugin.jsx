@@ -1,3 +1,7 @@
+/**
+ * See https://codesandbox.io/p/sandbox/vigilant-kate-5tncvy?file=%2Fsrc%2Fplugins%2FAutoLinkPlugin.js
+*/
+
 import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
 
 const URL_MATCHER =

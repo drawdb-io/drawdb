@@ -1,3 +1,7 @@
+/**
+ * See https://codesandbox.io/p/sandbox/vigilant-kate-5tncvy?file=%2Fsrc%2Fplugins%2FToolbarPlugin.js
+ */
+
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
