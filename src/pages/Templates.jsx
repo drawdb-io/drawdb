@@ -110,7 +110,9 @@ export default function Templates() {
                       key={i}
                       className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
                     >
-                      <Thumbnail diagram={c} i={"2" + i} />
+                      <div className="h-48">
+                        <Thumbnail diagram={c} i={"2" + i} zoom={0.3} />
+                      </div>
                       <div className="px-4 py-3 w-full">
                         <div className="flex justify-between">
                           <div className="text-lg font-bold text-zinc-700">
