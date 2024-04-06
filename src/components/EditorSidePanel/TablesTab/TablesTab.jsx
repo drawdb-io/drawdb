@@ -36,7 +36,18 @@ export default function TablesTab() {
           accordion
         >
           {tables.map((t) => (
-            <TableInfo data={t} key={t.id} />
+            <div id={`scroll_table_${t.id}`} key={t.id}>
+              <Collapse.Panel
+                header={
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                    {t.name}
+                  </div>
+                }
+                itemKey={`${t.id}`}
+              >
+                <TableInfo data={t} />
+              </Collapse.Panel>
+            </div>
           ))}
         </Collapse>
       )}
