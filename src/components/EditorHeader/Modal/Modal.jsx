@@ -102,7 +102,7 @@ export default function Modal({
     const parser = new Parser();
     let ast = null;
     try {
-      ast = parser.astify(importData.src, { database: "MySQL" });
+      ast = parser.astify(importSource.src, { database: "MySQL" });
     } catch (err) {
       Toast.error(
         "Could not parse the sql file. Make sure there are no syntax errors."
@@ -111,7 +111,7 @@ export default function Modal({
     }
 
     const d = astToDiagram(ast);
-    if (importData.overwrite) {
+    if (importSource.overwrite) {
       setTables(d.tables);
       setRelationships(d.relationships);
       setNotes([]);
