@@ -1,12 +1,12 @@
 import { Tabs } from "@douyinfe/semi-ui";
 import { Tab } from "../../data/constants";
-import TablesOverview from "./TablesOverview";
-import RelationshipsOverview from "./RelationshipsOverview";
-import AreasOverview from "./AreasOverview";
-import NotesOverview from "./NotesOverview";
-import TypesOverview from "./TypesOverview";
-import Issues from "./Issues";
 import { useLayout, useSelect } from "../../hooks";
+import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
+import TypesTab from "./TypesTab/TypesTab";
+import Issues from "./Issues";
+import AreasTab from "./AreasTab/AreasTab";
+import NotesTab from "./NotesTab/NotesTab";
+import TablesTab from "./TablesTab/TablesTab";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
@@ -21,11 +21,11 @@ export default function SidePanel({ width, resize, setResize }) {
   ];
 
   const contentList = [
-    <TablesOverview key="tables" />,
-    <RelationshipsOverview key="relationships" />,
-    <AreasOverview key="areas" />,
-    <NotesOverview key="notes" />,
-    <TypesOverview key="types" />,
+    <TablesTab key="tables" />,
+    <RelationshipsTab key="relationships" />,
+    <AreasTab key="areas" />,
+    <NotesTab key="notes" />,
+    <TypesTab key="types" />,
   ];
 
   return (

@@ -125,6 +125,56 @@ export default function TablesContextProvider({ children }) {
     );
   };
 
+  const deleteField = (field, tid) => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "field_delete",
+        tid: tid,
+        data: field,
+        message: `Delete field`,
+      },
+    ]);
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev
+        .filter(
+          (e) =>
+            !(
+              (e.startTableId === tid && e.startFieldId === field.id) ||
+              (e.endTableId === tid && e.endFieldId === field.id)
+            )
+        )
+        .map((e, i) => ({ ...e, id: i }))
+    );
+    setRelationships((prev) => {
+      return prev.map((e) => {
+        if (e.startTableId === tid && e.startFieldId > field.id) {
+          return {
+            ...e,
+            startFieldId: e.startFieldId - 1,
+          };
+        }
+        if (e.endTableId === tid && e.endFieldId > field.id) {
+          return {
+            ...e,
+            endFieldId: e.endFieldId - 1,
+          };
+        }
+        return e;
+      });
+    });
+    updateTable(tid, {
+      fields: tables[tid].fields
+        .filter((e) => e.id !== field.id)
+        .map((t, i) => {
+          return { ...t, id: i };
+        }),
+    });
+  };
+
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       setRelationships((prev) => {
@@ -175,6 +225,7 @@ export default function TablesContextProvider({ children }) {
         addTable,
         updateTable,
         updateField,
+        deleteField,
         deleteTable,
         relationships,
         setRelationships,

@@ -45,8 +45,13 @@ export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
   const [editField, setEditField] = useState({});
   const { layout } = useLayout();
-  const { deleteTable, updateTable, updateField, setRelationships } =
-    useTables();
+  const {
+    deleteTable,
+    updateTable,
+    updateField,
+    deleteField,
+    setRelationships,
+  } = useTables();
   const { settings } = useSettings();
   const { types } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -1269,63 +1274,7 @@ export default function Table(props) {
                 backgroundColor: "#d42020",
               }}
               icon={<IconMinus />}
-              onClick={() => {
-                setUndoStack((prev) => [
-                  ...prev,
-                  {
-                    action: Action.EDIT,
-                    element: ObjectType.TABLE,
-                    component: "field_delete",
-                    tid: props.tableData.id,
-                    data: fieldData,
-                    message: `Delete field`,
-                  },
-                ]);
-                setRedoStack([]);
-                setRelationships((prev) =>
-                  prev
-                    .filter(
-                      (e) =>
-                        !(
-                          (e.startTableId === props.tableData.id &&
-                            e.startFieldId === index) ||
-                          (e.endTableId === props.tableData.id &&
-                            e.endFieldId === index)
-                        )
-                    )
-                    .map((e, i) => ({ ...e, id: i }))
-                );
-                setRelationships((prev) => {
-                  return prev.map((e) => {
-                    if (
-                      e.startTableId === props.tableData.id &&
-                      e.startFieldId > fieldData.id
-                    ) {
-                      return {
-                        ...e,
-                        startFieldId: e.startFieldId - 1,
-                      };
-                    }
-                    if (
-                      e.endTableId === props.tableData.id &&
-                      e.endFieldId > fieldData.id
-                    ) {
-                      return {
-                        ...e,
-                        endFieldId: e.endFieldId - 1,
-                      };
-                    }
-                    return e;
-                  });
-                });
-                updateTable(props.tableData.id, {
-                  fields: props.tableData.fields
-                    .filter((e) => e.id !== fieldData.id)
-                    .map((t, i) => {
-                      return { ...t, id: i };
-                    }),
-                });
-              }}
+              onClick={() => deleteField(fieldData, props.tableData.id)}
             />
           ) : (
             <div className="flex gap-1 items-center">
