@@ -249,7 +249,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block mt-2"
-              href="https://discord.gg/8y7XUfcqR8"
+              href="https://discord.gg/BrjZgNrmR6"
               target="_blank"
               rel="noreferrer"
             >

@@ -7,7 +7,7 @@
 <p align="center">
     <a href="https://drawdb.vercel.app/">drawDB</a>
     ·  
-    <a href="https://discord.com/invite/8y7XUfcqR8">Discord</a>
+    <a href="https://discord.gg/BrjZgNrmR6">Discord</a>
 </p>
 
 <h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="drawdb.gif"></h3>

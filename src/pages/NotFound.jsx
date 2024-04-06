@@ -11,7 +11,7 @@ export default function NotFound() {
         or{" "}
         <a
           className="text-blue-600"
-          href="https://discord.com/invite/8y7XUfcqR8"
+          href="https://discord.gg/BrjZgNrmR6"
         >
           a message on discord
         </a>
