@@ -4,11 +4,9 @@ import {
   IconChevronRight,
   IconChevronUp,
   IconChevronDown,
-  IconCheckboxTick,
   IconSaveStroked,
   IconUndo,
   IconRedo,
-  IconRowsStroked,
   IconEdit,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,20 +17,9 @@ import {
   Dropdown,
   InputNumber,
   Tooltip,
-  Image,
-  Modal,
   Spin,
-  Input,
-  Upload,
-  Banner,
   Toast,
-  SideSheet,
-  List,
-  Checkbox,
 } from "@douyinfe/semi-ui";
-import timeLine from "../../assets/process.png";
-import timeLineDark from "../../assets/process_dark.png";
-import todo from "../../assets/calendar.png";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
 import {
@@ -47,17 +34,14 @@ import {
   Action,
   Tab,
   State,
-  Cardinality,
+  MODAL,
+  SIDESHEET,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../../data/schemas";
-import Editor from "@monaco-editor/react";
 import { db } from "../../data/db";
-import { useLiveQuery } from "dexie-react-hooks";
-import { Parser } from "node-sql-parser";
-import Todo from "./Todo";
 import {
   useLayout,
   useSettings,
@@ -66,18 +50,16 @@ import {
   useUndoRedo,
   useSelect,
 } from "../../hooks";
-import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
-import {
-  ddbDiagramIsValid,
-  jsonDiagramIsValid,
-} from "../../utils/validateSchema";
+import { enterFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
 import useAreas from "../../hooks/useAreas";
 import useNotes from "../../hooks/useNotes";
 import useTypes from "../../hooks/useTypes";
 import useSaveState from "../../hooks/useSaveState";
-import Thumbnail from "../Thumbnail";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
+import LayoutDropdown from "./LayoutDropdown";
+import Sidesheet from "./SideSheet/Sidesheet";
+import Modal from "./Modal/Modal";
 
 export default function ControlPanel({
   diagramId,
@@ -86,47 +68,15 @@ export default function ControlPanel({
   setTitle,
   lastSaved,
 }) {
-  const defaultTemplates = useLiveQuery(() => db.templates.toArray());
-  const MODAL = {
-    NONE: 0,
-    IMG: 1,
-    CODE: 2,
-    IMPORT: 3,
-    RENAME: 4,
-    OPEN: 5,
-    SAVEAS: 6,
-    NEW: 7,
-    IMPORT_SRC: 8,
-  };
-  const STATUS = {
-    NONE: 0,
-    WARNING: 1,
-    ERROR: 2,
-    OK: 3,
-  };
-  const SIDESHEET = {
-    NONE: 0,
-    TODO: 1,
-    TIMELINE: 2,
-  };
-  const diagrams = useLiveQuery(() => db.diagrams.toArray());
-  const [visible, setVisible] = useState(MODAL.NONE);
+  const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
-  const [saveAsTitle, setSaveAsTitle] = useState(title);
-  const [selectedDiagramId, setSelectedDiagramId] = useState(0);
-  const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [showEditName, setShowEditName] = useState(false);
   const [exportData, setExportData] = useState({
     data: null,
     filename: `${title}_${new Date().toISOString()}`,
     extension: "",
   });
-  const [error, setError] = useState({
-    type: STATUS.NONE,
-    message: "",
-  });
-  const [data, setData] = useState(null);
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -149,27 +99,9 @@ export default function ControlPanel({
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
   const navigate = useNavigate();
+
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
-
-  const diagramIsEmpty = () => {
-    return (
-      tables.length === 0 &&
-      relationships.length === 0 &&
-      notes.length === 0 &&
-      areas.length === 0
-    );
-  };
-
-  const overwriteDiagram = () => {
-    setTables(data.tables);
-    setRelationships(data.relationships);
-    setAreas(data.subjectAreas);
-    setNotes(data.notes);
-    if (data.title) {
-      setTitle(data.title);
-    }
-  };
 
   const undo = () => {
     if (undoStack.length === 0) return;
@@ -517,7 +449,7 @@ export default function ControlPanel({
     }
   };
 
-  const fileImport = () => setVisible(MODAL.IMPORT);
+  const fileImport = () => setModal(MODAL.IMPORT);
   const viewGrid = () =>
     setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
   const zoomIn = () =>
@@ -555,14 +487,10 @@ export default function ControlPanel({
   const fitWindow = () => {
     const diagram = document.getElementById("diagram").getBoundingClientRect();
     const canvas = document.getElementById("canvas").getBoundingClientRect();
-    console.log(diagram);
-    console.log(canvas);
 
     const scaleX = canvas.width / diagram.width;
     const scaleY = canvas.height / diagram.height;
-
     const scale = Math.min(scaleX, scaleY);
-
     const translateX = canvas.left;
     const translateY = canvas.top;
 
@@ -737,44 +665,13 @@ export default function ControlPanel({
     del();
   };
   const save = () => setSaveState(State.SAVING);
-  const open = () => setVisible(MODAL.OPEN);
-  const saveDiagramAs = () => setVisible(MODAL.SAVEAS);
-  const loadDiagram = async (id) => {
-    await db.diagrams
-      .get(id)
-      .then((diagram) => {
-        if (diagram) {
-          setDiagramId(diagram.id);
-          setTitle(diagram.name);
-          setTables(diagram.tables);
-          setTypes(diagram.types);
-          setRelationships(diagram.references);
-          setAreas(diagram.areas);
-          setNotes(diagram.notes);
-          setTransform({
-            pan: diagram.pan,
-            zoom: diagram.zoom,
-          });
-          setUndoStack([]);
-          setRedoStack([]);
-          window.name = `d ${diagram.id}`;
-        } else {
-          Toast.error("Oops! Something went wrong.");
-        }
-      })
-      .catch(() => {
-        Toast.error("Oops! Couldn't load diagram.");
-      });
-  };
-  const createNewDiagram = (id) => {
-    const newWindow = window.open("/editor");
-    newWindow.name = "lt " + id;
-  };
+  const open = () => setModal(MODAL.OPEN);
+  const saveDiagramAs = () => setModal(MODAL.SAVEAS);
 
   const menu = {
     File: {
       New: {
-        function: () => setVisible(MODAL.NEW),
+        function: () => setModal(MODAL.NEW),
       },
       "New window": {
         function: () => {
@@ -813,7 +710,7 @@ export default function ControlPanel({
       },
       Rename: {
         function: () => {
-          setVisible(MODAL.RENAME);
+          setModal(MODAL.RENAME);
           setPrevTitle(title);
         },
       },
@@ -840,10 +737,7 @@ export default function ControlPanel({
         shortcut: "Ctrl+I",
       },
       "Import from source": {
-        function: () => {
-          setData({ src: "", overwrite: true, dbms: "MySQL" });
-          setVisible(MODAL.IMPORT_SRC);
-        },
+        function: () => setModal(MODAL.IMPORT_SRC),
       },
       "Export as": {
         children: [
@@ -856,7 +750,7 @@ export default function ControlPanel({
                   extension: "png",
                 }));
               });
-              setVisible(MODAL.IMG);
+              setModal(MODAL.IMG);
             },
           },
           {
@@ -870,12 +764,12 @@ export default function ControlPanel({
                   }));
                 }
               );
-              setVisible(MODAL.IMG);
+              setModal(MODAL.IMG);
             },
           },
           {
             JSON: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const result = JSON.stringify(
                 {
                   tables: tables,
@@ -907,7 +801,7 @@ export default function ControlPanel({
                   }));
                 }
               );
-              setVisible(MODAL.IMG);
+              setModal(MODAL.IMG);
             },
           },
           {
@@ -959,7 +853,7 @@ export default function ControlPanel({
         children: [
           {
             MySQL: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const src = jsonToMySQL({
                 tables: tables,
                 references: relationships,
@@ -974,7 +868,7 @@ export default function ControlPanel({
           },
           {
             PostgreSQL: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const src = jsonToPostgreSQL({
                 tables: tables,
                 references: relationships,
@@ -989,7 +883,7 @@ export default function ControlPanel({
           },
           {
             SQLite: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const src = jsonToSQLite({
                 tables: tables,
                 references: relationships,
@@ -1004,7 +898,7 @@ export default function ControlPanel({
           },
           {
             MariaDB: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const src = jsonToMariaDB({
                 tables: tables,
                 references: relationships,
@@ -1019,7 +913,7 @@ export default function ControlPanel({
           },
           {
             MSSQL: () => {
-              setVisible(MODAL.CODE);
+              setModal(MODAL.CODE);
               const src = jsonToSQLServer({
                 tables: tables,
                 references: relationships,
@@ -1252,838 +1146,33 @@ export default function ControlPanel({
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
-  const getModalTitle = () => {
-    switch (visible) {
-      case MODAL.IMPORT:
-      case MODAL.IMPORT_SRC:
-        return "Import diagram";
-      case MODAL.CODE:
-        return "Export source";
-      case MODAL.IMG:
-        return "Export image";
-      case MODAL.RENAME:
-        return "Rename diagram";
-      case MODAL.OPEN:
-        return "Open diagram";
-      case MODAL.SAVEAS:
-        return "Save as";
-      case MODAL.NEW:
-        return "Create new diagram";
-      default:
-        return "";
-    }
-  };
-
-  const getOkText = () => {
-    switch (visible) {
-      case MODAL.IMPORT:
-      case MODAL.IMPORT_SRC:
-        return "Import";
-      case MODAL.CODE:
-      case MODAL.IMG:
-        return "Export";
-      case MODAL.RENAME:
-        return "Rename";
-      case MODAL.OPEN:
-        return "Open";
-      case MODAL.SAVEAS:
-        return "Save as";
-      case MODAL.NEW:
-        return "Create";
-      default:
-        return "Confirm";
-    }
-  };
-
-  const parseSQLAndLoadDiagram = () => {
-    const parser = new Parser();
-    let ast = null;
-    try {
-      ast = parser.astify(data.src, { database: "MySQL" });
-    } catch (err) {
-      Toast.error(
-        "Could not parse the sql file. Make sure there are no syntax errors."
-      );
-      return;
-    }
-
-    const tables = [];
-    const relationships = [];
-    const inlineForeignKeys = [];
-
-    ast.forEach((e) => {
-      if (e.type === "create") {
-        if (e.keyword === "table") {
-          const table = {};
-          table.name = e.table[0].table;
-          table.comment = "";
-          table.color = "#175e7a";
-          table.fields = [];
-          table.indices = [];
-          table.x = 0;
-          table.y = 0;
-          e.create_definitions.forEach((d) => {
-            if (d.resource === "column") {
-              const field = {};
-              field.name = d.column.column;
-              field.type = d.definition.dataType;
-              field.comment = "";
-              field.unique = false;
-              if (d.unique) field.unique = true;
-              field.increment = false;
-              if (d.auto_increment) field.increment = true;
-              field.notNull = false;
-              if (d.nullable) field.notNull = true;
-              field.primary = false;
-              if (d.primary_key) field.primary = true;
-              field.default = "";
-              if (d.default_val) field.default = d.default_val.value.value;
-              if (d.definition["length"]) field.size = d.definition["length"];
-              field.check = "";
-              if (d.check) {
-                let check = "";
-                if (d.check.definition[0].left.column) {
-                  let value = d.check.definition[0].right.value;
-                  if (
-                    d.check.definition[0].right.type ===
-                      "double_quote_string" ||
-                    d.check.definition[0].right.type === "single_quote_string"
-                  )
-                    value = "'" + value + "'";
-                  check =
-                    d.check.definition[0].left.column +
-                    " " +
-                    d.check.definition[0].operator +
-                    " " +
-                    value;
-                } else {
-                  let value = d.check.definition[0].right.value;
-                  if (
-                    d.check.definition[0].left.type === "double_quote_string" ||
-                    d.check.definition[0].left.type === "single_quote_string"
-                  )
-                    value = "'" + value + "'";
-                  check =
-                    value +
-                    " " +
-                    d.check.definition[0].operator +
-                    " " +
-                    d.check.definition[0].right.column;
-                }
-                field.check = check;
-              }
-
-              table.fields.push(field);
-            } else if (d.resource === "constraint") {
-              if (d.constraint_type === "primary key") {
-                d.definition.forEach((c) => {
-                  table.fields.forEach((f) => {
-                    if (f.name === c.column && !f.primary) {
-                      f.primary = true;
-                    }
-                  });
-                });
-              } else if (d.constraint_type === "FOREIGN KEY") {
-                inlineForeignKeys.push({ ...d, startTable: e.table[0].table });
-              }
-            }
-          });
-          tables.push(table);
-          tables.forEach((e, i) => {
-            e.id = i;
-            e.fields.forEach((f, j) => {
-              f.id = j;
-            });
-          });
-        } else if (e.keyword === "index") {
-          const index = {};
-          index.name = e.index;
-          index.unique = false;
-          if (e.index_type === "unique") index.unique = true;
-          index.fields = [];
-          e.index_columns.forEach((f) => index.fields.push(f.column));
-
-          let found = -1;
-          tables.forEach((t, i) => {
-            if (found !== -1) return;
-            if (t.name === e.table.table) {
-              t.indices.push(index);
-              found = i;
-            }
-          });
-
-          if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
-        }
-      } else if (e.type === "alter") {
-        if (
-          e.expr[0].action === "add" &&
-          e.expr[0].create_definitions.constraint_type === "FOREIGN KEY"
-        ) {
-          const relationship = {};
-          const startTable = e.table[0].table;
-          const startField = e.expr[0].create_definitions.definition[0].column;
-          const endTable =
-            e.expr[0].create_definitions.reference_definition.table[0].table;
-          const endField =
-            e.expr[0].create_definitions.reference_definition.definition[0]
-              .column;
-          let updateConstraint = "No action";
-          let deleteConstraint = "No action";
-          e.expr[0].create_definitions.reference_definition.on_action.forEach(
-            (c) => {
-              if (c.type === "on update") {
-                updateConstraint = c.value.value;
-                updateConstraint =
-                  updateConstraint[0].toUpperCase() +
-                  updateConstraint.substring(1);
-              } else if (c.type === "on delete") {
-                deleteConstraint = c.value.value;
-                deleteConstraint =
-                  deleteConstraint[0].toUpperCase() +
-                  deleteConstraint.substring(1);
-              }
-            }
-          );
-
-          let startTableId = -1;
-          let startFieldId = -1;
-          let endTableId = -1;
-          let endFieldId = -1;
-
-          tables.forEach((t) => {
-            if (t.name === startTable) {
-              startTableId = t.id;
-              return;
-            }
-
-            if (t.name === endTable) {
-              endTableId = t.id;
-            }
-          });
-
-          if (startTableId === -1 || endTableId === -1) return;
-
-          tables[startTableId].fields.forEach((f) => {
-            if (f.name === startField) {
-              startFieldId = f.id;
-              return;
-            }
-
-            if (f.name === endField) {
-              endFieldId = f.id;
-            }
-          });
-
-          if (startFieldId === -1 || endFieldId === -1) return;
-
-          relationship.name = startTable + "_" + startField + "_fk";
-          relationship.startTableId = startTableId;
-          relationship.startFieldId = startFieldId;
-          relationship.endTableId = endTableId;
-          relationship.endFieldId = endFieldId;
-          relationship.updateConstraint = updateConstraint;
-          relationship.deleteConstraint = deleteConstraint;
-          relationship.cardinality = Cardinality.ONE_TO_ONE;
-          relationships.push(relationship);
-
-          relationships.forEach((r, i) => (r.id = i));
-        }
-      }
-    });
-
-    inlineForeignKeys.forEach((fk) => {
-      const relationship = {};
-      const startTable = fk.startTable;
-      const startField = fk.definition[0].column;
-      const endTable = fk.reference_definition.table[0].table;
-      const endField = fk.reference_definition.definition[0].column;
-      let updateConstraint = "No action";
-      let deleteConstraint = "No action";
-      fk.reference_definition.on_action.forEach((c) => {
-        if (c.type === "on update") {
-          updateConstraint = c.value.value;
-          updateConstraint =
-            updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
-        } else if (c.type === "on delete") {
-          deleteConstraint = c.value.value;
-          deleteConstraint =
-            deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
-        }
-      });
-
-      let startTableId = -1;
-      let startFieldId = -1;
-      let endTableId = -1;
-      let endFieldId = -1;
-
-      tables.forEach((t) => {
-        if (t.name === startTable) {
-          startTableId = t.id;
-          return;
-        }
-
-        if (t.name === endTable) {
-          endTableId = t.id;
-        }
-      });
-
-      if (startTableId === -1 || endTableId === -1) return;
-
-      tables[startTableId].fields.forEach((f) => {
-        if (f.name === startField) {
-          startFieldId = f.id;
-          return;
-        }
-
-        if (f.name === endField) {
-          endFieldId = f.id;
-        }
-      });
-
-      if (startFieldId === -1 || endFieldId === -1) return;
-
-      relationship.name = startTable + "_" + startField + "_fk";
-      relationship.startTableId = startTableId;
-      relationship.startFieldId = startFieldId;
-      relationship.endTableId = endTableId;
-      relationship.endFieldId = endFieldId;
-      relationship.updateConstraint = updateConstraint;
-      relationship.deleteConstraint = deleteConstraint;
-      relationship.cardinality = Cardinality.ONE_TO_ONE;
-      relationships.push(relationship);
-    });
-
-    relationships.forEach((r, i) => (r.id = i));
-
-    if (data.overwrite) {
-      setTables(tables);
-      setRelationships(relationships);
-      setNotes([]);
-      setAreas([]);
-      setTypes([]);
-      setUndoStack([]);
-      setRedoStack([]);
-    } else {
-      setTables((prev) => [...prev, ...tables]);
-      setRelationships((prev) => [...prev, ...relationships]);
-    }
-
-    console.log(tables);
-    console.log(relationships);
-  };
-
-  const getModalOnOk = async () => {
-    switch (visible) {
-      case MODAL.IMG:
-        saveAs(
-          exportData.data,
-          `${exportData.filename}.${exportData.extension}`
-        );
-        return;
-      case MODAL.CODE: {
-        const blob = new Blob([exportData.data], {
-          type: "application/json",
-        });
-        saveAs(blob, `${exportData.filename}.${exportData.extension}`);
-        return;
-      }
-      case MODAL.IMPORT:
-        if (error.type !== STATUS.ERROR) {
-          setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
-          overwriteDiagram();
-          setData(null);
-          setVisible(MODAL.NONE);
-          setUndoStack([]);
-          setRedoStack([]);
-        }
-        return;
-      case MODAL.IMPORT_SRC:
-        parseSQLAndLoadDiagram();
-        setVisible(MODAL.NONE);
-        return;
-      case MODAL.OPEN:
-        if (selectedDiagramId === 0) return;
-        loadDiagram(selectedDiagramId);
-        setVisible(MODAL.NONE);
-        return;
-      case MODAL.RENAME:
-        setPrevTitle(title);
-        setVisible(MODAL.NONE);
-        return;
-      case MODAL.SAVEAS:
-        setTitle(saveAsTitle);
-        setVisible(MODAL.NONE);
-        return;
-      case MODAL.NEW:
-        setVisible(MODAL.NONE);
-        createNewDiagram(selectedTemplateId);
-        return;
-      default:
-        setVisible(MODAL.NONE);
-        return;
-    }
-  };
-
-  const importModalBody = () => {
-    return (
-      <>
-        <Upload
-          action="#"
-          beforeUpload={({ file, fileList }) => {
-            const f = fileList[0].fileInstance;
-            if (!f) {
-              return;
-            }
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-              let jsonObject = null;
-              try {
-                jsonObject = JSON.parse(e.target.result);
-              } catch (error) {
-                setError({
-                  type: STATUS.ERROR,
-                  message: "The file contains an error.",
-                });
-                return;
-              }
-              if (f.type === "application/json") {
-                if (!jsonDiagramIsValid(jsonObject)) {
-                  setError({
-                    type: STATUS.ERROR,
-                    message:
-                      "The file is missing necessary properties for a diagram.",
-                  });
-                  return;
-                }
-              } else if (f.name.split(".").pop() === "ddb") {
-                if (!ddbDiagramIsValid(jsonObject)) {
-                  setError({
-                    type: STATUS.ERROR,
-                    message:
-                      "The file is missing necessary properties for a diagram.",
-                  });
-                  return;
-                }
-              }
-              setData(jsonObject);
-              if (diagramIsEmpty()) {
-                setError({
-                  type: STATUS.OK,
-                  message: "Everything looks good. You can now import.",
-                });
-              } else {
-                setError({
-                  type: STATUS.WARNING,
-                  message:
-                    "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
-                });
-              }
-            };
-            reader.readAsText(f);
-
-            return {
-              autoRemove: false,
-              fileInstance: file.fileInstance,
-              status: "success",
-              shouldUpload: false,
-            };
-          }}
-          draggable={true}
-          dragMainText="Drag and drop the file here or click to upload."
-          dragSubText="Support json and ddb"
-          accept="application/json,.ddb"
-          onRemove={() =>
-            setError({
-              type: STATUS.NONE,
-              message: "",
-            })
-          }
-          onFileChange={() =>
-            setError({
-              type: STATUS.NONE,
-              message: "",
-            })
-          }
-          limit={1}
-        />
-        {error.type === STATUS.ERROR ? (
-          <Banner
-            type="danger"
-            fullMode={false}
-            description={<div>{error.message}</div>}
-          />
-        ) : error.type === STATUS.OK ? (
-          <Banner
-            type="info"
-            fullMode={false}
-            description={<div>{error.message}</div>}
-          />
-        ) : (
-          error.type === STATUS.WARNING && (
-            <Banner
-              type="warning"
-              fullMode={false}
-              description={<div>{error.message}</div>}
-            />
-          )
-        )}
-      </>
-    );
-  };
-
-  const importSrcModalBody = () => {
-    return (
-      <>
-        <Upload
-          action="#"
-          beforeUpload={({ file, fileList }) => {
-            const f = fileList[0].fileInstance;
-            if (!f) {
-              return;
-            }
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-              setData((prev) => ({ ...prev, src: e.target.result }));
-            };
-            reader.readAsText(f);
-
-            return {
-              autoRemove: false,
-              fileInstance: file.fileInstance,
-              status: "success",
-              shouldUpload: false,
-            };
-          }}
-          draggable={true}
-          dragMainText="Drag and drop the file here or click to upload."
-          dragSubText="Upload an sql file to autogenerate your tables and columns."
-          accept=".sql"
-          onRemove={() => {
-            setError({
-              type: STATUS.NONE,
-              message: "",
-            });
-            setData((prev) => ({ ...prev, src: "" }));
-          }}
-          onFileChange={() =>
-            setError({
-              type: STATUS.NONE,
-              message: "",
-            })
-          }
-          limit={1}
-        ></Upload>
-        <div>
-          <div className="text-xs mb-3 mt-1 opacity-80">
-            * For the time being loading only MySQL scripts is supported.
-          </div>
-          <Checkbox
-            aria-label="overwrite checkbox"
-            checked={data.overwrite}
-            defaultChecked
-            onChange={(e) =>
-              setData((prev) => ({ ...prev, overwrite: e.target.checked }))
-            }
-          >
-            Overwrite existing diagram
-          </Checkbox>
-        </div>
-      </>
-    );
-  };
-
-  const newModalBody = () => (
-    <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
-      <div onClick={() => setSelectedTemplateId(0)}>
-        <div
-          className={`rounded-md h-[180px] border-2 hover:border-dashed ${
-            selectedTemplateId === 0 ? "border-blue-400" : "border-zinc-400"
-          }`}
-        >
-          <Thumbnail i={0} diagram={{}} zoom={0.24} theme={settings.mode} />
-        </div>
-        <div className="text-center mt-1">Blank</div>
-      </div>
-      {defaultTemplates.map((temp, i) => (
-        <div key={i} onClick={() => setSelectedTemplateId(temp.id)}>
-          <div
-            className={`rounded-md h-[180px] border-2 hover:border-dashed ${
-              selectedTemplateId === temp.id
-                ? "border-blue-400"
-                : "border-zinc-400"
-            }`}
-          >
-            <Thumbnail
-              i={temp.id}
-              diagram={temp}
-              zoom={0.24}
-              theme={settings.mode}
-            />
-          </div>
-          <div className="text-center mt-1">{temp.title}</div>
-        </div>
-      ))}
-    </div>
-  );
-
-  const getModalBody = () => {
-    switch (visible) {
-      case MODAL.IMPORT:
-        return importModalBody();
-      case MODAL.IMPORT_SRC:
-        return importSrcModalBody();
-      case MODAL.NEW:
-        return newModalBody();
-      case MODAL.RENAME:
-        return (
-          <Input
-            placeholder="Diagram name"
-            value={title}
-            onChange={(v) => setTitle(v)}
-          />
-        );
-      case MODAL.OPEN:
-        return (
-          <div>
-            {diagrams?.length === 0 ? (
-              <Banner
-                fullMode={false}
-                type="info"
-                bordered
-                icon={null}
-                closeIcon={null}
-                description={<div>You have no saved diagrams.</div>}
-              />
-            ) : (
-              <div className="max-h-[360px]">
-                <table className="w-full text-left border-separate border-spacing-x-0">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Last Modified</th>
-                      <th>Size</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {diagrams?.map((d) => {
-                      const size = JSON.stringify(d).length;
-                      let sizeStr;
-                      if (size >= 1024 && size < 1024 * 1024)
-                        sizeStr = (size / 1024).toFixed(1) + "KB";
-                      else if (size >= 1024 * 1024)
-                        sizeStr = (size / (1024 * 1024)).toFixed(1) + "MB";
-                      else sizeStr = size + "B";
-                      return (
-                        <tr
-                          key={d.id}
-                          className={`${
-                            selectedDiagramId === d.id
-                              ? "bg-blue-300 bg-opacity-30"
-                              : "hover-1"
-                          }`}
-                          onClick={() => {
-                            setSelectedDiagramId(d.id);
-                          }}
-                          onDoubleClick={() => {
-                            loadDiagram(d.id);
-                            window.name = "d " + d.id;
-                            setVisible(MODAL.NONE);
-                          }}
-                        >
-                          <td className="py-1">
-                            <i className="bi bi-file-earmark-text text-[16px] me-1 opacity-60" />
-                            {d.name}
-                          </td>
-                          <td className="py-1">
-                            {d.lastModified.toLocaleDateString() +
-                              " " +
-                              d.lastModified.toLocaleTimeString()}
-                          </td>
-                          <td className="py-1">{sizeStr}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        );
-      case MODAL.SAVEAS:
-        return (
-          <Input
-            placeholder="Diagram name"
-            value={saveAsTitle}
-            onChange={(v) => setSaveAsTitle(v)}
-          />
-        );
-      case MODAL.CODE:
-      case MODAL.IMG:
-        if (exportData.data !== "" || exportData.data) {
-          return (
-            <>
-              {visible === MODAL.IMG ? (
-                <Image src={exportData.data} alt="Diagram" height={280} />
-              ) : (
-                <Editor
-                  height="360px"
-                  value={exportData.data}
-                  language={exportData.extension}
-                  options={{ readOnly: true }}
-                  theme={settings.mode === "light" ? "light" : "vs-dark"}
-                />
-              )}
-              <div className="text-sm font-semibold mt-2">Filename:</div>
-              <Input
-                value={exportData.filename}
-                placeholder="Filename"
-                suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
-                onChange={(value) =>
-                  setExportData((prev) => ({ ...prev, filename: value }))
-                }
-                field="filename"
-              />
-            </>
-          );
-        } else {
-          return (
-            <div className="text-center my-3">
-              <Spin tip="Loading..." size="large" />
-            </div>
-          );
-        }
-      default:
-        return <></>;
-    }
-  };
-
   return (
     <>
       {layout.header && header()}
       {layout.toolbar && toolbar()}
       <Modal
-        title={getModalTitle()}
-        visible={visible !== MODAL.NONE}
-        onOk={getModalOnOk}
-        afterClose={() => {
-          setExportData(() => ({
-            data: "",
-            extension: "",
-            filename: `${title}_${new Date().toISOString()}`,
-          }));
-          setError({
-            type: STATUS.NONE,
-            message: "",
-          });
-          setData(null);
-        }}
-        onCancel={() => {
-          if (visible === MODAL.RENAME) setTitle(prevTitle);
-          setVisible(MODAL.NONE);
-        }}
-        centered
-        closeOnEsc={true}
-        okText={getOkText()}
-        okButtonProps={{
-          disabled:
-            (error && error.type && error.type === STATUS.ERROR) ||
-            (visible === MODAL.IMPORT &&
-              (error.type === STATUS.ERROR || !data)) ||
-            ((visible === MODAL.IMG || visible === MODAL.CODE) &&
-              !exportData.data) ||
-            (visible === MODAL.RENAME && title === "") ||
-            (visible === MODAL.SAVEAS && saveAsTitle === "") ||
-            (visible === MODAL.IMPORT_SRC && data.src === ""),
-        }}
-        cancelText="Cancel"
-        width={visible === MODAL.NEW ? 740 : 600}
-      >
-        {getModalBody()}
-      </Modal>
-      <SideSheet
-        visible={sidesheet !== SIDESHEET.NONE}
-        onCancel={() => {
-          setSidesheet(SIDESHEET.NONE);
-        }}
-        width={340}
-        title={getTitle(sidesheet)}
-        style={{ paddingBottom: "16px" }}
-        bodyStyle={{ padding: "0px" }}
-      >
-        {getContent(sidesheet)}
-      </SideSheet>
+        modal={modal}
+        exportData={exportData}
+        setExportData={setExportData}
+        title={title}
+        setTitle={setTitle}
+        setPrevTitle={setPrevTitle}
+        setDiagramId={setDiagramId}
+        setModal={setModal}
+        prevTitle={prevTitle}
+      />
+      <Sidesheet
+        type={sidesheet}
+        onClose={() => setSidesheet(SIDESHEET.NONE)}
+      />
     </>
   );
-
-  function getTitle(type) {
-    switch (type) {
-      case SIDESHEET.TIMELINE:
-        return (
-          <div className="flex items-center">
-            <img
-              src={settings.mode === "light" ? timeLine : timeLineDark}
-              className="w-7"
-              alt="chat icon"
-            />
-            <div className="ms-3 text-lg">Timeline</div>
-          </div>
-        );
-      case SIDESHEET.TODO:
-        return (
-          <div className="flex items-center">
-            <img src={todo} className="w-7" alt="todo icon" />
-            <div className="ms-3 text-lg">To-do list</div>
-          </div>
-        );
-      default:
-        break;
-    }
-  }
-
-  function getContent(type) {
-    switch (type) {
-      case SIDESHEET.TIMELINE:
-        return renderTimeline();
-      case SIDESHEET.TODO:
-        return <Todo />;
-      default:
-        break;
-    }
-  }
-
-  function renderTimeline() {
-    if (undoStack.length > 0) {
-      return (
-        <List className="sidesheet-theme">
-          {[...undoStack].reverse().map((e, i) => (
-            <List.Item
-              key={i}
-              style={{ padding: "4px 18px 4px 18px" }}
-              className="hover-1"
-            >
-              <div className="flex items-center py-1 w-full">
-                <i className="block fa-regular fa-circle fa-xs" />
-                <div className="ms-2">{e.message}</div>
-              </div>
-            </List.Item>
-          ))}
-        </List>
-      );
-    } else {
-      return (
-        <div className="m-5 sidesheet-theme">
-          No activity was recorded. You have not added anything to your diagram
-          yet.
-        </div>
-      );
-    }
-  }
 
   function toolbar() {
     return (
       <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
         <div className="flex justify-start items-center">
-          {layoutDropdown()}
+          <LayoutDropdown />
           <Divider layout="vertical" margin="8px" />
           <Dropdown
             style={{ width: "240px" }}
@@ -2267,12 +1356,12 @@ export default function ControlPanel({
                 className="text-xl ms-3 me-1"
                 onMouseEnter={() => setShowEditName(true)}
                 onMouseLeave={() => setShowEditName(false)}
-                onClick={() => setVisible(MODAL.RENAME)}
+                onClick={() => setModal(MODAL.RENAME)}
               >
                 {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
                 {title}
               </div>
-              {(showEditName || visible === MODAL.RENAME) && <IconEdit />}
+              {(showEditName || modal === MODAL.RENAME) && <IconEdit />}
             </div>
             <div className="flex justify-between items-center">
               <div className="flex justify-start text-md select-none me-2">
@@ -2366,65 +1455,6 @@ export default function ControlPanel({
           </div>
         </div>
       </nav>
-    );
-  }
-
-  function layoutDropdown() {
-    return (
-      <Dropdown
-        position="bottomLeft"
-        style={{ width: "180px" }}
-        render={
-          <Dropdown.Menu>
-            <Dropdown.Item
-              icon={
-                layout.header ? <IconCheckboxTick /> : <div className="px-2" />
-              }
-              onClick={() => invertLayout("header")}
-            >
-              Header
-            </Dropdown.Item>
-            <Dropdown.Item
-              icon={
-                layout.sidebar ? <IconCheckboxTick /> : <div className="px-2" />
-              }
-              onClick={() => invertLayout("sidebar")}
-            >
-              Sidebar
-            </Dropdown.Item>
-            <Dropdown.Item
-              icon={
-                layout.issues ? <IconCheckboxTick /> : <div className="px-2" />
-              }
-              onClick={() => invertLayout("issues")}
-            >
-              Issues
-            </Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item
-              icon={<div className="px-2" />}
-              onClick={() => {
-                if (layout.fullscreen) {
-                  exitFullscreen();
-                } else {
-                  enterFullscreen();
-                }
-                invertLayout("fullscreen");
-              }}
-            >
-              Fullscreen
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        }
-        trigger="click"
-      >
-        <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
-          <IconRowsStroked size="extra-large" />
-          <div>
-            <IconCaretdown />
-          </div>
-        </div>
-      </Dropdown>
     );
   }
 }

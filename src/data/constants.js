@@ -99,3 +99,28 @@ export const State = {
   LOADING: 3,
   ERROR: 4,
 };
+
+export const MODAL = {
+  NONE: 0,
+  IMG: 1,
+  CODE: 2,
+  IMPORT: 3,
+  RENAME: 4,
+  OPEN: 5,
+  SAVEAS: 6,
+  NEW: 7,
+  IMPORT_SRC: 8,
+};
+
+export const STATUS = {
+  NONE: 0,
+  WARNING: 1,
+  ERROR: 2,
+  OK: 3,
+};
+
+export const SIDESHEET = {
+  NONE: 0,
+  TODO: 1,
+  TIMELINE: 2,
+};
