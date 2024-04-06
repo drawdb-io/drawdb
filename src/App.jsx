@@ -8,6 +8,7 @@ import { useEffect, useLayoutEffect } from "react";
 import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import useSettings from "./hooks/useSettings";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
             }
           />
           <Route path="/templates" element={<Templates />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </SettingsContextProvider>
