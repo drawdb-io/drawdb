@@ -11,6 +11,7 @@ import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
+import github from "../assets/github.png";
 import FadeIn from "../animations/FadeIn";
 import SlideIn from "../animations/SlideIn";
 
@@ -232,19 +233,34 @@ export default function LandingPage() {
               drawdb@outlook.com
             </a>
           </div>
-          <a
-            className="inline-block mt-2"
-            href="https://discord.gg/8y7XUfcqR8"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="bg-[#5865f2] hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-8 py-4 rounded-lg">
-              <img src={discord} className="h-8" />
-              <div className="text-lg text-white font-bold">
-                Join us on Discord
+          <div className="sm:block flex gap-3 justify-center">
+            <a
+              className="inline-block mt-2"
+              href="https://github.com/drawdb-io/drawdb"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="bg-zinc-800 hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-14 py-4 rounded-lg">
+                <img src={github} className="h-8" />
+                <div className="text-lg text-white font-bold">
+                  See the source
+                </div>
               </div>
-            </div>
-          </a>
+            </a>
+            <a
+              className="inline-block mt-2"
+              href="https://discord.gg/8y7XUfcqR8"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="bg-[#5865f2] hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-8 py-4 rounded-lg">
+                <img src={discord} className="h-8" />
+                <div className="text-lg text-white font-bold">
+                  Join us on Discord
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
       <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold px-3">
