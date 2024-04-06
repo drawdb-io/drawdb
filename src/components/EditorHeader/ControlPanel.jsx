@@ -1214,7 +1214,7 @@ export default function ControlPanel({
         function: () => window.open("https://discord.gg/8y7XUfcqR8", "_blank"),
       },
       "Report a bug": {
-        function: () => window.open("/bug_report", "_blank"),
+        function: () => window.open("/bug-report", "_blank"),
       },
       "Give feedback": {
         function: () => window.open("/survey", "_blank"),

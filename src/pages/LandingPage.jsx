@@ -216,7 +216,7 @@ export default function LandingPage() {
               <i className="bi bi-arrow-right"></i>
             </Link>
             <Link
-              to="/bug_report"
+              to="/bug-report"
               className="sm:mt-2 w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
             >
               <div>Report a bug</div>

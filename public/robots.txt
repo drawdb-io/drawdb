@@ -1,0 +1,8 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /editor
+Allow: /shortcuts
+Allow: /templates
+Disallow: /bug-report
+Disallow: /survey

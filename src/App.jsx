@@ -9,38 +9,7 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import useSettings from "./hooks/useSettings";
 
-function ThemedPage({ children }) {
-  const { setSettings } = useSettings();
-
-  useLayoutEffect(() => {
-    const theme = localStorage.getItem("theme");
-    if (theme === "dark") {
-      setSettings((prev) => ({ ...prev, mode: "dark" }));
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "dark");
-      }
-    } else {
-      setSettings((prev) => ({ ...prev, mode: "light" }));
-      const body = document.body;
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "light");
-      }
-    }
-  }, [setSettings]);
-
-  return children;
-}
-
-function RestoreScroll() {
-  const location = useLocation();
-  useEffect(() => {
-    window.scroll(0, 0);
-  }, [location.pathname]);
-  return null;
-}
-
-function App() {
+export default function App() {
   return (
     <SettingsContextProvider>
       <BrowserRouter>
@@ -72,7 +41,7 @@ function App() {
             }
           />
           <Route
-            path="/bug_report"
+            path="/bug-report"
             element={
               <ThemedPage>
                 <BugReport />
@@ -86,4 +55,33 @@ function App() {
   );
 }
 
-export default App;
+function ThemedPage({ children }) {
+  const { setSettings } = useSettings();
+
+  useLayoutEffect(() => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      setSettings((prev) => ({ ...prev, mode: "dark" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "dark");
+      }
+    } else {
+      setSettings((prev) => ({ ...prev, mode: "light" }));
+      const body = document.body;
+      if (body.hasAttribute("theme-mode")) {
+        body.setAttribute("theme-mode", "light");
+      }
+    }
+  }, [setSettings]);
+
+  return children;
+}
+
+function RestoreScroll() {
+  const location = useLocation();
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, [location.pathname]);
+  return null;
+}
