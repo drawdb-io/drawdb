@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import logo_light from "../assets/logo_light_160.png";
 import logo_dark from "../assets/logo_dark_160.png";
 import {
@@ -21,23 +21,10 @@ import { CLEAR_EDITOR_COMMAND } from "lexical";
 import { Link } from "react-router-dom";
 import RichEditor from "../components/LexicalEditor/RichEditor";
 import axios from "axios";
+import { questions } from "../data/surveyQuestions";
 
 function SurveyForm({ theme }) {
   const [editor] = useLexicalComposerContext();
-  const questions = useMemo(
-    () => ({
-      satisfaction: "How satisfied are you with drawDB?",
-      ease: "How easy was it to get started with drawDB?",
-      wouldRecommend: "How likely are you to recommend drawDB?",
-      hadDifficulty:
-        "Did you encounter any difficulties when navigating drawDB?",
-      difficulty: "What were the difficulties you faced?",
-      triedOtherApps: "Have you tried apps like drawDB?",
-      comparison: "How did you find drawDB as compared to other apps?",
-      occupation: "What is your occupation?",
-    }),
-    []
-  );
   const [form, setForm] = useState({
     satisfaction: 5,
     ease: 5,
@@ -89,7 +76,7 @@ function SurveyForm({ theme }) {
       };
       sendMail();
     });
-  }, [editor, form, questions]);
+  }, [editor, form]);
 
   return (
     <div className="py-5 px-8 mt-6 card-theme rounded-md">

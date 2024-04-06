@@ -25,11 +25,11 @@ export default function WorkSpace() {
   const [width, setWidth] = useState(340);
   const [lastSaved, setLastSaved] = useState("");
   const { layout } = useLayout();
+  const { settings } = useSettings();
   const { types, setTypes } = useTypes();
   const { areas, setAreas } = useAreas();
   const { tasks, setTasks } = useTasks();
   const { notes, setNotes } = useNotes();
-  const { settings, setSettings } = useSettings();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
   const { tables, relationships, setTables, setRelationships } = useTables();
@@ -40,6 +40,200 @@ export default function WorkSpace() {
     const w = e.clientX;
     if (w > 340) setWidth(w);
   };
+
+  const save = useCallback(async () => {
+    const name = window.name.split(" ");
+    const op = name[0];
+    const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
+
+    if (saveAsDiagram) {
+      if (
+        (id === 0 && window.name === "") ||
+        window.name.split(" ")[0] === "lt"
+      ) {
+        await db.diagrams
+          .add({
+            name: title,
+            lastModified: new Date(),
+            tables: tables,
+            references: relationships,
+            types: types,
+            notes: notes,
+            areas: areas,
+            todos: tasks,
+            pan: transform.pan,
+            zoom: transform.zoom,
+          })
+          .then((id) => {
+            setId(id);
+            window.name = `d ${id}`;
+            setSaveState(State.SAVED);
+            setLastSaved(new Date().toLocaleString());
+          });
+      } else {
+        await db.diagrams
+          .update(id, {
+            name: title,
+            lastModified: new Date(),
+            tables: tables,
+            references: relationships,
+            types: types,
+            notes: notes,
+            areas: areas,
+            todos: tasks,
+            pan: transform.pan,
+            zoom: transform.zoom,
+          })
+          .then(() => {
+            setSaveState(State.SAVED);
+            setLastSaved(new Date().toLocaleString());
+          });
+      }
+    } else {
+      await db.templates
+        .update(id, {
+          title: title,
+          tables: tables,
+          relationships: relationships,
+          types: types,
+          notes: notes,
+          subjectAreas: areas,
+          todos: tasks,
+          pan: transform.pan,
+          zoom: transform.zoom,
+        })
+        .then(() => {
+          setSaveState(State.SAVED);
+          setLastSaved(new Date().toLocaleString());
+        })
+        .catch(() => {
+          setSaveState(State.ERROR);
+        });
+    }
+  }, [
+    tables,
+    relationships,
+    notes,
+    areas,
+    types,
+    title,
+    id,
+    tasks,
+    transform,
+    setSaveState,
+  ]);
+
+  const load = useCallback(async () => {
+    const loadLatestDiagram = async () => {
+      await db.diagrams
+        .orderBy("lastModified")
+        .last()
+        .then((d) => {
+          if (d) {
+            setId(d.id);
+            setTables(d.tables);
+            setRelationships(d.references);
+            setNotes(d.notes);
+            setAreas(d.areas);
+            setTypes(d.types);
+            setTasks(d.todos ?? []);
+            setTransform({ pan: d.pan, zoom: d.zoom });
+            window.name = `d ${d.id}`;
+          } else {
+            window.name = "";
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    const loadDiagram = async (id) => {
+      await db.diagrams
+        .get(id)
+        .then((diagram) => {
+          if (diagram) {
+            setId(diagram.id);
+            setTitle(diagram.name);
+            setTables(diagram.tables);
+            setTypes(diagram.types);
+            setRelationships(diagram.references);
+            setAreas(diagram.areas);
+            setNotes(diagram.notes);
+            setTasks(diagram.todos ?? []);
+            setTransform({
+              pan: diagram.pan,
+              zoom: diagram.zoom,
+            });
+            setUndoStack([]);
+            setRedoStack([]);
+            window.name = `d ${diagram.id}`;
+          } else {
+            window.name = "";
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    const loadTemplate = async (id) => {
+      await db.templates
+        .get(id)
+        .then((diagram) => {
+          if (diagram) {
+            setId(diagram.id);
+            setTitle(diagram.title);
+            setTables(diagram.tables);
+            setTypes(diagram.types);
+            setRelationships(diagram.relationships);
+            setAreas(diagram.subjectAreas);
+            setTasks(diagram.todos ?? []);
+            setNotes(diagram.notes);
+            setTransform({
+              zoom: 1,
+              pan: { x: 0, y: 0 },
+            });
+            setUndoStack([]);
+            setRedoStack([]);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    if (window.name === "") {
+      loadLatestDiagram();
+    } else {
+      const name = window.name.split(" ");
+      const op = name[0];
+      const id = parseInt(name[1]);
+      switch (op) {
+        case "d": {
+          loadDiagram(id);
+          break;
+        }
+        case "t":
+        case "lt": {
+          loadTemplate(id);
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }, [
+    setTransform,
+    setRedoStack,
+    setUndoStack,
+    setRelationships,
+    setTables,
+    setAreas,
+    setNotes,
+    setTypes,
+    setTasks,
+  ]);
 
   useEffect(() => {
     if (
@@ -69,217 +263,17 @@ export default function WorkSpace() {
     setSaveState,
   ]);
 
-  const save = useCallback(
-    async (diagram = true) => {
-      if (saveState !== State.SAVING) {
-        return;
-      }
-      if (diagram) {
-        if (
-          (id === 0 && window.name === "") ||
-          window.name.split(" ")[0] === "lt"
-        ) {
-          db.diagrams
-            .add({
-              name: title,
-              lastModified: new Date(),
-              tables: tables,
-              references: relationships,
-              types: types,
-              notes: notes,
-              areas: areas,
-              todos: tasks,
-              pan: transform.pan,
-              zoom: transform.zoom,
-            })
-            .then((id) => {
-              setId(id);
-              window.name = `d ${id}`;
-              setSaveState(State.SAVED);
-              setLastSaved(new Date().toLocaleString());
-            });
-        } else {
-          db.diagrams
-            .update(id, {
-              name: title,
-              lastModified: new Date(),
-              tables: tables,
-              references: relationships,
-              types: types,
-              notes: notes,
-              areas: areas,
-              todos: tasks,
-              pan: transform.pan,
-              zoom: transform.zoom,
-            })
-            .then(() => {
-              setSaveState(State.SAVED);
-              setLastSaved(new Date().toLocaleString());
-            });
-        }
-      } else {
-        db.templates
-          .update(id, {
-            title: title,
-            tables: tables,
-            relationships: relationships,
-            types: types,
-            notes: notes,
-            subjectAreas: areas,
-            todos: tasks,
-            pan: transform.pan,
-            zoom: transform.zoom,
-          })
-          .then(() => {
-            setSaveState(State.SAVED);
-            setLastSaved(new Date().toLocaleString());
-          })
-          .catch(() => {
-            setSaveState(State.ERROR);
-          });
-      }
-    },
-    [
-      tables,
-      relationships,
-      notes,
-      areas,
-      types,
-      title,
-      id,
-      saveState,
-      tasks,
-      transform.zoom,
-      transform.pan,
-      setSaveState,
-    ]
-  );
   useEffect(() => {
-    const name = window.name.split(" ");
-    const op = name[0];
-    const diagram = window.name === "" || op === "d" || op === "lt";
+    if (saveState !== State.SAVING) return;
 
-    save(diagram);
+    save();
   }, [id, saveState, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
 
-    const loadLatestDiagram = async () => {
-      db.diagrams
-        .orderBy("lastModified")
-        .last()
-        .then((d) => {
-          if (d) {
-            setId(d.id);
-            setTables(d.tables);
-            setRelationships(d.references);
-            setNotes(d.notes);
-            setAreas(d.areas);
-            setTypes(d.types);
-            setTasks(d.todos ?? []);
-            setTransform({ pan: d.pan, zoom: d.zoom });
-            window.name = `d ${d.id}`;
-          } else {
-            window.name = "";
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-
-    const loadDiagram = async (id) => {
-      db.diagrams
-        .get(id)
-        .then((diagram) => {
-          if (diagram) {
-            setId(diagram.id);
-            setTitle(diagram.name);
-            setTables(diagram.tables);
-            setTypes(diagram.types);
-            setRelationships(diagram.references);
-            setAreas(diagram.areas);
-            setNotes(diagram.notes);
-            setTasks(diagram.todos ?? []);
-            setTransform({
-              pan: diagram.pan,
-              zoom: diagram.zoom,
-            });
-            setUndoStack([]);
-            setRedoStack([]);
-            window.name = `d ${diagram.id}`;
-          } else {
-            window.name = "";
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-
-    const loadTemplate = async (id) => {
-      db.templates
-        .get(id)
-        .then((diagram) => {
-          if (diagram) {
-            setId(diagram.id);
-            setTitle(diagram.title);
-            setTables(diagram.tables);
-            setTypes(diagram.types);
-            setRelationships(diagram.relationships);
-            setAreas(diagram.subjectAreas);
-            setTasks(diagram.todos ?? []);
-            setNotes(diagram.notes);
-            setTransform({
-              zoom: 1,
-              pan: { x: 0, y: 0 },
-            });
-            setUndoStack([]);
-            setRedoStack([]);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-
-    if (window.name == "") {
-      console.log("Loading the latest diagram");
-      loadLatestDiagram();
-    } else {
-      const name = window.name.split(" ");
-      const op = name[0];
-      const did = parseInt(name[1]);
-      switch (op) {
-        case "d": {
-          loadDiagram(did);
-          break;
-        }
-        case "lt": {
-          loadTemplate(did);
-          break;
-        }
-        case "t": {
-          loadTemplate(did);
-          break;
-        }
-        default:
-          break;
-      }
-    }
-  }, [
-    setSettings,
-    setTransform,
-    setRedoStack,
-    setUndoStack,
-    setRelationships,
-    setTables,
-    setAreas,
-    setNotes,
-    setTypes,
-    setTasks,
-  ]);
+    load();
+  }, [load]);
 
   return (
     <div className="h-[100vh] flex flex-col overflow-hidden theme">
