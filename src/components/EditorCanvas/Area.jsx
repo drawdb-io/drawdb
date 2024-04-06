@@ -2,14 +2,12 @@ import { useState } from "react";
 import { Button, Popover, Input, Toast } from "@douyinfe/semi-ui";
 import {
   IconEdit,
-  IconCheckboxTick,
   IconDeleteStroked,
 } from "@douyinfe/semi-icons";
 import {
   Tab,
   Action,
   ObjectType,
-  tableThemes,
   defaultBlue,
   State,
 } from "../../data/constants";
@@ -22,6 +20,7 @@ import {
   useSaveState,
   useTransform,
 } from "../../hooks";
+import ColorPallete from "../ColorPallete";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
@@ -225,92 +224,32 @@ function EditPopoverContent({ data }) {
         <Popover
           content={
             <div className="popover-theme">
-              <div className="flex justify-between items-center p-2">
-                <div className="font-medium">Theme</div>
-                <Button
-                  type="tertiary"
-                  size="small"
-                  onClick={() => {
-                    updateArea(data.id, {
-                      color: defaultBlue,
-                    });
-                    setSaveState(State.SAVING);
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-              <hr />
-              <div className="py-3">
-                <div>
-                  {tableThemes
-                    .slice(0, Math.ceil(tableThemes.length / 2))
-                    .map((c) => (
-                      <button
-                        key={c}
-                        style={{ backgroundColor: c }}
-                        className="p-3 rounded-full mx-1"
-                        onClick={() => {
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.AREA,
-                              aid: data.id,
-                              undo: { color: data.color },
-                              redo: { color: c },
-                              message: `Edit area color to ${c}`,
-                            },
-                          ]);
-                          setRedoStack([]);
-                          updateArea(data.id, {
-                            color: c,
-                          });
-                        }}
-                      >
-                        {data.color === c ? (
-                          <IconCheckboxTick style={{ color: "white" }} />
-                        ) : (
-                          <IconCheckboxTick style={{ color: c }} />
-                        )}
-                      </button>
-                    ))}
-                </div>
-                <div className="mt-3">
-                  {tableThemes
-                    .slice(Math.ceil(tableThemes.length / 2))
-                    .map((c) => (
-                      <button
-                        key={c}
-                        style={{ backgroundColor: c }}
-                        className="p-3 rounded-full mx-1"
-                        onClick={() => {
-                          setUndoStack((prev) => [
-                            ...prev,
-                            {
-                              action: Action.EDIT,
-                              element: ObjectType.AREA,
-                              aid: data.id,
-                              undo: { color: data.color },
-                              redo: { color: c },
-                              message: `Edit area color to ${c}`,
-                            },
-                          ]);
-                          setRedoStack([]);
-                          updateArea(data.id, {
-                            color: c,
-                          });
-                        }}
-                      >
-                        <IconCheckboxTick
-                          style={{
-                            color: data.color === c ? "white" : c,
-                          }}
-                        />
-                      </button>
-                    ))}
-                </div>
-              </div>
+              <ColorPallete
+                currentColor={data.color}
+                onPickColor={(c) => {
+                  setUndoStack((prev) => [
+                    ...prev,
+                    {
+                      action: Action.EDIT,
+                      element: ObjectType.AREA,
+                      aid: data.id,
+                      undo: { color: data.color },
+                      redo: { color: c },
+                      message: `Edit area color to ${c}`,
+                    },
+                  ]);
+                  setRedoStack([]);
+                  updateArea(data.id, {
+                    color: c,
+                  });
+                }}
+                onClearColor={() => {
+                  updateArea(data.id, {
+                    color: defaultBlue,
+                  });
+                  setSaveState(State.SAVING);
+                }}
+              />
             </div>
           }
           position="rightTop"
