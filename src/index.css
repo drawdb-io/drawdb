@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.cm-focused {
-  outline: none !important;
-}
-
-.bg-blue {
-  background-color: #124559;
-}
-
 .semi-form-vertical .semi-form-field {
   margin: 0;
   padding-top: 8px !important;
