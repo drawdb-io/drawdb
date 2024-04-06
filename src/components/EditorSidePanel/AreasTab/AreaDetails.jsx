@@ -8,7 +8,7 @@ import {
   State,
   defaultBlue,
 } from "../../../data/constants";
-import ColorPallete from "../../ColorPallete";
+import ColorPalette from "../../ColorPalette";
 
 export default function AreaInfo({ data, i }) {
   const { setSaveState } = useSaveState();
@@ -52,7 +52,7 @@ export default function AreaInfo({ data, i }) {
         <Popover
           content={
             <div className="popover-theme">
-              <ColorPallete
+              <ColorPalette
                 currentColor={data.color}
                 onClearColor={() => {
                   updateArea(i, { color: defaultBlue });

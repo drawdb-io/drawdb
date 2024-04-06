@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Button, Popover, Input, Toast } from "@douyinfe/semi-ui";
-import {
-  IconEdit,
-  IconDeleteStroked,
-} from "@douyinfe/semi-icons";
+import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
   Tab,
   Action,
@@ -20,7 +17,7 @@ import {
   useSaveState,
   useTransform,
 } from "../../hooks";
-import ColorPallete from "../ColorPallete";
+import ColorPalette from "../ColorPalette";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
@@ -224,7 +221,7 @@ function EditPopoverContent({ data }) {
         <Popover
           content={
             <div className="popover-theme">
-              <ColorPallete
+              <ColorPalette
                 currentColor={data.color}
                 onPickColor={(c) => {
                   setUndoStack((prev) => [

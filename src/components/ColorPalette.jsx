@@ -2,7 +2,7 @@ import { Button } from "@douyinfe/semi-ui";
 import { IconCheckboxTick } from "@douyinfe/semi-icons";
 import { tableThemes } from "../data/constants";
 
-export default function ColorPallete({
+export default function ColorPalette({
   currentColor,
   onClearColor,
   onPickColor,
