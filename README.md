@@ -36,5 +36,12 @@ npm install
 npm run build
 ```
 
+### Docker Build
+```bash
+docker build -t drawdb .
+docker run -p 3000:80 drawdb
+```
+
+
 Set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample` for the survey and bug report forms.
 
