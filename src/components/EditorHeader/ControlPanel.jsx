@@ -8,6 +8,7 @@ import {
   IconUndo,
   IconRedo,
   IconEdit,
+  IconClock,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
@@ -85,6 +86,8 @@ export default function ControlPanel({
     tables,
     setTables,
     addTable,
+    addTimestamp,
+    toggleTimeStamp,
     updateTable,
     deleteTable,
     updateField,
@@ -1308,6 +1311,19 @@ export default function ControlPanel({
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
               <i className="fa-regular fa-calendar-check" />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Add Timestamp to tables" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded flex items-center"
+              onClick={toggleTimeStamp}
+            >
+              <IconClock
+                size="large"
+                style={{ color: addTimestamp ? "" : "#9598a6" }}
+              />
+              {/* <i className="fa-regular fa-clock" /> */}
             </button>
           </Tooltip>
         </div>

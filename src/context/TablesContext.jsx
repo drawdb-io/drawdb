@@ -9,9 +9,13 @@ export const TablesContext = createContext(null);
 export default function TablesContextProvider({ children }) {
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
+  // By default Include created_at and updated_at to all new tables
+  const [addTimestamp, setAddTimeStamp] = useState(true);
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+
+  const toggleTimeStamp = () => setAddTimeStamp(ts => !ts);
 
   const addTable = (addToHistory = true, data) => {
     if (data) {
@@ -21,6 +25,32 @@ export default function TablesContextProvider({ children }) {
         return temp.map((t, i) => ({ ...t, id: i }));
       });
     } else {
+      const timestamp = !addTimestamp ? [] : [
+        {
+          name: "created_at",
+          type: "TIMESTAMP",
+          default: "",
+          check: "",
+          primary: false,
+          unique: false,
+          notNull: true,
+          increment: false,
+          comment: "",
+          id: 1,
+        },
+        {
+          name: "updated_at",
+          type: "TIMESTAMP",
+          default: "",
+          check: "",
+          primary: false,
+          unique: false,
+          notNull: true,
+          increment: false,
+          comment: "",
+          id: 2,
+        },
+      ];
       setTables((prev) => [
         ...prev,
         {
@@ -41,6 +71,7 @@ export default function TablesContextProvider({ children }) {
               comment: "",
               id: 0,
             },
+            ...timestamp
           ],
           comment: "",
           indices: [],
@@ -222,6 +253,8 @@ export default function TablesContextProvider({ children }) {
       value={{
         tables,
         setTables,
+        toggleTimeStamp,
+        addTimestamp,
         addTable,
         updateTable,
         updateField,
