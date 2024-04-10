@@ -51,11 +51,11 @@ export default function Table(props) {
                    ? "bg-zinc-100 text-zinc-800"
                    : "bg-zinc-800 text-zinc-200"
                } ${
-            selectedElement.id === tableData.id &&
-            selectedElement.element === ObjectType.TABLE
-              ? "border-solid border-blue-500"
-              : "border-zinc-500"
-          }`}
+                 selectedElement.id === tableData.id &&
+                 selectedElement.element === ObjectType.TABLE
+                   ? "border-solid border-blue-500"
+                   : "border-zinc-500"
+               }`}
         >
           <div
             className="h-[10px] w-full rounded-t-md"
@@ -246,7 +246,9 @@ export default function Table(props) {
         }
         style={{ paddingBottom: "16px" }}
       >
-        <TableInfo data={tableData} />
+        <div className="sidesheet-theme">
+          <TableInfo data={tableData} />
+        </div>
       </SideSheet>
     </>
   );
