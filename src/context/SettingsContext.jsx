@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import { tableWidth } from "../data/constants";
 
 export const SettingsContext = createContext(null);
 
@@ -11,6 +12,7 @@ export default function SettingsContextProvider({ children }) {
     autosave: true,
     panning: true,
     showCardinality: true,
+    tableWidth: tableWidth,
   });
 
   return (

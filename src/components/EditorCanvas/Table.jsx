@@ -39,7 +39,7 @@ export default function Table(props) {
         key={tableData.id}
         x={tableData.x}
         y={tableData.y}
-        width={200}
+        width={settings.tableWidth}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
         onMouseDown={onMouseDown}

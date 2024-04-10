@@ -27,6 +27,7 @@ import New from "./New";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import Editor from "@monaco-editor/react";
+import SetTableWidth from "./SetTableWidth";
 
 export default function Modal({
   modal,
@@ -105,7 +106,7 @@ export default function Modal({
       ast = parser.astify(importSource.src, { database: "MySQL" });
     } catch (err) {
       Toast.error(
-        "Could not parse the sql file. Make sure there are no syntax errors."
+        "Could not parse the sql file. Make sure there are no syntax errors.",
       );
       return;
     }
@@ -135,7 +136,7 @@ export default function Modal({
       case MODAL.IMG:
         saveAs(
           exportData.data,
-          `${exportData.filename}.${exportData.extension}`
+          `${exportData.filename}.${exportData.extension}`,
         );
         return;
       case MODAL.CODE: {
@@ -259,6 +260,8 @@ export default function Modal({
             </div>
           );
         }
+      case MODAL.TABLE_WIDTH:
+        return <SetTableWidth />;
       default:
         return <></>;
     }

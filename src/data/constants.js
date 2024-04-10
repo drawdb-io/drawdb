@@ -110,6 +110,7 @@ export const MODAL = {
   SAVEAS: 6,
   NEW: 7,
   IMPORT_SRC: 8,
+  TABLE_WIDTH: 9,
 };
 
 export const STATUS = {
