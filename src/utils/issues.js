@@ -1,6 +1,8 @@
+import { strHasQuotes } from "./utils";
+
 function validateDateStr(str) {
   return /^(?!0000)(?!00)(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9]|3[01])|(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31))$/.test(
-    str
+    str,
   );
 }
 
@@ -17,6 +19,9 @@ function checkDefault(field) {
       return field.values.includes(field.default);
     case "CHAR":
     case "VARCHAR":
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
       return field.default.length <= field.size;
     case "BINARY":
     case "VARBINARY":
@@ -94,26 +99,26 @@ export function getIssues(diagram) {
       } else if (field.type === "ENUM" || field.type === "SET") {
         if (!field.values || field.values.length === 0) {
           issues.push(
-            `"${field.name}" field of table "${table.name}" is of type ${field.type} but no values have been specified`
+            `"${field.name}" field of table "${table.name}" is of type ${field.type} but no values have been specified`,
           );
         }
       }
 
       if (!checkDefault(field)) {
         issues.push(
-          `Default value for field "${field.name}" in table "${table.name}" does not match its type.`
+          `Default value for field "${field.name}" in table "${table.name}" does not match its type.`,
         );
       }
 
       if (field.notNull && field.default.toLowerCase() === "null") {
         issues.push(
-          `"${field.name}" field of table "${table.name}" is NOT NULL but has default NULL`
+          `"${field.name}" field of table "${table.name}" is NOT NULL but has default NULL`,
         );
       }
 
       if (field.type === "DOUBLE" && field.size !== "") {
         issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`
+          `Specifying number of digits for floating point data types is deprecated.`,
         );
       }
 
@@ -172,14 +177,14 @@ export function getIssues(diagram) {
       } else if (field.type === "ENUM" || field.type === "SET") {
         if (!field.values || field.values.length === 0) {
           issues.push(
-            `"${field.name}" field of type "${type.name}" is of type ${field.type} but no values have been specified`
+            `"${field.name}" field of type "${type.name}" is of type ${field.type} but no values have been specified`,
           );
         }
       }
 
       if (field.type === "DOUBLE" && field.size !== "") {
         issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`
+          `Specifying number of digits for floating point data types is deprecated.`,
         );
       }
 
@@ -217,7 +222,7 @@ export function getIssues(diagram) {
   function checkCircularRelationships(tableId, visited = []) {
     if (visited.includes(tableId)) {
       issues.push(
-        `Circular relationship involving table: "${diagram.tables[tableId].name}"`
+        `Circular relationship involving table: "${diagram.tables[tableId].name}"`,
       );
       return;
     }

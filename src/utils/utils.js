@@ -14,3 +14,13 @@ export function dataURItoBlob(dataUrl) {
 export function arrayIsEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
+
+export function strHasQuotes(str) {
+  if (str.length < 2) return false;
+
+  return (
+    (str[0] === str[str.length - 1] && str[0] === "'") ||
+    (str[0] === str[str.length - 1] && str[0] === '"') ||
+    (str[0] === str[str.length - 1] && str[0] === "`")
+  );
+}

@@ -1,4 +1,5 @@
 import { sqlDataTypes } from "../data/constants";
+import { strHasQuotes } from "./utils";
 
 export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
@@ -34,7 +35,7 @@ export function generateSchema(type) {
   return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
     .map((f) => `"${f.name}" : ${getJsonType(f)}`)
     .join(
-      ",\n\t\t\t\t"
+      ",\n\t\t\t\t",
     )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
 }
 
@@ -83,8 +84,8 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
         field.type === "BINARY"
           ? "bit"
           : field.type === "VARBINARY"
-          ? "bit varying"
-          : field.type.toLowerCase();
+            ? "bit varying"
+            : field.type.toLowerCase();
       return `${type}(${field.size})`;
     }
     if (hasPrecision(field.type) && field.size !== "") {
@@ -145,6 +146,16 @@ export function hasQuotes(type) {
   ].includes(type);
 }
 
+export function parseDefault(field) {
+  if (strHasQuotes(field.default)) {
+    return field.default;
+  }
+
+  return hasQuotes(field.type) && field.default.toLowerCase() !== "null"
+    ? `'${field.default}'`
+    : `${field.default}`;
+}
+
 export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
@@ -159,25 +170,18 @@ export function jsonToMySQL(obj) {
               }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `"${field.default}"`
-                        : `${field.default}`
-                    }`
-                  : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
                   ? !sqlDataTypes.includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
                         obj.types.find(
-                          (t) => t.name === field.type.toLowerCase()
-                        )
+                          (t) => t.name === field.type.toLowerCase(),
+                        ),
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }`
+              }`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -194,10 +198,10 @@ export function jsonToMySQL(obj) {
                     i.name
                   }\`\nON \`${table.name}\` (${i.fields
                     .map((f) => `\`${f}\``)
-                    .join(", ")});`
+                    .join(", ")});`,
               )}`
             : ""
-        }`
+        }`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -208,7 +212,7 @@ export function jsonToMySQL(obj) {
           obj.tables[r.startTableId].fields[r.startFieldId].name
         }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
           obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
     )
     .join("\n")}`;
 }
@@ -221,7 +225,7 @@ export function jsonToPostgreSQL(obj) {
         (f) =>
           `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
             .map((v) => `'${v}'`)
-            .join(", ")});\n`
+            .join(", ")});\n`,
       );
     if (typeStatements.length > 0) {
       return (
@@ -251,7 +255,7 @@ export function jsonToPostgreSQL(obj) {
                   (f) =>
                     `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
                       .map((v) => `'${v}'`)
-                      .join(", ")});\n\n`
+                      .join(", ")});\n\n`,
                 )}`
             : ""
         }CREATE TABLE "${table.name}" (\n${table.fields
@@ -262,19 +266,12 @@ export function jsonToPostgreSQL(obj) {
               }" ${getTypeString(field, "postgres")}${
                 field.notNull ? " NOT NULL" : ""
               }${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `'${field.default}'`
-                        : `${field.default}`
-                    }`
-                  : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
                   ? ""
                   : ` CHECK(${field.check})`
-              }`
+              }`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -291,10 +288,10 @@ export function jsonToPostgreSQL(obj) {
                     i.name
                   }"\nON "${table.name}" (${i.fields
                     .map((f) => `"${f}"`)
-                    .join(", ")});`
+                    .join(", ")});`,
               )}`
             : ""
-        }`
+        }`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -303,7 +300,7 @@ export function jsonToPostgreSQL(obj) {
           obj.tables[r.startTableId].fields[r.startFieldId].name
         }") REFERENCES "${obj.tables[r.endTableId].name}"("${
           obj.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
     )
     .join("\n")}`;
 }
@@ -369,20 +366,11 @@ export function jsonToSQLite(obj) {
               field.name
             }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
-            }${
-              field.default !== ""
-                ? ` DEFAULT ${
-                    hasQuotes(field.type) &&
-                    field.default.toLowerCase() !== "null"
-                      ? `'${field.default}'`
-                      : `${field.default}`
-                  }`
-                : ""
-            }${
+            }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${
               field.check === "" || !hasCheck(field.type)
                 ? ""
                 : ` CHECK(${field.check})`
-            }`
+            }`,
         )
         .join(",\n")}${
         table.fields.filter((f) => f.primary).length > 0
@@ -400,7 +388,7 @@ export function jsonToSQLite(obj) {
                     i.name
                   }"\nON "${table.name}" (${i.fields
                     .map((f) => `"${f}"`)
-                    .join(", ")});`
+                    .join(", ")});`,
               )
               .join("\n")}`
           : ""
@@ -423,25 +411,18 @@ export function jsonToMariaDB(obj) {
               }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `"${field.default}"`
-                        : `${field.default}`
-                    }`
-                  : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
                   ? !sqlDataTypes.includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
                         obj.types.find(
-                          (t) => t.name === field.type.toLowerCase()
-                        )
+                          (t) => t.name === field.type.toLowerCase(),
+                        ),
                       )}', \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }`
+              }`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -458,10 +439,10 @@ export function jsonToMariaDB(obj) {
                     i.name
                   }\`\nON \`${table.name}\` (${i.fields
                     .map((f) => `\`${f}\``)
-                    .join(", ")});`
+                    .join(", ")});`,
               )}`
             : ""
-        }`
+        }`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -472,7 +453,7 @@ export function jsonToMariaDB(obj) {
           obj.tables[r.startTableId].fields[r.startFieldId].name
         }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
           obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`
+        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
     )
     .join("\n")}`;
 }
@@ -503,19 +484,12 @@ export function jsonToSQLServer(obj) {
               }${field.increment ? " IDENTITY" : ""}${
                 field.unique ? " UNIQUE" : ""
               }${
-                field.default !== ""
-                  ? ` DEFAULT ${
-                      hasQuotes(field.type) &&
-                      field.default.toLowerCase() !== "null"
-                        ? `'${field.default}'`
-                        : `${field.default}`
-                    }`
-                  : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
                   ? ""
                   : ` CHECK(${field.check})`
-              }`
+              }`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -532,10 +506,10 @@ export function jsonToSQLServer(obj) {
                     i.name
                   }]\nON [${table.name}] (${i.fields
                     .map((f) => `[${f}]`)
-                    .join(", ")});\nGO\n`
+                    .join(", ")});\nGO\n`,
               )}`
             : ""
-        }`
+        }`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -544,7 +518,7 @@ export function jsonToSQLServer(obj) {
           obj.tables[r.startTableId].fields[r.startFieldId].name
         }]) REFERENCES [${obj.tables[r.endTableId].name}]([${
           obj.tables[r.endTableId].fields[r.endFieldId].name
-        }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`
+        }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`,
     )
     .join("\n")}`;
 }
