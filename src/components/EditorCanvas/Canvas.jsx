@@ -18,16 +18,18 @@ import {
   useSelect,
   useAreas,
   useNotes,
+  useLayout,
 } from "../../hooks";
 
 export default function Canvas() {
   const { tables, updateTable, relationships, addRelationship } = useTables();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
+  const { layout } = useLayout();
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
-  const { setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -187,6 +189,14 @@ export default function Canvas() {
   };
 
   const handleMouseDown = (e) => {
+    // don't pan if the sidesheet for editing a table is open
+    if (
+      selectedElement.element === ObjectType.TABLE &&
+      selectedElement.open &&
+      !layout.sidebar
+    )
+      return;
+
     setPanning({
       isPanning: true,
       ...transform.pan,
