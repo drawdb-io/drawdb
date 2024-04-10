@@ -32,6 +32,28 @@ export default function Table(props) {
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+  const openEditor = () => {
+    if (!layout.sidebar) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.TABLE,
+        id: tableData.id,
+        open: true,
+      }));
+    } else {
+      setSelectedElement((prev) => ({
+        ...prev,
+        currentTab: Tab.TABLES,
+        element: ObjectType.TABLE,
+        id: tableData.id,
+        open: true,
+      }));
+      if (selectedElement.currentTab !== Tab.TABLES) return;
+      document
+        .getElementById(`scroll_table_${tableData.id}`)
+        .scrollIntoView({ behavior: "smooth" });
+    }
+  }
 
   return (
     <>
@@ -45,6 +67,7 @@ export default function Table(props) {
         onMouseDown={onMouseDown}
       >
         <div
+          onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
                select-none rounded-lg w-full ${
                  settings.mode === "light"
@@ -80,28 +103,7 @@ export default function Table(props) {
                     opacity: "0.7",
                     marginRight: "6px",
                   }}
-                  onClick={() => {
-                    if (!layout.sidebar) {
-                      setSelectedElement((prev) => ({
-                        ...prev,
-                        element: ObjectType.TABLE,
-                        id: tableData.id,
-                        open: true,
-                      }));
-                    } else {
-                      setSelectedElement((prev) => ({
-                        ...prev,
-                        currentTab: Tab.TABLES,
-                        element: ObjectType.TABLE,
-                        id: tableData.id,
-                        open: true,
-                      }));
-                      if (selectedElement.currentTab !== Tab.TABLES) return;
-                      document
-                        .getElementById(`scroll_table_${tableData.id}`)
-                        .scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
+                  onClick={openEditor}
                 />
                 <Popover
                   content={
