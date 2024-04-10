@@ -45,6 +45,7 @@ export default function TablesContextProvider({ children }) {
           comment: "",
           indices: [],
           color: defaultBlue,
+          key: Date.now(),
         },
       ]);
     }

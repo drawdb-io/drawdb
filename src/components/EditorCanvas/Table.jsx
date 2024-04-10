@@ -104,6 +104,7 @@ export default function Table(props) {
                   }}
                 />
                 <Popover
+                  key={tableData.key}
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
