@@ -41,7 +41,7 @@ export default function Relationship({ data }) {
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
     const point2 = pathRef.current.getPointAtLength(
-      pathLength - cardinalityOffset
+      pathLength - cardinalityOffset,
     );
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
@@ -51,17 +51,20 @@ export default function Relationship({ data }) {
     <g className="select-none group">
       <path
         ref={pathRef}
-        d={calcPath({
-          ...data,
-          startTable: {
-            x: tables[data.startTableId].x,
-            y: tables[data.startTableId].y,
+        d={calcPath(
+          {
+            ...data,
+            startTable: {
+              x: tables[data.startTableId].x,
+              y: tables[data.startTableId].y,
+            },
+            endTable: {
+              x: tables[data.endTableId].x,
+              y: tables[data.endTableId].y,
+            },
           },
-          endTable: {
-            x: tables[data.endTableId].x,
-            y: tables[data.endTableId].y,
-          },
-        })}
+          settings.tableWidth,
+        )}
         stroke="gray"
         className="group-hover:stroke-sky-700"
         fill="none"

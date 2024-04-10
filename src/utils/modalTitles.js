@@ -17,6 +17,8 @@ export const getModalTitle = (modal) => {
       return "Save as";
     case MODAL.NEW:
       return "Create new diagram";
+    case MODAL.TABLE_WIDTH:
+      return "Set the table width";
     default:
       return "";
   }

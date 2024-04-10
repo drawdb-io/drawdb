@@ -187,7 +187,7 @@ export default function ControlPanel({
                 return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
               }
               return t;
-            })
+            }),
           );
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
@@ -209,7 +209,7 @@ export default function ControlPanel({
                     ...index,
                     ...a.undo,
                   }
-                : index
+                : index,
             ),
           });
         } else if (a.component === "index_delete") {
@@ -224,27 +224,27 @@ export default function ControlPanel({
                 };
               }
               return table;
-            })
+            }),
           );
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e))
+          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e)),
         );
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
           updateType(a.tid, {
             fields: types[a.tid].fields.filter(
-              (e, i) => i !== types[a.tid].fields.length - 1
+              (e, i) => i !== types[a.tid].fields.length - 1,
             ),
           });
         }
         if (a.component === "field") {
           updateType(a.tid, {
             fields: types[a.tid].fields.map((e, i) =>
-              i === a.fid ? { ...e, ...a.undo } : e
+              i === a.fid ? { ...e, ...a.undo } : e,
             ),
           });
         } else if (a.component === "field_delete") {
@@ -256,7 +256,7 @@ export default function ControlPanel({
                 return { ...t, fields: temp };
               }
               return t;
-            })
+            }),
           );
         } else if (a.component === "self") {
           updateType(a.tid, a.undo);
@@ -388,7 +388,7 @@ export default function ControlPanel({
                 };
               }
               return table;
-            })
+            }),
           );
         } else if (a.component === "index") {
           updateTable(a.tid, {
@@ -398,7 +398,7 @@ export default function ControlPanel({
                     ...index,
                     ...a.redo,
                   }
-                : index
+                : index,
             ),
           });
         } else if (a.component === "index_delete") {
@@ -412,7 +412,7 @@ export default function ControlPanel({
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e))
+          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e)),
         );
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
@@ -428,7 +428,7 @@ export default function ControlPanel({
         } else if (a.component === "field") {
           updateType(a.tid, {
             fields: types[a.tid].fields.map((e, i) =>
-              i === a.fid ? { ...e, ...a.redo } : e
+              i === a.fid ? { ...e, ...a.redo } : e,
             ),
           });
         } else if (a.component === "field_delete") {
@@ -466,7 +466,7 @@ export default function ControlPanel({
       showFieldSummary: !prev.showFieldSummary,
     }));
     Toast.success(
-      `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`
+      `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`,
     );
   };
   const copyAsImage = () => {
@@ -762,7 +762,7 @@ export default function ControlPanel({
                     data: dataUrl,
                     extension: "jpeg",
                   }));
-                }
+                },
               );
               setModal(MODAL.IMG);
             },
@@ -780,7 +780,7 @@ export default function ControlPanel({
                   title: title,
                 },
                 null,
-                2
+                2,
               );
               setExportData((prev) => ({
                 ...prev,
@@ -799,7 +799,7 @@ export default function ControlPanel({
                     data: dataUrl,
                     extension: "svg",
                   }));
-                }
+                },
               );
               setModal(MODAL.IMG);
             },
@@ -818,7 +818,7 @@ export default function ControlPanel({
                   0,
                   0,
                   canvas.offsetWidth,
-                  canvas.offsetHeight
+                  canvas.offsetHeight,
                 );
                 doc.save(`${exportData.filename}.pdf`);
               });
@@ -838,7 +838,7 @@ export default function ControlPanel({
                   types: types,
                 },
                 null,
-                2
+                2,
               );
               const blob = new Blob([result], {
                 type: "text/plain;charset=utf-8",
@@ -1085,6 +1085,9 @@ export default function ControlPanel({
             Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
             return { ...prev, panning: !prev.panning };
           }),
+      },
+      "Table width": {
+        function: () => setModal(MODAL.TABLE_WIDTH),
       },
       "Flush storage": {
         function: async () => {
@@ -1389,7 +1392,7 @@ export default function ControlPanel({
                                         >
                                           {Object.keys(e)[0]}
                                         </Dropdown.Item>
-                                      )
+                                      ),
                                     )}
                                   </Dropdown.Menu>
                                 }
