@@ -31,7 +31,7 @@ export function astToDiagram(ast) {
             field.primary = false;
             if (d.primary_key) field.primary = true;
             field.default = "";
-            if (d.default_val) field.default = d.default_val.value.value;
+            if (d.default_val) field.default = d.default_val.value.value.toString();
             if (d.definition["length"]) field.size = d.definition["length"];
             field.check = "";
             if (d.check) {
