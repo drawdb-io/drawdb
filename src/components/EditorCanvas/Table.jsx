@@ -168,7 +168,7 @@ export default function Table(props) {
                   position="rightTop"
                   showArrow
                   trigger="click"
-                  style={{ width: "200px" }}
+                  style={{ width: "200px", wordBreak: "break-word" }}
                 >
                   <Button
                     icon={<IconMore />}
@@ -219,10 +219,19 @@ export default function Table(props) {
                       <strong>Default :</strong>{" "}
                       {e.default === "" ? "Not set" : e.default}
                     </p>
+                    <p>
+                      <strong>Comment:</strong>{" "}
+                      {e.comment === "" ? (
+                        "Not comment" 
+                      ) : (
+                        <div>{e.comment}</div>
+                      )}
+                    </p>
                   </div>
                 }
                 position="right"
                 showArrow
+                style={{ width: "200px", wordBreak: "break-word" }}
               >
                 {field(e, i)}
               </Popover>
