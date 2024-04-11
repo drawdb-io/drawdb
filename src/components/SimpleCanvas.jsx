@@ -5,7 +5,7 @@ import { calcPath } from "../utils/calcPath";
 function Table({ table, grab }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const height = table.fields.length * 36 + 50 + 7;
+  const height = table.fields.length * 36 + 57;
   return (
     <foreignObject
       key={table.name}
