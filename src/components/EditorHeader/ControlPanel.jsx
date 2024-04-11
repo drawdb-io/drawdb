@@ -19,6 +19,7 @@ import {
   Tooltip,
   Spin,
   Toast,
+  Popconfirm,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -715,6 +716,11 @@ export default function ControlPanel({
         },
       },
       "Delete diagram": {
+        warning: {
+          title: "Delete diagram",
+          message:
+            "Are you sure you want to delete this diagram? This operation is irreversible.",
+        },
         function: async () => {
           await db.diagrams
             .delete(diagramId)
@@ -1090,6 +1096,11 @@ export default function ControlPanel({
         function: () => setModal(MODAL.TABLE_WIDTH),
       },
       "Flush storage": {
+        warning: {
+          title: "Flush storage",
+          message:
+            "Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates.",
+        },
         function: async () => {
           db.delete()
             .then(() => {
@@ -1399,7 +1410,7 @@ export default function ControlPanel({
                               <Dropdown
                                 style={{ width: "120px" }}
                                 key={item}
-                                position={"rightTop"}
+                                position="rightTop"
                                 render={
                                   <Dropdown.Menu>
                                     {menu[category][item].children.map(
@@ -1427,6 +1438,19 @@ export default function ControlPanel({
                                   <IconChevronRight />
                                 </Dropdown.Item>
                               </Dropdown>
+                            );
+                          }
+                          if (menu[category][item].warning) {
+                            return (
+                              <Popconfirm
+                                key={index}
+                                title={menu[category][item].warning.title}
+                                content={menu[category][item].warning.message}
+                                onConfirm={menu[category][item].function}
+                                position="right"
+                              >
+                                <Dropdown.Item>{item}</Dropdown.Item>
+                              </Popconfirm>
                             );
                           }
                           return (
