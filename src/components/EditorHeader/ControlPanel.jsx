@@ -20,6 +20,7 @@ import {
   Spin,
   Toast,
   Popconfirm,
+  Tag,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { saveAs } from "file-saver";
@@ -992,18 +993,22 @@ export default function ControlPanel({
     },
     View: {
       Header: {
+        state: layout.header ? "on" : "off",
         function: () =>
           setLayout((prev) => ({ ...prev, header: !prev.header })),
       },
       Sidebar: {
+        state: layout.sidebar ? "on" : "off",
         function: () =>
           setLayout((prev) => ({ ...prev, sidebar: !prev.sidebar })),
       },
       Issues: {
+        state: layout.issues ? "on" : "off",
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
       "Strict mode": {
+        state: settings.strictMode ? "off" : "on",
         function: viewStrictMode,
         shortcut: "Ctrl+Shift+M",
       },
@@ -1018,7 +1023,8 @@ export default function ControlPanel({
           enterFullscreen();
         },
       },
-      "Field summary": {
+      "Field details": {
+        state: layout.showFieldSummary ? "on" : "off",
         function: viewFieldSummary,
         shortcut: "Ctrl+Shift+F",
       },
@@ -1027,10 +1033,12 @@ export default function ControlPanel({
         shortcut: "Ctrl+R",
       },
       "Show grid": {
+        state: settings.showGrid ? "on" : "off",
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
       },
       "Show cardinality": {
+        state: settings.showCardinality ? "on" : "off",
         function: () =>
           setSettings((prev) => ({
             ...prev,
@@ -1079,6 +1087,7 @@ export default function ControlPanel({
         function: () => setSidesheet(SIDESHEET.TIMELINE),
       },
       Autosave: {
+        state: settings.autosave ? "on" : "off",
         function: () =>
           setSettings((prev) => {
             Toast.success(`Autosave is ${settings.autosave ? "off" : "on"}`);
@@ -1086,6 +1095,7 @@ export default function ControlPanel({
           }),
       },
       Panning: {
+        state: settings.panning ? "on" : "off",
         function: () =>
           setSettings((prev) => {
             Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
@@ -1401,7 +1411,7 @@ export default function ControlPanel({
                   <Dropdown
                     key={category}
                     position="bottomLeft"
-                    style={{ width: "220px" }}
+                    style={{ width: "240px" }}
                     render={
                       <Dropdown.Menu>
                         {Object.keys(menu[category]).map((item, index) => {
@@ -1465,16 +1475,21 @@ export default function ControlPanel({
                                 }
                               }
                             >
-                              {menu[category][item].shortcut ? (
-                                <>
-                                  <div>{item}</div>
-                                  <div className="text-gray-400">
-                                    {menu[category][item].shortcut}
-                                  </div>
-                                </>
-                              ) : (
-                                item
-                              )}
+                              <div className="w-full flex items-center justify-between">
+                                <div>{item}</div>
+                                <div className="flex items-center gap-1">
+                                  {menu[category][item].shortcut && (
+                                    <div className="text-gray-400">
+                                      {menu[category][item].shortcut}
+                                    </div>
+                                  )}
+                                  {menu[category][item].state && (
+                                    <Tag color="blue">
+                                      {menu[category][item].state}
+                                    </Tag>
+                                  )}
+                                </div>
+                              </div>
                             </Dropdown.Item>
                           );
                         })}
