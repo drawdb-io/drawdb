@@ -1313,6 +1313,24 @@ export default function ControlPanel({
               <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Change theme" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              onClick={() => {
+                const body = document.body;
+                if (body.hasAttribute("theme-mode")) {
+                  if (body.getAttribute("theme-mode") === "light") {
+                    menu["View"]["Theme"].children[1]["Dark"]();
+                  } else {
+                    menu["View"]["Theme"].children[0]["Light"]();
+                  }
+                }
+              }}
+            >
+              <i className="fa-solid fa-circle-half-stroke" />
+            </button>
+          </Tooltip>
         </div>
         <button
           onClick={() => invertLayout("header")}
