@@ -106,6 +106,7 @@ export default function Table(props) {
                   onClick={openEditor}
                 />
                 <Popover
+                  key={tableData.key}
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
