@@ -41,7 +41,7 @@ function Table({ table, grab }) {
           >
             <div className={hoveredField === i ? "text-zinc-500" : ""}>
               <button
-                className={`w-[9px] h-[9px] bg-[#2f68ad] rounded-full me-2`}
+                className={`w-[9px] h-[9px] bg-[#2f68adcc] rounded-full me-2`}
               />
               {e.name}
             </div>
