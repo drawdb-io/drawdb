@@ -4,6 +4,7 @@ import {
   ObjectType,
   tableFieldHeight,
   tableHeaderHeight,
+  tableColorStripHeight,
 } from "../../data/constants";
 import {
   IconEdit,
@@ -289,9 +290,19 @@ export default function Table(props) {
                 startFieldId: index,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
-                startY: tableData.y + index * 36 + 50 + 19,
+                startY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
                 endX: tableData.x + 15,
-                endY: tableData.y + index * 36 + 50 + 19,
+                endY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
               }));
             }}
           />

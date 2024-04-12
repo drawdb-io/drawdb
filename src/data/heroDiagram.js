@@ -1,10 +1,19 @@
+import {
+  tableColorStripHeight,
+  tableFieldHeight,
+  tableHeaderHeight,
+} from "./constants";
+
 const xOffset = window.innerWidth * 0.65;
 export const diagram = {
   tables: [
     {
       name: "galactic_users",
       x: xOffset + 75,
-      y: window.innerHeight * 0.23 - (50 + 4 * 36 + 7) * 0.5,
+      y:
+        window.innerHeight * 0.23 -
+        (tableHeaderHeight + 4 * tableFieldHeight + tableColorStripHeight) *
+          0.5,
       fields: [
         {
           name: "id",
@@ -29,7 +38,10 @@ export const diagram = {
       id: 1,
       name: "celestial_data",
       x: xOffset + 27,
-      y: window.innerHeight * 0.72 - (50 + 5 * 36 + 7) * 0.5,
+      y:
+        window.innerHeight * 0.72 -
+        (tableHeaderHeight + 5 * tableFieldHeight + tableColorStripHeight) *
+          0.5,
       fields: [
         {
           name: "id",
@@ -58,7 +70,10 @@ export const diagram = {
       id: 2,
       name: "astro_mine",
       x: xOffset + 336,
-      y: window.innerHeight * 0.72 - (50 + 3 * 36 + 7) * 0.5,
+      y:
+        window.innerHeight * 0.72 -
+        (tableHeaderHeight + 3 * tableFieldHeight + tableColorStripHeight) *
+          0.5,
       fields: [
         {
           name: "id",
@@ -79,7 +94,10 @@ export const diagram = {
       id: 3,
       name: "asteroid",
       x: xOffset + 310,
-      y: window.innerHeight * 0.23 - (50 + 3 * 36 + 7) * 0.5,
+      y:
+        window.innerHeight * 0.23 -
+        (tableHeaderHeight + 3 * tableFieldHeight + tableColorStripHeight) *
+          0.5,
       fields: [
         {
           name: "id",
