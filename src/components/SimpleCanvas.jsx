@@ -41,7 +41,7 @@ function Table({ table, grab }) {
           >
             <div className={hoveredField === i ? "text-zinc-500" : ""}>
               <button
-                className={`w-[9px] h-[9px] bg-[#2f68ad] opacity-80 z-50 rounded-full me-2`}
+                className={`w-[9px] h-[9px] bg-[#2f68ad] rounded-full me-2`}
               />
               {e.name}
             </div>
@@ -161,8 +161,8 @@ export default function SimpleCanvas({ diagram, zoom }) {
       const dy = e.clientY - offset.y;
       setTables((prev) =>
         prev.map((table, i) =>
-          i === dragging ? { ...table, x: dx, y: dy } : table
-        )
+          i === dragging ? { ...table, x: dx, y: dy } : table,
+        ),
       );
     }
   };
