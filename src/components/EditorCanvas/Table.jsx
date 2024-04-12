@@ -53,7 +53,7 @@ export default function Table(props) {
         .getElementById(`scroll_table_${tableData.id}`)
         .scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   return (
     <>
@@ -260,7 +260,9 @@ export default function Table(props) {
     return (
       <div
         className={`${
-          index === tableData.fields.length - 1 || "border-b border-gray-400"
+          index === tableData.fields.length - 1
+            ? ""
+            : "border-b border-gray-400"
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onMouseEnter={() => {
           setHoveredField(index);
