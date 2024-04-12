@@ -4,6 +4,7 @@ import {
   ObjectType,
   tableFieldHeight,
   tableHeaderHeight,
+  tableColorStripHeight,
 } from "../../data/constants";
 import {
   IconEdit,
@@ -53,7 +54,7 @@ export default function Table(props) {
         .getElementById(`scroll_table_${tableData.id}`)
         .scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   return (
     <>
@@ -269,7 +270,9 @@ export default function Table(props) {
     return (
       <div
         className={`${
-          index === tableData.fields.length - 1 || "border-b border-gray-400"
+          index === tableData.fields.length - 1
+            ? ""
+            : "border-b border-gray-400"
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onMouseEnter={() => {
           setHoveredField(index);
@@ -296,9 +299,19 @@ export default function Table(props) {
                 startFieldId: index,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
-                startY: tableData.y + index * 36 + 50 + 19,
+                startY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
                 endX: tableData.x + 15,
-                endY: tableData.y + index * 36 + 50 + 19,
+                endY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
               }));
             }}
           />

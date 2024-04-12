@@ -1,17 +1,27 @@
 import { useEffect, useState, useRef } from "react";
-import { Cardinality } from "../data/constants";
+import {
+  Cardinality,
+  tableColorStripHeight,
+  tableFieldHeight,
+  tableHeaderHeight,
+  tableWidth,
+} from "../data/constants";
 import { calcPath } from "../utils/calcPath";
 
 function Table({ table, grab }) {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredField, setHoveredField] = useState(-1);
-  const height = table.fields.length * 36 + 50 + 7;
+  const height =
+    table.fields.length * tableFieldHeight +
+    tableHeaderHeight +
+    tableColorStripHeight;
+
   return (
     <foreignObject
       key={table.name}
       x={table.x}
       y={table.y}
-      width={200}
+      width={tableWidth}
       height={height}
       className="drop-shadow-lg rounded-md cursor-move"
       onMouseDown={grab}
@@ -161,8 +171,8 @@ export default function SimpleCanvas({ diagram, zoom }) {
       const dy = e.clientY - offset.y;
       setTables((prev) =>
         prev.map((table, i) =>
-          i === dragging ? { ...table, x: dx, y: dy } : table
-        )
+          i === dragging ? { ...table, x: dx, y: dy } : table,
+        ),
       );
     }
   };
