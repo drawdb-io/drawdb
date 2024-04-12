@@ -223,16 +223,15 @@ export default function Table(props) {
                     <p>
                       <strong>Comment:</strong>{" "}
                       {e.comment === "" ? (
-                        "Not comment" 
+                        "No comment" 
                       ) : (
-                        <div>{e.comment}</div>
+                        <div style={{ maxWidth: "260px", wordBreak: "break-word" }}>{e.comment}</div>
                       )}
                     </p>
                   </div>
                 }
                 position="right"
                 showArrow
-                style={{ width: "200px", wordBreak: "break-word" }}
               >
                 {field(e, i)}
               </Popover>
