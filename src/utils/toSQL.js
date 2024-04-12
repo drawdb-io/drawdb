@@ -397,6 +397,71 @@ export function jsonToSQLite(obj) {
     .join("\n");
 }
 
+export function jsonToDjangoModels(obj) {
+  let djangoCode = "";
+
+  obj.types.forEach(type => {
+    let typeStatements = [];
+    
+    type.fields.forEach(field => {
+      if (field.type === "ENUM" || field.type === "SET") {
+        typeStatements.push(`    ${field.name}_t = models.TextChoices(\n${field.values.map(value => `        ('${value}', '${value}')`).join(',\n')}\n    )`);
+      }
+    });
+
+    // Generate Django model definition
+    djangoCode += `class ${type.name}(models.Model) {\n`;
+    type.fields.forEach(field => {
+      djangoCode += `    ${field.name} = models.${getTypeString(field)}(`;
+      if (field.primary) {
+        djangoCode += "primary_key=True, ";
+      }
+      if (field.unique) {
+        djangoCode += "unique=True, ";
+      }
+      if (!field.notNull) {
+        djangoCode += "null=True, ";
+      }
+      if (field.default !== "") {
+        djangoCode += `default=${parseDefault(field)}, `;
+      }
+      djangoCode += ")\n";
+    });
+    djangoCode += `}\n\n`;
+  });
+
+  obj.tables.forEach(table => {
+    djangoCode += `class ${table.name}(models.Model) {\n`;
+    table.fields.forEach(field => {
+      djangoCode += `    ${field.name} = models.${getTypeString(field)}(`;
+      if (field.primary) {
+        djangoCode += "primary_key=True, ";
+      }
+      if (field.unique) {
+        djangoCode += "unique=True, ";
+      }
+      if (!field.notNull) {
+        djangoCode += "null=True, ";
+      }
+      if (field.default !== "") {
+        djangoCode += `default=${parseDefault(field)}, `;
+      }
+      djangoCode += ")\n";
+    });
+    djangoCode += `}\n\n`;
+  });
+
+  obj.references.forEach(reference => {
+    const startTable = obj.tables[reference.startTableId];
+    const endTable = obj.tables[reference.endTableId];
+    djangoCode += `class ${startTable.name}(models.Model) {\n`;
+    djangoCode += `    ${endTable.name} = models.ForeignKey('${endTable.name}', on_delete=models.${reference.deleteConstraint}, related_name='${startTable.name.toLowerCase()}_${endTable.name.toLowerCase()}', db_column='${endTable.name.toLowerCase()}')\n`;
+    djangoCode += `\n`;
+  });
+
+  return djangoCode;
+}
+
 export function jsonToMariaDB(obj) {
   return `${obj.tables
     .map(

@@ -30,6 +30,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToDjangoModels
 } from "../../utils/toSQL";
 import {
   ObjectType,
@@ -922,6 +923,21 @@ export default function ControlPanel({
             MSSQL: () => {
               setModal(MODAL.CODE);
               const src = jsonToSQLServer({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
+          {
+            DjangoModels: () => {
+              setModal(MODAL.CODE);
+              const src = jsonToDjangoModels({
                 tables: tables,
                 references: relationships,
                 types: types,
