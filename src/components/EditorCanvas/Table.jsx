@@ -53,7 +53,7 @@ export default function Table(props) {
         .getElementById(`scroll_table_${tableData.id}`)
         .scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   return (
     <>
@@ -100,7 +100,6 @@ export default function Table(props) {
                   theme="solid"
                   style={{
                     backgroundColor: "#2f68ad",
-                    opacity: "0.7",
                     marginRight: "6px",
                   }}
                   onClick={openEditor}
@@ -175,7 +174,6 @@ export default function Table(props) {
                     type="tertiary"
                     size="small"
                     style={{
-                      opacity: "0.7",
                       backgroundColor: "grey",
                       color: "white",
                     }}
@@ -279,7 +277,7 @@ export default function Table(props) {
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
-            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full"
+            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68ad] rounded-full"
             onMouseDown={() => {
               handleGripField(index);
               setLinkingLine((prev) => ({
@@ -303,7 +301,6 @@ export default function Table(props) {
               theme="solid"
               size="small"
               style={{
-                opacity: "0.7",
                 backgroundColor: "#d42020",
               }}
               icon={<IconMinus />}
