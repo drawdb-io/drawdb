@@ -100,8 +100,7 @@ export default function Table(props) {
                   size="small"
                   theme="solid"
                   style={{
-                    backgroundColor: "#2f68ad",
-                    opacity: "0.7",
+                    backgroundColor: "#2F68ADB3",
                     marginRight: "6px",
                   }}
                   onClick={openEditor}
@@ -176,8 +175,7 @@ export default function Table(props) {
                     type="tertiary"
                     size="small"
                     style={{
-                      opacity: "0.7",
-                      backgroundColor: "grey",
+                      backgroundColor: "#808080B3",
                       color: "white",
                     }}
                   />
@@ -282,7 +280,7 @@ export default function Table(props) {
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
-            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68ad] opacity-80 z-50 rounded-full"
+            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2F68ADCC] rounded-full"
             onMouseDown={() => {
               handleGripField(index);
               setLinkingLine((prev) => ({
@@ -316,8 +314,7 @@ export default function Table(props) {
               theme="solid"
               size="small"
               style={{
-                opacity: "0.7",
-                backgroundColor: "#d42020",
+                backgroundColor: "#D42020B3",
               }}
               icon={<IconMinus />}
               onClick={() => deleteField(fieldData, tableData.id)}
