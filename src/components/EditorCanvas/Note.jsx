@@ -135,8 +135,11 @@ export default function Note({ data, onMouseDown }) {
         onMouseDown={onMouseDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
-          <div className="flex justify-between">
-            <label htmlFor={`note_${data.id}`} className="ms-5">
+          <div className="flex justify-between gap-1 w-full">
+            <label
+              htmlFor={`note_${data.id}`}
+              className="ms-5 overflow-hidden text-ellipsis"
+            >
               {data.title}
             </label>
             {(hovered ||
