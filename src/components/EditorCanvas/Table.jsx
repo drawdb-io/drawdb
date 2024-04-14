@@ -169,7 +169,7 @@ export default function Table(props) {
                   position="rightTop"
                   showArrow
                   trigger="click"
-                  style={{ width: "200px" }}
+                  style={{ width: "200px", wordBreak: "break-word" }}
                 >
                   <Button
                     icon={<IconMore />}
@@ -219,6 +219,14 @@ export default function Table(props) {
                     <p>
                       <strong>Default :</strong>{" "}
                       {e.default === "" ? "Not set" : e.default}
+                    </p>
+                    <p>
+                      <strong>Comment:</strong>{" "}
+                      {e.comment === "" ? (
+                        "No comment" 
+                      ) : (
+                        <div style={{ maxWidth: "260px", wordBreak: "break-word" }}>{e.comment}</div>
+                      )}
                     </p>
                   </div>
                 }
