@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Row, Col, Button, Collapse } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useNotes, useSelect } from "../../../hooks";
