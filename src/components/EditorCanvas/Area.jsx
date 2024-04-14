@@ -109,8 +109,10 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             className="w-fill p-2 h-full"
             style={{ backgroundColor: `${data.color}66` }}
           >
-            <div className="flex justify-between">
-              <div className="text-color select-none">{data.name}</div>
+            <div className="flex justify-between gap-1 w-full">
+              <div className="text-color select-none overflow-hidden text-ellipsis">
+                {data.name}
+              </div>
               {(hovered || (areaIsSelected() && !layout.sidebar)) && (
                 <Popover
                   visible={areaIsSelected() && !layout.sidebar}
