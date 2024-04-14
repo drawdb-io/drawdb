@@ -100,43 +100,41 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             hovered
               ? "border-dashed border-blue-500"
               : selectedElement.element === ObjectType.AREA &&
-                selectedElement.id === data.id
-              ? "border-blue-500"
-              : "border-slate-400"
-          } w-full h-full cursor-move rounded relative`}
+                  selectedElement.id === data.id
+                ? "border-blue-500"
+                : "border-slate-400"
+          } w-full h-full cursor-move rounded`}
         >
           <div
-            className="opacity-40 w-fill p-2 h-full"
-            style={{ backgroundColor: data.color }}
-          />
-        </div>
-        <div className="text-color absolute top-2 left-3 select-none">
-          {data.name}
-        </div>
-        {(hovered || (areaIsSelected() && !layout.sidebar)) && (
-          <div className="absolute top-2 right-3">
-            <Popover
-              visible={areaIsSelected() && !layout.sidebar}
-              onClickOutSide={onClickOutSide}
-              stopPropagation
-              content={<EditPopoverContent data={data} />}
-              trigger="custom"
-              position="rightTop"
-              showArrow
-            >
-              <Button
-                icon={<IconEdit />}
-                size="small"
-                theme="solid"
-                style={{
-                  backgroundColor: "#2f68ad",
-                  opacity: "0.7",
-                }}
-                onClick={edit}
-              />
-            </Popover>
+            className="w-fill p-2 h-full"
+            style={{ backgroundColor: `${data.color}66` }}
+          >
+            <div className="flex justify-between">
+              <div className="text-color select-none">{data.name}</div>
+              {(hovered || (areaIsSelected() && !layout.sidebar)) && (
+                <Popover
+                  visible={areaIsSelected() && !layout.sidebar}
+                  onClickOutSide={onClickOutSide}
+                  stopPropagation
+                  content={<EditPopoverContent data={data} />}
+                  trigger="custom"
+                  position="rightTop"
+                  showArrow
+                >
+                  <Button
+                    icon={<IconEdit />}
+                    size="small"
+                    theme="solid"
+                    style={{
+                      backgroundColor: "#2F68ADB3",
+                    }}
+                    onClick={edit}
+                  />
+                </Popover>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </foreignObject>
       {hovered && (
         <>
