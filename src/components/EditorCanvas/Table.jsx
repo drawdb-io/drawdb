@@ -215,15 +215,17 @@ export default function Table(props) {
                       </Tag>
                     )}
                     <p>
-                      <strong>Default :</strong>{" "}
+                      <strong>Default: </strong>
                       {e.default === "" ? "Not set" : e.default}
                     </p>
                     <p>
-                      <strong>Comment:</strong>{" "}
+                      <strong>Comment: </strong>
                       {e.comment === "" ? (
-                        "No comment" 
+                        "No comment"
                       ) : (
-                        <div style={{ maxWidth: "260px", wordBreak: "break-word" }}>{e.comment}</div>
+                        <div className="max-w-[260px] break-words">
+                          {e.comment}
+                        </div>
                       )}
                     </p>
                   </div>
