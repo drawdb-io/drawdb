@@ -61,22 +61,18 @@ export default function Note({ data, onMouseDown }) {
   };
 
   const edit = () => {
-    if (layout.sidebar) {
-      setSelectedElement((prev) => ({
-        ...prev,
-        currentTab: Tab.NOTES,
-      }));
-      if (selectedElement.currentTab !== Tab.NOTES) return;
+    setSelectedElement((prev) => ({
+      ...prev,
+      ...(layout.sidebar && { currentTab: Tab.NOTES }),
+      ...(!layout.sidebar && { element: ObjectType.NOTE }),
+      id: data.id,
+      open: true,
+    }));
+
+    if (layout.sidebar && selectedElement.currentTab === Tab.NOTES) {
       document
         .getElementById(`scroll_note_${data.id}`)
         .scrollIntoView({ behavior: "smooth" });
-    } else {
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.NOTE,
-        id: data.id,
-        open: true,
-      }));
     }
   };
 

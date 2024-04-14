@@ -1,20 +1,27 @@
 import { useState } from "react";
 import { Row, Col, Button, Collapse } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useNotes } from "../../../hooks";
+import { useNotes, useSelect } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import NoteInfo from "./NoteInfo";
 
 export default function NotesTab() {
   const { notes, addNote } = useNotes();
-  const [activeKey, setActiveKey] = useState("");
+  const { selectedElement, setSelectedElement } = useSelect();
 
   return (
     <>
       <Row gutter={6}>
         <Col span={16}>
-          <SearchBar setActiveKey={setActiveKey} />
+          <SearchBar
+            setActiveKey={(activeKey) =>
+              setSelectedElement((prev) => ({
+                ...prev,
+                id: parseInt(activeKey),
+              }))
+            }
+          />
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addNote()}>
@@ -26,8 +33,14 @@ export default function NotesTab() {
         <Empty title="No text notes" text="Add notes cuz why not!" />
       ) : (
         <Collapse
-          activeKey={activeKey}
-          onChange={(k) => setActiveKey(k)}
+          activeKey={selectedElement.open ? `${selectedElement.id}` : ""}
+          onChange={(activeKey) => {
+            setSelectedElement((prev) => ({
+              ...prev,
+              id: parseInt(activeKey),
+              open: true,
+            }));
+          }}
           accordion
         >
           {notes.map((n, i) => (
