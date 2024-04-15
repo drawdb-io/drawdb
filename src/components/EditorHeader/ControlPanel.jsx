@@ -935,7 +935,7 @@ export default function ControlPanel({
             },
           },
           {
-            DjangoModels: () => {
+            "Django Models": () => {
               setModal(MODAL.CODE);
               const src = jsonToDjangoModels({
                 tables: tables,
@@ -945,10 +945,10 @@ export default function ControlPanel({
               setExportData((prev) => ({
                 ...prev,
                 data: src,
-                extension: "sql",
+                extension: "py",
               }));
             },
-          },
+          }          
         ],
         function: () => {},
       },

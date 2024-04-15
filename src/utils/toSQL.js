@@ -1,6 +1,8 @@
-import { sqlDataTypes } from "../data/constants";
+import { sqlDataTypes, SQL_TO_DJANGO_TYPE_MAPPING, 
+        SQL_TO_DJANGO_DELETE_CONSTRAINT_MAPPING, 
+        SQL_TO_DJANGO_UPDATE_CONSTRAINT_MAPPING } 
+        from "../data/constants";
 import { strHasQuotes } from "./utils";
-
 export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
     return '{ "type" : "object", additionalProperties : true }';
@@ -400,6 +402,9 @@ export function jsonToSQLite(obj) {
 export function jsonToDjangoModels(obj) {
   let djangoCode = "";
 
+  djangoCode += "from django.db import models\n";
+  djangoCode += "from django.db.models import DO_NOTHING, CASCADE, PROTECT, SET_NULL, SET_DEFAULT\n\n";
+
   obj.types.forEach(type => {
     let typeStatements = [];
     
@@ -409,10 +414,10 @@ export function jsonToDjangoModels(obj) {
       }
     });
 
-    // Generate Django model definition
     djangoCode += `class ${type.name}(models.Model) {\n`;
     type.fields.forEach(field => {
-      djangoCode += `    ${field.name} = models.${getTypeString(field)}(`;
+      const djangoType = SQL_TO_DJANGO_TYPE_MAPPING[field.type] || 'CharField';
+      djangoCode += `    ${field.name} = models.${djangoType}(`;
       if (field.primary) {
         djangoCode += "primary_key=True, ";
       }
@@ -433,7 +438,8 @@ export function jsonToDjangoModels(obj) {
   obj.tables.forEach(table => {
     djangoCode += `class ${table.name}(models.Model) {\n`;
     table.fields.forEach(field => {
-      djangoCode += `    ${field.name} = models.${getTypeString(field)}(`;
+      const djangoType = SQL_TO_DJANGO_TYPE_MAPPING[field.type] || 'CharField'; // Convert SQL type to Django type
+      djangoCode += `    ${field.name} = models.${djangoType}(`;
       if (field.primary) {
         djangoCode += "primary_key=True, ";
       }
@@ -454,8 +460,10 @@ export function jsonToDjangoModels(obj) {
   obj.references.forEach(reference => {
     const startTable = obj.tables[reference.startTableId];
     const endTable = obj.tables[reference.endTableId];
+    const deleteConstraint = SQL_TO_DJANGO_DELETE_CONSTRAINT_MAPPING[reference.deleteConstraint.toUpperCase()] || 'CASCADE'; 
+    const updateConstraint = SQL_TO_DJANGO_UPDATE_CONSTRAINT_MAPPING[reference.updateConstraint.toUpperCase()] || 'CASCADE';
     djangoCode += `class ${startTable.name}(models.Model) {\n`;
-    djangoCode += `    ${endTable.name} = models.ForeignKey('${endTable.name}', on_delete=models.${reference.deleteConstraint}, related_name='${startTable.name.toLowerCase()}_${endTable.name.toLowerCase()}', db_column='${endTable.name.toLowerCase()}')\n`;
+    djangoCode += `    ${endTable.name} = models.ForeignKey('${endTable.name}', on_delete=models.${deleteConstraint}, related_name='${startTable.name.toLowerCase()}_${endTable.name.toLowerCase()}', db_column='${endTable.name.toLowerCase()}', on_update=models.${updateConstraint})\n`;
     djangoCode += `\n`;
   });
 

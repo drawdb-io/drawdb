@@ -126,3 +126,42 @@ export const SIDESHEET = {
   TODO: 1,
   TIMELINE: 2,
 };
+
+export const SQL_TO_DJANGO_TYPE_MAPPING = {
+  'INT': 'IntegerField',
+  'TINYINT': 'SmallIntegerField',
+  'SMALLINT': 'SmallIntegerField',
+  'MEDIUMINT': 'IntegerField',
+  'BIGINT': 'BigIntegerField',
+  'FLOAT': 'FloatField',
+  'DOUBLE': 'FloatField',
+  'DECIMAL': 'DecimalField',
+  'DATE': 'DateField',
+  'TIME': 'TimeField',
+  'DATETIME': 'DateTimeField',
+  'TIMESTAMP': 'DateTimeField',
+  'YEAR': 'IntegerField',
+  'CHAR': 'CharField',
+  'VARCHAR': 'CharField',
+  'TEXT': 'TextField',
+  'BLOB': 'BinaryField',
+  'MEDIUMBLOB': 'BinaryField',
+  'LONGBLOB': 'BinaryField',
+  'TINYBLOB': 'BinaryField',
+};
+
+export const SQL_TO_DJANGO_DELETE_CONSTRAINT_MAPPING = {
+  'NO ACTION': 'DO_NOTHING',
+  'RESTRICT': 'PROTECT',
+  'CASCADE': 'CASCADE',
+  'SET NULL': 'SET_NULL',
+  'SET DEFAULT': 'SET_DEFAULT',
+};
+
+export const SQL_TO_DJANGO_UPDATE_CONSTRAINT_MAPPING = {
+  'NO ACTION': 'DO_NOTHING',
+  'RESTRICT': 'PROTECT',
+  'CASCADE': 'CASCADE',
+  'SET NULL': 'SET_NULL',
+  'SET DEFAULT': 'SET_DEFAULT',
+};
