@@ -14,8 +14,8 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: jpberno
-        password: dckr_pat_-5mmdsAWDh8DHZsJfZ4lN9d3Qew
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build and push
       uses: docker/build-push-action@v5
