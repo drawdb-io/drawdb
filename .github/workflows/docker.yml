@@ -1,0 +1,29 @@
+name: Docker Build and Push
+
+on:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: jpberno
+        password: dckr_pat_-5mmdsAWDh8DHZsJfZ4lN9d3Qew
+    
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: jpberno/test-drawdb:latest #ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
