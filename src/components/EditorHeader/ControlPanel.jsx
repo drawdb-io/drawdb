@@ -1024,7 +1024,7 @@ export default function ControlPanel({
         },
       },
       "Field details": {
-        state: layout.showFieldSummary ? "on" : "off",
+        state: settings.showFieldSummary ? "on" : "off",
         function: viewFieldSummary,
         shortcut: "Ctrl+Shift+F",
       },
