@@ -17,31 +17,16 @@ export default function ColorPalette({
       </div>
       <hr />
       <div className="py-3 space-y-3">
-        <div>
-          {tableThemes.slice(0, Math.ceil(tableThemes.length / 2)).map((c) => (
+        <div className="flex flex-wrap w-72 gap-y-2">
+          {tableThemes.map((c) => (
             <button
               key={c}
               style={{ backgroundColor: c }}
-              className="p-3 rounded-full mx-1"
-              onClick={() => onPickColor(c)}
-            >
-              {currentColor === c ? (
-                <IconCheckboxTick style={{ color: "white" }} />
-              ) : (
-                <IconCheckboxTick style={{ color: c }} />
-              )}
-            </button>
-          ))}
-        </div>
-        <div>
-          {tableThemes.slice(Math.ceil(tableThemes.length / 2)).map((c) => (
-            <button
-              key={c}
-              style={{ backgroundColor: c }}
-              className="p-3 rounded-full mx-1"
+              className="w-10 h-10 rounded-full mx-1"
               onClick={() => onPickColor(c)}
             >
               <IconCheckboxTick
+                className="pt-1"
                 style={{
                   color: currentColor === c ? "white" : c,
                 }}
