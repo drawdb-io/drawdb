@@ -21,5 +21,5 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         push: true
-        tags: jpberno/test-drawdb:latest #ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
