@@ -24,7 +24,6 @@ export default function TableInfo({ data }) {
   const [editField, setEditField] = useState({});
   const draggingElementIndex = useRef();
   const isDragging = useRef();
-  console.log(isDragging.current);
 
   return (
     <div>
@@ -63,7 +62,6 @@ export default function TableInfo({ data }) {
           onDragOver={(e) => {
             e.preventDefault();
             if (isDragging.current) return;
-            console.log("dragging over...");
             isDragging.current = true;
             draggingElementIndex.current = j;
           }}
