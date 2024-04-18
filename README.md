@@ -45,3 +45,9 @@ docker run -p 3000:80 drawdb
 
 Set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample` for the survey and bug report forms.
 
+
+### One Click Deployment
+
+[![Deploy to RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy-md.png)](https://repocloud.io/details/?app_id=262)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/drawdb-io/drawdb)
