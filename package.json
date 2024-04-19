@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/lang-sql": "^6.6.3",
     "@douyinfe/semi-ui": "^2.51.3",
     "@lexical/react": "^0.12.5",
-    "@monaco-editor/react": "^4.6.0",
+    "@uiw/codemirror-theme-github": "^4.21.25",
+    "@uiw/codemirror-theme-vscode": "^4.21.25",
+    "@uiw/react-codemirror": "^4.21.25",
     "@vercel/analytics": "^1.2.2",
     "axios": "^1.6.2",
     "dexie": "^3.2.4",
