@@ -1,5 +1,5 @@
 <h3 align="center">
-    <img width="80" alt="Puter.com, The Personal Cloud Computer: All your files, apps, and games in one place accessible from anywhere at any time." src="./src/assets/icon-dark.png">
+    <img width="80" alt="drawdb logo" src="./src/assets/icon-dark.png">
 </h3>
 
 <h3 align="center">Free, simple, and intuitive database design tool and SQL generator.</h3>
