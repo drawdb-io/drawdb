@@ -26,8 +26,17 @@ import Open from "./Open";
 import New from "./New";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
-import Editor from "@monaco-editor/react";
 import SetTableWidth from "./SetTableWidth";
+import CodeMirror from "@uiw/react-codemirror";
+import { sql } from "@codemirror/lang-sql";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { json } from "@codemirror/lang-json";
+import { githubLight } from "@uiw/codemirror-theme-github";
+
+const languageExtension = {
+  sql: [sql()],
+  json: [json()],
+};
 
 export default function Modal({
   modal,
@@ -233,12 +242,13 @@ export default function Modal({
               {modal === MODAL.IMG ? (
                 <Image src={exportData.data} alt="Diagram" height={280} />
               ) : (
-                <Editor
-                  height="360px"
+                <CodeMirror
                   value={exportData.data}
-                  language={exportData.extension}
-                  options={{ readOnly: true }}
-                  theme={settings.mode === "light" ? "light" : "vs-dark"}
+                  height="360px"
+                  extensions={languageExtension[exportData.extension]}
+                  onChange={() => {}}
+                  editable={false}
+                  theme={settings.mode === "dark" ? vscodeDark : githubLight}
                 />
               )}
               <div className="text-sm font-semibold mt-2">Filename:</div>
