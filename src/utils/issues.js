@@ -14,8 +14,14 @@ function checkDefault(field) {
     case "BIGINT":
     case "SMALLINT":
       return /^-?\d*$/.test(field.default);
+    case "SET": {
+      const defaultValues = field.default.split(",");
+      for (let i = 0; i < defaultValues.length; i++) {
+        if (!field.values.includes(defaultValues[i].trim())) return false;
+      }
+      return true;
+    }
     case "ENUM":
-    case "SET":
       return field.values.includes(field.default);
     case "CHAR":
     case "VARCHAR":
