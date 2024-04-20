@@ -58,7 +58,14 @@ export function astToDiagram(ast) {
               }
               field.default = defaultValue;
             }
-            if (d.definition["length"]) field.size = d.definition["length"];
+            if (d.definition["length"]) {
+              if (d.definition.scale) {
+                field.size =
+                  "(" + d.definition["length"] + "," + d.definition.scale + ")";
+              } else {
+                field.size = d.definition["length"];
+              }
+            }
             field.check = "";
             if (d.check) {
               let check = "";
