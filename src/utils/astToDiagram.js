@@ -31,7 +31,30 @@ export function astToDiagram(ast) {
             field.primary = false;
             if (d.primary_key) field.primary = true;
             field.default = "";
-            if (d.default_val) field.default = d.default_val.value.value.toString();
+            if (d.default_val) {
+              let defaultValue = "";
+              if (d.default_val.value.type === "function") {
+                defaultValue = d.default_val.value.name;
+                if (d.default_val.value.args) {
+                  defaultValue +=
+                    "(" +
+                    d.default_val.value.args.value
+                      .map((v) => {
+                        if (
+                          v.type === "single_quote_string" ||
+                          v.type === "double_quote_string"
+                        )
+                          return "'" + v.value + "'";
+                        return v.value;
+                      })
+                      .join(", ") +
+                    ")";
+                }
+              } else {
+                defaultValue = d.default_val.value.value.toString();
+              }
+              field.default = defaultValue;
+            }
             if (d.definition["length"]) field.size = d.definition["length"];
             field.check = "";
             if (d.check) {
@@ -135,7 +158,7 @@ export function astToDiagram(ast) {
                 deleteConstraint[0].toUpperCase() +
                 deleteConstraint.substring(1);
             }
-          }
+          },
         );
 
         let startTableId = -1;
