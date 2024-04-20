@@ -30,7 +30,8 @@ function checkDefault(field) {
       );
     case "BOOLEAN":
       return (
-        field.default.trim() === "false" || field.default.trim() === "true"
+        field.default.trim().toLowerCase() === "false" ||
+        field.default.trim().toLowerCase() === "true"
       );
     case "FLOAT":
     case "DECIMAL":
