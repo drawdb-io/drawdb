@@ -21,6 +21,9 @@ export function astToDiagram(ast) {
             const field = {};
             field.name = d.column.column;
             field.type = d.definition.dataType;
+            if (d.definition.expr && d.definition.expr.type === "expr_list") {
+              field.values = d.definition.expr.value.map((v) => v.value);
+            }
             field.comment = "";
             field.unique = false;
             if (d.unique) field.unique = true;
