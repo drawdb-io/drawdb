@@ -114,9 +114,17 @@ export default function Modal({
     try {
       ast = parser.astify(importSource.src, { database: "MySQL" });
     } catch (err) {
-      Toast.error(
-        "Could not parse the sql file. Make sure there are no syntax errors.",
-      );
+      setError({
+        type: STATUS.ERROR,
+        message:
+          err.name +
+          " [Ln " +
+          err.location.start.line +
+          ", Col " +
+          err.location.start.column +
+          "]: " +
+          err.message,
+      });
       return;
     }
 
@@ -133,6 +141,7 @@ export default function Modal({
       setTables((prev) => [...prev, ...d.tables]);
       setRelationships((prev) => [...prev, ...d.relationships]);
     }
+    setModal(MODAL.NONE);
   };
 
   const createNewDiagram = (id) => {
@@ -167,7 +176,6 @@ export default function Modal({
         return;
       case MODAL.IMPORT_SRC:
         parseSQLAndLoadDiagram();
-        setModal(MODAL.NONE);
         return;
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;
@@ -207,6 +215,7 @@ export default function Modal({
           <ImportSource
             importData={importSource}
             setImportData={setImportSource}
+            error={error}
             setError={setError}
           />
         );
