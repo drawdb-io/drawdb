@@ -62,6 +62,9 @@ function checkDefault(field) {
       return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
     }
     case "DATETIME": {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
       if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
         return false;
       }
