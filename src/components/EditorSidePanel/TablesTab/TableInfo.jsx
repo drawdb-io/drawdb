@@ -19,7 +19,8 @@ import IndexDetails from "./IndexDetails";
 
 export default function TableInfo({ data }) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const { deleteTable, updateTable, updateField } = useTables();
+  const { deleteTable, updateTable, updateField, setRelationships } =
+    useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const draggingElementIndex = useRef();
@@ -79,6 +80,28 @@ export default function TableInfo({ data }) {
 
             updateField(data.id, index, { ...b, id: index });
             updateField(data.id, j, { ...a, id: j });
+
+            setRelationships((prev) =>
+              prev.map((e) => {
+                if (e.startTableId === data.id) {
+                  if (e.startFieldId === index) {
+                    return { ...e, startFieldId: j };
+                  }
+                  if (e.startFieldId === j) {
+                    return { ...e, startFieldId: index };
+                  }
+                }
+                if (e.endTableId === data.id) {
+                  if (e.endFieldId === index) {
+                    return { ...e, endFieldId: j };
+                  }
+                  if (e.endFieldId === j) {
+                    return { ...e, endFieldId: index };
+                  }
+                }
+                return e;
+              }),
+            );
           }}
           onDragEnd={(e) => {
             e.preventDefault();
