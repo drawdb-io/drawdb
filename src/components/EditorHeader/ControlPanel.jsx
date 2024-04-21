@@ -30,6 +30,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToDjangoModels
 } from "../../utils/toSQL";
 import {
   ObjectType,
@@ -933,6 +934,21 @@ export default function ControlPanel({
               }));
             },
           },
+          {
+            "Django Models": () => {
+              setModal(MODAL.CODE);
+              const src = jsonToDjangoModels({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "py",
+              }));
+            },
+          }          
         ],
         function: () => {},
       },
