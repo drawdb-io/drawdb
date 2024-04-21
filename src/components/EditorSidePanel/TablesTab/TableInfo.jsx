@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Collapse,
   Row,
@@ -19,9 +19,11 @@ import IndexDetails from "./IndexDetails";
 
 export default function TableInfo({ data }) {
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const { deleteTable, updateTable } = useTables();
+  const { deleteTable, updateTable, updateField } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const draggingElementIndex = useRef();
+  const isDragging = useRef();
 
   return (
     <div>
@@ -53,7 +55,38 @@ export default function TableInfo({ data }) {
         />
       </div>
       {data.fields.map((f, j) => (
-        <TableField key={"field_" + j} data={f} tid={data.id} index={j} />
+        <div
+          key={"field_" + j}
+          className="cursor-pointer"
+          draggable
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (isDragging.current) return;
+            isDragging.current = true;
+            draggingElementIndex.current = j;
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            isDragging.current = false;
+            const index = draggingElementIndex.current;
+
+            if (index == null || index === j) {
+              return;
+            }
+
+            const a = data.fields[index];
+            const b = data.fields[j];
+
+            updateField(data.id, index, { ...b, id: index });
+            updateField(data.id, j, { ...a, id: j });
+          }}
+          onDragEnd={(e) => {
+            e.preventDefault();
+            isDragging.current = false;
+          }}
+        >
+          <TableField data={f} tid={data.id} index={j} />
+        </div>
       ))}
       {data.indices.length > 0 && (
         <Card
