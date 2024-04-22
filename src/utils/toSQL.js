@@ -44,10 +44,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
     }
-    if (isSized(field.type)) {
-      return `${field.type}(${field.size})`;
-    }
-    if (hasPrecision(field.type)) {
+    if (hasPrecision(field.type) || isSized(field.type)) {
       return `${field.type}${field.size ? `(${field.size})` : ""}`;
     }
     if (field.type === "SET" || field.type === "ENUM") {

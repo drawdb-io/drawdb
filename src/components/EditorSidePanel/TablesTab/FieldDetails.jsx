@@ -123,9 +123,9 @@ export default function FieldDetails({ data, tid, index }) {
           <div className="font-semibold">Precision</div>
           <Input
             className="my-2 w-full"
-            placeholder="Set precision: (size, d)"
+            placeholder="Set precision: size, d"
             validateStatus={
-              !data.size || /^\(\d+,\s*\d+\)$|^$/.test(data.size)
+              !data.size || /^\d+,\s*\d+$|^$/.test(data.size)
                 ? "default"
                 : "error"
             }

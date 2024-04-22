@@ -60,8 +60,7 @@ export function astToDiagram(ast) {
             }
             if (d.definition["length"]) {
               if (d.definition.scale) {
-                field.size =
-                  "(" + d.definition["length"] + "," + d.definition.scale + ")";
+                field.size = d.definition["length"] + "," + d.definition.scale;
               } else {
                 field.size = d.definition["length"];
               }
@@ -114,13 +113,11 @@ export function astToDiagram(ast) {
             }
           }
         });
-        tables.push(table);
-        tables.forEach((e, i) => {
-          e.id = i;
-          e.fields.forEach((f, j) => {
-            f.id = j;
-          });
+        table.fields.forEach((f, j) => {
+          f.id = j;
         });
+        table.id = tables.length;
+        tables.push(table);
       } else if (e.keyword === "index") {
         const index = {};
         index.name = e.index;
