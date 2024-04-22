@@ -23,8 +23,10 @@ export default function TableInfo({ data }) {
     useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
-  const draggingElementIndex = useRef();
-  const isDragging = useRef();
+  const [drag, setDrag] = useState({
+    draggingElementIndex: null,
+    draggingOverIndexList: [],
+  });
 
   return (
     <div>
@@ -58,19 +60,42 @@ export default function TableInfo({ data }) {
       {data.fields.map((f, j) => (
         <div
           key={"field_" + j}
-          className="cursor-pointer"
+          className={`cursor-pointer ${drag.draggingOverIndexList.includes(j) ? "opacity-25" : ""}`}
           draggable
+          onDragStart={() => {
+            setDrag((prev) => ({ ...prev, draggingElementIndex: j }));
+          }}
+          onDragLeave={() => {
+            setDrag((prev) => ({
+              ...prev,
+              draggingOverIndexList: prev.draggingOverIndexList.filter(
+                (index) => index !== j,
+              ),
+            }));
+          }}
           onDragOver={(e) => {
             e.preventDefault();
-            if (isDragging.current) return;
-            isDragging.current = true;
-            draggingElementIndex.current = j;
+            if (drag.draggingElementIndex != null) {
+              if (j !== drag.draggingElementIndex) {
+                setDrag((prev) => {
+                  if (prev.draggingOverIndexList.includes(j)) {
+                    return prev;
+                  }
+
+                  return {
+                    ...prev,
+                    draggingOverIndexList: prev.draggingOverIndexList.concat(j),
+                  };
+                });
+              }
+
+              return;
+            }
           }}
           onDrop={(e) => {
             e.preventDefault();
-            isDragging.current = false;
-            const index = draggingElementIndex.current;
-
+            const index = drag.draggingElementIndex;
+            setDrag({ draggingElementIndex: null, draggingOverIndexList: [] });
             if (index == null || index === j) {
               return;
             }
@@ -105,7 +130,7 @@ export default function TableInfo({ data }) {
           }}
           onDragEnd={(e) => {
             e.preventDefault();
-            isDragging.current = false;
+            setDrag({ draggingElementIndex: null, draggingOverIndexList: [] });
           }}
         >
           <TableField data={f} tid={data.id} index={j} />
