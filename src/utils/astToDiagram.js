@@ -1,4 +1,9 @@
-import { Cardinality } from "../data/constants";
+import {
+  Cardinality,
+  tableColorStripHeight,
+  tableFieldHeight,
+  tableHeaderHeight,
+} from "../data/constants";
 
 export function astToDiagram(ast) {
   const tables = [];
@@ -14,8 +19,6 @@ export function astToDiagram(ast) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.x = 0;
-        table.y = 0;
         e.create_definitions.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
@@ -277,6 +280,26 @@ export function astToDiagram(ast) {
   });
 
   relationships.forEach((r, i) => (r.id = i));
+
+  let maxHeight = -1;
+  const tableWidth = 200;
+  const gapX = 54;
+  const gapY = 40;
+  tables.forEach((table, i) => {
+    if (i < tables.length / 2) {
+      table.x = i * tableWidth + (i + 1) * gapX;
+      table.y = gapY;
+      const height =
+        table.fields.length * tableFieldHeight +
+        tableHeaderHeight +
+        tableColorStripHeight;
+      maxHeight = Math.max(height, maxHeight);
+    } else {
+      const index = tables.length - i - 1;
+      table.x = index * tableWidth + (index + 1) * gapX;
+      table.y = maxHeight + 2 * gapY;
+    }
+  });
 
   return { tables, relationships };
 }

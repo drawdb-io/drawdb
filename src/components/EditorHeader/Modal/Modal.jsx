@@ -132,6 +132,7 @@ export default function Modal({
     if (importSource.overwrite) {
       setTables(d.tables);
       setRelationships(d.relationships);
+      setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
       setNotes([]);
       setAreas([]);
       setTypes([]);
