@@ -8,7 +8,6 @@ import {
 export function astToDiagram(ast) {
   const tables = [];
   const relationships = [];
-  const inlineForeignKeys = [];
 
   ast.forEach((e) => {
     if (e.type === "create") {
@@ -19,6 +18,7 @@ export function astToDiagram(ast) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
+        table.id = tables.length;
         e.create_definitions.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
@@ -112,14 +112,57 @@ export function astToDiagram(ast) {
                 });
               });
             } else if (d.constraint_type === "FOREIGN KEY") {
-              inlineForeignKeys.push({ ...d, startTable: e.table[0].table });
+              const relationship = {};
+              const startTableId = table.id;
+              const startTable = e.table[0].table;
+              const startField = d.definition[0].column;
+              const endTable = d.reference_definition.table[0].table;
+              const endField = d.reference_definition.definition[0].column;
+
+              const endTableId = tables.findIndex((t) => t.name === endTable);
+              if (endTableId === -1) return;
+
+              const endFieldId = tables[endTableId].fields.findIndex(
+                (f) => f.name === endField,
+              );
+              if (endField === -1) return;
+
+              const startFieldId = table.fields.findIndex(
+                (f) => f.name === startField,
+              );
+              if (startFieldId === -1) return;
+
+              relationship.name = startTable + "_" + startField + "_fk";
+              relationship.startTableId = startTableId;
+              relationship.endTableId = endTableId;
+              relationship.endFieldId = endFieldId;
+              relationship.startFieldId = startFieldId;
+              let updateConstraint = "No action";
+              let deleteConstraint = "No action";
+              d.reference_definition.on_action.forEach((c) => {
+                if (c.type === "on update") {
+                  updateConstraint = c.value.value;
+                  updateConstraint =
+                    updateConstraint[0].toUpperCase() +
+                    updateConstraint.substring(1);
+                } else if (c.type === "on delete") {
+                  deleteConstraint = c.value.value;
+                  deleteConstraint =
+                    deleteConstraint[0].toUpperCase() +
+                    deleteConstraint.substring(1);
+                }
+              });
+
+              relationship.updateConstraint = updateConstraint;
+              relationship.deleteConstraint = deleteConstraint;
+              relationship.cardinality = Cardinality.ONE_TO_ONE;
+              relationships.push(relationship);
             }
           }
         });
         table.fields.forEach((f, j) => {
           f.id = j;
         });
-        table.id = tables.length;
         tables.push(table);
       } else if (e.keyword === "index") {
         const index = {};
@@ -141,142 +184,68 @@ export function astToDiagram(ast) {
         if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
       }
     } else if (e.type === "alter") {
-      if (
-        e.expr[0].action === "add" &&
-        e.expr[0].create_definitions.constraint_type === "FOREIGN KEY"
-      ) {
-        const relationship = {};
-        const startTable = e.table[0].table;
-        const startField = e.expr[0].create_definitions.definition[0].column;
-        const endTable =
-          e.expr[0].create_definitions.reference_definition.table[0].table;
-        const endField =
-          e.expr[0].create_definitions.reference_definition.definition[0]
-            .column;
-        let updateConstraint = "No action";
-        let deleteConstraint = "No action";
-        e.expr[0].create_definitions.reference_definition.on_action.forEach(
-          (c) => {
-            if (c.type === "on update") {
-              updateConstraint = c.value.value;
-              updateConstraint =
-                updateConstraint[0].toUpperCase() +
-                updateConstraint.substring(1);
-            } else if (c.type === "on delete") {
-              deleteConstraint = c.value.value;
-              deleteConstraint =
-                deleteConstraint[0].toUpperCase() +
-                deleteConstraint.substring(1);
-            }
-          },
-        );
+      e.expr.forEach((expr) => {
+        if (
+          expr.action === "add" &&
+          expr.create_definitions.constraint_type === "FOREIGN KEY"
+        ) {
+          console.log(e);
+          const relationship = {};
+          const startTable = e.table[0].table;
+          const startField = expr.create_definitions.definition[0].column;
+          const endTable =
+            expr.create_definitions.reference_definition.table[0].table;
+          const endField =
+            expr.create_definitions.reference_definition.definition[0].column;
+          let updateConstraint = "No action";
+          let deleteConstraint = "No action";
+          expr.create_definitions.reference_definition.on_action.forEach(
+            (c) => {
+              if (c.type === "on update") {
+                updateConstraint = c.value.value;
+                updateConstraint =
+                  updateConstraint[0].toUpperCase() +
+                  updateConstraint.substring(1);
+              } else if (c.type === "on delete") {
+                deleteConstraint = c.value.value;
+                deleteConstraint =
+                  deleteConstraint[0].toUpperCase() +
+                  deleteConstraint.substring(1);
+              }
+            },
+          );
 
-        let startTableId = -1;
-        let startFieldId = -1;
-        let endTableId = -1;
-        let endFieldId = -1;
+          const startTableId = tables.findIndex((t) => t.name === startTable);
+          if (startTable === -1) return;
 
-        tables.forEach((t) => {
-          if (t.name === startTable) {
-            startTableId = t.id;
-            return;
-          }
+          const endTableId = tables.findIndex((t) => t.name === endTable);
+          if (endTableId === -1) return;
 
-          if (t.name === endTable) {
-            endTableId = t.id;
-          }
-        });
+          const endFieldId = tables[endTableId].fields.findIndex(
+            (f) => f.name === endField,
+          );
+          if (endField === -1) return;
 
-        if (startTableId === -1 || endTableId === -1) return;
+          const startFieldId = tables[startTableId].fields.findIndex(
+            (f) => f.name === startField,
+          );
+          if (startFieldId === -1) return;
 
-        tables[startTableId].fields.forEach((f) => {
-          if (f.name === startField) {
-            startFieldId = f.id;
-            return;
-          }
+          relationship.name = startTable + "_" + startField + "_fk";
+          relationship.startTableId = startTableId;
+          relationship.startFieldId = startFieldId;
+          relationship.endTableId = endTableId;
+          relationship.endFieldId = endFieldId;
+          relationship.updateConstraint = updateConstraint;
+          relationship.deleteConstraint = deleteConstraint;
+          relationship.cardinality = Cardinality.ONE_TO_ONE;
+          relationships.push(relationship);
+          console.log(relationship);
 
-          if (f.name === endField) {
-            endFieldId = f.id;
-          }
-        });
-
-        if (startFieldId === -1 || endFieldId === -1) return;
-
-        relationship.name = startTable + "_" + startField + "_fk";
-        relationship.startTableId = startTableId;
-        relationship.startFieldId = startFieldId;
-        relationship.endTableId = endTableId;
-        relationship.endFieldId = endFieldId;
-        relationship.updateConstraint = updateConstraint;
-        relationship.deleteConstraint = deleteConstraint;
-        relationship.cardinality = Cardinality.ONE_TO_ONE;
-        relationships.push(relationship);
-
-        relationships.forEach((r, i) => (r.id = i));
-      }
+          relationships.forEach((r, i) => (r.id = i));
+        }
+      });
     }
-  });
-
-  inlineForeignKeys.forEach((fk) => {
-    const relationship = {};
-    const startTable = fk.startTable;
-    const startField = fk.definition[0].column;
-    const endTable = fk.reference_definition.table[0].table;
-    const endField = fk.reference_definition.definition[0].column;
-    let updateConstraint = "No action";
-    let deleteConstraint = "No action";
-    fk.reference_definition.on_action.forEach((c) => {
-      if (c.type === "on update") {
-        updateConstraint = c.value.value;
-        updateConstraint =
-          updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
-      } else if (c.type === "on delete") {
-        deleteConstraint = c.value.value;
-        deleteConstraint =
-          deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
-      }
-    });
-
-    let startTableId = -1;
-    let startFieldId = -1;
-    let endTableId = -1;
-    let endFieldId = -1;
-
-    tables.forEach((t) => {
-      if (t.name === startTable) {
-        startTableId = t.id;
-        return;
-      }
-
-      if (t.name === endTable) {
-        endTableId = t.id;
-      }
-    });
-
-    if (startTableId === -1 || endTableId === -1) return;
-
-    tables[startTableId].fields.forEach((f) => {
-      if (f.name === startField) {
-        startFieldId = f.id;
-        return;
-      }
-
-      if (f.name === endField) {
-        endFieldId = f.id;
-      }
-    });
-
-    if (startFieldId === -1 || endFieldId === -1) return;
-
-    relationship.name = startTable + "_" + startField + "_fk";
-    relationship.startTableId = startTableId;
-    relationship.startFieldId = startFieldId;
-    relationship.endTableId = endTableId;
-    relationship.endFieldId = endFieldId;
-    relationship.updateConstraint = updateConstraint;
-    relationship.deleteConstraint = deleteConstraint;
-    relationship.cardinality = Cardinality.ONE_TO_ONE;
-    relationships.push(relationship);
   });
 
   relationships.forEach((r, i) => (r.id = i));
