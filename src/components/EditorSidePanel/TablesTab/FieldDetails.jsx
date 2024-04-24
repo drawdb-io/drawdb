@@ -80,7 +80,7 @@ export default function FieldDetails({ data, tid, index }) {
                   undo: editField,
                   redo: { values: data.values },
                   message: `Edit table field values to "${JSON.stringify(
-                    data.values
+                    data.values,
                   )}"`,
                 },
               ]);
@@ -123,9 +123,11 @@ export default function FieldDetails({ data, tid, index }) {
           <div className="font-semibold">Precision</div>
           <Input
             className="my-2 w-full"
-            placeholder="Set precision: (size, d)"
+            placeholder="Set precision: size, d"
             validateStatus={
-              /^\(\d+,\s*\d+\)$|^$/.test(data.size) ? "default" : "error"
+              !data.size || /^\d+,\s*\d+$|^$/.test(data.size)
+                ? "default"
+                : "error"
             }
             value={data.size}
             onChange={(value) => updateField(tid, index, { size: value })}

@@ -1,5 +1,5 @@
 import { sqlDataTypes } from "../data/constants";
-import { strHasQuotes } from "./utils";
+import { isFunction, isKeyword, strHasQuotes } from "./utils";
 
 export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
@@ -44,10 +44,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
     }
-    if (isSized(field.type)) {
-      return `${field.type}(${field.size})`;
-    }
-    if (hasPrecision(field.type)) {
+    if (hasPrecision(field.type) || isSized(field.type)) {
       return `${field.type}${field.size ? `(${field.size})` : ""}`;
     }
     if (field.type === "SET" || field.type === "ENUM") {
@@ -147,13 +144,16 @@ export function hasQuotes(type) {
 }
 
 export function parseDefault(field) {
-  if (strHasQuotes(field.default)) {
+  if (
+    strHasQuotes(field.default) ||
+    isFunction(field.default) ||
+    isKeyword(field.default) ||
+    !hasQuotes(field.type)
+  ) {
     return field.default;
   }
 
-  return hasQuotes(field.type) && field.default.toLowerCase() !== "null"
-    ? `'${field.default}'`
-    : `${field.default}`;
+  return `'${field.default}'`;
 }
 
 export function jsonToMySQL(obj) {

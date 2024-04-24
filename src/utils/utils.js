@@ -24,3 +24,13 @@ export function strHasQuotes(str) {
     (str[0] === str[str.length - 1] && str[0] === "`")
   );
 }
+
+const keywords = ["CURRENT_TIMESTAMP", "NULL"];
+
+export function isKeyword(str) {
+  return keywords.includes(str.toUpperCase());
+}
+
+export function isFunction(str) {
+  return /\w+\([^)]*\)$/.test(str);
+}

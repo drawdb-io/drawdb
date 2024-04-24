@@ -1,4 +1,4 @@
-import { strHasQuotes } from "./utils";
+import { isFunction, strHasQuotes } from "./utils";
 
 function validateDateStr(str) {
   return /^(?!0000)(?!00)(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9]|3[01])|(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31))$/.test(
@@ -9,13 +9,23 @@ function validateDateStr(str) {
 function checkDefault(field) {
   if (field.default === "") return true;
 
+  if (isFunction(field.default)) return true;
+
+  if (!field.notNull && field.default.toLowerCase() === "null") return true;
+
   switch (field.type) {
     case "INT":
     case "BIGINT":
     case "SMALLINT":
       return /^-?\d*$/.test(field.default);
+    case "SET": {
+      const defaultValues = field.default.split(",");
+      for (let i = 0; i < defaultValues.length; i++) {
+        if (!field.values.includes(defaultValues[i].trim())) return false;
+      }
+      return true;
+    }
     case "ENUM":
-    case "SET":
       return field.values.includes(field.default);
     case "CHAR":
     case "VARCHAR":
@@ -30,7 +40,8 @@ function checkDefault(field) {
       );
     case "BOOLEAN":
       return (
-        field.default.trim() === "false" || field.default.trim() === "true"
+        field.default.trim().toLowerCase() === "false" ||
+        field.default.trim().toLowerCase() === "true"
       );
     case "FLOAT":
     case "DECIMAL":
@@ -55,6 +66,9 @@ function checkDefault(field) {
       return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
     }
     case "DATETIME": {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
       if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
         return false;
       }
@@ -116,12 +130,6 @@ export function getIssues(diagram) {
         );
       }
 
-      if (field.type === "DOUBLE" && field.size !== "") {
-        issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`,
-        );
-      }
-
       if (duplicateFieldNames[field.name]) {
         issues.push(`Duplicate table fields in table "${table.name}"`);
       } else {
@@ -180,12 +188,6 @@ export function getIssues(diagram) {
             `"${field.name}" field of type "${type.name}" is of type ${field.type} but no values have been specified`,
           );
         }
-      }
-
-      if (field.type === "DOUBLE" && field.size !== "") {
-        issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`,
-        );
       }
 
       if (duplicateFieldNames[field.name]) {

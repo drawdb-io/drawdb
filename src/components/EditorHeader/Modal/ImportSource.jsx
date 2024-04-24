@@ -1,7 +1,12 @@
-import { Upload, Checkbox } from "@douyinfe/semi-ui";
+import { Upload, Checkbox, Banner } from "@douyinfe/semi-ui";
 import { STATUS } from "../../../data/constants";
 
-export default function ImportSource({ importData, setImportData, setError }) {
+export default function ImportSource({
+  importData,
+  setImportData,
+  error,
+  setError,
+}) {
   return (
     <div>
       <Upload
@@ -60,6 +65,29 @@ export default function ImportSource({ importData, setImportData, setError }) {
         >
           Overwrite existing diagram
         </Checkbox>
+        <div className="mt-2">
+          {error.type === STATUS.ERROR ? (
+            <Banner
+              type="danger"
+              fullMode={false}
+              description={<div>{error.message}</div>}
+            />
+          ) : error.type === STATUS.OK ? (
+            <Banner
+              type="info"
+              fullMode={false}
+              description={<div>{error.message}</div>}
+            />
+          ) : (
+            error.type === STATUS.WARNING && (
+              <Banner
+                type="warning"
+                fullMode={false}
+                description={<div>{error.message}</div>}
+              />
+            )
+          )}
+        </div>
       </div>
     </div>
   );
