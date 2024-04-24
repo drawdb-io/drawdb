@@ -56,6 +56,8 @@ export function astToDiagram(ast) {
                       .join(", ") +
                     ")";
                 }
+              } else if (d.default_val.value.type === "null") {
+                defaultValue = "NULL";
               } else {
                 defaultValue = d.default_val.value.value.toString();
               }
@@ -189,7 +191,6 @@ export function astToDiagram(ast) {
           expr.action === "add" &&
           expr.create_definitions.constraint_type === "FOREIGN KEY"
         ) {
-          console.log(e);
           const relationship = {};
           const startTable = e.table[0].table;
           const startField = expr.create_definitions.definition[0].column;
@@ -240,7 +241,6 @@ export function astToDiagram(ast) {
           relationship.deleteConstraint = deleteConstraint;
           relationship.cardinality = Cardinality.ONE_TO_ONE;
           relationships.push(relationship);
-          console.log(relationship);
 
           relationships.forEach((r, i) => (r.id = i));
         }
