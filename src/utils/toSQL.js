@@ -181,7 +181,7 @@ export function jsonToMySQL(obj) {
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }`,
+              }${field.comment ? ` COMMENT '${field.comment}'` : ''}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -190,7 +190,7 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n);\n${
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${
           table.indices.length > 0
             ? `\n${table.indices.map(
                 (i) =>
