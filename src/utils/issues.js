@@ -128,12 +128,6 @@ export function getIssues(diagram) {
         );
       }
 
-      if (field.type === "DOUBLE" && field.size !== "") {
-        issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`,
-        );
-      }
-
       if (duplicateFieldNames[field.name]) {
         issues.push(`Duplicate table fields in table "${table.name}"`);
       } else {
@@ -192,12 +186,6 @@ export function getIssues(diagram) {
             `"${field.name}" field of type "${type.name}" is of type ${field.type} but no values have been specified`,
           );
         }
-      }
-
-      if (field.type === "DOUBLE" && field.size !== "") {
-        issues.push(
-          `Specifying number of digits for floating point data types is deprecated.`,
-        );
       }
 
       if (duplicateFieldNames[field.name]) {
