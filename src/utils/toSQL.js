@@ -1,5 +1,5 @@
 import { sqlDataTypes } from "../data/constants";
-import { isFunction, strHasQuotes } from "./utils";
+import { isFunction, isKeyword, strHasQuotes } from "./utils";
 
 export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
@@ -144,13 +144,16 @@ export function hasQuotes(type) {
 }
 
 export function parseDefault(field) {
-  if (strHasQuotes(field.default) || isFunction(field.default)) {
+  if (
+    strHasQuotes(field.default) ||
+    isFunction(field.default) ||
+    isKeyword(field.default) ||
+    !hasQuotes(field.type)
+  ) {
     return field.default;
   }
 
-  return hasQuotes(field.type) && field.default.toLowerCase() !== "null"
-    ? `'${field.default}'`
-    : `${field.default}`;
+  return `'${field.default}'`;
 }
 
 export function jsonToMySQL(obj) {
