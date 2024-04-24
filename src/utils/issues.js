@@ -11,6 +11,8 @@ function checkDefault(field) {
 
   if (isFunction(field.default)) return true;
 
+  if (!field.notNull && field.default.toLowerCase() === "null") return true;
+
   switch (field.type) {
     case "INT":
     case "BIGINT":
