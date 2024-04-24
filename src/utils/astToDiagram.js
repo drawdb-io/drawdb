@@ -5,6 +5,42 @@ import {
   tableHeaderHeight,
 } from "../data/constants";
 
+function buildSQLFromAST(ast) {
+  if (ast.type === "binary_expr") {
+    const leftSQL = buildSQLFromAST(ast.left);
+    const rightSQL = buildSQLFromAST(ast.right);
+    return `(${leftSQL}) ${ast.operator} (${rightSQL})`;
+  }
+
+  if (ast.type === "function") {
+    let expr = "";
+    expr = ast.name;
+    if (ast.args) {
+      expr +=
+        "(" +
+        ast.args.value
+          .map((v) => {
+            if (v.type === "column_ref") return "`" + v.column + "`";
+            if (
+              v.type === "single_quote_string" ||
+              v.type === "double_quote_string"
+            )
+              return "'" + v.value + "'";
+            return v.value;
+          })
+          .join(", ") +
+        ")";
+    }
+    return expr;
+  } else if (ast.type === "column_ref") {
+    return "`" + ast.column + "`";
+  } else if (ast.type === "expr_list") {
+    return ast.value.map((v) => v.value).join(" AND ");
+  } else {
+    return ast.value;
+  }
+}
+
 export function astToDiagram(ast) {
   const tables = [];
   const relationships = [];
@@ -72,35 +108,7 @@ export function astToDiagram(ast) {
             }
             field.check = "";
             if (d.check) {
-              let check = "";
-              if (d.check.definition[0].left.column) {
-                let value = d.check.definition[0].right.value;
-                if (
-                  d.check.definition[0].right.type === "double_quote_string" ||
-                  d.check.definition[0].right.type === "single_quote_string"
-                )
-                  value = "'" + value + "'";
-                check =
-                  d.check.definition[0].left.column +
-                  " " +
-                  d.check.definition[0].operator +
-                  " " +
-                  value;
-              } else {
-                let value = d.check.definition[0].right.value;
-                if (
-                  d.check.definition[0].left.type === "double_quote_string" ||
-                  d.check.definition[0].left.type === "single_quote_string"
-                )
-                  value = "'" + value + "'";
-                check =
-                  value +
-                  " " +
-                  d.check.definition[0].operator +
-                  " " +
-                  d.check.definition[0].right.column;
-              }
-              field.check = check;
+              field.check = buildSQLFromAST(d.check.definition[0]);
             }
 
             table.fields.push(field);
