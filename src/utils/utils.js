@@ -24,3 +24,7 @@ export function strHasQuotes(str) {
     (str[0] === str[str.length - 1] && str[0] === "`")
   );
 }
+
+export function isFunction(str) {
+  return /\w+\([^)]*\)$/.test(str);
+}
