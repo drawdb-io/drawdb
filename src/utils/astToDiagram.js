@@ -9,7 +9,7 @@ function buildSQLFromAST(ast) {
   if (ast.type === "binary_expr") {
     const leftSQL = buildSQLFromAST(ast.left);
     const rightSQL = buildSQLFromAST(ast.right);
-    return `(${leftSQL}) ${ast.operator} (${rightSQL})`;
+    return `${leftSQL} ${ast.operator} ${rightSQL}`;
   }
 
   if (ast.type === "function") {
@@ -37,7 +37,7 @@ function buildSQLFromAST(ast) {
   } else if (ast.type === "expr_list") {
     return ast.value.map((v) => v.value).join(" AND ");
   } else {
-    return ast.value;
+    return typeof ast.value === "string" ? "'" + ast.value + "'" : ast.value;
   }
 }
 
