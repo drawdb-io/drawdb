@@ -123,7 +123,7 @@ export default function TableField({ data, tid, index }) {
       <Col span={3}>
         <Button
           type={data.notNull ? "primary" : "tertiary"}
-          title="Nullable"
+          title="Not Null"
           theme={data.notNull ? "solid" : "light"}
           onClick={() => {
             setUndoStack((prev) => [
