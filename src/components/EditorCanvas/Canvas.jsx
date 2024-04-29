@@ -10,6 +10,7 @@ import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
+import Line from './Line';
 import {
   useSettings,
   useTransform,
@@ -19,6 +20,7 @@ import {
   useAreas,
   useNotes,
   useLayout,
+  useLine
 } from "../../hooks";
 
 export default function Canvas() {
@@ -30,22 +32,12 @@ export default function Canvas() {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { linking, setLinking, linkingLine, setLinkingLine } = useLine()
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
     prevX: 0,
     prevY: 0,
-  });
-  const [linking, setLinking] = useState(false);
-  const [linkingLine, setLinkingLine] = useState({
-    startTableId: -1,
-    startFieldId: -1,
-    endTableId: -1,
-    endFieldId: -1,
-    startX: 0,
-    startY: 0,
-    endX: 0,
-    endY: 0,
   });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
@@ -474,13 +466,7 @@ export default function Canvas() {
                 }
               />
             ))}
-            {linking && (
-              <path
-                d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
-                stroke="red"
-                strokeDasharray="8,8"
-              />
-            )}
+            <Line />
             {notes.map((n) => (
               <Note
                 key={n.id}

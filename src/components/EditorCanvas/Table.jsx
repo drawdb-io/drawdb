@@ -14,18 +14,18 @@ import {
   IconKeyStroked,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, Toast, SideSheet } from "@douyinfe/semi-ui";
-import { useLayout, useSettings, useTables, useSelect } from "../../hooks";
+import {
+  useLayout,
+  useSettings,
+  useTables,
+  useSelect,
+  useLine,
+} from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
-  const {
-    tableData,
-    onMouseDown,
-    setHoveredTable,
-    handleGripField,
-    setLinkingLine,
-  } = props;
+  const { tableData, onMouseDown, setHoveredTable, handleGripField } = props;
   const { layout } = useLayout();
   const { deleteTable, deleteField } = useTables();
   const { settings } = useSettings();

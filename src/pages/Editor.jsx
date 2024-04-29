@@ -8,6 +8,7 @@ import NotesContextProvider from "../context/NotesContext";
 import TypesContextProvider from "../context/TypesContext";
 import TasksContextProvider from "../context/TasksContext";
 import SaveStateContextProvider from "../context/SaveStateContext";
+import LineContextProvider from "../context/LineContext";
 import WorkSpace from "../components/Workspace";
 
 export default function Editor() {
@@ -20,11 +21,13 @@ export default function Editor() {
               <AreasContextProvider>
                 <NotesContextProvider>
                   <TypesContextProvider>
-                    <TablesContextProvider>
-                      <SaveStateContextProvider>
-                        <WorkSpace />
-                      </SaveStateContextProvider>
-                    </TablesContextProvider>
+                    <LineContextProvider>
+                      <TablesContextProvider>
+                        <SaveStateContextProvider>
+                          <WorkSpace />
+                        </SaveStateContextProvider>
+                      </TablesContextProvider>
+                    </LineContextProvider>
                   </TypesContextProvider>
                 </NotesContextProvider>
               </AreasContextProvider>
