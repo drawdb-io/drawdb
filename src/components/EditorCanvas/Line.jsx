@@ -10,6 +10,7 @@ export default function Line() {
           d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
           stroke="red"
           strokeDasharray="8,8"
+          className="pointer-events-none"
         />
       )}
     </>

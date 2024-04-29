@@ -27,6 +27,7 @@ export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
   const { tableData, onMouseDown, setHoveredTable, handleGripField } = props;
   const { layout } = useLayout();
+  const { linking, setLinkingLine, linkingLine } = useLine();
   const { deleteTable, deleteField } = useTables();
   const { settings } = useSettings();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -56,6 +57,17 @@ export default function Table(props) {
     }
   };
 
+  const isSourceField = (fieldIndex, tableId) => {
+    return (
+      linkingLine.startFieldId === fieldIndex &&
+      linkingLine.startTableId === tableId
+    );
+  };
+
+  const isFieldSelectable = (fieldIndex, tableId) => {
+    return !isSourceField(fieldIndex, tableId);
+  };
+
   return (
     <>
       <foreignObject
@@ -69,17 +81,19 @@ export default function Table(props) {
       >
         <div
           onDoubleClick={openEditor}
-          className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${
-                 selectedElement.id === tableData.id &&
-                 selectedElement.element === ObjectType.TABLE
-                   ? "border-solid border-blue-500"
-                   : "border-zinc-500"
-               }`}
+          className={`border-2 hover:border-blue-500 select-none rounded-lg w-full overflow-hidden
+            ${!linking && "hover:border-dashed"}
+            ${
+              settings.mode === "light"
+                ? "bg-zinc-100 text-zinc-800"
+                : "bg-zinc-800 text-zinc-200"
+            }
+            ${
+              selectedElement.id === tableData.id &&
+              selectedElement.element === ObjectType.TABLE
+                ? "border-solid border-blue-500"
+                : "border-zinc-500"
+            }`}
         >
           <div
             className="h-[10px] w-full rounded-t-md"
@@ -268,11 +282,13 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`${
-          index === tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+        className={`group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden
+          ${
+            index === tableData.fields.length - 1
+              ? ""
+              : "border-b border-gray-400"
+          }
+          ${linking && isFieldSelectable(index, tableData.id) ? "hover:bg-semi-blue-1" : ""}`}
         onMouseEnter={() => {
           setHoveredField(index);
           setHoveredTable({
@@ -286,7 +302,7 @@ export default function Table(props) {
       >
         <div
           className={`${
-            hoveredField === index ? "text-zinc-400" : ""
+            !linking && hoveredField === index ? "text-zinc-400" : ""
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
