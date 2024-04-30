@@ -82,10 +82,8 @@
   background-color: rgba(var(--semi-grey-2), 1);
 }
 
-.hover\:bg-semi-blue-1 {
-  &:hover {
-    background-color: rgba(var(--semi-blue-1), 1);
-  }
+.hover\:bg-semi-blue-1:hover {
+  background-color: rgba(var(--semi-blue-1), 1);
 }
 
 .hover-2:hover {
