@@ -25,6 +25,14 @@ export default function App() {
               </ThemedPage>
             }
           />
+                        <Route
+      path="/editor/:diagramId"
+      element={
+        <ThemedPage>
+          <Editor />
+        </ThemedPage>
+      }
+    />
           <Route
             path="/survey"
             element={

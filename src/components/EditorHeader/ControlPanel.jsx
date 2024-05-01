@@ -74,6 +74,23 @@ export default function ControlPanel({
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
   const [showEditName, setShowEditName] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const shareLink = () => {
+    // Construct the full diagram URL with the diagram ID
+    const fullUrl = `${window.location.origin}/editor/${diagramId}`;
+    
+    // Copy the diagram URL to the clipboard
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      // Show tooltip
+      setTooltipVisible(true);
+      // Hide tooltip after 3 seconds
+      setTimeout(() => {
+        setTooltipVisible(false);
+      }, 3000);
+    }).catch((error) => {
+      console.error('Failed to copy link: ', error);
+    });
+  };
   const [exportData, setExportData] = useState({
     data: null,
     filename: `${title}_${new Date().toISOString()}`,
@@ -1334,6 +1351,11 @@ export default function ControlPanel({
               <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
+          <Tooltip content={tooltipVisible ? "Link copied!" : "Share Link"} position="bottom">
+        <button onClick={shareLink} className="py-1 px-2 hover-2 rounded text-xl -mt-0.5">
+          <i className="fa-solid fa-link"></i>
+        </button>
+      </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content="Change theme" position="bottom">
             <button
