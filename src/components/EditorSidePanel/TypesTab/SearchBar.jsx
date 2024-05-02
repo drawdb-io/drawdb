@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
-import { useTypes } from "../../../hooks";
+import { useSelect, useTypes } from "../../../hooks";
 
 export default function Searchbar() {
   const { types } = useTypes();
   const [value, setValue] = useState("");
+  const { setSelectedElement } = useSelect();
 
   const [filteredResult, setFilteredResult] = useState(
-    types.map((t) => t.name)
+    types.map((t) => t.name),
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      types.map((t) => t.name).filter((i) => i.includes(value))
+      types.map((t) => t.name).filter((i) => i.includes(value)),
     );
   };
 
@@ -29,6 +30,11 @@ export default function Searchbar() {
       onChange={(v) => setValue(v)}
       onSelect={(v) => {
         const i = types.findIndex((t) => t.name === v);
+        setSelectedElement((prev) => ({
+          ...prev,
+          id: parseInt(i),
+          open: true,
+        }));
         document
           .getElementById(`scroll_type_${i}`)
           .scrollIntoView({ behavior: "smooth" });
