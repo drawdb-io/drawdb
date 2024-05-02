@@ -1,31 +1,24 @@
-import { useState } from "react";
-import { useSelect, useTables } from "../../../hooks";
+import { useMemo, useState } from "react";
+import { useSelect } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { ObjectType } from "../../../data/constants";
 
-export default function SearchBar() {
-  const { tables } = useTables();
+export default function SearchBar({ tables }) {
   const { setSelectedElement } = useSelect();
   const [searchText, setSearchText] = useState("");
-  const [filteredResult, setFilteredResult] = useState(
-    tables.map((t) => t.name),
+  const filteredTable = useMemo(
+    () => tables.map((t) => t.name).filter((i) => i.includes(searchText)),
+    [tables, searchText],
   );
-
-  const handleStringSearch = (value) => {
-    setFilteredResult(
-      tables.map((t) => t.name).filter((i) => i.includes(value)),
-    );
-  };
 
   return (
     <AutoComplete
-      data={filteredResult}
+      data={filteredTable}
       value={searchText}
       showClear
       prefix={<IconSearch />}
       placeholder="Search..."
-      onSearch={(v) => handleStringSearch(v)}
       emptyContent={<div className="p-3 popover-theme">No tables found</div>}
       onChange={(v) => setSearchText(v)}
       onSelect={(v) => {

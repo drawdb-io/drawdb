@@ -14,7 +14,7 @@ export default function TablesTab() {
     <>
       <Row gutter={6}>
         <Col span={16}>
-          <SearchBar />
+          <SearchBar tables={tables} />
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addTable(true)}>
