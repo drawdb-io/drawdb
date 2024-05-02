@@ -2,18 +2,19 @@ import { useState } from "react";
 import { useSelect, useTables } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
+import { ObjectType } from "../../../data/constants";
 
 export default function SearchBar() {
   const { tables } = useTables();
   const { setSelectedElement } = useSelect();
   const [searchText, setSearchText] = useState("");
   const [filteredResult, setFilteredResult] = useState(
-    tables.map((t) => t.name)
+    tables.map((t) => t.name),
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      tables.map((t) => t.name).filter((i) => i.includes(value))
+      tables.map((t) => t.name).filter((i) => i.includes(value)),
     );
   };
 
@@ -33,6 +34,7 @@ export default function SearchBar() {
           ...prev,
           id: id,
           open: true,
+          element: ObjectType.TABLE,
         }));
         document
           .getElementById(`scroll_table_${id}`)

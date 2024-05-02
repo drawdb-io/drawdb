@@ -1,8 +1,9 @@
 import { Collapse, Row, Col, Button, Popover } from "@douyinfe/semi-ui";
 import { IconPlus, IconInfoCircle } from "@douyinfe/semi-icons";
+import { useSelect, useTypes } from "../../../hooks";
+import { ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
-import { useSelect, useTypes } from "../../../hooks";
 import TypeInfo from "./TypeInfo";
 
 export default function TypesTab() {
@@ -54,12 +55,17 @@ export default function TypesTab() {
         <Empty title="No types" text="Make your own custom data types" />
       ) : (
         <Collapse
-          activeKey={selectedElement.open ? `${selectedElement.id}` : ""}
+          activeKey={
+            selectedElement.open && selectedElement.element === ObjectType.TYPE
+              ? `${selectedElement.id}`
+              : ""
+          }
           onChange={(id) =>
             setSelectedElement((prev) => ({
               ...prev,
-              id: parseInt(id),
               open: true,
+              id: parseInt(id),
+              element: ObjectType.TYPE,
             }))
           }
           accordion

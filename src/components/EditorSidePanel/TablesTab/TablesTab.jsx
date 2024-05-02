@@ -1,6 +1,7 @@
 import { Collapse, Row, Col, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useSelect, useTables } from "../../../hooks";
+import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
 import TableInfo from "./TableInfo";
@@ -25,12 +26,17 @@ export default function TablesTab() {
         <Empty title="No tables" text="Start building your diagram!" />
       ) : (
         <Collapse
-          activeKey={selectedElement.open ? `${selectedElement.id}` : ""}
+          activeKey={
+            selectedElement.open && selectedElement.element === ObjectType.TABLE
+              ? `${selectedElement.id}`
+              : ""
+          }
           onChange={(k) =>
             setSelectedElement((prev) => ({
               ...prev,
-              id: parseInt(k),
               open: true,
+              id: parseInt(k),
+              element: ObjectType.TABLE,
             }))
           }
           accordion

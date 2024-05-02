@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { useSelect, useTypes } from "../../../hooks";
+import { ObjectType } from "../../../data/constants";
 
 export default function Searchbar() {
   const { types } = useTypes();
@@ -32,8 +33,9 @@ export default function Searchbar() {
         const i = types.findIndex((t) => t.name === v);
         setSelectedElement((prev) => ({
           ...prev,
-          id: parseInt(i),
+          id: i,
           open: true,
+          element: ObjectType.TYPE,
         }));
         document
           .getElementById(`scroll_type_${i}`)
