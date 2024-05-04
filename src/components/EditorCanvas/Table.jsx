@@ -221,7 +221,7 @@ export default function Table(props) {
                     )}
                     <p>
                       <strong>Default: </strong>
-                      {e.default === "" ? "Not set" : e.default + ''}
+                      {e.default === "" ? "Not set" : e.default}
                     </p>
                     <p>
                       <strong>Comment: </strong>
