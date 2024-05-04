@@ -46,7 +46,6 @@ export function astToDiagram(ast) {
   const relationships = [];
 
   ast.forEach((e) => {
-    console.log(e)
     if (e.type === "create") {
       if (e.keyword === "table") {
         const table = {};
