@@ -11,6 +11,8 @@ function checkDefault(field) {
 
   if (isFunction(field.default)) return true;
 
+  if (Array.isArray(field.default.name)) return true;
+
   if (!field.notNull && field.default.toLowerCase() === "null") return true;
 
   switch (field.type) {
@@ -124,7 +126,7 @@ export function getIssues(diagram) {
         );
       }
 
-      if (field.notNull && field.default.toLowerCase() === "null") {
+      if (field.notNull && !Array.isArray(field.default.name) && field.default.toLowerCase() === "null") {
         issues.push(
           `"${field.name}" field of table "${table.name}" is NOT NULL but has default NULL`,
         );
