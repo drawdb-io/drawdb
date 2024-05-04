@@ -184,6 +184,11 @@ export default function Table(props) {
             </div>
           </div>
           {tableData.fields.map((e, i) => {
+
+            if (e.default.name && e.default.name[0].value && e.default.name[0].value === 'CURRENT_TIMESTAMP') {
+              e.default = 'CURRENT_TIMESTAMP'
+            }
+
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
@@ -216,7 +221,7 @@ export default function Table(props) {
                     )}
                     <p>
                       <strong>Default: </strong>
-                      {e.default === "" ? "Not set" : e.default}
+                      {e.default === "" ? "Not set" : e.default + ''}
                     </p>
                     <p>
                       <strong>Comment: </strong>
