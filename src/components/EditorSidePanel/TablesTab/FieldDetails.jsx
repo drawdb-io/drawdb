@@ -60,6 +60,7 @@ export default function FieldDetails({ data, tid, index }) {
             validateStatus={
               !data.values || data.values.length === 0 ? "error" : "default"
             }
+            addOnBlur
             className="my-2"
             placeholder="Use ',' for batch input"
             onChange={(v) => updateField(tid, index, { values: v })}
