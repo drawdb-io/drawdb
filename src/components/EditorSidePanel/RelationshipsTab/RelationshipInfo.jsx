@@ -63,6 +63,9 @@ export default function RelationshipInfo({ data }) {
         idx === data.id
           ? {
               ...e,
+              name: `${tables[e.startTableId].name}_${
+                tables[e.startTableId].fields[e.startFieldId].name
+              }_fk`,
               startTableId: e.endTableId,
               startFieldId: e.endFieldId,
               endTableId: e.startTableId,
