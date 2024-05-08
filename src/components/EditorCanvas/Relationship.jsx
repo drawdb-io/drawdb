@@ -1,11 +1,13 @@
 import { useRef } from "react";
-import { Cardinality } from "../../data/constants";
+import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
-import { useTables, useSettings } from "../../hooks";
+import { useTables, useSettings, useLayout, useSelect } from "../../hooks";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
   const { tables } = useTables();
+  const { layout } = useLayout();
+  const { selectedElement, setSelectedElement } = useSelect();
   const pathRef = useRef();
 
   let cardinalityStart = "1";
@@ -47,8 +49,31 @@ export default function Relationship({ data }) {
     cardinalityEndY = point2.y;
   }
 
+  const edit = () => {
+    if (!layout.sidebar) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.RELATIONSHIP,
+        id: data.id,
+        open: true,
+      }));
+    } else {
+      setSelectedElement((prev) => ({
+        ...prev,
+        currentTab: Tab.RELATIONSHIPS,
+        element: ObjectType.RELATIONSHIP,
+        id: data.id,
+        open: true,
+      }));
+      if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
+      document
+        .getElementById(`scroll_ref_${data.id}`)
+        .scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <g className="select-none group">
+    <g className="select-none group" onDoubleClick={edit}>
       <path
         ref={pathRef}
         d={calcPath(

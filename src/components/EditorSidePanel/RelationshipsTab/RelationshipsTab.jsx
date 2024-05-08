@@ -1,20 +1,32 @@
-import { useState } from "react";
 import { Collapse } from "@douyinfe/semi-ui";
-import { useTables } from "../../../hooks";
+import { useSelect, useTables } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import RelationshipInfo from "./RelationshipInfo";
+import { ObjectType } from "../../../data/constants";
 
 export default function RelationshipsTab() {
   const { relationships } = useTables();
-  const [refActiveIndex, setRefActiveIndex] = useState("");
+  const { selectedElement, setSelectedElement } = useSelect();
 
   return (
     <>
-      <SearchBar setRefActiveIndex={setRefActiveIndex} />
+      <SearchBar />
       <Collapse
-        activeKey={refActiveIndex}
-        onChange={(k) => setRefActiveIndex(k)}
+        activeKey={
+          selectedElement.open &&
+          selectedElement.element === ObjectType.RELATIONSHIP
+            ? `${selectedElement.id}`
+            : ""
+        }
+        onChange={(k) =>
+          setSelectedElement((prev) => ({
+            ...prev,
+            open: true,
+            id: parseInt(k),
+            element: ObjectType.RELATIONSHIP,
+          }))
+        }
         accordion
       >
         {relationships.length <= 0 ? (
