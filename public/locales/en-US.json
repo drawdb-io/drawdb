@@ -1,0 +1,284 @@
+{
+  "Menu": {
+    "File": {
+      "son": {
+        "New": {
+          "val": "New"
+        },
+        "New window": {
+          "val": "New window"
+        },
+        "Open": {
+          "val": "Open"
+        },
+        "Save": {
+          "val": "Save"
+        },
+        "Save as": {
+          "val": "Save as"
+        },
+        "Save as template": {
+          "val": "Save as template"
+        },
+        "Rename": {
+          "val": "Rename"
+        },
+        "Delete diagram": {
+          "val": "Delete diagram"
+        },
+        "Import diagram": {
+          "val": "Import diagram"
+        },
+        "Import from source": {
+          "val": "Import from source"
+        },
+        "Export as": {
+          "son": {
+            "PNG": {
+              "val": "PNG"
+            },
+            "JPEG": {
+              "val": "JPEG"
+            },
+            "JSON": {
+              "val": "JSON"
+            },
+            "SVG": {
+              "val": "SVG"
+            },
+            "PDF": {
+              "val": "PDF"
+            },
+            "DRAWDB": {
+              "val": "DRAWDB"
+            }
+          },
+          "val": "Export as"
+        },
+        "Export source": {
+          "son": {
+            "MySQL": {
+              "val": "MySQL"
+            },
+            "PostgreSQL": {
+              "val": "PostgreSQL"
+            },
+            "SQLite": {
+              "val": "SQLite"
+            },
+            "MariaDB": {
+              "val": "MariaDB"
+            },
+            "MSSQL": {
+              "val": "MSSQL"
+            }
+          },
+          "val": "Export source"
+        },
+        "Exit": {
+          "val": "Exit"
+        }
+      },
+      "val": "File"
+    },
+    "Edit": {
+      "son": {
+        "Undo": {
+          "val": "Undo"
+        },
+        "Redo": {
+          "val": "Redo"
+        },
+        "Clear": {
+          "val": "Clear"
+        },
+        "Edit": {
+          "val": "Edit"
+        },
+        "Cut": {
+          "val": "Cut"
+        },
+        "Copy": {
+          "val": "Copy"
+        },
+        "Paste": {
+          "val": "Paste"
+        },
+        "Duplicate": {
+          "val": "Duplicate"
+        },
+        "Delete": {
+          "val": "Delete"
+        },
+        "Copy as image": {
+          "val": "Copy as image"
+        }
+      },
+      "val": "Edit"
+    },
+    "View": {
+      "son": {
+        "Header": {
+          "val": "Header"
+        },
+        "Sidebar": {
+          "val": "Sidebar"
+        },
+        "Issues": {
+          "val": "Issues"
+        },
+        "Strict mode": {
+          "val": "Strict mode"
+        },
+        "Presentation mode": {
+          "val": "Presentation mode"
+        },
+        "Field details": {
+          "val": "Field details"
+        },
+        "Reset view": {
+          "val": "Reset view"
+        },
+        "Show grid": {
+          "val": "Show grid"
+        },
+        "Show cardinality": {
+          "val": "Show cardinality"
+        },
+        "Theme": {
+          "son": {
+            "Light": {
+              "val": "Light"
+            },
+            "Dark": {
+              "val": "Dark"
+            }
+          },
+          "val": "Theme"
+        },
+        "Zoom in": {
+          "val": "Zoom in"
+        },
+        "Zoom out": {
+          "val": "Zoom out"
+        },
+        "Fullscreen": {
+          "val": "Fullscreen"
+        }
+      },
+      "val": "View"
+    },
+    "Settings": {
+      "son": {
+        "Show timeline": {
+          "val": "Show timeline"
+        },
+        "Autosave": {
+          "val": "Autosave"
+        },
+        "Panning": {
+          "val": "Panning"
+        },
+        "Table width": {
+          "val": "Table width"
+        },
+        "Flush storage": {
+          "val": "Flush storage"
+        },
+        "Language": {
+          "son": {
+            "English": {
+              "val": "English"
+            },
+            "简体中文": {
+              "val": "简体中文"
+            }
+          },
+          "val": "Language"
+        }
+      },
+      "val": "Settings"
+    },
+    "Help": {
+      "son": {
+        "Shortcuts": {
+          "val": "Shortcuts"
+        },
+        "Ask us on discord": {
+          "val": "Ask us on discord"
+        },
+        "Report a bug": {
+          "val": "Report a bug"
+        },
+        "Give feedback": {
+          "val": "Give feedback"
+        }
+      },
+      "val": "Help"
+    }
+  },
+  "Tip": {
+    "Template saved": "Template saved",
+    "Delete diagram": "Delete diagram",
+    "Are you sure you want to delete this diagram? This operation is irreversible": "Are you sure you want to delete this diagram? This operation is irreversible.",
+    "Untitled diagram": "Untitled diagram",
+    "Oops! Something went wrong": "Oops! Something went wrong.",
+    "Oops! Couldn't load diagram": "Oops! Couldn't load diagram",
+    "Flush storage": "Flush storage",
+    "Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates": "Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates.",
+    "Storage flushed": "Storage flushed"
+  },
+  "Page": {
+    "editor": {
+      "Fit window / Reset": "Fit window / Reset",
+      "Zoom": "Zoom",
+      "Header": "Header",
+      "Sidebar": "Sidebar",
+      "Issues": "Issues",
+      "Fullscreen": "Fullscreen",
+      "Zoom in": "Zoom in",
+      "Zoom out": "Zoom out",
+      "To-do": "To-do",
+      "Change theme": "Change theme",
+      "Diagram name": "Diagram name",
+      "State": {
+        "No changes": "No changes",
+        "Loading": "Loading . . .",
+        "Last saved": "Last saved {{lastSaved}}",
+        "Saving": "Saving . . .",
+        "Failed to save": "Failed to save"
+      },
+      "ModalTitle": {
+        "Import diagram": "Import diagram",
+        "Export source": "Export source",
+        "Export image": "Export image",
+        "Rename diagram": "Rename diagram",
+        "Open diagram": "Open diagram",
+        "Save as": "Save as",
+        "Create new diagram": "Create new diagram",
+        "Set the table width": "Set the table width"
+      }
+    }
+  },
+  "Global": {
+    "Undo": "Undo",
+    "Redo": "Redo",
+    "Add table": "Add table",
+    "Add subject area": "Add subject area",
+    "Add note": "Add note",
+    "Save": "Save",
+    "Import": "Import",
+    "Export": "Export",
+    "Rename": "Rename",
+    "Open": "Open",
+    "Save as": "Save as",
+    "Create": "Create",
+    "Confirm": "Confirm",
+    "Filename": "Filename",
+    "Loading": "Loading ...",
+    "Cancel": "Cancel",
+    "Name": "Name",
+    "Last Modified": "Last Modified",
+    "Size": "Size"
+  }
+}

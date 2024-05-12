@@ -1,0 +1,284 @@
+{
+  "Menu": {
+    "File": {
+      "son": {
+        "New": {
+          "val": "新文件"
+        },
+        "New window": {
+          "val": "新建窗口"
+        },
+        "Open": {
+          "val": "打开"
+        },
+        "Save": {
+          "val": "保存"
+        },
+        "Save as": {
+          "val": "另存为"
+        },
+        "Save as template": {
+          "val": "另存为模板"
+        },
+        "Rename": {
+          "val": "重命名"
+        },
+        "Delete diagram": {
+          "val": "删除关系图"
+        },
+        "Import diagram": {
+          "val": "导入关系图"
+        },
+        "Import from source": {
+          "val": "从源文件导入"
+        },
+        "Export as": {
+          "son": {
+            "PNG": {
+              "val": "PNG"
+            },
+            "JPEG": {
+              "val": "JPEG"
+            },
+            "JSON": {
+              "val": "JSON"
+            },
+            "SVG": {
+              "val": "SVG"
+            },
+            "PDF": {
+              "val": "PDF"
+            },
+            "DRAWDB": {
+              "val": "DRAWDB"
+            }
+          },
+          "val": "导出为"
+        },
+        "Export source": {
+          "son": {
+            "MySQL": {
+              "val": "MySQL"
+            },
+            "PostgreSQL": {
+              "val": "PostgreSQL"
+            },
+            "SQLite": {
+              "val": "SQLite"
+            },
+            "MariaDB": {
+              "val": "MariaDB"
+            },
+            "MSSQL": {
+              "val": "MSSQL"
+            }
+          },
+          "val": "导出来源"
+        },
+        "Exit": {
+          "val": "退出"
+        }
+      },
+      "val": "文件"
+    },
+    "Edit": {
+      "son": {
+        "Undo": {
+          "val": "撤销"
+        },
+        "Redo": {
+          "val": "重做"
+        },
+        "Clear": {
+          "val": "清除"
+        },
+        "Edit": {
+          "val": "编辑"
+        },
+        "Cut": {
+          "val": "剪切"
+        },
+        "Copy": {
+          "val": "复制"
+        },
+        "Paste": {
+          "val": "粘贴"
+        },
+        "Duplicate": {
+          "val": "复制"
+        },
+        "Delete": {
+          "val": "删除"
+        },
+        "Copy as image": {
+          "val": "复制为图像"
+        }
+      },
+      "val": "编辑"
+    },
+    "View": {
+      "son": {
+        "Header": {
+          "val": "显示顶部"
+        },
+        "Sidebar": {
+          "val": "显示边栏"
+        },
+        "Issues": {
+          "val": "显示问题"
+        },
+        "Strict mode": {
+          "val": "严格模式"
+        },
+        "Presentation mode": {
+          "val": "演示模式"
+        },
+        "Field details": {
+          "val": "字段详细信息"
+        },
+        "Reset view": {
+          "val": "重置视图"
+        },
+        "Show grid": {
+          "val": "显示网格"
+        },
+        "Show cardinality": {
+          "val": "显示基数"
+        },
+        "Theme": {
+          "son": {
+            "Light": {
+              "val": "亮光模式"
+            },
+            "Dark": {
+              "val": "暗黑模式"
+            }
+          },
+          "val": "主题"
+        },
+        "Zoom in": {
+          "val": "放大"
+        },
+        "Zoom out": {
+          "val": "缩小"
+        },
+        "Fullscreen": {
+          "val": "全屏"
+        }
+      },
+      "val": "主题"
+    },
+    "Settings": {
+      "son": {
+        "Show timeline": {
+          "val": "显示时间线"
+        },
+        "Autosave": {
+          "val": "自动保存"
+        },
+        "Panning": {
+          "val": "Panning"
+        },
+        "Table width": {
+          "val": "表格宽度"
+        },
+        "Flush storage": {
+          "val": "清空存储空间"
+        },
+        "Language": {
+          "son": {
+            "English": {
+              "val": "英语"
+            },
+            "简体中文": {
+              "val": "简体中文"
+            }
+          },
+          "val": "语言"
+        }
+      },
+      "val": "设置"
+    },
+    "Help": {
+      "son": {
+        "Shortcuts": {
+          "val": "快捷键"
+        },
+        "Ask us on discord": {
+          "val": "在discord上和我们聊聊吧"
+        },
+        "Report a bug": {
+          "val": "报告错误"
+        },
+        "Give feedback": {
+          "val": "提供反馈"
+        }
+      },
+      "val": "帮助"
+    }
+  },
+  "Tip": {
+    "Template saved": "模板保存成功",
+    "Delete diagram": "删除关系图",
+    "Are you sure you want to delete this diagram? This operation is irreversible": "您确定要删除此关系图吗?此操作是不可逆的",
+    "Untitled diagram": "无标题关系图",
+    "Oops! Something went wrong.": "哎呀！出了小问题",
+    "Oops! Couldn't load diagram": "哎呀！无法加载关系图",
+    "Flush storage": "清空存储空间",
+    "Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates": "您确定要清空存储空间吗？这将不可逆地删除所有关系图和自定义模板。",
+    "Storage flushed": "存储空间已清空"
+  },
+  "Page": {
+    "editor": {
+      "Fit window / Reset": "编辑器最大化 / 重置",
+      "Zoom": "缩放",
+      "Header": "顶部",
+      "Sidebar": "边栏",
+      "Issues": "问题",
+      "Fullscreen": "全屏",
+      "Zoom in": "放大",
+      "Zoom out": "缩小",
+      "To-do": "待办",
+      "Change theme": "改变主题",
+      "Diagram name": "关系图名称",
+      "State": {
+        "No changes": "无改变",
+        "Loading": "加载中 . . .",
+        "Last saved": "最后一次保存 {{lastSaved}}",
+        "Saving": "正在保存 . . .",
+        "Failed to save": "保存失败"
+      },
+      "ModalTitle": {
+        "Import diagram": "导入关系图",
+        "Export source": "导出源文件",
+        "Export image": "导出图像",
+        "Rename diagram": "重命名关系图",
+        "Open diagram": "打开关系图",
+        "Save as": "另存为",
+        "Create new diagram": "创建新关系图",
+        "Set the table width": "设置表格宽度"
+      }
+    }
+  },
+  "Global": {
+    "Undo": "撤销",
+    "Redo": "重做",
+    "Add table": "添加表",
+    "Add subject area": "添加主题区域",
+    "Add note": "添加笔记",
+    "Save": "保存",
+    "Import": "导入",
+    "Export": "到处",
+    "Rename": "重命名",
+    "Open": "打开",
+    "Save as": "另存为",
+    "Create": "创建",
+    "Confirm": "确认",
+    "Filename": "文件名称",
+    "Loading": "加载中 ...",
+    "Cancel": "取消",
+    "Name": "名称",
+    "Last Modified": "最后修改时间",
+    "Size": "大小"
+  }
+}

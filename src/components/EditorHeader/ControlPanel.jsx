@@ -63,6 +63,12 @@ import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
 
+import { getTranslateItem } from "../../i18n/i18n"
+import { useTranslation } from 'react-i18next'
+//import { useTranslation, Trans, Translation } from 'react-i18next'
+// console.log(">>>", useTranslation, Trans, Translation)
+// let { t ,i18n} = useTranslation()
+
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -70,6 +76,8 @@ export default function ControlPanel({
   setTitle,
   lastSaved,
 }) {
+  const { t } = useTranslation();
+
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
@@ -670,8 +678,8 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
 
-  const menu = {
-    File: {
+  let menu = {
+    "File": {
       New: {
         function: () => setModal(MODAL.NEW),
       },
@@ -706,7 +714,7 @@ export default function ControlPanel({
               custom: 1,
             })
             .then(() => {
-              Toast.success("Template saved!");
+              Toast.success(t("Tip.Template saved"));
             });
         },
       },
@@ -718,16 +726,16 @@ export default function ControlPanel({
       },
       "Delete diagram": {
         warning: {
-          title: "Delete diagram",
+          title: t("Tip.Delete diagram"),
           message:
-            "Are you sure you want to delete this diagram? This operation is irreversible.",
+            t("Tip.Are you sure you want to delete this diagram? This operation is irreversible"),
         },
         function: async () => {
           await db.diagrams
             .delete(diagramId)
             .then(() => {
               setDiagramId(0);
-              setTitle("Untitled diagram");
+              setTitle(t("Tip.Untitled diagram"));
               setTables([]);
               setRelationships([]);
               setAreas([]);
@@ -736,7 +744,7 @@ export default function ControlPanel({
               setUndoStack([]);
               setRedoStack([]);
             })
-            .catch(() => Toast.error("Oops! Something went wrong."));
+            .catch(() => Toast.error("Tip.Oops! Something went wrong"));
         },
       },
       "Import diagram": {
@@ -1107,20 +1115,23 @@ export default function ControlPanel({
       },
       "Flush storage": {
         warning: {
-          title: "Flush storage",
+          title: t("Tip.Flush storage"),
           message:
-            "Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates.",
+            t("Tip.Are you sure you want to flush the storage? This will irreversibly delete all your diagrams and custom templates"),
         },
         function: async () => {
           db.delete()
             .then(() => {
-              Toast.success("Storage flushed");
+              Toast.success(t("Tip.Storage flushed"));
               window.location.reload(false);
             })
             .catch(() => {
-              Toast.error("Oops! Something went wrong.");
+              Toast.error(t("Tip.Oops! Something went wrong"));
             });
         },
+      },
+      Language:{
+        children: getTranslateItem(),
       },
     },
     Help: {
@@ -1139,6 +1150,129 @@ export default function ControlPanel({
       },
     },
   };
+
+  let lostTranslateItem = {}
+  // 翻译菜单
+  function translateMenu(item) {
+    lostTranslateItem = {}
+    // let { t ,i18n} = useTranslation()
+    // let { t } = useTranslation()
+    console.log("==> t ==>", t)
+    let translateResult = {};
+    let keys = Object.keys(item);
+    for (const key of keys) {
+      let key2 = t(`Menu.${key}.val`);
+      let val = item[key];
+      console.log("翻译", key, key2);
+
+      //二级菜单
+      if (typeof val === "object"){
+        val = translateSubMenu(val, `Menu.${key}`, t);
+      }
+
+      if(`Menu.${key}.val` === key2) {
+        //翻译缺失
+        // lostTranslateItem[key] = key;
+        logLostTranslate(`Menu.${key}.val`, key)
+      }else{
+        logLostTranslate(`Menu.${key}.val`, key2)
+      }
+
+      // if(key===key2)continue;
+      // item[key2] = item[key];
+      // delete item[key];
+      translateResult[key2] = val
+    }
+    return translateResult
+  }
+  function translateSubMenu(item, mainMenu, t) {
+    let translateResult = {};
+    for (const key of Object.keys(item)) {
+      let key2 = t(`${mainMenu}.son.${key}.val`);
+      let val = item[key];
+
+      // 子菜单
+      let childrens = val.children;
+      if(childrens){
+        for (let i = 0; i <childrens.length; i++) {
+          childrens[i] = translateSubMenu(childrens[i], `${mainMenu}.son.${key}`, t)
+        }
+        val.children = childrens
+      }
+
+      //翻译缺失
+      if(`${mainMenu}.son.${key}.val` === key2) {
+        logLostTranslate(`${mainMenu}.son.${key}.val`, key)
+      }else{
+        logLostTranslate(`${mainMenu}.son.${key}.val`, key2)
+      }
+
+      translateResult[key2] = val;
+    }
+    return translateResult
+  }
+  function logLostTranslate(path, key) {
+    // console.log("记录Path", path, key)
+    // const paths = path.split(/\./);
+    // let data = lostTranslateItem[paths[0]];
+
+    // switch (paths.length) {
+    //   case 1:
+    //     lostTranslateItem[paths[0]] = key;
+    //     break;
+    //   case 2:
+    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]=key;}
+    //     break;
+    //   case 3:
+    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]]){lostTranslateItem[paths[0]][paths[1]][paths[2]]=key;}
+    //     break;
+    //   case 4:
+    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]]){lostTranslateItem[paths[0]][paths[1]][paths[2]]={};}
+    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]][paths[3]]){lostTranslateItem[paths[0]][paths[1]][paths[2]][paths[3]]=key;}
+    //     break;
+    //   case 5:
+    //     break;
+    //   default:
+    //     console.log("超出设计的路径", path, paths)
+    // }
+
+    lostTranslateItem = setVal(lostTranslateItem, path, key);
+  }
+  function setVal(obj, path, val) {
+    const [start, ...endItem ] = path.split(/\./);
+
+    if(!obj[start]){
+      obj[start] = {};
+    }
+
+    if (endItem.length>0){
+      obj[start] = setValIImp(obj[start], endItem, val)
+    }else{
+      obj[start].val = val;
+    }
+    return obj;
+  }
+  function setValIImp(obj, remainPaths, val) {
+    const [start, ...endItem ] = remainPaths;
+    if(!obj[start]){
+      obj[start] = {};
+    }
+    if(endItem.length > 1){
+      obj[start] = setValIImp(obj[start], endItem, val)
+    }else{
+      obj[start].val = val
+    }
+    return obj
+  }
+  menu = translateMenu(menu);
+  console.log("菜单>", menu)
+  console.log("菜单翻译", lostTranslateItem)
+  console.log("菜单翻译txt", JSON.stringify(lostTranslateItem))
 
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
@@ -1207,7 +1341,7 @@ export default function ControlPanel({
                   onClick={fitWindow}
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <div>Fit window / Reset</div>
+                  <div>{ t("Page.editor.Fit window / Reset") }</div>
                   <div className="text-gray-400">Ctrl+Alt+W</div>
                 </Dropdown.Item>
                 <Dropdown.Divider />
@@ -1226,7 +1360,7 @@ export default function ControlPanel({
                   <InputNumber
                     field="zoom"
                     label="Custom zoom"
-                    placeholder="Zoom"
+                    placeholder={t("Page.editor.Zoom")}
                     suffix={<div className="p-1">%</div>}
                     onChange={(v) =>
                       setTransform((prev) => ({
@@ -1249,7 +1383,7 @@ export default function ControlPanel({
               </div>
             </div>
           </Dropdown>
-          <Tooltip content="Zoom in" position="bottom">
+          <Tooltip content={t("Page.editor.Zoom in")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
@@ -1259,7 +1393,7 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-plus" />
             </button>
           </Tooltip>
-          <Tooltip content="Zoom out" position="bottom">
+          <Tooltip content={t("Page.editor.Zoom out")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
@@ -1270,7 +1404,7 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content="Undo" position="bottom">
+          <Tooltip content={t("Global.Undo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={undo}
@@ -1281,7 +1415,7 @@ export default function ControlPanel({
               />
             </button>
           </Tooltip>
-          <Tooltip content="Redo" position="bottom">
+          <Tooltip content={t("Global.Redo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={redo}
@@ -1293,7 +1427,7 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content="Add table" position="bottom">
+          <Tooltip content={t("Global.Add table")} position="bottom">
             <button
               className="flex items-center py-1 px-2 hover-2 rounded"
               onClick={() => addTable()}
@@ -1301,7 +1435,7 @@ export default function ControlPanel({
               <IconAddTable />
             </button>
           </Tooltip>
-          <Tooltip content="Add subject area" position="bottom">
+          <Tooltip content={t("Global.Add subject area")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addArea()}
@@ -1309,7 +1443,7 @@ export default function ControlPanel({
               <IconAddArea />
             </button>
           </Tooltip>
-          <Tooltip content="Add note" position="bottom">
+          <Tooltip content={t("Global.Add note")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addNote()}
@@ -1318,7 +1452,7 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content="Save" position="bottom">
+          <Tooltip content={t("Global.Save")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={save}
@@ -1326,7 +1460,7 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
-          <Tooltip content="To-do" position="bottom">
+          <Tooltip content={t("Page.editor.To-do")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
@@ -1335,16 +1469,17 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content="Change theme" position="bottom">
+          <Tooltip content={t("Page.editor.Change theme")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => {
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
                   if (body.getAttribute("theme-mode") === "light") {
-                    menu["View"]["Theme"].children[1]["Dark"]();
+                    menu[t("Menu.View.val")][t("Menu.View.son.Theme.val")].children[1][t("Menu.View.son.Theme.son.Dark.val")]();
                   } else {
-                    menu["View"]["Theme"].children[0]["Light"]();
+                    menu[t("Menu.View.val")][t("Menu.View.son.Theme.val")].children[0][t("Menu.View.son.Theme.son.Light.val")]();
+                    // menu["View"]["Theme"].children[0]["Light"]();
                   }
                 }
               }}
@@ -1366,15 +1501,16 @@ export default function ControlPanel({
   function getState() {
     switch (saveState) {
       case State.NONE:
-        return "No changes";
+        return t("Page.editor.State.No changes");
       case State.LOADING:
-        return "Loading . . .";
+        return t("Page.editor.State.Loading");
       case State.SAVED:
-        return `Last saved ${lastSaved}`;
+        //return `Last saved ${lastSaved}`;
+        return t("Page.editor.State.Last saved", {lastSaved: lastSaved});
       case State.SAVING:
-        return "Saving . . .";
+        return t("Page.editor.State.Saving");
       case State.ERROR:
-        return "Failed to save";
+        return t("Page.editor.State.Failed to save");
       default:
         return "";
     }

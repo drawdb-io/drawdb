@@ -6,8 +6,10 @@ import {
 import { Dropdown } from "@douyinfe/semi-ui";
 import { useLayout } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
+import { useTranslation } from 'react-i18next'
 
 export default function LayoutDropdown() {
+  const { t } = useTranslation();
   const { layout, setLayout } = useLayout();
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
@@ -24,7 +26,7 @@ export default function LayoutDropdown() {
             }
             onClick={() => invertLayout("header")}
           >
-            Header
+              {t("Page.editor.Header")}
           </Dropdown.Item>
           <Dropdown.Item
             icon={
@@ -32,7 +34,7 @@ export default function LayoutDropdown() {
             }
             onClick={() => invertLayout("sidebar")}
           >
-            Sidebar
+            {t("Page.editor.Sidebar")}
           </Dropdown.Item>
           <Dropdown.Item
             icon={
@@ -40,7 +42,7 @@ export default function LayoutDropdown() {
             }
             onClick={() => invertLayout("issues")}
           >
-            Issues
+            {t("Page.editor.Issues")}
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
@@ -54,7 +56,7 @@ export default function LayoutDropdown() {
               invertLayout("fullscreen");
             }}
           >
-            Fullscreen
+              {t("Page.editor.Fullscreen")}
           </Dropdown.Item>
         </Dropdown.Menu>
       }

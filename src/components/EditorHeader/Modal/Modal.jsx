@@ -32,6 +32,7 @@ import { sql } from "@codemirror/lang-sql";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { json } from "@codemirror/lang-json";
 import { githubLight } from "@uiw/codemirror-theme-github";
+import { useTranslation } from 'react-i18next'
 
 const languageExtension = {
   sql: [sql()],
@@ -49,6 +50,7 @@ export default function Modal({
   exportData,
   setExportData,
 }) {
+  const { t } = useTranslation();
   const { setTables, setRelationships } = useTables();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
@@ -100,11 +102,11 @@ export default function Modal({
           setRedoStack([]);
           window.name = `d ${diagram.id}`;
         } else {
-          Toast.error("Oops! Something went wrong.");
+          Toast.error(t("Tip.Oops! Something went wrong"));
         }
       })
       .catch(() => {
-        Toast.error("Oops! Couldn't load diagram.");
+        Toast.error(t("Tip.Oops! Couldn't load diagram"));
       });
   };
 
@@ -239,7 +241,7 @@ export default function Modal({
       case MODAL.SAVEAS:
         return (
           <Input
-            placeholder="Diagram name"
+            placeholder={t("Page.editor.Diagram name")}
             value={saveAsTitle}
             onChange={(v) => setSaveAsTitle(v)}
           />
@@ -264,7 +266,7 @@ export default function Modal({
               <div className="text-sm font-semibold mt-2">Filename:</div>
               <Input
                 value={exportData.filename}
-                placeholder="Filename"
+                placeholder={t("Global.Filename")}
                 suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
                 onChange={(value) =>
                   setExportData((prev) => ({ ...prev, filename: value }))
@@ -276,7 +278,7 @@ export default function Modal({
         } else {
           return (
             <div className="text-center my-3">
-              <Spin tip="Loading..." size="large" />
+              <Spin tip={t("Global.Loading")} size="large" />
             </div>
           );
         }
@@ -326,7 +328,7 @@ export default function Modal({
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
       }}
-      cancelText="Cancel"
+      cancelText={t("Global.Cancel")}
       width={modal === MODAL.NEW ? 740 : 600}
     >
       {getModalBody()}

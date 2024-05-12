@@ -9,6 +9,7 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import useSettings from "./hooks/useSettings";
 import NotFound from "./pages/NotFound";
+import "./i18n/i18n";
 
 export default function App() {
   return (
