@@ -64,7 +64,7 @@ export default function TypeInfo({ index, data }) {
           style={{ marginTop: "12px", marginBottom: "12px" }}
           headerLine={false}
         >
-          <Collapse>
+          <Collapse keepDOM lazyRender>
             <Collapse.Panel header="Comment" itemKey="1">
               <TextArea
                 field="comment"

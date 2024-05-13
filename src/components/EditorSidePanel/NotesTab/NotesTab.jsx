@@ -33,6 +33,8 @@ export default function NotesTab() {
       ) : (
         <Collapse
           activeKey={selectedElement.open ? `${selectedElement.id}` : ""}
+          keepDOM
+          lazyRender
           onChange={(activeKey) => {
             setSelectedElement((prev) => ({
               ...prev,
