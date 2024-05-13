@@ -1,4 +1,4 @@
-import { Tabs } from "@douyinfe/semi-ui";
+import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { Tab } from "../../data/constants";
 import { useLayout, useSelect } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
@@ -13,19 +13,11 @@ export default function SidePanel({ width, resize, setResize }) {
   const { selectedElement, setSelectedElement } = useSelect();
 
   const tabList = [
-    { tab: "Tables", itemKey: Tab.TABLES },
-    { tab: "Relationships", itemKey: Tab.RELATIONSHIPS },
-    { tab: "Subject Areas", itemKey: Tab.AREAS },
-    { tab: "Notes", itemKey: Tab.NOTES },
-    { tab: "Types", itemKey: Tab.TYPES },
-  ];
-
-  const contentList = [
-    <TablesTab key="tables" />,
-    <RelationshipsTab key="relationships" />,
-    <AreasTab key="areas" />,
-    <NotesTab key="notes" />,
-    <TypesTab key="types" />,
+    { tab: "Tables", itemKey: Tab.TABLES, component: <TablesTab />  },
+    { tab: "Relationships", itemKey: Tab.RELATIONSHIPS, component: <RelationshipsTab />  },
+    { tab: "Subject Areas", itemKey: Tab.AREAS, component: <AreasTab />  },
+    { tab: "Notes", itemKey: Tab.NOTES, component: <NotesTab />  },
+    { tab: "Types", itemKey: Tab.TYPES, component: <TypesTab />  },
   ];
 
   return (
@@ -38,15 +30,19 @@ export default function SidePanel({ width, resize, setResize }) {
           <Tabs
             type="card"
             activeKey={selectedElement.currentTab}
-            tabList={tabList}
+            lazyRender
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }
             collapsible
           >
-            <div className="p-2">
-              {contentList[parseInt(selectedElement.currentTab) - 1]}
-            </div>
+            {tabList.length && tabList.map(tab => 
+              <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
+                <div className="p-2">
+                  {tab.component}
+                </div>
+              </TabPane>
+            )}
           </Tabs>
         </div>
         {layout.issues && (

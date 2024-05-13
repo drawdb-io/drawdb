@@ -27,7 +27,7 @@ export default function Issues() {
   }, [tables, relationships, issues, types]);
 
   return (
-    <Collapse style={{ width: "100%" }}>
+    <Collapse keepDOM lazyRender style={{ width: "100%" }}>
       <Collapse.Panel
         header={
           <Badge
