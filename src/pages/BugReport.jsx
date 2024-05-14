@@ -16,8 +16,10 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 function Form({ theme }) {
+  const { t } = useTranslation();
   const [editor] = useLexicalComposerContext();
   const [data, setData] = useState({
     title: "",
@@ -71,12 +73,12 @@ function Form({ theme }) {
             attachments: data.attachments,
           })
           .then(() => {
-            Toast.success("Bug reported!");
+            Toast.success(t("Page.ReportBug.Bug reported"));
             editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
             resetForm();
           })
           .catch(() => {
-            Toast.error("Oops! Something went wrong.");
+            Toast.error(t("Page.ReportBug.Oops! Something went wrong"));
             setLoading(false);
           });
       };
@@ -105,8 +107,8 @@ function Form({ theme }) {
           };
         }}
         draggable={true}
-        dragMainText="Click to upload the file or drag and drop the file here"
-        dragSubText="Upload up to 3 images"
+        dragMainText={t("Page.ReportBug.BugUploadFile")}
+        dragSubText={t("Page.ReportBug.BugUploadImage")}
         accept="image/*"
         limit={3}
       ></Upload>
@@ -133,11 +135,12 @@ function Form({ theme }) {
 }
 
 export default function BugReport() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState("");
 
   useEffect(() => {
     setTheme(localStorage.getItem("theme"));
-    document.title = "Report a bug | drawDB";
+    document.title = t("Page.ReportBug.ReportABug") + " | drawDB";
     document.body.setAttribute("class", "theme");
   }, [setTheme]);
 
@@ -169,7 +172,7 @@ export default function BugReport() {
             />
           </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
-            Report a bug
+            {t("Page.ReportBug.ReportABug")}
           </div>
         </div>
         <div className="flex items-center">
@@ -196,38 +199,38 @@ export default function BugReport() {
           <div className="card-theme p-6 rounded-md">
             <div className="flex items-center">
               <IconPaperclip />
-              <div className="font-bold ms-1">Describe the bug </div>
+              <div className="font-bold ms-1">{t("Page.ReportBug.tips.title", {context: 1})}</div>
             </div>
             <div className="text-sm mt-1">
-              Please provide a clear and concise description of what the bug is.
+              {t("Page.ReportBug.tips.subTitle", {context: 1})}
             </div>
             <div className="flex items-center mt-3">
               <IconPaperclip />
-              <div className="font-bold ms-1">Steps to reproduce the bug </div>
+              <div className="font-bold ms-1">{t("Page.ReportBug.tips.title", {context: 2})}</div>
             </div>
             <div className="text-sm mt-1">
-              Please provide the steps of how to reproduce the bug.
+              {t("Page.ReportBug.tips.subTitle", {context: 2})}
             </div>
             <div className="flex items-center mt-3">
               <IconPaperclip />
-              <div className="font-bold ms-1">Expected behaviour</div>
+              <div className="font-bold ms-1">{t("Page.ReportBug.tips.title", {context: 3})}</div>
             </div>
             <div className="text-sm mt-1">
-              Tell us what you expected to see vs what you saw.
+              {t("Page.ReportBug.tips.subTitle", {context: 3})}
             </div>
             <div className="flex items-center mt-3">
               <IconPaperclip />
-              <div className="font-bold ms-1">Your browser and device</div>
+              <div className="font-bold ms-1">{t("Page.ReportBug.tips.title", {context: 4})}</div>
             </div>
             <div className="text-sm mt-1">
-              What web browser and device did you encounter the bug on.
+              {t("Page.ReportBug.tips.subTitle", {context: 4})}
             </div>
             <div className="flex items-center mt-3">
               <IconPaperclip />
-              <div className="font-bold ms-1">Screenshots</div>
+              <div className="font-bold ms-1">{t("Page.ReportBug.tips.title", {context: 5})}</div>
             </div>
             <div className="text-sm mt-1">
-              Add any relevant images if possible.
+              {t("Page.ReportBug.tips.subTitle", {context: 5})}
             </div>
             <div className="flex items-center justify-center my-2">
               <hr
@@ -235,7 +238,7 @@ export default function BugReport() {
                   theme === "dark" ? "border-zinc-700" : "border-zinc-300"
                 } flex-grow`}
               />
-              <div className="text-sm font-semibold m-2">Alternatively</div>
+              <div className="text-sm font-semibold m-2">{t("Page.ReportBug.Alternatively")}</div>
               <hr
                 className={`${
                   theme === "dark" ? "border-zinc-700" : "border-zinc-300"
@@ -253,7 +256,7 @@ export default function BugReport() {
                 );
               }}
             >
-              Add an issue
+              {t("Page.ReportBug.Add an issue")}
             </Button>
           </div>
         </div>
@@ -265,10 +268,7 @@ export default function BugReport() {
             closeIcon={null}
             description={
               <div>
-                We value your feedback! If you&apos;ve encountered a bug or
-                issue while using our platform, please help us improve by
-                reporting it. Your input is invaluable in making our service
-                better.
+                {t("Page.ReportBug.tip2")}
               </div>
             }
           />

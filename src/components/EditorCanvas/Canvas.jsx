@@ -20,8 +20,10 @@ import {
   useNotes,
   useLayout,
 } from "../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function Canvas() {
+  const { t } = useTranslation();
   const { tables, updateTable, relationships, addRelationship } = useTables();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -278,7 +280,7 @@ export default function Canvas() {
           toX: info.x,
           toY: info.y,
           id: dragging.id,
-          message: `Move ${info.name} to (${info.x}, ${info.y})`,
+          message: t("Tip.MoveTo", {name: info.name, x: info.x, y: info.y}),
         },
       ]);
       setRedoStack([]);
@@ -291,7 +293,7 @@ export default function Canvas() {
           action: Action.PAN,
           undo: { x: panning.x, y: panning.y },
           redo: transform.pan,
-          message: `Move diagram to (${transform.pan?.x}, ${transform.pan?.y})`,
+          message: t("Tip.MoveDiagramTo",{x: transform.pan?.x, y: transform.pan?.y}),
         },
       ]);
       setRedoStack([]);
@@ -321,7 +323,7 @@ export default function Canvas() {
             height: initCoords.height,
           },
           redo: areas[areaResize.id],
-          message: `Resize area`,
+          message: t("Tip.Resize area"),
         },
       ]);
       setRedoStack([]);
@@ -350,7 +352,7 @@ export default function Canvas() {
       tables[linkingLine.startTableId].fields[linkingLine.startFieldId].type !==
       tables[hoveredTable.tableId].fields[hoveredTable.field].type
     ) {
-      Toast.info("Cannot connect");
+      Toast.info(t("Tip.Cannot connect"));
       return;
     }
     if (

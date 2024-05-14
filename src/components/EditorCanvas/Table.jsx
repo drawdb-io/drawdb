@@ -16,8 +16,10 @@ import {
 import { Popover, Tag, Button, Toast, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useTables, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
+import {useTranslation} from "react-i18next";
 
 export default function Table(props) {
+  const { t } = useTranslation();
   const [hoveredField, setHoveredField] = useState(-1);
   const {
     tableData,
@@ -157,7 +159,7 @@ export default function Table(props) {
                         block
                         style={{ marginTop: "8px" }}
                         onClick={() => {
-                          Toast.success(`Table deleted!`);
+                          Toast.success(t("Page.editor.SidePanel.Tables.Table deleted"));
                           deleteTable(tableData.id);
                         }}
                       >
@@ -196,32 +198,32 @@ export default function Table(props) {
                     <hr />
                     {e.primary && (
                       <Tag color="blue" className="me-2 my-2">
-                        Primary
+                        {t("Page.editor.TableCard.Primary")}
                       </Tag>
                     )}
                     {e.unique && (
                       <Tag color="amber" className="me-2 my-2">
-                        Unique
+                        {t("Page.editor.TableCard.Unique")}
                       </Tag>
                     )}
                     {e.notNull && (
                       <Tag color="purple" className="me-2 my-2">
-                        Not null
+                        {t("Page.editor.TableCard.Not null")}
                       </Tag>
                     )}
                     {e.increment && (
                       <Tag color="green" className="me-2 my-2">
-                        Increment
+                        {t("Page.editor.TableCard.Increment")}
                       </Tag>
                     )}
                     <p>
-                      <strong>Default: </strong>
-                      {e.default === "" ? "Not set" : e.default}
+                      <strong>{t("Page.editor.TableCard.Default")}: </strong>
+                      {e.default === "" ? t("Page.editor.TableCard.Not set") : e.default}
                     </p>
                     <p>
-                      <strong>Comment: </strong>
+                      <strong>{t("Page.editor.TableCard.Comment")}: </strong>
                       {e.comment === "" ? (
-                        "No comment"
+                        t("Page.editor.TableCard.No comment")
                       ) : (
                         <div className="max-w-[260px] break-words">
                           {e.comment}
@@ -242,7 +244,7 @@ export default function Table(props) {
         </div>
       </foreignObject>
       <SideSheet
-        title="Edit table"
+        title={t("Page.editor.TableCard.Edit table")}
         size="small"
         visible={
           selectedElement.element === ObjectType.TABLE &&

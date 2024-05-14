@@ -16,8 +16,10 @@ import { Action, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPalette";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
+import {useTranslation} from "react-i18next";
 
 export default function TableInfo({ data }) {
+  const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships } =
     useTables();
@@ -31,11 +33,11 @@ export default function TableInfo({ data }) {
   return (
     <div>
       <div className="flex items-center mb-2.5">
-        <div className="text-md font-semibold">Name: </div>
+        <div className="text-md font-semibold flex-shrink-0">{t("Global.Name")}: </div>
         <Input
           value={data.name}
           validateStatus={data.name === "" ? "error" : "default"}
-          placeholder="Name"
+          placeholder={t("Global.Name")}
           className="ms-2"
           onChange={(value) => updateTable(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
@@ -50,7 +52,7 @@ export default function TableInfo({ data }) {
                 tid: data.id,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit table name to ${e.target.value}`,
+                message: t("Page.editor.SidePanel.Tables.Edit table name to", {name:e.target.value}),
               },
             ]);
             setRedoStack([]);
@@ -147,7 +149,7 @@ export default function TableInfo({ data }) {
             onChange={(itemKey) => setIndexActiveKey(itemKey)}
             accordion
           >
-            <Collapse.Panel header="Indices" itemKey="1">
+            <Collapse.Panel header={t("Page.editor.SidePanel.Tables.Indices")} itemKey="1">
               {data.indices.map((idx, k) => (
                 <IndexDetails
                   key={"index_" + k}
@@ -170,12 +172,12 @@ export default function TableInfo({ data }) {
         headerLine={false}
       >
         <Collapse>
-          <Collapse.Panel header="Comment" itemKey="1">
+          <Collapse.Panel header={t("Page.editor.SidePanel.Tables.Comment")} itemKey="1">
             <TextArea
               field="comment"
               value={data.comment}
               autosize
-              placeholder="Add comment"
+              placeholder={t("Page.editor.SidePanel.Tables.Add comment")}
               rows={1}
               onChange={(value) =>
                 updateTable(data.id, { comment: value }, false)
@@ -192,7 +194,7 @@ export default function TableInfo({ data }) {
                     tid: data.id,
                     undo: editField,
                     redo: { comment: e.target.value },
-                    message: `Edit table comment to ${e.target.value}`,
+                    message: t("Page.editor.SidePanel.Tables.Edit table comment to", {val: e.target.value}),
                   },
                 ]);
                 setRedoStack([]);
@@ -218,7 +220,7 @@ export default function TableInfo({ data }) {
                         tid: data.id,
                         undo: { color: data.color },
                         redo: { color: defaultBlue },
-                        message: `Edit table color to default`,
+                        message: t("Page.editor.SidePanel.Tables.Edit table color to default"),
                       },
                     ]);
                     setRedoStack([]);
@@ -234,7 +236,7 @@ export default function TableInfo({ data }) {
                         tid: data.id,
                         undo: { color: data.color },
                         redo: { color: c },
-                        message: `Edit table color to ${c}`,
+                        message: t("Page.editor.SidePanel.Tables.Edit table color to", {color: c}),
                       },
                     ]);
                     setRedoStack([]);
@@ -265,7 +267,7 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "index_add",
                   tid: data.id,
-                  message: `Add index`,
+                  message: t("Page.editor.SidePanel.Tables.Add index")
                 },
               ]);
               setRedoStack([]);
@@ -282,7 +284,7 @@ export default function TableInfo({ data }) {
               });
             }}
           >
-            Add index
+            {t("Page.editor.SidePanel.Tables.Add index")}
           </Button>
         </Col>
         <Col span={6}>
@@ -295,7 +297,7 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "field_add",
                   tid: data.id,
-                  message: `Add field`,
+                  message: t("Page.editor.SidePanel.Tables.Add field"),
                 },
               ]);
               setRedoStack([]);
@@ -319,7 +321,7 @@ export default function TableInfo({ data }) {
             }}
             block
           >
-            Add field
+            {t("Page.editor.SidePanel.Tables.Add field")}
           </Button>
         </Col>
         <Col span={3}>
@@ -327,7 +329,7 @@ export default function TableInfo({ data }) {
             icon={<IconDeleteStroked />}
             type="danger"
             onClick={() => {
-              Toast.success(`Table deleted!`);
+              Toast.success(t("Page.editor.SidePanel.Tables.Table deleted"));
               deleteTable(data.id);
             }}
           />

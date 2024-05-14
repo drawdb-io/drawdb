@@ -2,8 +2,10 @@ import { useState } from "react";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { useNotes } from "../../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function SearchBar({ setActiveKey }) {
+  const { t } = useTranslation();
   const { notes } = useNotes();
   const [searchText, setSearchText] = useState("");
   const [filteredResult, setFilteredResult] = useState(
@@ -22,7 +24,7 @@ export default function SearchBar({ setActiveKey }) {
       value={searchText}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
+      placeholder={t("Global.Search")}
       emptyContent={<div className="p-3 popover-theme">No notes found</div>}
       onSearch={(v) => handleStringSearch(v)}
       onChange={(v) => setSearchText(v)}

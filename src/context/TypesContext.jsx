@@ -1,10 +1,12 @@
 import { createContext, useState } from "react";
 import { Action, ObjectType } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
+import {useTranslation} from "react-i18next";
 
 export const TypesContext = createContext(null);
 
 export default function TypesContextProvider({ children }) {
+  const { t } = useTranslation();
   const [types, setTypes] = useState([]);
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
@@ -31,7 +33,7 @@ export default function TypesContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.TYPE,
-          message: `Add new type`,
+          message: t("Page.editor.SidePanel.Types.Add new type"),
         },
       ]);
       setRedoStack([]);
@@ -47,7 +49,7 @@ export default function TypesContextProvider({ children }) {
           element: ObjectType.TYPE,
           id: id,
           data: types[id],
-          message: `Delete type`,
+          message: t("Page.editor.SidePanel.Types.Delete type"),
         },
       ]);
       setRedoStack([]);

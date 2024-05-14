@@ -13,8 +13,10 @@ import {
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
 import { isSized, hasPrecision, getSize } from "../../../utils/toSQL";
 import { useUndoRedo, useTypes } from "../../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function TypeField({ data, tid, fid }) {
+  const { t } = useTranslation();
   const { types, updateType } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -24,7 +26,7 @@ export default function TypeField({ data, tid, fid }) {
         <Input
           value={data.name}
           validateStatus={data.name === "" ? "error" : "default"}
-          placeholder="Name"
+          placeholder={t("Global.Name")}
           onChange={(value) =>
             updateType(tid, {
               fields: types[tid].fields.map((e, id) =>
@@ -45,7 +47,7 @@ export default function TypeField({ data, tid, fid }) {
                 fid: fid,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit type field name to ${e.target.value}`,
+                message: t("Page.editor.SidePanel.Types.Edit type field name to", {val: e.target.value}),
               },
             ]);
             setRedoStack([]);
@@ -72,7 +74,7 @@ export default function TypeField({ data, tid, fid }) {
           filter
           value={data.type}
           validateStatus={data.type === "" ? "error" : "default"}
-          placeholder="Type"
+          placeholder={t("Global.Type")}
           onChange={(value) => {
             if (value === data.type) return;
             setUndoStack((prev) => [
@@ -85,7 +87,7 @@ export default function TypeField({ data, tid, fid }) {
                 fid: fid,
                 undo: { type: data?.type },
                 redo: { type: value },
-                message: `Edit type field type to ${value}`,
+                message: t("Page.editor.SidePanel.Types.Edit type field type to", {val: value}),
               },
             ]);
             setRedoStack([]);
@@ -135,7 +137,7 @@ export default function TypeField({ data, tid, fid }) {
                         : "default"
                     }
                     className="my-2"
-                    placeholder="Use ',' for batch input"
+                    placeholder={t("Page.editor.SidePanel.Types.Use ',' for batch input")}
                     onChange={(v) =>
                       updateType(tid, {
                         fields: types[tid].fields.map((e, id) =>
@@ -160,10 +162,11 @@ export default function TypeField({ data, tid, fid }) {
                           fid: fid,
                           undo: editField,
                           redo: { values: data.values },
-                          message: `Edit type field values to "${JSON.stringify(
-                            data.values
-                          )}"`,
-                        },
+                          // message: `Edit type field values to "${JSON.stringify(
+                          //   data.values
+                          // )}"`,
+                          message: t("Page.editor.SidePanel.Types.Edit type field values to", {val: JSON.stringify(data.values)})
+                        }
                       ]);
                       setRedoStack([]);
                     }}
@@ -175,7 +178,7 @@ export default function TypeField({ data, tid, fid }) {
                   <div className="font-semibold">Size</div>
                   <InputNumber
                     className="my-2 w-full"
-                    placeholder="Set length"
+                    placeholder={t("Page.editor.SidePanel.Types.Set length")}
                     value={data.size}
                     onChange={(value) =>
                       updateType(tid, {
@@ -197,7 +200,7 @@ export default function TypeField({ data, tid, fid }) {
                           fid: fid,
                           undo: editField,
                           redo: { size: e.target.value },
-                          message: `Edit type field size to ${e.target.value}`,
+                          message:  t("Page.editor.SidePanel.Types.Edit type field size to", {val: e.target.value}),
                         },
                       ]);
                       setRedoStack([]);
@@ -210,7 +213,7 @@ export default function TypeField({ data, tid, fid }) {
                   <div className="font-semibold">Precision</div>
                   <Input
                     className="my-2 w-full"
-                    placeholder="Set precision: (size, d)"
+                    placeholder={t("Page.editor.SidePanel.Types.Set precision")}
                     validateStatus={
                       /^\(\d+,\s*\d+\)$|^$/.test(data.size)
                         ? "default"
@@ -237,7 +240,7 @@ export default function TypeField({ data, tid, fid }) {
                           fid: fid,
                           undo: editField,
                           redo: { size: e.target.value },
-                          message: `Edit type field precision to ${e.target.value}`,
+                          message: t("Page.editor.SidePanel.Types.Edit type field precision to", {val: e.target.value}),
                         },
                       ]);
                       setRedoStack([]);
@@ -259,7 +262,7 @@ export default function TypeField({ data, tid, fid }) {
                       tid: tid,
                       fid: fid,
                       data: data,
-                      message: `Delete field`,
+                      message: t("Page.editor.SidePanel.Types.Delete field"),
                     },
                   ]);
                   updateType(tid, {
@@ -267,7 +270,7 @@ export default function TypeField({ data, tid, fid }) {
                   });
                 }}
               >
-                Delete field
+                {t("Page.editor.SidePanel.Types.Delete field")}
               </Button>
             </div>
           }

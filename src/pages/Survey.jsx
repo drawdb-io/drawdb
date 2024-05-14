@@ -22,8 +22,10 @@ import { Link } from "react-router-dom";
 import RichEditor from "../components/LexicalEditor/RichEditor";
 import axios from "axios";
 import { questions } from "../data/surveyQuestions";
+import {useTranslation} from "react-i18next";
 
 function SurveyForm({ theme }) {
+  const { t } = useTranslation();
   const [editor] = useLexicalComposerContext();
   const [form, setForm] = useState({
     satisfaction: 5,
@@ -60,17 +62,17 @@ function SurveyForm({ theme }) {
             subject: `[SURVEY]: ${new Date().toDateString()}`,
             message: `${Object.keys(form).map(
               (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
-            )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
+            )}<div>${t("Tip.How can we make drawDB a better experience for you")}</div>${$generateHtmlFromNodes(
               editor
             )}`,
           })
           .then(() => {
-            Toast.success("Thanks for the feedback!");
+            Toast.success(t("Tip.Thanks for the feedback"));
             editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
             resetForm();
           })
           .catch(() => {
-            Toast.error("Oops! Something went wrong.");
+            Toast.error(t("Tip.Oops! Something went wrong"));
             setLoading(false);
           });
       };

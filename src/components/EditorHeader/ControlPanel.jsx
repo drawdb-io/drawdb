@@ -468,7 +468,7 @@ export default function ControlPanel({
     setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
   const viewStrictMode = () => {
     setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
-    Toast.success(`Stict mode is ${settings.strictMode ? "on" : "off"}.`);
+    Toast.success(t("Tip.Strict mode is",{context: settings.strictMode ? "on" : "off"}));
   };
   const viewFieldSummary = () => {
     setSettings((prev) => ({
@@ -476,7 +476,7 @@ export default function ControlPanel({
       showFieldSummary: !prev.showFieldSummary,
     }));
     Toast.success(
-      `Field summary is ${settings.showFieldSummary ? "off" : "on"}.`,
+        t("Tip.Field summary is_on", {context: settings.showFieldSummary ? "off" : "on"})
     );
   };
   const copyAsImage = () => {
@@ -485,10 +485,10 @@ export default function ControlPanel({
       navigator.clipboard
         .write([new ClipboardItem({ "image/png": blob })])
         .then(() => {
-          Toast.success("Copied to clipboard.");
+          Toast.success(t("Tip.CopiedSuccess"));
         })
         .catch(() => {
-          Toast.error("Could not copy to clipboard.");
+          Toast.error(t("Tip.CopiedFall"));
         });
     });
   };
@@ -616,21 +616,21 @@ export default function ControlPanel({
         navigator.clipboard
           .writeText(JSON.stringify({ ...tables[selectedElement.id] }))
           .catch(() => {
-            Toast.error("Could not copy");
+            Toast.error(t("Tip.Could not copy"));
           });
         break;
       case ObjectType.NOTE:
         navigator.clipboard
           .writeText(JSON.stringify({ ...notes[selectedElement.id] }))
           .catch(() => {
-            Toast.error("Could not copy");
+            Toast.error(t("Tip.Could not copy"));
           });
         break;
       case ObjectType.AREA:
         navigator.clipboard
           .writeText(JSON.stringify({ ...areas[selectedElement.id] }))
           .catch(() => {
-            Toast.error("Could not copy");
+            Toast.error(t("Tip.Could not copy"));
           });
         break;
       default:
@@ -744,7 +744,7 @@ export default function ControlPanel({
               setUndoStack([]);
               setRedoStack([]);
             })
-            .catch(() => Toast.error("Tip.Oops! Something went wrong"));
+            .catch(() => Toast.error(t("Tip.Oops! Something went wrong")));
         },
       },
       "Import diagram": {
@@ -1098,7 +1098,7 @@ export default function ControlPanel({
         state: settings.autosave ? "on" : "off",
         function: () =>
           setSettings((prev) => {
-            Toast.success(`Autosave is ${settings.autosave ? "off" : "on"}`);
+            Toast.success(t("Tip.AutoSave", {context: settings.autosave ? "off" : "on"}));
             return { ...prev, autosave: !prev.autosave };
           }),
       },
@@ -1106,7 +1106,7 @@ export default function ControlPanel({
         state: settings.panning ? "on" : "off",
         function: () =>
           setSettings((prev) => {
-            Toast.success(`Panning is ${settings.panning ? "off" : "on"}`);
+            Toast.success(t("Tip.Panning",{context: settings.panning ? "off" : "on"}));
             return { ...prev, panning: !prev.panning };
           }),
       },
@@ -1157,13 +1157,13 @@ export default function ControlPanel({
     lostTranslateItem = {}
     // let { t ,i18n} = useTranslation()
     // let { t } = useTranslation()
-    console.log("==> t ==>", t)
+    // console.log("==> t ==>", t)
     let translateResult = {};
     let keys = Object.keys(item);
     for (const key of keys) {
       let key2 = t(`Menu.${key}.val`);
       let val = item[key];
-      console.log("翻译", key, key2);
+      // console.log("翻译", key, key2);
 
       //二级菜单
       if (typeof val === "object"){
@@ -1270,9 +1270,9 @@ export default function ControlPanel({
     return obj
   }
   menu = translateMenu(menu);
-  console.log("菜单>", menu)
-  console.log("菜单翻译", lostTranslateItem)
-  console.log("菜单翻译txt", JSON.stringify(lostTranslateItem))
+  // console.log("菜单>", menu)
+  // console.log("菜单翻译", lostTranslateItem)
+  // console.log("菜单翻译txt", JSON.stringify(lostTranslateItem))
 
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });

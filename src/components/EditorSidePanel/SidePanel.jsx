@@ -7,17 +7,19 @@ import Issues from "./Issues";
 import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
+import {useTranslation} from "react-i18next";
 
 export default function SidePanel({ width, resize, setResize }) {
+  const { t } = useTranslation();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
 
   const tabList = [
-    { tab: "Tables", itemKey: Tab.TABLES },
-    { tab: "Relationships", itemKey: Tab.RELATIONSHIPS },
-    { tab: "Subject Areas", itemKey: Tab.AREAS },
-    { tab: "Notes", itemKey: Tab.NOTES },
-    { tab: "Types", itemKey: Tab.TYPES },
+    { tab: t("Page.editor.SidePanel.Tables.val"), itemKey: Tab.TABLES },
+    { tab: t("Page.editor.SidePanel.Relationships.val"), itemKey: Tab.RELATIONSHIPS },
+    { tab: t("Page.editor.SidePanel.Subject Areas.val"), itemKey: Tab.AREAS },
+    { tab: t("Page.editor.SidePanel.Notes.val"), itemKey: Tab.NOTES },
+    { tab: t("Page.editor.SidePanel.Types.val"), itemKey: Tab.TYPES },
   ];
 
   const contentList = [

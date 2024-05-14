@@ -5,8 +5,10 @@ import { getSize, hasCheck, hasPrecision, isSized } from "../../../utils/toSQL";
 import { useTables, useTypes, useUndoRedo } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
+import {useTranslation} from "react-i18next";
 
 export default function TableField({ data, tid, index }) {
+  const { t } = useTranslation();
   const { updateField } = useTables();
   const { types } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -18,7 +20,7 @@ export default function TableField({ data, tid, index }) {
         <Input
           value={data.name}
           validateStatus={data.name === "" ? "error" : "default"}
-          placeholder="Name"
+          placeholder={t("Global.Name")}
           onChange={(value) => updateField(tid, index, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -33,7 +35,7 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit table field name to ${e.target.value}`,
+                message: t("Page.editor.SidePanel.Tables.Edit table field name to", {val: e.target.value}),
               },
             ]);
             setRedoStack([]);
@@ -56,7 +58,7 @@ export default function TableField({ data, tid, index }) {
           filter
           value={data.type}
           validateStatus={data.type === "" ? "error" : "default"}
-          placeholder="Type"
+          placeholder={t("Global.Type")}
           onChange={(value) => {
             if (value === data.type) return;
             setUndoStack((prev) => [
@@ -69,7 +71,7 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { type: data.type },
                 redo: { type: value },
-                message: `Edit table field type to ${value}`,
+                message: t("Page.editor.SidePanel.Tables.Edit table field type to",{type:value}),
               },
             ]);
             setRedoStack([]);
@@ -123,7 +125,7 @@ export default function TableField({ data, tid, index }) {
       <Col span={3}>
         <Button
           type={data.notNull ? "primary" : "tertiary"}
-          title="Not Null"
+          title={t("Global.Not Null")}
           theme={data.notNull ? "solid" : "light"}
           onClick={() => {
             setUndoStack((prev) => [
@@ -136,9 +138,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { notNull: data.notNull },
                 redo: { notNull: !data.notNull },
-                message: `Edit table field to${
-                  data.notNull ? "" : " not"
-                } null`,
+                // message: `Edit table field to${
+                //   data.notNull ? "" : " not"
+                // } null`,
+                message: t("Page.editor.SidePanel.Tables.Edit table field to null", {context: data.notNull ? "not" : ""})
               },
             ]);
             setRedoStack([]);
@@ -151,7 +154,7 @@ export default function TableField({ data, tid, index }) {
       <Col span={3}>
         <Button
           type={data.primary ? "primary" : "tertiary"}
-          title="Primary"
+          title={t("Global.Primary")}
           theme={data.primary ? "solid" : "light"}
           onClick={() => {
             setUndoStack((prev) => [
@@ -164,9 +167,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { primary: data.primary },
                 redo: { primary: !data.primary },
-                message: `Edit table field to${
-                  data.primary ? " not" : ""
-                } primary`,
+                // message: `Edit table field to${
+                //   data.primary ? " not" : ""
+                // } primary`,
+                message: t("Page.editor.SidePanel.Tables.Edit table field to primary", {context: data.primary ? "not" : ""})
               },
             ]);
             setRedoStack([]);

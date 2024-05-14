@@ -5,8 +5,10 @@ import { ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
 import TypeInfo from "./TypeInfo";
+import {useTranslation} from "react-i18next";
 
 export default function TypesTab() {
+  const { t } = useTranslation();
   const { types, addType } = useTypes();
   const { selectedElement, setSelectedElement } = useSelect();
 
@@ -18,30 +20,17 @@ export default function TypesTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addType(true)}>
-            Add type
+            {t("Page.editor.SidePanel.Types.Add type")}
           </Button>
         </Col>
         <Col span={3}>
           <Popover
             content={
               <div className="w-[240px] text-sm space-y-2 popover-theme">
-                <div>
-                  This feature is meant for object-relational DBMSs like{" "}
-                  <strong>PostgreSQL</strong>.
-                </div>
-                <div>
-                  If used for <strong>MySQL</strong> or <strong>MariaDB</strong>{" "}
-                  a <code>JSON</code> type will be generated with the
-                  corresponding json validation check.
-                </div>
-                <div>
-                  If used for <strong>SQLite</strong> it will be translated to a{" "}
-                  <code>BLOB</code>.
-                </div>
-                <div>
-                  If used for <strong>MSSQL</strong> a type alias to the first
-                  field will be generated.
-                </div>
+                <div dangerouslySetInnerHTML={{ __html: t('Page.editor.SidePanel.Types.tip.tip_1')}} />
+                <div dangerouslySetInnerHTML={{ __html: t('Page.editor.SidePanel.Types.tip.tip_2')}} />
+                <div dangerouslySetInnerHTML={{ __html: t('Page.editor.SidePanel.Types.tip.tip_3')}} />
+                <div dangerouslySetInnerHTML={{ __html: t('Page.editor.SidePanel.Types.tip.tip_4')}} />
               </div>
             }
             showArrow
@@ -52,7 +41,7 @@ export default function TypesTab() {
         </Col>
       </Row>
       {types.length <= 0 ? (
-        <Empty title="No types" text="Make your own custom data types" />
+        <Empty title={t("Page.editor.SidePanel.Types.No types")} text={t("Page.editor.SidePanel.Types.Make your own custom data types")} />
       ) : (
         <Collapse
           activeKey={

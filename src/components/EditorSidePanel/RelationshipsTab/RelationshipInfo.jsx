@@ -19,21 +19,36 @@ import {
   ObjectType,
 } from "../../../data/constants";
 import { useTables, useUndoRedo } from "../../../hooks";
+import {useTranslation} from "react-i18next";
 
-const columns = [
-  {
-    title: "Primary",
-    dataIndex: "primary",
-  },
-  {
-    title: "Foreign",
-    dataIndex: "foreign",
-  },
-];
+// const columns = [
+//   {
+//     title: t("Page.editor.SidePanel.Relationships.Primary"),
+//     dataIndex: "primary",
+//   },
+//   {
+//     title: t("Page.editor.SidePanel.Relationships.Foreign"),
+//     dataIndex: "foreign",
+//   },
+// ];
+let columns;
 
 export default function RelationshipInfo({ data }) {
+  const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { tables, setRelationships, deleteRelationship } = useTables();
+
+  // init columns
+  columns = [
+    {
+      title: t("Page.editor.SidePanel.Relationships.Primary"),
+      dataIndex: "primary",
+    },
+    {
+      title: t("Page.editor.SidePanel.Relationships.Foreign"),
+      dataIndex: "foreign",
+    },
+  ];
 
   const swapKeys = () => {
     setUndoStack((prev) => [
@@ -54,7 +69,7 @@ export default function RelationshipInfo({ data }) {
           endTableId: data.startTableId,
           endFieldId: data.startFieldId,
         },
-        message: `Swap primary and foreign tables`,
+        message: t("Page.editor.SidePanel.Relationships.Swap primary and foreign tables"),
       },
     ]);
     setRedoStack([]);
@@ -85,7 +100,7 @@ export default function RelationshipInfo({ data }) {
         rid: data.id,
         undo: { cardinality: data.cardinality },
         redo: { cardinality: value },
-        message: `Edit relationship cardinality`,
+        message: t("Page.editor.SidePanel.Relationships.Edit relationship cardinality"),
       },
     ]);
     setRedoStack([]);
@@ -102,7 +117,7 @@ export default function RelationshipInfo({ data }) {
       rid: data.id,
       undo: { [undoKey]: data[undoKey] },
       redo: { [undoKey]: value },
-      message: `Edit relationship ${key} constraint`,
+      message: t("Page.editor.SidePanel.Relationships.Edit relationship item constraint",{key: key}),
     });
     setUndoStack((prev) => [
       ...prev,
@@ -112,7 +127,7 @@ export default function RelationshipInfo({ data }) {
         rid: data.id,
         undo: { [undoKey]: data[undoKey] },
         redo: { [undoKey]: value },
-        message: `Edit relationship ${key} constraint`,
+        message: t("Page.editor.SidePanel.Relationships.Edit relationship item constraint",{key: key}),
       },
     ]);
     setRedoStack([]);
@@ -133,11 +148,11 @@ export default function RelationshipInfo({ data }) {
       >
         <div className="flex justify-between items-center mb-3">
           <div className="me-3">
-            <span className="font-semibold">Primary: </span>
+            <span className="font-semibold">{t("Page.editor.SidePanel.Relationships.Primary")}: </span>
             {tables[data.endTableId].name}
           </div>
           <div className="mx-1">
-            <span className="font-semibold">Foreign: </span>
+            <span className="font-semibold">{t("Page.editor.SidePanel.Relationships.Foreign")}: </span>
             {tables[data.startTableId].name}
           </div>
           <div className="ms-1">
@@ -168,7 +183,7 @@ export default function RelationshipInfo({ data }) {
                       block
                       onClick={swapKeys}
                     >
-                      Swap
+                      {t("Page.editor.SidePanel.Relationships.Swap")}
                     </Button>
                   </div>
                 </div>
@@ -181,10 +196,10 @@ export default function RelationshipInfo({ data }) {
             </Popover>
           </div>
         </div>
-        <div className="font-semibold my-1">Cardinality</div>
+        <div className="font-semibold my-1">{t("Page.editor.SidePanel.Relationships.Cardinality")}</div>
         <Select
           optionList={Object.values(Cardinality).map((v) => ({
-            label: v,
+            label: t("Page.editor.SidePanel.Relationships.CardinalityItem."+v),
             value: v,
           }))}
           value={data.cardinality}
@@ -193,10 +208,10 @@ export default function RelationshipInfo({ data }) {
         />
         <Row gutter={6} className="my-3">
           <Col span={12}>
-            <div className="font-semibold">On update: </div>
+            <div className="font-semibold">{t("Page.editor.SidePanel.Relationships.On update")}: </div>
             <Select
               optionList={Object.values(Constraint).map((v) => ({
-                label: v,
+                label: t("Page.editor.SidePanel.Relationships.ActionItem."+v),
                 value: v,
               }))}
               value={data.updateConstraint}
@@ -205,10 +220,10 @@ export default function RelationshipInfo({ data }) {
             />
           </Col>
           <Col span={12}>
-            <div className="font-semibold">On delete: </div>
+            <div className="font-semibold">{t("Page.editor.SidePanel.Relationships.On delete")}: </div>
             <Select
               optionList={Object.values(Constraint).map((v) => ({
-                label: v,
+                label: t("Page.editor.SidePanel.Relationships.ActionItem."+v),
                 value: v,
               }))}
               value={data.deleteConstraint}
@@ -223,7 +238,7 @@ export default function RelationshipInfo({ data }) {
           type="danger"
           onClick={() => deleteRelationship(data.id, true)}
         >
-          Delete
+          {t("Global.Delete")}
         </Button>
       </Collapse.Panel>
     </div>

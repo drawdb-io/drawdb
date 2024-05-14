@@ -18,6 +18,7 @@ import {
   useTransform,
 } from "../../hooks";
 import ColorPalette from "../ColorPalette";
+import {useTranslation} from "react-i18next";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
@@ -187,6 +188,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
 }
 
 function EditPopoverContent({ data }) {
+  const { t } = useTranslation();
   const [editField, setEditField] = useState({});
   const { setSaveState } = useSaveState();
   const { updateArea, deleteArea } = useAreas();
@@ -212,7 +214,7 @@ function EditPopoverContent({ data }) {
                 aid: data.id,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit area name to ${e.target.value}`,
+                message: t("Page.editor.SidePanel.Subject Areas.Edit area name to", {name: e.target.value}),
               },
             ]);
             setRedoStack([]);
@@ -232,7 +234,7 @@ function EditPopoverContent({ data }) {
                       aid: data.id,
                       undo: { color: data.color },
                       redo: { color: c },
-                      message: `Edit area color to ${c}`,
+                      message: t("Page.editor.SidePanel.Subject Areas.Edit area color to", {val: c}),
                     },
                   ]);
                   setRedoStack([]);
@@ -264,7 +266,7 @@ function EditPopoverContent({ data }) {
           type="danger"
           block
           onClick={() => {
-            Toast.success(`Area deleted!`);
+            Toast.success(t("Page.editor.SidePanel.Subject Areas.Area deleted"));
             deleteArea(data.id, true);
           }}
         >

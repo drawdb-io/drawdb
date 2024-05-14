@@ -19,8 +19,10 @@ import {
   useNotes,
   useSaveState,
 } from "../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function Note({ data, onMouseDown }) {
+  const { t } = useTranslation();
   const w = 180;
   const r = 3;
   const fold = 24;
@@ -54,7 +56,7 @@ export default function Note({ data, onMouseDown }) {
         nid: data.id,
         undo: editField,
         redo: { content: e.target.value, height: newHeight },
-        message: `Edit note content to "${e.target.value}"`,
+        message: t("Page.editor.SidePanel.Notes.Edit note content to", {val: e.target.value}),
       },
     ]);
     setRedoStack([]);
@@ -172,7 +174,7 @@ export default function Note({ data, onMouseDown }) {
                       <div className="w-[280px] flex items-center mb-2">
                         <Input
                           value={data.title}
-                          placeholder="Title"
+                          placeholder={t("Page.editor.SidePanel.Notes.Title")}
                           className="me-2"
                           onChange={(value) =>
                             updateNote(data.id, { title: value })
@@ -190,7 +192,7 @@ export default function Note({ data, onMouseDown }) {
                                 nid: data.id,
                                 undo: editField,
                                 redo: { title: e.target.value },
-                                message: `Edit note title to "${e.target.value}"`,
+                                message: t("Page.editor.SidePanel.Notes.Edit note title to", {val: e.target.name}),
                               },
                             ]);
                             setRedoStack([]);
@@ -216,7 +218,7 @@ export default function Note({ data, onMouseDown }) {
                                           nid: data.id,
                                           undo: { color: data.color },
                                           redo: { color: c },
-                                          message: `Edit note color to ${c}`,
+                                          message: t("Page.editor.SidePanel.Notes.Edit note color to", {val: c}),
                                         },
                                       ]);
                                       setRedoStack([]);
@@ -250,7 +252,7 @@ export default function Note({ data, onMouseDown }) {
                           type="danger"
                           block
                           onClick={() => {
-                            Toast.success(`Note deleted!`);
+                            Toast.success(t("Page.editor.SidePanel.Notes.Note deleted"));
                             deleteNote(data.id, true);
                           }}
                         >

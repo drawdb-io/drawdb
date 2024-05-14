@@ -9,8 +9,10 @@ import {
   defaultBlue,
 } from "../../../data/constants";
 import ColorPalette from "../../ColorPalette";
+import {useTranslation} from "react-i18next";
 
 export default function AreaInfo({ data, i }) {
+  const { t } = useTranslation();
   const { setSaveState } = useSaveState();
   const { deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -28,7 +30,7 @@ export default function AreaInfo({ data, i }) {
       <Col span={18}>
         <Input
           value={data.name}
-          placeholder="Name"
+          placeholder={t("Global.Name")}
           onChange={(value) => updateArea(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -41,7 +43,7 @@ export default function AreaInfo({ data, i }) {
                 aid: i,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit area name to ${e.target.value}`,
+                message: t("Page.editor.SidePanel.Subject Areas.Edit area name to", {name: e.target.value}),
               },
             ]);
             setRedoStack([]);
@@ -67,7 +69,7 @@ export default function AreaInfo({ data, i }) {
                       aid: i,
                       undo: { color: data.color },
                       redo: { color: c },
-                      message: `Edit area color to ${c}`,
+                      message: t("Page.editor.SidePanel.Subject Areas.Edit area color to", {val: c}),
                     },
                   ]);
                   setRedoStack([]);
@@ -91,7 +93,7 @@ export default function AreaInfo({ data, i }) {
           icon={<IconDeleteStroked />}
           type="danger"
           onClick={() => {
-            Toast.success(`Area deleted!`);
+            Toast.success(t("Page.editor.SidePanel.Subject Areas.Area deleted"));
             deleteArea(i, true);
           }}
         />

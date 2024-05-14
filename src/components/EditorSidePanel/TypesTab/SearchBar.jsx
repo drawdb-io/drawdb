@@ -3,8 +3,10 @@ import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { useSelect, useTypes } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
+import {useTranslation} from "react-i18next";
 
 export default function Searchbar() {
+  const { t } = useTranslation();
   const { types } = useTypes();
   const [value, setValue] = useState("");
   const { setSelectedElement } = useSelect();
@@ -25,7 +27,7 @@ export default function Searchbar() {
       value={value}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
+      placeholder={t("Global.Search")}
       onSearch={(v) => handleStringSearch(v)}
       emptyContent={<div className="p-3 popover-theme">No types found</div>}
       onChange={(v) => setValue(v)}

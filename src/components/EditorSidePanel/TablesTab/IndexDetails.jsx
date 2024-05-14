@@ -2,15 +2,17 @@ import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Checkbox, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useTables, useUndoRedo } from "../../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function IndexDetails({ data, fields, iid, tid }) {
+  const { t } = useTranslation();
   const { tables, updateTable } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
   return (
     <div className="flex justify-between items-center mb-2">
       <Select
-        placeholder="Select fields"
+        placeholder={t("Page.editor.SidePanel.Tables.Select fields")}
         multiple
         validateStatus={data.fields.length === 0 ? "error" : "default"}
         optionList={fields}
@@ -33,7 +35,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 fields: [...value],
                 name: `${value.join("_")}_index`,
               },
-              message: `Edit index fields to "${JSON.stringify(value)}"`,
+              message: t("Page.editor.SidePanel.Tables.Edit index fields to", {val: JSON.stringify(value)}),
             },
           ]);
           setRedoStack([]);
@@ -53,10 +55,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
       <Popover
         content={
           <div className="px-1 popover-theme">
-            <div className="font-semibold mb-1">Index name: </div>
+            <div className="font-semibold mb-1">{t("Page.editor.SidePanel.Tables.Index name")} </div>
             <Input value={data.name} placeholder="Index name" disabled />
             <div className="flex justify-between items-center my-3">
-              <div className="font-medium">Unique</div>
+              <div className="font-medium">{t("Page.editor.SidePanel.Tables.Unique")}</div>
               <Checkbox
                 value="unique"
                 checked={data.unique}
@@ -77,9 +79,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                         [checkedValues.target.value]:
                           checkedValues.target.checked,
                       },
-                      message: `Edit table field to${
-                        data.unique ? " not" : ""
-                      } unique`,
+                      // message: `Edit table field to${
+                      //   data.unique ? " not" : ""
+                      // } unique`,
+                        message: t("Page.editor.SidePanel.Tables.Edit table field to unique", {context: data.unique ? "not" : ""})
                     },
                   ]);
                   setRedoStack([]);
@@ -110,7 +113,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                     component: "index_delete",
                     tid: tid,
                     data: data,
-                    message: `Delete index`,
+                    message: t("Page.editor.SidePanel.Tables.Delete index"),
                   },
                 ]);
                 setRedoStack([]);
@@ -124,7 +127,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 });
               }}
             >
-              Delete
+                {t("Global.Delete")}
             </Button>
           </div>
         }

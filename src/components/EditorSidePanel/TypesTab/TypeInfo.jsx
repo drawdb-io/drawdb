@@ -13,8 +13,10 @@ import {
 import { IconDeleteStroked, IconPlus } from "@douyinfe/semi-icons";
 import { useUndoRedo, useTypes } from "../../../hooks";
 import TypeField from "./TypeField";
+import {useTranslation} from "react-i18next";
 
 export default function TypeInfo({ index, data }) {
+  const { t } = useTranslation();
   const { deleteType, updateType } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -30,11 +32,11 @@ export default function TypeInfo({ index, data }) {
         itemKey={`${index}`}
       >
         <div className="flex items-center mb-2.5">
-          <div className="text-md font-semibold">Name: </div>
+          <div className="text-md font-semibold flex-shrink-0">{t("Global.Name")}: </div>
           <Input
             value={data.name}
             validateStatus={data.name === "" ? "error" : "default"}
-            placeholder="Name"
+            placeholder={t("Global.Name")}
             className="ms-2"
             onChange={(value) => updateType(index, { name: value })}
             onFocus={(e) => setEditField({ name: e.target.value })}
@@ -49,7 +51,7 @@ export default function TypeInfo({ index, data }) {
                   tid: index,
                   undo: editField,
                   redo: { name: e.target.value },
-                  message: `Edit type name to ${e.target.value}`,
+                  message: t("Page.editor.SidePanel.Types.Edit type name to", {val: e.target.value}),
                 },
               ]);
               setRedoStack([]);
@@ -65,12 +67,12 @@ export default function TypeInfo({ index, data }) {
           headerLine={false}
         >
           <Collapse>
-            <Collapse.Panel header="Comment" itemKey="1">
+            <Collapse.Panel header={t("Page.editor.SidePanel.Types.Comment")} itemKey="1">
               <TextArea
                 field="comment"
                 value={data.comment}
                 autosize
-                placeholder="Add comment"
+                placeholder={t("Page.editor.SidePanel.Types.Add comment")}
                 rows={1}
                 onChange={(value) =>
                   updateType(index, { comment: value }, false)
@@ -87,7 +89,7 @@ export default function TypeInfo({ index, data }) {
                       tid: index,
                       undo: editField,
                       redo: { comment: e.target.value },
-                      message: `Edit type comment to ${e.target.value}`,
+                      message: t("Edit type comment to", {val: e.target.value}),
                     },
                   ]);
                   setRedoStack([]);
@@ -108,7 +110,7 @@ export default function TypeInfo({ index, data }) {
                     element: ObjectType.TYPE,
                     component: "field_add",
                     tid: index,
-                    message: `Add field to type`,
+                    message: t("Page.editor.SidePanel.Types.Add field"),
                   },
                 ]);
                 setRedoStack([]);
@@ -124,7 +126,7 @@ export default function TypeInfo({ index, data }) {
               }}
               block
             >
-              Add field
+              {t("Page.editor.SidePanel.Types.Add field")}
             </Button>
           </Col>
           <Col span={12}>
@@ -132,12 +134,12 @@ export default function TypeInfo({ index, data }) {
               icon={<IconDeleteStroked />}
               type="danger"
               onClick={() => {
-                Toast.success(`Type deleted!`);
+                Toast.success(t("Page.editor.SidePanel.Tables.Type deleted"));
                 deleteType(index);
               }}
               block
             >
-              Delete
+              {t("Global.Delete")}
             </Button>
           </Col>
         </Row>

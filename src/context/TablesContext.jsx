@@ -3,10 +3,12 @@ import { Action, ObjectType, defaultBlue } from "../data/constants";
 import useTransform from "../hooks/useTransform";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import {useTranslation} from "react-i18next";
 
 export const TablesContext = createContext(null);
 
 export default function TablesContextProvider({ children }) {
+  const { t } = useTranslation();
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const { transform } = useTransform();
@@ -55,7 +57,7 @@ export default function TablesContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.TABLE,
-          message: `Add new table`,
+          message: t("Page.editor.SidePanel.Tables.Add new table"),
         },
       ]);
       setRedoStack([]);
@@ -70,7 +72,7 @@ export default function TablesContextProvider({ children }) {
           action: Action.DELETE,
           element: ObjectType.TABLE,
           data: tables[id],
-          message: `Delete table`,
+          message: t("Page.editor.SidePanel.Tables.Delete table"),
         },
       ]);
       setRedoStack([]);
@@ -135,7 +137,7 @@ export default function TablesContextProvider({ children }) {
         component: "field_delete",
         tid: tid,
         data: field,
-        message: `Delete field`,
+        message: t("Page.editor.SidePanel.Tables.Delete field"),
       },
     ]);
     setRedoStack([]);
@@ -185,7 +187,7 @@ export default function TablesContextProvider({ children }) {
             action: Action.ADD,
             element: ObjectType.RELATIONSHIP,
             data: data,
-            message: `Add new relationship`,
+            message: t("Page.editor.SidePanel.Relationships.Add new relationship"),
           },
         ]);
         setRedoStack([]);
@@ -208,7 +210,7 @@ export default function TablesContextProvider({ children }) {
           action: Action.DELETE,
           element: ObjectType.RELATIONSHIP,
           data: relationships[id],
-          message: `Delete relationship`,
+          message: t("Page.editor.SidePanel.Relationships.Delete relationship"),
         },
       ]);
       setRedoStack([]);

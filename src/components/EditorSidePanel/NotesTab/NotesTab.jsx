@@ -4,8 +4,10 @@ import { useNotes, useSelect } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import NoteInfo from "./NoteInfo";
+import {useTranslation} from "react-i18next";
 
 export default function NotesTab() {
+  const { t } = useTranslation();
   const { notes, addNote } = useNotes();
   const { selectedElement, setSelectedElement } = useSelect();
 
@@ -24,12 +26,12 @@ export default function NotesTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addNote()}>
-            Add note
+              {t("Page.editor.SidePanel.Notes.Add note")}
           </Button>
         </Col>
       </Row>
       {notes.length <= 0 ? (
-        <Empty title="No text notes" text="Add notes cuz why not!" />
+        <Empty title={t("Page.editor.SidePanel.Notes.No text notes")} text={t("Page.editor.SidePanel.Notes.Add notes cuz why not")} />
       ) : (
         <Collapse
           activeKey={selectedElement.open ? `${selectedElement.id}` : ""}

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useAreas } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
+import {useTranslation} from "react-i18next";
 
 export default function SearchBar() {
+    const { t } = useTranslation();
   const { areas } = useAreas();
   const [searchText, setSearchText] = useState("");
 
@@ -23,7 +25,7 @@ export default function SearchBar() {
       value={searchText}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
+      placeholder={t("Global.Search")}
       emptyContent={<div className="p-3 popover-theme">No areas found</div>}
       onSearch={(v) => handleStringSearch(v)}
       onChange={(v) => setSearchText(v)}

@@ -39,7 +39,7 @@ export default function AreasContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.AREA,
-          message: `Add new subject area`,
+          message: t("Page.editor.SidePanel.Subject Areas.Add new subject area"),
         },
       ]);
       setRedoStack([]);
@@ -54,7 +54,7 @@ export default function AreasContextProvider({ children }) {
           action: Action.DELETE,
           element: ObjectType.AREA,
           data: areas[id],
-          message: `Delete subject area`,
+          message: t("Page.editor.SidePanel.Subject Areas.Delete subject area"),
         },
       ]);
       setRedoStack([]);

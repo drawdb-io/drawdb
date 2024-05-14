@@ -5,8 +5,10 @@ import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
 import TableInfo from "./TableInfo";
+import {useTranslation} from "react-i18next";
 
 export default function TablesTab() {
+  const { t } = useTranslation();
   const { tables, addTable } = useTables();
   const { selectedElement, setSelectedElement } = useSelect();
 
@@ -18,12 +20,12 @@ export default function TablesTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addTable(true)}>
-            Add table
+            {t("Global.Add table")}
           </Button>
         </Col>
       </Row>
       {tables.length === 0 ? (
-        <Empty title="No tables" text="Start building your diagram!" />
+        <Empty title={t("Page.editor.SidePanel.Tables.No tables")} text={t("Tip.Start building your diagram!")} />
       ) : (
         <Collapse
           activeKey={

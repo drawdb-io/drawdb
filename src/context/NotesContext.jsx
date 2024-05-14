@@ -3,10 +3,12 @@ import useTransform from "../hooks/useTransform";
 import { Action, ObjectType, defaultNoteTheme } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import {useTranslation} from "react-i18next";
 
 export const NotesContext = createContext(null);
 
 export default function NotesContextProvider({ children }) {
+  const { t } = useTranslation();
   const [notes, setNotes] = useState([]);
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -39,7 +41,7 @@ export default function NotesContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.NOTE,
-          message: `Add new note`,
+          message: t("Page.editor.SidePanel.Notes.Add new note"),
         },
       ]);
       setRedoStack([]);
@@ -54,7 +56,7 @@ export default function NotesContextProvider({ children }) {
           action: Action.DELETE,
           element: ObjectType.NOTE,
           data: notes[id],
-          message: `Delete note`,
+          message: t("Page.editor.SidePanel.Notes.Delete note"),
         },
       ]);
       setRedoStack([]);

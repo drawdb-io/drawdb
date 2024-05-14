@@ -4,8 +4,10 @@ import Empty from "../Empty";
 import { useAreas } from "../../../hooks";
 import SearchBar from "./SearchBar";
 import AreaInfo from "./AreaDetails";
+import {useTranslation} from "react-i18next";
 
 export default function AreasTab() {
+  const { t } = useTranslation();
   const { areas, addArea } = useAreas();
 
   return (
@@ -16,14 +18,14 @@ export default function AreasTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={addArea}>
-            Add area
+            {t("Page.editor.SidePanel.Subject Areas.Add area")}
           </Button>
         </Col>
       </Row>
       {areas.length <= 0 ? (
         <Empty
-          title="No subject areas"
-          text="Add subject areas to organize tables!"
+          title={t("Page.editor.SidePanel.Subject Areas.No subject areas")}
+          text={t("Page.editor.SidePanel.Subject Areas.Add subject areas to organize tables")}
         />
       ) : (
         <div className="p-2">
