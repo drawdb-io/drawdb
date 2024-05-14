@@ -221,7 +221,7 @@ export default function RelationshipInfo({ data }) {
           icon={<IconDeleteStroked />}
           block
           type="danger"
-          onClick={() => deleteRelationship(data.id, true)}
+          onClick={() => deleteRelationship(data.id)}
         >
           Delete
         </Button>

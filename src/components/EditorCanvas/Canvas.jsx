@@ -375,7 +375,7 @@ export default function Canvas() {
     delete newRelationship.startY;
     delete newRelationship.endX;
     delete newRelationship.endY;
-    addRelationship(newRelationship, true);
+    addRelationship(newRelationship);
   };
 
   const handleMouseWheel = (e) => {

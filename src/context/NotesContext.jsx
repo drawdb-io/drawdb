@@ -12,7 +12,7 @@ export default function NotesContextProvider({ children }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
 
-  const addNote = (addToHistory = true, data) => {
+  const addNote = (data, addToHistory = true) => {
     if (data) {
       setNotes((prev) => {
         const temp = prev.slice();

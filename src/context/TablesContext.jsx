@@ -13,7 +13,7 @@ export default function TablesContextProvider({ children }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
 
-  const addTable = (addToHistory = true, data) => {
+  const addTable = (data, addToHistory = true) => {
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();

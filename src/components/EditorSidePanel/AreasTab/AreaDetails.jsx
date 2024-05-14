@@ -92,7 +92,7 @@ export default function AreaInfo({ data, i }) {
           type="danger"
           onClick={() => {
             Toast.success(`Area deleted!`);
-            deleteArea(i, true);
+            deleteArea(i);
           }}
         />
       </Col>
