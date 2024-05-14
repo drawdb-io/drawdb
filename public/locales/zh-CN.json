@@ -418,7 +418,10 @@
         "Not set": "未设置",
         "Comment": "注释",
         "No comment": "无注释",
-        "Edit table": "修改表"
+        "Edit table": "修改表",
+        "Indices": "索引",
+        "No indices": "无索引",
+        "Delete table": "删除表"
       }
     },
     "ReportBug": {

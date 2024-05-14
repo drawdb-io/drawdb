@@ -418,7 +418,10 @@
         "Not set": "Not set",
         "Comment": "Comment",
         "No comment": "No comment",
-        "Edit table": "Edit table"
+        "Edit table": "Edit table",
+        "Indices": "Indices",
+        "No indices": "No indices",
+        "Delete table": "Delete table"
       }
     },
     "ReportBug": {

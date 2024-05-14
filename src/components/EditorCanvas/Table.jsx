@@ -112,9 +112,9 @@ export default function Table(props) {
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
-                        <strong>Comment :</strong>{" "}
+                        <strong>{t("Page.editor.TableCard.Comment")}:</strong>{" "}
                         {tableData.comment === "" ? (
-                          "No comment"
+                            t("Page.editor.TableCard.No comment")
                         ) : (
                           <div>{tableData.comment}</div>
                         )}
@@ -125,10 +125,10 @@ export default function Table(props) {
                             tableData.indices.length === 0 ? "" : "block"
                           }`}
                         >
-                          Indices :
+                          {t("Page.editor.TableCard.Indices")} :
                         </strong>{" "}
                         {tableData.indices.length === 0 ? (
-                          "No indices"
+                            t("Page.editor.TableCard.No indices")
                         ) : (
                           <div>
                             {tableData.indices.map((index, k) => (
@@ -163,7 +163,7 @@ export default function Table(props) {
                           deleteTable(tableData.id);
                         }}
                       >
-                        Delete table
+                        {t("Page.editor.TableCard.Delete table")}
                       </Button>
                     </div>
                   }
