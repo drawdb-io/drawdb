@@ -50,6 +50,9 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     if (field.type === "SET" || field.type === "ENUM") {
       return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
     }
+    if (field.type === "CUSTOM") {
+      return `${field.values}`;
+    }
     if (!sqlDataTypes.includes(field.type)) {
       return "JSON";
     }
@@ -66,6 +69,9 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     }
     if (field.type === "ENUM") {
       return `${field.name}_t`;
+    }
+    if (field.type === "CUSTOM") {
+      return `${field.values}`;
     }
     if (field.type === "SET") {
       return `${field.name}_t[]`;
@@ -98,6 +104,8 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
           : `NVARCHAR(255) CHECK([${field.name}] in (${field.values
               .map((v) => `'${v}'`)
               .join(", ")}))`;
+      case "CUSTOM":
+        return field.values;
       case "VARCHAR":
         type = `NVARCHAR`;
         break;
@@ -333,6 +341,8 @@ export function getSQLiteType(field) {
       return `TEXT CHECK("${field.name}" in (${field.values
         .map((v) => `'${v}'`)
         .join(", ")}))`;
+    case "CUSTOM":
+      return field.values;
     default:
       return "BLOB";
   }

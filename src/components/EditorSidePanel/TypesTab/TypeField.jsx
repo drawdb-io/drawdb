@@ -123,11 +123,13 @@ export default function TypeField({ data, tid, fid }) {
         <Popover
           content={
             <div className="popover-theme w-[240px]">
-              {(data.type === "ENUM" || data.type === "SET") && (
+              {(data.type === "ENUM" || data.type === "SET" || data.type === "CUSTOM") && (
                 <>
                   <div className="font-semibold mb-1">{data.type} values</div>
                   <TagInput
-                    separator={[",", ", ", " ,"]}
+                    separator={
+                      data.type === "CUSTOM" ? [] : [",", ", ", " ,"]
+                    }
                     value={data.values}
                     validateStatus={
                       !data.values || data.values.length === 0
@@ -135,7 +137,9 @@ export default function TypeField({ data, tid, fid }) {
                         : "default"
                     }
                     className="my-2"
-                    placeholder="Use ',' for batch input"
+                    placeholder={
+                      data.type === "CUSTOM" ? "Enter a custom value" : "Use ',' for batch input"
+                    }
                     onChange={(v) =>
                       updateType(tid, {
                         fields: types[tid].fields.map((e, id) =>

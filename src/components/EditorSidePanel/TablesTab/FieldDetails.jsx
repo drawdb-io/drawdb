@@ -51,18 +51,22 @@ export default function FieldDetails({ data, tid, index }) {
           setRedoStack([]);
         }}
       />
-      {(data.type === "ENUM" || data.type === "SET") && (
+      {(data.type === "ENUM" || data.type === "SET" || data.type === "CUSTOM") && (
         <>
           <div className="font-semibold mb-1">{data.type} values</div>
           <TagInput
-            separator={[",", ", ", " ,"]}
+            separator={
+              data.type === "CUSTOM" ? [] : [",", ", ", " ,"]
+            }
             value={data.values}
             validateStatus={
               !data.values || data.values.length === 0 ? "error" : "default"
             }
             addOnBlur
             className="my-2"
-            placeholder="Use ',' for batch input"
+            placeholder={
+              data.type === "CUSTOM" ? "Enter a custom value" : "Use ',' for batch input"
+            }
             onChange={(v) => updateField(tid, index, { values: v })}
             onFocus={() => setEditField({ values: data.values })}
             onBlur={() => {

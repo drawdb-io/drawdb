@@ -22,6 +22,7 @@ export const sqlDataTypes = [
   "UUID",
   "ENUM",
   "SET",
+  "CUSTOM"
 ];
 
 export const tableThemes = [
