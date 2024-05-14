@@ -138,7 +138,7 @@ export default function NoteInfo({ data, nid }) {
             type="danger"
             onClick={() => {
               Toast.success(`Note deleted!`);
-              deleteNote(nid, true);
+              deleteNote(nid);
             }}
           />
         </div>

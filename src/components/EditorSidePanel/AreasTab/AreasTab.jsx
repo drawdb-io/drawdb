@@ -15,7 +15,7 @@ export default function AreasTab() {
           <SearchBar />
         </Col>
         <Col span={8}>
-          <Button icon={<IconPlus />} block onClick={addArea}>
+          <Button icon={<IconPlus />} block onClick={() => addArea()}>
             Add area
           </Button>
         </Col>

@@ -12,7 +12,7 @@ export default function AreasContextProvider({ children }) {
   const { selectedElement, setSelectedElement } = useSelect();
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
-  const addArea = (addToHistory = true, data) => {
+  const addArea = (data, addToHistory = true) => {
     if (data) {
       setAreas((prev) => {
         const temp = prev.slice();

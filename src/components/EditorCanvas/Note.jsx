@@ -251,7 +251,7 @@ export default function Note({ data, onMouseDown }) {
                           block
                           onClick={() => {
                             Toast.success(`Note deleted!`);
-                            deleteNote(data.id, true);
+                            deleteNote(data.id);
                           }}
                         >
                           Delete

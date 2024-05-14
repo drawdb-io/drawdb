@@ -265,7 +265,7 @@ function EditPopoverContent({ data }) {
           block
           onClick={() => {
             Toast.success(`Area deleted!`);
-            deleteArea(data.id, true);
+            deleteArea(data.id);
           }}
         >
           Delete

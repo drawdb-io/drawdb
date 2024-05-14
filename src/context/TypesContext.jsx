@@ -8,7 +8,7 @@ export default function TypesContextProvider({ children }) {
   const [types, setTypes] = useState([]);
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
-  const addType = (addToHistory = true, data) => {
+  const addType = (data, addToHistory = true) => {
     if (data) {
       setTypes((prev) => {
         const temp = prev.slice();
