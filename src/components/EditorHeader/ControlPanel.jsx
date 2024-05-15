@@ -1536,7 +1536,7 @@ export default function ControlPanel({
                 onMouseLeave={() => setShowEditName(false)}
                 onClick={() => setModal(MODAL.RENAME)}
               >
-                {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
+                {window.name.split(" ")[0] === "t" ? t("Tip.Templates") : t("Tip.Diagrams")}/
                 {title}
               </div>
               {(showEditName || modal === MODAL.RENAME) && <IconEdit />}

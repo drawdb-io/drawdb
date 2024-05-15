@@ -221,6 +221,8 @@
     "Template saved": "模板保存成功",
     "Delete diagram": "删除关系图",
     "Are you sure you want to delete this diagram? This operation is irreversible": "您确定要删除此关系图吗?此操作是不可逆的",
+    "Diagrams": "关系图",
+    "Templates": "模板",
     "Untitled diagram": "无标题关系图",
     "Oops! Something went wrong.": "哎呀！出了小问题",
     "Oops! Couldn't load diagram": "哎呀！无法加载关系图",
@@ -327,7 +329,7 @@
           "Table deleted": "表已删除！",
           "Type deleted": "类已删除！"
         },
-        "Relationships":{
+        "Relationships": {
           "val": "关系",
           "No relationships": "未建立关系",
           "Drag to connect fields and form relationships": "拖动可连接字段就能形成关系！",
@@ -407,6 +409,30 @@
           "Edit type field name to": "自定义类型的字段名称设置为 {{val}}",
           "Add new type": "添加新类型",
           "Delete type": "删除类型"
+        },
+        "Issues": {
+          "val": "问题",
+          "No issues were detected": "未检测到任何问题。",
+          "Duplicate table by the name": "表名称重复 {{name}}",
+          "Empty field name in table": "表 {{name}} 中有名称为空的字段",
+          "Empty field type in table": "表 {{name}} 中有类型为空的字段",
+          "noValues": "表 {{name}} 的 {{field.name}} 字段属于 {{field.type}} 类型，但未指定任何值",
+          "typeNotMatch": "表\"{{table}}\"的\"{{field}}\"字段设置的默认值与其类型不符",
+          "valNowNull": "表\"{{table}}\"的\"{{field}}\"字段不能为空，但默认值现在是NULL",
+          "Duplicate table fields in table": "表 {{name}} 中存在重复的字段",
+          "Duplicate index by the name": "存在多个名称为 {{name}} 的索引",
+          "Empty index type in table": "表 {{name}} 中的存在没有名字的索引",
+          "noPrimaryKey": "表 {{name}} 没有主键",
+          "TypeNoName": "声明了一个没有名称的类型",
+          "TypeNameDuplicate": "存在多个名称为 {{name}} 自定义类型",
+          "EmptyType": "声明了一个没有字段的空类型\"{{name}}\"",
+          "Empty field name in type": "自定义类\"{{name}}\"中的存在名称为空的字段",
+          "Empty field type in": "自定义类\"{{name}}\"中的存在类型为空的字段",
+          "fieldNoVal": "自定义类\"{{name}}\"中的\"{{field.name}}\"字段是{{field.type}}类型，您没有指定它的值",
+          "Duplicate type fields in": "自定义类 {{name}} 中存在重复名称的字段",
+          "Duplicate reference by the name": "存在多个名为 {{name}} 的索引",
+          "ReferencingColumnIncompatible": "引用的列 {{columA}} 和引用的列 {{coloB}} 不兼容。",
+          "Circular relationship involving table": "涉及表 {{name}} 的循环关系"
         }
       },
       "TableCard": {

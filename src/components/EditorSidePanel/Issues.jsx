@@ -3,8 +3,10 @@ import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
 import { useSettings, useTables, useTypes } from "../../hooks";
+import {useTranslation} from "react-i18next";
 
 export default function Issues() {
+  const { t } = useTranslation();
   const { settings } = useSettings();
   const { types } = useTypes();
   const { tables, relationships } = useTables();
@@ -38,7 +40,7 @@ export default function Issues() {
           >
             <div className="pe-3 select-none">
               <i className="fa-solid fa-triangle-exclamation me-2 text-yellow-500" />
-              Issues
+              {t("Page.editor.SidePanel.Issues.val")}
             </div>
           </Badge>
         }
@@ -58,7 +60,7 @@ export default function Issues() {
               ))}
             </>
           ) : (
-            <div>No issues were detected.</div>
+            <div>{t("Page.editor.SidePanel.Issues.No issues were detected")}</div>
           )}
         </div>
       </Collapse.Panel>
