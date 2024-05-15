@@ -1151,19 +1151,16 @@ export default function ControlPanel({
     },
   };
 
+  // log menu Translate JSON
   let lostTranslateItem = {}
   // 翻译菜单
   function translateMenu(item) {
     lostTranslateItem = {}
-    // let { t ,i18n} = useTranslation()
-    // let { t } = useTranslation()
-    // console.log("==> t ==>", t)
     let translateResult = {};
     let keys = Object.keys(item);
     for (const key of keys) {
       let key2 = t(`Menu.${key}.val`);
       let val = item[key];
-      // console.log("翻译", key, key2);
 
       //二级菜单
       if (typeof val === "object"){
@@ -1172,15 +1169,11 @@ export default function ControlPanel({
 
       if(`Menu.${key}.val` === key2) {
         //翻译缺失
-        // lostTranslateItem[key] = key;
         logLostTranslate(`Menu.${key}.val`, key)
       }else{
         logLostTranslate(`Menu.${key}.val`, key2)
       }
 
-      // if(key===key2)continue;
-      // item[key2] = item[key];
-      // delete item[key];
       translateResult[key2] = val
     }
     return translateResult
@@ -1191,16 +1184,18 @@ export default function ControlPanel({
       let key2 = t(`${mainMenu}.son.${key}.val`);
       let val = item[key];
 
-      // 子菜单
-      let childrens = val.children;
-      if(childrens){
-        for (let i = 0; i <childrens.length; i++) {
-          childrens[i] = translateSubMenu(childrens[i], `${mainMenu}.son.${key}`, t)
+      if("Language" !== key){// 跳过，不翻译 切换语言 的子菜单
+        // 子菜单
+        let childrens = val.children;
+        if(childrens){
+          for (let i = 0; i <childrens.length; i++) {
+            childrens[i] = translateSubMenu(childrens[i], `${mainMenu}.son.${key}`, t)
+          }
+          val.children = childrens
         }
-        val.children = childrens
       }
 
-      //翻译缺失
+      //翻译记录
       if(`${mainMenu}.son.${key}.val` === key2) {
         logLostTranslate(`${mainMenu}.son.${key}.val`, key)
       }else{
@@ -1212,35 +1207,6 @@ export default function ControlPanel({
     return translateResult
   }
   function logLostTranslate(path, key) {
-    // console.log("记录Path", path, key)
-    // const paths = path.split(/\./);
-    // let data = lostTranslateItem[paths[0]];
-
-    // switch (paths.length) {
-    //   case 1:
-    //     lostTranslateItem[paths[0]] = key;
-    //     break;
-    //   case 2:
-    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]=key;}
-    //     break;
-    //   case 3:
-    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]]){lostTranslateItem[paths[0]][paths[1]][paths[2]]=key;}
-    //     break;
-    //   case 4:
-    //     if(!lostTranslateItem[paths[0]]){lostTranslateItem[paths[0]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]]){lostTranslateItem[paths[0]][paths[1]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]]){lostTranslateItem[paths[0]][paths[1]][paths[2]]={};}
-    //     if(!lostTranslateItem[paths[0]][paths[1]][paths[2]][paths[3]]){lostTranslateItem[paths[0]][paths[1]][paths[2]][paths[3]]=key;}
-    //     break;
-    //   case 5:
-    //     break;
-    //   default:
-    //     console.log("超出设计的路径", path, paths)
-    // }
-
     lostTranslateItem = setVal(lostTranslateItem, path, key);
   }
   function setVal(obj, path, val) {
@@ -1271,8 +1237,7 @@ export default function ControlPanel({
   }
   menu = translateMenu(menu);
   // console.log("菜单>", menu)
-  // console.log("菜单翻译", lostTranslateItem)
-  // console.log("菜单翻译txt", JSON.stringify(lostTranslateItem))
+  // console.log("菜单翻译", lostTranslateItem) // Perhaps useful when modifying menu items in the future
 
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
@@ -1479,7 +1444,6 @@ export default function ControlPanel({
                     menu[t("Menu.View.val")][t("Menu.View.son.Theme.val")].children[1][t("Menu.View.son.Theme.son.Dark.val")]();
                   } else {
                     menu[t("Menu.View.val")][t("Menu.View.son.Theme.val")].children[0][t("Menu.View.son.Theme.son.Light.val")]();
-                    // menu["View"]["Theme"].children[0]["Light"]();
                   }
                 }
               }}

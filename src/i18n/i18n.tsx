@@ -1,20 +1,27 @@
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import {initReactI18next, useTranslation} from 'react-i18next';
+import {initReactI18next} from 'react-i18next';
 
+const supportedLngs = ['en-US', 'zh-CN']
 const translateItem = [
     {name:"English",file:"en-US"}
     ,{name:"简体中文",file:"zh-CN"}
 ];
 export const getTranslateItem = ()=> {
     let result = []
-    let {i18n} = useTranslation();
+    // const useLanguage = localStorage.getItem("useLanguage");
     for (const item of translateItem) {
         let lngItem = {}
-        lngItem[item.name] = ()=>{
+        let name = item.name;
+        //if(item.file === useLanguage){
+        if(item.file === i18n.language){
+            name = "[✔]" + name
+        }
+        lngItem[name] = ()=>{
             i18n.changeLanguage(item.file);
-            console.log("切换语言", item)
+            // console.log("切换语言", item)
+            localStorage.setItem("useLanguage", item.file)
         }
         result.push(lngItem)
     }
@@ -38,8 +45,8 @@ i18n
             useSuspense: false
         },
         // 设置默认语言
-        lng: 'zh-CN',
-        fallbackLng: 'zh-CN',
+        // lng: 'en-US',
+        fallbackLng: 'en-US',
         // 是否启用调试模式
         debug: true,
         //
@@ -50,22 +57,7 @@ i18n
              * @param lngs 语言编码
              * @param namespaces 名称空间
              */
-            // loadPath: function (lngs: Array<string>, namespaces: Array<string>) {
-            //     console.log(lngs, namespaces)
-            //     return `http://localhost:8000/locales/${lngs[0]}.json`;
-            // },
-            //loadPath: '/locales/{{lng}}/{{ns}}.json',
             loadPath: '/locales/{{lng}}.json',
-            /**
-             * 用于对响应的结果进行结构转化
-             * @param data 原始响应的字符串结果
-             */
-            // parse: function (data) {
-            //     console.log("i18n-parse", data)
-            //     const obj = eval("(" + data + ")");
-            //     return obj.resp;
-            // },
-
             /**
              * 是否允许跨域
              */
@@ -82,22 +74,17 @@ i18n
         interpolation: {
             escapeValue: false, // not needed for react as it escapes by default
         },
-
-        // resources: {
-        //     "en-US": {
-        //         translation: {
-        //             File: "File文件"
-        //         }
-        //     },
-        //     "zh-CN": {
-        //         translation: {
-        //             File: "文件"
-        //         }
-        //     }
-        // }
-
+        supportedLngs: supportedLngs
     }, function (err, t) {
         // i18n插件初始化完成或异常时的回调函数
         console.log('国际化插件初始化完毕!', err, t)
+        //auto load last select Language
+        console.log(">>>", this, i18n)
+        if(!err && localStorage.getItem("useLanguage")){
+            // let {i18n} = useTranslation();
+            i18n.changeLanguage(localStorage.getItem("useLanguage"));
+            // i18n.language = localStorage.getItem("useLanguage")
+            console.log("auto load last select Language")
+        }
     });
 export default i18n;
