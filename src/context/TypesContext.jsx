@@ -1,10 +1,13 @@
 import { createContext, useState } from "react";
 import { Action, ObjectType } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
+import { Toast } from "@douyinfe/semi-ui";
+import { useTranslation } from "react-i18next";
 
 export const TypesContext = createContext(null);
 
 export default function TypesContextProvider({ children }) {
+  const { t } = useTranslation();
   const [types, setTypes] = useState([]);
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
@@ -31,7 +34,7 @@ export default function TypesContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.TYPE,
-          message: `Add new type`,
+          message: t("add_type"),
         },
       ]);
       setRedoStack([]);
@@ -40,6 +43,7 @@ export default function TypesContextProvider({ children }) {
 
   const deleteType = (id, addToHistory = true) => {
     if (addToHistory) {
+      Toast.success(t("type_deleted"));
       setUndoStack((prev) => [
         ...prev,
         {
@@ -47,7 +51,9 @@ export default function TypesContextProvider({ children }) {
           element: ObjectType.TYPE,
           id: id,
           data: types[id],
-          message: `Delete type`,
+          message: t("delete_type", {
+            typeName: types[id].name,
+          }),
         },
       ]);
       setRedoStack([]);
@@ -57,7 +63,7 @@ export default function TypesContextProvider({ children }) {
 
   const updateType = (id, values) => {
     setTypes((prev) =>
-      prev.map((e, i) => (i === id ? { ...e, ...values } : e))
+      prev.map((e, i) => (i === id ? { ...e, ...values } : e)),
     );
   };
 

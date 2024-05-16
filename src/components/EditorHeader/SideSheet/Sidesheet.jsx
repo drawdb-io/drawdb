@@ -6,8 +6,10 @@ import timeLineDark from "../../../assets/process_dark.png";
 import todo from "../../../assets/calendar.png";
 import Timeline from "./Timeline";
 import Todo from "./Todo";
+import { useTranslation } from "react-i18next";
 
 export default function Sidesheet({ type, onClose }) {
+  const { t } = useTranslation();
   const { settings } = useSettings();
 
   function getTitle(type) {
@@ -20,14 +22,14 @@ export default function Sidesheet({ type, onClose }) {
               className="w-7"
               alt="chat icon"
             />
-            <div className="ms-3 text-lg">Timeline</div>
+            <div className="ms-3 text-lg">{t("timeline")}</div>
           </div>
         );
       case SIDESHEET.TODO:
         return (
           <div className="flex items-center">
             <img src={todo} className="w-7" alt="todo icon" />
-            <div className="ms-3 text-lg">To-do list</div>
+            <div className="ms-3 text-lg">{t("to_do")}</div>
           </div>
         );
       default:

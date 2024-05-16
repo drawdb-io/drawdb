@@ -4,10 +4,12 @@ import { useNotes, useSelect } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import NoteInfo from "./NoteInfo";
+import { useTranslation } from "react-i18next";
 
 export default function NotesTab() {
   const { notes, addNote } = useNotes();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -24,12 +26,12 @@ export default function NotesTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addNote()}>
-            Add note
+            {t("add_note")}
           </Button>
         </Col>
       </Row>
       {notes.length <= 0 ? (
-        <Empty title="No text notes" text="Add notes cuz why not!" />
+        <Empty title={t("no_notes")} text={t("no_notes_text")} />
       ) : (
         <Collapse
           activeKey={selectedElement.open ? `${selectedElement.id}` : ""}

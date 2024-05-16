@@ -2,17 +2,20 @@ import { useState } from "react";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { useNotes } from "../../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function SearchBar({ setActiveKey }) {
   const { notes } = useNotes();
   const [searchText, setSearchText] = useState("");
+  const { t } = useTranslation();
+
   const [filteredResult, setFilteredResult] = useState(
-    notes.map((t) => t.title)
+    notes.map((t) => t.title),
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      notes.map((t) => t.title).filter((i) => i.includes(value))
+      notes.map((t) => t.title).filter((i) => i.includes(value)),
     );
   };
 
@@ -22,8 +25,8 @@ export default function SearchBar({ setActiveKey }) {
       value={searchText}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
-      emptyContent={<div className="p-3 popover-theme">No notes found</div>}
+      placeholder={t("search")}
+      emptyContent={<div className="p-3 popover-theme">{t("not_found")}</div>}
       onSearch={(v) => handleStringSearch(v)}
       onChange={(v) => setSearchText(v)}
       onSelect={(v) => {

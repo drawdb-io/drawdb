@@ -1,3 +1,5 @@
+import i18n from "../i18n/i18n";
+
 export const sqlDataTypes = [
   "INT",
   "SMALLINT",
@@ -55,9 +57,9 @@ export const tableFieldHeight = 36;
 export const tableColorStripHeight = 7;
 
 export const Cardinality = {
-  ONE_TO_ONE: "One to one",
-  ONE_TO_MANY: "One to many",
-  MANY_TO_ONE: "Many to one",
+  ONE_TO_ONE: i18n.t("one_to_one"),
+  ONE_TO_MANY: i18n.t("one_to_many"),
+  MANY_TO_ONE: i18n.t("many_to_one"),
 };
 
 export const Constraint = {
@@ -112,6 +114,7 @@ export const MODAL = {
   NEW: 7,
   IMPORT_SRC: 8,
   TABLE_WIDTH: 9,
+  LANGUAGE: 10,
 };
 
 export const STATUS = {

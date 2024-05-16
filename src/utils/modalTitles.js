@@ -1,24 +1,27 @@
 import { MODAL } from "../data/constants";
+import i18n from "../i18n/i18n";
 
 export const getModalTitle = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
     case MODAL.IMPORT_SRC:
-      return "Import diagram";
+      return i18n.t("import_diagram");
     case MODAL.CODE:
-      return "Export source";
+      return i18n.t("export_source");
     case MODAL.IMG:
-      return "Export image";
+      return i18n.t("export_image");
     case MODAL.RENAME:
-      return "Rename diagram";
+      return i18n.t("rename_diagram");
     case MODAL.OPEN:
-      return "Open diagram";
+      return i18n.t("open_diagram");
     case MODAL.SAVEAS:
-      return "Save as";
+      return i18n.t("save_as");
     case MODAL.NEW:
-      return "Create new diagram";
+      return i18n.t("create_new_diagram");
     case MODAL.TABLE_WIDTH:
-      return "Set the table width";
+      return i18n.t("table_width");
+    case MODAL.LANGUAGE:
+      return i18n.t("language");
     default:
       return "";
   }
@@ -28,19 +31,19 @@ export const getOkText = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
     case MODAL.IMPORT_SRC:
-      return "Import";
+      return i18n.t("import");
     case MODAL.CODE:
     case MODAL.IMG:
-      return "Export";
+      return i18n.t("export");
     case MODAL.RENAME:
-      return "Rename";
+      return i18n.t("rename");
     case MODAL.OPEN:
-      return "Open";
+      return i18n.t("open");
     case MODAL.SAVEAS:
-      return "Save as";
+      return i18n.t("save_as");
     case MODAL.NEW:
-      return "Create";
+      return i18n.t("create");
     default:
-      return "Confirm";
+      return i18n.t("confirm");
   }
 };

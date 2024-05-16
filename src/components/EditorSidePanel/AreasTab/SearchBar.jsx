@@ -2,18 +2,20 @@ import { useState } from "react";
 import { useAreas } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
+import { useTranslation } from "react-i18next";
 
 export default function SearchBar() {
   const { areas } = useAreas();
   const [searchText, setSearchText] = useState("");
+  const { t } = useTranslation();
 
   const [filteredResult, setFilteredResult] = useState(
-    areas.map((t) => t.name)
+    areas.map((t) => t.name),
   );
 
   const handleStringSearch = (value) => {
     setFilteredResult(
-      areas.map((t) => t.name).filter((i) => i.includes(value))
+      areas.map((t) => t.name).filter((i) => i.includes(value)),
     );
   };
 
@@ -23,8 +25,8 @@ export default function SearchBar() {
       value={searchText}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
-      emptyContent={<div className="p-3 popover-theme">No areas found</div>}
+      placeholder={t("search")}
+      emptyContent={<div className="p-3 popover-theme">{t("not_found")}</div>}
       onSearch={(v) => handleStringSearch(v)}
       onChange={(v) => setSearchText(v)}
       onSelect={(v) => {

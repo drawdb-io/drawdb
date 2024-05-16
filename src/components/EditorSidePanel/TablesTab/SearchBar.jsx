@@ -3,10 +3,12 @@ import { useSelect } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { ObjectType } from "../../../data/constants";
+import { useTranslation } from "react-i18next";
 
 export default function SearchBar({ tables }) {
   const { setSelectedElement } = useSelect();
   const [searchText, setSearchText] = useState("");
+  const { t } = useTranslation();
   const filteredTable = useMemo(
     () => tables.map((t) => t.name).filter((i) => i.includes(searchText)),
     [tables, searchText],
@@ -18,8 +20,8 @@ export default function SearchBar({ tables }) {
       value={searchText}
       showClear
       prefix={<IconSearch />}
-      placeholder="Search..."
-      emptyContent={<div className="p-3 popover-theme">No tables found</div>}
+      placeholder={t("search")}
+      emptyContent={<div className="p-3 popover-theme">{t("not_found")}</div>}
       onChange={(v) => setSearchText(v)}
       onSelect={(v) => {
         const { id } = tables.find((t) => t.name === v);

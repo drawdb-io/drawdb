@@ -1,5 +1,6 @@
 import { Upload, Checkbox, Banner } from "@douyinfe/semi-ui";
 import { STATUS } from "../../../data/constants";
+import { useTranslation } from "react-i18next";
 
 export default function ImportSource({
   importData,
@@ -7,6 +8,8 @@ export default function ImportSource({
   error,
   setError,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div>
       <Upload
@@ -30,8 +33,8 @@ export default function ImportSource({
           };
         }}
         draggable={true}
-        dragMainText="Drag and drop the file here or click to upload."
-        dragSubText="Upload an sql file to autogenerate your tables and columns."
+        dragMainText={t("drag_and_drop_files")}
+        dragSubText={t("upload_sql_to_generate_diagrams")}
         accept=".sql"
         onRemove={() => {
           setError({
@@ -50,7 +53,7 @@ export default function ImportSource({
       />
       <div>
         <div className="text-xs mb-3 mt-1 opacity-80">
-          * For the time being loading only MySQL scripts is supported.
+          {t("only_mysql_supported")}
         </div>
         <Checkbox
           aria-label="overwrite checkbox"
@@ -63,7 +66,7 @@ export default function ImportSource({
             }))
           }
         >
-          Overwrite existing diagram
+          {t("overwrite_existing_diagram")}
         </Checkbox>
         <div className="mt-2">
           {error.type === STATUS.ERROR ? (

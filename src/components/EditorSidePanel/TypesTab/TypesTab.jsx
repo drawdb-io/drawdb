@@ -5,10 +5,12 @@ import { ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
 import TypeInfo from "./TypeInfo";
+import { useTranslation } from "react-i18next";
 
 export default function TypesTab() {
   const { types, addType } = useTypes();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -18,30 +20,18 @@ export default function TypesTab() {
         </Col>
         <Col span={8}>
           <Button icon={<IconPlus />} block onClick={() => addType(true)}>
-            Add type
+            {t("add_type")}
           </Button>
         </Col>
         <Col span={3}>
           <Popover
             content={
               <div className="w-[240px] text-sm space-y-2 popover-theme">
-                <div>
-                  This feature is meant for object-relational DBMSs like{" "}
-                  <strong>PostgreSQL</strong>.
-                </div>
-                <div>
-                  If used for <strong>MySQL</strong> or <strong>MariaDB</strong>{" "}
-                  a <code>JSON</code> type will be generated with the
-                  corresponding json validation check.
-                </div>
-                <div>
-                  If used for <strong>SQLite</strong> it will be translated to a{" "}
-                  <code>BLOB</code>.
-                </div>
-                <div>
-                  If used for <strong>MSSQL</strong> a type alias to the first
-                  field will be generated.
-                </div>
+                {t("types_info")
+                  .split("\n")
+                  .map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
               </div>
             }
             showArrow
@@ -52,7 +42,7 @@ export default function TypesTab() {
         </Col>
       </Row>
       {types.length <= 0 ? (
-        <Empty title="No types" text="Make your own custom data types" />
+        <Empty title={t("no_types")} text={t("no_types_text")} />
       ) : (
         <Collapse
           activeKey={

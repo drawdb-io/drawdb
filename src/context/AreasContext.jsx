@@ -3,10 +3,13 @@ import { Action, ObjectType, defaultBlue } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useTransform from "../hooks/useTransform";
 import useSelect from "../hooks/useSelect";
+import { Toast } from "@douyinfe/semi-ui";
+import { useTranslation } from "react-i18next";
 
 export const AreasContext = createContext(null);
 
 export default function AreasContextProvider({ children }) {
+  const { t } = useTranslation();
   const [areas, setAreas] = useState([]);
   const { transform } = useTransform();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -39,7 +42,7 @@ export default function AreasContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.AREA,
-          message: `Add new subject area`,
+          message: t("add_area"),
         },
       ]);
       setRedoStack([]);
@@ -48,19 +51,20 @@ export default function AreasContextProvider({ children }) {
 
   const deleteArea = (id, addToHistory = true) => {
     if (addToHistory) {
+      Toast.success(t("area_deleted"));
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.AREA,
           data: areas[id],
-          message: `Delete subject area`,
+          message: t("delete_area", areas[id].name),
         },
       ]);
       setRedoStack([]);
     }
     setAreas((prev) =>
-      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
+      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
@@ -82,7 +86,7 @@ export default function AreasContextProvider({ children }) {
           };
         }
         return t;
-      })
+      }),
     );
   };
 

@@ -2,9 +2,11 @@ import { db } from "../../../data/db";
 import { useSettings } from "../../../hooks";
 import { useLiveQuery } from "dexie-react-hooks";
 import Thumbnail from "../../Thumbnail";
+import { useTranslation } from "react-i18next";
 
 export default function New({ selectedTemplateId, setSelectedTemplateId }) {
   const { settings } = useSettings();
+  const { t } = useTranslation();
   const templates = useLiveQuery(() => db.templates.toArray());
 
   return (
@@ -17,7 +19,7 @@ export default function New({ selectedTemplateId, setSelectedTemplateId }) {
         >
           <Thumbnail i={0} diagram={{}} zoom={0.24} theme={settings.mode} />
         </div>
-        <div className="text-center mt-1">Blank</div>
+        <div className="text-center mt-1">{t("blank")}</div>
       </div>
       {templates?.map((temp, i) => (
         <div key={i} onClick={() => setSelectedTemplateId(temp.id)}>

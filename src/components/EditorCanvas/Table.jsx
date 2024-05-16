@@ -13,9 +13,10 @@ import {
   IconDeleteStroked,
   IconKeyStroked,
 } from "@douyinfe/semi-icons";
-import { Popover, Tag, Button, Toast, SideSheet } from "@douyinfe/semi-ui";
+import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useTables, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
+import { useTranslation } from "react-i18next";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
@@ -29,6 +30,7 @@ export default function Table(props) {
   const { layout } = useLayout();
   const { deleteTable, deleteField } = useTables();
   const { settings } = useSettings();
+  const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
 
   const height =
@@ -110,9 +112,9 @@ export default function Table(props) {
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
-                        <strong>Comment :</strong>{" "}
+                        <strong>{t("comment")}:</strong>{" "}
                         {tableData.comment === "" ? (
-                          "No comment"
+                          t("not_set")
                         ) : (
                           <div>{tableData.comment}</div>
                         )}
@@ -123,10 +125,10 @@ export default function Table(props) {
                             tableData.indices.length === 0 ? "" : "block"
                           }`}
                         >
-                          Indices :
+                          {t("indices")}:
                         </strong>{" "}
                         {tableData.indices.length === 0 ? (
-                          "No indices"
+                          t("not_set")
                         ) : (
                           <div>
                             {tableData.indices.map((index, k) => (
@@ -156,12 +158,9 @@ export default function Table(props) {
                         type="danger"
                         block
                         style={{ marginTop: "8px" }}
-                        onClick={() => {
-                          Toast.success(`Table deleted!`);
-                          deleteTable(tableData.id);
-                        }}
+                        onClick={() => deleteTable(tableData.id)}
                       >
-                        Delete table
+                        {t("delete")}
                       </Button>
                     </div>
                   }
@@ -196,37 +195,31 @@ export default function Table(props) {
                     <hr />
                     {e.primary && (
                       <Tag color="blue" className="me-2 my-2">
-                        Primary
+                        {t("primary")}
                       </Tag>
                     )}
                     {e.unique && (
                       <Tag color="amber" className="me-2 my-2">
-                        Unique
+                        {t("unique")}
                       </Tag>
                     )}
                     {e.notNull && (
                       <Tag color="purple" className="me-2 my-2">
-                        Not null
+                        {t("not_null")}
                       </Tag>
                     )}
                     {e.increment && (
                       <Tag color="green" className="me-2 my-2">
-                        Increment
+                        {t("autoincrement")}
                       </Tag>
                     )}
                     <p>
-                      <strong>Default: </strong>
-                      {e.default === "" ? "Not set" : e.default}
+                      <strong>{t("default_value")}: </strong>
+                      {e.default === "" ? t("not_set") : e.default}
                     </p>
                     <p>
-                      <strong>Comment: </strong>
-                      {e.comment === "" ? (
-                        "No comment"
-                      ) : (
-                        <div className="max-w-[260px] break-words">
-                          {e.comment}
-                        </div>
-                      )}
+                      <strong>{t("comment")}: </strong>
+                      {e.comment === "" ? t("not_set") : e.comment}
                     </p>
                   </div>
                 }
@@ -242,7 +235,7 @@ export default function Table(props) {
         </div>
       </foreignObject>
       <SideSheet
-        title="Edit table"
+        title={t("edit")}
         size="small"
         visible={
           selectedElement.element === ObjectType.TABLE &&

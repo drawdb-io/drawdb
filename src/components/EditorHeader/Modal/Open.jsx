@@ -1,9 +1,11 @@
 import { db } from "../../../data/db";
 import { Banner } from "@douyinfe/semi-ui";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 
 export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
   const diagrams = useLiveQuery(() => db.diagrams.toArray());
+  const { t } = useTranslation();
 
   const getDiagramSize = (d) => {
     const size = JSON.stringify(d).length;
@@ -32,9 +34,9 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
           <table className="w-full text-left border-separate border-spacing-x-0">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Last Modified</th>
-                <th>Size</th>
+                <th>{t("name")}</th>
+                <th>{t("last_modified")}</th>
+                <th>{t("size")}</th>
               </tr>
             </thead>
             <tbody>

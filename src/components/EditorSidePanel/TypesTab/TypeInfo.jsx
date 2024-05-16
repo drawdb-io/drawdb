@@ -8,16 +8,17 @@ import {
   TextArea,
   Button,
   Card,
-  Toast,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconPlus } from "@douyinfe/semi-icons";
 import { useUndoRedo, useTypes } from "../../../hooks";
 import TypeField from "./TypeField";
+import { useTranslation } from "react-i18next";
 
 export default function TypeInfo({ index, data }) {
   const { deleteType, updateType } = useTypes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const { t } = useTranslation();
 
   return (
     <div id={`scroll_type_${index}`}>
@@ -30,11 +31,11 @@ export default function TypeInfo({ index, data }) {
         itemKey={`${index}`}
       >
         <div className="flex items-center mb-2.5">
-          <div className="text-md font-semibold">Name: </div>
+          <div className="text-md font-semibold break-keep">{t("name")}: </div>
           <Input
             value={data.name}
             validateStatus={data.name === "" ? "error" : "default"}
-            placeholder="Name"
+            placeholder={t("name")}
             className="ms-2"
             onChange={(value) => updateType(index, { name: value })}
             onFocus={(e) => setEditField({ name: e.target.value })}
@@ -49,7 +50,10 @@ export default function TypeInfo({ index, data }) {
                   tid: index,
                   undo: editField,
                   redo: { name: e.target.value },
-                  message: `Edit type name to ${e.target.value}`,
+                  message: t("edit_type", {
+                    typeName: data.name,
+                    extra: "[name]",
+                  }),
                 },
               ]);
               setRedoStack([]);
@@ -65,12 +69,12 @@ export default function TypeInfo({ index, data }) {
           headerLine={false}
         >
           <Collapse keepDOM lazyRender>
-            <Collapse.Panel header="Comment" itemKey="1">
+            <Collapse.Panel header={t("comment")} itemKey="1">
               <TextArea
                 field="comment"
                 value={data.comment}
                 autosize
-                placeholder="Add comment"
+                placeholder={t("comment")}
                 rows={1}
                 onChange={(value) =>
                   updateType(index, { comment: value }, false)
@@ -87,7 +91,10 @@ export default function TypeInfo({ index, data }) {
                       tid: index,
                       undo: editField,
                       redo: { comment: e.target.value },
-                      message: `Edit type comment to ${e.target.value}`,
+                      message: t("edit_type", {
+                        typeName: data.name,
+                        extra: "[comment]",
+                      }),
                     },
                   ]);
                   setRedoStack([]);
@@ -108,7 +115,10 @@ export default function TypeInfo({ index, data }) {
                     element: ObjectType.TYPE,
                     component: "field_add",
                     tid: index,
-                    message: `Add field to type`,
+                    message: t("edit_type", {
+                      typeName: data.name,
+                      extra: "[add field]",
+                    }),
                   },
                 ]);
                 setRedoStack([]);
@@ -124,20 +134,17 @@ export default function TypeInfo({ index, data }) {
               }}
               block
             >
-              Add field
+              {t("add_field")}
             </Button>
           </Col>
           <Col span={12}>
             <Button
               icon={<IconDeleteStroked />}
               type="danger"
-              onClick={() => {
-                Toast.success(`Type deleted!`);
-                deleteType(index);
-              }}
+              onClick={() => deleteType(index)}
               block
             >
-              Delete
+              {t("delete")}
             </Button>
           </Col>
         </Row>

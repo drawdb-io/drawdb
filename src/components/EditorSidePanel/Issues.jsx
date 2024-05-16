@@ -3,10 +3,12 @@ import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
 import { useSettings, useTables, useTypes } from "../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function Issues() {
-  const { settings } = useSettings();
   const { types } = useTypes();
+  const { t } = useTranslation();
+  const { settings } = useSettings();
   const { tables, relationships } = useTables();
   const [issues, setIssues] = useState([]);
 
@@ -38,7 +40,7 @@ export default function Issues() {
           >
             <div className="pe-3 select-none">
               <i className="fa-solid fa-triangle-exclamation me-2 text-yellow-500" />
-              Issues
+              {t("issues")}
             </div>
           </Badge>
         }
@@ -46,9 +48,7 @@ export default function Issues() {
       >
         <div className="max-h-[160px] overflow-y-auto">
           {settings.strictMode ? (
-            <div className="mb-1">
-              Strict mode is off so no issues will be displayed.
-            </div>
+            <div className="mb-1">{t("strict_mode_is_on_no_issues")}</div>
           ) : issues.length > 0 ? (
             <>
               {issues.map((e, i) => (
@@ -58,7 +58,7 @@ export default function Issues() {
               ))}
             </>
           ) : (
-            <div>No issues were detected.</div>
+            <div>{t("no_issues")}</div>
           )}
         </div>
       </Collapse.Panel>
