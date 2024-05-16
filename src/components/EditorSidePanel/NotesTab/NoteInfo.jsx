@@ -66,7 +66,7 @@ export default function NoteInfo({ data, nid }) {
             setEditField({ content: e.target.value, height: data.height })
           }
           onBlur={(e) => {
-            if (e.target.value === editField.name) return;
+            if (e.target.value === editField.content) return;
             const textarea = document.getElementById(`note_${data.id}`);
             textarea.style.height = "0";
             textarea.style.height = textarea.scrollHeight + "px";
