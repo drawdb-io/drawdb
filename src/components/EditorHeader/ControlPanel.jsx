@@ -129,7 +129,7 @@ export default function ControlPanel({
           ...prev,
           { ...a, x: tables[a.id].x, y: tables[a.id].y },
         ]);
-        updateTable(a.id, { x: a.x, y: a.y }, true);
+        updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setRedoStack((prev) => [
           ...prev,
@@ -145,15 +145,15 @@ export default function ControlPanel({
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        addTable(false, a.data);
+        addTable(a.data, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
-        addNote(false, a.data);
+        addNote(a.data, false);
       } else if (a.element === ObjectType.AREA) {
-        addArea(false, a.data);
+        addArea(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType(false, { id: a.id, ...a.data });
+        addType({ id: a.id, ...a.data }, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -281,15 +281,15 @@ export default function ControlPanel({
     setRedoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        addTable(false);
+        addTable(null, false);
       } else if (a.element === ObjectType.AREA) {
-        addArea(false);
+        addArea(null, false);
       } else if (a.element === ObjectType.NOTE) {
-        addNote(false);
+        addNote(null, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType(false);
+        addType(null, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -298,7 +298,7 @@ export default function ControlPanel({
           ...prev,
           { ...a, x: tables[a.id].x, y: tables[a.id].y },
         ]);
-        updateTable(a.id, { x: a.x, y: a.y }, true);
+        updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setUndoStack((prev) => [
           ...prev,
@@ -557,13 +557,13 @@ export default function ControlPanel({
   const del = () => {
     switch (selectedElement.element) {
       case ObjectType.TABLE:
-        deleteTable(selectedElement.id, true);
+        deleteTable(selectedElement.id);
         break;
       case ObjectType.NOTE:
-        deleteNote(selectedElement.id, true);
+        deleteNote(selectedElement.id);
         break;
       case ObjectType.AREA:
-        deleteArea(selectedElement.id, true);
+        deleteArea(selectedElement.id);
         break;
       default:
         break;
@@ -572,7 +572,7 @@ export default function ControlPanel({
   const duplicate = () => {
     switch (selectedElement.element) {
       case ObjectType.TABLE:
-        addTable(true, {
+        addTable({
           ...tables[selectedElement.id],
           x: tables[selectedElement.id].x + 20,
           y: tables[selectedElement.id].y + 20,
@@ -580,7 +580,7 @@ export default function ControlPanel({
         });
         break;
       case ObjectType.NOTE:
-        addNote(true, {
+        addNote({
           ...notes[selectedElement.id],
           x: notes[selectedElement.id].x + 20,
           y: notes[selectedElement.id].y + 20,
@@ -588,7 +588,7 @@ export default function ControlPanel({
         });
         break;
       case ObjectType.AREA:
-        addArea(true, {
+        addArea({
           ...areas[selectedElement.id],
           x: areas[selectedElement.id].x + 20,
           y: areas[selectedElement.id].y + 20,
@@ -630,21 +630,21 @@ export default function ControlPanel({
       }
       const v = new Validator();
       if (v.validate(obj, tableSchema).valid) {
-        addTable(true, {
+        addTable({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,
           id: tables.length,
         });
       } else if (v.validate(obj, areaSchema).valid) {
-        addArea(true, {
+        addArea({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,
           id: areas.length,
         });
       } else if (v.validate(obj, noteSchema)) {
-        addNote(true, {
+        addNote({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,

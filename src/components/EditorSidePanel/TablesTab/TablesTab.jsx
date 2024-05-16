@@ -19,7 +19,7 @@ export default function TablesTab() {
           <SearchBar tables={tables} />
         </Col>
         <Col span={8}>
-          <Button icon={<IconPlus />} block onClick={() => addTable(true)}>
+          <Button icon={<IconPlus />} block onClick={() => addTable()}>
             {t("add_table")}
           </Button>
         </Col>

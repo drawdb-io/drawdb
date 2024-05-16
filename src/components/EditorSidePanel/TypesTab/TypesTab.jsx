@@ -19,7 +19,7 @@ export default function TypesTab() {
           <Searchbar />
         </Col>
         <Col span={8}>
-          <Button icon={<IconPlus />} block onClick={() => addType(true)}>
+          <Button icon={<IconPlus />} block onClick={() => addType()}>
             {t("add_type")}
           </Button>
         </Col>
