@@ -4,9 +4,9 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { en, english } from "./locales/en";
 import { zh, chinese } from "./locales/zh";
 import { es, spanish } from "./locales/es";
+import { da, danish } from "./locales/da";
 
-
-export const languages = [english, chinese, spanish];
+export const languages = [english, chinese, danish, spanish];
 
 i18n
   .use(LanguageDetector)
@@ -21,6 +21,7 @@ i18n
       en,
       zh,
       es,
+      da,
     },
   });
 
