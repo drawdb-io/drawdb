@@ -42,6 +42,7 @@ export default function TableField({ data, tid, index }) {
       </Col>
       <Col span={8}>
         <Select
+          allowCreate={true}
           className="w-full"
           optionList={[
             ...sqlDataTypes.map((value) => ({
