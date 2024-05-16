@@ -96,8 +96,8 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
         return baseType
           ? "NVARCHAR(255)"
           : `NVARCHAR(255) CHECK([${field.name}] in (${field.values
-              .map((v) => `'${v}'`)
-              .join(", ")}))`;
+            .map((v) => `'${v}'`)
+            .join(", ")}))`;
       case "VARCHAR":
         type = `NVARCHAR`;
         break;
@@ -126,6 +126,8 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     }
 
     return type;
+  } else if (dbms === "clickhouse") {
+    return `${field.type}`
   }
 }
 
@@ -160,61 +162,50 @@ export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
+        `${table.comment === "" ? "" : `/* ${table.comment} */\n`
         }CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
-                field.name
-              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
-                field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
-                  ? !sqlDataTypes.includes(field.type)
-                    ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
-                        obj.types.find(
-                          (t) => t.name === field.type.toLowerCase(),
-                        ),
-                      )}", \`${field.name}\`))`
-                    : ""
-                  : ` CHECK(${field.check})`
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${field.name
+              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${field.increment ? " AUTO_INCREMENT" : ""
+              }${field.unique ? " UNIQUE" : ""}${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? !sqlDataTypes.includes(field.type)
+                  ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase(),
+                    ),
+                  )}", \`${field.name}\`))`
+                  : ""
+                : ` CHECK(${field.check})`
               }${field.comment ? ` COMMENT '${field.comment}'` : ''}`,
           )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `\`${f.name}\``)
-                .join(", ")})`
+              .filter((f) => f.primary)
+              .map((f) => `\`${f.name}\``)
+              .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${
-          table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`,
-              )}`
-            : ""
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${table.indices.length > 0
+          ? `\n${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`,
+          )}`
+          : ""
         }`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE \`${
-          obj.tables[r.startTableId].name
-        }\`\nADD FOREIGN KEY(\`${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
-    .join("\n")}`;
+      .map(
+        (r) =>
+          `ALTER TABLE \`${obj.tables[r.startTableId].name
+          }\`\nADD FOREIGN KEY(\`${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
+      )
+      .join("\n")}`;
 }
 
 export function jsonToPostgreSQL(obj) {
@@ -230,79 +221,67 @@ export function jsonToPostgreSQL(obj) {
     if (typeStatements.length > 0) {
       return (
         typeStatements.join("") +
-        `${
-          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        `${type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
         }CREATE TYPE ${type.name} AS (\n${type.fields
           .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
           .join("\n")}\n);`
       );
     } else {
-      return `${
-        type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-      }CREATE TYPE ${type.name} AS (\n${type.fields
-        .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
-        .join("\n")}\n);`;
+      return `${type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        }CREATE TYPE ${type.name} AS (\n${type.fields
+          .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+          .join("\n")}\n);`;
     }
   })}\n${obj.tables
     .map(
       (table) =>
-        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${
-          table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
-            .length > 0
-            ? `${table.fields
-                .filter((f) => f.type === "ENUM" || f.type === "SET")
-                .map(
-                  (f) =>
-                    `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-                      .map((v) => `'${v}'`)
-                      .join(", ")});\n\n`,
-                )}`
-            : ""
+        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
+          .length > 0
+          ? `${table.fields
+            .filter((f) => f.type === "ENUM" || f.type === "SET")
+            .map(
+              (f) =>
+                `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+                  .map((v) => `'${v}'`)
+                  .join(", ")});\n\n`,
+            )}`
+          : ""
         }CREATE TABLE "${table.name}" (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
-                field.name
-              }" ${getTypeString(field, "postgres")}${
-                field.notNull ? " NOT NULL" : ""
-              }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
-                  ? ""
-                  : ` CHECK(${field.check})`
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${field.name
+              }" ${getTypeString(field, "postgres")}${field.notNull ? " NOT NULL" : ""
+              }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? ""
+                : ` CHECK(${field.check})`
               }`,
           )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `"${f.name}"`)
-                .join(", ")})`
+              .filter((f) => f.primary)
+              .map((f) => `"${f.name}"`)
+              .join(", ")})`
             : ""
-        }\n);\n${
-          table.indices.length > 0
-            ? `${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`,
-              )}`
-            : ""
+        }\n);\n${table.indices.length > 0
+          ? `${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name
+              }"\nON "${table.name}" (${i.fields
+                .map((f) => `"${f}"`)
+                .join(", ")});`,
+          )}`
+          : ""
         }`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${obj.tables[r.endTableId].name}"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
-    .join("\n")}`;
+      .map(
+        (r) =>
+          `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }") REFERENCES "${obj.tables[r.endTableId].name}"("${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
+      )
+      .join("\n")}`;
 }
 
 export function getSQLiteType(field) {
@@ -343,11 +322,9 @@ export function getInlineFK(table, obj) {
   obj.references.forEach((r) => {
     if (fk !== "") return;
     if (r.startTableId === table.id) {
-      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-        obj.tables[r.endTableId].name
-      }"("${
-        obj.tables[r.endTableId].fields[r.endFieldId].name
-      }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
+      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${obj.tables[r.endTableId].name
+        }"("${obj.tables[r.endTableId].fields[r.endFieldId].name
+        }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
     }
   });
   return fk;
@@ -357,42 +334,35 @@ export function jsonToSQLite(obj) {
   return obj.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, obj);
-      return `${
-        table.comment === "" ? "" : `/* ${table.comment} */\n`
-      }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
-        .map(
-          (field) =>
-            `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
-              field.name
-            }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
-              field.unique ? " UNIQUE" : ""
-            }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${
-              field.check === "" || !hasCheck(field.type)
+      return `${table.comment === "" ? "" : `/* ${table.comment} */\n`
+        }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
+          .map(
+            (field) =>
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${field.name
+              }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${field.unique ? " UNIQUE" : ""
+              }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${field.check === "" || !hasCheck(field.type)
                 ? ""
                 : ` CHECK(${field.check})`
-            }`,
-        )
-        .join(",\n")}${
-        table.fields.filter((f) => f.primary).length > 0
-          ? `,\n\tPRIMARY KEY(${table.fields
+              }`,
+          )
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
+            ? `,\n\tPRIMARY KEY(${table.fields
               .filter((f) => f.primary)
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
-          : ""
-      }\t${inlineFK}\n);\n${
-        table.indices.length > 0
+            : ""
+        }\t${inlineFK}\n);\n${table.indices.length > 0
           ? `${table.indices
-              .map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`,
-              )
-              .join("\n")}`
+            .map(
+              (i) =>
+                `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${i.name
+                }"\nON "${table.name}" (${i.fields
+                  .map((f) => `"${f}"`)
+                  .join(", ")});`,
+            )
+            .join("\n")}`
           : ""
-      }`;
+        }`;
     })
     .join("\n");
 }
@@ -401,126 +371,102 @@ export function jsonToMariaDB(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
+        `${table.comment === "" ? "" : `/* ${table.comment} */\n`
         }CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
-                field.name
-              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
-                field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
-                  ? !sqlDataTypes.includes(field.type)
-                    ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
-                        obj.types.find(
-                          (t) => t.name === field.type.toLowerCase(),
-                        ),
-                      )}', \`${field.name}\`))`
-                    : ""
-                  : ` CHECK(${field.check})`
+              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${field.name
+              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${field.increment ? " AUTO_INCREMENT" : ""
+              }${field.unique ? " UNIQUE" : ""}${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+              }${field.check === "" || !hasCheck(field.type)
+                ? !sqlDataTypes.includes(field.type)
+                  ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase(),
+                    ),
+                  )}', \`${field.name}\`))`
+                  : ""
+                : ` CHECK(${field.check})`
               }`,
           )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
+          .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `\`${f.name}\``)
-                .join(", ")})`
+              .filter((f) => f.primary)
+              .map((f) => `\`${f.name}\``)
+              .join(", ")})`
             : ""
-        }\n);${
-          table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`,
-              )}`
-            : ""
+        }\n);${table.indices.length > 0
+          ? `\n${table.indices.map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`,
+          )}`
+          : ""
         }`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE \`${
-          obj.tables[r.startTableId].name
-        }\`\nADD FOREIGN KEY(\`${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
-    .join("\n")}`;
+      .map(
+        (r) =>
+          `ALTER TABLE \`${obj.tables[r.startTableId].name
+          }\`\nADD FOREIGN KEY(\`${obj.tables[r.startTableId].fields[r.startFieldId].name
+          }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${obj.tables[r.endTableId].fields[r.endFieldId].name
+          }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
+      )
+      .join("\n")}`;
 }
 
 export function jsonToSQLServer(obj) {
   return `${obj.types
     .map((type) => {
-      return `${
-        type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-      }CREATE TYPE [${type.name}] FROM ${
-        type.fields.length < 0
+      return `${type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        }CREATE TYPE [${type.name}] FROM ${type.fields.length < 0
           ? ""
           : `${getTypeString(type.fields[0], "mssql", true)}`
-      };\nGO\n`;
+        };\nGO\n`;
     })
     .join("\n")}\n${obj.tables
-    .map(
-      (table) =>
-        `${
-          table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`
-        }CREATE TABLE [${table.name}] (\n${table.fields
-          .map(
-            (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t[${
-                field.name
-              }] ${getTypeString(field, "mssql")}${
-                field.notNull ? " NOT NULL" : ""
-              }${field.increment ? " IDENTITY" : ""}${
-                field.unique ? " UNIQUE" : ""
-              }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
-              }${
-                field.check === "" || !hasCheck(field.type)
+      .map(
+        (table) =>
+          `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`
+          }CREATE TABLE [${table.name}] (\n${table.fields
+            .map(
+              (field) =>
+                `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t[${field.name
+                }] ${getTypeString(field, "mssql")}${field.notNull ? " NOT NULL" : ""
+                }${field.increment ? " IDENTITY" : ""}${field.unique ? " UNIQUE" : ""
+                }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+                }${field.check === "" || !hasCheck(field.type)
                   ? ""
                   : ` CHECK(${field.check})`
-              }`,
-          )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
-            ? `,\n\tPRIMARY KEY(${table.fields
+                }`,
+            )
+            .join(",\n")}${table.fields.filter((f) => f.primary).length > 0
+              ? `,\n\tPRIMARY KEY(${table.fields
                 .filter((f) => f.primary)
                 .map((f) => `[${f.name}]`)
                 .join(", ")})`
-            : ""
-        }\n);\nGO\n${
-          table.indices.length > 0
+              : ""
+          }\n);\nGO\n${table.indices.length > 0
             ? `${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX [${
-                    i.name
-                  }]\nON [${table.name}] (${i.fields
-                    .map((f) => `[${f}]`)
-                    .join(", ")});\nGO\n`,
-              )}`
+              (i) =>
+                `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX [${i.name
+                }]\nON [${table.name}] (${i.fields
+                  .map((f) => `[${f}]`)
+                  .join(", ")});\nGO\n`,
+            )}`
             : ""
-        }`,
-    )
-    .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE [${obj.tables[r.startTableId].name}]\nADD FOREIGN KEY([${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }]) REFERENCES [${obj.tables[r.endTableId].name}]([${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`,
-    )
-    .join("\n")}`;
+          }`,
+      )
+      .join("\n")}\n${obj.references
+        .map(
+          (r) =>
+            `ALTER TABLE [${obj.tables[r.startTableId].name}]\nADD FOREIGN KEY([${obj.tables[r.startTableId].fields[r.startFieldId].name
+            }]) REFERENCES [${obj.tables[r.endTableId].name}]([${obj.tables[r.endTableId].fields[r.endFieldId].name
+            }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`,
+        )
+        .join("\n")}`;
 }
 
 export function isSized(type) {
@@ -559,4 +505,27 @@ export function getSize(type) {
     default:
       return "";
   }
+}
+
+export function jsonToClickHouse(obj) {
+  // TODO: Table Engine selection UI
+  return `${obj.tables
+    .map(
+      (table) =>
+        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
+          .map(
+            (field, i) =>
+              `\t"${field.name}"\t\t\t${field.notNull ? `${getTypeString(field, "clickhouse")}` : `Nullable(${getTypeString(field, "clickhouse")})`
+              }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+              }${i < table.fields.length - 1 ? "," : ""}${field.comment === "" ? "" : `\t-- ${field.comment}`}`,
+          )
+          .join("\n")}\n)\nENGINE MergeTree()${table.fields.filter((f) => f.primary).length > 0
+            ? `\nORDER BY(${table.fields
+              .filter((f) => f.primary)
+              .map((f) => `"${f.name}"`)
+              .join(", ")})`
+            : ""
+        };\n`,
+    )
+    .join("\n")}`;
 }

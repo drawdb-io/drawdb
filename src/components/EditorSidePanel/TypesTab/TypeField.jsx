@@ -55,6 +55,7 @@ export default function TypeField({ data, tid, fid }) {
       <Col span={11}>
         <Select
           className="w-full"
+          
           optionList={[
             ...sqlDataTypes.map((value) => ({
               label: value,

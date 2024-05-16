@@ -30,6 +30,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToClickHouse
 } from "../../utils/toSQL";
 import {
   ObjectType,
@@ -922,6 +923,21 @@ export default function ControlPanel({
             MSSQL: () => {
               setModal(MODAL.CODE);
               const src = jsonToSQLServer({
+                tables: tables,
+                references: relationships,
+                types: types,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: src,
+                extension: "sql",
+              }));
+            },
+          },
+          {
+            ClickHouse: () => {
+              setModal(MODAL.CODE);
+              const src = jsonToClickHouse({
                 tables: tables,
                 references: relationships,
                 types: types,
