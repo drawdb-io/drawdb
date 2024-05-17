@@ -6,7 +6,12 @@ import { zh, chinese } from "./locales/zh";
 import { es, spanish } from "./locales/es";
 import { da, danish } from "./locales/da";
 
-export const languages = [english, chinese, danish, spanish];
+export const languages = [
+  english,
+  chinese,
+  danish,
+  spanish,
+].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
   .use(LanguageDetector)
