@@ -1,4 +1,4 @@
-import { Row, Col, Button } from "@douyinfe/semi-ui";
+import { Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import Empty from "../Empty";
 import { useAreas } from "../../../hooks";
@@ -12,16 +12,14 @@ export default function AreasTab() {
 
   return (
     <div>
-      <Row gutter={6}>
-        <Col span={16}>
-          <SearchBar />
-        </Col>
-        <Col span={8}>
+      <div className="flex gap-2">
+        <SearchBar />
+        <div>
           <Button icon={<IconPlus />} block onClick={addArea}>
             {t("add_area")}
           </Button>
-        </Col>
-      </Row>
+        </div>
+      </div>
       {areas.length <= 0 ? (
         <Empty
           title={t("no_subject_areas")}

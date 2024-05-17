@@ -1,4 +1,4 @@
-import { Row, Col, Button, Collapse } from "@douyinfe/semi-ui";
+import { Button, Collapse } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useNotes, useSelect } from "../../../hooks";
 import Empty from "../Empty";
@@ -13,23 +13,21 @@ export default function NotesTab() {
 
   return (
     <>
-      <Row gutter={6}>
-        <Col span={16}>
-          <SearchBar
-            setActiveKey={(activeKey) =>
-              setSelectedElement((prev) => ({
-                ...prev,
-                id: parseInt(activeKey),
-              }))
-            }
-          />
-        </Col>
-        <Col span={8}>
+      <div className="flex gap-2">
+        <SearchBar
+          setActiveKey={(activeKey) =>
+            setSelectedElement((prev) => ({
+              ...prev,
+              id: parseInt(activeKey),
+            }))
+          }
+        />
+        <div>
           <Button icon={<IconPlus />} block onClick={() => addNote()}>
             {t("add_note")}
           </Button>
-        </Col>
-      </Row>
+        </div>
+      </div>
       {notes.length <= 0 ? (
         <Empty title={t("no_notes")} text={t("no_notes_text")} />
       ) : (

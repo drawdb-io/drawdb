@@ -1,4 +1,4 @@
-import { Collapse, Row, Col, Button } from "@douyinfe/semi-ui";
+import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useSelect, useTables } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
@@ -14,16 +14,14 @@ export default function TablesTab() {
 
   return (
     <>
-      <Row gutter={6}>
-        <Col span={16}>
-          <SearchBar tables={tables} />
-        </Col>
-        <Col span={8}>
+      <div className="flex gap-2">
+        <SearchBar tables={tables} />
+        <div>
           <Button icon={<IconPlus />} block onClick={() => addTable()}>
             {t("add_table")}
           </Button>
-        </Col>
-      </Row>
+        </div>
+      </div>
       {tables.length === 0 ? (
         <Empty title={t("no_tables")} text={t("no_tables_text")} />
       ) : (

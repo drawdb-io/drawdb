@@ -1,8 +1,6 @@
 import { useState } from "react";
 import {
   Collapse,
-  Row,
-  Col,
   Input,
   TextArea,
   Button,
@@ -210,8 +208,8 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
-      <Row gutter={6} className="mt-2">
-        <Col span={8}>
+      <div className="flex justify-between items-center gap-1 mb-2">
+        <div>
           <Popover
             content={
               <div className="popover-theme">
@@ -263,12 +261,12 @@ export default function TableInfo({ data }) {
             showArrow
           >
             <div
-              className="h-[32px] w-[32px] rounded mb-2"
+              className="h-[32px] w-[32px] rounded"
               style={{ backgroundColor: data.color }}
             />
           </Popover>
-        </Col>
-        <Col span={7}>
+        </div>
+        <div className="flex gap-1">
           <Button
             block
             onClick={() => {
@@ -302,8 +300,6 @@ export default function TableInfo({ data }) {
           >
             {t("add_index")}
           </Button>
-        </Col>
-        <Col span={6}>
           <Button
             onClick={() => {
               setUndoStack((prev) => [
@@ -342,15 +338,13 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
-        </Col>
-        <Col span={3}>
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
             onClick={() => deleteTable(data.id)}
           />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }

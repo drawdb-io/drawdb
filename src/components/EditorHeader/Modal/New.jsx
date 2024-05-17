@@ -10,7 +10,7 @@ export default function New({ selectedTemplateId, setSelectedTemplateId }) {
   const templates = useLiveQuery(() => db.templates.toArray());
 
   return (
-    <div className="h-[360px] grid grid-cols-3 gap-2 overflow-auto px-1">
+    <div className="grid grid-cols-3 gap-2 overflow-auto px-1">
       <div onClick={() => setSelectedTemplateId(0)}>
         <div
           className={`rounded-md h-[180px] border-2 hover:border-dashed ${

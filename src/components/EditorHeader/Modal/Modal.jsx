@@ -333,6 +333,7 @@ export default function Modal({
       }}
       cancelText={t("cancel")}
       width={modal === MODAL.NEW ? 740 : 600}
+      bodyStyle={{ maxHeight: window.innerHeight - 280, overflow: "auto" }}
     >
       {getModalBody()}
     </SemiUIModal>
