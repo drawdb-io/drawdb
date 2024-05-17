@@ -177,8 +177,8 @@ const pt = {
     type_with_no_name: "Declarado um tipo sem nome",
     duplicate_types: "Tipos duplicados pelo nome '{{typeName}}'",
     type_w_no_fields: "Declarado um tipo vazio '{{typeName}}' sem campos",
-    empty_type_field_name: "Campo `nome` vazio no tipo '{{typeName}}'",
-    empty_type_field_type: "Campo `tipo` vazio no tipo '{{typeName}}'",
+    empty_type_field_name: "Campo `name` vazio no tipo '{{typeName}}'",
+    empty_type_field_type: "Campo `type` vazio no tipo '{{typeName}}'",
     no_values_for_type_field:
       "O campo '{{fieldName}}' do tipo '{{typeName}}' é do tipo `{{type}}` mas nenhum valor foi especificado",
     duplicate_type_fields:
