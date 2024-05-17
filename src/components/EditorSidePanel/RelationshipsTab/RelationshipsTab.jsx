@@ -4,10 +4,12 @@ import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import RelationshipInfo from "./RelationshipInfo";
 import { ObjectType } from "../../../data/constants";
+import { useTranslation } from "react-i18next";
 
 export default function RelationshipsTab() {
   const { relationships } = useTables();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -33,8 +35,8 @@ export default function RelationshipsTab() {
       >
         {relationships.length <= 0 ? (
           <Empty
-            title="No relationships"
-            text="Drag to connect fields and form relationships!"
+            title={t("no_relationships")}
+            text={t("no_relationships_text")}
           />
         ) : (
           relationships.map((r) => <RelationshipInfo key={r.id} data={r} />)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Row, Col, Button, Input, Popover, Toast } from "@douyinfe/semi-ui";
+import { Row, Col, Button, Input, Popover } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useAreas, useSaveState, useUndoRedo } from "../../../hooks";
 import {
@@ -8,9 +8,11 @@ import {
   State,
   defaultBlue,
 } from "../../../data/constants";
-import ColorPalette from "../../ColorPalette";
+import ColorPalette from "../../ColorPicker";
+import { useTranslation } from "react-i18next";
 
 export default function AreaInfo({ data, i }) {
+  const { t } = useTranslation();
   const { setSaveState } = useSaveState();
   const { deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -28,7 +30,7 @@ export default function AreaInfo({ data, i }) {
       <Col span={18}>
         <Input
           value={data.name}
-          placeholder="Name"
+          placeholder={t("name")}
           onChange={(value) => updateArea(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -41,7 +43,10 @@ export default function AreaInfo({ data, i }) {
                 aid: i,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit area name to ${e.target.value}`,
+                message: t("edit_area", {
+                  areaName: e.target.value,
+                  extra: "[name]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -67,7 +72,10 @@ export default function AreaInfo({ data, i }) {
                       aid: i,
                       undo: { color: data.color },
                       redo: { color: c },
-                      message: `Edit area color to ${c}`,
+                      message: t("edit_area", {
+                        areaName: data.name,
+                        extra: "[color]",
+                      }),
                     },
                   ]);
                   setRedoStack([]);
@@ -90,10 +98,7 @@ export default function AreaInfo({ data, i }) {
         <Button
           icon={<IconDeleteStroked />}
           type="danger"
-          onClick={() => {
-            Toast.success(`Area deleted!`);
-            deleteArea(i);
-          }}
+          onClick={() => deleteArea(i, true)}
         />
       </Col>
     </Row>

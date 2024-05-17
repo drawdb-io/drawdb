@@ -21,6 +21,7 @@ import {
 } from "@douyinfe/semi-icons";
 import { State } from "../../../data/constants";
 import { useTasks, useSaveState } from "../../../hooks";
+import { useTranslation } from "react-i18next";
 
 const Priority = {
   NONE: 0,
@@ -30,10 +31,10 @@ const Priority = {
 };
 
 const SortOrder = {
-  ORIGINAL: "My order",
-  PRIORITY: "Priority",
-  COMPLETED: "Completed",
-  ALPHABETICALLY: "Alphabetically",
+  ORIGINAL: "my_order",
+  PRIORITY: "priority",
+  COMPLETED: "completed",
+  ALPHABETICALLY: "alphabetically",
 };
 
 export default function Todo() {
@@ -41,17 +42,18 @@ export default function Todo() {
   const [, setSortOrder] = useState(SortOrder.ORIGINAL);
   const { tasks, setTasks, updateTask } = useTasks();
   const { setSaveState } = useSaveState();
+  const { t } = useTranslation();
 
   const priorityLabel = (p) => {
     switch (p) {
       case Priority.NONE:
-        return "None";
+        return t("none");
       case Priority.LOW:
-        return "Low";
+        return t("low");
       case Priority.MEDIUM:
-        return "Medium";
+        return t("medium");
       case Priority.HIGH:
-        return "High";
+        return t("high");
       default:
         return "";
     }
@@ -91,7 +93,7 @@ export default function Todo() {
             } else {
               return 0;
             }
-          })
+          }),
         );
         break;
       case SortOrder.ALPHABETICALLY:
@@ -116,7 +118,7 @@ export default function Todo() {
                     sort(order);
                   }}
                 >
-                  {order}
+                  {t(order)}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
@@ -128,7 +130,7 @@ export default function Todo() {
             theme="borderless"
             type="tertiary"
           >
-            Sort by <IconCaretdown />
+            {t("sort_by")} <IconCaretdown />
           </Button>
         </Dropdown>
         <Button
@@ -147,12 +149,12 @@ export default function Todo() {
             ]);
           }}
         >
-          Add task
+          {t("add_task")}
         </Button>
       </div>
       {tasks.length > 0 ? (
         <List className="sidesheet-theme">
-          {tasks.map((t, i) => (
+          {tasks.map((task, i) => (
             <List.Item
               key={i}
               style={{ paddingLeft: "18px", paddingRight: "18px" }}
@@ -163,7 +165,7 @@ export default function Todo() {
                 <Row gutter={6} align="middle" type="flex" className="mb-2">
                   <Col span={2}>
                     <Checkbox
-                      checked={t.complete}
+                      checked={task.complete}
                       onChange={(e) => {
                         updateTask(i, { complete: e.target.checked });
                         setSaveState(State.SAVING);
@@ -172,25 +174,25 @@ export default function Todo() {
                   </Col>
                   <Col span={19}>
                     <Input
-                      placeholder="Title"
+                      placeholder={t("title")}
                       onChange={(v) => updateTask(i, { title: v })}
-                      value={t.title}
+                      value={task.title}
                       onBlur={() => setSaveState(State.SAVING)}
-                    ></Input>
+                    />
                   </Col>
                   <Col span={3}>
                     <Popover
                       content={
                         <div className="p-2 popover-theme">
                           <div className="mb-2 font-semibold">
-                            Set priority:
+                            {t("priority")}:
                           </div>
                           <RadioGroup
                             onChange={(e) => {
                               updateTask(i, { priority: e.target.value });
                               setSaveState(State.SAVING);
                             }}
-                            value={t.priority}
+                            value={task.priority}
                             direction="vertical"
                           >
                             <Radio value={Priority.NONE}>
@@ -221,12 +223,12 @@ export default function Todo() {
                             style={{ marginTop: "12px" }}
                             onClick={() => {
                               setTasks((prev) =>
-                                prev.filter((task, j) => i !== j)
+                                prev.filter((_, j) => i !== j),
                               );
                               setSaveState(State.SAVING);
                             }}
                           >
-                            Delete
+                            {t("delete")}
                           </Button>
                         </div>
                       }
@@ -243,7 +245,7 @@ export default function Todo() {
                     <Col span={2}></Col>
                     <Col span={22}>
                       <TextArea
-                        placeholder="Details"
+                        placeholder={t("details")}
                         onChange={(v) => updateTask(i, { details: v })}
                         value={t.details}
                         onBlur={() => setSaveState(State.SAVING)}
@@ -254,9 +256,9 @@ export default function Todo() {
                 <Row>
                   <Col span={2}></Col>
                   <Col span={22}>
-                    Priority:{" "}
-                    <Tag color={priorityColor(t.priority)}>
-                      {priorityLabel(t.priority)}
+                    {t("priority")}:{" "}
+                    <Tag color={priorityColor(task.priority)}>
+                      {priorityLabel(task.priority)}
                     </Tag>
                   </Col>
                 </Row>
@@ -265,10 +267,7 @@ export default function Todo() {
           ))}
         </List>
       ) : (
-        <div className="m-5 sidesheet-theme">
-          You have no tasks yet. Add your to-dos and keep track of your
-          progress.
-        </div>
+        <div className="m-5 sidesheet-theme">{t("no_tasks")}</div>
       )}
     </>
   );

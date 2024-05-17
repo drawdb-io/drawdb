@@ -7,17 +7,23 @@ import Issues from "./Issues";
 import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
+import { useTranslation } from "react-i18next";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
 
   const tabList = [
-    { tab: "Tables", itemKey: Tab.TABLES, component: <TablesTab />  },
-    { tab: "Relationships", itemKey: Tab.RELATIONSHIPS, component: <RelationshipsTab />  },
-    { tab: "Subject Areas", itemKey: Tab.AREAS, component: <AreasTab />  },
-    { tab: "Notes", itemKey: Tab.NOTES, component: <NotesTab />  },
-    { tab: "Types", itemKey: Tab.TYPES, component: <TypesTab />  },
+    { tab: t("tables"), itemKey: Tab.TABLES, component: <TablesTab /> },
+    {
+      tab: t("relationships"),
+      itemKey: Tab.RELATIONSHIPS,
+      component: <RelationshipsTab />,
+    },
+    { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
+    { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
+    { tab: t("types"), itemKey: Tab.TYPES, component: <TypesTab /> },
   ];
 
   return (
@@ -36,13 +42,12 @@ export default function SidePanel({ width, resize, setResize }) {
             }
             collapsible
           >
-            {tabList.length && tabList.map(tab => 
-              <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                <div className="p-2">
-                  {tab.component}
-                </div>
-              </TabPane>
-            )}
+            {tabList.length &&
+              tabList.map((tab) => (
+                <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
+                  <div className="p-2">{tab.component}</div>
+                </TabPane>
+              ))}
           </Tabs>
         </div>
         {layout.issues && (

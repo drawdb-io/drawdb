@@ -2,15 +2,17 @@ import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Checkbox, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useTables, useUndoRedo } from "../../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function IndexDetails({ data, fields, iid, tid }) {
+  const { t } = useTranslation();
   const { tables, updateTable } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
   return (
     <div className="flex justify-between items-center mb-2">
       <Select
-        placeholder="Select fields"
+        placeholder={t("select_fields")}
         multiple
         validateStatus={data.fields.length === 0 ? "error" : "default"}
         optionList={fields}
@@ -33,7 +35,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 fields: [...value],
                 name: `${value.join("_")}_index`,
               },
-              message: `Edit index fields to "${JSON.stringify(value)}"`,
+              message: t("edit_table", {
+                tableName: tables[tid].name,
+                extra: "[index field]",
+              }),
             },
           ]);
           setRedoStack([]);
@@ -45,7 +50,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                     fields: [...value],
                     name: `${value.join("_")}_index`,
                   }
-                : index
+                : index,
             ),
           });
         }}
@@ -53,10 +58,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
       <Popover
         content={
           <div className="px-1 popover-theme">
-            <div className="font-semibold mb-1">Index name: </div>
-            <Input value={data.name} placeholder="Index name" disabled />
+            <div className="font-semibold mb-1">{t("name")}: </div>
+            <Input value={data.name} placeholder={t("name")} disabled />
             <div className="flex justify-between items-center my-3">
-              <div className="font-medium">Unique</div>
+              <div className="font-medium">{t("unique")}</div>
               <Checkbox
                 value="unique"
                 checked={data.unique}
@@ -77,9 +82,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                         [checkedValues.target.value]:
                           checkedValues.target.checked,
                       },
-                      message: `Edit table field to${
-                        data.unique ? " not" : ""
-                      } unique`,
+                      message: t("edit_table", {
+                        tableName: tables[tid].name,
+                        extra: "[index field]",
+                      }),
                     },
                   ]);
                   setRedoStack([]);
@@ -91,7 +97,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                             [checkedValues.target.value]:
                               checkedValues.target.checked,
                           }
-                        : index
+                        : index,
                     ),
                   });
                 }}
@@ -110,7 +116,10 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                     component: "index_delete",
                     tid: tid,
                     data: data,
-                    message: `Delete index`,
+                    message: t("edit_table", {
+                      tableName: tables[tid].name,
+                      extra: "[delete index]",
+                    }),
                   },
                 ]);
                 setRedoStack([]);

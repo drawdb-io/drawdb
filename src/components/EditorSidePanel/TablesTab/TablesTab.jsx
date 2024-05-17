@@ -1,29 +1,29 @@
-import { Collapse, Row, Col, Button } from "@douyinfe/semi-ui";
+import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useSelect, useTables } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
 import TableInfo from "./TableInfo";
+import { useTranslation } from "react-i18next";
 
 export default function TablesTab() {
   const { tables, addTable } = useTables();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
 
   return (
     <>
-      <Row gutter={6}>
-        <Col span={16}>
-          <SearchBar tables={tables} />
-        </Col>
-        <Col span={8}>
+      <div className="flex gap-2">
+        <SearchBar tables={tables} />
+        <div>
           <Button icon={<IconPlus />} block onClick={() => addTable()}>
-            Add table
+            {t("add_table")}
           </Button>
-        </Col>
-      </Row>
+        </div>
+      </div>
       {tables.length === 0 ? (
-        <Empty title="No tables" text="Start building your diagram!" />
+        <Empty title={t("no_tables")} text={t("no_tables_text")} />
       ) : (
         <Collapse
           activeKey={

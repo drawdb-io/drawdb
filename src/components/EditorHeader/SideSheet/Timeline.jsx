@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../../../hooks";
 import { List } from "@douyinfe/semi-ui";
 
 export default function Timeline() {
   const { undoStack } = useUndoRedo();
+  const { t } = useTranslation();
 
   if (undoStack.length > 0) {
     return (
@@ -22,11 +24,6 @@ export default function Timeline() {
       </List>
     );
   } else {
-    return (
-      <div className="m-5 sidesheet-theme">
-        No activity was recorded. You have not added anything to your diagram
-        yet.
-      </div>
-    );
+    return <div className="m-5 sidesheet-theme">{t("no_activity")}</div>;
   }
 }

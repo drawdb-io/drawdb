@@ -1,18 +1,20 @@
 import { Button } from "@douyinfe/semi-ui";
 import { IconCheckboxTick } from "@douyinfe/semi-icons";
 import { tableThemes } from "../data/constants";
+import { useTranslation } from "react-i18next";
 
 export default function ColorPalette({
   currentColor,
   onClearColor,
   onPickColor,
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="flex justify-between items-center p-2">
-        <div className="font-medium">Theme</div>
+        <div className="font-medium">{t("theme")}</div>
         <Button type="tertiary" size="small" onClick={onClearColor}>
-          Clear
+          {t("clear")}
         </Button>
       </div>
       <hr />

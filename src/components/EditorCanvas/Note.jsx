@@ -6,7 +6,7 @@ import {
   State,
   noteThemes,
 } from "../../data/constants";
-import { Input, Button, Popover, Toast } from "@douyinfe/semi-ui";
+import { Input, Button, Popover } from "@douyinfe/semi-ui";
 import {
   IconEdit,
   IconDeleteStroked,
@@ -19,6 +19,7 @@ import {
   useNotes,
   useSaveState,
 } from "../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function Note({ data, onMouseDown }) {
   const w = 180;
@@ -27,6 +28,7 @@ export default function Note({ data, onMouseDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
+  const { t } = useTranslation();
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -54,7 +56,10 @@ export default function Note({ data, onMouseDown }) {
         nid: data.id,
         undo: editField,
         redo: { content: e.target.value, height: newHeight },
-        message: `Edit note content to "${e.target.value}"`,
+        message: t("edit_note", {
+          noteTitle: e.target.value,
+          extra: "[content]",
+        }),
       },
     ]);
     setRedoStack([]);
@@ -168,11 +173,11 @@ export default function Note({ data, onMouseDown }) {
                   stopPropagation
                   content={
                     <div className="popover-theme">
-                      <div className="font-semibold mb-2 ms-1">Edit note</div>
+                      <div className="font-semibold mb-2 ms-1">{t("edit")}</div>
                       <div className="w-[280px] flex items-center mb-2">
                         <Input
                           value={data.title}
-                          placeholder="Title"
+                          placeholder={t("title")}
                           className="me-2"
                           onChange={(value) =>
                             updateNote(data.id, { title: value })
@@ -190,7 +195,10 @@ export default function Note({ data, onMouseDown }) {
                                 nid: data.id,
                                 undo: editField,
                                 redo: { title: e.target.value },
-                                message: `Edit note title to "${e.target.value}"`,
+                                message: t("edit_note", {
+                                  noteTitle: e.target.value,
+                                  extra: "[title]",
+                                }),
                               },
                             ]);
                             setRedoStack([]);
@@ -199,7 +207,9 @@ export default function Note({ data, onMouseDown }) {
                         <Popover
                           content={
                             <div className="popover-theme">
-                              <div className="font-medium mb-1">Theme</div>
+                              <div className="font-medium mb-1">
+                                {t("theme")}
+                              </div>
                               <hr />
                               <div className="py-3">
                                 {noteThemes.map((c) => (
@@ -216,7 +226,10 @@ export default function Note({ data, onMouseDown }) {
                                           nid: data.id,
                                           undo: { color: data.color },
                                           redo: { color: c },
-                                          message: `Edit note color to ${c}`,
+                                          message: t("edit_note", {
+                                            noteTitle: data.title,
+                                            extra: "[color]",
+                                          }),
                                         },
                                       ]);
                                       setRedoStack([]);
@@ -249,12 +262,9 @@ export default function Note({ data, onMouseDown }) {
                           icon={<IconDeleteStroked />}
                           type="danger"
                           block
-                          onClick={() => {
-                            Toast.success(`Note deleted!`);
-                            deleteNote(data.id);
-                          }}
+                          onClick={() => deleteNote(data.id, true)}
                         >
-                          Delete
+                          {t("delete")}
                         </Button>
                       </div>
                     </div>

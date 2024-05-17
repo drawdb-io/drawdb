@@ -24,6 +24,8 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^10.18.0",
     "html-to-image": "^1.11.11",
+    "i18next": "^23.11.4",
+    "i18next-browser-languagedetector": "^8.0.0",
     "jsonschema": "^1.4.1",
     "jspdf": "^2.5.1",
     "lexical": "^0.12.5",
@@ -31,6 +33,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
+    "react-i18next": "^14.1.1",
     "react-router-dom": "^6.21.0",
     "url": "^0.11.1"
   },

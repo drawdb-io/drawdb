@@ -1,23 +1,22 @@
 import { useState } from "react";
 import {
   Collapse,
-  Row,
-  Col,
   Input,
   TextArea,
   Button,
   Card,
   Popover,
-  Toast,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useTables, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType, defaultBlue } from "../../../data/constants";
-import ColorPalette from "../../ColorPalette";
+import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
+import { useTranslation } from "react-i18next";
 
 export default function TableInfo({ data }) {
+  const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships } =
     useTables();
@@ -31,11 +30,11 @@ export default function TableInfo({ data }) {
   return (
     <div>
       <div className="flex items-center mb-2.5">
-        <div className="text-md font-semibold">Name: </div>
+        <div className="text-md font-semibold break-keep">{t("name")}: </div>
         <Input
           value={data.name}
           validateStatus={data.name === "" ? "error" : "default"}
-          placeholder="Name"
+          placeholder={t("name")}
           className="ms-2"
           onChange={(value) => updateTable(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
@@ -50,7 +49,10 @@ export default function TableInfo({ data }) {
                 tid: data.id,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit table name to ${e.target.value}`,
+                message: t("edit_table", {
+                  tableName: e.target.value,
+                  extra: "[name]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -149,7 +151,7 @@ export default function TableInfo({ data }) {
             onChange={(itemKey) => setIndexActiveKey(itemKey)}
             accordion
           >
-            <Collapse.Panel header="Indices" itemKey="1">
+            <Collapse.Panel header={t("indices")} itemKey="1">
               {data.indices.map((idx, k) => (
                 <IndexDetails
                   key={"index_" + k}
@@ -172,12 +174,12 @@ export default function TableInfo({ data }) {
         headerLine={false}
       >
         <Collapse keepDOM lazyRender>
-          <Collapse.Panel header="Comment" itemKey="1">
+          <Collapse.Panel header={t("comment")} itemKey="1">
             <TextArea
               field="comment"
               value={data.comment}
               autosize
-              placeholder="Add comment"
+              placeholder={t("comment")}
               rows={1}
               onChange={(value) =>
                 updateTable(data.id, { comment: value }, false)
@@ -194,7 +196,10 @@ export default function TableInfo({ data }) {
                     tid: data.id,
                     undo: editField,
                     redo: { comment: e.target.value },
-                    message: `Edit table comment to ${e.target.value}`,
+                    message: t("edit_table", {
+                      tableName: e.target.value,
+                      extra: "[comment]",
+                    }),
                   },
                 ]);
                 setRedoStack([]);
@@ -203,8 +208,8 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
-      <Row gutter={6} className="mt-2">
-        <Col span={8}>
+      <div className="flex justify-between items-center gap-1 mb-2">
+        <div>
           <Popover
             content={
               <div className="popover-theme">
@@ -220,7 +225,10 @@ export default function TableInfo({ data }) {
                         tid: data.id,
                         undo: { color: data.color },
                         redo: { color: defaultBlue },
-                        message: `Edit table color to default`,
+                        message: t("edit_table", {
+                          tableName: data.name,
+                          extra: "[color]",
+                        }),
                       },
                     ]);
                     setRedoStack([]);
@@ -236,7 +244,10 @@ export default function TableInfo({ data }) {
                         tid: data.id,
                         undo: { color: data.color },
                         redo: { color: c },
-                        message: `Edit table color to ${c}`,
+                        message: t("edit_table", {
+                          tableName: data.name,
+                          extra: "[color]",
+                        }),
                       },
                     ]);
                     setRedoStack([]);
@@ -250,12 +261,12 @@ export default function TableInfo({ data }) {
             showArrow
           >
             <div
-              className="h-[32px] w-[32px] rounded mb-2"
+              className="h-[32px] w-[32px] rounded"
               style={{ backgroundColor: data.color }}
             />
           </Popover>
-        </Col>
-        <Col span={7}>
+        </div>
+        <div className="flex gap-1">
           <Button
             block
             onClick={() => {
@@ -267,7 +278,10 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "index_add",
                   tid: data.id,
-                  message: `Add index`,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[add index]",
+                  }),
                 },
               ]);
               setRedoStack([]);
@@ -284,10 +298,8 @@ export default function TableInfo({ data }) {
               });
             }}
           >
-            Add index
+            {t("add_index")}
           </Button>
-        </Col>
-        <Col span={6}>
           <Button
             onClick={() => {
               setUndoStack((prev) => [
@@ -297,7 +309,10 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "field_add",
                   tid: data.id,
-                  message: `Add field`,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[add field]",
+                  }),
                 },
               ]);
               setRedoStack([]);
@@ -321,20 +336,15 @@ export default function TableInfo({ data }) {
             }}
             block
           >
-            Add field
+            {t("add_field")}
           </Button>
-        </Col>
-        <Col span={3}>
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
-            onClick={() => {
-              Toast.success(`Table deleted!`);
-              deleteTable(data.id);
-            }}
+            onClick={() => deleteTable(data.id)}
           />
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }

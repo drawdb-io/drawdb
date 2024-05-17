@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Popover, Input, Toast } from "@douyinfe/semi-ui";
+import { Button, Popover, Input } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
   Tab,
@@ -17,7 +17,8 @@ import {
   useSaveState,
   useTransform,
 } from "../../hooks";
-import ColorPalette from "../ColorPalette";
+import ColorPalette from "../ColorPicker";
+import { useTranslation } from "react-i18next";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
@@ -191,14 +192,15 @@ function EditPopoverContent({ data }) {
   const { setSaveState } = useSaveState();
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { t } = useTranslation();
 
   return (
     <div className="popover-theme">
-      <div className="font-semibold mb-2 ms-1">Edit subject area</div>
+      <div className="font-semibold mb-2 ms-1">{t("edit")}</div>
       <div className="w-[280px] flex items-center mb-2">
         <Input
           value={data.name}
-          placeholder="Name"
+          placeholder={t("name")}
           className="me-2"
           onChange={(value) => updateArea(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
@@ -212,7 +214,10 @@ function EditPopoverContent({ data }) {
                 aid: data.id,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit area name to ${e.target.value}`,
+                message: t("edit_area", {
+                  areaName: e.target.value,
+                  extra: "[name]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -232,7 +237,10 @@ function EditPopoverContent({ data }) {
                       aid: data.id,
                       undo: { color: data.color },
                       redo: { color: c },
-                      message: `Edit area color to ${c}`,
+                      message: t("edit_area", {
+                        areaName: data.name,
+                        extra: "[color]",
+                      }),
                     },
                   ]);
                   setRedoStack([]);
@@ -263,12 +271,9 @@ function EditPopoverContent({ data }) {
           icon={<IconDeleteStroked />}
           type="danger"
           block
-          onClick={() => {
-            Toast.success(`Area deleted!`);
-            deleteArea(data.id);
-          }}
+          onClick={() => deleteArea(data.id, true)}
         >
-          Delete
+          {t("delete")}
         </Button>
       </div>
     </div>

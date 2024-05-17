@@ -5,10 +5,13 @@ import { getSize, hasCheck, hasPrecision, isSized } from "../../../utils/toSQL";
 import { useTables, useTypes, useUndoRedo } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
+import { useTranslation } from "react-i18next";
 
 export default function TableField({ data, tid, index }) {
   const { updateField } = useTables();
   const { types } = useTypes();
+  const { tables } = useTables();
+  const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
 
@@ -33,7 +36,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: editField,
                 redo: { name: e.target.value },
-                message: `Edit table field name to ${e.target.value}`,
+                message: t("edit_table", {
+                  tableName: tables[tid].name,
+                  extra: "[field]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -69,7 +75,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { type: data.type },
                 redo: { type: value },
-                message: `Edit table field type to ${value}`,
+                message: t("edit_table", {
+                  tableName: tables[tid].name,
+                  extra: "[field]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -123,7 +132,7 @@ export default function TableField({ data, tid, index }) {
       <Col span={3}>
         <Button
           type={data.notNull ? "primary" : "tertiary"}
-          title="Not Null"
+          title={t("not_null")}
           theme={data.notNull ? "solid" : "light"}
           onClick={() => {
             setUndoStack((prev) => [
@@ -136,9 +145,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { notNull: data.notNull },
                 redo: { notNull: !data.notNull },
-                message: `Edit table field to${
-                  data.notNull ? "" : " not"
-                } null`,
+                message: t("edit_table", {
+                  tableName: tables[tid].name,
+                  extra: "[field]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -151,7 +161,7 @@ export default function TableField({ data, tid, index }) {
       <Col span={3}>
         <Button
           type={data.primary ? "primary" : "tertiary"}
-          title="Primary"
+          title={t("primary")}
           theme={data.primary ? "solid" : "light"}
           onClick={() => {
             setUndoStack((prev) => [
@@ -164,9 +174,10 @@ export default function TableField({ data, tid, index }) {
                 fid: index,
                 undo: { primary: data.primary },
                 redo: { primary: !data.primary },
-                message: `Edit table field to${
-                  data.primary ? " not" : ""
-                } primary`,
+                message: t("edit_table", {
+                  tableName: tables[tid].name,
+                  extra: "[field]",
+                }),
               },
             ]);
             setRedoStack([]);

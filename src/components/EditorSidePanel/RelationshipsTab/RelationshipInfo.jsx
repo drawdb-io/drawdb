@@ -19,14 +19,16 @@ import {
   ObjectType,
 } from "../../../data/constants";
 import { useTables, useUndoRedo } from "../../../hooks";
+import i18n from "../../../i18n/i18n";
+import { useTranslation } from "react-i18next";
 
 const columns = [
   {
-    title: "Primary",
+    title: i18n.t("primary"),
     dataIndex: "primary",
   },
   {
-    title: "Foreign",
+    title: i18n.t("foreign"),
     dataIndex: "foreign",
   },
 ];
@@ -34,6 +36,7 @@ const columns = [
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { tables, setRelationships, deleteRelationship } = useTables();
+  const { t } = useTranslation();
 
   const swapKeys = () => {
     setUndoStack((prev) => [
@@ -54,7 +57,10 @@ export default function RelationshipInfo({ data }) {
           endTableId: data.startTableId,
           endFieldId: data.startFieldId,
         },
-        message: `Swap primary and foreign tables`,
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[swap keys]",
+        }),
       },
     ]);
     setRedoStack([]);
@@ -71,8 +77,8 @@ export default function RelationshipInfo({ data }) {
               endTableId: e.startTableId,
               endFieldId: e.startFieldId,
             }
-          : e
-      )
+          : e,
+      ),
     );
   };
 
@@ -85,12 +91,17 @@ export default function RelationshipInfo({ data }) {
         rid: data.id,
         undo: { cardinality: data.cardinality },
         redo: { cardinality: value },
-        message: `Edit relationship cardinality`,
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[cardinality]",
+        }),
       },
     ]);
     setRedoStack([]);
     setRelationships((prev) =>
-      prev.map((e, idx) => (idx === data.id ? { ...e, cardinality: value } : e))
+      prev.map((e, idx) =>
+        idx === data.id ? { ...e, cardinality: value } : e,
+      ),
     );
   };
 
@@ -102,7 +113,10 @@ export default function RelationshipInfo({ data }) {
       rid: data.id,
       undo: { [undoKey]: data[undoKey] },
       redo: { [undoKey]: value },
-      message: `Edit relationship ${key} constraint`,
+      message: t("edit_relationship", {
+        refName: data.name,
+        extra: "[constraint]",
+      }),
     });
     setUndoStack((prev) => [
       ...prev,
@@ -112,12 +126,15 @@ export default function RelationshipInfo({ data }) {
         rid: data.id,
         undo: { [undoKey]: data[undoKey] },
         redo: { [undoKey]: value },
-        message: `Edit relationship ${key} constraint`,
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[constraint]",
+        }),
       },
     ]);
     setRedoStack([]);
     setRelationships((prev) =>
-      prev.map((e, idx) => (idx === data.id ? { ...e, [undoKey]: value } : e))
+      prev.map((e, idx) => (idx === data.id ? { ...e, [undoKey]: value } : e)),
     );
   };
 
@@ -133,11 +150,11 @@ export default function RelationshipInfo({ data }) {
       >
         <div className="flex justify-between items-center mb-3">
           <div className="me-3">
-            <span className="font-semibold">Primary: </span>
+            <span className="font-semibold">{t("primary")}: </span>
             {tables[data.endTableId].name}
           </div>
           <div className="mx-1">
-            <span className="font-semibold">Foreign: </span>
+            <span className="font-semibold">{t("foreign")}: </span>
             {tables[data.startTableId].name}
           </div>
           <div className="ms-1">
@@ -168,7 +185,7 @@ export default function RelationshipInfo({ data }) {
                       block
                       onClick={swapKeys}
                     >
-                      Swap
+                      {t("swap")}
                     </Button>
                   </div>
                 </div>
@@ -181,7 +198,7 @@ export default function RelationshipInfo({ data }) {
             </Popover>
           </div>
         </div>
-        <div className="font-semibold my-1">Cardinality</div>
+        <div className="font-semibold my-1">{t("cardinality")}:</div>
         <Select
           optionList={Object.values(Cardinality).map((v) => ({
             label: v,
@@ -193,7 +210,7 @@ export default function RelationshipInfo({ data }) {
         />
         <Row gutter={6} className="my-3">
           <Col span={12}>
-            <div className="font-semibold">On update: </div>
+            <div className="font-semibold">{t("on_update")}: </div>
             <Select
               optionList={Object.values(Constraint).map((v) => ({
                 label: v,
@@ -205,7 +222,7 @@ export default function RelationshipInfo({ data }) {
             />
           </Col>
           <Col span={12}>
-            <div className="font-semibold">On delete: </div>
+            <div className="font-semibold">{t("on_delete")}: </div>
             <Select
               optionList={Object.values(Constraint).map((v) => ({
                 label: v,
@@ -223,7 +240,7 @@ export default function RelationshipInfo({ data }) {
           type="danger"
           onClick={() => deleteRelationship(data.id)}
         >
-          Delete
+          {t("delete")}
         </Button>
       </Collapse.Panel>
     </div>

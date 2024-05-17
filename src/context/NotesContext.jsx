@@ -3,10 +3,13 @@ import useTransform from "../hooks/useTransform";
 import { Action, ObjectType, defaultNoteTheme } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
+import { Toast } from "@douyinfe/semi-ui";
+import { useTranslation } from "react-i18next";
 
 export const NotesContext = createContext(null);
 
 export default function NotesContextProvider({ children }) {
+  const { t } = useTranslation();
   const [notes, setNotes] = useState([]);
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -39,7 +42,7 @@ export default function NotesContextProvider({ children }) {
         {
           action: Action.ADD,
           element: ObjectType.NOTE,
-          message: `Add new note`,
+          message: t("add_note"),
         },
       ]);
       setRedoStack([]);
@@ -48,19 +51,20 @@ export default function NotesContextProvider({ children }) {
 
   const deleteNote = (id, addToHistory = true) => {
     if (addToHistory) {
+      Toast.success(t("note_deleted"));
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.NOTE,
           data: notes[id],
-          message: `Delete note`,
+          message: t("delete_note", { noteTitle: notes[id].title }),
         },
       ]);
       setRedoStack([]);
     }
     setNotes((prev) =>
-      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }))
+      prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
@@ -82,7 +86,7 @@ export default function NotesContextProvider({ children }) {
           };
         }
         return t;
-      })
+      }),
     );
   };
 

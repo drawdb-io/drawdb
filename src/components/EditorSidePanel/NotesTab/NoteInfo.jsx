@@ -1,20 +1,15 @@
 import { useState } from "react";
-import {
-  Button,
-  Collapse,
-  TextArea,
-  Popover,
-  Input,
-  Toast,
-} from "@douyinfe/semi-ui";
+import { Button, Collapse, TextArea, Popover, Input } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconCheckboxTick } from "@douyinfe/semi-icons";
 import { noteThemes, Action, ObjectType } from "../../../data/constants";
 import { useNotes, useUndoRedo } from "../../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function NoteInfo({ data, nid }) {
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const { t } = useTranslation();
 
   return (
     <Collapse.Panel
@@ -27,10 +22,10 @@ export default function NoteInfo({ data, nid }) {
       id={`scroll_note_${data.id}`}
     >
       <div className="flex items-center mb-2">
-        <div className="font-semibold me-2">Title:</div>
+        <div className="font-semibold me-2 break-keep">{t("title")}:</div>
         <Input
           value={data.title}
-          placeholder="Title"
+          placeholder={t("title")}
           onChange={(value) => updateNote(data.id, { title: value })}
           onFocus={(e) => setEditField({ title: e.target.value })}
           onBlur={(e) => {
@@ -43,7 +38,10 @@ export default function NoteInfo({ data, nid }) {
                 nid: data.id,
                 undo: editField,
                 redo: { title: e.target.value },
-                message: `Edit note title to "${e.target.name}"`,
+                message: t("edit_note", {
+                  noteTitle: e.target.value,
+                  extra: "[title]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -52,7 +50,7 @@ export default function NoteInfo({ data, nid }) {
       </div>
       <div className="flex justify-between align-top">
         <TextArea
-          placeholder="Add content"
+          placeholder={t("content")}
           value={data.content}
           autosize
           onChange={(value) => {
@@ -79,7 +77,10 @@ export default function NoteInfo({ data, nid }) {
                 nid: nid,
                 undo: editField,
                 redo: { content: e.target.value, height: newHeight },
-                message: `Edit note content to "${e.target.value}"`,
+                message: t("edit_note", {
+                  noteTitle: e.target.value,
+                  extra: "[content]",
+                }),
               },
             ]);
             setRedoStack([]);
@@ -90,7 +91,7 @@ export default function NoteInfo({ data, nid }) {
           <Popover
             content={
               <div className="popover-theme">
-                <div className="font-medium mb-1">Theme</div>
+                <div className="font-medium mb-1">{t("theme")}</div>
                 <hr />
                 <div className="py-3">
                   {noteThemes.map((c) => (
@@ -107,7 +108,10 @@ export default function NoteInfo({ data, nid }) {
                             nid: nid,
                             undo: { color: data.color },
                             redo: { color: c },
-                            message: `Edit note color to ${c}`,
+                            message: t("edit_note", {
+                              noteTitle: data.title,
+                              extra: "[color]",
+                            }),
                           },
                         ]);
                         setRedoStack([]);
@@ -136,10 +140,7 @@ export default function NoteInfo({ data, nid }) {
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
-            onClick={() => {
-              Toast.success(`Note deleted!`);
-              deleteNote(nid);
-            }}
+            onClick={() => deleteNote(nid, true)}
           />
         </div>
       </div>

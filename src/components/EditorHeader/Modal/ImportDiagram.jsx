@@ -5,11 +5,13 @@ import {
 import { Upload, Banner } from "@douyinfe/semi-ui";
 import { STATUS } from "../../../data/constants";
 import { useAreas, useNotes, useTables } from "../../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function ImportDiagram({ setImportData, error, setError }) {
   const { areas } = useAreas();
   const { notes } = useNotes();
   const { tables, relationships } = useTables();
+  const { t } = useTranslation();
 
   const diagramIsEmpty = () => {
     return (
@@ -84,8 +86,8 @@ export default function ImportDiagram({ setImportData, error, setError }) {
           };
         }}
         draggable={true}
-        dragMainText="Drag and drop the file here or click to upload."
-        dragSubText="Support json and ddb"
+        dragMainText={t("drag_and_drop_files")}
+        dragSubText={t("support_json_and_ddb")}
         accept="application/json,.ddb"
         onRemove={() =>
           setError({

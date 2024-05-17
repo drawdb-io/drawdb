@@ -20,8 +20,11 @@ import {
   useNotes,
   useLayout,
 } from "../../hooks";
+import { useTranslation } from "react-i18next";
+import { diagram } from "../../data/heroDiagram";
 
 export default function Canvas() {
+  const { t } = useTranslation();
   const { tables, updateTable, relationships, addRelationship } = useTables();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -278,7 +281,10 @@ export default function Canvas() {
           toX: info.x,
           toY: info.y,
           id: dragging.id,
-          message: `Move ${info.name} to (${info.x}, ${info.y})`,
+          message: t("move_element", {
+            coords: `(${info.x}, ${info.y})`,
+            name: info.name,
+          }),
         },
       ]);
       setRedoStack([]);
@@ -291,7 +297,10 @@ export default function Canvas() {
           action: Action.PAN,
           undo: { x: panning.x, y: panning.y },
           redo: transform.pan,
-          message: `Move diagram to (${transform.pan?.x}, ${transform.pan?.y})`,
+          message: t("move_element", {
+            coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
+            name: diagram,
+          }),
         },
       ]);
       setRedoStack([]);
@@ -321,7 +330,10 @@ export default function Canvas() {
             height: initCoords.height,
           },
           redo: areas[areaResize.id],
-          message: `Resize area`,
+          message: t("edit_area", {
+            areaName: areas[areaResize.id].name,
+            extra: "[resize]",
+          }),
         },
       ]);
       setRedoStack([]);
@@ -350,7 +362,7 @@ export default function Canvas() {
       tables[linkingLine.startTableId].fields[linkingLine.startFieldId].type !==
       tables[hoveredTable.tableId].fields[hoveredTable.field].type
     ) {
-      Toast.info("Cannot connect");
+      Toast.info(t("connot_connect"));
       return;
     }
     if (

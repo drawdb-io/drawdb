@@ -27,11 +27,13 @@ import New from "./New";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
+import Language from "./Language";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { json } from "@codemirror/lang-json";
 import { githubLight } from "@uiw/codemirror-theme-github";
+import { useTranslation } from "react-i18next";
 
 const languageExtension = {
   sql: [sql()],
@@ -49,6 +51,7 @@ export default function Modal({
   exportData,
   setExportData,
 }) {
+  const { t } = useTranslation();
   const { setTables, setRelationships } = useTables();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
@@ -239,7 +242,7 @@ export default function Modal({
       case MODAL.SAVEAS:
         return (
           <Input
-            placeholder="Diagram name"
+            placeholder={t("name")}
             value={saveAsTitle}
             onChange={(v) => setSaveAsTitle(v)}
           />
@@ -261,10 +264,10 @@ export default function Modal({
                   theme={settings.mode === "dark" ? vscodeDark : githubLight}
                 />
               )}
-              <div className="text-sm font-semibold mt-2">Filename:</div>
+              <div className="text-sm font-semibold mt-2">{t("filename")}:</div>
               <Input
                 value={exportData.filename}
-                placeholder="Filename"
+                placeholder={t("filename")}
                 suffix={<div className="p-2">{`.${exportData.extension}`}</div>}
                 onChange={(value) =>
                   setExportData((prev) => ({ ...prev, filename: value }))
@@ -276,12 +279,14 @@ export default function Modal({
         } else {
           return (
             <div className="text-center my-3">
-              <Spin tip="Loading..." size="large" />
+              <Spin tip={t("loading")} size="large" />
             </div>
           );
         }
       case MODAL.TABLE_WIDTH:
         return <SetTableWidth />;
+      case MODAL.LANGUAGE:
+        return <Language />;
       default:
         return <></>;
     }
@@ -326,8 +331,9 @@ export default function Modal({
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
       }}
-      cancelText="Cancel"
+      cancelText={t("cancel")}
       width={modal === MODAL.NEW ? 740 : 600}
+      bodyStyle={{ maxHeight: window.innerHeight - 280, overflow: "auto" }}
     >
       {getModalBody()}
     </SemiUIModal>

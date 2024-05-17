@@ -1,10 +1,12 @@
 import { Divider, Tooltip } from "@douyinfe/semi-ui";
 import { useTransform, useLayout } from "../hooks";
 import { exitFullscreen } from "../utils/fullscreen";
+import { useTranslation } from "react-i18next";
 
 export default function FloatingControls() {
   const { transform, setTransform } = useTransform();
   const { setLayout } = useLayout();
+  const { t } = useTranslation();
 
   return (
     <div className="flex gap-2">
@@ -35,7 +37,7 @@ export default function FloatingControls() {
           <i className="bi bi-plus-lg" />
         </button>
       </div>
-      <Tooltip content="Exit">
+      <Tooltip content={t("exit")}>
         <button
           className="px-3 py-2 rounded-lg popover-theme"
           onClick={() => {
