@@ -1,0 +1,16 @@
+services:
+  drawdb:
+    image: node:20-alpine
+    container_name: drawdb
+    ports:
+      - 5173:5173
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    command: sh -c "npm install && npm run dev:docker"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
