@@ -131,6 +131,7 @@ export default function WorkSpace() {
         .then((d) => {
           if (d) {
             setId(d.id);
+            setTitle(d.name);
             setTables(d.tables);
             setRelationships(d.references);
             setNotes(d.notes);
