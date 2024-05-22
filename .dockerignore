@@ -1,0 +1,36 @@
+# Ignore node_modules
+node_modules
+
+# Ignore logs
+*.log
+logs
+*.log.*
+
+# Ignore environment variables
+.env
+
+# Ignore build directories and files
+dist
+build
+
+# Ignore temporary files and directories
+tmp
+temp
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Ignore Docker-related files
+Dockerfile*
+docker-compose.yml
+
+# Ignore IDE/editor specific files
+.vscode
+.idea
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS-specific files
+.DS_Store
