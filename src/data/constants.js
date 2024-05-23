@@ -105,16 +105,17 @@ export const State = {
 
 export const MODAL = {
   NONE: 0,
-  IMG: 1,
-  CODE: 2,
-  IMPORT: 3,
+  NEW: 1,
+  OPEN: 2,
+  SAVEAS: 3,
   RENAME: 4,
-  OPEN: 5,
-  SAVEAS: 6,
-  NEW: 7,
-  IMPORT_SRC: 8,
-  TABLE_WIDTH: 9,
-  LANGUAGE: 10,
+  IMPORT_SRC: 5,
+  IMPORT_DIAGRAM: 6,
+  TABLE_WIDTH: 7,
+  LANGUAGE: 8,
+  EXPORT_IMG: 9,
+  EXPORT_SQL: 10,
+  EXPORT_JSON: 11,
 };
 
 export const STATUS = {
@@ -129,3 +130,13 @@ export const SIDESHEET = {
   TODO: 1,
   TIMELINE: 2,
 };
+
+export const DATABASE_TYPES = [
+  "MySQL",
+  "MariaDB",
+  "PostgreSQL",
+  "SQLite",
+  "MSSQL",
+];
+
+export const IMAGE_TYPES = ["png", "jpeg", "svg"];

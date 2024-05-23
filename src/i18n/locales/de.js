@@ -168,7 +168,7 @@ const de = {
     no_values_for_field:
       "Das Feld '{{fieldName}}' der Tabelle '{{tableName}}' ist vom Typ `{{type}}`, aber es wurden keine Werte angegeben",
     default_doesnt_match_type:
-      "Der Standardwert für das Feld '{{fieldName}}' in der Tabelle '{{table.name}}' entspricht nicht seinem Typ",
+      "Der Standardwert für das Feld '{{fieldName}}' in der Tabelle '{{tableName}}' entspricht nicht seinem Typ",
     not_null_is_null:
       "Das Feld '{{fieldName}}' der Tabelle '{{tableName}}' ist NOT NULL, hat aber standardmäßig NULL",
     duplicate_fields:

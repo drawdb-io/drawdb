@@ -39,94 +39,143 @@ export function generateSchema(type) {
     )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
 }
 
-export function getTypeString(field, dbms = "mysql", baseType = false) {
-  if (dbms === "mysql") {
-    if (field.type === "UUID") {
-      return `VARCHAR(36)`;
-    }
-    if (hasPrecision(field.type) || isSized(field.type)) {
-      return `${field.type}${field.size ? `(${field.size})` : ""}`;
-    }
-    if (field.type === "SET" || field.type === "ENUM") {
-      return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
-    }
-    if (!sqlDataTypes.includes(field.type)) {
-      return "JSON";
-    }
-    return field.type;
-  } else if (dbms === "postgres") {
-    if (field.type === "SMALLINT" && field.increment) {
-      return "smallserial";
-    }
-    if (field.type === "INT" && field.increment) {
-      return "serial";
-    }
-    if (field.type === "BIGINT" && field.increment) {
-      return "bigserial";
-    }
-    if (field.type === "ENUM") {
-      return `${field.name}_t`;
-    }
-    if (field.type === "SET") {
-      return `${field.name}_t[]`;
-    }
-    if (field.type === "TIMESTAMP") {
-      return "TIMESTAMPTZ";
-    }
-    if (field.type === "DATETIME") {
-      return `timestamp`;
-    }
-    if (isSized(field.type)) {
-      const type =
-        field.type === "BINARY"
-          ? "bit"
-          : field.type === "VARBINARY"
-            ? "bit varying"
-            : field.type.toLowerCase();
-      return `${type}(${field.size})`;
-    }
-    if (hasPrecision(field.type) && field.size !== "") {
-      return `${field.type}${field.size}`;
-    }
-    return field.type.toLowerCase();
-  } else if (dbms === "mssql") {
-    let type = field.type;
-    switch (field.type) {
-      case "ENUM":
-        return baseType
-          ? "NVARCHAR(255)"
-          : `NVARCHAR(255) CHECK([${field.name}] in (${field.values
-              .map((v) => `'${v}'`)
-              .join(", ")}))`;
-      case "VARCHAR":
-        type = `NVARCHAR`;
-        break;
-      case "UUID":
-        type = "UNIQUEIDENTIFIER";
-        break;
-      case "DOUBLE":
-        type = "FLOAT";
-        break;
-      case "BOOLEAN":
-        return "BIT";
-      case "SET":
-        return "NVARCHAR(255)";
-      case "BLOB":
-        return "VARBINARY(MAX)";
-      case "JSON":
-        return "NVARCHAR(MAX)";
-      case "TEXT":
-        return "TEXT";
-      default:
-        type = field.type;
-        break;
-    }
-    if (isSized(field.type)) {
-      return `${type}(${field.size})`;
-    }
-
-    return type;
+export function getMysqlType(field) {
+  if (field.type === "UUID") {
+    return `VARCHAR(36)`;
   }
+  if (hasPrecision(field.type) || isSized(field.type)) {
+    return `${field.type}${field.size ? `(${field.size})` : ""}`;
+  }
+  if (field.type === "SET" || field.type === "ENUM") {
+    return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
+  }
+  if (!sqlDataTypes.includes(field.type)) {
+    return "JSON";
+  }
+  return field.type;
+}
+
+export function getPostgreSQLType(field) {
+  if (field.type === "SMALLINT" && field.increment) {
+    return "smallserial";
+  }
+  if (field.type === "INT" && field.increment) {
+    return "serial";
+  }
+  if (field.type === "BIGINT" && field.increment) {
+    return "bigserial";
+  }
+  if (field.type === "ENUM") {
+    return `${field.name}_t`;
+  }
+  if (field.type === "SET") {
+    return `${field.name}_t[]`;
+  }
+  if (field.type === "TIMESTAMP") {
+    return "TIMESTAMPTZ";
+  }
+  if (field.type === "DATETIME") {
+    return `timestamp`;
+  }
+  if (isSized(field.type)) {
+    const type =
+      field.type === "BINARY"
+        ? "bit"
+        : field.type === "VARBINARY"
+          ? "bit varying"
+          : field.type.toLowerCase();
+    return `${type}(${field.size})`;
+  }
+  if (hasPrecision(field.type) && field.size !== "") {
+    return `${field.type}${field.size}`;
+  }
+  return field.type.toLowerCase();
+}
+
+export function getMSSQLType(field, baseType = false) {
+  let type = field.type;
+  switch (field.type) {
+    case "ENUM":
+      return baseType
+        ? "NVARCHAR(255)"
+        : `NVARCHAR(255) CHECK([${field.name}] in (${field.values
+            .map((v) => `'${v}'`)
+            .join(", ")}))`;
+    case "VARCHAR":
+      type = `NVARCHAR`;
+      break;
+    case "UUID":
+      type = "UNIQUEIDENTIFIER";
+      break;
+    case "DOUBLE":
+      type = "FLOAT";
+      break;
+    case "BOOLEAN":
+      return "BIT";
+    case "SET":
+      return "NVARCHAR(255)";
+    case "BLOB":
+      return "VARBINARY(MAX)";
+    case "JSON":
+      return "NVARCHAR(MAX)";
+    case "TEXT":
+      return "TEXT";
+    default:
+      type = field.type;
+      break;
+  }
+  if (isSized(field.type)) {
+    return `${type}(${field.size})`;
+  }
+
+  return type;
+}
+
+export function getSQLiteType(field) {
+  switch (field.type) {
+    case "INT":
+    case "SMALLINT":
+    case "BIGINT":
+    case "BOOLEAN":
+      return "INTEGER";
+    case "DECIMAL":
+    case "NUMERIC":
+    case "FLOAT":
+    case "DOUBLE":
+    case "REAL":
+      return "REAL";
+    case "CHAR":
+    case "VARCHAR":
+    case "UUID":
+    case "TEXT":
+    case "DATE":
+    case "TIME":
+    case "TIMESTAMP":
+    case "DATETIME":
+    case "BINARY":
+    case "VARBINARY":
+      return "TEXT";
+    case "ENUM":
+      return `TEXT CHECK("${field.name}" in (${field.values
+        .map((v) => `'${v}'`)
+        .join(", ")}))`;
+    default:
+      return "BLOB";
+  }
+}
+
+export function getTypeString(field, dbms = "mysql", baseType = false) {
+  if (dbms === "mysql" || dbms === "mariadb") {
+    return getMysqlType(field);
+  } else if (dbms === "postgressql") {
+    return getPostgreSQLType(field);
+  } else if (dbms === "mssql") {
+    return getMSSQLType(field, baseType);
+  } else if (dbms === "sqlite") {
+    return getSQLiteType(field);
+  }
+
+  return field.type;
 }
 
 export function hasQuotes(type) {
@@ -181,7 +230,7 @@ export function jsonToMySQL(obj) {
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` COMMENT '${field.comment}'` : ''}`,
+              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -190,7 +239,7 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${
           table.indices.length > 0
             ? `\n${table.indices.map(
                 (i) =>
@@ -233,14 +282,14 @@ export function jsonToPostgreSQL(obj) {
         `${
           type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
         }CREATE TYPE ${type.name} AS (\n${type.fields
-          .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+          .map((f) => `\t${f.name} ${getTypeString(f, "postgressql")}`)
           .join("\n")}\n);`
       );
     } else {
       return `${
         type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
       }CREATE TYPE ${type.name} AS (\n${type.fields
-        .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+        .map((f) => `\t${f.name} ${getTypeString(f, "postgressql")}`)
         .join("\n")}\n);`;
     }
   })}\n${obj.tables
@@ -263,7 +312,7 @@ export function jsonToPostgreSQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
                 field.name
-              }" ${getTypeString(field, "postgres")}${
+              }" ${getTypeString(field, "postgressql")}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
@@ -305,39 +354,6 @@ export function jsonToPostgreSQL(obj) {
     .join("\n")}`;
 }
 
-export function getSQLiteType(field) {
-  switch (field.type) {
-    case "INT":
-    case "SMALLINT":
-    case "BIGINT":
-    case "BOOLEAN":
-      return "INTEGER";
-    case "DECIMAL":
-    case "NUMERIC":
-    case "FLOAT":
-    case "DOUBLE":
-    case "REAL":
-      return "REAL";
-    case "CHAR":
-    case "VARCHAR":
-    case "UUID":
-    case "TEXT":
-    case "DATE":
-    case "TIME":
-    case "TIMESTAMP":
-    case "DATETIME":
-    case "BINARY":
-    case "VARBINARY":
-      return "TEXT";
-    case "ENUM":
-      return `TEXT CHECK("${field.name}" in (${field.values
-        .map((v) => `'${v}'`)
-        .join(", ")}))`;
-    default:
-      return "BLOB";
-  }
-}
-
 export function getInlineFK(table, obj) {
   let fk = "";
   obj.references.forEach((r) => {
@@ -364,7 +380,7 @@ export function jsonToSQLite(obj) {
           (field) =>
             `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
               field.name
-            }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
+            }" ${getTypeString(field, "sqlite")}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
             }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${
               field.check === "" || !hasCheck(field.type)
@@ -458,7 +474,7 @@ export function jsonToMariaDB(obj) {
     .join("\n")}`;
 }
 
-export function jsonToSQLServer(obj) {
+export function jsonToMSSQL(obj) {
   return `${obj.types
     .map((type) => {
       return `${
@@ -560,3 +576,11 @@ export function getSize(type) {
       return "";
   }
 }
+
+export default {
+  jsonToMySQL,
+  jsonToMariaDB,
+  jsonToPostgreSQL,
+  jsonToSQLite,
+  jsonToMSSQL,
+};

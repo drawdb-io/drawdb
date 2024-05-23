@@ -21,15 +21,8 @@ import {
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg, toSvg } from "html-to-image";
+import { toPng, toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
-import {
-  jsonToMySQL,
-  jsonToPostgreSQL,
-  jsonToSQLite,
-  jsonToMariaDB,
-  jsonToSQLServer,
-} from "../../utils/toSQL";
 import {
   ObjectType,
   Action,
@@ -60,8 +53,8 @@ import useSaveState from "../../hooks/useSaveState";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
-import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
+import ModalManager from "./ModalManager";
 
 export default function ControlPanel({
   diagramId,
@@ -72,13 +65,7 @@ export default function ControlPanel({
 }) {
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
-  const [prevTitle, setPrevTitle] = useState(title);
   const [showEditName, setShowEditName] = useState(false);
-  const [exportData, setExportData] = useState({
-    data: null,
-    filename: `${title}_${new Date().toISOString()}`,
-    extension: "",
-  });
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -452,7 +439,7 @@ export default function ControlPanel({
     }
   };
 
-  const fileImport = () => setModal(MODAL.IMPORT);
+  const importDiagram = () => setModal(MODAL.IMPORT_DIAGRAM);
   const viewGrid = () =>
     setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
   const zoomIn = () =>
@@ -704,7 +691,6 @@ export default function ControlPanel({
       rename: {
         function: () => {
           setModal(MODAL.RENAME);
-          setPrevTitle(title);
         },
       },
       delete_diagram: {
@@ -730,7 +716,7 @@ export default function ControlPanel({
         },
       },
       import_diagram: {
-        function: fileImport,
+        function: importDiagram,
         shortcut: "Ctrl+I",
       },
       import_from_source: {
@@ -739,66 +725,8 @@ export default function ControlPanel({
       export_as: {
         children: [
           {
-            PNG: () => {
-              toPng(document.getElementById("canvas")).then(function (dataUrl) {
-                setExportData((prev) => ({
-                  ...prev,
-                  data: dataUrl,
-                  extension: "png",
-                }));
-              });
-              setModal(MODAL.IMG);
-            },
-          },
-          {
-            JPEG: () => {
-              toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "jpeg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
-            },
-          },
-          {
-            JSON: () => {
-              setModal(MODAL.CODE);
-              const result = JSON.stringify(
-                {
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  types: types,
-                  title: title,
-                },
-                null,
-                2,
-              );
-              setExportData((prev) => ({
-                ...prev,
-                data: result,
-                extension: "json",
-              }));
-            },
-          },
-          {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+            IMAGE: () => {
+              setModal(MODAL.EXPORT_IMG);
             },
           },
           {
@@ -817,8 +745,18 @@ export default function ControlPanel({
                   canvas.offsetWidth,
                   canvas.offsetHeight,
                 );
-                doc.save(`${exportData.filename}.pdf`);
+                doc.save(`${title}_${new Date().toISOString()}.pdf`);
               });
+            },
+          },
+          {
+            SQL: () => {
+              setModal(MODAL.EXPORT_SQL);
+            },
+          },
+          {
+            JSON: () => {
+              setModal(MODAL.EXPORT_JSON);
             },
           },
           {
@@ -840,87 +778,7 @@ export default function ControlPanel({
               const blob = new Blob([result], {
                 type: "text/plain;charset=utf-8",
               });
-              saveAs(blob, `${exportData.filename}.ddb`);
-            },
-          },
-        ],
-        function: () => {},
-      },
-      export_source: {
-        children: [
-          {
-            MySQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToMySQL({
-                tables: tables,
-                references: relationships,
-                types: types,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
-            },
-          },
-          {
-            PostgreSQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToPostgreSQL({
-                tables: tables,
-                references: relationships,
-                types: types,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
-            },
-          },
-          {
-            SQLite: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToSQLite({
-                tables: tables,
-                references: relationships,
-                types: types,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
-            },
-          },
-          {
-            MariaDB: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToMariaDB({
-                tables: tables,
-                references: relationships,
-                types: types,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
-            },
-          },
-          {
-            MSSQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToSQLServer({
-                tables: tables,
-                references: relationships,
-                types: types,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+              saveAs(blob, `${title}_${new Date().toISOString()}.ddb`);
             },
           },
         ],
@@ -1166,7 +1024,7 @@ export default function ControlPanel({
     },
   };
 
-  useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
+  useHotkeys("ctrl+i, meta+i", importDiagram, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
   useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
   useHotkeys("ctrl+s, meta+s", save, { preventDefault: true });
@@ -1196,20 +1054,21 @@ export default function ControlPanel({
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
+  const hideModal = () => {
+    setModal(MODAL.NONE);
+  };
+
   return (
     <>
       {layout.header && header()}
       {layout.toolbar && toolbar()}
-      <Modal
+      <ModalManager
         modal={modal}
-        exportData={exportData}
-        setExportData={setExportData}
+        hideModal={hideModal}
         title={title}
         setTitle={setTitle}
-        setPrevTitle={setPrevTitle}
         setDiagramId={setDiagramId}
         setModal={setModal}
-        prevTitle={prevTitle}
       />
       <Sidesheet
         type={sidesheet}

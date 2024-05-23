@@ -1,37 +1,107 @@
 import { Upload, Checkbox, Banner } from "@douyinfe/semi-ui";
-import { STATUS } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { Parser } from "node-sql-parser";
+import { astToDiagram } from "../../../utils/astToDiagram";
+import { STATUS } from "../../../data/constants";
+import {
+  useAreas,
+  useNotes,
+  useTables,
+  useTransform,
+  useTypes,
+  useUndoRedo,
+} from "../../../hooks";
+import BaseModal from "./BaseModal";
 
-export default function ImportSource({
-  importData,
-  setImportData,
-  error,
-  setError,
-}) {
+export default function ImportSource({ hideModal }) {
   const { t } = useTranslation();
+  const { setTables, setRelationships } = useTables();
+  const { setAreas } = useAreas();
+  const { setNotes } = useNotes();
+  const { setTypes } = useTypes();
+  const { setTransform } = useTransform();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+
+  const [importData, setImportData] = useState({
+    src: "",
+    overwrite: true,
+    dbms: "MySQL",
+  });
+  const [error, setError] = useState({
+    type: STATUS.NONE,
+    message: "",
+  });
+
+  const beforeUpload = ({ file, fileList }) => {
+    const f = fileList[0].fileInstance;
+    if (!f) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      setImportData((prev) => ({ ...prev, src: e.target.result }));
+    };
+    reader.readAsText(f);
+
+    return {
+      autoRemove: false,
+      fileInstance: file.fileInstance,
+      status: "success",
+      shouldUpload: false,
+    };
+  };
+
+  const onOk = () => {
+    const parser = new Parser();
+    let ast = null;
+    try {
+      ast = parser.astify(importData.src, { database: "MySQL" });
+    } catch (err) {
+      setError({
+        type: STATUS.ERROR,
+        message:
+          err.name +
+          " [Ln " +
+          err.location.start.line +
+          ", Col " +
+          err.location.start.column +
+          "]: " +
+          err.message,
+      });
+      return;
+    }
+
+    const d = astToDiagram(ast);
+    if (importData.overwrite) {
+      setTables(d.tables);
+      setRelationships(d.relationships);
+      setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+      setNotes([]);
+      setAreas([]);
+      setTypes([]);
+      setUndoStack([]);
+      setRedoStack([]);
+    } else {
+      setTables((prev) => [...prev, ...d.tables]);
+      setRelationships((prev) => [...prev, ...d.relationships]);
+    }
+    hideModal();
+  };
 
   return (
-    <div>
+    <BaseModal
+      modalTitle={t("import_diagram")}
+      okText={t("import")}
+      onOk={onOk}
+      onCancel={hideModal}
+      okBtnDisabled={
+        (error && error?.type === STATUS.ERROR) || importData.src === ""
+      }
+    >
       <Upload
         action="#"
-        beforeUpload={({ file, fileList }) => {
-          const f = fileList[0].fileInstance;
-          if (!f) {
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            setImportData((prev) => ({ ...prev, src: e.target.result }));
-          };
-          reader.readAsText(f);
-
-          return {
-            autoRemove: false,
-            fileInstance: file.fileInstance,
-            status: "success",
-            shouldUpload: false,
-          };
-        }}
+        beforeUpload={beforeUpload}
         draggable={true}
         dragMainText={t("drag_and_drop_files")}
         dragSubText={t("upload_sql_to_generate_diagrams")}
@@ -92,6 +162,6 @@ export default function ImportSource({
           )}
         </div>
       </div>
-    </div>
+    </BaseModal>
   );
 }

@@ -1,11 +1,29 @@
-import { db } from "../../../data/db";
-import { Banner } from "@douyinfe/semi-ui";
+import { Banner, Toast } from "@douyinfe/semi-ui";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { db } from "../../../data/db";
+import {
+  useAreas,
+  useNotes,
+  useTables,
+  useTransform,
+  useTypes,
+  useUndoRedo,
+} from "../../../hooks";
+import BaseModal from "./BaseModal";
 
-export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
-  const diagrams = useLiveQuery(() => db.diagrams.toArray());
+export default function Open({ hideModal, setDiagramId, setTitle }) {
   const { t } = useTranslation();
+  const { setTables, setRelationships } = useTables();
+  const { setNotes } = useNotes();
+  const { setAreas } = useAreas();
+  const { setTypes } = useTypes();
+  const { setTransform } = useTransform();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+
+  const diagrams = useLiveQuery(() => db.diagrams.toArray());
+  const [selectedDiagramId, setSelectedDiagramId] = useState(0);
 
   const getDiagramSize = (d) => {
     const size = JSON.stringify(d).length;
@@ -18,8 +36,48 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
 
     return sizeStr;
   };
+
+  const loadDiagram = async (id) => {
+    await db.diagrams
+      .get(id)
+      .then((diagram) => {
+        if (diagram) {
+          setDiagramId(diagram.id);
+          setTitle(diagram.name);
+          setTables(diagram.tables);
+          setTypes(diagram.types);
+          setRelationships(diagram.references);
+          setAreas(diagram.areas);
+          setNotes(diagram.notes);
+          setTransform({
+            pan: diagram.pan,
+            zoom: diagram.zoom,
+          });
+          setUndoStack([]);
+          setRedoStack([]);
+          window.name = `d ${diagram.id}`;
+        } else {
+          Toast.error("Oops! Something went wrong.");
+        }
+      })
+      .catch(() => {
+        Toast.error("Oops! Couldn't load diagram.");
+      });
+  };
+
+  const onOk = () => {
+    if (selectedDiagramId === 0) return;
+    loadDiagram(selectedDiagramId);
+    hideModal();
+  };
+
   return (
-    <div>
+    <BaseModal
+      modalTitle={t("open_diagram")}
+      okText={t("open")}
+      onOk={onOk}
+      onCancel={hideModal}
+    >
       {diagrams?.length === 0 ? (
         <Banner
           fullMode={false}
@@ -70,6 +128,6 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
           </table>
         </div>
       )}
-    </div>
+    </BaseModal>
   );
 }

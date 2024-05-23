@@ -165,7 +165,7 @@ const en = {
     no_values_for_field:
       "'{{fieldName}}' field of table '{{tableName}}' is of type `{{type}}` but no values have been specified",
     default_doesnt_match_type:
-      "Default value for field '{{fieldName}}' in table '{{table.name}}' does not match its type",
+      "Default value for field '{{fieldName}}' in table '{{tableName}}' does not match its type",
     not_null_is_null:
       "'{{fieldName}}' field of table '{{tableName}}' is NOT NULL but has default NULL",
     duplicate_fields:
@@ -212,6 +212,8 @@ const en = {
     edit_relationship: "{{extra}} Edit relationship {{refName}}",
     delete_relationship: "Delete relationship {{refName}}",
     not_found: "Not found",
+    export_json: "Export json",
+    format: "Format",
   },
 };
 
