@@ -76,7 +76,7 @@ export function astToDiagram(ast) {
             if (d.default_val) {
               let defaultValue = "";
               if (d.default_val.value.type === "function") {
-                defaultValue = d.default_val.value.name;
+                defaultValue = d.default_val.value.name.name[0].value;
                 if (d.default_val.value.args) {
                   defaultValue +=
                     "(" +
