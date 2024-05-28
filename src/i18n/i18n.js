@@ -10,6 +10,7 @@ import { vi, vietnamese } from "./locales/vi";
 import { pt, portuguese } from "./locales/pt-br";
 import { fa, persian } from "./locales/fa"
 import { hi, hindi } from "./locales/hi";
+import { uk, ukrainian } from "./locales/uk";
 
 export const languages = [
   english,
@@ -20,7 +21,8 @@ export const languages = [
   vietnamese,
   portuguese,
   persian,
-  hindi
+  hindi,
+  ukrainian
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -41,7 +43,8 @@ i18n
       vi,
       pt,
       fa,
-      hi
+      hi,
+	  uk
     },
   });
 
