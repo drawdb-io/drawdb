@@ -79,9 +79,9 @@ export default function LandingPage() {
         </div>
       </div>
       <div id="learn-more">
-        <div className="bg-zinc-100 py-10 px-24 md:px-8 rounded-b-[40px]">
+        <div className="bg-zinc-100 py-20 px-24 md:px-8 rounded-b-[40px]">
           <FadeIn duration={1}>
-            <div className="text-2xl text-slate-900 font-bold text-center mb-5 md:hidden">
+            <div className="text-2xl text-slate-900 font-bold text-center mb-10 md:hidden">
               Entity-Relationship diagrams simplified
             </div>
             <div className="md:hidden">
@@ -101,7 +101,7 @@ export default function LandingPage() {
               </Steps>
             </div>
           </FadeIn>
-          <div className="mt-16 text-center w-[75%] sm:w-full mx-auto shadow-sm rounded-lg border px-12 py-8 bg-white">
+          <div className="mt-20 text-center w-[75%] sm:w-full mx-auto shadow-sm rounded-lg border p-12 bg-white">
             <div className="text-2xl font-bold text-slate-900 mb-8">
               Why drawDB?
             </div>
@@ -149,7 +149,7 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <div id="features" className="py-10 px-36 md:px-8">
+      <div id="features" className="py-20 px-36 md:px-8">
         <FadeIn duration={1}>
           <div className="text-2xl font-bold text-center">
             Here is what drawDB offers
@@ -157,7 +157,7 @@ export default function LandingPage() {
           <div className="text-sm opacity-75 text-center">
             More coming soon...
           </div>
-          <div className="grid grid-cols-3 gap-8 mt-6 md:grid-cols-2 sm:grid-cols-1">
+          <div className="grid grid-cols-3 gap-8 mt-10 md:grid-cols-2 sm:grid-cols-1">
             {features.map((f, i) => (
               <div
                 key={i}
@@ -174,7 +174,7 @@ export default function LandingPage() {
           </div>
         </FadeIn>
       </div>
-      <div className="bg-zinc-100 py-10 px-32 md:px-8 rounded-t-[40px]">
+      <div className="bg-zinc-100 py-20 px-32 md:px-8 rounded-t-[40px]">
         <div className="text-center text-2xl font-bold mb-4">
           We support these DBMS
         </div>
