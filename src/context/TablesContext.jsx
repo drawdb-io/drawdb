@@ -68,12 +68,18 @@ export default function TablesContextProvider({ children }) {
   const deleteTable = (id, addToHistory = true) => {
     if (addToHistory) {
       Toast.success(t("table_deleted"));
+      const rels = relationships.reduce((acc, r) => {
+        if (r.startTableId === id || r.endTableId === id) {
+          acc.push(r);
+        }
+        return acc;
+      }, []);
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.TABLE,
-          data: tables[id],
+          data: { table: tables[id], relationship: rels },
           message: t("delete_table", { tableName: tables[id] }),
         },
       ]);

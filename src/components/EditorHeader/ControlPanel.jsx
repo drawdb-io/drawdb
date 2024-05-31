@@ -146,7 +146,8 @@ export default function ControlPanel({
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        addTable(a.data, false);
+        a.data.relationship.forEach((x) => addRelationship(x, false));
+        addTable(a.data.table, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -337,7 +338,7 @@ export default function ControlPanel({
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        deleteTable(a.data.id, false);
+        deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.id, false);
       } else if (a.element === ObjectType.NOTE) {
