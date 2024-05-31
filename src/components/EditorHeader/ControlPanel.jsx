@@ -88,6 +88,7 @@ export default function ControlPanel({
     setTables,
     addTable,
     updateTable,
+    deleteField,
     deleteTable,
     updateField,
     setRelationships,
@@ -145,7 +146,8 @@ export default function ControlPanel({
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        addTable(a.data, false);
+        a.data.relationship.forEach((x) => addRelationship(x, false));
+        addTable(a.data.table, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -166,27 +168,49 @@ export default function ControlPanel({
           updateField(a.tid, a.fid, a.undo);
         } else if (a.component === "field_delete") {
           setRelationships((prev) => {
-            return prev.map((e) => {
-              if (e.startTableId === a.tid && e.startFieldId >= a.data.id) {
+            let temp = [...prev];
+            a.data.relationship.forEach((r) => {
+              temp.splice(r.id, 0, r);
+            });
+            temp = temp.map((e, i) => {
+              const recoveredRel = a.data.relationship.find(
+                (x) =>
+                  (x.startTableId === e.startTableId &&
+                    x.startFieldId === e.startFieldId) ||
+                  (x.endTableId === e.endTableId &&
+                    x.endFieldId === a.endFieldId),
+              );
+              if (
+                e.startTableId === a.tid &&
+                e.startFieldId >= a.data.field.id &&
+                !recoveredRel
+              ) {
                 return {
                   ...e,
+                  id: i,
                   startFieldId: e.startFieldId + 1,
                 };
               }
-              if (e.endTableId === a.tid && e.endFieldId >= a.data.id) {
+              if (
+                e.endTableId === a.tid &&
+                e.endFieldId >= a.data.field.id &&
+                !recoveredRel
+              ) {
                 return {
                   ...e,
+                  id: i,
                   endFieldId: e.endFieldId + 1,
                 };
               }
-              return e;
+              return { ...e, id: i };
             });
+            return temp;
           });
           setTables((prev) =>
             prev.map((t) => {
               if (t.id === a.tid) {
                 const temp = t.fields.slice();
-                temp.splice(a.data.id, 0, a.data);
+                temp.splice(a.data.field.id, 0, a.data.field);
                 return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
               }
               return t;
@@ -314,7 +338,7 @@ export default function ControlPanel({
       }
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
-        deleteTable(a.data.id, false);
+        deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.id, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -334,28 +358,7 @@ export default function ControlPanel({
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.redo);
         } else if (a.component === "field_delete") {
-          setRelationships((prev) => {
-            return prev.map((e) => {
-              if (e.startTableId === a.tid && e.startFieldId > a.data.id) {
-                return {
-                  ...e,
-                  startFieldId: e.startFieldId - 1,
-                };
-              }
-              if (e.endTableId === a.tid && e.endFieldId > a.data.id) {
-                return {
-                  ...e,
-                  endFieldId: e.endFieldId - 1,
-                };
-              }
-              return e;
-            });
-          });
-          updateTable(a.tid, {
-            fields: tables[a.tid].fields
-              .filter((field) => field.id !== a.data.id)
-              .map((e, i) => ({ ...e, id: i })),
-          });
+          deleteField(a.data.field, a.tid, false);
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: [

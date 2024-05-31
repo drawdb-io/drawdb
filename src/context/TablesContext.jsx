@@ -68,12 +68,18 @@ export default function TablesContextProvider({ children }) {
   const deleteTable = (id, addToHistory = true) => {
     if (addToHistory) {
       Toast.success(t("table_deleted"));
+      const rels = relationships.reduce((acc, r) => {
+        if (r.startTableId === id || r.endTableId === id) {
+          acc.push(r);
+        }
+        return acc;
+      }, []);
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.TABLE,
-          data: tables[id],
+          data: { table: tables[id], relationship: rels },
           message: t("delete_table", { tableName: tables[id] }),
         },
       ]);
@@ -130,24 +136,38 @@ export default function TablesContextProvider({ children }) {
     );
   };
 
-  const deleteField = (field, tid) => {
-    setUndoStack((prev) => [
-      ...prev,
-      {
-        action: Action.EDIT,
-        element: ObjectType.TABLE,
-        component: "field_delete",
-        tid: tid,
-        data: field,
-        message: t("edit_table", {
-          tableName: tables[tid].name,
-          extra: "[delete field]",
-        }),
-      },
-    ]);
-    setRedoStack([]);
-    setRelationships((prev) =>
-      prev
+  const deleteField = (field, tid, addToHistory = true) => {
+    if (addToHistory) {
+      const rels = relationships.reduce((acc, r) => {
+        if (
+          (r.startTableId === tid && r.startFieldId === field.id) ||
+          (r.endTableId === tid && r.endFieldId === field.id)
+        ) {
+          acc.push(r);
+        }
+        return acc;
+      }, []);
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.TABLE,
+          component: "field_delete",
+          tid: tid,
+          data: {
+            field: field,
+            relationship: rels,
+          },
+          message: t("edit_table", {
+            tableName: tables[tid].name,
+            extra: "[delete field]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+    }
+    setRelationships((prev) => {
+      const temp = prev
         .filter(
           (e) =>
             !(
@@ -155,24 +175,24 @@ export default function TablesContextProvider({ children }) {
               (e.endTableId === tid && e.endFieldId === field.id)
             ),
         )
-        .map((e, i) => ({ ...e, id: i })),
-    );
-    setRelationships((prev) => {
-      return prev.map((e) => {
-        if (e.startTableId === tid && e.startFieldId > field.id) {
-          return {
-            ...e,
-            startFieldId: e.startFieldId - 1,
-          };
-        }
-        if (e.endTableId === tid && e.endFieldId > field.id) {
-          return {
-            ...e,
-            endFieldId: e.endFieldId - 1,
-          };
-        }
-        return e;
-      });
+        .map((e, i) => {
+          if (e.startTableId === tid && e.startFieldId > field.id) {
+            return {
+              ...e,
+              startFieldId: e.startFieldId - 1,
+              id: i,
+            };
+          }
+          if (e.endTableId === tid && e.endFieldId > field.id) {
+            return {
+              ...e,
+              endFieldId: e.endFieldId - 1,
+              id: i,
+            };
+          }
+          return { ...e, id: i };
+        });
+      return temp;
     });
     updateTable(tid, {
       fields: tables[tid].fields
