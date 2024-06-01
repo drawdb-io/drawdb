@@ -1,6 +1,5 @@
-
 const ukrainian = {
-  name: "Українська",
+  name: "Ukrainian",
   native_name: "Українська",
   code: "uk",
 };
@@ -157,7 +156,7 @@ const uk = {
     empty_field_name: "Порожнє поле `name` в таблиці '{{tableName}}'",
     empty_field_type: "Порожнє поле `type` в таблиці '{{tableName}}'",
     no_values_for_field: "'{{fieldName}}' поле в таблиці '{{tableName}}' має тип `{{type}}`, але значення не вказані",
-    default_doesnt_match_type: "Значення за замовчуванням для поля '{{fieldName}}' в таблиці '{{table.name}}' не відповідає його типу",
+    default_doesnt_match_type: "Значення за замовчуванням для поля '{{fieldName}}' в таблиці '{{tableName}}' не відповідає його типу",
     not_null_is_null: "'{{fieldName}}' поле в таблиці '{{tableName}}' є NOT NULL, але має значення за замовчуванням NULL",
     duplicate_fields: "Дубльовані поля таблиці з назвою '{{fieldName}}' в таблиці '{{tableName}}'",
     duplicate_index: "Дубльований індекс з назвою '{{indexName}}' в таблиці '{{tableName}}'",

@@ -156,7 +156,7 @@ const fa = {
     empty_field_name: "فیلد خالی name در جدول '{{tableName}}'",
     empty_field_type: "فیلد خالی type در جدول '{{tableName}}'",
     no_values_for_field: "فیلد '{{fieldName}}' جدول '{{tableName}}' از نوع {{type}} است اما هیچ مقداری مشخص نشده است",
-    default_doesnt_match_type: "مقدار پیش‌فرض برای فیلد '{{fieldName}}' در جدول '{{table.name}}' با نوع آن مطابقت ندارد",
+    default_doesnt_match_type: "مقدار پیش‌فرض برای فیلد '{{fieldName}}' در جدول '{{tableName}}' با نوع آن مطابقت ندارد",
     not_null_is_null: "فیلد '{{fieldName}}' جدول '{{tableName}}' غیر خالی است اما پیش‌فرض آن خالی است",
     duplicate_fields: "فیلدهای تکراری جدول به نام '{{fieldName}}' در جدول '{{tableName}}'",
     duplicate_index: "شاخص تکراری به نام '{{indexName}}' در جدول '{{tableName}}'",

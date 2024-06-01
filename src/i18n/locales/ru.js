@@ -165,7 +165,7 @@ const ru = {
     no_values_for_field:
       "Поле '{{fieldName}}' таблицы '{{tableName}}' имеет тип `{{type}}`, но не указаны значения",
     default_doesnt_match_type:
-      "Значение по умолчанию для поля '{{fieldName}}' в таблице '{{table.name}}' не соответствует его типу",
+      "Значение по умолчанию для поля '{{fieldName}}' в таблице '{{tableName}}' не соответствует его типу",
     not_null_is_null:
       "Поле '{{fieldName}}' таблицы '{{tableName}}' НЕ NULL, но имеет значение NULL по умолчанию",
     duplicate_fields:

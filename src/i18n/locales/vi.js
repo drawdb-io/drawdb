@@ -156,7 +156,7 @@ const vi = {
     empty_field_name: "Trường trống `name` trong bảng '{{tableName}}'",
     empty_field_type: "Trường trống `loại` trong bảng '{{tableName}}'",
     no_values_for_field: "Trường '{{fieldName}}' của bảng '{{tableName}}' thuộc loại `{{type}}` nhưng không có giá trị nào được chỉ định",
-    default_doesnt_match_type: "Giá trị mặc định cho trường '{{fieldName}}' trong bảng '{{table.name}}' không khớp với loại của nó",
+    default_doesnt_match_type: "Giá trị mặc định cho trường '{{fieldName}}' trong bảng '{{tableName}}' không khớp với loại của nó",
     not_null_is_null: "Trường '{{fieldName}}' của bảng '{{tableName}}' là NOT NULL nhưng đang là NULL",
     duplicate_fields: "Các trường bảng trùng lặp theo tên '{{fieldName}}' trong bảng '{{tableName}}'",
     duplicate_index: "Chỉ mục trùng lặp theo tên '{{indexName}}' trong bảng '{{tableName}}'",

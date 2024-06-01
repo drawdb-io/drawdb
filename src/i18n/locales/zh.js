@@ -160,7 +160,7 @@ const zh = {
     no_values_for_field:
       "表 '{{tableName}}' 的 '{{fieldName}}' 字段类型为 `{{type}}`，但未指定任何值",
     default_doesnt_match_type:
-      "表 '{{table.name}}' 中字段 '{{fieldName}}' 的默认值与其类型不匹配",
+      "表 '{{tableName}}' 中字段 '{{fieldName}}' 的默认值与其类型不匹配",
     not_null_is_null:
       "表 '{{tableName}}' 中的 '{{fieldName}}' 字段为 NOT NULL，但默认值为 NULL",
     duplicate_fields:

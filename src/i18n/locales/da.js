@@ -165,7 +165,7 @@ const da = {
     no_values_for_field:
       "'{{fieldName}}' felt fra tabellen '{{tableName}}' er af type `{{type}}` men ingen værdi er blevet specificeret",
     default_doesnt_match_type:
-      "Standardværdien for feltet '{{fieldName}}' i tabellen '{{table.name}}' stemmer ikke overens med dens type",
+      "Standardværdien for feltet '{{fieldName}}' i tabellen '{{tableName}}' stemmer ikke overens med dens type",
     not_null_is_null:
       "'{{fieldName}}' felt fra tabellen '{{tableName}}' er IKKE NUL, men har standardværdien NUL",
     duplicate_fields:

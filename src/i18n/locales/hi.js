@@ -165,7 +165,7 @@ const hindi = {
       no_values_for_field:
         "टेबल '{{tableName}}' के फ़ील्ड '{{fieldName}}' का प्रकार `{{type}}` है लेकिन कोई व्हॅल्यू निर्दिष्ट नहीं की गयी है",
       default_doesnt_match_type:
-        "टेबल '{{table.name}}' में फ़ील्ड '{{fieldName}}' की डिफ़ॉल्ट व्हॅल्यू उसके प्रकार से मेल नहीं खाती",
+        "टेबल '{{tableName}}' में फ़ील्ड '{{fieldName}}' की डिफ़ॉल्ट व्हॅल्यू उसके प्रकार से मेल नहीं खाती",
       not_null_is_null:
         "टेबल '{{tableName}}' के फ़ील्ड '{{fieldName}}' की व्हॅल्यू NOT NULL है लेकिन डिफ़ॉल्ट NULL है",
       duplicate_fields:

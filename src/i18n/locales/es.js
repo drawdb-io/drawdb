@@ -165,7 +165,7 @@ const es = {
     no_values_for_field:
       "El campo '{{fieldName}}' de la tabla '{{tableName}}' es de tipo `{{type}}` pero no se han especificado valores",
     default_doesnt_match_type:
-      "El valor predeterminado para el campo '{{fieldName}}' en la tabla '{{table.name}}' no coincide con su tipo",
+      "El valor predeterminado para el campo '{{fieldName}}' en la tabla '{{tableName}}' no coincide con su tipo",
     not_null_is_null:
       "El campo '{{fieldName}}' de la tabla '{{tableName}}' es NOT NULL pero tiene NULL por defecto",
     duplicate_fields:
