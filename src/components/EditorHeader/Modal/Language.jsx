@@ -16,7 +16,7 @@ export default function Language() {
             settings.mode === "dark"
               ? "bg-zinc-700 hover:bg-zinc-600"
               : "bg-zinc-100 hover:bg-zinc-200"
-          } ${i18n.resolvedLanguage === l.code ? "border-zinc-400" : "border-transparent"}`}
+          } ${i18n.language === l.code ? "border-zinc-400" : "border-transparent"}`}
         >
           <div className="flex justify-between items-center">
             <div className="font-semibold">{l.native_name}</div>
