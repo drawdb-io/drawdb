@@ -7,7 +7,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
-    command: sh -c "npm install && npm run dev:docker"
+    command: sh -c "npm install && npm run dev -- --host"
     networks:
       - default
 
