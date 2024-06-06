@@ -17,6 +17,9 @@ import {
   useSaveState,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
+import { Modal } from "@douyinfe/semi-ui";
+import { useTranslation } from "react-i18next";
+import { databases } from "../data/databases";
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
@@ -24,6 +27,8 @@ export default function WorkSpace() {
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
   const [lastSaved, setLastSaved] = useState("");
+  const [showSelectDbModal, setShowSelectDbModal] = useState(false);
+  const [selectedDb, setSelectedDb] = useState("");
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
@@ -32,8 +37,10 @@ export default function WorkSpace() {
   const { notes, setNotes } = useNotes();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
-  const { tables, relationships, setTables, setRelationships } = useTables();
+  const { tables, relationships, setTables, setRelationships, setDatabase } =
+    useTables();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
+  const { t } = useTranslation();
 
   const handleResize = (e) => {
     if (!resize) return;
@@ -130,6 +137,9 @@ export default function WorkSpace() {
         .last()
         .then((d) => {
           if (d) {
+            if (!d.database) {
+              setShowSelectDbModal(true);
+            }
             setId(d.id);
             setTitle(d.name);
             setTables(d.tables);
@@ -154,6 +164,9 @@ export default function WorkSpace() {
         .get(id)
         .then((diagram) => {
           if (diagram) {
+            if (!diagram.database) {
+              setShowSelectDbModal(true);
+            }
             setId(diagram.id);
             setTitle(diagram.name);
             setTables(diagram.tables);
@@ -304,6 +317,46 @@ export default function WorkSpace() {
           )}
         </div>
       </div>
+      <Modal
+        centered
+        size="medium"
+        closable={false}
+        hasCancel={false}
+        title={t("pick_db")}
+        okText={t("confirm")}
+        onOk={() => {
+          setDatabase(selectedDb);
+          setShowSelectDbModal(false);
+        }}
+        visible={showSelectDbModal}
+      >
+        <div className="grid grid-cols-3 gap-4 place-content-center">
+          {databases.map((x) => (
+            <div
+              key={x.name}
+              onClick={() => setSelectedDb(x.label)}
+              className={`space-y-3 py-3 px-4 rounded-md border-2 ${
+                settings.mode === "dark"
+                  ? "bg-zinc-700 hover:bg-zinc-600"
+                  : "bg-zinc-100 hover:bg-zinc-200"
+              } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
+            >
+              <div className="font-semibold">{x.name}</div>
+              {x.image && (
+                <img
+                  src={x.image}
+                  className="h-10"
+                  style={{
+                    filter:
+                      "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
+                  }}
+                />
+              )}
+              <div className="text-xs">{x.description}</div>
+            </div>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 }

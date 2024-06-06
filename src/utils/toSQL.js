@@ -1,8 +1,8 @@
-import { sqlDataTypes } from "../data/constants";
+import { defaultTypes } from "../data/datatypes";
 import { isFunction, isKeyword, strHasQuotes } from "./utils";
 
 export function getJsonType(f) {
-  if (!sqlDataTypes.includes(f.type)) {
+  if (!defaultTypes.includes(f.type)) {
     return '{ "type" : "object", additionalProperties : true }';
   }
   switch (f.type) {
@@ -50,7 +50,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     if (field.type === "SET" || field.type === "ENUM") {
       return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
     }
-    if (!sqlDataTypes.includes(field.type)) {
+    if (!defaultTypes.includes(field.type)) {
       return "JSON";
     }
     return field.type;
@@ -173,7 +173,7 @@ export function jsonToMySQL(obj) {
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
-                  ? !sqlDataTypes.includes(field.type)
+                  ? !defaultTypes.includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),
@@ -414,7 +414,7 @@ export function jsonToMariaDB(obj) {
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
-                  ? !sqlDataTypes.includes(field.type)
+                  ? !defaultTypes.includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),

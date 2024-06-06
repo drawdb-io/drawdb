@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, ObjectType, sqlDataTypes } from "../../../data/constants";
+import { Action, ObjectType } from "../../../data/constants";
 import {
   Row,
   Col,
@@ -12,11 +12,13 @@ import {
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
 import { isSized, hasPrecision, getSize } from "../../../utils/toSQL";
-import { useUndoRedo, useTypes } from "../../../hooks";
+import { useUndoRedo, useTypes, useTables } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import { dbToTypes } from "../../../data/datatypes";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
+  const { database } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();
@@ -62,7 +64,7 @@ export default function TypeField({ data, tid, fid }) {
         <Select
           className="w-full"
           optionList={[
-            ...sqlDataTypes.map((value) => ({
+            ...dbToTypes[database].map((value) => ({
               label: value,
               value: value,
             })),

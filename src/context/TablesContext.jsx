@@ -10,6 +10,7 @@ export const TablesContext = createContext(null);
 
 export default function TablesContextProvider({ children }) {
   const { t } = useTranslation();
+  const [database, setDatabase] = useState("");
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const { transform } = useTransform();
@@ -261,6 +262,8 @@ export default function TablesContextProvider({ children }) {
         setRelationships,
         addRelationship,
         deleteRelationship,
+        database,
+        setDatabase,
       }}
     >
       {children}

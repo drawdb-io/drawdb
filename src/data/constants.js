@@ -1,31 +1,5 @@
 import i18n from "../i18n/i18n";
 
-export const sqlDataTypes = [
-  "INT",
-  "SMALLINT",
-  "BIGINT",
-  "DECIMAL",
-  "NUMERIC",
-  "FLOAT",
-  "DOUBLE",
-  "REAL",
-  "CHAR",
-  "VARCHAR",
-  "TEXT",
-  "DATE",
-  "TIME",
-  "TIMESTAMP",
-  "DATETIME",
-  "BOOLEAN",
-  "BINARY",
-  "VARBINARY",
-  "BLOB",
-  "JSON",
-  "UUID",
-  "ENUM",
-  "SET",
-];
-
 export const tableThemes = [
   "#f03c3c",
   "#ff4f81",
