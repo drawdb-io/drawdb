@@ -3,11 +3,13 @@ import { Input, Button, Popover, Checkbox, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useTables, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 export default function IndexDetails({ data, fields, iid, tid }) {
   const { t } = useTranslation();
   const { tables, updateTable } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const [editField, setEditField] = useState({});
 
   return (
     <div className="flex justify-between items-center mb-2">
@@ -29,11 +31,9 @@ export default function IndexDetails({ data, fields, iid, tid }) {
               iid: iid,
               undo: {
                 fields: [...data.fields],
-                name: `${data.fields.join("_")}_index`,
               },
               redo: {
                 fields: [...value],
-                name: `${value.join("_")}_index`,
               },
               message: t("edit_table", {
                 tableName: tables[tid].name,
@@ -48,7 +48,6 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 ? {
                     ...index,
                     fields: [...value],
-                    name: `${value.join("_")}_index`,
                   }
                 : index,
             ),
@@ -59,7 +58,48 @@ export default function IndexDetails({ data, fields, iid, tid }) {
         content={
           <div className="px-1 popover-theme">
             <div className="font-semibold mb-1">{t("name")}: </div>
-            <Input value={data.name} placeholder={t("name")} disabled />
+            <Input
+              value={data.name}
+              placeholder={t("name")}
+              validateStatus={data.name.trim() === "" ? "error" : "default"}
+              onFocus={() =>
+                setEditField({
+                  name: data.name,
+                })
+              }
+              onChange={(value) =>
+                updateTable(tid, {
+                  indices: tables[tid].indices.map((index) =>
+                    index.id === iid
+                      ? {
+                          ...index,
+                          name: value,
+                        }
+                      : index,
+                  ),
+                })
+              }
+              onBlur={(e) => {
+                if (e.target.value === editField.name) return;
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "index",
+                    tid: tid,
+                    iid: iid,
+                    undo: editField,
+                    redo: { name: e.target.value },
+                    message: t("edit_table", {
+                      tableName: tables[tid].name,
+                      extra: "[index]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+              }}
+            />
             <div className="flex justify-between items-center my-3">
               <div className="font-medium">{t("unique")}</div>
               <Checkbox

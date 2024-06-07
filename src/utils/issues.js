@@ -168,6 +168,13 @@ export function getIssues(diagram) {
     });
 
     table.indices.forEach((index) => {
+      if (index.name.trim() === "") {
+        issues.push(
+          i18n.t("empty_index_name", {
+            tableName: table.name,
+          }),
+        );
+      }
       if (index.fields.length === 0) {
         issues.push(
           i18n.t("empty_index", {
