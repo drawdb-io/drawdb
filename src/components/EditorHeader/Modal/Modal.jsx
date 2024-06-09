@@ -5,7 +5,7 @@ import {
   Toast,
   Modal as SemiUIModal,
 } from "@douyinfe/semi-ui";
-import { MODAL, STATUS } from "../../../data/constants";
+import { DB, MODAL, STATUS } from "../../../data/constants";
 import { useState } from "react";
 import { db } from "../../../data/db";
 import {
@@ -52,7 +52,7 @@ export default function Modal({
   setExportData,
 }) {
   const { t } = useTranslation();
-  const { setTables, setRelationships } = useTables();
+  const { setTables, setRelationships, setDatabase } = useTables();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -88,6 +88,11 @@ export default function Modal({
       .get(id)
       .then((diagram) => {
         if (diagram) {
+          if (diagram.database) {
+            setDatabase(diagram.database);
+          } else {
+            setDatabase(DB.GENERIC);
+          }
           setDiagramId(diagram.id);
           setTitle(diagram.name);
           setTables(diagram.tables);
