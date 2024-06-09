@@ -212,6 +212,10 @@ const en = {
     edit_relationship: "{{extra}} Edit relationship {{refName}}",
     delete_relationship: "Delete relationship {{refName}}",
     not_found: "Not found",
+    pick_db: "Choose a database",
+    generic: "Generic",
+    generic_description:
+      "Generic diagrams can be exported to any SQL flavor but support few data types.",
   },
 };
 

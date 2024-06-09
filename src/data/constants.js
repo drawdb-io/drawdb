@@ -103,3 +103,12 @@ export const SIDESHEET = {
   TODO: 1,
   TIMELINE: 2,
 };
+
+export const DB = {
+  MYSQL: "mysql",
+  POSTGRES: "postgresql",
+  MSSQL: "mssql",
+  SQLITE: "sqlite",
+  MARIADB: "mariadb",
+  GENERIC: "generic",
+};

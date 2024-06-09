@@ -3,38 +3,39 @@ import postgresImage from "../assets/postgres-icon.png";
 import sqliteImage from "../assets/sqlite-icon.png";
 import mariadbImage from "../assets/mariadb-icon.png";
 import mssqlImage from "../assets/mssql-icon.png";
+import i18n from "../i18n/i18n";
+import { DB } from "./constants";
 
 export const databases = [
   {
     name: "MySQL",
-    label: "mysql",
+    label: DB.MYSQL,
     image: mysqlImage,
   },
   {
     name: "PostgreSQL",
-    label: "postgresql",
+    label: DB.POSTGRES,
     image: postgresImage,
   },
   {
     name: "SQLite",
-    label: "sqlite",
+    label: DB.SQLITE,
     image: sqliteImage,
   },
   {
     name: "MariaDB",
-    label: "mariadb",
+    label: DB.MARIADB,
     image: mariadbImage,
   },
   {
     name: "MSSQL",
-    label: "mssql",
+    label: DB.MSSQL,
     image: mssqlImage,
   },
   {
-    name: "Generic",
-    label: "generic",
+    name: i18n.t("generic"),
+    label: DB.GENERIC,
     image: null,
-    description:
-      "Generic diagrams can be exported to any SQL flavor but support few data types.",
+    description: i18n.t("generic_description"),
   },
 ];

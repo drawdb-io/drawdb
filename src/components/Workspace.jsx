@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import SidePanel from "./EditorSidePanel/SidePanel";
-import { State } from "../data/constants";
+import { DB, State } from "../data/constants";
 import { db } from "../data/db";
 import {
   useLayout,
@@ -37,8 +37,14 @@ export default function WorkSpace() {
   const { notes, setNotes } = useNotes();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
-  const { tables, relationships, setTables, setRelationships, setDatabase } =
-    useTables();
+  const {
+    tables,
+    relationships,
+    setTables,
+    setRelationships,
+    database,
+    setDatabase,
+  } = useTables();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
 
@@ -60,6 +66,7 @@ export default function WorkSpace() {
       ) {
         await db.diagrams
           .add({
+            database: database,
             name: title,
             lastModified: new Date(),
             tables: tables,
@@ -80,6 +87,7 @@ export default function WorkSpace() {
       } else {
         await db.diagrams
           .update(id, {
+            database: database,
             name: title,
             lastModified: new Date(),
             tables: tables,
@@ -99,6 +107,7 @@ export default function WorkSpace() {
     } else {
       await db.templates
         .update(id, {
+          database: database,
           title: title,
           tables: tables,
           relationships: relationships,
@@ -128,6 +137,7 @@ export default function WorkSpace() {
     tasks,
     transform,
     setSaveState,
+    database,
   ]);
 
   const load = useCallback(async () => {
@@ -137,8 +147,10 @@ export default function WorkSpace() {
         .last()
         .then((d) => {
           if (d) {
-            if (!d.database) {
-              setShowSelectDbModal(true);
+            if (d.database) {
+              setDatabase(d.database);
+            } else {
+              setDatabase(DB.GENERIC);
             }
             setId(d.id);
             setTitle(d.name);
@@ -164,8 +176,10 @@ export default function WorkSpace() {
         .get(id)
         .then((diagram) => {
           if (diagram) {
-            if (!diagram.database) {
-              setShowSelectDbModal(true);
+            if (diagram.database) {
+              setDatabase(diagram.database);
+            } else {
+              setDatabase(DB.GENERIC);
             }
             setId(diagram.id);
             setTitle(diagram.name);
@@ -196,6 +210,11 @@ export default function WorkSpace() {
         .get(id)
         .then((diagram) => {
           if (diagram) {
+            if (diagram.database) {
+              setDatabase(diagram.database);
+            } else {
+              setDatabase(DB.GENERIC);
+            }
             setId(diagram.id);
             setTitle(diagram.title);
             setTables(diagram.tables);
@@ -210,6 +229,8 @@ export default function WorkSpace() {
             });
             setUndoStack([]);
             setRedoStack([]);
+          } else {
+            setShowSelectDbModal(true);
           }
         })
         .catch((error) => {
@@ -247,6 +268,7 @@ export default function WorkSpace() {
     setNotes,
     setTypes,
     setTasks,
+    setDatabase,
   ]);
 
   useEffect(() => {
@@ -324,18 +346,20 @@ export default function WorkSpace() {
         hasCancel={false}
         title={t("pick_db")}
         okText={t("confirm")}
+        visible={showSelectDbModal}
         onOk={() => {
+          if (selectedDb === "") return;
           setDatabase(selectedDb);
           setShowSelectDbModal(false);
         }}
-        visible={showSelectDbModal}
+        okButtonProps={{ disabled: selectedDb === "" }}
       >
         <div className="grid grid-cols-3 gap-4 place-content-center">
           {databases.map((x) => (
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 py-3 px-4 rounded-md border-2 ${
+              className={`space-y-3 py-3 px-4 rounded-md border-2 select-none ${
                 settings.mode === "dark"
                   ? "bg-zinc-700 hover:bg-zinc-600"
                   : "bg-zinc-100 hover:bg-zinc-200"
