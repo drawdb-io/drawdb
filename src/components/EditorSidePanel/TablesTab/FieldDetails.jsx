@@ -9,13 +9,13 @@ import {
 } from "@douyinfe/semi-ui";
 import { Action, ObjectType } from "../../../data/constants";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { hasCheck, hasPrecision, isSized } from "../../../utils/toSQL";
 import { useTables, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import { dbToTypes } from "../../../data/datatypes";
 
 export default function FieldDetails({ data, tid, index }) {
   const { t } = useTranslation();
-  const { tables } = useTables();
+  const { tables, database } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { updateField, deleteField } = useTables();
   const [editField, setEditField] = useState({});
@@ -99,7 +99,7 @@ export default function FieldDetails({ data, tid, index }) {
           />
         </>
       )}
-      {isSized(data.type) && (
+      {dbToTypes[database][data.type].isSized && (
         <>
           <div className="font-semibold">{t("size")}</div>
           <InputNumber
@@ -131,7 +131,7 @@ export default function FieldDetails({ data, tid, index }) {
           />
         </>
       )}
-      {hasPrecision(data.type) && (
+      {dbToTypes[database][data.type].hasPrecision && (
         <>
           <div className="font-semibold">{t("precision")}</div>
           <Input
@@ -168,7 +168,7 @@ export default function FieldDetails({ data, tid, index }) {
           />
         </>
       )}
-      {hasCheck(data.type) && (
+      {dbToTypes[database][data.type].hasCheck && (
         <>
           <div className="font-semibold">{t("check")}</div>
           <Input

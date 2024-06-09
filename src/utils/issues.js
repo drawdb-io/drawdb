@@ -1,86 +1,15 @@
+import { dbToTypes } from "../data/datatypes";
 import i18n from "../i18n/i18n";
-import { isFunction, strHasQuotes } from "./utils";
+import { isFunction } from "./utils";
 
-function validateDateStr(str) {
-  return /^(?!0000)(?!00)(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9]|3[01])|(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31))$/.test(
-    str,
-  );
-}
-
-function checkDefault(field) {
+function checkDefault(field, database) {
   if (field.default === "") return true;
 
   if (isFunction(field.default)) return true;
 
   if (!field.notNull && field.default.toLowerCase() === "null") return true;
 
-  switch (field.type) {
-    case "INT":
-    case "BIGINT":
-    case "SMALLINT":
-      return /^-?\d*$/.test(field.default);
-    case "SET": {
-      const defaultValues = field.default.split(",");
-      for (let i = 0; i < defaultValues.length; i++) {
-        if (!field.values.includes(defaultValues[i].trim())) return false;
-      }
-      return true;
-    }
-    case "ENUM":
-      return field.values.includes(field.default);
-    case "CHAR":
-    case "VARCHAR":
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    case "BINARY":
-    case "VARBINARY":
-      return (
-        field.default.length <= field.size && /^[01]+$/.test(field.default)
-      );
-    case "BOOLEAN":
-      return (
-        field.default.trim().toLowerCase() === "false" ||
-        field.default.trim().toLowerCase() === "true"
-      );
-    case "FLOAT":
-    case "DECIMAL":
-    case "DOUBLE":
-    case "NUMERIC":
-    case "REAL":
-      return /^-?\d*.?\d+$/.test(field.default);
-    case "DATE":
-      return validateDateStr(field.default);
-    case "TIME":
-      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
-    case "TIMESTAMP": {
-      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
-        return true;
-      }
-      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
-        return false;
-      }
-      const content = field.default.split(" ");
-      const date = content[0].split("-");
-
-      return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
-    }
-    case "DATETIME": {
-      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
-        return true;
-      }
-      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
-        return false;
-      }
-      const c = field.default.split(" ");
-      const d = c[0].split("-");
-
-      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
-    }
-    default:
-      return true;
-  }
+  return dbToTypes[database][field.type].checkDefault(field);
 }
 
 export function getIssues(diagram) {
@@ -123,7 +52,7 @@ export function getIssues(diagram) {
         }
       }
 
-      if (!checkDefault(field)) {
+      if (!checkDefault(field, diagram.database)) {
         issues.push(
           i18n.t("default_doesnt_match_type", {
             tableName: table.name,

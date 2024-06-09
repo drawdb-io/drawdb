@@ -94,6 +94,7 @@ export default function ControlPanel({
     setRelationships,
     addRelationship,
     deleteRelationship,
+    database,
   } = useTables();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
@@ -858,6 +859,7 @@ export default function ControlPanel({
                 tables: tables,
                 references: relationships,
                 types: types,
+                database: database,
               });
               setExportData((prev) => ({
                 ...prev,
@@ -873,6 +875,7 @@ export default function ControlPanel({
                 tables: tables,
                 references: relationships,
                 types: types,
+                database: database,
               });
               setExportData((prev) => ({
                 ...prev,
@@ -888,6 +891,7 @@ export default function ControlPanel({
                 tables: tables,
                 references: relationships,
                 types: types,
+                database: database,
               });
               setExportData((prev) => ({
                 ...prev,
@@ -903,6 +907,7 @@ export default function ControlPanel({
                 tables: tables,
                 references: relationships,
                 types: types,
+                database: database,
               });
               setExportData((prev) => ({
                 ...prev,
@@ -918,6 +923,7 @@ export default function ControlPanel({
                 tables: tables,
                 references: relationships,
                 types: types,
+                database: database,
               });
               setExportData((prev) => ({
                 ...prev,

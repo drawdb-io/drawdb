@@ -9,7 +9,7 @@ export default function Issues() {
   const { types } = useTypes();
   const { t } = useTranslation();
   const { settings } = useSettings();
-  const { tables, relationships } = useTables();
+  const { tables, relationships, database } = useTables();
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
@@ -18,6 +18,7 @@ export default function Issues() {
         tables: tables,
         relationships: relationships,
         types: types,
+        database: database,
       });
 
       if (!arrayIsEqual(newIssues, issues)) {
@@ -26,7 +27,7 @@ export default function Issues() {
     };
 
     findIssues();
-  }, [tables, relationships, issues, types]);
+  }, [tables, relationships, issues, types, database]);
 
   return (
     <Collapse keepDOM lazyRender style={{ width: "100%" }}>

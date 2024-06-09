@@ -11,7 +11,6 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
-import { isSized, hasPrecision, getSize } from "../../../utils/toSQL";
 import { useUndoRedo, useTypes, useTables } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
@@ -64,7 +63,7 @@ export default function TypeField({ data, tid, fid }) {
         <Select
           className="w-full"
           optionList={[
-            ...dbToTypes[database].map((value) => ({
+            ...Object.keys(dbToTypes[database]).map((value) => ({
               label: value,
               value: value,
             })),
@@ -112,11 +111,14 @@ export default function TypeField({ data, tid, fid }) {
                     : e,
                 ),
               });
-            } else if (isSized(value) || hasPrecision(value)) {
+            } else if (
+              dbToTypes[database][value].isSized ||
+              dbToTypes[database][value].hasPrecision
+            ) {
               updateType(tid, {
                 fields: types[tid].fields.map((e, id) =>
                   id === fid
-                    ? { ...data, type: value, size: getSize(value) }
+                    ? { ...data, type: value, size:  dbToTypes[database][value].defaultSize }
                     : e,
                 ),
               });
@@ -184,7 +186,7 @@ export default function TypeField({ data, tid, fid }) {
                   />
                 </>
               )}
-              {isSized(data.type) && (
+              {dbToTypes[database][data.type].isSized && (
                 <>
                   <div className="font-semibold">{t("size")}</div>
                   <InputNumber
@@ -222,7 +224,7 @@ export default function TypeField({ data, tid, fid }) {
                   />
                 </>
               )}
-              {hasPrecision(data.type) && (
+              {dbToTypes[database][data.type].hasPrecision && (
                 <>
                   <div className="font-semibold">{t("precision")}</div>
                   <Input

@@ -1,8 +1,8 @@
-import { defaultTypes } from "../data/datatypes";
+import { dbToTypes, defaultTypes } from "../data/datatypes";
 import { isFunction, isKeyword, strHasQuotes } from "./utils";
 
 export function getJsonType(f) {
-  if (!defaultTypes.includes(f.type)) {
+  if (!Object.keys(defaultTypes).includes(f.type)) {
     return '{ "type" : "object", additionalProperties : true }';
   }
   switch (f.type) {
@@ -39,18 +39,26 @@ export function generateSchema(type) {
     )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
 }
 
-export function getTypeString(field, dbms = "mysql", baseType = false) {
+export function getTypeString(
+  field,
+  currentDb,
+  dbms = "mysql",
+  baseType = false,
+) {
   if (dbms === "mysql") {
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
     }
-    if (hasPrecision(field.type) || isSized(field.type)) {
+    if (
+      dbToTypes[currentDb][field.type].isSized ||
+      dbToTypes[currentDb][field.type].hasPrecision
+    ) {
       return `${field.type}${field.size ? `(${field.size})` : ""}`;
     }
     if (field.type === "SET" || field.type === "ENUM") {
       return `${field.type}(${field.values.map((v) => `"${v}"`).join(", ")})`;
     }
-    if (!defaultTypes.includes(field.type)) {
+    if (!Object.keys(defaultTypes).includes(field.type)) {
       return "JSON";
     }
     return field.type;
@@ -76,7 +84,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
     if (field.type === "DATETIME") {
       return `timestamp`;
     }
-    if (isSized(field.type)) {
+    if (dbToTypes[currentDb][field.type].isSized) {
       const type =
         field.type === "BINARY"
           ? "bit"
@@ -85,7 +93,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
             : field.type.toLowerCase();
       return `${type}(${field.size})`;
     }
-    if (hasPrecision(field.type) && field.size !== "") {
+    if (dbToTypes[currentDb][field.type].hasPrecision && field.size !== "") {
       return `${field.type}${field.size}`;
     }
     return field.type.toLowerCase();
@@ -121,7 +129,7 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
         type = field.type;
         break;
     }
-    if (isSized(field.type)) {
+    if (dbToTypes[currentDb][field.type].isSized) {
       return `${type}(${field.size})`;
     }
 
@@ -167,13 +175,14 @@ export function jsonToMySQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
-              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
-                field.check === "" || !hasCheck(field.type)
-                  ? !defaultTypes.includes(field.type)
+                field.check === "" ||
+                !dbToTypes[obj.database][field.type].hasCheck
+                  ? !Object.keys(defaultTypes).includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),
@@ -181,7 +190,7 @@ export function jsonToMySQL(obj) {
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` COMMENT '${field.comment}'` : ''}`,
+              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -190,7 +199,7 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${
           table.indices.length > 0
             ? `\n${table.indices.map(
                 (i) =>
@@ -233,14 +242,16 @@ export function jsonToPostgreSQL(obj) {
         `${
           type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
         }CREATE TYPE ${type.name} AS (\n${type.fields
-          .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+          .map(
+            (f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`,
+          )
           .join("\n")}\n);`
       );
     } else {
       return `${
         type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
       }CREATE TYPE ${type.name} AS (\n${type.fields
-        .map((f) => `\t${f.name} ${getTypeString(f, "postgres")}`)
+        .map((f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`)
         .join("\n")}\n);`;
     }
   })}\n${obj.tables
@@ -263,12 +274,13 @@ export function jsonToPostgreSQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
                 field.name
-              }" ${getTypeString(field, "postgres")}${
+              }" ${getTypeString(field, obj.database, "postgres")}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
-                field.check === "" || !hasCheck(field.type)
+                field.check === "" ||
+                !dbToTypes[obj.database][field.type].hasCheck
                   ? ""
                   : ` CHECK(${field.check})`
               }`,
@@ -367,7 +379,8 @@ export function jsonToSQLite(obj) {
             }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
             }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${
-              field.check === "" || !hasCheck(field.type)
+              field.check === "" ||
+              !dbToTypes[obj.database][field.type].hasCheck
                 ? ""
                 : ` CHECK(${field.check})`
             }`,
@@ -408,13 +421,14 @@ export function jsonToMariaDB(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
-              }\` ${getTypeString(field)}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
-                field.check === "" || !hasCheck(field.type)
-                  ? !defaultTypes.includes(field.type)
+                field.check === "" ||
+                !dbToTypes[obj.database][field.type].hasCheck
+                  ? !Object.keys(defaultTypes).includes(field.type)
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),
@@ -466,7 +480,7 @@ export function jsonToSQLServer(obj) {
       }CREATE TYPE [${type.name}] FROM ${
         type.fields.length < 0
           ? ""
-          : `${getTypeString(type.fields[0], "mssql", true)}`
+          : `${getTypeString(type.fields[0], obj.database, "mssql", true)}`
       };\nGO\n`;
     })
     .join("\n")}\n${obj.tables
@@ -479,14 +493,15 @@ export function jsonToSQLServer(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t[${
                 field.name
-              }] ${getTypeString(field, "mssql")}${
+              }] ${getTypeString(field, obj.database, "mssql")}${
                 field.notNull ? " NOT NULL" : ""
               }${field.increment ? " IDENTITY" : ""}${
                 field.unique ? " UNIQUE" : ""
               }${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
-                field.check === "" || !hasCheck(field.type)
+                field.check === "" ||
+                !dbToTypes[obj.database][field.type].hasCheck
                   ? ""
                   : ` CHECK(${field.check})`
               }`,
@@ -521,42 +536,4 @@ export function jsonToSQLServer(obj) {
         }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`,
     )
     .join("\n")}`;
-}
-
-export function isSized(type) {
-  return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT"].includes(type);
-}
-
-export function hasPrecision(type) {
-  return ["DOUBLE", "NUMERIC", "DECIMAL", "FLOAT"].includes(type);
-}
-
-export function hasCheck(type) {
-  return [
-    "INT",
-    "SMALLINT",
-    "BIGINT",
-    "CHAR",
-    "VARCHAR",
-    "FLOAT",
-    "DECIMAL",
-    "DOUBLE",
-    "NUMERIC",
-    "REAL",
-  ].includes(type);
-}
-
-export function getSize(type) {
-  switch (type) {
-    case "CHAR":
-    case "BINARY":
-      return 1;
-    case "VARCHAR":
-    case "VARBINARY":
-      return 255;
-    case "TEXT":
-      return 65535;
-    default:
-      return "";
-  }
 }

@@ -1,7 +1,6 @@
 import { Action, ObjectType } from "../../../data/constants";
 import { Row, Col, Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
-import { getSize, hasCheck, hasPrecision, isSized } from "../../../utils/toSQL";
 import { useTables, useTypes, useUndoRedo } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
@@ -51,7 +50,7 @@ export default function TableField({ data, tid, index }) {
         <Select
           className="w-full"
           optionList={[
-            ...dbToTypes[database].map((value) => ({
+            ...Object.keys(dbToTypes[database]).map((value) => ({
               label: value,
               value: value,
             })),
@@ -93,10 +92,13 @@ export default function TableField({ data, tid, index }) {
                 values: data.values ? [...data.values] : [],
                 increment: incr,
               });
-            } else if (isSized(value) || hasPrecision(value)) {
+            } else if (
+              dbToTypes[database][value].isSized ||
+              dbToTypes[database][value].hasPrecision
+            ) {
               updateField(tid, index, {
                 type: value,
-                size: getSize(value),
+                size: dbToTypes[database][value].defaultSize,
                 increment: incr,
               });
             } else if (
@@ -113,7 +115,7 @@ export default function TableField({ data, tid, index }) {
                 size: "",
                 values: [],
               });
-            } else if (hasCheck(value)) {
+            } else if (dbToTypes[database][value].hasCheck) {
               updateField(tid, index, {
                 type: value,
                 check: "",
