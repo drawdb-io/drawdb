@@ -1,5 +1,5 @@
-import { dbToTypes, defaultTypes } from "../data/datatypes";
-import { isFunction, isKeyword, strHasQuotes } from "./utils";
+import { dbToTypes, defaultTypes } from "../../data/datatypes";
+import { parseDefault } from "./shared";
 
 export function getJsonType(f) {
   if (!Object.keys(defaultTypes).includes(f.type)) {
@@ -137,33 +137,6 @@ export function getTypeString(
   }
 }
 
-export function hasQuotes(type) {
-  return [
-    "CHAR",
-    "VARCHAR",
-    "BINARY",
-    "VARBINARY",
-    "ENUM",
-    "DATE",
-    "TIME",
-    "TIMESTAMP",
-    "DATETIME",
-  ].includes(type);
-}
-
-export function parseDefault(field) {
-  if (
-    strHasQuotes(field.default) ||
-    isFunction(field.default) ||
-    isKeyword(field.default) ||
-    !hasQuotes(field.type)
-  ) {
-    return field.default;
-  }
-
-  return `'${field.default}'`;
-}
-
 export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
@@ -178,7 +151,7 @@ export function jsonToMySQL(obj) {
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -277,7 +250,7 @@ export function jsonToPostgreSQL(obj) {
               }" ${getTypeString(field, obj.database, "postgres")}${
                 field.notNull ? " NOT NULL" : ""
               }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -378,7 +351,7 @@ export function jsonToSQLite(obj) {
               field.name
             }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
-            }${field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""}${
+            }${field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""}${
               field.check === "" ||
               !dbToTypes[obj.database][field.type].hasCheck
                 ? ""
@@ -424,7 +397,7 @@ export function jsonToMariaDB(obj) {
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -498,7 +471,7 @@ export function jsonToSQLServer(obj) {
               }${field.increment ? " IDENTITY" : ""}${
                 field.unique ? " UNIQUE" : ""
               }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck

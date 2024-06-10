@@ -98,6 +98,7 @@ export const defaultTypes = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 1,
+    hasQuotes: true,
   },
   VARCHAR: {
     type: "VARCHAR",
@@ -111,6 +112,7 @@ export const defaultTypes = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 255,
+    hasQuotes: true,
   },
   TEXT: {
     type: "TEXT",
@@ -119,16 +121,7 @@ export const defaultTypes = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 65535,
-  },
-  DATE: {
-    type: "DATE",
-    checkDefault: (field) => {
-      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
-    },
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    defaultSize: null,
+    hasQuotes: true,
   },
   TIME: {
     type: "TIME",
@@ -139,6 +132,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    hasQuotes: true,
   },
   TIMESTAMP: {
     type: "TIMESTAMP",
@@ -157,6 +151,18 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    hasQuotes: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+    hasQuotes: true,
   },
   DATETIME: {
     type: "DATETIME",
@@ -175,6 +181,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    hasQuotes: true,
   },
   BOOLEAN: {
     type: "BOOLEAN",
@@ -200,6 +207,7 @@ export const defaultTypes = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 1,
+    hasQuotes: true,
   },
   VARBINARY: {
     type: "VARBINARY",
@@ -212,6 +220,7 @@ export const defaultTypes = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 255,
+    hasQuotes: true,
   },
   BLOB: {
     type: "BLOB",
@@ -246,6 +255,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    hasQuotes: true,
   },
   SET: {
     type: "SET",
@@ -356,16 +366,126 @@ export const postgresTypes = {
 };
 
 export const sqliteTypes = {
-  INTEGER: { type: "INTEGER", checkDefault: (field) => {} },
-  REAL: { type: "REAL", checkDefault: (field) => {} },
-  TEXT: { type: "TEXT", checkDefault: (field) => {} },
-  BLOB: { type: "BLOB", checkDefault: (field) => {} },
-  NUMERIC: { type: "NUMERIC", checkDefault: (field) => {} },
-  BOOLEAN: { type: "BOOLEAN", checkDefault: (field) => {} },
-  DATE: { type: "DATE", checkDefault: (field) => {} },
-  DATETIME: { type: "DATETIME", checkDefault: (field) => {} },
-  TIME: { type: "TIME", checkDefault: (field) => {} },
-  TIMESTAMP: { type: "TIMESTAMP", checkDefault: (field) => {} },
+  INT: {
+    type: "INT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+  },
+  REAL: {
+    type: "REAL",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    defaultSize: null,
+  },
+  TEXT: {
+    type: "TEXT",
+    checkDefault: (field) => false,
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  BLOB: {
+    type: "BLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    defaultSize: null,
+  },
+  NUMERIC: {
+    type: "NUMERIC",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    defaultSize: null,
+  },
+  BOOLEAN: {
+    type: "BOOLEAN",
+    checkDefault: (field) => {
+      return (
+        field.default.trim().toLowerCase() === "false" ||
+        field.default.trim().toLowerCase() === "true"
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+  },
+  TIME: {
+    type: "TIME",
+    checkDefault: (field) => {
+      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+    hasQuotes: true,
+  },
+  TIMESTAMP: {
+    type: "TIMESTAMP",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const content = field.default.split(" ");
+      const date = content[0].split("-");
+      return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+    hasQuotes: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+    hasQuotes: true,
+  },
+  DATETIME: {
+    type: "DATETIME",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    defaultSize: null,
+    hasQuotes: true,
+  },
 };
 
 export const mariadbTypes = {

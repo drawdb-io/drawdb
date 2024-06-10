@@ -29,7 +29,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
-} from "../../utils/toSQL";
+} from "../../utils/exportSQL/generic";
 import {
   ObjectType,
   Action,
@@ -37,6 +37,7 @@ import {
   State,
   MODAL,
   SIDESHEET,
+  DB,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -62,6 +63,7 @@ import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
+import { exportSQL } from "../../utils/exportSQL";
 
 export default function ControlPanel({
   diagramId,
@@ -851,89 +853,105 @@ export default function ControlPanel({
         function: () => {},
       },
       export_source: {
-        children: [
-          {
-            MySQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToMySQL({
-                tables: tables,
-                references: relationships,
-                types: types,
-                database: database,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+        ...(database === DB.GENERIC && {
+          children: [
+            {
+              MySQL: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToMySQL({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
             },
-          },
-          {
-            PostgreSQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToPostgreSQL({
-                tables: tables,
-                references: relationships,
-                types: types,
-                database: database,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+            {
+              PostgreSQL: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToPostgreSQL({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
             },
-          },
-          {
-            SQLite: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToSQLite({
-                tables: tables,
-                references: relationships,
-                types: types,
-                database: database,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+            {
+              SQLite: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToSQLite({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
             },
-          },
-          {
-            MariaDB: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToMariaDB({
-                tables: tables,
-                references: relationships,
-                types: types,
-                database: database,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+            {
+              MariaDB: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToMariaDB({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
             },
-          },
-          {
-            MSSQL: () => {
-              setModal(MODAL.CODE);
-              const src = jsonToSQLServer({
-                tables: tables,
-                references: relationships,
-                types: types,
-                database: database,
-              });
-              setExportData((prev) => ({
-                ...prev,
-                data: src,
-                extension: "sql",
-              }));
+            {
+              MSSQL: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToSQLServer({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
             },
-          },
-        ],
-        function: () => {},
+          ],
+        }),
+        function: () => {
+          if (database === DB.GENERIC) return;
+          setModal(MODAL.CODE);
+          const src = exportSQL({
+            tables: tables,
+            references: relationships,
+            types: types,
+            database: database,
+          });
+          setExportData((prev) => ({
+            ...prev,
+            data: src,
+            extension: "sql",
+          }));
+        },
       },
       exit: {
         function: () => {
