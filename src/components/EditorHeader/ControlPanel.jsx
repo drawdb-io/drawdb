@@ -740,7 +740,30 @@ export default function ControlPanel({
         shortcut: "Ctrl+I",
       },
       import_from_source: {
-        function: () => setModal(MODAL.IMPORT_SRC),
+        ...(database === DB.GENERIC && {
+          children: [
+            {
+              MySQL: () => setModal(MODAL.IMPORT_SRC),
+            },
+            // {
+            //   PostgreSQL: () => setModal(MODAL.IMPORT_SRC),
+            // },
+            {
+              SQLite: () => setModal(MODAL.IMPORT_SRC),
+            },
+            // {
+            //   MariaDB: () => setModal(MODAL.IMPORT_SRC),
+            // },
+            // {
+            //   MSSQL: () => setModal(MODAL.IMPORT_SRC),
+            // },
+          ],
+        }),
+        function: () => {
+          if (database === DB.GENERIC) return;
+
+          setModal(MODAL.IMPORT_SRC)
+        },
       },
       export_as: {
         children: [

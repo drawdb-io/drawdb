@@ -19,7 +19,6 @@ import {
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
-import { astToDiagram } from "../../../utils/astToDiagram";
 import { getModalTitle, getOkText } from "../../../utils/modalTitles";
 import Rename from "./Rename";
 import Open from "./Open";
@@ -34,6 +33,7 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { json } from "@codemirror/lang-json";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTranslation } from "react-i18next";
+import { importSQL } from "../../../utils/importSQL";
 
 const languageExtension = {
   sql: [sql()],
@@ -136,7 +136,7 @@ export default function Modal({
       return;
     }
 
-    const d = astToDiagram(ast);
+    const d = importSQL(ast);
     if (importSource.overwrite) {
       setTables(d.tables);
       setRelationships(d.relationships);

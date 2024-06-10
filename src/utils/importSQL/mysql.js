@@ -3,7 +3,7 @@ import {
   tableColorStripHeight,
   tableFieldHeight,
   tableHeaderHeight,
-} from "../data/constants";
+} from "../../data/constants";
 
 function buildSQLFromAST(ast) {
   if (ast.type === "binary_expr") {
@@ -41,7 +41,7 @@ function buildSQLFromAST(ast) {
   }
 }
 
-export function astToDiagram(ast) {
+export function fromMySQL(ast) {
   const tables = [];
   const relationships = [];
 
