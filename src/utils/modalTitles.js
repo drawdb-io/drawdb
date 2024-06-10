@@ -7,7 +7,7 @@ export const getModalTitle = (modal) => {
     case MODAL.IMPORT_SRC:
       return i18n.t("import_diagram");
     case MODAL.CODE:
-      return i18n.t("export_source");
+      return i18n.t("export");
     case MODAL.IMG:
       return i18n.t("export_image");
     case MODAL.RENAME:
