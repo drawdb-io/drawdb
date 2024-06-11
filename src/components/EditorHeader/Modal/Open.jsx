@@ -37,6 +37,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
                 <th>{t("name")}</th>
                 <th>{t("last_modified")}</th>
                 <th>{t("size")}</th>
+                <th>{t("type")}</th>
               </tr>
             </thead>
             <tbody>
@@ -63,6 +64,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
                         d.lastModified.toLocaleTimeString()}
                     </td>
                     <td className="py-1">{getDiagramSize(d)}</td>
+                    <td className="py-1">{d.database ?? 'generic'}</td>
                   </tr>
                 );
               })}

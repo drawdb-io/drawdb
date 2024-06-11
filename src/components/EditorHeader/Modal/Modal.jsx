@@ -337,7 +337,7 @@ export default function Modal({
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
       }}
       cancelText={t("cancel")}
-      width={modal === MODAL.NEW ? 740 : 600}
+      width={modal === MODAL.NEW || modal === MODAL.OPEN ? 740 : 600}
       bodyStyle={{ maxHeight: window.innerHeight - 280, overflow: "auto" }}
     >
       {getModalBody()}
