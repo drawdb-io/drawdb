@@ -76,6 +76,7 @@ export default function ControlPanel({
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [prevTitle, setPrevTitle] = useState(title);
   const [showEditName, setShowEditName] = useState(false);
+  const [importDb, setImportDb] = useState("");
   const [exportData, setExportData] = useState({
     data: null,
     filename: `${title}_${new Date().toISOString()}`,
@@ -743,13 +744,19 @@ export default function ControlPanel({
         ...(database === DB.GENERIC && {
           children: [
             {
-              MySQL: () => setModal(MODAL.IMPORT_SRC),
+              MySQL: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.MYSQL);
+              },
             },
             // {
             //   PostgreSQL: () => setModal(MODAL.IMPORT_SRC),
             // },
             {
-              SQLite: () => setModal(MODAL.IMPORT_SRC),
+              SQLite: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.SQLITE);
+              },
             },
             // {
             //   MariaDB: () => setModal(MODAL.IMPORT_SRC),
@@ -762,7 +769,7 @@ export default function ControlPanel({
         function: () => {
           if (database === DB.GENERIC) return;
 
-          setModal(MODAL.IMPORT_SRC)
+          setModal(MODAL.IMPORT_SRC);
         },
       },
       export_as: {
@@ -1260,6 +1267,7 @@ export default function ControlPanel({
         setDiagramId={setDiagramId}
         setModal={setModal}
         prevTitle={prevTitle}
+        importDb={importDb}
       />
       <Sidesheet
         type={sidesheet}

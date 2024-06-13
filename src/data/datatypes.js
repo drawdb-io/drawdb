@@ -366,8 +366,8 @@ export const postgresTypes = {
 };
 
 export const sqliteTypes = {
-  INT: {
-    type: "INT",
+  INTEGER: {
+    type: "INTEGER",
     checkDefault: (field) => {
       return intRegex.test(field.default);
     },
@@ -384,23 +384,6 @@ export const sqliteTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
-  },
-  TEXT: {
-    type: "TEXT",
-    checkDefault: (field) => false,
-    hasCheck: false,
-    isSized: true,
-    hasPrecision: false,
-    defaultSize: 65535,
-    hasQuotes: true,
-  },
-  BLOB: {
-    type: "BLOB",
-    checkDefault: (field) => false,
-    isSized: false,
-    hasCheck: false,
-    hasPrecision: false,
     defaultSize: null,
   },
   NUMERIC: {
@@ -426,6 +409,42 @@ export const sqliteTypes = {
     hasPrecision: false,
     defaultSize: null,
   },
+  VARCHAR: {
+    type: "VARCHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  TEXT: {
+    type: "TEXT",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  BLOB: {
+    type: "BLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    defaultSize: null,
+  },
+
   TIME: {
     type: "TIME",
     checkDefault: (field) => {

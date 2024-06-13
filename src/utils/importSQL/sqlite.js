@@ -1,7 +1,30 @@
 import { Cardinality, DB } from "../../data/constants";
+import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
-export function fromMySQL(ast, diagramDb = DB.GENERIC) {
+export const affinity = new Proxy(
+  {
+    INT: "INTEGER",
+    TINYINT: "INTEGER",
+    SMALLINT: "INTEGER",
+    MEDIUMINT: "INTEGER",
+    BIGINT: "INTEGER",
+    "UNSIGNED BIG INT": "INTEGER",
+    INT2: "INTEGER",
+    INT8: "INTEGER",
+    CHARACTER: "TEXT",
+    NCHARACTER: "TEXT",
+    NVARCHAR: "VARCHAR",
+    DOUBLE: "REAL",
+    FLOAT: "REAL",
+  },
+  {
+    get: (target, prop) => (prop in target ? target[prop] : "BLOB"),
+  },
+);
+
+export function fromSQLite(ast, diagramDb = DB.GENERIC) {
+  console.log(ast);
   const tables = [];
   const relationships = [];
 
@@ -19,7 +42,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           if (d.resource === "column") {
             const field = {};
             field.name = d.column.column;
-            field.type = d.definition.dataType;
+
+            let type = d.definition.dataType;
+            if (!dbToTypes[diagramDb][type]) {
+              type = affinity[type];
+            }
+            field.type = type;
+
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
             }
@@ -153,66 +182,6 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
 
         if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
       }
-    } else if (e.type === "alter") {
-      e.expr.forEach((expr) => {
-        if (
-          expr.action === "add" &&
-          expr.create_definitions.constraint_type === "FOREIGN KEY"
-        ) {
-          const relationship = {};
-          const startTable = e.table[0].table;
-          const startField = expr.create_definitions.definition[0].column;
-          const endTable =
-            expr.create_definitions.reference_definition.table[0].table;
-          const endField =
-            expr.create_definitions.reference_definition.definition[0].column;
-          let updateConstraint = "No action";
-          let deleteConstraint = "No action";
-          expr.create_definitions.reference_definition.on_action.forEach(
-            (c) => {
-              if (c.type === "on update") {
-                updateConstraint = c.value.value;
-                updateConstraint =
-                  updateConstraint[0].toUpperCase() +
-                  updateConstraint.substring(1);
-              } else if (c.type === "on delete") {
-                deleteConstraint = c.value.value;
-                deleteConstraint =
-                  deleteConstraint[0].toUpperCase() +
-                  deleteConstraint.substring(1);
-              }
-            },
-          );
-
-          const startTableId = tables.findIndex((t) => t.name === startTable);
-          if (startTable === -1) return;
-
-          const endTableId = tables.findIndex((t) => t.name === endTable);
-          if (endTableId === -1) return;
-
-          const endFieldId = tables[endTableId].fields.findIndex(
-            (f) => f.name === endField,
-          );
-          if (endField === -1) return;
-
-          const startFieldId = tables[startTableId].fields.findIndex(
-            (f) => f.name === startField,
-          );
-          if (startFieldId === -1) return;
-
-          relationship.name = startTable + "_" + startField + "_fk";
-          relationship.startTableId = startTableId;
-          relationship.startFieldId = startFieldId;
-          relationship.endTableId = endTableId;
-          relationship.endFieldId = endFieldId;
-          relationship.updateConstraint = updateConstraint;
-          relationship.deleteConstraint = deleteConstraint;
-          relationship.cardinality = Cardinality.ONE_TO_ONE;
-          relationships.push(relationship);
-
-          relationships.forEach((r, i) => (r.id = i));
-        }
-      });
     }
   });
 

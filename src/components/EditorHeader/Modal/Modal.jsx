@@ -50,9 +50,10 @@ export default function Modal({
   setDiagramId,
   exportData,
   setExportData,
+  importDb,
 }) {
   const { t } = useTranslation();
-  const { setTables, setRelationships, setDatabase } = useTables();
+  const { setTables, setRelationships, database, setDatabase } = useTables();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -62,7 +63,6 @@ export default function Modal({
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: true,
-    dbms: "MySQL",
   });
   const [importData, setImportData] = useState(null);
   const [error, setError] = useState({
@@ -120,7 +120,9 @@ export default function Modal({
     const parser = new Parser();
     let ast = null;
     try {
-      ast = parser.astify(importSource.src, { database: "MySQL" });
+      ast = parser.astify(importSource.src, {
+        database: database === DB.GENERIC ? importDb : database,
+      });
     } catch (err) {
       setError({
         type: STATUS.ERROR,
@@ -136,7 +138,7 @@ export default function Modal({
       return;
     }
 
-    const d = importSQL(ast);
+    const d = importSQL(ast, database === DB.GENERIC ? importDb : database, database);
     if (importSource.overwrite) {
       setTables(d.tables);
       setRelationships(d.relationships);
@@ -316,7 +318,6 @@ export default function Modal({
         setImportSource({
           src: "",
           overwrite: true,
-          dbms: "MySQL",
         });
       }}
       onCancel={() => {
