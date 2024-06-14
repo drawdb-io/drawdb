@@ -1,6 +1,7 @@
 import { Cardinality, DB } from "../../data/constants";
 import { buildSQLFromAST } from "./shared";
 
+// eslint-disable-next-line no-unused-vars
 export function fromMySQL(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];

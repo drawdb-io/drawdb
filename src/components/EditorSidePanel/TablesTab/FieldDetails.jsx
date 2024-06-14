@@ -27,13 +27,7 @@ export default function FieldDetails({ data, tid, index }) {
         className="my-2"
         placeholder={t("default_value")}
         value={data.default}
-        disabled={
-          data.type === "BLOB" ||
-          data.type === "JSON" ||
-          data.type === "TEXT" ||
-          data.type === "UUID" ||
-          data.increment
-        }
+        disabled={dbToTypes[database][data.type].hasDefault || data.increment}
         onChange={(value) => updateField(tid, index, { default: value })}
         onFocus={(e) => setEditField({ default: e.target.value })}
         onBlur={(e) => {
@@ -236,13 +230,7 @@ export default function FieldDetails({ data, tid, index }) {
         <Checkbox
           value="increment"
           checked={data.increment}
-          disabled={
-            !(
-              data.type === "INT" ||
-              data.type === "BIGINT" ||
-              data.type === "SMALLINT"
-            )
-          }
+          disabled={!dbToTypes[database][data.type].canIncrement}
           onChange={(checkedValues) => {
             setUndoStack((prev) => [
               ...prev,

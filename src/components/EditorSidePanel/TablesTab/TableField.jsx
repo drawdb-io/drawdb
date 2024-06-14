@@ -83,8 +83,7 @@ export default function TableField({ data, tid, index }) {
             ]);
             setRedoStack([]);
             const incr =
-              data.increment &&
-              (value === "INT" || value === "BIGINT" || value === "SMALLINT");
+              data.increment && dbToTypes[database][value].canIncrement;
             if (value === "ENUM" || value === "SET") {
               updateField(tid, index, {
                 type: value,
@@ -101,13 +100,7 @@ export default function TableField({ data, tid, index }) {
                 size: dbToTypes[database][value].defaultSize,
                 increment: incr,
               });
-            } else if (
-              value === "BLOB" ||
-              value === "JSON" ||
-              value === "UUID" ||
-              value === "TEXT" ||
-              incr
-            ) {
+            } else if (!dbToTypes[database][value].hasDefault || incr) {
               updateField(tid, index, {
                 type: value,
                 increment: incr,

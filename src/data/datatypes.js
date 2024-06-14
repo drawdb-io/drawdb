@@ -15,6 +15,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    canIncrement: true,
   },
   SMALLINT: {
     type: "SMALLINT",
@@ -25,6 +26,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    canIncrement: true,
   },
   BIGINT: {
     type: "BIGINT",
@@ -35,6 +37,7 @@ export const defaultTypes = {
     hasCheck: true,
     hasPrecision: false,
     defaultSize: null,
+    canIncrement: true,
   },
   DECIMAL: {
     type: "DECIMAL",
@@ -229,6 +232,7 @@ export const defaultTypes = {
     hasCheck: false,
     hasPrecision: false,
     defaultSize: null,
+    noDefault: true,
   },
   JSON: {
     type: "JSON",
@@ -237,6 +241,7 @@ export const defaultTypes = {
     hasCheck: false,
     hasPrecision: false,
     defaultSize: null,
+    noDefault: true,
   },
   UUID: {
     type: "UUID",
@@ -245,6 +250,7 @@ export const defaultTypes = {
     hasCheck: false,
     hasPrecision: false,
     defaultSize: null,
+    noDefault: true,
   },
   ENUM: {
     type: "ENUM",
@@ -270,6 +276,7 @@ export const defaultTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    noDefault: true,
   },
 };
 
@@ -375,6 +382,7 @@ export const sqliteTypes = {
     isSized: false,
     hasPrecision: false,
     defaultSize: null,
+    canIncrement: true,
   },
   REAL: {
     type: "REAL",
@@ -430,7 +438,8 @@ export const sqliteTypes = {
         return field.default.length - 2 <= field.size;
       }
       return field.default.length <= field.size;
-    },    hasCheck: true,
+    },
+    hasCheck: true,
     isSized: true,
     hasPrecision: false,
     defaultSize: 65535,
@@ -443,6 +452,7 @@ export const sqliteTypes = {
     hasCheck: false,
     hasPrecision: false,
     defaultSize: null,
+    noDefault: true,
   },
 
   TIME: {
