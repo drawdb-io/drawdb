@@ -56,8 +56,9 @@ import {
   useNotes,
   useAreas,
   useEnums,
+  useFullscreen,
 } from "../../hooks";
-import { enterFullscreen } from "../../utils/fullscreen";
+import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
@@ -682,6 +683,7 @@ export default function ControlPanel({
   const save = () => setSaveState(State.SAVING);
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
+  const fullscreen = useFullscreen();
 
   const menu = {
     file: {
@@ -1204,7 +1206,12 @@ export default function ControlPanel({
         shortcut: "Ctrl+Down/Wheel",
       },
       fullscreen: {
-        function: enterFullscreen,
+        state: fullscreen ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: fullscreen ? exitFullscreen : enterFullscreen,
       },
     },
     settings: {
