@@ -2,26 +2,39 @@ import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
-export const affinity = new Proxy(
-  {
-    INT: "INTEGER",
-    TINYINT: "INTEGER",
-    SMALLINT: "INTEGER",
-    MEDIUMINT: "INTEGER",
-    BIGINT: "INTEGER",
-    "UNSIGNED BIG INT": "INTEGER",
-    INT2: "INTEGER",
-    INT8: "INTEGER",
-    CHARACTER: "TEXT",
-    NCHARACTER: "TEXT",
-    NVARCHAR: "VARCHAR",
-    DOUBLE: "REAL",
-    FLOAT: "REAL",
-  },
-  {
-    get: (target, prop) => (prop in target ? target[prop] : "BLOB"),
-  },
-);
+const affinity = {
+  [DB.SQLITE]: new Proxy(
+    {
+      INT: "INTEGER",
+      TINYINT: "INTEGER",
+      SMALLINT: "INTEGER",
+      MEDIUMINT: "INTEGER",
+      BIGINT: "INTEGER",
+      "UNSIGNED BIG INT": "INTEGER",
+      INT2: "INTEGER",
+      INT8: "INTEGER",
+      CHARACTER: "TEXT",
+      NCHARACTER: "TEXT",
+      NVARCHAR: "VARCHAR",
+      DOUBLE: "REAL",
+      FLOAT: "REAL",
+    },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+  [DB.GENERIC]: new Proxy(
+    {
+      INT: "INTEGER",
+      TINYINT: "SMALLINT",
+      MEDIUMINT: "INTEGER",
+      INT2: "INTEGER",
+      INT8: "INTEGER",
+      CHARACTER: "TEXT",
+      NCHARACTER: "TEXT",
+      NVARCHAR: "VARCHAR",
+    },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+};
 
 export function fromSQLite(ast, diagramDb = DB.GENERIC) {
   console.log(ast);
@@ -45,7 +58,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
 
             let type = d.definition.dataType;
             if (!dbToTypes[diagramDb][type]) {
-              type = affinity[type];
+              type = affinity[diagramDb][type];
             }
             field.type = type;
 

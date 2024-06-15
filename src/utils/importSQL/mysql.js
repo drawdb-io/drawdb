@@ -2,10 +2,22 @@ import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
-export const affinity = new Proxy(
-  { INT: "INTEGER" },
-  { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
-);
+const affinity = {
+  [DB.MYSQL]: new Proxy(
+    { INT: "INTEGER" },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+  [DB.GENERIC]: new Proxy(
+    {
+      INT: "INTEGER",
+      TINYINT: "SMALLINT",
+      MEDIUMINT: "INTEGER",
+      BIT: "BOOLEAN",
+      YEAR: "INTEGER",
+    },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+};
 
 export function fromMySQL(ast, diagramDb = DB.GENERIC) {
   const tables = [];
@@ -28,7 +40,7 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
 
             let type = d.definition.dataType;
             if (!dbToTypes[diagramDb][type]) {
-              type = affinity[type];
+              type = affinity[diagramDb][type];
             }
             field.type = type;
 
