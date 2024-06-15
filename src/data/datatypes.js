@@ -178,8 +178,10 @@ export const defaultTypes = {
     type: "BOOLEAN",
     checkDefault: (field) => {
       return (
-        field.default.trim().toLowerCase() === "false" ||
-        field.default.trim().toLowerCase() === "true"
+        field.default.toLowerCase() === "false" ||
+        field.default.toLowerCase() === "true" ||
+        field.default === "0" ||
+        field.default === "1"
       );
     },
     hasCheck: false,
@@ -362,8 +364,10 @@ export const mysqlTypes = {
     type: "BOOLEAN",
     checkDefault: (field) => {
       return (
-        field.default.trim().toLowerCase() === "false" ||
-        field.default.trim().toLowerCase() === "true"
+        field.default.toLowerCase() === "false" ||
+        field.default.toLowerCase() === "true" ||
+        field.default === "0" ||
+        field.default === "1"
       );
     },
     hasCheck: false,
@@ -754,8 +758,10 @@ export const sqliteTypes = {
     type: "BOOLEAN",
     checkDefault: (field) => {
       return (
-        field.default.trim().toLowerCase() === "false" ||
-        field.default.trim().toLowerCase() === "true"
+        field.default.toLowerCase() === "false" ||
+        field.default.toLowerCase() === "true" ||
+        field.default === "0" ||
+        field.default === "1"
       );
     },
     hasCheck: false,
