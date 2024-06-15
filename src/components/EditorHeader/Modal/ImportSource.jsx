@@ -51,10 +51,7 @@ export default function ImportSource({
         }
         limit={1}
       />
-      <div>
-        <div className="text-xs mb-3 mt-1 opacity-80">
-          {t("only_mysql_supported")}
-        </div>
+      <div className="mt-2">
         <Checkbox
           aria-label="overwrite checkbox"
           checked={importData.overwrite}

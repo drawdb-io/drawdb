@@ -14,7 +14,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     canIncrement: true,
   },
   SMALLINT: {
@@ -25,7 +24,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     canIncrement: true,
   },
   BIGINT: {
@@ -36,7 +34,6 @@ export const defaultTypes = {
     isSized: false,
     hasCheck: true,
     hasPrecision: false,
-    defaultSize: null,
     canIncrement: true,
   },
   DECIMAL: {
@@ -47,7 +44,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   NUMERIC: {
     type: "NUMERIC",
@@ -57,7 +53,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   FLOAT: {
     type: "FLOAT",
@@ -67,7 +62,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   DOUBLE: {
     type: "DOUBLE",
@@ -77,7 +71,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   REAL: {
     type: "REAL",
@@ -87,7 +80,6 @@ export const defaultTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
   },
   CHAR: {
     type: "CHAR",
@@ -134,7 +126,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   TIMESTAMP: {
@@ -153,7 +144,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   DATE: {
@@ -164,7 +154,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   DATETIME: {
@@ -183,7 +172,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   BOOLEAN: {
@@ -197,7 +185,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
   },
   BINARY: {
     type: "BINARY",
@@ -231,7 +218,6 @@ export const defaultTypes = {
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
-    defaultSize: null,
     noDefault: true,
   },
   JSON: {
@@ -240,7 +226,6 @@ export const defaultTypes = {
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
-    defaultSize: null,
     noDefault: true,
   },
   UUID: {
@@ -249,7 +234,6 @@ export const defaultTypes = {
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
-    defaultSize: null,
     noDefault: true,
   },
   ENUM: {
@@ -260,7 +244,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   SET: {
@@ -275,7 +258,6 @@ export const defaultTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     noDefault: true,
   },
 };
@@ -381,7 +363,6 @@ export const sqliteTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     canIncrement: true,
   },
   REAL: {
@@ -392,7 +373,6 @@ export const sqliteTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   NUMERIC: {
     type: "NUMERIC",
@@ -402,7 +382,6 @@ export const sqliteTypes = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
-    defaultSize: null,
   },
   BOOLEAN: {
     type: "BOOLEAN",
@@ -415,7 +394,6 @@ export const sqliteTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
   },
   VARCHAR: {
     type: "VARCHAR",
@@ -451,7 +429,6 @@ export const sqliteTypes = {
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
-    defaultSize: null,
     noDefault: true,
   },
 
@@ -463,7 +440,6 @@ export const sqliteTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   TIMESTAMP: {
@@ -482,7 +458,6 @@ export const sqliteTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   DATE: {
@@ -493,7 +468,6 @@ export const sqliteTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
   DATETIME: {
@@ -512,7 +486,6 @@ export const sqliteTypes = {
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
-    defaultSize: null,
     hasQuotes: true,
   },
 };
