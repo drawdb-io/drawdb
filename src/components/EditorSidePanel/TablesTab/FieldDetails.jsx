@@ -27,7 +27,7 @@ export default function FieldDetails({ data, tid, index }) {
         className="my-2"
         placeholder={t("default_value")}
         value={data.default}
-        disabled={dbToTypes[database][data.type].hasDefault || data.increment}
+        disabled={dbToTypes[database][data.type].noDefault || data.increment}
         onChange={(value) => updateField(tid, index, { default: value })}
         onFocus={(e) => setEditField({ default: e.target.value })}
         onBlur={(e) => {

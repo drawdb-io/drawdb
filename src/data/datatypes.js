@@ -111,7 +111,7 @@ export const defaultTypes = {
   },
   TEXT: {
     type: "TEXT",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     hasCheck: false,
     isSized: true,
     hasPrecision: false,
@@ -214,7 +214,7 @@ export const defaultTypes = {
   },
   BLOB: {
     type: "BLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -222,7 +222,7 @@ export const defaultTypes = {
   },
   JSON: {
     type: "JSON",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -230,7 +230,7 @@ export const defaultTypes = {
   },
   UUID: {
     type: "UUID",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -491,7 +491,7 @@ export const mysqlTypes = {
   },
   TINYBLOB: {
     type: "TINYBLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -499,7 +499,7 @@ export const mysqlTypes = {
   },
   BLOB: {
     type: "BLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -507,7 +507,7 @@ export const mysqlTypes = {
   },
   MEDIUMBLOB: {
     type: "MEDIUMBLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -515,7 +515,7 @@ export const mysqlTypes = {
   },
   LONGBLOB: {
     type: "LONGBLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -603,7 +603,7 @@ export const mysqlTypes = {
   },
   GEOMETRY: {
     type: "GEOMETRY",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -611,7 +611,7 @@ export const mysqlTypes = {
   },
   POINT: {
     type: "POINT",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -619,7 +619,7 @@ export const mysqlTypes = {
   },
   LINESTRING: {
     type: "LINESTRING",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -627,7 +627,7 @@ export const mysqlTypes = {
   },
   POLYGON: {
     type: "POLYGON",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -635,7 +635,7 @@ export const mysqlTypes = {
   },
   MULTIPOINT: {
     type: "MULTIPOINT",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -643,7 +643,7 @@ export const mysqlTypes = {
   },
   MULTILINESTRING: {
     type: "MULTILINESTRING",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -651,7 +651,7 @@ export const mysqlTypes = {
   },
   MULTIPOLYGON: {
     type: "MULTIPOLYGON",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -659,7 +659,7 @@ export const mysqlTypes = {
   },
   GEOMETRYCOLLECTION: {
     type: "GEOMETRYCOLLECTION",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -667,7 +667,7 @@ export const mysqlTypes = {
   },
   JSON: {
     type: "JSON",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
@@ -778,12 +778,7 @@ export const sqliteTypes = {
   },
   TEXT: {
     type: "TEXT",
-    checkDefault: (field) => {
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    },
+    checkDefault: (field) => true,
     hasCheck: true,
     isSized: true,
     hasPrecision: false,
@@ -792,7 +787,7 @@ export const sqliteTypes = {
   },
   BLOB: {
     type: "BLOB",
-    checkDefault: (field) => false,
+    checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
