@@ -6,8 +6,8 @@ const binaryRegex = /^[01]+$/;
 
 /* eslint-disable no-unused-vars */
 export const defaultTypes = {
-  INT: {
-    type: "INT",
+  INTEGER: {
+    type: "INTEGER",
     checkDefault: (field) => {
       return intRegex.test(field.default);
     },
@@ -263,49 +263,416 @@ export const defaultTypes = {
 };
 
 export const mysqlTypes = {
-  TINYINT: { type: "TINYINT", checkDefault: (field) => {} },
-  SMALLINT: { type: "SMALLINT", checkDefault: (field) => {} },
-  MEDIUMINT: { type: "MEDIUMINT", checkDefault: (field) => {} },
-  INT: { type: "INT", checkDefault: (field) => {} },
-  INTEGER: { type: "INTEGER", checkDefault: (field) => {} },
-  BIGINT: { type: "BIGINT", checkDefault: (field) => {} },
-  DECIMAL: { type: "DECIMAL", checkDefault: (field) => {} },
-  NUMERIC: { type: "NUMERIC", checkDefault: (field) => {} },
-  FLOAT: { type: "FLOAT", checkDefault: (field) => {} },
-  DOUBLE: { type: "DOUBLE", checkDefault: (field) => {} },
-  BIT: { type: "BIT", checkDefault: (field) => {} },
-  BOOLEAN: { type: "BOOLEAN", checkDefault: (field) => {} },
-  DATE: { type: "DATE", checkDefault: (field) => {} },
-  DATETIME: { type: "DATETIME", checkDefault: (field) => {} },
-  TIMESTAMP: { type: "TIMESTAMP", checkDefault: (field) => {} },
-  TIME: { type: "TIME", checkDefault: (field) => {} },
-  YEAR: { type: "YEAR", checkDefault: (field) => {} },
-  CHAR: { type: "CHAR", checkDefault: (field) => {} },
-  VARCHAR: { type: "VARCHAR", checkDefault: (field) => {} },
-  BINARY: { type: "BINARY", checkDefault: (field) => {} },
-  VARBINARY: { type: "VARBINARY", checkDefault: (field) => {} },
-  TINYBLOB: { type: "TINYBLOB", checkDefault: (field) => {} },
-  BLOB: { type: "BLOB", checkDefault: (field) => {} },
-  MEDIUMBLOB: { type: "MEDIUMBLOB", checkDefault: (field) => {} },
-  LONGBLOB: { type: "LONGBLOB", checkDefault: (field) => {} },
-  TINYTEXT: { type: "TINYTEXT", checkDefault: (field) => {} },
-  TEXT: { type: "TEXT", checkDefault: (field) => {} },
-  MEDIUMTEXT: { type: "MEDIUMTEXT", checkDefault: (field) => {} },
-  LONGTEXT: { type: "LONGTEXT", checkDefault: (field) => {} },
-  ENUM: { type: "ENUM", checkDefault: (field) => {} },
-  SET: { type: "SET", checkDefault: (field) => {} },
-  GEOMETRY: { type: "GEOMETRY", checkDefault: (field) => {} },
-  POINT: { type: "POINT", checkDefault: (field) => {} },
-  LINESTRING: { type: "LINESTRING", checkDefault: (field) => {} },
-  POLYGON: { type: "POLYGON", checkDefault: (field) => {} },
-  MULTIPOINT: { type: "MULTIPOINT", checkDefault: (field) => {} },
-  MULTILINESTRING: { type: "MULTILINESTRING", checkDefault: (field) => {} },
-  MULTIPOLYGON: { type: "MULTIPOLYGON", checkDefault: (field) => {} },
+  TINYINT: {
+    type: "TINYINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  SMALLINT: {
+    type: "SMALLINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  MEDIUMINT: {
+    type: "MEDIUMINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  INTEGER: {
+    type: "INTEGER",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  BIGINT: {
+    type: "BIGINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  DECIMAL: {
+    type: "DECIMAL",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  NUMERIC: {
+    type: "NUMERIC",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  FLOAT: {
+    type: "FLOAT",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  DOUBLE: {
+    type: "DOUBLE",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  BIT: {
+    type: "BIT",
+    checkDefault: (field) => {
+      return field.default === "1" || field.default === "0";
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  BOOLEAN: {
+    type: "BOOLEAN",
+    checkDefault: (field) => {
+      return (
+        field.default.trim().toLowerCase() === "false" ||
+        field.default.trim().toLowerCase() === "true"
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+  },
+  TIME: {
+    type: "TIME",
+    checkDefault: (field) => {
+      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  TIMESTAMP: {
+    type: "TIMESTAMP",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const content = field.default.split(" ");
+      const date = content[0].split("-");
+      return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  DATETIME: {
+    type: "DATETIME",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  YEAR: {
+    type: "YEAR",
+    checkDefault: (field) => {
+      return /^\d{4}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+  },
+  CHAR: {
+    type: "CHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  VARCHAR: {
+    type: "VARCHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  BINARY: {
+    type: "BINARY",
+    checkDefault: (field) => {
+      return (
+        field.default.length <= field.size && binaryRegex.test(field.default)
+      );
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  VARBINARY: {
+    type: "VARBINARY",
+    checkDefault: (field) => {
+      return (
+        field.default.length <= field.size && binaryRegex.test(field.default)
+      );
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  TINYBLOB: {
+    type: "TINYBLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  BLOB: {
+    type: "BLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  MEDIUMBLOB: {
+    type: "MEDIUMBLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  LONGBLOB: {
+    type: "LONGBLOB",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  TINYTEXT: {
+    type: "TINYTEXT",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  TEXT: {
+    type: "TEXT",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  MEDIUMTEXT: {
+    type: "MEDIUMTEXT",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  LONGTEXT: {
+    type: "LONGTEXT",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  ENUM: {
+    type: "ENUM",
+    checkDefault: (field) => {
+      return field.values.includes(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  SET: {
+    type: "SET",
+    checkDefault: (field) => {
+      const defaultValues = field.default.split(",");
+      for (let i = 0; i < defaultValues.length; i++) {
+        if (!field.values.includes(defaultValues[i].trim())) return false;
+      }
+      return true;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  GEOMETRY: {
+    type: "GEOMETRY",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  POINT: {
+    type: "POINT",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  LINESTRING: {
+    type: "LINESTRING",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  POLYGON: {
+    type: "POLYGON",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  MULTIPOINT: {
+    type: "MULTIPOINT",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  MULTILINESTRING: {
+    type: "MULTILINESTRING",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  MULTIPOLYGON: {
+    type: "MULTIPOLYGON",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
   GEOMETRYCOLLECTION: {
     type: "GEOMETRYCOLLECTION",
-    checkDefault: (field) => {},
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
   },
-  JSON: { type: "JSON", checkDefault: (field) => {} },
+  JSON: {
+    type: "JSON",
+    checkDefault: (field) => false,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
 };
 
 export const postgresTypes = {
@@ -431,7 +798,6 @@ export const sqliteTypes = {
     hasPrecision: false,
     noDefault: true,
   },
-
   TIME: {
     type: "TIME",
     checkDefault: (field) => {
