@@ -325,7 +325,7 @@ export default function Table(props) {
           ) : (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
-              <span>{fieldData.type}</span>
+              <span>{fieldData.type.substr(0, 12)}</span>
             </div>
           )}
         </div>
