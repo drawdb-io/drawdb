@@ -35,7 +35,7 @@ export default function TablesContextProvider({ children }) {
           fields: [
             {
               name: "id",
-              type: "INT",
+              type: "INTEGER",
               default: "",
               check: "",
               primary: true,

@@ -901,7 +901,7 @@ export const mariadbTypes = {
 
 export const mssqlTypes = {
   BIGINT: { type: "", checkDefault: (field) => {} },
-  INT: { type: "", checkDefault: (field) => {} },
+  INTEGER: { type: "", checkDefault: (field) => {} },
   SMALLINT: { type: "", checkDefault: (field) => {} },
   TINYINT: { type: "", checkDefault: (field) => {} },
   BIT: { type: "", checkDefault: (field) => {} },

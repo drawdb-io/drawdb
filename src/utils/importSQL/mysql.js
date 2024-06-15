@@ -1,7 +1,12 @@
 import { Cardinality, DB } from "../../data/constants";
+import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
-// eslint-disable-next-line no-unused-vars
+export const affinity = new Proxy(
+  { INT: "INTEGER" },
+  { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+);
+
 export function fromMySQL(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
@@ -20,7 +25,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           if (d.resource === "column") {
             const field = {};
             field.name = d.column.column;
-            field.type = d.definition.dataType;
+
+            let type = d.definition.dataType;
+            if (!dbToTypes[diagramDb][type]) {
+              type = affinity[type];
+            }
+            field.type = type;
+
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
             }
