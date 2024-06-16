@@ -247,7 +247,7 @@ export default function Todo() {
                       <TextArea
                         placeholder={t("details")}
                         onChange={(v) => updateTask(i, { details: v })}
-                        value={t.details}
+                        value={task.details}
                         onBlur={() => setSaveState(State.SAVING)}
                       ></TextArea>
                     </Col>
