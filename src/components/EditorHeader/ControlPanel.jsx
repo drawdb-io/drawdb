@@ -758,9 +758,12 @@ export default function ControlPanel({
                 setImportDb(DB.SQLITE);
               },
             },
-            // {
-            //   MariaDB: () => setModal(MODAL.IMPORT_SRC),
-            // },
+            {
+              MariaDB: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.MARIADB);
+              },
+            },
             // {
             //   MSSQL: () => setModal(MODAL.IMPORT_SRC),
             // },

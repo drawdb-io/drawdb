@@ -857,49 +857,6 @@ export const sqliteTypes = {
   },
 };
 
-export const mariadbTypes = {
-  TINYINT: { type: " ", checkDefault: (field) => {} },
-  SMALLINT: { type: "", checkDefault: (field) => {} },
-  MEDIUMINT: { type: "", checkDefault: (field) => {} },
-  INT: { type: "", checkDefault: (field) => {} },
-  INTEGER: { type: "", checkDefault: (field) => {} },
-  BIGINT: { type: "", checkDefault: (field) => {} },
-  DECIMAL: { type: "", checkDefault: (field) => {} },
-  NUMERIC: { type: "", checkDefault: (field) => {} },
-  FLOAT: { type: "", checkDefault: (field) => {} },
-  DOUBLE: { type: "", checkDefault: (field) => {} },
-  BIT: { type: "", checkDefault: (field) => {} },
-  BOOLEAN: { type: "", checkDefault: (field) => {} },
-  DATE: { type: "", checkDefault: (field) => {} },
-  DATETIME: { type: "", checkDefault: (field) => {} },
-  TIMESTAMP: { type: "", checkDefault: (field) => {} },
-  TIME: { type: "", checkDefault: (field) => {} },
-  YEAR: { type: "", checkDefault: (field) => {} },
-  CHAR: { type: "", checkDefault: (field) => {} },
-  VARCHAR: { type: "", checkDefault: (field) => {} },
-  BINARY: { type: "", checkDefault: (field) => {} },
-  VARBINARY: { type: "", checkDefault: (field) => {} },
-  TINYBLOB: { type: "", checkDefault: (field) => {} },
-  BLOB: { type: "", checkDefault: (field) => {} },
-  MEDIUMBLOB: { type: "", checkDefault: (field) => {} },
-  LONGBLOB: { type: "", checkDefault: (field) => {} },
-  TINYTEXT: { type: "", checkDefault: (field) => {} },
-  TEXT: { type: "", checkDefault: (field) => {} },
-  MEDIUMTEXT: { type: "", checkDefault: (field) => {} },
-  LONGTEXT: { type: "", checkDefault: (field) => {} },
-  ENUM: { type: "", checkDefault: (field) => {} },
-  SET: { type: "", checkDefault: (field) => {} },
-  GEOMETRY: { type: "", checkDefault: (field) => {} },
-  POINT: { type: "", checkDefault: (field) => {} },
-  LINESTRING: { type: "", checkDefault: (field) => {} },
-  POLYGON: { type: "", checkDefault: (field) => {} },
-  MULTIPOINT: { type: "", checkDefault: (field) => {} },
-  MULTILINESTRING: { type: "", checkDefault: (field) => {} },
-  MULTIPOLYGON: { type: "", checkDefault: (field) => {} },
-  GEOMETRYCOLLECTION: { type: "", checkDefault: (field) => {} },
-  JSON: { type: "", checkDefault: (field) => {} },
-};
-
 export const mssqlTypes = {
   BIGINT: { type: "", checkDefault: (field) => {} },
   INTEGER: { type: "", checkDefault: (field) => {} },
@@ -942,7 +899,7 @@ const dbToTypesBase = {
   postgresql: postgresTypes,
   sqlite: sqliteTypes,
   mssql: mssqlTypes,
-  mariadb: mariadbTypes,
+  mariadb: mysqlTypes,
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {

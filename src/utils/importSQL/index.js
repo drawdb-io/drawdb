@@ -4,6 +4,7 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
 } from "../../data/constants";
+import { fromMariaDB } from "./mariadb";
 import { fromMySQL } from "./mysql";
 import { fromSQLite } from "./sqlite";
 
@@ -20,7 +21,7 @@ export function importSQL(ast, toDb = DB.MYSQL, diagramDb = DB.GENERIC) {
       diagram = { tables: [], relationships: [] };
       break;
     case DB.MARIADB:
-      diagram = { tables: [], relationships: [] };
+      diagram = fromMariaDB(ast, diagramDb);
       break;
     case DB.MSSQL:
       diagram = { tables: [], relationships: [] };
