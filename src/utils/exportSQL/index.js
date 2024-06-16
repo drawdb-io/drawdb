@@ -1,5 +1,6 @@
 import { DB } from "../../data/constants";
 import { toMariaDB } from "./mariadb";
+import { toMySQL } from "./mysql";
 import { toSqlite } from "./sqlite";
 
 export function exportSQL(diagram) {
@@ -7,7 +8,7 @@ export function exportSQL(diagram) {
     case DB.SQLITE:
       return toSqlite(diagram);
     case DB.MYSQL:
-      return "hi from mysql";
+      return toMySQL(diagram);
     case DB.POSTGRES:
       return "hi from postgres";
     case DB.MARIADB:
