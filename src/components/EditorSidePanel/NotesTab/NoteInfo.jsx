@@ -98,7 +98,7 @@ export default function NoteInfo({ data, nid }) {
                     <button
                       key={c}
                       style={{ backgroundColor: c }}
-                      className="p-3 rounded-full mx-1"
+                      className="w-10 h-10 p-3 rounded-full mx-1"
                       onClick={() => {
                         setUndoStack((prev) => [
                           ...prev,
