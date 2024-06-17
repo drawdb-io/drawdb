@@ -15,7 +15,7 @@ export default function AreasTab() {
       <div className="flex gap-2">
         <SearchBar />
         <div>
-          <Button icon={<IconPlus />} block onClick={addArea}>
+          <Button icon={<IconPlus />} block onClick={() => addArea()}>
             {t("add_area")}
           </Button>
         </div>
