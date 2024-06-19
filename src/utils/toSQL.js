@@ -181,7 +181,7 @@ export function jsonToMySQL(obj) {
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` COMMENT '${field.comment}'` : ''}`,
+              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -190,16 +190,16 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ''};\n${
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${
           table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`,
-              )}`
+            ? `\n${table.indices
+                .map(
+                  (i) =>
+                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name}\`\nON \`${table.name}\` (${i.fields
+                      .map((f) => `\`${f}\``)
+                      .join(", ")});`,
+                )
+                .join("\n")}`
             : ""
         }`,
     )
@@ -282,14 +282,16 @@ export function jsonToPostgreSQL(obj) {
             : ""
         }\n);\n${
           table.indices.length > 0
-            ? `${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`,
-              )}`
+            ? `${table.indices
+                .map(
+                  (i) =>
+                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
+                      i.name
+                    }"\nON "${table.name}" (${i.fields
+                      .map((f) => `"${f}"`)
+                      .join(", ")});`,
+                )
+                .join("\n")}`
             : ""
         }`,
     )
@@ -433,14 +435,16 @@ export function jsonToMariaDB(obj) {
             : ""
         }\n);${
           table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`,
-              )}`
+            ? `\n${table.indices
+                .map(
+                  (i) =>
+                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
+                      i.name
+                    }\`\nON \`${table.name}\` (${i.fields
+                      .map((f) => `\`${f}\``)
+                      .join(", ")});`,
+                )
+                .join("\n")}`
             : ""
         }`,
     )
