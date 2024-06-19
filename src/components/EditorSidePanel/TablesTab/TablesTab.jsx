@@ -46,10 +46,17 @@ export default function TablesTab() {
           {tables.map((t) => (
             <div id={`scroll_table_${t.id}`} key={t.id}>
               <Collapse.Panel
+                className="relative"
                 header={
-                  <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                    {t.name}
-                  </div>
+                  <>
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {t.name}
+                    </div>
+                    <div
+                      className="w-1 h-full absolute top-0 left-0 bottom-0"
+                      style={{ backgroundColor: t.color }}
+                    />
+                  </>
                 }
                 itemKey={`${t.id}`}
               >
