@@ -6,6 +6,7 @@ import {
 } from "../../data/constants";
 import { fromMariaDB } from "./mariadb";
 import { fromMySQL } from "./mysql";
+import { fromPostgres } from "./postgres";
 import { fromSQLite } from "./sqlite";
 
 export function importSQL(ast, toDb = DB.MYSQL, diagramDb = DB.GENERIC) {
@@ -18,7 +19,7 @@ export function importSQL(ast, toDb = DB.MYSQL, diagramDb = DB.GENERIC) {
       diagram = fromMySQL(ast, diagramDb);
       break;
     case DB.POSTGRES:
-      diagram = { tables: [], relationships: [] };
+      diagram = fromPostgres(ast, diagramDb);
       break;
     case DB.MARIADB:
       diagram = fromMariaDB(ast, diagramDb);

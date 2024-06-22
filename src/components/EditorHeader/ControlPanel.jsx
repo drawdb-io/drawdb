@@ -749,9 +749,12 @@ export default function ControlPanel({
                 setImportDb(DB.MYSQL);
               },
             },
-            // {
-            //   PostgreSQL: () => setModal(MODAL.IMPORT_SRC),
-            // },
+            {
+              PostgreSQL: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.POSTGRES);
+              },
+            },
             {
               SQLite: () => {
                 setModal(MODAL.IMPORT_SRC);
