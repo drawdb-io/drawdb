@@ -151,7 +151,9 @@ export function jsonToMySQL(obj) {
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
+                field.default !== ""
+                  ? ` DEFAULT ${parseDefault(field, obj.database)}`
+                  : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -250,7 +252,9 @@ export function jsonToPostgreSQL(obj) {
               }" ${getTypeString(field, obj.database, "postgres")}${
                 field.notNull ? " NOT NULL" : ""
               }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
+                field.default !== ""
+                  ? ` DEFAULT ${parseDefault(field, obj.database)}`
+                  : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -397,7 +401,9 @@ export function jsonToMariaDB(obj) {
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
+                field.default !== ""
+                  ? ` DEFAULT ${parseDefault(field, obj.database)}`
+                  : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
@@ -471,7 +477,9 @@ export function jsonToSQLServer(obj) {
               }${field.increment ? " IDENTITY" : ""}${
                 field.unique ? " UNIQUE" : ""
               }${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
+                field.default !== ""
+                  ? ` DEFAULT ${parseDefault(field, obj.database)}`
+                  : ""
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck

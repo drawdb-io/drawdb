@@ -1,6 +1,6 @@
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { Tab } from "../../data/constants";
-import { useLayout, useSelect } from "../../hooks";
+import { DB, Tab } from "../../data/constants";
+import { useLayout, useSelect, useTables } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
 import TypesTab from "./TypesTab/TypesTab";
 import Issues from "./Issues";
@@ -8,23 +8,34 @@ import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { database } = useTables();
   const { t } = useTranslation();
 
-  const tabList = [
-    { tab: t("tables"), itemKey: Tab.TABLES, component: <TablesTab /> },
-    {
-      tab: t("relationships"),
-      itemKey: Tab.RELATIONSHIPS,
-      component: <RelationshipsTab />,
-    },
-    { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
-    { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
-    { tab: t("types"), itemKey: Tab.TYPES, component: <TypesTab /> },
-  ];
+  const tabList = useMemo(() => {
+    const tabs = [
+      { tab: t("tables"), itemKey: Tab.TABLES, component: <TablesTab /> },
+      {
+        tab: t("relationships"),
+        itemKey: Tab.RELATIONSHIPS,
+        component: <RelationshipsTab />,
+      },
+      { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
+      { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
+    ];
+    if (database === DB.GENERIC || database === DB.POSTGRES) {
+      tabs.push({
+        tab: t("types"),
+        itemKey: Tab.TYPES,
+        component: <TypesTab />,
+      });
+    }
+    return tabs;
+  }, [t, database]);
 
   return (
     <div className="flex h-full">

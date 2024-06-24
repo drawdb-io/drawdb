@@ -6,8 +6,8 @@ const binaryRegex = /^[01]+$/;
 
 /* eslint-disable no-unused-vars */
 export const defaultTypes = {
-  INTEGER: {
-    type: "INTEGER",
+  INT: {
+    type: "INT",
     checkDefault: (field) => {
       return intRegex.test(field.default);
     },

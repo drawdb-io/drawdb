@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Action, ObjectType, defaultBlue } from "../data/constants";
+import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
 import useTransform from "../hooks/useTransform";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
@@ -35,7 +35,7 @@ export default function TablesContextProvider({ children }) {
           fields: [
             {
               name: "id",
-              type: "INTEGER",
+              type: database === DB.GENERIC ? "INT" : "INTEGER",
               default: "",
               check: "",
               primary: true,
