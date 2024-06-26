@@ -22,7 +22,7 @@ export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
   const {
     tableData,
-    onMouseDown,
+    onPointerDown,
     setHoveredTable,
     handleGripField,
     setLinkingLine,
@@ -67,7 +67,7 @@ export default function Table(props) {
         width={settings.tableWidth}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
       >
         <div
           onDoubleClick={openEditor}
@@ -266,14 +266,18 @@ export default function Table(props) {
             ? ""
             : "border-b border-gray-400"
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
-        onMouseEnter={() => {
+        onPointerEnter={(e) => {
+          if (!e.isPrimary) return;
+
           setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
             field: index,
           });
         }}
-        onMouseLeave={() => {
+        onPointerLeave={(e) => {
+          if (!e.isPrimary) return;
+
           setHoveredField(-1);
         }}
       >
@@ -284,7 +288,9 @@ export default function Table(props) {
         >
           <button
             className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
-            onMouseDown={() => {
+            onPointerDown={(e) => {
+              if (!e.isPrimary) return;
+
               handleGripField(index);
               setLinkingLine((prev) => ({
                 ...prev,
