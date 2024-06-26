@@ -68,14 +68,21 @@ export default function Canvas() {
     y: 0,
     width: 0,
     height: 0,
-    mouseX: 0,
-    mouseY: 0,
+    pointerX: 0,
+    pointerY: 0,
   });
   const [cursor, setCursor] = useState("default");
 
   const canvas = useRef(null);
 
-  const handleMouseDownOnElement = (e, id, type) => {
+  /**
+   * @param {PointerEvent} e
+   * @param {*} id
+   * @param {ObjectType[keyof ObjectType]} type
+   */
+  const handlePointerDownOnElement = (e, id, type) => {
+    if (!e.isPrimary) return;
+
     const { clientX, clientY } = e;
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
@@ -122,7 +129,12 @@ export default function Canvas() {
     }));
   };
 
-  const handleMouseMove = (e) => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerMove = (e) => {
+    if (!e.isPrimary) return;
+
     if (linking) {
       const rect = canvas.current.getBoundingClientRect();
       setLinkingLine({
@@ -164,34 +176,39 @@ export default function Canvas() {
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
       let newDims = { ...initCoords };
-      delete newDims.mouseX;
-      delete newDims.mouseY;
-      const mouseX = e.clientX / transform.zoom;
-      const mouseY = e.clientY / transform.zoom;
+      delete newDims.pointerX;
+      delete newDims.pointerY;
+      const pointerX = e.clientX / transform.zoom;
+      const pointerY = e.clientY / transform.zoom;
       setPanning({ isPanning: false, x: 0, y: 0 });
       if (areaResize.dir === "br") {
-        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
+        newDims.width = initCoords.width + (pointerX - initCoords.pointerX);
+        newDims.height = initCoords.height + (pointerY - initCoords.pointerY);
       } else if (areaResize.dir === "tl") {
-        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
-        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
-        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
+        newDims.x = initCoords.x + (pointerX - initCoords.pointerX);
+        newDims.y = initCoords.y + (pointerY - initCoords.pointerY);
+        newDims.width = initCoords.width - (pointerX - initCoords.pointerX);
+        newDims.height = initCoords.height - (pointerY - initCoords.pointerY);
       } else if (areaResize.dir === "tr") {
-        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
-        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
+        newDims.y = initCoords.y + (pointerY - initCoords.pointerY);
+        newDims.width = initCoords.width + (pointerX - initCoords.pointerX);
+        newDims.height = initCoords.height - (pointerY - initCoords.pointerY);
       } else if (areaResize.dir === "bl") {
-        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
-        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
+        newDims.x = initCoords.x + (pointerX - initCoords.pointerX);
+        newDims.width = initCoords.width - (pointerX - initCoords.pointerX);
+        newDims.height = initCoords.height + (pointerY - initCoords.pointerY);
       }
 
       updateArea(areaResize.id, { ...newDims });
     }
   };
 
-  const handleMouseDown = (e) => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerDown = (e) => {
+    if (!e.isPrimary) return;
+
     // don't pan if the sidesheet for editing a table is open
     if (
       selectedElement.element === ObjectType.TABLE &&
@@ -268,7 +285,12 @@ export default function Canvas() {
     }
   };
 
-  const handleMouseUp = () => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerUp = (e) => {
+    if (!e.isPrimary) return;
+
     if (coordsDidUpdate(dragging.element)) {
       const info = getMovedElementDetails();
       setUndoStack((prev) => [
@@ -344,8 +366,8 @@ export default function Canvas() {
       y: 0,
       width: 0,
       height: 0,
-      mouseX: 0,
-      mouseY: 0,
+      pointerX: 0,
+      pointerY: 0,
     });
   };
 
@@ -411,12 +433,12 @@ export default function Canvas() {
   const theme = localStorage.getItem("theme");
 
   return (
-    <div className="flex-grow h-full" id="canvas">
+    <div className="flex-grow h-full touch-none" id="canvas">
       <div ref={canvas} className="w-full h-full">
         <svg
-          onMouseMove={handleMouseMove}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          onPointerMove={handlePointerMove}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
           className="w-full h-full"
           style={{
             cursor: cursor,
@@ -464,8 +486,8 @@ export default function Canvas() {
               <Area
                 key={a.id}
                 data={a}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, a.id, ObjectType.AREA)
+                onPointerDown={(e) =>
+                  handlePointerDownOnElement(e, a.id, ObjectType.AREA)
                 }
                 setResize={setAreaResize}
                 setInitCoords={setInitCoords}
@@ -481,8 +503,8 @@ export default function Canvas() {
                 setHoveredTable={setHoveredTable}
                 handleGripField={handleGripField}
                 setLinkingLine={setLinkingLine}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, table.id, ObjectType.TABLE)
+                onPointerDown={(e) =>
+                  handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
                 }
               />
             ))}
@@ -497,8 +519,8 @@ export default function Canvas() {
               <Note
                 key={n.id}
                 data={n}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, n.id, ObjectType.NOTE)
+                onPointerDown={(e) =>
+                  handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
                 }
               />
             ))}

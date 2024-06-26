@@ -349,9 +349,9 @@ export default function WorkSpace() {
       />
       <div
         className="flex h-full overflow-y-auto"
-        onMouseUp={() => setResize(false)}
-        onMouseLeave={() => setResize(false)}
-        onMouseMove={handleResize}
+        onPointerUp={(e) => e.isPrimary && setResize(false)}
+        onPointerLeave={(e) => e.isPrimary && setResize(false)}
+        onPointerMove={(e) => e.isPrimary && handleResize(e)}
       >
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />

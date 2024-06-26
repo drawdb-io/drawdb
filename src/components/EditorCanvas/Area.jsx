@@ -20,7 +20,7 @@ import {
 import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
 
-export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
+export default function Area({ data, onPointerDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
   const { settings } = useSettings();
@@ -35,8 +35,8 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
       y: data.y,
       width: data.width,
       height: data.height,
-      mouseX: e.clientX / transform.zoom,
-      mouseY: e.clientY / transform.zoom,
+      pointerX: e.clientX / transform.zoom,
+      pointerY: e.clientY / transform.zoom,
     });
   };
 
@@ -85,8 +85,8 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
 
   return (
     <g
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={(e) => e.isPrimary && setHovered(true)}
+      onPointerLeave={(e) => e.isPrimary &&setHovered(false)}
     >
       <foreignObject
         key={data.id}
@@ -94,7 +94,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
         y={data.y}
         width={data.width > 0 ? data.width : 0}
         height={data.height > 0 ? data.height : 0}
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
       >
         <div
           className={`border-2 ${
@@ -149,7 +149,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nwse-resize"
-            onMouseDown={(e) => handleResize(e, "tl")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tl")}
           />
           <circle
             cx={data.x + data.width}
@@ -159,7 +159,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nesw-resize"
-            onMouseDown={(e) => handleResize(e, "tr")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tr")}
           />
           <circle
             cx={data.x}
@@ -169,7 +169,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nesw-resize"
-            onMouseDown={(e) => handleResize(e, "bl")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "bl")}
           />
           <circle
             cx={data.x + data.width}
@@ -179,7 +179,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nwse-resize"
-            onMouseDown={(e) => handleResize(e, "br")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "br")}
           />
         </>
       )}
