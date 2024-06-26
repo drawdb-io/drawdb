@@ -139,8 +139,8 @@ export default function Canvas() {
       const rect = canvas.current.getBoundingClientRect();
       setLinkingLine({
         ...linkingLine,
-        endX: (e.clientX - rect.left - transform.pan?.x) / transform.zoom,
-        endY: (e.clientY - rect.top - transform.pan?.y) / transform.zoom,
+        endX: (e.clientX - rect.left - transform.pan.x) / transform.zoom,
+        endY: (e.clientY - rect.top - transform.pan.y) / transform.zoom,
       });
     } else if (
       panning.isPanning &&
@@ -154,7 +154,7 @@ export default function Canvas() {
       const dy = e.clientY - panning.dy;
       setTransform((prev) => ({
         ...prev,
-        pan: { x: prev.pan?.x + dx, y: prev.pan?.y + dy },
+        pan: { x: prev.pan.x + dx, y: prev.pan.y + dy },
       }));
       setPanning((prev) => ({ ...prev, dx: e.clientX, dy: e.clientY }));
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
@@ -258,7 +258,7 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(transform.pan?.x === panning.x && transform.pan?.y === panning.y);
+    !(transform.pan.x === panning.x && transform.pan.y === panning.y);
 
   const getMovedElementDetails = () => {
     switch (dragging.element) {
@@ -477,7 +477,7 @@ export default function Canvas() {
           )}
           <g
             style={{
-              transform: `translate(${transform.pan?.x}px, ${transform.pan?.y}px) scale(${transform.zoom})`,
+              transform: `translate(${transform.pan.x}px, ${transform.pan.y}px) scale(${transform.zoom})`,
               transformOrigin: "top left",
             }}
             id="diagram"
