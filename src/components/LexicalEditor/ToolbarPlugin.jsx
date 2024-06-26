@@ -89,7 +89,6 @@ function positionEditorElement(editor, rect) {
 function FloatingLinkEditor({ editor }) {
   const editorRef = useRef(null);
   const inputRef = useRef(null);
-  const mouseDownRef = useRef(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [isEditMode, setEditMode] = useState(false);
   const [lastSelection, setLastSelection] = useState(null);
@@ -134,9 +133,7 @@ function FloatingLinkEditor({ editor }) {
         rect = domRange.getBoundingClientRect();
       }
 
-      if (!mouseDownRef.current) {
-        positionEditorElement(editorElem, rect);
-      }
+      positionEditorElement(editorElem, rect);
       setLastSelection(selection);
     } else if (!activeElement || activeElement.className !== "link-input") {
       positionEditorElement(editorElem, null);
