@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /*
+   * Workaround to allow proper bottom positioning for fixed
+   * elements in mobile browsers with collapsing url bars:
+   * https://stackoverflow.com/a/17555766/1137077
+   */
+  :root,
+  html,
+  body {
+    @apply h-full min-h-full;
+  }
+  #root {
+    @apply h-full min-h-full;
+  }
+}
+
 .semi-form-vertical .semi-form-field {
   margin: 0;
   padding-top: 8px !important;

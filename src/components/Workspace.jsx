@@ -338,7 +338,7 @@ export default function WorkSpace() {
   }, [load]);
 
   return (
-    <div className="h-[100vh] flex flex-col overflow-hidden theme">
+    <div className="h-full flex flex-col overflow-hidden theme">
       <ControlPanel
         diagramId={id}
         setDiagramId={setId}
