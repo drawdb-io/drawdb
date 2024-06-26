@@ -477,8 +477,8 @@ export default function Canvas() {
           )}
           <g
             style={{
-              transform: `translate(${transform.pan?.x}px, ${transform.pan?.y}px) scale(${transform.zoom})`,
-              transformOrigin: "top left",
+              transform: `scale(${transform.zoom}) translate(${transform.pan?.x}px, ${transform.pan?.y}px)`,
+              transformOrigin: "center center",
             }}
             id="diagram"
           >
