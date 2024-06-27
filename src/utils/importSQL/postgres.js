@@ -20,6 +20,7 @@ const affinity = {
 export function fromPostgres(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
+  const types = [];
 
   ast.forEach((e) => {
     if (e.type === "create") {
@@ -241,5 +242,5 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
 
   relationships.forEach((r, i) => (r.id = i));
 
-  return { tables, relationships };
+  return { tables, relationships, types };
 }

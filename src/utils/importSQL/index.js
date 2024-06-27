@@ -10,7 +10,7 @@ import { fromPostgres } from "./postgres";
 import { fromSQLite } from "./sqlite";
 
 export function importSQL(ast, toDb = DB.MYSQL, diagramDb = DB.GENERIC) {
-  let diagram = { tables: [], relationships: [] };
+  let diagram;
   switch (toDb) {
     case DB.SQLITE:
       diagram = fromSQLite(ast, diagramDb);

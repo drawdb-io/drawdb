@@ -355,7 +355,7 @@ export default function WorkSpace() {
         okButtonProps={{ disabled: selectedDb === "" }}
       >
         <div className="grid grid-cols-3 gap-4 place-content-center">
-          {databases.map((x) => (
+          {Object.values(databases).map((x) => (
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}

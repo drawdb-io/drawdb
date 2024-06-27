@@ -138,14 +138,18 @@ export default function Modal({
       return;
     }
 
-    const d = importSQL(ast, database === DB.GENERIC ? importDb : database, database);
+    const d = importSQL(
+      ast,
+      database === DB.GENERIC ? importDb : database,
+      database,
+    );
     if (importSource.overwrite) {
       setTables(d.tables);
       setRelationships(d.relationships);
       setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
       setNotes([]);
       setAreas([]);
-      setTypes([]);
+      setTypes(d.types ?? []);
       setUndoStack([]);
       setRedoStack([]);
     } else {
