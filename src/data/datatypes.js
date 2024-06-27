@@ -5,7 +5,7 @@ const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
 
 /* eslint-disable no-unused-vars */
-export const defaultTypes = {
+const defaultTypesBase = {
   INT: {
     type: "INT",
     checkDefault: (field) => {
@@ -264,7 +264,11 @@ export const defaultTypes = {
   },
 };
 
-export const mysqlTypes = {
+export const defaultTypes = new Proxy(defaultTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : {}),
+});
+
+export const mysqlTypesBase = {
   TINYINT: {
     type: "TINYINT",
     checkDefault: (field) => {
@@ -679,7 +683,11 @@ export const mysqlTypes = {
   },
 };
 
-export const postgresTypes = {
+export const mysqlTypes = new Proxy(mysqlTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : {}),
+});
+
+export const postgresTypesBase = {
   SMALLINT: {
     type: "SMALLINT",
     checkDefault: (field) => {
@@ -1098,7 +1106,11 @@ export const postgresTypes = {
   },
 };
 
-export const sqliteTypes = {
+export const postgresTypes = new Proxy(postgresTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : {}),
+});
+
+export const sqliteTypesBase = {
   INTEGER: {
     type: "INTEGER",
     checkDefault: (field) => {
@@ -1230,7 +1242,11 @@ export const sqliteTypes = {
   },
 };
 
-export const mssqlTypes = {
+export const sqliteTypes = new Proxy(sqliteTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : {}),
+});
+
+export const mssqlTypesBase = {
   BIGINT: { type: "", checkDefault: (field) => {} },
   INTEGER: { type: "", checkDefault: (field) => {} },
   SMALLINT: { type: "", checkDefault: (field) => {} },
@@ -1265,6 +1281,10 @@ export const mssqlTypes = {
   SQL_VARIANT: { type: "", checkDefault: (field) => {} },
   JSON: { type: "", checkDefault: (field) => {} },
 };
+
+export const mssqlTypes = new Proxy(mssqlTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : {}),
+});
 
 const dbToTypesBase = {
   generic: defaultTypes,

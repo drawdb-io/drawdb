@@ -268,7 +268,7 @@ export default function ControlPanel({
         if (a.component === "field_add") {
           updateType(a.tid, {
             fields: types[a.tid].fields.filter(
-              (e, i) => i !== types[a.tid].fields.length - 1,
+              (_, i) => i !== types[a.tid].fields.length - 1,
             ),
           });
         }
