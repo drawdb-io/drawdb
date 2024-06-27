@@ -13,6 +13,7 @@ export default function SettingsContextProvider({ children }) {
     panning: true,
     showCardinality: true,
     tableWidth: tableWidth,
+    showCursorCoordinates: false,
   });
 
   return (

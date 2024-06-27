@@ -1158,6 +1158,18 @@ export default function ControlPanel({
             showCardinality: !prev.showCardinality,
           })),
       },
+      show_debug_coordinates: {
+        state: settings.showDebugCoordinates ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showDebugCoordinates: !prev.showDebugCoordinates,
+          })),
+      },
       theme: {
         children: [
           {
