@@ -4,11 +4,12 @@ import {
   IconRowsStroked,
 } from "@douyinfe/semi-icons";
 import { Dropdown } from "@douyinfe/semi-ui";
-import { useLayout } from "../../hooks";
+import { useFullscreen, useLayout } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { useTranslation } from "react-i18next";
 
 export default function LayoutDropdown() {
+  const fullscreen = useFullscreen();
   const { layout, setLayout } = useLayout();
   const { t } = useTranslation();
 
@@ -47,14 +48,15 @@ export default function LayoutDropdown() {
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
-            icon={<div className="px-2" />}
+            icon={
+              fullscreen ? <IconCheckboxTick /> : <div className="px-2" />
+            }
             onClick={() => {
-              if (layout.fullscreen) {
+              if (fullscreen) {
                 exitFullscreen();
               } else {
                 enterFullscreen();
               }
-              invertLayout("fullscreen");
             }}
           >
             {t("fullscreen")}

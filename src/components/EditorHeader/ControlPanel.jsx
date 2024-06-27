@@ -44,19 +44,20 @@ import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../../data/schemas";
 import { db } from "../../data/db";
 import {
+  useAreas,
+  useFullscreen,
   useLayout,
-  useSettings,
-  useTransform,
-  useTables,
-  useUndoRedo,
+  useNotes,
+  useSaveState,
   useSelect,
+  useSettings,
+  useTables,
+  useTransform,
+  useTypes,
+  useUndoRedo,
 } from "../../hooks";
-import { enterFullscreen } from "../../utils/fullscreen";
+import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
-import useAreas from "../../hooks/useAreas";
-import useNotes from "../../hooks/useNotes";
-import useTypes from "../../hooks/useTypes";
-import useSaveState from "../../hooks/useSaveState";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
@@ -663,6 +664,7 @@ export default function ControlPanel({
   const save = () => setSaveState(State.SAVING);
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
+  const fullscreen = useFullscreen();
 
   const menu = {
     file: {
@@ -1104,7 +1106,12 @@ export default function ControlPanel({
         shortcut: "Ctrl+Down/Wheel",
       },
       fullscreen: {
-        function: enterFullscreen,
+        state: fullscreen ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: fullscreen ? exitFullscreen : enterFullscreen,
       },
     },
     settings: {
