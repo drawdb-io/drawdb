@@ -76,9 +76,9 @@ export default function Canvas() {
   const canvas = useRef(null);
 
   /**
-   * @param {PointerEvent} e 
-   * @param {*} id 
-   * @param {ObjectType[keyof ObjectType]} type 
+   * @param {PointerEvent} e
+   * @param {*} id
+   * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
     if (!e.isPrimary) return;
@@ -130,7 +130,7 @@ export default function Canvas() {
   };
 
   /**
-   * @param {PointerEvent} e 
+   * @param {PointerEvent} e
    */
   const handlePointerMove = (e) => {
     if (!e.isPrimary) return;
@@ -204,7 +204,7 @@ export default function Canvas() {
   };
 
   /**
-   * @param {PointerEvent} e 
+   * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
     if (!e.isPrimary) return;
@@ -286,7 +286,7 @@ export default function Canvas() {
   };
 
   /**
-   * @param {PointerEvent} e 
+   * @param {PointerEvent} e
    */
   const handlePointerUp = (e) => {
     if (!e.isPrimary) return;
