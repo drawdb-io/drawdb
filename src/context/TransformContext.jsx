@@ -22,7 +22,11 @@ export default function TransformContextProvider({ children }) {
         }
 
         return {
-          zoom: findFirstNumber(actionOrValue.zoom, prev.zoom, 1),
+          zoom: clamp(
+            findFirstNumber(actionOrValue.zoom, prev.zoom, 1),
+            0.02,
+            5,
+          ),
           pan: {
             x: findFirstNumber(actionOrValue.pan?.x, prev.pan?.x, 0),
             y: findFirstNumber(actionOrValue.pan?.y, prev.pan?.y, 0),
