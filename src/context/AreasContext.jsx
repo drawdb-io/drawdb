@@ -23,15 +23,17 @@ export default function AreasContextProvider({ children }) {
         return temp.map((t, i) => ({ ...t, id: i }));
       });
     } else {
+      const width = 200;
+      const height = 200;
       setAreas((prev) => [
         ...prev,
         {
           id: prev.length,
           name: `area_${prev.length}`,
-          x: -transform.pan.x,
-          y: -transform.pan.y,
-          width: 200,
-          height: 200,
+          x: transform.pan.x - width / 2,
+          y: transform.pan.y - height / 2,
+          width,
+          height,
           color: defaultBlue,
         },
       ]);
