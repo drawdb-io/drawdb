@@ -1,7 +1,7 @@
 import { Collapse, Button, Popover } from "@douyinfe/semi-ui";
 import { IconPlus, IconInfoCircle } from "@douyinfe/semi-icons";
-import { useSelect, useTypes } from "../../../hooks";
-import { ObjectType } from "../../../data/constants";
+import { useSelect, useTables, useTypes } from "../../../hooks";
+import { DB, ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
 import TypeInfo from "./TypeInfo";
@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 export default function TypesTab() {
   const { types, addType } = useTypes();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { database } = useTables();
   const { t } = useTranslation();
 
   return (
@@ -21,21 +22,23 @@ export default function TypesTab() {
             {t("add_type")}
           </Button>
         </div>
-        <Popover
-          content={
-            <div className="w-[240px] text-sm space-y-2 popover-theme">
-              {t("types_info")
-                .split("\n")
-                .map((line, index) => (
-                  <div key={index}>{line}</div>
-                ))}
-            </div>
-          }
-          showArrow
-          position="rightTop"
-        >
-          <Button theme="borderless" icon={<IconInfoCircle />} />
-        </Popover>
+        {database === DB.GENERIC && (
+          <Popover
+            content={
+              <div className="w-[240px] text-sm space-y-2 popover-theme">
+                {t("types_info")
+                  .split("\n")
+                  .map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
+              </div>
+            }
+            showArrow
+            position="rightTop"
+          >
+            <Button theme="borderless" icon={<IconInfoCircle />} />
+          </Popover>
+        )}
       </div>
       {types.length <= 0 ? (
         <Empty title={t("no_types")} text={t("no_types_text")} />

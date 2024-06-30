@@ -112,7 +112,7 @@ const en = {
     this_will_appear_as_is: "*This will appear in the generated script as is.",
     comment: "Comment",
     add_field: "Add field",
-    values: "values",
+    values: "Values",
     size: "Size",
     precision: "Precision",
     set_precision: "Set precision: (size, digits)",
@@ -216,6 +216,10 @@ const en = {
     generic: "Generic",
     generic_description:
       "Generic diagrams can be exported to any SQL flavor but support few data types.",
+    enums: "Enums",
+    add_enum: "Add enum",
+    edit_enum: "Edit enum",
+    delete_enum: "Delete enum",
   },
 };
 
