@@ -9,3 +9,4 @@ export { default as useTasks } from "./useTasks";
 export { default as useTransform } from "./useTransform";
 export { default as useTypes } from "./useTypes";
 export { default as useUndoRedo } from "./useUndoRedo";
+export { default as useEnums } from "./useEnums";

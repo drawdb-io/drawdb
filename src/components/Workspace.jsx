@@ -15,6 +15,7 @@ import {
   useTypes,
   useTasks,
   useSaveState,
+  useEnums,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import { Modal } from "@douyinfe/semi-ui";
@@ -37,6 +38,7 @@ export default function WorkSpace() {
   const { notes, setNotes } = useNotes();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
+  const { enums, setEnums } = useEnums();
   const {
     tables,
     relationships,
@@ -71,12 +73,13 @@ export default function WorkSpace() {
             lastModified: new Date(),
             tables: tables,
             references: relationships,
-            types: types,
             notes: notes,
             areas: areas,
             todos: tasks,
             pan: transform.pan,
             zoom: transform.zoom,
+            ...(databases[database].hasEnums && { enums: enums }),
+            ...(databases[database].hasTypes && { types: types }),
           })
           .then((id) => {
             setId(id);
@@ -92,12 +95,13 @@ export default function WorkSpace() {
             lastModified: new Date(),
             tables: tables,
             references: relationships,
-            types: types,
             notes: notes,
             areas: areas,
             todos: tasks,
             pan: transform.pan,
             zoom: transform.zoom,
+            ...(databases[database].hasEnums && { enums: enums }),
+            ...(databases[database].hasTypes && { types: types }),
           })
           .then(() => {
             setSaveState(State.SAVED);
@@ -111,12 +115,13 @@ export default function WorkSpace() {
           title: title,
           tables: tables,
           relationships: relationships,
-          types: types,
           notes: notes,
           subjectAreas: areas,
           todos: tasks,
           pan: transform.pan,
           zoom: transform.zoom,
+          ...(databases[database].hasEnums && { enums: enums }),
+          ...(databases[database].hasTypes && { types: types }),
         })
         .then(() => {
           setSaveState(State.SAVED);
@@ -138,6 +143,7 @@ export default function WorkSpace() {
     transform,
     setSaveState,
     database,
+    enums,
   ]);
 
   const load = useCallback(async () => {
@@ -158,9 +164,14 @@ export default function WorkSpace() {
             setRelationships(d.references);
             setNotes(d.notes);
             setAreas(d.areas);
-            setTypes(d.types);
             setTasks(d.todos ?? []);
             setTransform({ pan: d.pan, zoom: d.zoom });
+            if (databases[database].hasTypes) {
+              setTypes(d.types ?? []);
+            }
+            if (databases[database].hasEnums) {
+              setEnums(d.enums ?? []);
+            }
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
@@ -184,7 +195,6 @@ export default function WorkSpace() {
             setId(diagram.id);
             setTitle(diagram.name);
             setTables(diagram.tables);
-            setTypes(diagram.types);
             setRelationships(diagram.references);
             setAreas(diagram.areas);
             setNotes(diagram.notes);
@@ -195,6 +205,12 @@ export default function WorkSpace() {
             });
             setUndoStack([]);
             setRedoStack([]);
+            if (databases[database].hasTypes) {
+              setTypes(diagram.types ?? []);
+            }
+            if (databases[database].hasEnums) {
+              setEnums(diagram.enums ?? []);
+            }
             window.name = `d ${diagram.id}`;
           } else {
             window.name = "";
@@ -218,7 +234,6 @@ export default function WorkSpace() {
             setId(diagram.id);
             setTitle(diagram.title);
             setTables(diagram.tables);
-            setTypes(diagram.types);
             setRelationships(diagram.relationships);
             setAreas(diagram.subjectAreas);
             setTasks(diagram.todos ?? []);
@@ -229,6 +244,12 @@ export default function WorkSpace() {
             });
             setUndoStack([]);
             setRedoStack([]);
+            if (databases[database].hasTypes) {
+              setTypes(diagram.types ?? []);
+            }
+            if (databases[database].hasEnums) {
+              setEnums(diagram.enums ?? []);
+            }
           } else {
             setShowSelectDbModal(true);
           }
@@ -269,6 +290,8 @@ export default function WorkSpace() {
     setTypes,
     setTasks,
     setDatabase,
+    database,
+    setEnums,
   ]);
 
   useEffect(() => {

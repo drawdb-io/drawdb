@@ -50,6 +50,7 @@ export const Tab = {
   AREAS: "3",
   NOTES: "4",
   TYPES: "5",
+  ENUMS: "6",
 };
 
 export const ObjectType = {
@@ -59,6 +60,7 @@ export const ObjectType = {
   NOTE: 3,
   RELATIONSHIP: 4,
   TYPE: 5,
+  ENUM: 6,
 };
 
 export const Action = {

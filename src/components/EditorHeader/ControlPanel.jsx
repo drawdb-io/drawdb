@@ -51,13 +51,13 @@ import {
   useTables,
   useUndoRedo,
   useSelect,
+  useSaveState,
+  useTypes,
+  useNotes,
+  useAreas,
 } from "../../hooks";
 import { enterFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
-import useAreas from "../../hooks/useAreas";
-import useNotes from "../../hooks/useNotes";
-import useTypes from "../../hooks/useTypes";
-import useSaveState from "../../hooks/useSaveState";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";

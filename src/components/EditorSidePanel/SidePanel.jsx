@@ -1,5 +1,5 @@
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { DB, Tab } from "../../data/constants";
+import { Tab } from "../../data/constants";
 import { useLayout, useSelect, useTables } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
 import TypesTab from "./TypesTab/TypesTab";
@@ -9,6 +9,8 @@ import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { databases } from "../../data/databases";
+import EnumsTab from "./EnumsTab/EnumsTab";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
@@ -27,13 +29,23 @@ export default function SidePanel({ width, resize, setResize }) {
       { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
       { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
     ];
-    if (database === DB.GENERIC || database === DB.POSTGRES) {
+
+    if (databases[database].hasTypes) {
       tabs.push({
         tab: t("types"),
         itemKey: Tab.TYPES,
         component: <TypesTab />,
       });
     }
+
+    if (databases[database].hasEnums) {
+      tabs.push({
+        tab: t("enums"),
+        itemKey: Tab.ENUMS,
+        component: <EnumsTab />,
+      });
+    }
+
     return tabs;
   }, [t, database]);
 
