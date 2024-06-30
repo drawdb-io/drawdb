@@ -1,18 +1,25 @@
 import { createContext, useCallback, useState } from "react";
 
+/**
+ * @type {import("react").Context<DrawDB.TransformContext>}
+ */
 export const TransformContext = createContext(null);
 
 export default function TransformContextProvider({ children }) {
+  /**
+   * @type {[DrawDB.TransformContext["transform"], DrawDB.TransformContext["setTransform"]}
+   */
   const [transform, setTransformInternal] = useState({
     zoom: 1,
     pan: { x: 0, y: 0 },
   });
 
   /**
-   * @type {typeof setTransformInternal}
+   * @type {typeof DrawDB.TransformContext["setTransform"]}
    */
   const setTransform = useCallback(
     (actionOrValue) => {
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
       const findFirstNumber = (...values) =>
         values.find((value) => typeof value === "number" && !isNaN(value));
 

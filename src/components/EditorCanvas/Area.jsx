@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Button, Popover, Input } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
@@ -15,16 +15,27 @@ import {
   useSelect,
   useAreas,
   useSaveState,
-  useTransform,
 } from "../../hooks";
 import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
+import { useHover } from "usehooks-ts";
+import { CanvasContext } from "../../context/CanvasContext";
 
-export default function Area({ data, onPointerDown, setResize, setInitCoords }) {
-  const [hovered, setHovered] = useState(false);
+export default function Area({
+  data,
+  onPointerDown,
+  setResize,
+  setInitCoords,
+}) {
+  const ref = useRef(null);
+  const isHovered = useHover(ref);
+  const {
+    pointer: {
+      spaces: { diagram: pointer },
+    },
+  } = useContext(CanvasContext);
   const { layout } = useLayout();
   const { settings } = useSettings();
-  const { transform } = useTransform();
   const { setSaveState } = useSaveState();
   const { selectedElement, setSelectedElement } = useSelect();
 
@@ -35,8 +46,8 @@ export default function Area({ data, onPointerDown, setResize, setInitCoords }) 
       y: data.y,
       width: data.width,
       height: data.height,
-      pointerX: e.clientX / transform.zoom,
-      pointerY: e.clientY / transform.zoom,
+      pointerX: pointer.x,
+      pointerY: pointer.y,
     });
   };
 
@@ -84,10 +95,7 @@ export default function Area({ data, onPointerDown, setResize, setInitCoords }) 
     selectedElement.open;
 
   return (
-    <g
-      onPointerEnter={(e) => e.isPrimary && setHovered(true)}
-      onPointerLeave={(e) => e.isPrimary &&setHovered(false)}
-    >
+    <g ref={ref}>
       <foreignObject
         key={data.id}
         x={data.x}
@@ -98,7 +106,7 @@ export default function Area({ data, onPointerDown, setResize, setInitCoords }) 
       >
         <div
           className={`border-2 ${
-            hovered
+            isHovered
               ? "border-dashed border-blue-500"
               : selectedElement.element === ObjectType.AREA &&
                   selectedElement.id === data.id
@@ -114,7 +122,7 @@ export default function Area({ data, onPointerDown, setResize, setInitCoords }) 
               <div className="text-color select-none overflow-hidden text-ellipsis">
                 {data.name}
               </div>
-              {(hovered || (areaIsSelected() && !layout.sidebar)) && (
+              {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
                 <Popover
                   visible={areaIsSelected() && !layout.sidebar}
                   onClickOutSide={onClickOutSide}
@@ -139,7 +147,7 @@ export default function Area({ data, onPointerDown, setResize, setInitCoords }) 
           </div>
         </div>
       </foreignObject>
-      {hovered && (
+      {isHovered && (
         <>
           <circle
             cx={data.x}
