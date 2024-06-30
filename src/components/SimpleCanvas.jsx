@@ -24,9 +24,9 @@ function Table({ table, grab }) {
       width={tableWidth}
       height={height}
       className="drop-shadow-lg rounded-md cursor-move"
-      onMouseDown={grab}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onPointerDown={(e) => e.isPrimary && grab(e)}
+      onPointerEnter={(e) => e.isPrimary && setIsHovered(true)}
+      onPointerLeave={(e) => e.isPrimary && setIsHovered(false)}
     >
       <div
         className={`border-2 ${
@@ -46,8 +46,8 @@ function Table({ table, grab }) {
             className={`${
               i === table.fields.length - 1 ? "" : "border-b border-gray-400"
             } h-[36px] px-2 py-1 flex justify-between`}
-            onMouseEnter={() => setHoveredField(i)}
-            onMouseLeave={() => setHoveredField(-1)}
+            onPointerEnter={(e) => e.isPrimary && setHoveredField(i)}
+            onPointerLeave={(e) => e.isPrimary && setHoveredField(-1)}
           >
             <div className={hoveredField === i ? "text-zinc-500" : ""}>
               <button
@@ -185,9 +185,9 @@ export default function SimpleCanvas({ diagram, zoom }) {
   return (
     <svg
       className="w-full h-full cursor-grab"
-      onMouseUp={releaseTable}
-      onMouseMove={moveTable}
-      onMouseLeave={releaseTable}
+      onPointerUp={(e) => e.isPrimary && releaseTable()}
+      onPointerMove={(e) => e.isPrimary && moveTable()}
+      onPointerLeave={(e) => e.isPrimary && releaseTable()}
     >
       <defs>
         <pattern

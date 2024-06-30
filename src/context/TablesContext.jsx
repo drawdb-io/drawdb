@@ -29,8 +29,8 @@ export default function TablesContextProvider({ children }) {
         {
           id: prev.length,
           name: `table_${prev.length}`,
-          x: -transform.pan.x,
-          y: -transform.pan.y,
+          x: transform.pan.x,
+          y: transform.pan.y,
           fields: [
             {
               name: "id",

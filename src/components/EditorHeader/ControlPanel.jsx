@@ -1070,6 +1070,18 @@ export default function ControlPanel({
             showCardinality: !prev.showCardinality,
           })),
       },
+      show_debug_coordinates: {
+        state: settings.showDebugCoordinates ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showDebugCoordinates: !prev.showDebugCoordinates,
+          })),
+      },
       theme: {
         children: [
           {
@@ -1425,8 +1437,8 @@ export default function ControlPanel({
             <div className="flex items-center">
               <div
                 className="text-xl ms-3 me-1"
-                onMouseEnter={() => setShowEditName(true)}
-                onMouseLeave={() => setShowEditName(false)}
+                onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
+                onPointerLeave={(e) => e.isPrimary && setShowEditName(false)}
                 onClick={() => setModal(MODAL.RENAME)}
               >
                 {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
