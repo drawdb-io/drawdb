@@ -10,6 +10,7 @@ import { useState } from "react";
 import { db } from "../../../data/db";
 import {
   useAreas,
+  useEnums,
   useNotes,
   useSettings,
   useTables,
@@ -34,6 +35,7 @@ import { json } from "@codemirror/lang-json";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
+import { databases } from "../../../data/databases";
 
 const languageExtension = {
   sql: [sql()],
@@ -58,6 +60,7 @@ export default function Modal({
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { settings } = useSettings();
+  const { setEnums } = useEnums();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [importSource, setImportSource] = useState({
@@ -149,7 +152,8 @@ export default function Modal({
       setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
       setNotes([]);
       setAreas([]);
-      setTypes(d.types ?? []);
+      if (databases[database].hasTypes) setTypes(d.types ?? []);
+      if (databases[database].hasEnums) setEnums(d.enums ?? []);
       setUndoStack([]);
       setRedoStack([]);
     } else {

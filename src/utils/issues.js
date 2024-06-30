@@ -9,6 +9,8 @@ function checkDefault(field, database) {
 
   if (!field.notNull && field.default.toLowerCase() === "null") return true;
 
+  if(!dbToTypes[database][field.type].checkDefault) return true;
+
   return dbToTypes[database][field.type].checkDefault(field);
 }
 

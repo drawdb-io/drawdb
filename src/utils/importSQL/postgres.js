@@ -21,6 +21,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
   const types = [];
+  const enums = [];
 
   ast.forEach((e) => {
     if (e.type === "create") {
@@ -176,6 +177,14 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         });
 
         if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
+      } else if (e.keyword === "type") {
+        if (e.resource === "enum") {
+          const newEnum = {
+            name: e.name.name,
+            values: e.create_definitions.value.map((x) => x.value),
+          };
+          enums.push(newEnum);
+        }
       }
     } else if (e.type === "alter") {
       e.expr.forEach((expr) => {
@@ -242,5 +251,5 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
 
   relationships.forEach((r, i) => (r.id = i));
 
-  return { tables, relationships, types };
+  return { tables, relationships, types, enums };
 }
