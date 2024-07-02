@@ -2,7 +2,14 @@ import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
 
 export function toPostgres(diagram) {
-  return `${diagram.types.map((type) => {
+  const enumStatements = diagram.enums
+    .map(
+      (e) =>
+        `CREATE TYPE "${e.name}" AS ENUM (\n${e.values.map((v) => `\t'${v}'`).join("\n")}\n);`,
+    )
+    .join("\n");
+
+  return `${enumStatements}\n${diagram.types.map((type) => {
     const typeStatements = type.fields
       .filter((f) => f.type === "ENUM" || f.type === "SET")
       .map(

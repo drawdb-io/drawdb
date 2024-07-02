@@ -268,7 +268,7 @@ export const defaultTypes = new Proxy(defaultTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : {}),
 });
 
-export const mysqlTypesBase = {
+const mysqlTypesBase = {
   TINYINT: {
     type: "TINYINT",
     checkDefault: (field) => {
@@ -687,7 +687,7 @@ export const mysqlTypes = new Proxy(mysqlTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : {}),
 });
 
-export const postgresTypesBase = {
+const postgresTypesBase = {
   SMALLINT: {
     type: "SMALLINT",
     checkDefault: (field) => {
@@ -912,14 +912,6 @@ export const postgresTypesBase = {
     hasPrecision: false,
     hasQuotes: false,
   },
-  ENUM: {
-    type: "ENUM",
-    checkDefault: (field) => true,
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
   POINT: {
     type: "POINT",
     checkDefault: (field) => /^\(\d+,\d+\)$/.test(field.default),
@@ -1110,7 +1102,7 @@ export const postgresTypes = new Proxy(postgresTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : {}),
 });
 
-export const sqliteTypesBase = {
+const sqliteTypesBase = {
   INTEGER: {
     type: "INTEGER",
     checkDefault: (field) => {
@@ -1246,7 +1238,7 @@ export const sqliteTypes = new Proxy(sqliteTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : {}),
 });
 
-export const mssqlTypesBase = {
+const mssqlTypesBase = {
   BIGINT: { type: "", checkDefault: (field) => {} },
   INTEGER: { type: "", checkDefault: (field) => {} },
   SMALLINT: { type: "", checkDefault: (field) => {} },
@@ -1296,5 +1288,5 @@ const dbToTypesBase = {
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : []),
+  get: (target, prop) => (prop in target ? target[prop] : {}),
 });

@@ -55,6 +55,7 @@ import {
   useTypes,
   useNotes,
   useAreas,
+  useEnums,
 } from "../../hooks";
 import { enterFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -99,6 +100,7 @@ export default function ControlPanel({
     deleteRelationship,
     database,
   } = useTables();
+  const { enums } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
@@ -871,6 +873,7 @@ export default function ControlPanel({
             references: relationships,
             types: types,
             database: database,
+            enums: enums,
           });
           setExportData((prev) => ({
             ...prev,
