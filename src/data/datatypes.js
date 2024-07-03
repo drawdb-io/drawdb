@@ -265,7 +265,7 @@ const defaultTypesBase = {
 };
 
 export const defaultTypes = new Proxy(defaultTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
 const mysqlTypesBase = {
@@ -684,7 +684,7 @@ const mysqlTypesBase = {
 };
 
 export const mysqlTypes = new Proxy(mysqlTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
 const postgresTypesBase = {
@@ -1099,7 +1099,7 @@ const postgresTypesBase = {
 };
 
 export const postgresTypes = new Proxy(postgresTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
 const sqliteTypesBase = {
@@ -1235,7 +1235,7 @@ const sqliteTypesBase = {
 };
 
 export const sqliteTypes = new Proxy(sqliteTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
 const mssqlTypesBase = {
@@ -1275,7 +1275,7 @@ const mssqlTypesBase = {
 };
 
 export const mssqlTypes = new Proxy(mssqlTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
 const dbToTypesBase = {
@@ -1288,5 +1288,5 @@ const dbToTypesBase = {
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {
-  get: (target, prop) => (prop in target ? target[prop] : {}),
+  get: (target, prop) => (prop in target ? target[prop] : false),
 });

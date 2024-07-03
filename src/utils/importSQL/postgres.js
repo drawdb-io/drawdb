@@ -34,8 +34,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         table.indices = [];
         table.id = tables.length;
         e.create_definitions.forEach((d) => {
+          const field = {};
           if (d.resource === "column") {
-            const field = {};
             field.name = d.column.column.expr.value;
 
             let type = d.definition.dataType;
@@ -153,6 +153,59 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               relationship.cardinality = Cardinality.ONE_TO_ONE;
               relationships.push(relationship);
             }
+          }
+
+          if (d.reference_definition) {
+            console.log(d);
+            const relationship = {};
+            const startTable = table.name;
+            const startField = field.name;
+            const endTable = d.reference_definition.table[0].table;
+            const endField =
+              d.reference_definition.definition[0].column.expr.value;
+            let updateConstraint = "No action";
+            let deleteConstraint = "No action";
+            d.reference_definition.on_action.forEach((c) => {
+              if (c.type === "on update") {
+                updateConstraint = c.value.value;
+                updateConstraint =
+                  updateConstraint[0].toUpperCase() +
+                  updateConstraint.substring(1);
+              } else if (c.type === "on delete") {
+                deleteConstraint = c.value.value;
+                deleteConstraint =
+                  deleteConstraint[0].toUpperCase() +
+                  deleteConstraint.substring(1);
+              }
+            });
+
+            const startTableId = tables.length;
+
+            const endTableId = tables.findIndex((t) => t.name === endTable);
+            if (endTableId === -1) return;
+
+            const endFieldId = tables[endTableId].fields.findIndex(
+              (f) => f.name === endField,
+            );
+            if (endField === -1) return;
+
+            const startFieldId = table.fields.findIndex(
+              (f) => f.name === startField,
+            );
+            if (startFieldId === -1) return;
+
+            relationship.name = startTable + "_" + startField + "_fk";
+            relationship.startTableId = startTableId;
+            relationship.startFieldId = startFieldId;
+            relationship.endTableId = endTableId;
+            relationship.endFieldId = endFieldId;
+            relationship.updateConstraint = updateConstraint;
+            relationship.deleteConstraint = deleteConstraint;
+            relationship.cardinality = Cardinality.ONE_TO_ONE;
+            relationships.push(relationship);
+
+            relationships.forEach((r, i) => (r.id = i));
+            console.log(relationship);
           }
         });
         table.fields.forEach((f, j) => {
