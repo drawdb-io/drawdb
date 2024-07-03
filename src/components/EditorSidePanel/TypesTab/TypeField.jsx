@@ -11,12 +11,13 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
-import { useUndoRedo, useTypes, useTables } from "../../../hooks";
+import { useUndoRedo, useTypes, useTables, useEnums } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
+  const { enums } = useEnums();
   const { database } = useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -75,6 +76,10 @@ export default function TypeField({ data, tid, fid }) {
                 label: type.name.toUpperCase(),
                 value: type.name.toUpperCase(),
               })),
+            ...enums.map((type) => ({
+              label: type.name.toUpperCase(),
+              value: type.name.toUpperCase(),
+            })),
           ]}
           filter
           value={data.type}
@@ -118,7 +123,11 @@ export default function TypeField({ data, tid, fid }) {
               updateType(tid, {
                 fields: types[tid].fields.map((e, id) =>
                   id === fid
-                    ? { ...data, type: value, size:  dbToTypes[database][value].defaultSize }
+                    ? {
+                        ...data,
+                        type: value,
+                        size: dbToTypes[database][value].defaultSize,
+                      }
                     : e,
                 ),
               });
