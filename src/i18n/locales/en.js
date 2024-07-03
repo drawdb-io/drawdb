@@ -218,7 +218,7 @@ const en = {
       "Generic diagrams can be exported to any SQL flavor but support few data types.",
     enums: "Enums",
     add_enum: "Add enum",
-    edit_enum: "Edit enum",
+    edit_enum: "{{extra}} Edit enum {{enumName}}",
     delete_enum: "Delete enum",
   },
 };

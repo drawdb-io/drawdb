@@ -12,16 +12,13 @@ export default function EnumDetails({ data, i }) {
   const [editField, setEditField] = useState({});
 
   return (
-    <div>
-      <div
-        className="flex justify-center items-center gap-2"
-        id={`scroll_enum_${data.id}`}
-      >
+    <>
+      <div className="flex justify-center items-center gap-2">
         <div className="font-semibold">{t("Name")}: </div>
         <Input
           value={data.name}
           placeholder={t("name")}
-          onChange={(value) => updateEnum(data.id, { name: value })}
+          onChange={(value) => updateEnum(i, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
@@ -30,7 +27,7 @@ export default function EnumDetails({ data, i }) {
               {
                 action: Action.EDIT,
                 element: ObjectType.ENUM,
-                aid: i,
+                id: i,
                 undo: editField,
                 redo: { name: e.target.value },
                 message: t("edit_enum", {
@@ -58,9 +55,8 @@ export default function EnumDetails({ data, i }) {
             ...prev,
             {
               action: Action.EDIT,
-              element: ObjectType.TABLE,
-              component: "field",
-              eid: i,
+              element: ObjectType.ENUM,
+              id: i,
               undo: editField,
               redo: { values: data.values },
               message: t("edit_enum", {
@@ -80,6 +76,6 @@ export default function EnumDetails({ data, i }) {
       >
         {t("delete")}
       </Button>
-    </div>
+    </>
   );
 }

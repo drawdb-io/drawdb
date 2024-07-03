@@ -19,10 +19,11 @@ export default function EnumsTab() {
           </Button>
         </div>
       </div>
-      <Collapse>
+      <Collapse accordion>
         {enums.map((e, i) => (
           <Collapse.Panel
-            key={e.name + i}
+            key={`enum_${i}`}
+            id={`scroll_enum_${i}`}
             header={
               <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {e.name}

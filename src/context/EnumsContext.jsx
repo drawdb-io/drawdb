@@ -57,7 +57,7 @@ export default function EnumsContextProvider({ children }) {
       ]);
       setRedoStack([]);
     }
-    setEnums((prev) => prev.filter((e, i) => i !== id));
+    setEnums((prev) => prev.filter((_, i) => i !== id));
   };
 
   const updateEnum = (id, values) => {

@@ -101,7 +101,7 @@ export default function ControlPanel({
     deleteRelationship,
     database,
   } = useTables();
-  const { enums, setEnums } = useEnums();
+  const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
@@ -129,6 +129,8 @@ export default function ControlPanel({
         deleteRelationship(a.data.id, false);
       } else if (a.element === ObjectType.TYPE) {
         deleteType(types.length - 1, false);
+      } else if (a.element === ObjectType.ENUM) {
+        deleteEnum(enums.length - 1, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -163,6 +165,8 @@ export default function ControlPanel({
         addArea(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
         addType({ id: a.id, ...a.data }, false);
+      } else if (a.element === ObjectType.ENUM) {
+        addEnum({ id: a.id, ...a.data }, false);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -295,6 +299,8 @@ export default function ControlPanel({
         } else if (a.component === "self") {
           updateType(a.tid, a.undo);
         }
+      } else if (a.element === ObjectType.ENUM) {
+        updateEnum(a.id, a.undo);
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -321,6 +327,8 @@ export default function ControlPanel({
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
         addType(null, false);
+      } else if (a.element === ObjectType.ENUM) {
+        addEnum(null, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
@@ -354,6 +362,8 @@ export default function ControlPanel({
         deleteArea(a.data.id, false);
       } else if (a.element === ObjectType.TYPE) {
         deleteType(a.id, false);
+      } else if (a.element === ObjectType.ENUM) {
+        deleteEnum(a.id, false);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.EDIT) {
@@ -451,6 +461,8 @@ export default function ControlPanel({
         } else if (a.component === "self") {
           updateType(a.tid, a.redo);
         }
+      } else if (a.element === ObjectType.ENUM) {
+        updateEnum(a.id, a.redo);
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -982,7 +994,8 @@ export default function ControlPanel({
                   notes: notes,
                   subjectAreas: areas,
                   ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),                },
+                  ...(databases[database].hasEnums && { enums: enums }),
+                },
                 null,
                 2,
               );
