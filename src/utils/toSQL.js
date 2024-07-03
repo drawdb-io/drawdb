@@ -265,7 +265,7 @@ export function jsonToPostgreSQL(obj) {
                 field.name
               }" ${getTypeString(field, "postgres")}${
                 field.notNull ? " NOT NULL" : ""
-              }${
+              }${field.unique ? " UNIQUE" : ""}${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" || !hasCheck(field.type)
