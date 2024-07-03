@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
-import { useSettings, useTables, useTypes } from "../../hooks";
+import { useEnums, useSettings, useTables, useTypes } from "../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function Issues() {
   const { types } = useTypes();
   const { t } = useTranslation();
   const { settings } = useSettings();
+  const { enums } = useEnums();
   const { tables, relationships, database } = useTables();
   const [issues, setIssues] = useState([]);
 
@@ -19,6 +20,7 @@ export default function Issues() {
         relationships: relationships,
         types: types,
         database: database,
+        enums: enums,
       });
 
       if (!arrayIsEqual(newIssues, issues)) {
@@ -27,7 +29,7 @@ export default function Issues() {
     };
 
     findIssues();
-  }, [tables, relationships, issues, types, database]);
+  }, [tables, relationships, issues, types, database, enums]);
 
   return (
     <Collapse keepDOM lazyRender style={{ width: "100%" }}>

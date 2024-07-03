@@ -9,7 +9,7 @@ function checkDefault(field, database) {
 
   if (!field.notNull && field.default.toLowerCase() === "null") return true;
 
-  if(!dbToTypes[database][field.type].checkDefault) return true;
+  if (!dbToTypes[database][field.type].checkDefault) return true;
 
   return dbToTypes[database][field.type].checkDefault(field);
 }
@@ -167,6 +167,24 @@ export function getIssues(diagram) {
         duplicateFieldNames[field.name] = true;
       }
     });
+  });
+
+  const duplicateEnumNames = {};
+  diagram.enums.forEach((e) => {
+    if (e.name === "") {
+      issues.push(i18n.t("enum_w_no_name"));
+    }
+
+    if (duplicateEnumNames[e.name]) {
+      issues.push(i18n.t("duplicate_enums", { enumName: e.name }));
+    } else {
+      duplicateEnumNames[e.name] = true;
+    }
+
+    if (e.values.length === 0) {
+      issues.push(i18n.t("enum_w_no_values", { enumName: e.name }));
+      return;
+    }
   });
 
   const duplicateFKName = {};

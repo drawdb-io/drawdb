@@ -220,6 +220,9 @@ const en = {
     add_enum: "Add enum",
     edit_enum: "{{extra}} Edit enum {{enumName}}",
     delete_enum: "Delete enum",
+    enum_w_no_name: "Found enum with no name",
+    enum_w_no_values: "Found enum '{{enumName}}' with no values",
+    duplicate_enums: "Duplicate enums with the name '{{enumName}}'",
   },
 };
 

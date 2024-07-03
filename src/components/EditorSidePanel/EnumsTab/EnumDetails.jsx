@@ -18,6 +18,7 @@ export default function EnumDetails({ data, i }) {
         <Input
           value={data.name}
           placeholder={t("name")}
+          validateStatus={data.name.trim() === "" ? "error" : "default"}
           onChange={(value) => updateEnum(i, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -46,6 +47,7 @@ export default function EnumDetails({ data, i }) {
         addOnBlur
         className="my-2"
         placeholder={t("values")}
+        validateStatus={data.values.length === 0 ? "error" : "default"}
         onChange={(v) => updateEnum(i, { values: v })}
         onFocus={() => setEditField({ values: data.values })}
         onBlur={() => {
