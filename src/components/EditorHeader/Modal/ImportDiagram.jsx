@@ -4,13 +4,21 @@ import {
 } from "../../../utils/validateSchema";
 import { Upload, Banner } from "@douyinfe/semi-ui";
 import { STATUS } from "../../../data/constants";
-import { useAreas, useNotes, useTables } from "../../../hooks";
+import {
+  useAreas,
+  useEnums,
+  useNotes,
+  useTables,
+  useTypes,
+} from "../../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function ImportDiagram({ setImportData, error, setError }) {
   const { areas } = useAreas();
   const { notes } = useNotes();
   const { tables, relationships } = useTables();
+  const { types } = useTypes();
+  const { enums } = useEnums();
   const { t } = useTranslation();
 
   const diagramIsEmpty = () => {
@@ -18,7 +26,9 @@ export default function ImportDiagram({ setImportData, error, setError }) {
       tables.length === 0 &&
       relationships.length === 0 &&
       notes.length === 0 &&
-      areas.length === 0
+      areas.length === 0 &&
+      types.length === 0 &&
+      enums.length === 0
     );
   };
 

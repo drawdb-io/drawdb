@@ -65,6 +65,7 @@ import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
 import { exportSQL } from "../../utils/exportSQL";
+import { databases } from "../../data/databases";
 
 export default function ControlPanel({
   diagramId,
@@ -100,7 +101,7 @@ export default function ControlPanel({
     deleteRelationship,
     database,
   } = useTables();
-  const { enums } = useEnums();
+  const { enums, setEnums } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
@@ -116,7 +117,7 @@ export default function ControlPanel({
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack[undoStack.length - 1];
-    setUndoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
+    setUndoStack((prev) => prev.filter((_, i) => i !== prev.length - 1));
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         deleteTable(tables[tables.length - 1].id, false);
@@ -732,6 +733,7 @@ export default function ControlPanel({
               setAreas([]);
               setNotes([]);
               setTypes([]);
+              setEnums([]);
               setUndoStack([]);
               setRedoStack([]);
             })
@@ -919,7 +921,8 @@ export default function ControlPanel({
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
-                  types: types,
+                  ...(databases[database].hasTypes && { types: types }),
+                  ...(databases[database].hasEnums && { enums: enums }),
                   title: title,
                 },
                 null,
@@ -978,8 +981,8 @@ export default function ControlPanel({
                   relationships: relationships,
                   notes: notes,
                   subjectAreas: areas,
-                  types: types,
-                },
+                  ...(databases[database].hasTypes && { types: types }),
+                  ...(databases[database].hasEnums && { enums: enums }),                },
                 null,
                 2,
               );
