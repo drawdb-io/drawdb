@@ -9,15 +9,15 @@ import {
 } from "@douyinfe/semi-ui";
 import { Action, ObjectType } from "../../../data/constants";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useTables, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
 export default function FieldDetails({ data, tid, index }) {
   const { t } = useTranslation();
-  const { tables, database } = useTables();
+  const { tables, database } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { updateField, deleteField } = useTables();
+  const { updateField, deleteField } = useDiagram();
   const [editField, setEditField] = useState({});
 
   return (

@@ -1,17 +1,17 @@
 import { Action, ObjectType } from "../../../data/constants";
 import { Row, Col, Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
-import { useEnums, useTables, useTypes, useUndoRedo } from "../../../hooks";
+import { useEnums, useDiagram, useTypes, useUndoRedo } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
 export default function TableField({ data, tid, index }) {
-  const { updateField } = useTables();
+  const { updateField } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
-  const { tables, database } = useTables();
+  const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});

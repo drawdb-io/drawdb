@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
-import { useEnums, useSettings, useTables, useTypes } from "../../hooks";
+import { useEnums, useSettings, useDiagram, useTypes } from "../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function Issues() {
@@ -10,7 +10,7 @@ export default function Issues() {
   const { t } = useTranslation();
   const { settings } = useSettings();
   const { enums } = useEnums();
-  const { tables, relationships, database } = useTables();
+  const { tables, relationships, database } = useDiagram();
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {

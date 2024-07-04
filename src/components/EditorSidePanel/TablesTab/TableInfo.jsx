@@ -8,7 +8,7 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useTables, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
@@ -19,7 +19,7 @@ export default function TableInfo({ data }) {
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships } =
-    useTables();
+    useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const [drag, setDrag] = useState({

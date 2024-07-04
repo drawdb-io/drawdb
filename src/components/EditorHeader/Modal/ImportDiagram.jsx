@@ -8,7 +8,7 @@ import {
   useAreas,
   useEnums,
   useNotes,
-  useTables,
+  useDiagram,
   useTypes,
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 export default function ImportDiagram({ setImportData, error, setError }) {
   const { areas } = useAreas();
   const { notes } = useNotes();
-  const { tables, relationships } = useTables();
+  const { tables, relationships } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
   const { t } = useTranslation();

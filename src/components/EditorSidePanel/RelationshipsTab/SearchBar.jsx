@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useSelect, useTables } from "../../../hooks";
+import { useSelect, useDiagram } from "../../../hooks";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
 export default function SearchBar() {
-  const { relationships } = useTables();
+  const { relationships } = useDiagram();
   const [searchText, setSearchText] = useState("");
   const { setSelectedElement } = useSelect();
   const { t } = useTranslation();

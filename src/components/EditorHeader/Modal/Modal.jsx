@@ -13,7 +13,7 @@ import {
   useEnums,
   useNotes,
   useSettings,
-  useTables,
+  useDiagram,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -55,7 +55,7 @@ export default function Modal({
   importDb,
 }) {
   const { t } = useTranslation();
-  const { setTables, setRelationships, database, setDatabase } = useTables();
+  const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();

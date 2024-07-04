@@ -8,7 +8,7 @@ import {
   useLayout,
   useSettings,
   useTransform,
-  useTables,
+  useDiagram,
   useUndoRedo,
   useAreas,
   useNotes,
@@ -46,7 +46,7 @@ export default function WorkSpace() {
     setRelationships,
     database,
     setDatabase,
-  } = useTables();
+  } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
 

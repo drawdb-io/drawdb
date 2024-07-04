@@ -48,7 +48,7 @@ import {
   useLayout,
   useSettings,
   useTransform,
-  useTables,
+  useDiagram,
   useUndoRedo,
   useSelect,
   useSaveState,
@@ -100,7 +100,7 @@ export default function ControlPanel({
     addRelationship,
     deleteRelationship,
     database,
-  } = useTables();
+  } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();

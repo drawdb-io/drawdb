@@ -6,9 +6,9 @@ import useSelect from "../hooks/useSelect";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
-export const TablesContext = createContext(null);
+export const DiagramContext = createContext(null);
 
-export default function TablesContextProvider({ children }) {
+export default function DiagramContextProvider({ children }) {
   const { t } = useTranslation();
   const [database, setDatabase] = useState(DB.GENERIC);
   const [tables, setTables] = useState([]);
@@ -249,7 +249,7 @@ export default function TablesContextProvider({ children }) {
   };
 
   return (
-    <TablesContext.Provider
+    <DiagramContext.Provider
       value={{
         tables,
         setTables,
@@ -267,6 +267,6 @@ export default function TablesContextProvider({ children }) {
       }}
     >
       {children}
-    </TablesContext.Provider>
+    </DiagramContext.Provider>
   );
 }

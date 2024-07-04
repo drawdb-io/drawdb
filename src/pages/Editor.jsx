@@ -1,6 +1,6 @@
 import LayoutContextProvider from "../context/LayoutContext";
 import TransformContextProvider from "../context/TransformContext";
-import TablesContextProvider from "../context/TablesContext";
+import TablesContextProvider from "../context/DiagramContext";
 import UndoRedoContextProvider from "../context/UndoRedoContext";
 import SelectContextProvider from "../context/SelectContext";
 import AreasContextProvider from "../context/AreasContext";

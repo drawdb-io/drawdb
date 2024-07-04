@@ -1,12 +1,12 @@
 import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Checkbox, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useTables, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function IndexDetails({ data, fields, iid, tid }) {
   const { t } = useTranslation();
-  const { tables, updateTable } = useTables();
+  const { tables, updateTable } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
 
   return (

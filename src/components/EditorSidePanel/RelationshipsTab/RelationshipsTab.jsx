@@ -1,5 +1,5 @@
 import { Collapse } from "@douyinfe/semi-ui";
-import { useSelect, useTables } from "../../../hooks";
+import { useSelect, useDiagram } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import RelationshipInfo from "./RelationshipInfo";
@@ -7,7 +7,7 @@ import { ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
 export default function RelationshipsTab() {
-  const { relationships } = useTables();
+  const { relationships } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 

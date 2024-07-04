@@ -1,6 +1,6 @@
 import { Collapse, Button, Popover } from "@douyinfe/semi-ui";
 import { IconPlus, IconInfoCircle } from "@douyinfe/semi-icons";
-import { useSelect, useTables, useTypes } from "../../../hooks";
+import { useSelect, useDiagram, useTypes } from "../../../hooks";
 import { DB, ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 export default function TypesTab() {
   const { types, addType } = useTypes();
   const { selectedElement, setSelectedElement } = useSelect();
-  const { database } = useTables();
+  const { database } = useDiagram();
   const { t } = useTranslation();
 
   return (

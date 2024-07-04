@@ -11,14 +11,14 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
-import { useUndoRedo, useTypes, useTables, useEnums } from "../../../hooks";
+import { useUndoRedo, useTypes, useDiagram, useEnums } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
   const { enums } = useEnums();
-  const { database } = useTables();
+  const { database } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();

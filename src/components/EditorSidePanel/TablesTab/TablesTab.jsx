@@ -1,6 +1,6 @@
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useSelect, useTables } from "../../../hooks";
+import { useSelect, useDiagram } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
@@ -8,7 +8,7 @@ import TableInfo from "./TableInfo";
 import { useTranslation } from "react-i18next";
 
 export default function TablesTab() {
-  const { tables, addTable } = useTables();
+  const { tables, addTable } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 

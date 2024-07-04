@@ -13,7 +13,7 @@ import Note from "./Note";
 import {
   useSettings,
   useTransform,
-  useTables,
+  useDiagram,
   useUndoRedo,
   useSelect,
   useAreas,
@@ -25,7 +25,7 @@ import { diagram } from "../../data/heroDiagram";
 
 export default function Canvas() {
   const { t } = useTranslation();
-  const { tables, updateTable, relationships, addRelationship } = useTables();
+  const { tables, updateTable, relationships, addRelationship } = useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();

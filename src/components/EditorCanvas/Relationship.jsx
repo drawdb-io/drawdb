@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
-import { useTables, useSettings, useLayout, useSelect } from "../../hooks";
+import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
-  const { tables } = useTables();
+  const { tables } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const pathRef = useRef();

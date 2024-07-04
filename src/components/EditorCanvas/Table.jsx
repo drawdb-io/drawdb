@@ -14,7 +14,7 @@ import {
   IconKeyStroked,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
-import { useLayout, useSettings, useTables, useSelect } from "../../hooks";
+import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +28,7 @@ export default function Table(props) {
     setLinkingLine,
   } = props;
   const { layout } = useLayout();
-  const { deleteTable, deleteField } = useTables();
+  const { deleteTable, deleteField } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();

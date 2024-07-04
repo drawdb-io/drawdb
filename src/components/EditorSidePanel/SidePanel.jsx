@@ -1,6 +1,6 @@
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { Tab } from "../../data/constants";
-import { useLayout, useSelect, useTables } from "../../hooks";
+import { useLayout, useSelect, useDiagram } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
 import TypesTab from "./TypesTab/TypesTab";
 import Issues from "./Issues";
@@ -15,7 +15,7 @@ import EnumsTab from "./EnumsTab/EnumsTab";
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
-  const { database } = useTables();
+  const { database } = useDiagram();
   const { t } = useTranslation();
 
   const tabList = useMemo(() => {

@@ -18,7 +18,7 @@ import {
   Action,
   ObjectType,
 } from "../../../data/constants";
-import { useTables, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 
@@ -35,7 +35,7 @@ const columns = [
 
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { tables, setRelationships, deleteRelationship } = useTables();
+  const { tables, setRelationships, deleteRelationship } = useDiagram();
   const { t } = useTranslation();
 
   const swapKeys = () => {
