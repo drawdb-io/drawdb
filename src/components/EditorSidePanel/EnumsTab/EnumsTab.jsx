@@ -4,6 +4,7 @@ import { IconPlus } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import SearchBar from "./SearchBar";
 import EnumDetails from "./EnumDetails";
+import Empty from "../Empty";
 
 export default function EnumsTab() {
   const { enums, addEnum } = useEnums();
@@ -19,22 +20,26 @@ export default function EnumsTab() {
           </Button>
         </div>
       </div>
-      <Collapse accordion>
-        {enums.map((e, i) => (
-          <Collapse.Panel
-            key={`enum_${i}`}
-            id={`scroll_enum_${i}`}
-            header={
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {e.name}
-              </div>
-            }
-            itemKey={`${i}`}
-          >
-            <EnumDetails data={e} i={i} />
-          </Collapse.Panel>
-        ))}
-      </Collapse>
+      {enums.length <= 0 ? (
+        <Empty title={t("no_enums")} text={t("no_enums_text")} />
+      ) : (
+        <Collapse accordion>
+          {enums.map((e, i) => (
+            <Collapse.Panel
+              key={`enum_${i}`}
+              id={`scroll_enum_${i}`}
+              header={
+                <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {e.name}
+                </div>
+              }
+              itemKey={`${i}`}
+            >
+              <EnumDetails data={e} i={i} />
+            </Collapse.Panel>
+          ))}
+        </Collapse>
+      )}
     </div>
   );
 }
