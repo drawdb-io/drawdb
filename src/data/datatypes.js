@@ -1239,39 +1239,385 @@ export const sqliteTypes = new Proxy(sqliteTypesBase, {
 });
 
 const mssqlTypesBase = {
-  BIGINT: { type: "", checkDefault: (field) => {} },
-  INTEGER: { type: "", checkDefault: (field) => {} },
-  SMALLINT: { type: "", checkDefault: (field) => {} },
-  TINYINT: { type: "", checkDefault: (field) => {} },
-  BIT: { type: "", checkDefault: (field) => {} },
-  DECIMAL: { type: "", checkDefault: (field) => {} },
-  NUMERIC: { type: "", checkDefault: (field) => {} },
-  MONEY: { type: "", checkDefault: (field) => {} },
-  SMALLMONEY: { type: "", checkDefault: (field) => {} },
-  FLOAT: { type: "", checkDefault: (field) => {} },
-  REAL: { type: "", checkDefault: (field) => {} },
-  DATE: { type: "", checkDefault: (field) => {} },
-  TIME: { type: "", checkDefault: (field) => {} },
-  DATETIME: { type: "", checkDefault: (field) => {} },
-  DATETIME2: { type: "", checkDefault: (field) => {} },
-  DATETIMEOFFSET: { type: "", checkDefault: (field) => {} },
-  SMALLDATETIME: { type: "", checkDefault: (field) => {} },
-  TIMESTAMP: { type: "", checkDefault: (field) => {} },
-  CHAR: { type: "", checkDefault: (field) => {} },
-  VARCHAR: { type: "", checkDefault: (field) => {} },
-  TEXT: { type: "", checkDefault: (field) => {} },
-  NCHAR: { type: "", checkDefault: (field) => {} },
-  NVARCHAR: { type: "", checkDefault: (field) => {} },
-  NTEXT: { type: "", checkDefault: (field) => {} },
-  BINARY: { type: "", checkDefault: (field) => {} },
-  VARBINARY: { type: "", checkDefault: (field) => {} },
-  IMAGE: { type: "", checkDefault: (field) => {} },
-  UNIQUEIDENTIFIER: { type: "", checkDefault: (field) => {} },
-  XML: { type: "", checkDefault: (field) => {} },
-  CURSOR: { type: "", checkDefault: (field) => {} },
-  TABLE: { type: "", checkDefault: (field) => {} },
-  SQL_VARIANT: { type: "", checkDefault: (field) => {} },
-  JSON: { type: "", checkDefault: (field) => {} },
+  TINYINT: {
+    type: "TINYINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  SMALLINT: {
+    type: "SMALLINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  INTEGER: {
+    type: "INTEGER",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  BIGINT: {
+    type: "BIGINT",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  BIT: {
+    type: "BIT",
+    checkDefault: (field) => {
+      return field.default === "1" || field.default === "0";
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  DECIMAL: {
+    type: "DECIMAL",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  NUMERIC: {
+    type: "NUMERIC",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  FLOAT: {
+    type: "FLOAT",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  DOUBLE: {
+    type: "DOUBLE",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  REAL: {
+    type: "REAL",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
+  MONEY: {
+    type: "MONEY",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  SMALLMONEY: {
+    type: "MONEY",
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  DATETIME: {
+    type: "DATETIME",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  DATETIME2: {
+    type: "DATETIME2",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: true,
+    hasQuotes: true,
+  },
+  DATETIMEOFFSET: {
+    type: "DATETIMEOFFSET",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (
+        !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d{1,7})?([+-]\d{2}:\d{2})?$/.test(
+          field.default,
+        )
+      ) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: true,
+    hasQuotes: true,
+  },
+  SMALLDATETIME: {
+    type: "SMALLDATETIME",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(field.default)) {
+        return false;
+      }
+      const c = field.default.split(" ");
+      const d = c[0].split("-");
+      return parseInt(d[0]) >= 1900 && parseInt(d[0]) <= 2079;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  TIME: {
+    type: "TIME",
+    checkDefault: (field) => {
+      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  TIMESTAMP: {
+    type: "TIMESTAMP",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const content = field.default.split(" ");
+      const date = content[0].split("-");
+      return parseInt(date[0]) >= 1970 && parseInt(date[0]) <= 2038;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  CHAR: {
+    type: "CHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  VARCHAR: {
+    type: "VARCHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  TEXT: {
+    type: "TEXT",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  NCHAR: {
+    type: "CHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  NVARCHAR: {
+    type: "VARCHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  NTEXT: {
+    type: "TEXT",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 65535,
+    hasQuotes: true,
+  },
+  BINARY: {
+    type: "BINARY",
+    checkDefault: (field) => {
+      return (
+        field.default.length <= field.size && binaryRegex.test(field.default)
+      );
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  VARBINARY: {
+    type: "VARBINARY",
+    checkDefault: (field) => {
+      return (
+        field.default.length <= field.size && binaryRegex.test(field.default)
+      );
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 255,
+    hasQuotes: true,
+  },
+  IMAGE: {
+    type: "IMAGE",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+    noDefault: true,
+  },
+  UNIQUEIDENTIFIER: {
+    type: "UNIQUEIDENTIFIER",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  XML: {
+    type: "XML",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+    noDefault: true,
+  },
+  CURSOR: {
+    type: "CURSOR",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: false,
+    noDefault: true,
+  },
+  SQL_VARIANT: {
+    type: "SQL_VARIANT",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: false,
+    noDefault: true,
+  },
+  JSON: {
+    type: "JSON",
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+    noDefault: true,
+  },
 };
 
 export const mssqlTypes = new Proxy(mssqlTypesBase, {

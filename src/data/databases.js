@@ -36,7 +36,7 @@ export const databases = {
     name: "MSSQL",
     label: DB.MSSQL,
     image: mssqlImage,
-    hasTypes: false,
+    hasTypes: true,
   },
   [DB.GENERIC]: {
     name: i18n.t("generic"),

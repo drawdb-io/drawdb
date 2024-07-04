@@ -783,9 +783,12 @@ export default function ControlPanel({
                 setImportDb(DB.MARIADB);
               },
             },
-            // {
-            //   MSSQL: () => setModal(MODAL.IMPORT_SRC),
-            // },
+            {
+              MSSQL: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.MSSQL);
+              },
+            },
           ],
         }),
         function: () => {
