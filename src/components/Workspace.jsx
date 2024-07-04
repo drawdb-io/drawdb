@@ -251,11 +251,12 @@ export default function WorkSpace() {
               setEnums(diagram.enums ?? []);
             }
           } else {
-            setShowSelectDbModal(true);
+            if (selectedDb === "") setShowSelectDbModal(true);
           }
         })
         .catch((error) => {
           console.log(error);
+          if (selectedDb === "") setShowSelectDbModal(true);
         });
     };
 
@@ -292,6 +293,7 @@ export default function WorkSpace() {
     setDatabase,
     database,
     setEnums,
+    selectedDb,
   ]);
 
   useEffect(() => {
