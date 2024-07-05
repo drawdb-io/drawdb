@@ -1087,15 +1087,6 @@ const postgresTypesBase = {
     hasQuotes: true,
     noDefault: true,
   },
-  ARRAY: {
-    type: "ARRAY",
-    checkDefault: (field) => true,
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-    noDefault: true,
-  },
 };
 
 export const postgresTypes = new Proxy(postgresTypesBase, {

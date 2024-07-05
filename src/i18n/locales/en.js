@@ -225,6 +225,7 @@ const en = {
     duplicate_enums: "Duplicate enums with the name '{{enumName}}'",
     no_enums: "No enums",
     no_enums_text: "Define enums here",
+    declare_array: "Declare array",
   },
 };
 

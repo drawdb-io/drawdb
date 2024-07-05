@@ -19,6 +19,7 @@ export const databases = {
     image: postgresImage,
     hasTypes: true,
     hasEnums: true,
+    hasArrays: true,
   },
   [DB.SQLITE]: {
     name: "SQLite",

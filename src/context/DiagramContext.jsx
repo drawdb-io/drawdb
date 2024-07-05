@@ -81,7 +81,7 @@ export default function DiagramContextProvider({ children }) {
           action: Action.DELETE,
           element: ObjectType.TABLE,
           data: { table: tables[id], relationship: rels },
-          message: t("delete_table", { tableName: tables[id] }),
+          message: t("delete_table", { tableName: tables[id].name }),
         },
       ]);
       setRedoStack([]);

@@ -30,7 +30,7 @@ export function toPostgres(diagram) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
                 field.name
-              }" ${field.type}${field.notNull ? " NOT NULL" : ""}${field.unique ? " UNIQUE" : ""}${
+              }" ${field.type}${field.isArray ? " ARRAY" : ""}${field.notNull ? " NOT NULL" : ""}${field.unique ? " UNIQUE" : ""}${
                 field.default.trim() !== ""
                   ? ` DEFAULT ${parseDefault(field, diagram.database)}`
                   : ""

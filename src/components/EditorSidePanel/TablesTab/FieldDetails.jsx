@@ -12,6 +12,7 @@ import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { databases } from "../../../data/databases";
 
 export default function FieldDetails({ data, tid, index }) {
   const { t } = useTranslation();
@@ -98,7 +99,7 @@ export default function FieldDetails({ data, tid, index }) {
           <div className="font-semibold">{t("size")}</div>
           <InputNumber
             className="my-2 w-full"
-            placeholder="Set length"
+            placeholder={t("size")}
             value={data.size}
             onChange={(value) => updateField(tid, index, { size: value })}
             onFocus={(e) => setEditField({ size: e.target.value })}
@@ -230,7 +231,9 @@ export default function FieldDetails({ data, tid, index }) {
         <Checkbox
           value="increment"
           checked={data.increment}
-          disabled={!dbToTypes[database][data.type].canIncrement}
+          disabled={
+            !dbToTypes[database][data.type].canIncrement || data.isArray
+          }
           onChange={(checkedValues) => {
             setUndoStack((prev) => [
               ...prev,
@@ -260,6 +263,42 @@ export default function FieldDetails({ data, tid, index }) {
           }}
         />
       </div>
+      {databases[database].hasArrays && (
+        <div className="flex justify-between items-center my-3">
+          <div className="font-medium">{t("declare_array")}</div>
+          <Checkbox
+            value="isArray"
+            checked={data.isArray}
+            onChange={(checkedValues) => {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "field",
+                  tid: tid,
+                  fid: index,
+                  undo: {
+                    [checkedValues.target.value]: !checkedValues.target.checked,
+                  },
+                  redo: {
+                    [checkedValues.target.value]: checkedValues.target.checked,
+                  },
+                  message: t("edit_table", {
+                    tableName: tables[tid].name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateField(tid, index, {
+                isArray: checkedValues.target.checked,
+                increment: data.isArray ? data.increment : false,
+              });
+            }}
+          />
+        </div>
+      )}
       <div className="font-semibold">{t("comment")}</div>
       <TextArea
         className="my-2"
