@@ -1037,6 +1037,8 @@ export default function ControlPanel({
           setRelationships([]);
           setAreas([]);
           setNotes([]);
+          setEnums([]);
+          setTypes([]);
           setUndoStack([]);
           setRedoStack([]);
         },
