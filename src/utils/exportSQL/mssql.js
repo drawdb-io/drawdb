@@ -2,16 +2,7 @@ import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
 
 export function toMSSQL(diagram) {
-  const typeStatements = diagram.types
-    .map(
-      (type) =>
-        `CREATE TYPE [${type.name}] AS TABLE (\n${type.fields
-          .map((f) => `\t[${f.name}] ${f.type}`)
-          .join("\n")}\n);\n`,
-    )
-    .join("\n");
-
-  return `${typeStatements}${diagram.tables
+  return `${diagram.tables
     .map(
       (table) =>
         `${
