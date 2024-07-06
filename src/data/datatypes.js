@@ -1,4 +1,5 @@
 import { strHasQuotes } from "../utils/utils";
+import { DB } from "./constants";
 
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
@@ -1616,12 +1617,12 @@ export const mssqlTypes = new Proxy(mssqlTypesBase, {
 });
 
 const dbToTypesBase = {
-  generic: defaultTypes,
-  mysql: mysqlTypes,
-  postgresql: postgresTypes,
-  sqlite: sqliteTypes,
-  mssql: mssqlTypes,
-  mariadb: mysqlTypes,
+  [DB.GENERIC]: defaultTypes,
+  [DB.MYSQL]: mysqlTypes,
+  [DB.POSTGRES]: postgresTypes,
+  [DB.SQLITE]: sqliteTypes,
+  [DB.MSSQL]: mssqlTypes,
+  [DB.MARIADB]: mysqlTypes,
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {

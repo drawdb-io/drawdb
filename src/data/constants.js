@@ -109,7 +109,7 @@ export const SIDESHEET = {
 export const DB = {
   MYSQL: "mysql",
   POSTGRES: "postgresql",
-  MSSQL: "mssql",
+  MSSQL: "transactsql",
   SQLITE: "sqlite",
   MARIADB: "mariadb",
   GENERIC: "generic",
