@@ -110,7 +110,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             }
             field.check = "";
             if (d.check) {
-              field.check = buildSQLFromAST(d.check.definition[0]);
+              field.check = buildSQLFromAST(d.check.definition[0], DB.SQLITE);
             }
 
             table.fields.push(field);

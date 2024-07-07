@@ -104,7 +104,7 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
             }
             field.check = "";
             if (d.check) {
-              field.check = buildSQLFromAST(d.check.definition[0]);
+              field.check = buildSQLFromAST(d.check.definition[0], DB.MSSQL);
             }
 
             table.fields.push(field);

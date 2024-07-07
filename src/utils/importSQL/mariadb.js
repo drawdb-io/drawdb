@@ -92,7 +92,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
             }
             field.check = "";
             if (d.check) {
-              field.check = buildSQLFromAST(d.check.definition[0]);
+              field.check = buildSQLFromAST(d.check.definition[0], DB.MARIADB);
             }
 
             table.fields.push(field);

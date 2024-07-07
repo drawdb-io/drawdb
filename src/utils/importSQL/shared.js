@@ -1,7 +1,24 @@
-export function buildSQLFromAST(ast) {
+import { DB } from "../../data/constants";
+
+function quoteColumn(str, db) {
+  switch (db) {
+    case DB.MYSQL:
+      return `\`${str}\``;
+    case DB.SQLITE:
+      return `"${str}"`;
+    case DB.POSTGRES:
+      return `"${str}"`;
+    case DB.MSSQL:
+      return `[${str}]`;
+    case DB.MARIADB:
+      return `\`${str}\``;
+  }
+}
+
+export function buildSQLFromAST(ast, db = DB.MYSQL) {
   if (ast.type === "binary_expr") {
-    const leftSQL = buildSQLFromAST(ast.left);
-    const rightSQL = buildSQLFromAST(ast.right);
+    const leftSQL = buildSQLFromAST(ast.left, db);
+    const rightSQL = buildSQLFromAST(ast.right, db);
     return `${leftSQL} ${ast.operator} ${rightSQL}`;
   }
 
@@ -26,7 +43,7 @@ export function buildSQLFromAST(ast) {
     }
     return expr;
   } else if (ast.type === "column_ref") {
-    return "`" + ast.column + "`";
+    return quoteColumn(ast.column, db);
   } else if (ast.type === "expr_list") {
     return ast.value.map((v) => v.value).join(" AND ");
   } else {

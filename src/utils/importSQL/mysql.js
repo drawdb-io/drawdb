@@ -92,7 +92,7 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
             }
             field.check = "";
             if (d.check) {
-              field.check = buildSQLFromAST(d.check.definition[0]);
+              field.check = buildSQLFromAST(d.check.definition[0], DB.MYSQL);
             }
 
             table.fields.push(field);
