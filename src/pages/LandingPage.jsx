@@ -290,11 +290,11 @@ const features = [
     title: "Import",
     content: (
       <div>
-        Already have a diagram? Import a DDL script*, or a JSON file to generate
+        Already have a diagram? Import a DDL script, or a JSON file to generate
         or a diagram.
       </div>
     ),
-    footer: "*Only MySQL supported, more coming soon.",
+    footer: "",
   },
   {
     title: "Customizable workspace",
