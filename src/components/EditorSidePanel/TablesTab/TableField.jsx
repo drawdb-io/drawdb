@@ -20,8 +20,9 @@ export default function TableField({ data, tid, index }) {
     <Row gutter={6} className="hover-1 my-2">
       <Col span={7}>
         <Input
+          id={`scroll_table_${tid}_input_${index}`}
           value={data.name}
-          validateStatus={data.name === "" ? "error" : "default"}
+          validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder="Name"
           onChange={(value) => updateField(tid, index, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}

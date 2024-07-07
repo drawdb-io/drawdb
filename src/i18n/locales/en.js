@@ -226,6 +226,7 @@ const en = {
     no_enums: "No enums",
     no_enums_text: "Define enums here",
     declare_array: "Declare array",
+    empty_index_name: "Declared an index with no name in table '{{tableName}}'",
   },
 };
 

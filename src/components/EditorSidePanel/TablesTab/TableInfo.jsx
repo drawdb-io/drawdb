@@ -33,7 +33,7 @@ export default function TableInfo({ data }) {
         <div className="text-md font-semibold break-keep">{t("name")}: </div>
         <Input
           value={data.name}
-          validateStatus={data.name === "" ? "error" : "default"}
+          validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder={t("name")}
           className="ms-2"
           onChange={(value) => updateTable(data.id, { name: value })}
@@ -290,7 +290,7 @@ export default function TableInfo({ data }) {
                   ...data.indices,
                   {
                     id: data.indices.length,
-                    name: `index_${data.indices.length}`,
+                    name: `${data.name}_index_${data.indices.length}`,
                     unique: false,
                     fields: [],
                   },
