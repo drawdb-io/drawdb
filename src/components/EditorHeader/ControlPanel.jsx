@@ -1507,9 +1507,21 @@ export default function ControlPanel({
             />
           </Link>
           <div className="ms-1 mt-1">
-            <div className="flex items-center">
+            <div className="flex items-center ms-3 gap-2">
+              {databases[database].image && (
+                <img
+                  src={databases[database].image}
+                  className="h-5"
+                  style={{
+                    filter:
+                      "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
+                  }}
+                  alt={databases[database].name + " icon"}
+                  title={databases[database].name + " diagram"}
+                />
+              )}
               <div
-                className="text-xl ms-3 me-1"
+                className="text-xl  me-1"
                 onMouseEnter={() => setShowEditName(true)}
                 onMouseLeave={() => setShowEditName(false)}
                 onClick={() => setModal(MODAL.RENAME)}
