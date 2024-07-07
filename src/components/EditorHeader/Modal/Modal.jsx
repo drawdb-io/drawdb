@@ -17,6 +17,7 @@ import {
   useTransform,
   useTypes,
   useUndoRedo,
+  useTasks,
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
@@ -61,6 +62,7 @@ export default function Modal({
   const { setTypes } = useTypes();
   const { settings } = useSettings();
   const { setEnums } = useEnums();
+  const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [importSource, setImportSource] = useState({
@@ -99,23 +101,31 @@ export default function Modal({
           setDiagramId(diagram.id);
           setTitle(diagram.name);
           setTables(diagram.tables);
-          setTypes(diagram.types);
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
+          setTasks(diagram.todos ?? []);
           setTransform({
             pan: diagram.pan,
             zoom: diagram.zoom,
           });
           setUndoStack([]);
           setRedoStack([]);
+          if (databases[database].hasTypes) {
+            setTypes(diagram.types ?? []);
+          }
+          if (databases[database].hasEnums) {
+            setEnums(diagram.enums ?? []);
+          }
           window.name = `d ${diagram.id}`;
         } else {
-          Toast.error("Oops! Something went wrong.");
+          window.name = "";
+          Toast.error(t("didnt_find_diagram"));
         }
       })
-      .catch(() => {
-        Toast.error("Oops! Couldn't load diagram.");
+      .catch((error) => {
+        console.log(error);
+        Toast.error(t("didnt_find_diagram"));
       });
   };
 
