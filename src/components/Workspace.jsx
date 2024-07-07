@@ -175,6 +175,7 @@ export default function WorkSpace() {
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
+            if (selectedDb === "") setShowSelectDbModal(true);
           }
         })
         .catch((error) => {
