@@ -35,9 +35,14 @@
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
+  opacity: 0;
+}
+
+::-webkit-scrollbar-corner {
   opacity: 0;
 }
 
