@@ -3,7 +3,7 @@ import {
   jsonDiagramIsValid,
 } from "../../../utils/validateSchema";
 import { Upload, Banner } from "@douyinfe/semi-ui";
-import { STATUS } from "../../../data/constants";
+import { DB, STATUS } from "../../../data/constants";
 import {
   useAreas,
   useEnums,
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 export default function ImportDiagram({ setImportData, error, setError }) {
   const { areas } = useAreas();
   const { notes } = useNotes();
-  const { tables, relationships } = useDiagram();
+  const { tables, relationships, database } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
   const { t } = useTranslation();
@@ -72,6 +72,20 @@ export default function ImportDiagram({ setImportData, error, setError }) {
                 return;
               }
             }
+
+            if (!jsonObject.database) {
+              jsonObject.database = DB.GENERIC;
+            }
+
+            if (jsonObject.database !== database) {
+              setError({
+                type: STATUS.ERROR,
+                message:
+                  "The imported diagram and the open diagram don't use matching databases.",
+              });
+              return;
+            }
+
             setImportData(jsonObject);
             if (diagramIsEmpty()) {
               setError({

@@ -171,6 +171,7 @@ export const jsonSchema = {
       items: { ...enumSchema },
     },
     title: { type: "string" },
+    database: { type: "string" },
   },
   required: ["tables", "relationships", "notes", "subjectAreas"],
 };
