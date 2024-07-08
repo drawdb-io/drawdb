@@ -12,17 +12,17 @@ export function toPostgres(diagram) {
   const typeStatements = diagram.types
     .map(
       (type) =>
-        `CREATE TYPE ${type.name} AS (\n${type.fields
+        `\nCREATE TYPE ${type.name} AS (\n${type.fields
           .map((f) => `\t${f.name} ${f.type}`)
-          .join("\n")}\n);\n${
+          .join("\n")}\n);\n\n${
           type.comment.trim() !== ""
-            ? `\nCOMMENT ON TYPE "${type.name}" IS '${type.comment}';\n`
+            ? `\nCOMMENT ON TYPE "${type.name}" IS '${type.comment}';\n\n`
             : ""
         }`,
     )
     .join("\n");
 
-  return `${enumStatements}\n\n${typeStatements}\n${diagram.tables
+  return `${enumStatements}${typeStatements}${diagram.tables
     .map(
       (table) =>
         `CREATE TABLE "${table.name}" (\n${table.fields

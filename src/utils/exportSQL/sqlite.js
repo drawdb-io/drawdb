@@ -28,20 +28,16 @@ export function toSqlite(diagram) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }\t${inlineFK}\n);\n${
-        table.indices.length > 0
-          ? `${table.indices
-              .map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`,
-              )
-              .join("\n")}`
-          : ""
-      }`;
+      }\t${inlineFK}\n);\n${table.indices
+        .map(
+          (i) =>
+            `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
+              i.name
+            }"\nON "${table.name}" (${i.fields
+              .map((f) => `"${f}"`)
+              .join(", ")});`,
+        )
+        .join("\n")}`;
     })
     .join("\n");
 }

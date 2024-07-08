@@ -32,18 +32,16 @@ export function toMySQL(diagram) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${
-          table.indices.length > 0
-            ? `\n${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                    i.name
-                  }\`\nON \`${table.name}\` (${i.fields
-                    .map((f) => `\`${f}\``)
-                    .join(", ")});`,
-              )}`
-            : ""
-        }`,
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${`\n${table.indices
+          .map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
+                i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`,
+          )
+          .join("")}`}`,
     )
     .join("\n")}\n${diagram.references
     .map(

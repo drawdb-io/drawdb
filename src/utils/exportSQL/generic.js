@@ -174,18 +174,14 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${
-          table.indices.length > 0
-            ? `\n${table.indices
-                .map(
-                  (i) =>
-                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name}\`\nON \`${table.name}\` (${i.fields
-                      .map((f) => `\`${f}\``)
-                      .join(", ")});`,
-                )
-                .join("\n")}`
-            : ""
-        }`,
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${`\n${table.indices
+          .map(
+            (i) =>
+              `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name}\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`,
+          )
+          .join("\n")}`}`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -267,20 +263,16 @@ export function jsonToPostgreSQL(obj) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n);\n${
-          table.indices.length > 0
-            ? `${table.indices
-                .map(
-                  (i) =>
-                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
-                      i.name
-                    }"\nON "${table.name}" (${i.fields
-                      .map((f) => `"${f}"`)
-                      .join(", ")});`,
-                )
-                .join("\n")}`
-            : ""
-        }`,
+        }\n);\n${table.indices
+          .map(
+            (i) =>
+              `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
+                i.name
+              }"\nON "${table.name}" (${i.fields
+                .map((f) => `"${f}"`)
+                .join(", ")});`,
+          )
+          .join("\n")}`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -369,20 +361,16 @@ export function jsonToSQLite(obj) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }\t${inlineFK}\n);\n${
-        table.indices.length > 0
-          ? `${table.indices
-              .map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
-                    i.name
-                  }"\nON "${table.name}" (${i.fields
-                    .map((f) => `"${f}"`)
-                    .join(", ")});`,
-              )
-              .join("\n")}`
-          : ""
-      }`;
+      }\t${inlineFK}\n);\n${table.indices
+        .map(
+          (i) =>
+            `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
+              i.name
+            }"\nON "${table.name}" (${i.fields
+              .map((f) => `"${f}"`)
+              .join(", ")});`,
+        )
+        .join("\n")}`;
     })
     .join("\n");
 }
@@ -424,20 +412,16 @@ export function jsonToMariaDB(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n);${
-          table.indices.length > 0
-            ? `\n${table.indices
-                .map(
-                  (i) =>
-                    `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
-                      i.name
-                    }\`\nON \`${table.name}\` (${i.fields
-                      .map((f) => `\`${f}\``)
-                      .join(", ")});`,
-                )
-                .join("\n")}`
-            : ""
-        }`,
+        }\n);${`\n${table.indices
+          .map(
+            (i) =>
+              `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
+                i.name
+              }\`\nON \`${table.name}\` (${i.fields
+                .map((f) => `\`${f}\``)
+                .join(", ")});`,
+          )
+          .join("\n")}`}`,
     )
     .join("\n")}\n${obj.references
     .map(
@@ -496,18 +480,16 @@ export function jsonToSQLServer(obj) {
                 .map((f) => `[${f.name}]`)
                 .join(", ")})`
             : ""
-        }\n);\nGO\n${
-          table.indices.length > 0
-            ? `${table.indices.map(
-                (i) =>
-                  `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX [${
-                    i.name
-                  }]\nON [${table.name}] (${i.fields
-                    .map((f) => `[${f}]`)
-                    .join(", ")});\nGO\n`,
-              )}`
-            : ""
-        }`,
+        }\n);\nGO\n${table.indices
+          .map(
+            (i) =>
+              `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX [${
+                i.name
+              }]\nON [${table.name}] (${i.fields
+                .map((f) => `[${f}]`)
+                .join(", ")});\nGO\n`,
+          )
+          .join("")}`,
     )
     .join("\n")}\n${obj.references
     .map(
