@@ -218,7 +218,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         index.unique = false;
         if (e.index_type === "unique") index.unique = true;
         index.fields = [];
-        e.index_columns.forEach((f) => index.fields.push(f.column));
+        e.index_columns.forEach((f) => index.fields.push(f.column.expr.value));
 
         let found = -1;
         tables.forEach((t, i) => {
