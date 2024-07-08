@@ -37,7 +37,6 @@ const affinity = {
 };
 
 export function fromSQLite(ast, diagramDb = DB.GENERIC) {
-  console.log(ast);
   const tables = [];
   const relationships = [];
 

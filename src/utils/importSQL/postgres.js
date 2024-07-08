@@ -156,7 +156,6 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           }
 
           if (d.reference_definition) {
-            console.log(d);
             const relationship = {};
             const startTable = table.name;
             const startField = field.name;
@@ -205,7 +204,6 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             relationships.push(relationship);
 
             relationships.forEach((r, i) => (r.id = i));
-            console.log(relationship);
           }
         });
         table.fields.forEach((f, j) => {

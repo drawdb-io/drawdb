@@ -107,17 +107,6 @@ export default function RelationshipInfo({ data }) {
 
   const changeConstraint = (key, value) => {
     const undoKey = `${key}Constraint`;
-    console.log({
-      action: Action.EDIT,
-      element: ObjectType.RELATIONSHIP,
-      rid: data.id,
-      undo: { [undoKey]: data[undoKey] },
-      redo: { [undoKey]: value },
-      message: t("edit_relationship", {
-        refName: data.name,
-        extra: "[constraint]",
-      }),
-    });
     setUndoStack((prev) => [
       ...prev,
       {
