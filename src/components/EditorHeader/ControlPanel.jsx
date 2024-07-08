@@ -712,11 +712,13 @@ export default function ControlPanel({
             .add({
               title: title,
               tables: tables,
+              database: database,
               relationships: relationships,
-              types: types,
               notes: notes,
               subjectAreas: areas,
               custom: 1,
+              ...(databases[database].hasEnums && { enums: enums }),
+              ...(databases[database].hasTypes && { types: types }),
             })
             .then(() => {
               Toast.success(t("template_saved"));
