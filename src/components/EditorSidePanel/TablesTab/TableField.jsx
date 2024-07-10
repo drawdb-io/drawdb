@@ -89,7 +89,8 @@ export default function TableField({ data, tid, index }) {
             ]);
             setRedoStack([]);
             const incr =
-              data.increment && dbToTypes[database][value].canIncrement;
+              data.increment && !!dbToTypes[database][value].canIncrement;
+
             if (value === "ENUM" || value === "SET") {
               updateField(tid, index, {
                 type: value,
