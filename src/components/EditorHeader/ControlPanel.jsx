@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useRegisterSW } from "virtual:pwa-register/react";
 import {
   IconCaretdown,
+  IconCloud,
   IconChevronRight,
   IconChevronUp,
   IconChevronDown,
@@ -18,6 +20,7 @@ import {
   InputNumber,
   Tooltip,
   Spin,
+  Tag,
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
@@ -1287,9 +1290,13 @@ export default function ControlPanel({
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
 
+  const {
+    offlineReady: [isOfflineReady],
+  } = useRegisterSW();
+
   return (
     <>
-      {layout.header && header()}
+      {layout.header && header(isOfflineReady)}
       {layout.toolbar && toolbar()}
       <Modal
         modal={modal}
@@ -1498,10 +1505,10 @@ export default function ControlPanel({
     }
   }
 
-  function header() {
+  function header(isOfflineReady) {
     return (
       <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
-        <div className="flex justify-start items-center">
+        <div className="flex justify-start items-center grow">
           <Link to="/">
             <img
               width={54}
@@ -1510,7 +1517,7 @@ export default function ControlPanel({
               className="ms-8 min-w-[54px]"
             />
           </Link>
-          <div className="ms-1 mt-1">
+          <div className="ms-1 sm:me-1 xl:me-6 mt-1 grow">
             <div className="flex items-center ms-3 gap-2">
               {databases[database].image && (
                 <img
@@ -1535,7 +1542,7 @@ export default function ControlPanel({
               </div>
               {(showEditName || modal === MODAL.RENAME) && <IconEdit />}
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-start items-center">
               <div className="flex justify-start text-md select-none me-2">
                 {Object.keys(menu).map((category) => (
                   <Dropdown
@@ -1642,6 +1649,13 @@ export default function ControlPanel({
               >
                 {getState()}
               </Button>
+              {isOfflineReady && (
+                <span className="ms-auto">
+                  <Tag prefixIcon={<IconCloud />} size="large">
+                    {t("available_offline")}
+                  </Tag>
+                </span>
+              )}
             </div>
           </div>
         </div>
