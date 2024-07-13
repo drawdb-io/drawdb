@@ -5,7 +5,7 @@
 <h3 align="center">Free, simple, and intuitive database design tool and SQL generator.</h3>
 
 <p align="center">
-    <a href="https://drawdb.vercel.app/">drawDB</a>
+    <a href="https://drawdb.app/">drawDB</a>
     ·  
     <a href="https://discord.gg/BrjZgNrmR6">Discord</a>
     ·  
