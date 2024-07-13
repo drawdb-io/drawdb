@@ -540,6 +540,7 @@ export default function Canvas() {
                 d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
                 stroke="red"
                 strokeDasharray="8,8"
+                className="pointer-events-none touch-none"
               />
             )}
             {notes.map((n) => (
