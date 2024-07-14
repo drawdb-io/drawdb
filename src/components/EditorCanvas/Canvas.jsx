@@ -436,24 +436,43 @@ export default function Canvas() {
     "wheel",
     (e) => {
       e.preventDefault();
-      // How "eager" the viewport is to
-      // center the cursor's coordinates
-      const eagernessFactor = 0.05;
-      setTransform((prev) => ({
-        pan: {
-          x:
-            prev.pan.x -
-            (pointer.spaces.diagram.x - prev.pan.x) *
-              eagernessFactor *
-              Math.sign(e.deltaY),
-          y:
-            prev.pan.y -
-            (pointer.spaces.diagram.y - prev.pan.y) *
-              eagernessFactor *
-              Math.sign(e.deltaY),
-        },
-        zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
-      }));
+
+      if (e.ctrlKey) {
+        // How "eager" the viewport is to
+        // center the cursor's coordinates
+        const eagernessFactor = 0.05;
+        setTransform((prev) => ({
+          pan: {
+            x:
+              prev.pan.x -
+              (pointer.spaces.diagram.x - prev.pan.x) *
+                eagernessFactor *
+                Math.sign(e.deltaY),
+            y:
+              prev.pan.y -
+              (pointer.spaces.diagram.y - prev.pan.y) *
+                eagernessFactor *
+                Math.sign(e.deltaY),
+          },
+          zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
+        }));
+      } else if (e.shiftKey) {
+        setTransform((prev) => ({
+          ...prev,
+          pan: {
+            ...prev.pan,
+            x: prev.pan.x + e.deltaY / prev.zoom,
+          },
+        }));
+      } else {
+        setTransform((prev) => ({
+          ...prev,
+          pan: {
+            ...prev.pan,
+            y: prev.pan.y + e.deltaY / prev.zoom,
+          },
+        }));
+      }
     },
     canvasRef,
     { passive: false },
