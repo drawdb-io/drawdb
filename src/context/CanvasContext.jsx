@@ -1,5 +1,5 @@
 import { useTransform } from "../hooks";
-import { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, useCallback, useMemo, useRef, useState } from "react";
 import { useEventListener, useResizeObserver } from "usehooks-ts";
 
 export const CanvasContext = createContext({
@@ -34,10 +34,11 @@ export const CanvasContext = createContext({
   },
 });
 
-export function useCanvasContextProviderValue(canvasRef) {
+export function CanvasContextProvider({ children, ...attrs }) {
+  const canvasWrapRef = useRef(null);
   const { transform } = useTransform();
   const canvasSize = useResizeObserver({
-    ref: canvasRef,
+    ref: canvasWrapRef,
     box: "content-box",
   });
   const screenSize = useMemo(
@@ -133,11 +134,11 @@ export function useCanvasContextProviderValue(canvasRef) {
   }
 
   // Important for touch screen devices!
-  useEventListener("pointerdown", detectPointerMovement, canvasRef);
+  useEventListener("pointerdown", detectPointerMovement, canvasWrapRef);
 
-  useEventListener("pointermove", detectPointerMovement, canvasRef);
+  useEventListener("pointermove", detectPointerMovement, canvasWrapRef);
 
-  return {
+  const contextValue = {
     canvas: {
       screenSize,
       viewBox,
@@ -155,4 +156,12 @@ export function useCanvasContextProviderValue(canvasRef) {
       setStyle: setPointerStyle,
     },
   };
+
+  return (
+    <CanvasContext.Provider value={contextValue}>
+      <div {...attrs} ref={canvasWrapRef}>
+        {children}
+      </div>
+    </CanvasContext.Provider>
+  )
 }

@@ -11,6 +11,7 @@ import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
 import {
+  useCanvas,
   useSettings,
   useTransform,
   useDiagram,
@@ -22,14 +23,13 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { diagram } from "../../data/heroDiagram";
-import { CanvasContext, useCanvasContextProviderValue } from "../../context/CanvasContext";
 import { useEventListener } from "usehooks-ts";
 
 export default function Canvas() {
   const { t } = useTranslation();
 
   const canvasRef = useRef(null);
-  const canvasContextValue = useCanvasContextProviderValue(canvasRef);
+  const canvasContextValue = useCanvas();
   const {
     canvas: { viewBox },
     pointer,
@@ -481,169 +481,167 @@ export default function Canvas() {
   const theme = localStorage.getItem("theme");
 
   return (
-    <CanvasContext.Provider value={canvasContextValue}>
-      <div className="flex-grow h-full touch-none" id="canvas">
-        <div
-          className="w-full h-full"
-          style={{
-            cursor: pointer.style,
-            backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
-          }}
-        >
-          {settings.showGrid && (
-            <svg className="absolute w-full h-full">
-              <defs>
-                <pattern
-                  id="pattern-circles"
-                  x="0"
-                  y="0"
-                  width="24"
-                  height="24"
-                  patternUnits="userSpaceOnUse"
-                  patternContentUnits="userSpaceOnUse"
-                >
-                  <circle
-                    id="pattern-circle"
-                    cx="4"
-                    cy="4"
-                    r="0.85"
-                    fill="rgb(99, 152, 191)"
-                  ></circle>
-                </pattern>
-              </defs>
-              <rect
+    <div className="flex-grow h-full touch-none" id="canvas">
+      <div
+        className="w-full h-full"
+        style={{
+          cursor: pointer.style,
+          backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
+        }}
+      >
+        {settings.showGrid && (
+          <svg className="absolute w-full h-full">
+            <defs>
+              <pattern
+                id="pattern-circles"
                 x="0"
                 y="0"
-                width="100%"
-                height="100%"
-                fill="url(#pattern-circles)"
-              ></rect>
-            </svg>
-          )}
-          <svg
-            ref={canvasRef}
-            onPointerMove={handlePointerMove}
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            className="absolute w-full h-full touch-none"
-            viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
-          >
-            {areas.map((a) => (
-              <Area
-                key={a.id}
-                data={a}
-                onPointerDown={(e) =>
-                  handlePointerDownOnElement(e, a.id, ObjectType.AREA)
-                }
-                setResize={setAreaResize}
-                setInitCoords={setInitCoords}
-              />
-            ))}
-            {relationships.map((e, i) => (
-              <Relationship key={i} data={e} />
-            ))}
-            {tables.map((table) => (
-              <Table
-                key={table.id}
-                tableData={table}
-                setHoveredTable={setHoveredTable}
-                handleGripField={handleGripField}
-                setLinkingLine={setLinkingLine}
-                onPointerDown={(e) =>
-                  handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
-                }
-              />
-            ))}
-            {linking && (
-              <path
-                d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
-                stroke="red"
-                strokeDasharray="8,8"
-                className="pointer-events-none touch-none"
-              />
-            )}
-            {notes.map((n) => (
-              <Note
-                key={n.id}
-                data={n}
-                onPointerDown={(e) =>
-                  handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
-                }
-              />
-            ))}
+                width="24"
+                height="24"
+                patternUnits="userSpaceOnUse"
+                patternContentUnits="userSpaceOnUse"
+              >
+                <circle
+                  id="pattern-circle"
+                  cx="4"
+                  cy="4"
+                  r="0.85"
+                  fill="rgb(99, 152, 191)"
+                ></circle>
+              </pattern>
+            </defs>
+            <rect
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              fill="url(#pattern-circles)"
+            ></rect>
           </svg>
-        </div>
-        {settings.showDebugCoordinates && (
-          <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-sm pointer-events-none select-none">
-            <table className="table-auto grow">
-              <thead>
-                <tr>
-                  <th className="text-left" colSpan={3}>
-                    {t("transform")}
-                  </th>
-                </tr>
-                <tr className="italic [&_th]:font-normal [&_th]:text-right">
-                  <th>pan x</th>
-                  <th>pan y</th>
-                  <th>scale</th>
-                </tr>
-              </thead>
-              <tbody className="[&_td]:text-right [&_td]:min-w-[8ch]">
-                <tr>
-                  <td>{transform.pan.x.toFixed(2)}</td>
-                  <td>{transform.pan.y.toFixed(2)}</td>
-                  <td>{transform.zoom.toFixed(4)}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
-              <thead>
-                <tr>
-                  <th colSpan={4}>{t("viewbox")}</th>
-                </tr>
-                <tr className="italic [&_th]:font-normal">
-                  <th>left</th>
-                  <th>top</th>
-                  <th>width</th>
-                  <th>height</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{viewBox.left.toFixed(2)}</td>
-                  <td>{viewBox.top.toFixed(2)}</td>
-                  <td>{viewBox.width.toFixed(2)}</td>
-                  <td>{viewBox.height.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
-              <thead>
-                <tr>
-                  <th colSpan={3}>{t("cursor_coordinates")}</th>
-                </tr>
-                <tr className="italic [&_th]:font-normal">
-                  <th>{t("coordinate_space")}</th>
-                  <th>x</th>
-                  <th>y</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{t("coordinate_space_screen")}</td>
-                  <td>{pointer.spaces.screen.x.toFixed(2)}</td>
-                  <td>{pointer.spaces.screen.y.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>{t("coordinate_space_diagram")}</td>
-                  <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
-                  <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         )}
+        <svg
+          ref={canvasRef}
+          onPointerMove={handlePointerMove}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          className="absolute w-full h-full touch-none"
+          viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
+        >
+          {areas.map((a) => (
+            <Area
+              key={a.id}
+              data={a}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, a.id, ObjectType.AREA)
+              }
+              setResize={setAreaResize}
+              setInitCoords={setInitCoords}
+            />
+          ))}
+          {relationships.map((e, i) => (
+            <Relationship key={i} data={e} />
+          ))}
+          {tables.map((table) => (
+            <Table
+              key={table.id}
+              tableData={table}
+              setHoveredTable={setHoveredTable}
+              handleGripField={handleGripField}
+              setLinkingLine={setLinkingLine}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
+              }
+            />
+          ))}
+          {linking && (
+            <path
+              d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
+              stroke="red"
+              strokeDasharray="8,8"
+              className="pointer-events-none touch-none"
+            />
+          )}
+          {notes.map((n) => (
+            <Note
+              key={n.id}
+              data={n}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
+              }
+            />
+          ))}
+        </svg>
       </div>
-    </CanvasContext.Provider>
+      {settings.showDebugCoordinates && (
+        <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-sm pointer-events-none select-none">
+          <table className="table-auto grow">
+            <thead>
+              <tr>
+                <th className="text-left" colSpan={3}>
+                  {t("transform")}
+                </th>
+              </tr>
+              <tr className="italic [&_th]:font-normal [&_th]:text-right">
+                <th>pan x</th>
+                <th>pan y</th>
+                <th>scale</th>
+              </tr>
+            </thead>
+            <tbody className="[&_td]:text-right [&_td]:min-w-[8ch]">
+              <tr>
+                <td>{transform.pan.x.toFixed(2)}</td>
+                <td>{transform.pan.y.toFixed(2)}</td>
+                <td>{transform.zoom.toFixed(4)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+            <thead>
+              <tr>
+                <th colSpan={4}>{t("viewbox")}</th>
+              </tr>
+              <tr className="italic [&_th]:font-normal">
+                <th>left</th>
+                <th>top</th>
+                <th>width</th>
+                <th>height</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{viewBox.left.toFixed(2)}</td>
+                <td>{viewBox.top.toFixed(2)}</td>
+                <td>{viewBox.width.toFixed(2)}</td>
+                <td>{viewBox.height.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+            <thead>
+              <tr>
+                <th colSpan={3}>{t("cursor_coordinates")}</th>
+              </tr>
+              <tr className="italic [&_th]:font-normal">
+                <th>{t("coordinate_space")}</th>
+                <th>x</th>
+                <th>y</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{t("coordinate_space_screen")}</td>
+                <td>{pointer.spaces.screen.x.toFixed(2)}</td>
+                <td>{pointer.spaces.screen.y.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td>{t("coordinate_space_diagram")}</td>
+                <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
+                <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }

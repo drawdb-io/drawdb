@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Popover, Input } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
@@ -9,6 +9,7 @@ import {
   State,
 } from "../../data/constants";
 import {
+  useCanvas,
   useLayout,
   useSettings,
   useUndoRedo,
@@ -19,7 +20,6 @@ import {
 import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
-import { CanvasContext } from "../../context/CanvasContext";
 
 export default function Area({
   data,
@@ -33,7 +33,7 @@ export default function Area({
     pointer: {
       spaces: { diagram: pointer },
     },
-  } = useContext(CanvasContext);
+  } = useCanvas();
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
