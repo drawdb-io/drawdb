@@ -85,6 +85,11 @@ export default function Note({ data, onPointerDown }) {
     <g
       onPointerEnter={(e) => e.isPrimary && setHovered(true)}
       onPointerLeave={(e) => e.isPrimary && setHovered(false)}
+      onPointerDown={(e) => {
+        // Required for onPointerLeave to trigger when a touch pointer leaves
+        // https://stackoverflow.com/a/70976017/1137077
+        e.target.releasePointerCapture(e.pointerId);
+      }}
     >
       <path
         d={`M${data.x + fold} ${data.y} L${data.x + w - r} ${

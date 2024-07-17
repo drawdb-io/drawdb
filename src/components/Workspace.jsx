@@ -352,6 +352,11 @@ export default function WorkSpace() {
         onPointerUp={(e) => e.isPrimary && setResize(false)}
         onPointerLeave={(e) => e.isPrimary && setResize(false)}
         onPointerMove={(e) => e.isPrimary && handleResize(e)}
+        onPointerDown={(e) => {
+          // Required for onPointerLeave to trigger when a touch pointer leaves
+          // https://stackoverflow.com/a/70976017/1137077
+          e.target.releasePointerCapture(e.pointerId);
+        }}
       >
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />

@@ -280,6 +280,11 @@ export default function Table(props) {
 
           setHoveredField(-1);
         }}
+        onPointerDown={(e) => {
+          // Required for onPointerLeave to trigger when a touch pointer leaves
+          // https://stackoverflow.com/a/70976017/1137077
+          e.target.releasePointerCapture(e.pointerId);
+        }}
       >
         <div
           className={`${

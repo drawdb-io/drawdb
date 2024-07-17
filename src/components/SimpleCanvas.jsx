@@ -24,7 +24,15 @@ function Table({ table, grab }) {
       width={tableWidth}
       height={height}
       className="drop-shadow-lg rounded-md cursor-move"
-      onPointerDown={(e) => e.isPrimary && grab(e)}
+      onPointerDown={(e) => {
+        // Required for onPointerLeave to trigger when a touch pointer leaves
+        // https://stackoverflow.com/a/70976017/1137077
+        e.target.releasePointerCapture(e.pointerId);
+        
+        if (!e.isPrimary) return;
+
+        grab(e);
+      }}
       onPointerEnter={(e) => e.isPrimary && setIsHovered(true)}
       onPointerLeave={(e) => e.isPrimary && setIsHovered(false)}
     >
@@ -48,6 +56,11 @@ function Table({ table, grab }) {
             } h-[36px] px-2 py-1 flex justify-between`}
             onPointerEnter={(e) => e.isPrimary && setHoveredField(i)}
             onPointerLeave={(e) => e.isPrimary && setHoveredField(-1)}
+            onPointerDown={(e) => {
+              // Required for onPointerLeave to trigger when a touch pointer leaves
+              // https://stackoverflow.com/a/70976017/1137077
+              e.target.releasePointerCapture(e.pointerId);
+            }}
           >
             <div className={hoveredField === i ? "text-zinc-500" : ""}>
               <button

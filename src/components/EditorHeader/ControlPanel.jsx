@@ -1540,6 +1540,11 @@ export default function ControlPanel({
                 className="text-xl  me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
                 onPointerLeave={(e) => e.isPrimary && setShowEditName(false)}
+                onPointerDown={(e) => {
+                  // Required for onPointerLeave to trigger when a touch pointer leaves
+                  // https://stackoverflow.com/a/70976017/1137077
+                  e.target.releasePointerCapture(e.pointerId);
+                }}
                 onClick={() => setModal(MODAL.RENAME)}
               >
                 {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
