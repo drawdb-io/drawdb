@@ -1158,6 +1158,18 @@ export default function ControlPanel({
             showCardinality: !prev.showCardinality,
           })),
       },
+      show_debug_coordinates: {
+        state: settings.showDebugCoordinates ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showDebugCoordinates: !prev.showDebugCoordinates,
+          })),
+      },
       theme: {
         children: [
           {
@@ -1526,8 +1538,13 @@ export default function ControlPanel({
               )}
               <div
                 className="text-xl  me-1"
-                onMouseEnter={() => setShowEditName(true)}
-                onMouseLeave={() => setShowEditName(false)}
+                onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
+                onPointerLeave={(e) => e.isPrimary && setShowEditName(false)}
+                onPointerDown={(e) => {
+                  // Required for onPointerLeave to trigger when a touch pointer leaves
+                  // https://stackoverflow.com/a/70976017/1137077
+                  e.target.releasePointerCapture(e.pointerId);
+                }}
                 onClick={() => setModal(MODAL.RENAME)}
               >
                 {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}

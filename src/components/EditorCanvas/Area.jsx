@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Popover, Input } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
@@ -9,22 +9,33 @@ import {
   State,
 } from "../../data/constants";
 import {
+  useCanvas,
   useLayout,
   useSettings,
   useUndoRedo,
   useSelect,
   useAreas,
   useSaveState,
-  useTransform,
 } from "../../hooks";
 import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
+import { useHover } from "usehooks-ts";
 
-export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
-  const [hovered, setHovered] = useState(false);
+export default function Area({
+  data,
+  onPointerDown,
+  setResize,
+  setInitCoords,
+}) {
+  const ref = useRef(null);
+  const isHovered = useHover(ref);
+  const {
+    pointer: {
+      spaces: { diagram: pointer },
+    },
+  } = useCanvas();
   const { layout } = useLayout();
   const { settings } = useSettings();
-  const { transform } = useTransform();
   const { setSaveState } = useSaveState();
   const { selectedElement, setSelectedElement } = useSelect();
 
@@ -35,8 +46,8 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
       y: data.y,
       width: data.width,
       height: data.height,
-      mouseX: e.clientX / transform.zoom,
-      mouseY: e.clientY / transform.zoom,
+      pointerX: pointer.x,
+      pointerY: pointer.y,
     });
   };
 
@@ -84,21 +95,18 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
     selectedElement.open;
 
   return (
-    <g
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <g ref={ref}>
       <foreignObject
         key={data.id}
         x={data.x}
         y={data.y}
         width={data.width > 0 ? data.width : 0}
         height={data.height > 0 ? data.height : 0}
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
       >
         <div
           className={`border-2 ${
-            hovered
+            isHovered
               ? "border-dashed border-blue-500"
               : selectedElement.element === ObjectType.AREA &&
                   selectedElement.id === data.id
@@ -114,7 +122,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
               <div className="text-color select-none overflow-hidden text-ellipsis">
                 {data.name}
               </div>
-              {(hovered || (areaIsSelected() && !layout.sidebar)) && (
+              {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
                 <Popover
                   visible={areaIsSelected() && !layout.sidebar}
                   onClickOutSide={onClickOutSide}
@@ -139,7 +147,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
           </div>
         </div>
       </foreignObject>
-      {hovered && (
+      {isHovered && (
         <>
           <circle
             cx={data.x}
@@ -149,7 +157,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nwse-resize"
-            onMouseDown={(e) => handleResize(e, "tl")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tl")}
           />
           <circle
             cx={data.x + data.width}
@@ -159,7 +167,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nesw-resize"
-            onMouseDown={(e) => handleResize(e, "tr")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tr")}
           />
           <circle
             cx={data.x}
@@ -169,7 +177,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nesw-resize"
-            onMouseDown={(e) => handleResize(e, "bl")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "bl")}
           />
           <circle
             cx={data.x + data.width}
@@ -179,7 +187,7 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
             stroke="#5891db"
             strokeWidth={2}
             cursor="nwse-resize"
-            onMouseDown={(e) => handleResize(e, "br")}
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "br")}
           />
         </>
       )}

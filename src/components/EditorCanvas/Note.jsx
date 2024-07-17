@@ -21,7 +21,7 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 
-export default function Note({ data, onMouseDown }) {
+export default function Note({ data, onPointerDown }) {
   const w = 180;
   const r = 3;
   const fold = 24;
@@ -83,8 +83,13 @@ export default function Note({ data, onMouseDown }) {
 
   return (
     <g
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={(e) => e.isPrimary && setHovered(true)}
+      onPointerLeave={(e) => e.isPrimary && setHovered(false)}
+      onPointerDown={(e) => {
+        // Required for onPointerLeave to trigger when a touch pointer leaves
+        // https://stackoverflow.com/a/70976017/1137077
+        e.target.releasePointerCapture(e.pointerId);
+      }}
     >
       <path
         d={`M${data.x + fold} ${data.y} L${data.x + w - r} ${
@@ -133,7 +138,7 @@ export default function Note({ data, onMouseDown }) {
         y={data.y}
         width={w}
         height={data.height}
-        onMouseDown={onMouseDown}
+        onPointerDown={onPointerDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
           <div className="flex justify-between gap-1 w-full">

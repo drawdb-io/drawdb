@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
+import { CanvasContextProvider } from "../context/CanvasContext";
 import SidePanel from "./EditorSidePanel/SidePanel";
 import { DB, State } from "../data/constants";
 import { db } from "../data/db";
@@ -338,7 +339,7 @@ export default function WorkSpace() {
   }, [load]);
 
   return (
-    <div className="h-[100vh] flex flex-col overflow-hidden theme">
+    <div className="h-full flex flex-col overflow-hidden theme">
       <ControlPanel
         diagramId={id}
         setDiagramId={setId}
@@ -349,15 +350,22 @@ export default function WorkSpace() {
       />
       <div
         className="flex h-full overflow-y-auto"
-        onMouseUp={() => setResize(false)}
-        onMouseLeave={() => setResize(false)}
-        onMouseMove={handleResize}
+        onPointerUp={(e) => e.isPrimary && setResize(false)}
+        onPointerLeave={(e) => e.isPrimary && setResize(false)}
+        onPointerMove={(e) => e.isPrimary && handleResize(e)}
+        onPointerDown={(e) => {
+          // Required for onPointerLeave to trigger when a touch pointer leaves
+          // https://stackoverflow.com/a/70976017/1137077
+          e.target.releasePointerCapture(e.pointerId);
+        }}
       >
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />
         )}
         <div className="relative w-full h-full overflow-hidden">
-          <Canvas saveState={saveState} setSaveState={setSaveState} />
+          <CanvasContextProvider className="h-full w-full">
+            <Canvas saveState={saveState} setSaveState={setSaveState} />
+          </CanvasContextProvider>
           {!(layout.sidebar || layout.toolbar || layout.header) && (
             <div className="fixed right-5 bottom-4">
               <FloatingControls />

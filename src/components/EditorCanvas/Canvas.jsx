@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import {
   Action,
   Cardinality,
@@ -11,6 +11,7 @@ import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
 import {
+  useCanvas,
   useSettings,
   useTransform,
   useDiagram,
@@ -22,9 +23,18 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { diagram } from "../../data/heroDiagram";
+import { useEventListener } from "usehooks-ts";
 
 export default function Canvas() {
   const { t } = useTranslation();
+
+  const canvasRef = useRef(null);
+  const canvasContextValue = useCanvas();
+  const {
+    canvas: { viewBox },
+    pointer,
+  } = canvasContextValue;
+
   const { tables, updateTable, relationships, addRelationship } = useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -50,17 +60,15 @@ export default function Canvas() {
     endX: 0,
     endY: 0,
   });
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [grabOffset, setGrabOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
     tableId: -1,
     field: -2,
   });
   const [panning, setPanning] = useState({
     isPanning: false,
-    x: 0,
-    y: 0,
-    dx: 0,
-    dy: 0,
+    panStart: { x: 0, y: 0 },
+    cursorStart: { x: 0, y: 0 },
   });
   const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
   const [initCoords, setInitCoords] = useState({
@@ -68,20 +76,23 @@ export default function Canvas() {
     y: 0,
     width: 0,
     height: 0,
-    mouseX: 0,
-    mouseY: 0,
+    pointerX: 0,
+    pointerY: 0,
   });
-  const [cursor, setCursor] = useState("default");
 
-  const canvas = useRef(null);
+  /**
+   * @param {PointerEvent} e
+   * @param {*} id
+   * @param {ObjectType[keyof ObjectType]} type
+   */
+  const handlePointerDownOnElement = (e, id, type) => {
+    if (!e.isPrimary) return;
 
-  const handleMouseDownOnElement = (e, id, type) => {
-    const { clientX, clientY } = e;
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
-      setOffset({
-        x: clientX / transform.zoom - table.x,
-        y: clientY / transform.zoom - table.y,
+      setGrabOffset({
+        x: table.x - pointer.spaces.diagram.x,
+        y: table.y - pointer.spaces.diagram.y,
       });
       setDragging({
         element: type,
@@ -91,9 +102,9 @@ export default function Canvas() {
       });
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
-      setOffset({
-        x: clientX / transform.zoom - area.x,
-        y: clientY / transform.zoom - area.y,
+      setGrabOffset({
+        x: area.x - pointer.spaces.diagram.x,
+        y: area.y - pointer.spaces.diagram.y,
       });
       setDragging({
         element: type,
@@ -103,9 +114,9 @@ export default function Canvas() {
       });
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
-      setOffset({
-        x: clientX / transform.zoom - note.x,
-        y: clientY / transform.zoom - note.y,
+      setGrabOffset({
+        x: note.x - pointer.spaces.diagram.x,
+        y: note.y - pointer.spaces.diagram.y,
       });
       setDragging({
         element: type,
@@ -122,13 +133,17 @@ export default function Canvas() {
     }));
   };
 
-  const handleMouseMove = (e) => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerMove = (e) => {
+    if (!e.isPrimary) return;
+
     if (linking) {
-      const rect = canvas.current.getBoundingClientRect();
       setLinkingLine({
         ...linkingLine,
-        endX: (e.clientX - rect.left - transform.pan?.x) / transform.zoom,
-        endY: (e.clientY - rect.top - transform.pan?.y) / transform.zoom,
+        endX: pointer.spaces.diagram.x,
+        endY: pointer.spaces.diagram.y,
       });
     } else if (
       panning.isPanning &&
@@ -138,60 +153,80 @@ export default function Canvas() {
       if (!settings.panning) {
         return;
       }
-      const dx = e.clientX - panning.dx;
-      const dy = e.clientY - panning.dy;
       setTransform((prev) => ({
         ...prev,
-        pan: { x: prev.pan?.x + dx, y: prev.pan?.y + dy },
+        pan: {
+          x:
+            panning.panStart.x +
+            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
+          y:
+            panning.panStart.y +
+            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
+        },
       }));
-      setPanning((prev) => ({ ...prev, dx: e.clientX, dy: e.clientY }));
     } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
-      const dx = e.clientX / transform.zoom - offset.x;
-      const dy = e.clientY / transform.zoom - offset.y;
-      updateTable(dragging.id, { x: dx, y: dy });
+      updateTable(dragging.id, {
+        x: pointer.spaces.diagram.x + grabOffset.x,
+        y: pointer.spaces.diagram.y + grabOffset.y,
+      });
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
       areaResize.id === -1
     ) {
-      const dx = e.clientX / transform.zoom - offset.x;
-      const dy = e.clientY / transform.zoom - offset.y;
-      updateArea(dragging.id, { x: dx, y: dy });
+      updateArea(dragging.id, {
+        x: pointer.spaces.diagram.x + grabOffset.x,
+        y: pointer.spaces.diagram.y + grabOffset.y,
+      });
     } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
-      const dx = e.clientX / transform.zoom - offset.x;
-      const dy = e.clientY / transform.zoom - offset.y;
-      updateNote(dragging.id, { x: dx, y: dy });
+      updateNote(dragging.id, {
+        x: pointer.spaces.diagram.x + grabOffset.x,
+        y: pointer.spaces.diagram.y + grabOffset.y,
+      });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
       let newDims = { ...initCoords };
-      delete newDims.mouseX;
-      delete newDims.mouseY;
-      const mouseX = e.clientX / transform.zoom;
-      const mouseY = e.clientY / transform.zoom;
-      setPanning({ isPanning: false, x: 0, y: 0 });
-      if (areaResize.dir === "br") {
-        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
-      } else if (areaResize.dir === "tl") {
-        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
-        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
-        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
-      } else if (areaResize.dir === "tr") {
-        newDims.y = initCoords.y + (mouseY - initCoords.mouseY);
-        newDims.width = initCoords.width + (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height - (mouseY - initCoords.mouseY);
-      } else if (areaResize.dir === "bl") {
-        newDims.x = initCoords.x + (mouseX - initCoords.mouseX);
-        newDims.width = initCoords.width - (mouseX - initCoords.mouseX);
-        newDims.height = initCoords.height + (mouseY - initCoords.mouseY);
+      delete newDims.pointerX;
+      delete newDims.pointerY;
+      setPanning((old) => ({ ...old, isPanning: false }));
+
+      switch (areaResize.dir) {
+        case "br":
+          newDims.width = pointer.spaces.diagram.x - initCoords.x;
+          newDims.height = pointer.spaces.diagram.y - initCoords.y;
+          break;
+        case "tl":
+          newDims.x = pointer.spaces.diagram.x;
+          newDims.y = pointer.spaces.diagram.y;
+          newDims.width =
+            initCoords.x + initCoords.width - pointer.spaces.diagram.x;
+          newDims.height =
+            initCoords.y + initCoords.height - pointer.spaces.diagram.y;
+          break;
+        case "tr":
+          newDims.y = pointer.spaces.diagram.y;
+          newDims.width = pointer.spaces.diagram.x - initCoords.x;
+          newDims.height =
+            initCoords.y + initCoords.height - pointer.spaces.diagram.y;
+          break;
+        case "bl":
+          newDims.x = pointer.spaces.diagram.x;
+          newDims.width =
+            initCoords.x + initCoords.width - pointer.spaces.diagram.x;
+          newDims.height = pointer.spaces.diagram.y - initCoords.y;
+          break;
       }
 
       updateArea(areaResize.id, { ...newDims });
     }
   };
 
-  const handleMouseDown = (e) => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerDown = (e) => {
+    if (!e.isPrimary) return;
+
     // don't pan if the sidesheet for editing a table is open
     if (
       selectedElement.element === ObjectType.TABLE &&
@@ -202,11 +237,12 @@ export default function Canvas() {
 
     setPanning({
       isPanning: true,
-      ...transform.pan,
-      dx: e.clientX,
-      dy: e.clientY,
+      panStart: transform.pan,
+      // Diagram space depends on the current panning.
+      // Use screen space to avoid circular dependencies and undefined behavior.
+      cursorStart: pointer.spaces.screen,
     });
-    setCursor("grabbing");
+    pointer.setStyle("grabbing");
   };
 
   const coordsDidUpdate = (element) => {
@@ -241,7 +277,7 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(transform.pan?.x === panning.x && transform.pan?.y === panning.y);
+    !(transform.pan.x === panning.x && transform.pan.y === panning.y);
 
   const getMovedElementDetails = () => {
     switch (dragging.element) {
@@ -268,7 +304,12 @@ export default function Canvas() {
     }
   };
 
-  const handleMouseUp = () => {
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerUp = (e) => {
+    if (!e.isPrimary) return;
+
     if (coordsDidUpdate(dragging.element)) {
       const info = getMovedElementDetails();
       setUndoStack((prev) => [
@@ -311,8 +352,8 @@ export default function Canvas() {
         open: false,
       }));
     }
-    setPanning({ isPanning: false, x: 0, y: 0 });
-    setCursor("default");
+    setPanning((old) => ({ ...old, isPanning: false }));
+    pointer.setStyle("default");
     if (linking) handleLinking();
     setLinking(false);
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
@@ -344,13 +385,13 @@ export default function Canvas() {
       y: 0,
       width: 0,
       height: 0,
-      mouseX: 0,
-      mouseY: 0,
+      pointerX: 0,
+      pointerY: 0,
     });
   };
 
   const handleGripField = () => {
-    setPanning(false);
+    setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinking(true);
   };
@@ -390,121 +431,217 @@ export default function Canvas() {
     addRelationship(newRelationship);
   };
 
-  const handleMouseWheel = (e) => {
-    e.preventDefault();
-    setTransform((prev) => ({
-      ...prev,
-      zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
-    }));
-  };
+  // Handle mouse wheel scrolling
+  useEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
 
-  useEffect(() => {
-    const canvasElement = canvas.current;
-    canvasElement.addEventListener("wheel", handleMouseWheel, {
-      passive: false,
-    });
-    return () => {
-      canvasElement.removeEventListener("wheel", handleMouseWheel);
-    };
-  });
+      if (e.ctrlKey) {
+        // How "eager" the viewport is to
+        // center the cursor's coordinates
+        const eagernessFactor = 0.05;
+        setTransform((prev) => ({
+          pan: {
+            x:
+              prev.pan.x -
+              (pointer.spaces.diagram.x - prev.pan.x) *
+                eagernessFactor *
+                Math.sign(e.deltaY),
+            y:
+              prev.pan.y -
+              (pointer.spaces.diagram.y - prev.pan.y) *
+                eagernessFactor *
+                Math.sign(e.deltaY),
+          },
+          zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
+        }));
+      } else if (e.shiftKey) {
+        setTransform((prev) => ({
+          ...prev,
+          pan: {
+            ...prev.pan,
+            x: prev.pan.x + e.deltaY / prev.zoom,
+          },
+        }));
+      } else {
+        setTransform((prev) => ({
+          ...prev,
+          pan: {
+            ...prev.pan,
+            y: prev.pan.y + e.deltaY / prev.zoom,
+          },
+        }));
+      }
+    },
+    canvasRef,
+    { passive: false },
+  );
 
   const theme = localStorage.getItem("theme");
 
   return (
-    <div className="flex-grow h-full" id="canvas">
-      <div ref={canvas} className="w-full h-full">
-        <svg
-          onMouseMove={handleMouseMove}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          className="w-full h-full"
-          style={{
-            cursor: cursor,
-            backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
-          }}
-        >
-          {settings.showGrid && (
-            <>
-              <defs>
-                <pattern
-                  id="pattern-circles"
-                  x="0"
-                  y="0"
-                  width="24"
-                  height="24"
-                  patternUnits="userSpaceOnUse"
-                  patternContentUnits="userSpaceOnUse"
-                >
-                  <circle
-                    id="pattern-circle"
-                    cx="4"
-                    cy="4"
-                    r="0.85"
-                    fill="rgb(99, 152, 191)"
-                  ></circle>
-                </pattern>
-              </defs>
-              <rect
+    <div className="flex-grow h-full touch-none" id="canvas">
+      <div
+        className="w-full h-full"
+        style={{
+          cursor: pointer.style,
+          backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
+        }}
+      >
+        {settings.showGrid && (
+          <svg className="absolute w-full h-full">
+            <defs>
+              <pattern
+                id="pattern-circles"
                 x="0"
                 y="0"
-                width="100%"
-                height="100%"
-                fill="url(#pattern-circles)"
-              ></rect>
-            </>
+                width="24"
+                height="24"
+                patternUnits="userSpaceOnUse"
+                patternContentUnits="userSpaceOnUse"
+              >
+                <circle
+                  id="pattern-circle"
+                  cx="4"
+                  cy="4"
+                  r="0.85"
+                  fill="rgb(99, 152, 191)"
+                ></circle>
+              </pattern>
+            </defs>
+            <rect
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              fill="url(#pattern-circles)"
+            ></rect>
+          </svg>
+        )}
+        <svg
+          ref={canvasRef}
+          onPointerMove={handlePointerMove}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          className="absolute w-full h-full touch-none"
+          viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
+        >
+          {areas.map((a) => (
+            <Area
+              key={a.id}
+              data={a}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, a.id, ObjectType.AREA)
+              }
+              setResize={setAreaResize}
+              setInitCoords={setInitCoords}
+            />
+          ))}
+          {relationships.map((e, i) => (
+            <Relationship key={i} data={e} />
+          ))}
+          {tables.map((table) => (
+            <Table
+              key={table.id}
+              tableData={table}
+              setHoveredTable={setHoveredTable}
+              handleGripField={handleGripField}
+              setLinkingLine={setLinkingLine}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
+              }
+            />
+          ))}
+          {linking && (
+            <path
+              d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
+              stroke="red"
+              strokeDasharray="8,8"
+              className="pointer-events-none touch-none"
+            />
           )}
-          <g
-            style={{
-              transform: `translate(${transform.pan?.x}px, ${transform.pan?.y}px) scale(${transform.zoom})`,
-              transformOrigin: "top left",
-            }}
-            id="diagram"
-          >
-            {areas.map((a) => (
-              <Area
-                key={a.id}
-                data={a}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, a.id, ObjectType.AREA)
-                }
-                setResize={setAreaResize}
-                setInitCoords={setInitCoords}
-              />
-            ))}
-            {relationships.map((e, i) => (
-              <Relationship key={i} data={e} />
-            ))}
-            {tables.map((table) => (
-              <Table
-                key={table.id}
-                tableData={table}
-                setHoveredTable={setHoveredTable}
-                handleGripField={handleGripField}
-                setLinkingLine={setLinkingLine}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, table.id, ObjectType.TABLE)
-                }
-              />
-            ))}
-            {linking && (
-              <path
-                d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
-                stroke="red"
-                strokeDasharray="8,8"
-              />
-            )}
-            {notes.map((n) => (
-              <Note
-                key={n.id}
-                data={n}
-                onMouseDown={(e) =>
-                  handleMouseDownOnElement(e, n.id, ObjectType.NOTE)
-                }
-              />
-            ))}
-          </g>
+          {notes.map((n) => (
+            <Note
+              key={n.id}
+              data={n}
+              onPointerDown={(e) =>
+                handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
+              }
+            />
+          ))}
         </svg>
       </div>
+      {settings.showDebugCoordinates && (
+        <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-sm pointer-events-none select-none">
+          <table className="table-auto grow">
+            <thead>
+              <tr>
+                <th className="text-left" colSpan={3}>
+                  {t("transform")}
+                </th>
+              </tr>
+              <tr className="italic [&_th]:font-normal [&_th]:text-right">
+                <th>pan x</th>
+                <th>pan y</th>
+                <th>scale</th>
+              </tr>
+            </thead>
+            <tbody className="[&_td]:text-right [&_td]:min-w-[8ch]">
+              <tr>
+                <td>{transform.pan.x.toFixed(2)}</td>
+                <td>{transform.pan.y.toFixed(2)}</td>
+                <td>{transform.zoom.toFixed(4)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+            <thead>
+              <tr>
+                <th colSpan={4}>{t("viewbox")}</th>
+              </tr>
+              <tr className="italic [&_th]:font-normal">
+                <th>left</th>
+                <th>top</th>
+                <th>width</th>
+                <th>height</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{viewBox.left.toFixed(2)}</td>
+                <td>{viewBox.top.toFixed(2)}</td>
+                <td>{viewBox.width.toFixed(2)}</td>
+                <td>{viewBox.height.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+            <thead>
+              <tr>
+                <th colSpan={3}>{t("cursor_coordinates")}</th>
+              </tr>
+              <tr className="italic [&_th]:font-normal">
+                <th>{t("coordinate_space")}</th>
+                <th>x</th>
+                <th>y</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{t("coordinate_space_screen")}</td>
+                <td>{pointer.spaces.screen.x.toFixed(2)}</td>
+                <td>{pointer.spaces.screen.y.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td>{t("coordinate_space_diagram")}</td>
+                <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
+                <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

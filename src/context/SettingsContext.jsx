@@ -1,7 +1,17 @@
 import { createContext, useState } from "react";
 import { tableWidth } from "../data/constants";
 
-export const SettingsContext = createContext(null);
+export const SettingsContext = createContext({
+  strictMode: false,
+  showFieldSummary: true,
+  showGrid: true,
+  mode: "light",
+  autosave: true,
+  panning: true,
+  showCardinality: true,
+  tableWidth: tableWidth,
+  showDebugCoordinates: false,
+});
 
 export default function SettingsContextProvider({ children }) {
   const [settings, setSettings] = useState({
@@ -13,6 +23,7 @@ export default function SettingsContextProvider({ children }) {
     panning: true,
     showCardinality: true,
     tableWidth: tableWidth,
+    showDebugCoordinates: false,
   });
 
   return (

@@ -42,7 +42,9 @@ export const shortcuts = [
     title: "Reset view",
     description: "Resetting view will set diagram pan to (0, 0).",
   },
-  { shortcut: "CTRL+UP / Wheel up", title: "Zoom in" },
-  { shortcut: "CTRL+DOWN / Wheel down", title: "Zoom out" },
+  { shortcut: "CTRL+UP / CTRL+Wheel up", title: "Zoom in" },
+  { shortcut: "CTRL+DOWN / CTRL+Wheel down", title: "Zoom out" },
+  { shortcut: "Wheel up / Wheel down", title: "Pan Y" },
+  { shortcut: "SHIFT+Wheel up / SHIFT+Wheel down", title: "Pan X" },
   { shortcut: "CTRL+H", title: "Open shortcuts" },
 ];

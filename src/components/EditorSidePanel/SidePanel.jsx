@@ -83,7 +83,7 @@ export default function SidePanel({ width, resize, setResize }) {
         className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
           resize && "bg-semi-grey-2"
         }`}
-        onMouseDown={() => setResize(true)}
+        onPointerDown={(e) => e.isPrimary && setResize(true)}
       >
         <div className="w-1 border-x border-color h-1/6" />
       </div>
