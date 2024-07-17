@@ -1,5 +1,3 @@
-// @ts-check
-
 import { useTransform } from "../hooks";
 import { createContext, useCallback, useMemo, useState } from "react";
 import { useEventListener, useResizeObserver } from "usehooks-ts";
