@@ -8,7 +8,6 @@ export default function LayoutContextProvider({ children }) {
     sidebar: true,
     issues: true,
     toolbar: true,
-    fullscreen: false,
   });
 
   return (

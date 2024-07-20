@@ -1,8 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import useTransform from "../hooks/useTransform";
-import useUndoRedo from "../hooks/useUndoRedo";
-import useSelect from "../hooks/useSelect";
+import { useTransform, useUndoRedo, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
