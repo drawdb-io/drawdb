@@ -76,7 +76,6 @@ export default function ControlPanel({
 }) {
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
-  const [prevTitle, setPrevTitle] = useState(title);
   const [showEditName, setShowEditName] = useState(false);
   const [importDb, setImportDb] = useState("");
   const [exportData, setExportData] = useState({
@@ -728,7 +727,6 @@ export default function ControlPanel({
       rename: {
         function: () => {
           setModal(MODAL.RENAME);
-          setPrevTitle(title);
         },
       },
       delete_diagram: {
@@ -1309,10 +1307,8 @@ export default function ControlPanel({
         setExportData={setExportData}
         title={title}
         setTitle={setTitle}
-        setPrevTitle={setPrevTitle}
         setDiagramId={setDiagramId}
         setModal={setModal}
-        prevTitle={prevTitle}
         importDb={importDb}
       />
       <Sidesheet

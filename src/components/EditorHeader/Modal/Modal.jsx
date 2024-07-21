@@ -6,7 +6,7 @@ import {
   Modal as SemiUIModal,
 } from "@douyinfe/semi-ui";
 import { DB, MODAL, STATUS } from "../../../data/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../../../data/db";
 import {
   useAreas,
@@ -48,8 +48,6 @@ export default function Modal({
   setModal,
   title,
   setTitle,
-  prevTitle,
-  setPrevTitle,
   setDiagramId,
   exportData,
   setExportData,
@@ -65,6 +63,7 @@ export default function Modal({
   const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: true,
@@ -77,6 +76,12 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
+
+  useEffect(() => {
+    if (title !== uncontrolledTitle) {
+      setUncontrolledTitle(title);
+    }
+  }, [title]);
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -212,7 +217,7 @@ export default function Modal({
         setModal(MODAL.NONE);
         return;
       case MODAL.RENAME:
-        setPrevTitle(title);
+        setTitle(uncontrolledTitle);
         setModal(MODAL.NONE);
         return;
       case MODAL.SAVEAS:
@@ -256,7 +261,9 @@ export default function Modal({
           />
         );
       case MODAL.RENAME:
-        return <Rename title={title} setTitle={setTitle} />;
+        return (
+          <Rename title={uncontrolledTitle} setTitle={setUncontrolledTitle} />
+        );
       case MODAL.OPEN:
         return (
           <Open
@@ -339,7 +346,7 @@ export default function Modal({
         });
       }}
       onCancel={() => {
-        if (modal === MODAL.RENAME) setTitle(prevTitle);
+        if (modal === MODAL.RENAME) setUncontrolledTitle(title);
         setModal(MODAL.NONE);
       }}
       centered
