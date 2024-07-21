@@ -6,7 +6,7 @@ import {
   Modal as SemiUIModal,
 } from "@douyinfe/semi-ui";
 import { DB, MODAL, STATUS } from "../../../data/constants";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { db } from "../../../data/db";
 import {
   useAreas,
@@ -76,12 +76,6 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
-
-  useEffect(() => {
-    if (title !== uncontrolledTitle) {
-      setUncontrolledTitle(title);
-    }
-  }, [title]);
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -262,7 +256,7 @@ export default function Modal({
         );
       case MODAL.RENAME:
         return (
-          <Rename title={uncontrolledTitle} setTitle={setUncontrolledTitle} />
+          <Rename key={title} title={title} setTitle={setUncontrolledTitle} />
         );
       case MODAL.OPEN:
         return (
