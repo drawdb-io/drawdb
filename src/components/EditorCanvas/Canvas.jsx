@@ -22,7 +22,6 @@ import {
   useLayout,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
-import { diagram } from "../../data/heroDiagram";
 import { useEventListener } from "usehooks-ts";
 
 export default function Canvas() {
@@ -340,7 +339,7 @@ export default function Canvas() {
           redo: transform.pan,
           message: t("move_element", {
             coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
-            name: diagram,
+            name: "diagram",
           }),
         },
       ]);
