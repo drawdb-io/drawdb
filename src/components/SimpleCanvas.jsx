@@ -199,7 +199,7 @@ export default function SimpleCanvas({ diagram, zoom }) {
     <svg
       className="w-full h-full cursor-grab"
       onPointerUp={(e) => e.isPrimary && releaseTable()}
-      onPointerMove={(e) => e.isPrimary && moveTable()}
+      onPointerMove={(e) => e.isPrimary && moveTable(e)}
       onPointerLeave={(e) => e.isPrimary && releaseTable()}
     >
       <defs>
