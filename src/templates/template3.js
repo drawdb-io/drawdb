@@ -177,7 +177,7 @@ export const template3 = {
           increment: false,
           comment: "",
           id: 4,
-          values: ["delivered", "recieved", "processing"],
+          values: ["delivered", "received", "processing"],
         },
         {
           name: "product_id",
