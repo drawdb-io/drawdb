@@ -48,8 +48,6 @@ export default function Modal({
   setModal,
   title,
   setTitle,
-  prevTitle,
-  setPrevTitle,
   setDiagramId,
   exportData,
   setExportData,
@@ -65,6 +63,7 @@ export default function Modal({
   const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: true,
@@ -212,7 +211,7 @@ export default function Modal({
         setModal(MODAL.NONE);
         return;
       case MODAL.RENAME:
-        setPrevTitle(title);
+        setTitle(uncontrolledTitle);
         setModal(MODAL.NONE);
         return;
       case MODAL.SAVEAS:
@@ -256,7 +255,9 @@ export default function Modal({
           />
         );
       case MODAL.RENAME:
-        return <Rename title={title} setTitle={setTitle} />;
+        return (
+          <Rename key={title} title={title} setTitle={setUncontrolledTitle} />
+        );
       case MODAL.OPEN:
         return (
           <Open
@@ -339,7 +340,7 @@ export default function Modal({
         });
       }}
       onCancel={() => {
-        if (modal === MODAL.RENAME) setTitle(prevTitle);
+        if (modal === MODAL.RENAME) setUncontrolledTitle(title);
         setModal(MODAL.NONE);
       }}
       centered

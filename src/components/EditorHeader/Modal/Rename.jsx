@@ -7,7 +7,7 @@ export default function Rename({ title, setTitle }) {
   return (
     <Input
       placeholder={t("name")}
-      value={title}
+      defaultValue={title}
       onChange={(v) => setTitle(v)}
     />
   );
