@@ -45,6 +45,7 @@ export default function Navbar() {
             className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
             href="https://github.com/drawdb-io/drawdb"
             target="_blank"
+            rel="noreferrer"
           >
             <i className="opacity-70 bi bi-github" />
           </a>
@@ -53,6 +54,7 @@ export default function Navbar() {
             className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
             href="https://x.com/drawDB_"
             target="_blank"
+            rel="noreferrer"
           >
             <i className="opacity-70 bi bi-twitter-x" />
           </a>
@@ -61,6 +63,7 @@ export default function Navbar() {
             className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
             href="https://discord.gg/BrjZgNrmR6"
             target="_blank"
+            rel="noreferrer"
           >
             <i className="opacity-70 bi bi-discord" />
           </a>
