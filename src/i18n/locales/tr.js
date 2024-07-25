@@ -1,6 +1,6 @@
-const english = {
+const turkish = {
   name: "Turkish",
-  native_name: "Turkish",
+  native_name: "Türkçe",
   code: "tr",
 };
 
