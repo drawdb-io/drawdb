@@ -12,6 +12,7 @@ import { fa, persian } from "./locales/fa"
 import { hi, hindi } from "./locales/hi";
 import { uk, ukrainian } from "./locales/uk";
 import { ru, russian } from "./locales/ru";
+import { mr,marathi } from "./locales/mr";
 
 export const languages = [
   english,
@@ -23,6 +24,7 @@ export const languages = [
   portuguese,
   persian,
   hindi,
+  marathi,
   ukrainian,
   russian,
 ].sort((a, b) => a.name.localeCompare(b.name));
@@ -46,6 +48,7 @@ i18n
       pt,
       fa,
       hi,
+      mr,
       uk,
       ru,
     },
