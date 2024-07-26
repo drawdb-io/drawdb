@@ -2,6 +2,8 @@ import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
 
 export function toMySQL(diagram) {
+  console.log(diagram);
+  // console.log(mysqlTypes[field.type.toString()]);
   return `${diagram.tables
     .map(
       (table) =>
@@ -12,7 +14,9 @@ export function toMySQL(diagram) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
                 field.name
-              }\` ${field.type}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${field.type}${(field.size !== undefined && field.size !== "")? "(" + field.size + ")" : ""}${
+                field.notNull ? " NOT NULL" : ""
+              }${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""
