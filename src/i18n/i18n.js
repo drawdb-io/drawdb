@@ -16,6 +16,7 @@ import { tr, turkish } from "./locales/tr";
 import { mr, marathi } from "./locales/mr";
 import { fr, french } from "./locales/fr";
 import { pa, punjabi } from "./locales/pa";
+import { hy, armenian } from "./locales/hy";
 
 export const languages = [
   english,
@@ -33,6 +34,7 @@ export const languages = [
   turkish,
   french,
   punjabi,
+  armenian,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -60,6 +62,7 @@ i18n
       tr,
       fr,
       pa,
+      hy,
     },
   });
 
