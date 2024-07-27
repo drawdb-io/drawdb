@@ -22,7 +22,7 @@ export default function Relationship({ data }) {
     return () => {
       document.removeEventListener(RELATIONSHIP_EDITING, handleEditing);
     };
-  }, []);
+  }, [data.id]);
 
   useEffect(() => {
     const handleClickAway = (event) => {
