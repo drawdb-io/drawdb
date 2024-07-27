@@ -411,6 +411,24 @@ export default function Canvas() {
     )
       return;
 
+    const existRelationship = relationships.find((r) => {
+      const startToEnd =
+        r.startTableId === linkingLine.startTableId &&
+        r.startFieldId === linkingLine.startFieldId &&
+        r.endTableId === hoveredTable.tableId &&
+        r.endFieldId === hoveredTable.field;
+      const endToStart =
+        r.startTableId === hoveredTable.tableId &&
+        r.startFieldId === hoveredTable.field &&
+        r.endTableId === linkingLine.startTableId &&
+        r.endFieldId === linkingLine.startFieldId;
+
+      return startToEnd || endToStart;
+    });
+    if (existRelationship) {
+      return;
+    }
+
     const newRelationship = {
       ...linkingLine,
       endTableId: hoveredTable.tableId,
