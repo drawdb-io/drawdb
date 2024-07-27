@@ -1,14 +1,41 @@
-import { useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import { RELATIONSHIP_EDITING } from "../../data/customEvents";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
+import { cn } from "../../utils/cn";
 
 export default function Relationship({ data }) {
+  const [editing, setEditing] = useState(false);
   const { settings } = useSettings();
   const { tables } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const pathRef = useRef();
+
+  useEffect(() => {
+    const handleEditing = (event) => {
+      setEditing(event.detail.id === data.id);
+    };
+
+    document.addEventListener(RELATIONSHIP_EDITING, handleEditing);
+    return () => {
+      document.removeEventListener(RELATIONSHIP_EDITING, handleEditing);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickAway = (event) => {
+      if (pathRef.current && !pathRef.current.contains(event.target)) {
+        setEditing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickAway);
+    return () => {
+      document.removeEventListener("mousedown", handleClickAway);
+    };
+  }, [pathRef]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -50,6 +77,7 @@ export default function Relationship({ data }) {
   }
 
   const edit = () => {
+    setEditing(true);
     if (!layout.sidebar) {
       setSelectedElement((prev) => ({
         ...prev,
@@ -72,8 +100,15 @@ export default function Relationship({ data }) {
     }
   };
 
+  const editingPathClass = cn("group-hover:stroke-sky-700", {
+    "stroke-sky-700": editing,
+  });
+  const editingCircleClass = cn("group-hover:fill-sky-700", {
+    "fill-sky-700": editing,
+  });
+
   return (
-    <g className="select-none group" onDoubleClick={edit}>
+    <g className="select-none group cursor-pointer" onDoubleClick={edit}>
       <path
         ref={pathRef}
         d={calcPath(
@@ -91,10 +126,9 @@ export default function Relationship({ data }) {
           settings.tableWidth,
         )}
         stroke="gray"
-        className="group-hover:stroke-sky-700"
+        className={editingPathClass}
         fill="none"
         strokeWidth={2}
-        cursor="pointer"
       />
       {pathRef.current && settings.showCardinality && (
         <>
@@ -103,7 +137,7 @@ export default function Relationship({ data }) {
             cy={cardinalityStartY}
             r="12"
             fill="grey"
-            className="group-hover:fill-sky-700"
+            className={editingCircleClass}
           />
           <text
             x={cardinalityStartX}
@@ -120,7 +154,7 @@ export default function Relationship({ data }) {
             cy={cardinalityEndY}
             r="12"
             fill="grey"
-            className="group-hover:fill-sky-700"
+            className={editingCircleClass}
           />
           <text
             x={cardinalityEndX}
