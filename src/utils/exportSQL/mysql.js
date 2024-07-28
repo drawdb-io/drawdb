@@ -2,8 +2,6 @@ import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
 
 export function toMySQL(diagram) {
-  console.log(diagram);
-  // console.log(mysqlTypes[field.type.toString()]);
   return `${diagram.tables
     .map(
       (table) =>
