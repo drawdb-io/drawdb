@@ -113,7 +113,7 @@ const en = {
     not_null: "Not null",
     primary: "Primary",
     unique: "Unique",
-    autoincrement: "Autoincrement",
+    autoincrement: "Auto-increment",
     default_value: "Default",
     check: "Check expression",
     this_will_appear_as_is: "*This will appear in the generated script as is.",
