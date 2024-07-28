@@ -18,6 +18,7 @@ import { fr, french } from "./locales/fr";
 import { pa, punjabi } from "./locales/pa";
 import { hy, armenian } from "./locales/hy";
 import { ar, arabic } from "./locales/ar";
+import { zh_tw, traditionalChinese } from "./locales/zh-tw";
 
 export const languages = [
   english,
@@ -37,6 +38,7 @@ export const languages = [
   punjabi,
   armenian,
   arabic,
+  traditionalChinese,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -66,6 +68,7 @@ i18n
       pa,
       hy,
       ar,
+      zh_tw,
     },
   });
 
