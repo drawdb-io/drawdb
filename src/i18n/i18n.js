@@ -59,7 +59,7 @@ i18n
       da,
       de,
       vi,
-      pt,
+      "pt-BR": pt,
       fa,
       hi,
       mr,
@@ -70,7 +70,7 @@ i18n
       pa,
       hy,
       ar,
-      zh_tw,
+      "zh-TW": zh_tw,
       he,
     },
   });

@@ -1,7 +1,7 @@
 const traditionalChinese = {
   name: "Traditional Chinese",
   native_name: "繁體中文",
-  code: "zh-tw",
+  code: "zh-TW",
 };
 
 const zh_tw = {
