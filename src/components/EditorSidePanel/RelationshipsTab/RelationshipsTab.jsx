@@ -4,7 +4,6 @@ import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import RelationshipInfo from "./RelationshipInfo";
 import { ObjectType } from "../../../data/constants";
-import { RELATIONSHIP_EDITING } from "../../../data/customEvents";
 import { useTranslation } from "react-i18next";
 
 export default function RelationshipsTab() {
@@ -24,20 +23,14 @@ export default function RelationshipsTab() {
         }
         keepDOM
         lazyRender
-        onChange={(k) => {
-          const newId = parseInt(k);
-          const event = new CustomEvent(RELATIONSHIP_EDITING, {
-            detail: { id: newId },
-          });
-          document.dispatchEvent(event);
-
+        onChange={(k) =>
           setSelectedElement((prev) => ({
             ...prev,
             open: true,
-            id: newId,
+            id: parseInt(k),
             element: ObjectType.RELATIONSHIP,
-          }));
-        }}
+          }))
+        }
         accordion
       >
         {relationships.length <= 0 ? (

@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
-import { RELATIONSHIP_EDITING } from "../../data/customEvents";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { cn } from "../../utils/cn";
@@ -14,28 +13,8 @@ export default function Relationship({ data }) {
   const pathRef = useRef();
 
   useEffect(() => {
-    const handleEditing = (event) => {
-      setEditing(event.detail.id === data.id);
-    };
-
-    document.addEventListener(RELATIONSHIP_EDITING, handleEditing);
-    return () => {
-      document.removeEventListener(RELATIONSHIP_EDITING, handleEditing);
-    };
-  }, [data.id]);
-
-  useEffect(() => {
-    const handleClickAway = (event) => {
-      if (pathRef.current && !pathRef.current.contains(event.target)) {
-        setEditing(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickAway);
-    return () => {
-      document.removeEventListener("mousedown", handleClickAway);
-    };
-  }, [pathRef]);
+    setEditing(data.id === selectedElement.id);
+  }, [data.id, selectedElement.id]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
