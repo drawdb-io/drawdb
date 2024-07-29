@@ -107,7 +107,7 @@ const zh = {
     default_value: "默认值",
     check: "检查表达式",
     this_will_appear_as_is: "*此内容将按原样显示在生成的脚本中。",
-    comment: "评论",
+    comment: "注释",
     add_field: "添加字段",
     values: "值",
     size: "大小",
