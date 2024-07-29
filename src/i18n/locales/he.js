@@ -1,5 +1,5 @@
 const hebrew = {
-    name: "עברית",
+    name: "Hebrew",
     native_name: "עברית",
     code: "he",
 };
