@@ -48,9 +48,7 @@ export default function LayoutDropdown() {
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
-            icon={
-              fullscreen ? <IconCheckboxTick /> : <div className="px-2" />
-            }
+            icon={fullscreen ? <IconCheckboxTick /> : <div className="px-2" />}
             onClick={() => {
               if (fullscreen) {
                 exitFullscreen();

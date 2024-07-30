@@ -339,7 +339,7 @@ export default function WorkSpace() {
   }, [load]);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden theme">
+    <div className="h-full flex flex-col overflow-hidden theme w-screen">
       <ControlPanel
         diagramId={id}
         setDiagramId={setId}
@@ -349,7 +349,7 @@ export default function WorkSpace() {
         setLastSaved={setLastSaved}
       />
       <div
-        className="flex h-full overflow-y-auto"
+        className="flex h-full overflow-y-auto "
         onPointerUp={(e) => e.isPrimary && setResize(false)}
         onPointerLeave={(e) => e.isPrimary && setResize(false)}
         onPointerMove={(e) => e.isPrimary && handleResize(e)}

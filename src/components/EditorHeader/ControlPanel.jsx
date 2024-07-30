@@ -1327,10 +1327,10 @@ export default function ControlPanel({
 
   function toolbar() {
     return (
-      <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
-        <div className="flex justify-start items-center">
+      <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme sm:w-screen sm:px-0">
+        <div className="flex items-center justify-center">
           <LayoutDropdown />
-          <Divider layout="vertical" margin="8px" />
+          <Divider layout="vertical" margin="0px" />
           <Dropdown
             style={{ width: "240px" }}
             position="bottomLeft"
@@ -1373,18 +1373,18 @@ export default function ControlPanel({
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
-              <div className="w-[40px]">
+            <div className="py-1 px-2 sm:px-0 hover-2 rounded flex items-center justify-">
+              <div className="w-[40px] sm:w-[30px]">
                 {Math.floor(transform.zoom * 100)}%
               </div>
-              <div>
+              <div className="sm:hidden">
                 <IconCaretdown />
               </div>
             </div>
           </Dropdown>
           <Tooltip content={t("zoom_in")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 sm:px-0 hover-2 rounded text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
               }
@@ -1394,7 +1394,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("zoom_out")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 sm:px-0 hover-2 rounded text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
               }
@@ -1405,7 +1405,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 sm:px-1 hover-2 rounded flex items-center"
               onClick={undo}
             >
               <IconUndo
@@ -1416,7 +1416,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("redo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 sm:px-1 hover-2 rounded flex items-center"
               onClick={redo}
             >
               <IconRedo
@@ -1428,7 +1428,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("add_table")} position="bottom">
             <button
-              className="flex items-center py-1 px-2 hover-2 rounded"
+              className="flex items-center py-1 px-2 sm:px-1 hover-2 rounded"
               onClick={() => addTable()}
             >
               <IconAddTable />
@@ -1436,7 +1436,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_area")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 sm:px-0 hover-2 rounded flex items-center"
               onClick={() => addArea()}
             >
               <IconAddArea />
@@ -1444,16 +1444,16 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_note")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 sm:px-0 hover-2 rounded flex items-center"
               onClick={() => addNote()}
             >
               <IconAddNote />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
+          <Divider layout="vertical" margin="4px" />
           <Tooltip content={t("save")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 sm:px-0 hover-2 rounded flex items-center"
               onClick={save}
             >
               <IconSaveStroked size="extra-large" />
@@ -1461,16 +1461,16 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("to_do")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 sm:px-0 hover-2 rounded text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
               <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
+          <Divider layout="vertical" margin="4px" />
           <Tooltip content={t("theme")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 sm:px-0 hover-2 rounded text-xl -mt-0.5"
               onClick={() => {
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
@@ -1488,7 +1488,7 @@ export default function ControlPanel({
         </div>
         <button
           onClick={() => invertLayout("header")}
-          className="flex items-center"
+          className="flex items-center mx-3"
         >
           {layout.header ? <IconChevronUp /> : <IconChevronDown />}
         </button>
@@ -1515,14 +1515,14 @@ export default function ControlPanel({
 
   function header() {
     return (
-      <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
+      <nav className="flex justify-between pt-1 items-center whitespace-nowrap w-screen">
         <div className="flex justify-start items-center">
           <Link to="/">
             <img
-              width={54}
+              width={43}
               src={icon}
               alt="logo"
-              className="ms-8 min-w-[54px]"
+              className="ms-8 min-w-[45px] sm:ml-2"
             />
           </Link>
           <div className="ms-1 mt-1">
