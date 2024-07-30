@@ -55,6 +55,16 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: true,
   },
+  NUMBER: {
+    type: "NUMBER",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    canIncrement: false,
+  },
   FLOAT: {
     type: "FLOAT",
     checkDefault: (field) => {
@@ -108,6 +118,20 @@ const defaultTypesBase = {
     isSized: true,
     hasPrecision: false,
     defaultSize: 255,
+    hasQuotes: true,
+  },
+  VARCHAR2: {
+    type: "VARCHAR2",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 225,
     hasQuotes: true,
   },
   TEXT: {
@@ -217,6 +241,22 @@ const defaultTypesBase = {
   },
   BLOB: {
     type: "BLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  CLOB: {
+    type: "CLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  NCLOB: {
+    type: "NCLOB",
     checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
@@ -1616,6 +1656,155 @@ export const mssqlTypes = new Proxy(mssqlTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
+const oraclesqlTypesBase = {
+  NUMBER: {
+    type: "NUMBER",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    canIncrement: false,
+  },
+  VARCHAR2: {
+    type: "VARCHAR2",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 4000,
+    hasQuotes: true,
+  },
+  CHAR: {
+    type: "CHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  CLOB: {
+    type: "CLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  NCLOB: {
+    type: "NCLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  BLOB: {
+    type: "BLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  TIMESTAMP: {
+    type: "TIMESTAMP",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(
+        field.default,
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: true,
+    hasQuotes: true,
+  },
+  INTERVAL: {
+    type: "INTERVAL",
+    checkDefault: (field) => {
+      return /^INTERVAL\s'\d+'(\s+DAY|HOUR|MINUTE|SECOND)?$/.test(
+        field.default,
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  FLOAT: {
+    type: "FLOAT",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  DOUBLE: {
+    type: "DOUBLE",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  BOOLEAN: {
+    type: "BOOLEAN",
+    checkDefault: (field) => {
+      return (
+        field.default === "0" ||
+        field.default === "1" ||
+        field.default.toUpperCase() === "TRUE" ||
+        field.default.toUpperCase() === "FALSE"
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+  },
+  RAW: {
+    type: "RAW",
+    checkDefault: (field) => {
+      return /^[0-9A-Fa-f]+$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 2000,
+    hasQuotes: false,
+  },
+};
+
+export const oraclesqlTypes = new Proxy(oraclesqlTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : false),
+});
+
 const dbToTypesBase = {
   [DB.GENERIC]: defaultTypes,
   [DB.MYSQL]: mysqlTypes,
@@ -1623,6 +1812,7 @@ const dbToTypesBase = {
   [DB.SQLITE]: sqliteTypes,
   [DB.MSSQL]: mssqlTypes,
   [DB.MARIADB]: mysqlTypes,
+  [DB.ORACLESQL]: oraclesqlTypes,
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {
