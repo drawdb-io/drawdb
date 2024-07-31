@@ -176,7 +176,7 @@ const hu = {
     not_null_is_null:
       "A(z) '{{tableName}}' tábla '{{fieldName}}' mezője NOT NULL-ként van beállítva, de a megadott alapért. érték NULL",
     duplicate_fields:
-      "Több '{{fieldName}}' nevű mező is létezik a(z) '{{tableName}}' táblában"
+      "Több '{{fieldName}}' nevű mező is létezik a(z) '{{tableName}}' táblában",
     duplicate_index:
       "Több '{{indexName}}' nevű index is létezik a(z) '{{tableName}}' táblában",
     empty_index: "A(z) '{{tableName}}' táblában levő index egyetlen oszlopot sem indexel",
