@@ -21,6 +21,7 @@ import { hy, armenian } from "./locales/hy";
 import { ar, arabic } from "./locales/ar";
 import { zh_tw, traditionalChinese } from "./locales/zh-tw";
 import { id, indonesian } from "./locales/id";
+import {te, telugu} from "./locales/te";
 
 export const languages = [
   english,
@@ -43,6 +44,7 @@ export const languages = [
   traditionalChinese,
   hebrew,
   indonesian,
+  telugu,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -75,6 +77,7 @@ i18n
       "zh-TW": zh_tw,
       he,
       id,
+      te,
     },
   });
 
