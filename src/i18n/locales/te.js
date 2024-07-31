@@ -1,5 +1,5 @@
 const telugu = {
-    name: "తెలుగు",
+    name: "Telugu",
     native_name: "తెలుగు",
     code: "te",
   };
