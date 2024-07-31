@@ -53,8 +53,10 @@ export default function TypeInfo({ index, data }) {
               if (e.target.value === editField.name) return;
 
               const updatedFields = tables.reduce((acc, table) => {
-                table.fields.forEach((_, i) => {
-                  acc.push({ tid: table.id, fid: i });
+                table.fields.forEach((field, i) => {
+                  if (field.type.toLowerCase() === data.name.toLowerCase()) {
+                    acc.push({ tid: table.id, fid: i });
+                  }
                 });
                 return acc;
               }, []);

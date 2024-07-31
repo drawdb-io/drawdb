@@ -308,6 +308,13 @@ export default function ControlPanel({
         }
       } else if (a.element === ObjectType.ENUM) {
         updateEnum(a.id, a.undo);
+        if (a.updatedFields) {
+          if (a.undo.name) {
+            a.updatedFields.forEach((x) =>
+              updateField(x.tid, x.fid, { type: a.undo.name.toUpperCase() }),
+            );
+          }
+        }
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -477,6 +484,13 @@ export default function ControlPanel({
         }
       } else if (a.element === ObjectType.ENUM) {
         updateEnum(a.id, a.redo);
+        if (a.updatedFields) {
+          if (a.redo.name) {
+            a.updatedFields.forEach((x) =>
+              updateField(x.tid, x.fid, { type: a.redo.name.toUpperCase() }),
+            );
+          }
+        }
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
