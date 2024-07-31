@@ -44,7 +44,7 @@ export const languages = [
   arabic,
   traditionalChinese,
   hebrew,
-  hungarian
+  hungarian,
   indonesian,
   telugu,
 ].sort((a, b) => a.name.localeCompare(b.name));
@@ -78,7 +78,7 @@ i18n
       ar,
       "zh-TW": zh_tw,
       he,
-      hu
+      hu,
       id,
       te,
     },
