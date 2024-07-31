@@ -10,12 +10,13 @@ import {
   Card,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconPlus } from "@douyinfe/semi-icons";
-import { useUndoRedo, useTypes } from "../../../hooks";
+import { useUndoRedo, useTypes, useDiagram } from "../../../hooks";
 import TypeField from "./TypeField";
 import { useTranslation } from "react-i18next";
 
 export default function TypeInfo({ index, data }) {
   const { deleteType, updateType } = useTypes();
+  const { tables, updateField } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();
@@ -37,10 +38,27 @@ export default function TypeInfo({ index, data }) {
             validateStatus={data.name === "" ? "error" : "default"}
             placeholder={t("name")}
             className="ms-2"
-            onChange={(value) => updateType(index, { name: value })}
+            onChange={(value) => {
+              updateType(index, { name: value });
+              tables.forEach((table, i) => {
+                table.fields.forEach((field, j) => {
+                  if (field.type.toLowerCase() === data.name.toLowerCase()) {
+                    updateField(i, j, { type: value.toUpperCase() });
+                  }
+                });
+              });
+            }}
             onFocus={(e) => setEditField({ name: e.target.value })}
             onBlur={(e) => {
               if (e.target.value === editField.name) return;
+
+              const updatedFields = tables.reduce((acc, table) => {
+                table.fields.forEach((_, i) => {
+                  acc.push({ tid: table.id, fid: i });
+                });
+                return acc;
+              }, []);
+
               setUndoStack((prev) => [
                 ...prev,
                 {
@@ -50,6 +68,7 @@ export default function TypeInfo({ index, data }) {
                   tid: index,
                   undo: editField,
                   redo: { name: e.target.value },
+                  updatedFields,
                   message: t("edit_type", {
                     typeName: data.name,
                     extra: "[name]",
