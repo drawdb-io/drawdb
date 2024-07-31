@@ -20,6 +20,7 @@ import { pa, punjabi } from "./locales/pa";
 import { hy, armenian } from "./locales/hy";
 import { ar, arabic } from "./locales/ar";
 import { zh_tw, traditionalChinese } from "./locales/zh-tw";
+import { hu, hungarian } from "./locales/hu";
 import { id, indonesian } from "./locales/id";
 import {te, telugu} from "./locales/te";
 
@@ -43,6 +44,7 @@ export const languages = [
   arabic,
   traditionalChinese,
   hebrew,
+  hungarian,
   indonesian,
   telugu,
 ].sort((a, b) => a.name.localeCompare(b.name));
@@ -76,6 +78,7 @@ i18n
       ar,
       "zh-TW": zh_tw,
       he,
+      hu,
       id,
       te,
     },
