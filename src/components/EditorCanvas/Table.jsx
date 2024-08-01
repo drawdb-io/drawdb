@@ -17,9 +17,11 @@ import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
+import { dbToTypes } from "../../data/datatypes";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
+  const { database } = useDiagram();
   const {
     tableData,
     onPointerDown,
@@ -190,7 +192,15 @@ export default function Table(props) {
                   <div className="popover-theme">
                     <div className="flex justify-between items-center pb-2">
                       <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4">{e.type}</p>
+                      <p className="ms-4">
+                        {e.type +
+                          ((dbToTypes[database][e.type].isSized ||
+                            dbToTypes[database][e.type].hasPrecision) &&
+                          e.size &&
+                          e.size !== ""
+                            ? "(" + e.size + ")"
+                            : "")}
+                      </p>
                     </div>
                     <hr />
                     {e.primary && (
@@ -336,7 +346,15 @@ export default function Table(props) {
           ) : (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
-              <span>{fieldData.type.substr(0, 12)}</span>
+              <span>
+                {fieldData.type +
+                  ((dbToTypes[database][fieldData.type].isSized ||
+                    dbToTypes[database][fieldData.type].hasPrecision) &&
+                  fieldData.size &&
+                  fieldData.size !== ""
+                    ? "(" + fieldData.size + ")"
+                    : "")}
+              </span>
             </div>
           )}
         </div>

@@ -122,7 +122,7 @@ const en = {
     values: "Values",
     size: "Size",
     precision: "Precision",
-    set_precision: "Set precision: (size, digits)",
+    set_precision: "Set precision: 'size, digits'",
     use_for_batch_input: "Use , for batch input",
     indices: "Indices",
     add_index: "Add index",
