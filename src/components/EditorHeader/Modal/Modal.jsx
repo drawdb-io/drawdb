@@ -166,8 +166,12 @@ export default function Modal({
       setUndoStack([]);
       setRedoStack([]);
     } else {
-      setTables((prev) => [...prev, ...d.tables]);
-      setRelationships((prev) => [...prev, ...d.relationships]);
+      setTables((prev) =>
+        [...prev, ...d.tables].map((t, i) => ({ ...t, id: i })),
+      );
+      setRelationships((prev) =>
+        [...prev, ...d.relationships].map((r, i) => ({ ...r, id: i })),
+      );
     }
     setModal(MODAL.NONE);
   };
