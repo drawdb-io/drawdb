@@ -86,6 +86,35 @@ export default function ImportDiagram({ setImportData, error, setError }) {
               return;
             }
 
+            let ok = true;
+            jsonObject.relationships.forEach((rel) => {
+              if (
+                !jsonObject.tables[rel.startTableId] ||
+                !jsonObject.tables[rel.endTableId]
+              ) {
+                setError({
+                  type: STATUS.ERROR,
+                  message: `Relationship ${rel.name} references a table that does not exist.`,
+                });
+                ok = false;
+                return;
+              }
+
+              if (
+                !jsonObject.tables[rel.startTableId].fields[rel.startFieldId] ||
+                !jsonObject.tables[rel.endTableId].fields[rel.endFieldId]
+              ) {
+                setError({
+                  type: STATUS.ERROR,
+                  message: `Relationship ${rel.name} references a field that does not exist.`,
+                });
+                ok = false;
+                return;
+              }
+            });
+
+            if (!ok) return;
+
             setImportData(jsonObject);
             if (diagramIsEmpty()) {
               setError({
