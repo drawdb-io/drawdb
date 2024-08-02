@@ -29,6 +29,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToMermaid,
 } from "../../utils/exportSQL/generic";
 import {
   ObjectType,
@@ -1038,6 +1039,25 @@ export default function ControlPanel({
                 type: "text/plain;charset=utf-8",
               });
               saveAs(blob, `${exportData.filename}.ddb`);
+            },
+          },
+          {
+            MERMAID: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToMermaid({
+                tables: tables,
+                relationships: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
+              });
+              // generate .md file
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "md",
+              }));
             },
           },
         ],
