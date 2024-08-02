@@ -23,6 +23,7 @@ import { zh_tw, traditionalChinese } from "./locales/zh-tw";
 import { hu, hungarian } from "./locales/hu";
 import { id, indonesian } from "./locales/id";
 import {te, telugu} from "./locales/te";
+import { tm ,tamil } from "./locales/tm";
 
 export const languages = [
   english,
@@ -47,6 +48,7 @@ export const languages = [
   hungarian,
   indonesian,
   telugu,
+  tamil
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -81,6 +83,7 @@ i18n
       hu,
       id,
       te,
+      tm,
     },
   });
 
