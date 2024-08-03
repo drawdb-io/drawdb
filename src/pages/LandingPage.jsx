@@ -287,11 +287,10 @@ const features = [
     footer: "",
   },
   {
-    title: "Import",
+    title: "Reverse engineer",
     content: (
       <div>
-        Already have a diagram? Import a DDL script, or a JSON file to generate
-        or a diagram.
+        Already have a schema? Import a DDL script to generate a diagram.
       </div>
     ),
     footer: "",

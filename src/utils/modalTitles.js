@@ -4,8 +4,9 @@ import i18n from "../i18n/i18n";
 export const getModalTitle = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
-    case MODAL.IMPORT_SRC:
       return i18n.t("import_diagram");
+    case MODAL.IMPORT_SRC:
+      return i18n.t("import_from_source");
     case MODAL.CODE:
       return i18n.t("export");
     case MODAL.IMG:
