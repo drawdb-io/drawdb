@@ -29,7 +29,6 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
-  jsonToMermaid,
 } from "../../utils/exportSQL/generic";
 import {
   ObjectType,
@@ -68,6 +67,7 @@ import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
 import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
+import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 
 export default function ControlPanel({
   diagramId,
@@ -1052,7 +1052,6 @@ export default function ControlPanel({
                 database: database,
                 title: title,
               });
-              // generate .md file
               setExportData((prev) => ({
                 ...prev,
                 data: result,
