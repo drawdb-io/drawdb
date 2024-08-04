@@ -279,6 +279,7 @@ const mysqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    signed: true,
   },
   SMALLINT: {
     type: "SMALLINT",
@@ -289,6 +290,7 @@ const mysqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    signed: true,
   },
   MEDIUMINT: {
     type: "MEDIUMINT",
@@ -299,6 +301,7 @@ const mysqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    signed: true,
   },
   INTEGER: {
     type: "INTEGER",
@@ -309,6 +312,7 @@ const mysqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    signed: true,
   },
   BIGINT: {
     type: "BIGINT",
@@ -319,6 +323,7 @@ const mysqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    signed: true,
   },
   DECIMAL: {
     type: "DECIMAL",

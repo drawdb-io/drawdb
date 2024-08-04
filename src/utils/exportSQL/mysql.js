@@ -13,7 +13,7 @@ export function toMySQL(diagram) {
             (field) =>
               `${exportFieldComment(field.comment)}\t\`${
                 field.name
-              }\` ${field.type}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
+              }\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.increment ? " AUTO_INCREMENT" : ""

@@ -13,7 +13,7 @@ export function toMariaDB(diagram) {
             (field) =>
               `${exportFieldComment(field.comment)}\t\`${
                 field.name
-              }\` ${field.type}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""
