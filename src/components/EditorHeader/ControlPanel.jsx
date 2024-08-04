@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
+  IconChevronLeft,
   IconChevronUp,
   IconChevronDown,
   IconSaveStroked,
@@ -68,6 +69,7 @@ import { useTranslation } from "react-i18next";
 import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
+import { isRtl } from "../../i18n/utils/rtl";
 
 export default function ControlPanel({
   diagramId,
@@ -109,7 +111,7 @@ export default function ControlPanel({
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -1374,7 +1376,10 @@ export default function ControlPanel({
 
   function toolbar() {
     return (
-      <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
+      <div
+        className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme"
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+      >
         <div className="flex justify-start items-center">
           <LayoutDropdown />
           <Divider layout="vertical" margin="8px" />
@@ -1382,7 +1387,9 @@ export default function ControlPanel({
             style={{ width: "240px" }}
             position="bottomLeft"
             render={
-              <Dropdown.Menu>
+              <Dropdown.Menu
+                style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+              >
                 <Dropdown.Item
                   onClick={fitWindow}
                   style={{ display: "flex", justifyContent: "space-between" }}
@@ -1562,7 +1569,10 @@ export default function ControlPanel({
 
   function header() {
     return (
-      <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
+      <nav
+        className="flex justify-between pt-1 items-center whitespace-nowrap"
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+      >
         <div className="flex justify-start items-center">
           <Link to="/">
             <img
@@ -1608,7 +1618,10 @@ export default function ControlPanel({
                   <Dropdown
                     key={category}
                     position="bottomLeft"
-                    style={{ width: "240px" }}
+                    style={{
+                      width: "240px",
+                      direction: isRtl(i18n.language) ? "rtl" : "ltr",
+                    }}
                     render={
                       <Dropdown.Menu>
                         {Object.keys(menu[category]).map((item, index) => {
@@ -1642,7 +1655,12 @@ export default function ControlPanel({
                                   onClick={menu[category][item].function}
                                 >
                                   {t(item)}
-                                  <IconChevronRight />
+
+                                  {isRtl(i18n.language) ? (
+                                    <IconChevronLeft />
+                                  ) : (
+                                    <IconChevronRight />
+                                  )}
                                 </Dropdown.Item>
                               </Dropdown>
                             );

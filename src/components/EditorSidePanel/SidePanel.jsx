@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { databases } from "../../data/databases";
 import EnumsTab from "./EnumsTab/EnumsTab";
+import { isRtl } from "../../i18n/utils/rtl";
+import i18n from "../../i18n/i18n";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
@@ -46,7 +48,7 @@ export default function SidePanel({ width, resize, setResize }) {
       });
     }
 
-    return tabs;
+    return isRtl(i18n.language) ? tabs.reverse() : tabs;
   }, [t, database]);
 
   return (
@@ -64,6 +66,7 @@ export default function SidePanel({ width, resize, setResize }) {
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }
             collapsible
+            tabBarStyle={{ direction: "ltr" }}
           >
             {tabList.length &&
               tabList.map((tab) => (

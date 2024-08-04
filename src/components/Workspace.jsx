@@ -22,6 +22,8 @@ import FloatingControls from "./FloatingControls";
 import { Modal } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
+import { isRtl } from "../i18n/utils/rtl";
+import i18n from "../i18n/i18n";
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
@@ -358,6 +360,7 @@ export default function WorkSpace() {
           // https://stackoverflow.com/a/70976017/1137077
           e.target.releasePointerCapture(e.pointerId);
         }}
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       >
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />
