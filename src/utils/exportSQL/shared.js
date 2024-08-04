@@ -1,6 +1,7 @@
+import { isFunction, isKeyword, strHasQuotes } from "../utils";
+
 import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { isFunction, isKeyword, strHasQuotes } from "../utils";
 
 export function parseDefault(field, database = DB.GENERIC) {
   if (
@@ -13,4 +14,15 @@ export function parseDefault(field, database = DB.GENERIC) {
   }
 
   return `'${field.default}'`;
+}
+
+export function exportFieldComment(comment) {
+  if (comment === "") {
+    return "";
+  }
+
+  return comment
+    .split("\n")
+    .map((commentLine) => `\t-- ${commentLine}\n`)
+    .join("");
 }
