@@ -6,6 +6,10 @@ const english = {
 
 const en = {
   translation: {
+    available_offline: "Available offline",
+    update_available: "An updated version of drawDB is available!",
+    reload_page_to_update: "Reload the page to update",
+    reload_now: "Reload now",
     report_bug: "Report a bug",
     import: "Import",
     file: "File",

@@ -9,6 +9,7 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
 import NotFound from "./pages/NotFound";
+import { PwaUpdatePrompt } from "./components/PwaUpdatePrompt";
 
 export default function App() {
   return (
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      <PwaUpdatePrompt />
     </SettingsContextProvider>
   );
 }
