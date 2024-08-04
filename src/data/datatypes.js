@@ -698,6 +698,7 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    compatibleWith: ["SMALLSERIAL", "SERIAL", "BIGSERIAL", "INTEGER", "BIGINT"],
   },
   INTEGER: {
     type: "INTEGER",
@@ -708,6 +709,13 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    compatibleWith: [
+      "SMALLSERIAL",
+      "SERIAL",
+      "BIGSERIAL",
+      "SMALLINT",
+      "BIGINT",
+    ],
   },
   BIGINT: {
     type: "BIGINT",
@@ -718,6 +726,13 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+    compatibleWith: [
+      "SMALLSERIAL",
+      "SERIAL",
+      "BIGSERIAL",
+      "INTEGER",
+      "SMALLINT",
+    ],
   },
   DECIMAL: {
     type: "DECIMAL",
@@ -763,6 +778,7 @@ const postgresTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
+    compatibleWith: ["INTEGER", "SERIAL", "BIGSERIAL", "SMALLINT", "BIGINT"],
   },
   SERIAL: {
     type: "SERIAL",
@@ -772,6 +788,13 @@ const postgresTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
+    compatibleWith: [
+      "INTEGER",
+      "SMALLSERIAL",
+      "BIGSERIAL",
+      "SMALLINT",
+      "BIGINT",
+    ],
   },
   BIGSERIAL: {
     type: "BIGSERIAL",
@@ -781,6 +804,7 @@ const postgresTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
+    compatibleWith: ["INTEGER", "SERIAL", "SMALLSERIAL", "SMALLINT", "BIGINT"],
   },
   MONEY: {
     type: "MONEY",

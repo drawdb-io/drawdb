@@ -23,6 +23,7 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
+import { areFieldsCompatible } from "../../utils/utils";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -34,7 +35,8 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship } = useDiagram();
+  const { tables, updateTable, relationships, addRelationship, database } =
+    useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
@@ -399,8 +401,11 @@ export default function Canvas() {
     if (hoveredTable.tableId < 0) return;
     if (hoveredTable.field < 0) return;
     if (
-      tables[linkingLine.startTableId].fields[linkingLine.startFieldId].type !==
-      tables[hoveredTable.tableId].fields[hoveredTable.field].type
+      !areFieldsCompatible(
+        database,
+        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
+        tables[hoveredTable.tableId].fields[hoveredTable.field],
+      )
     ) {
       Toast.info(t("cannot_connect"));
       return;
