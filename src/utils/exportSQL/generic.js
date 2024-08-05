@@ -94,7 +94,7 @@ export function getTypeString(
       return `${type}(${field.size})`;
     }
     if (dbToTypes[currentDb][field.type].hasPrecision && field.size !== "") {
-      return `${field.type}${field.size}`;
+      return `${field.type.toLowerCase()}${field.size ? `(${field.size})` : ""}`;
     }
     return field.type.toLowerCase();
   } else if (dbms === "mssql") {
