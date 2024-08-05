@@ -25,6 +25,7 @@ import { id, indonesian } from "./locales/id";
 import {te, telugu} from "./locales/te";
 import { tm ,tamil } from "./locales/tm";
 import { gu, gujarati } from "./locales/gu";
+import { it, italian } from "./locales/it";
 
 export const languages = [
   english,
@@ -50,7 +51,8 @@ export const languages = [
   indonesian,
   telugu,
   tamil,
-  gujarati
+  gujarati,
+  italian,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -86,7 +88,8 @@ i18n
       id,
       te,
       tm,
-      gu
+      gu,
+	  it,
     },
   });
 
