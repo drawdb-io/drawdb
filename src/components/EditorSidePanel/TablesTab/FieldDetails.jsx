@@ -299,6 +299,44 @@ export default function FieldDetails({ data, tid, index }) {
           />
         </div>
       )}
+      {databases[database].hasUnsignedTypes &&
+        dbToTypes[database][data.type].signed && (
+          <div className="flex justify-between items-center my-3">
+            <div className="font-medium">{t("Unsigned")}</div>
+            <Checkbox
+              value="unsigned"
+              checked={data.unsigned}
+              onChange={(checkedValues) => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "field",
+                    tid: tid,
+                    fid: index,
+                    undo: {
+                      [checkedValues.target.value]:
+                        !checkedValues.target.checked,
+                    },
+                    redo: {
+                      [checkedValues.target.value]:
+                        checkedValues.target.checked,
+                    },
+                    message: t("edit_table", {
+                      tableName: tables[tid].name,
+                      extra: "[field]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+                updateField(tid, index, {
+                  unsigned: checkedValues.target.checked,
+                });
+              }}
+            />
+          </div>
+        )}
       <div className="font-semibold">{t("comment")}</div>
       <TextArea
         className="my-2"

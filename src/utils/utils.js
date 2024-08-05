@@ -1,3 +1,5 @@
+import { dbToTypes } from "../data/datatypes";
+
 export function dataURItoBlob(dataUrl) {
   const byteString = atob(dataUrl.split(",")[1]);
   const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
@@ -33,4 +35,14 @@ export function isKeyword(str) {
 
 export function isFunction(str) {
   return /\w+\([^)]*\)$/.test(str);
+}
+
+export function areFieldsCompatible(db, field1, field2) {
+  const same = field1.type === field2.type;
+  if (dbToTypes[db][field1.type].compatibleWith) {
+    return (
+      dbToTypes[db][field1.type].compatibleWith.includes(field2.type) || same
+    );
+  }
+  return same;
 }
