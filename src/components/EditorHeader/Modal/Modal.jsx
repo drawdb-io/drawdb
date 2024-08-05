@@ -37,6 +37,7 @@ import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
+import { isRtl } from "../../../i18n/utils/rtl";
 
 const languageExtension = {
   sql: [sql()],
@@ -53,7 +54,7 @@ export default function Modal({
   setExportData,
   importDb,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
@@ -324,6 +325,7 @@ export default function Modal({
 
   return (
     <SemiUIModal
+      style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       title={getModalTitle(modal)}
       visible={modal !== MODAL.NONE}
       onOk={getModalOnOk}
@@ -362,7 +364,11 @@ export default function Modal({
       }}
       cancelText={t("cancel")}
       width={modal === MODAL.NEW || modal === MODAL.OPEN ? 740 : 600}
-      bodyStyle={{ maxHeight: window.innerHeight - 280, overflow: "auto" }}
+      bodyStyle={{
+        maxHeight: window.innerHeight - 280,
+        overflow: "auto",
+        direction: "ltr",
+      }}
     >
       {getModalBody()}
     </SemiUIModal>

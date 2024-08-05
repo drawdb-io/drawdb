@@ -7,6 +7,8 @@ import { Dropdown } from "@douyinfe/semi-ui";
 import { useFullscreen, useLayout } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { useTranslation } from "react-i18next";
+import { isRtl } from "../../i18n/utils/rtl";
+import i18n from "../../i18n/i18n";
 
 export default function LayoutDropdown() {
   const fullscreen = useFullscreen();
@@ -19,7 +21,10 @@ export default function LayoutDropdown() {
   return (
     <Dropdown
       position="bottomLeft"
-      style={{ width: "180px" }}
+      style={{
+        width: "180px",
+        direction: isRtl(i18n.language) ? "rtl" : "ltr",
+      }}
       render={
         <Dropdown.Menu>
           <Dropdown.Item
@@ -48,9 +53,7 @@ export default function LayoutDropdown() {
           </Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Item
-            icon={
-              fullscreen ? <IconCheckboxTick /> : <div className="px-2" />
-            }
+            icon={fullscreen ? <IconCheckboxTick /> : <div className="px-2" />}
             onClick={() => {
               if (fullscreen) {
                 exitFullscreen();

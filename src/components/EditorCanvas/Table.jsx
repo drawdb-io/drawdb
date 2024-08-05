@@ -18,6 +18,8 @@ import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
+import { isRtl } from "../../i18n/utils/rtl";
+import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
@@ -84,6 +86,7 @@ export default function Table(props) {
                    ? "border-solid border-blue-500"
                    : "border-zinc-500"
                }`}
+          style={{ direction: "ltr" }}
         >
           <div
             className="h-[10px] w-full rounded-t-md"
@@ -190,7 +193,10 @@ export default function Table(props) {
                 key={i}
                 content={
                   <div className="popover-theme">
-                    <div className="flex justify-between items-center pb-2">
+                    <div
+                      className="flex justify-between items-center pb-2"
+                      style={{ direction: "ltr" }}
+                    >
                       <p className="me-4 font-bold">{e.name}</p>
                       <p className="ms-4">
                         {e.type +
@@ -235,6 +241,11 @@ export default function Table(props) {
                 }
                 position="right"
                 showArrow
+                style={
+                  isRtl(i18n.language)
+                    ? { direction: "rtl" }
+                    : { direction: "ltr" }
+                }
               >
                 {field(e, i)}
               </Popover>
