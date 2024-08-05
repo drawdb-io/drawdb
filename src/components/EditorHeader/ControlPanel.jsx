@@ -1385,7 +1385,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Dropdown
             style={{ width: "240px" }}
-            position="bottomLeft"
+            position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
             render={
               <Dropdown.Menu
                 style={isRtl(i18n.language) ? { direction: "rtl" } : {}}

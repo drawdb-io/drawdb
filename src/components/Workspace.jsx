@@ -23,7 +23,6 @@ import { Modal } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
-import i18n from "../i18n/i18n";
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
@@ -51,11 +50,11 @@ export default function WorkSpace() {
     setDatabase,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleResize = (e) => {
     if (!resize) return;
-    const w = e.clientX;
+    const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
     if (w > 340) setWidth(w);
   };
 

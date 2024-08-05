@@ -63,6 +63,7 @@ export default function TableInfo({ data }) {
         <div
           key={"field_" + j}
           className={`cursor-pointer ${drag.draggingOverIndexList.includes(j) ? "opacity-25" : ""}`}
+          style={{ direction: "ltr" }}
           draggable
           onDragStart={() => {
             setDrag((prev) => ({ ...prev, draggingElementIndex: j }));
