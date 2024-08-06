@@ -149,7 +149,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
 
               relationship.updateConstraint = updateConstraint;
               relationship.deleteConstraint = deleteConstraint;
-              relationship.cardinality = Cardinality.ONE_TO_ONE;
+
+              if (table.fields[startFieldId].unique) {
+                relationship.cardinality = Cardinality.ONE_TO_ONE;
+              } else {
+                relationship.cardinality = Cardinality.MANY_TO_ONE;
+              }
+
               relationships.push(relationship);
             }
           }
@@ -231,7 +237,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           relationship.endFieldId = endFieldId;
           relationship.updateConstraint = updateConstraint;
           relationship.deleteConstraint = deleteConstraint;
-          relationship.cardinality = Cardinality.ONE_TO_ONE;
+
+          if (tables[startTableId].fields[startFieldId].unique) {
+            relationship.cardinality = Cardinality.ONE_TO_ONE;
+          } else {
+            relationship.cardinality = Cardinality.MANY_TO_ONE;
+          }
+
           relationships.push(relationship);
 
           relationships.forEach((r, i) => (r.id = i));
