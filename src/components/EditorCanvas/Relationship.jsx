@@ -1,14 +1,20 @@
-import { useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
+import { cn } from "../../utils/cn";
 
 export default function Relationship({ data }) {
+  const [editing, setEditing] = useState(false);
   const { settings } = useSettings();
   const { tables } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const pathRef = useRef();
+
+  useEffect(() => {
+    setEditing(data.id === selectedElement.id);
+  }, [data.id, selectedElement.id]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -50,6 +56,7 @@ export default function Relationship({ data }) {
   }
 
   const edit = () => {
+    setEditing(true);
     if (!layout.sidebar) {
       setSelectedElement((prev) => ({
         ...prev,
@@ -72,8 +79,15 @@ export default function Relationship({ data }) {
     }
   };
 
+  const editingPathClass = cn("group-hover:stroke-sky-700", {
+    "stroke-sky-700": editing,
+  });
+  const editingCircleClass = cn("group-hover:fill-sky-700", {
+    "fill-sky-700": editing,
+  });
+
   return (
-    <g className="select-none group" onDoubleClick={edit}>
+    <g className="select-none group cursor-pointer" onDoubleClick={edit}>
       <path
         ref={pathRef}
         d={calcPath(
@@ -91,10 +105,9 @@ export default function Relationship({ data }) {
           settings.tableWidth,
         )}
         stroke="gray"
-        className="group-hover:stroke-sky-700"
+        className={editingPathClass}
         fill="none"
         strokeWidth={2}
-        cursor="pointer"
       />
       {pathRef.current && settings.showCardinality && (
         <>
@@ -103,7 +116,7 @@ export default function Relationship({ data }) {
             cy={cardinalityStartY}
             r="12"
             fill="grey"
-            className="group-hover:fill-sky-700"
+            className={editingCircleClass}
           />
           <text
             x={cardinalityStartX}
@@ -120,7 +133,7 @@ export default function Relationship({ data }) {
             cy={cardinalityEndY}
             r="12"
             fill="grey"
-            className="group-hover:fill-sky-700"
+            className={editingCircleClass}
           />
           <text
             x={cardinalityEndX}
