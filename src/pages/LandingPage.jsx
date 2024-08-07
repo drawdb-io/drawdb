@@ -9,6 +9,7 @@ import mysql_icon from "../assets/mysql.png";
 import postgres_icon from "../assets/postgres.png";
 import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
+import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
@@ -178,7 +179,7 @@ export default function LandingPage() {
         <div className="text-center text-2xl font-bold mb-4">
           We support these DBMS
         </div>
-        <div className="grid grid-cols-5 place-items-center items-baseline sm:grid-cols-1 sm:gap-4">
+        <div className="grid grid-cols-3 grid-rows-2 gap-y-[4rem] place-items-center items-baseline sm:grid-cols-1 sm:grid-rows-1 sm:gap-10">
           <img
             src={mysql_icon}
             className="opacity-70 hover:opacity-100 transition-all duration-300 h-20"
@@ -198,6 +199,10 @@ export default function LandingPage() {
           <img
             src={sql_server_icon}
             className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
+          />
+          <img
+            src={oraclesql_icon}
+            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16 scale-[300%]"
           />
         </div>
         <div className="mt-16 mb-2 text-2xl font-bold text-center">

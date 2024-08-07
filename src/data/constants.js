@@ -112,5 +112,6 @@ export const DB = {
   MSSQL: "transactsql",
   SQLITE: "sqlite",
   MARIADB: "mariadb",
+  ORACLESQL: "oraclesql",
   GENERIC: "generic",
 };
