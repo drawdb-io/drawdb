@@ -28,6 +28,17 @@ export const getModalTitle = (modal) => {
   }
 };
 
+export const getModalWidth = (modal) => {
+  switch (modal) {
+    case MODAL.LANGUAGE:
+    case MODAL.OPEN:
+    case MODAL.NEW:
+      return 740;
+    default:
+      return 600;
+  }
+};
+
 export const getOkText = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:

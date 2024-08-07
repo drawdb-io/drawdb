@@ -21,7 +21,11 @@ import {
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
-import { getModalTitle, getOkText } from "../../../utils/modalTitles";
+import {
+  getModalTitle,
+  getModalWidth,
+  getOkText,
+} from "../../../utils/modalData";
 import Rename from "./Rename";
 import Open from "./Open";
 import New from "./New";
@@ -363,7 +367,7 @@ export default function Modal({
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
       }}
       cancelText={t("cancel")}
-      width={modal === MODAL.NEW || modal === MODAL.OPEN ? 740 : 600}
+      width={getModalWidth(modal)}
       bodyStyle={{
         maxHeight: window.innerHeight - 280,
         overflow: "auto",
