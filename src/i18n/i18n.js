@@ -22,10 +22,11 @@ import { ar, arabic } from "./locales/ar";
 import { zh_tw, traditionalChinese } from "./locales/zh-tw";
 import { hu, hungarian } from "./locales/hu";
 import { id, indonesian } from "./locales/id";
-import {te, telugu} from "./locales/te";
+import { te, telugu} from "./locales/te";
 import { tm ,tamil } from "./locales/tm";
 import { gu, gujarati } from "./locales/gu";
 import { it, italian } from "./locales/it";
+import { ko, korean } from "./locales/ko";
 
 export const languages = [
   english,
@@ -53,6 +54,7 @@ export const languages = [
   tamil,
   gujarati,
   italian,
+  korean,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -89,7 +91,8 @@ i18n
       te,
       tm,
       gu,
-	  it,
+      it,
+      ko,
     },
   });
 
