@@ -9,14 +9,14 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="py-5 px-8 sm:px-4 flex justify-between items-center">
-        <div className="flex items-center">
+      <div className="py-4 px-12 sm:px-4 flex justify-between items-center">
+        <div className="flex items-center justify-between w-full">
           <Link to="/">
-            <img src={logo} alt="logo" className="me-2 h-[48px] sm:h-[32px]" />
+            <img src={logo} alt="logo" className="h-[48px] sm:h-[32px]" />
           </Link>
-          <div className="md:hidden flex space-x-6 ml-6">
+          <div className="md:hidden flex gap-12">
             <Link
-              className="text-lg font-semibold hover:text-indigo-700"
+              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
               onClick={() =>
                 document
                   .getElementById("features")
@@ -27,46 +27,46 @@ export default function Navbar() {
             </Link>
             <Link
               to="/editor"
-              className="text-lg font-semibold hover:text-indigo-700"
+              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
             >
               Editor
             </Link>
             <Link
               to="/templates"
-              className="text-lg font-semibold hover:text-indigo-700"
+              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
             >
               Templates
             </Link>
           </div>
-        </div>
-        <div className="md:hidden block space-x-3">
-          <a
-            title="Jump to Github"
-            className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-            href="https://github.com/drawdb-io/drawdb"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i className="opacity-70 bi bi-github" />
-          </a>
-          <a
-            title="Follow us on X"
-            className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-            href="https://x.com/drawDB_"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i className="opacity-70 bi bi-twitter-x" />
-          </a>
-          <a
-            title="Join the community on Discord"
-            className="px-3 py-2 bg-zinc-100 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-            href="https://discord.gg/BrjZgNrmR6"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i className="opacity-70 bi bi-discord" />
-          </a>
+          <div className="md:hidden block space-x-3 ms-12">
+            <a
+              title="Jump to Github"
+              className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
+              href="https://github.com/drawdb-io/drawdb"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="opacity-70 bi bi-github" />
+            </a>
+            <a
+              title="Follow us on X"
+              className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
+              href="https://x.com/drawDB_"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="opacity-70 bi bi-twitter-x" />
+            </a>
+            <a
+              title="Join the community on Discord"
+              className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
+              href="https://discord.gg/BrjZgNrmR6"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="opacity-70 bi bi-discord" />
+            </a>
+          </div>
         </div>
         <button
           onClick={() => setOpenMenu((prev) => !prev)}

@@ -28,7 +28,7 @@ function Table({ table, grab }) {
         // Required for onPointerLeave to trigger when a touch pointer leaves
         // https://stackoverflow.com/a/70976017/1137077
         e.target.releasePointerCapture(e.pointerId);
-        
+
         if (!e.isPrimary) return;
 
         grab(e);
@@ -197,7 +197,7 @@ export default function SimpleCanvas({ diagram, zoom }) {
 
   return (
     <svg
-      className="w-full h-full cursor-grab"
+      className="w-full h-full cursor-grab rounded-3xl"
       onPointerUp={(e) => e.isPrimary && releaseTable()}
       onPointerMove={(e) => e.isPrimary && moveTable(e)}
       onPointerLeave={(e) => e.isPrimary && releaseTable()}
