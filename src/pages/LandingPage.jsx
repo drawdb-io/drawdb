@@ -281,7 +281,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://discord.gg/BrjZgNrmR6"
+              href="https://x.com/drawdb_"
               target="_blank"
               rel="noreferrer"
             >
