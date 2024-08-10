@@ -1,4 +1,4 @@
-import {  useLocation, Outlet } from "react-router-dom";
+import { useLocation, Outlet } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
@@ -7,7 +7,9 @@ export default function App() {
   return (
     <SettingsContextProvider>
       <RestoreScroll />
-      <Outlet />
+      <ThemedPage>
+        <Outlet />
+      </ThemedPage>
     </SettingsContextProvider>
   );
 }
