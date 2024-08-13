@@ -205,8 +205,9 @@ export function jsonToPostgreSQL(obj) {
         (f) =>
           `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
             .map((v) => `'${v}'`)
-            .join(", ")});\n`,
-      );
+            .join(", ")});`,
+      )
+      .join("\n");
     if (typeStatements.length > 0) {
       return (
         typeStatements.join("") +
@@ -237,8 +238,9 @@ export function jsonToPostgreSQL(obj) {
                   (f) =>
                     `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
                       .map((v) => `'${v}'`)
-                      .join(", ")});\n\n`,
-                )}`
+                      .join(", ")});\n`,
+                )
+                .join("\n")}\n`
             : ""
         }CREATE TABLE "${table.name}" (\n${table.fields
           .map(
