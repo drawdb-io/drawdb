@@ -1246,11 +1246,11 @@ export default function ControlPanel({
       },
       zoom_in: {
         function: zoomIn,
-        shortcut: "Ctrl+Up/Wheel",
+        shortcut: "Ctrl+(Up/Wheel)",
       },
       zoom_out: {
         function: zoomOut,
-        shortcut: "Ctrl+Down/Wheel",
+        shortcut: "Ctrl+(Down/Wheel)",
       },
       fullscreen: {
         state: fullscreen ? (
