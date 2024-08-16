@@ -53,7 +53,7 @@
     "postcss": "^8.4.32",
     "prettier": "3.2.5",
     "tailwindcss": "^3.3.6",
-    "vite": "^5.0.11"
+    "vite": "^5.4.1"
   },
   "overrides": {
     "follow-redirects": "^1.15.4"
