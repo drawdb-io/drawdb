@@ -64,7 +64,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
             }
-            field.comment = "";
+            field.comment = d.comment ? d.comment.value.value : "";
             field.unique = false;
             if (d.unique) field.unique = true;
             field.increment = false;
