@@ -6,9 +6,9 @@ export function toPostgres(diagram) {
   const enumStatements = diagram.enums
     .map(
       (e) =>
-        `CREATE TYPE "${e.name}" AS ENUM (\n${e.values.map((v) => `\t'${v}'`).join(",\n")}\n);`,
+        `CREATE TYPE "${e.name}" AS ENUM (\n${e.values.map((v) => `\t'${v}'`).join(",\n")}\n);\n`,
     )
-    .join("\n\n");
+    .join("\n");
 
   const typeStatements = diagram.types
     .map(
@@ -53,7 +53,13 @@ export function toPostgres(diagram) {
           table.comment.trim() !== ""
             ? `\nCOMMENT ON TABLE "${table.name}" IS '${table.comment}';\n`
             : ""
-        }${table.indices
+        }${table.fields
+          .map((field) =>
+            field.comment.trim() !== ""
+              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${field.comment}';\n`
+              : "",
+          )
+          .join("")}${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${

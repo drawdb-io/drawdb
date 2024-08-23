@@ -141,12 +141,10 @@ export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
-        }CREATE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
+              `\t\`${
                 field.name
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
@@ -220,16 +218,16 @@ export function jsonToPostgreSQL(obj) {
           .join("\n")}\n);`
       );
     } else {
-      return `${
-        type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-      }CREATE TYPE ${type.name} AS (\n${type.fields
+      return `CREATE TYPE ${type.name} AS (\n${type.fields
         .map((f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`)
-        .join("\n")}\n);`;
+        .join(
+          "\n",
+        )}\n);\n${type.comment != "" ? `\nCOMMENT ON TYPE ${type.name} IS '${type.comment}';\n` : ""}`;
     }
   })}\n${obj.tables
     .map(
       (table) =>
-        `${table.comment === "" ? "" : `/**\n${table.comment}\n*/\n`}${
+        `${
           table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
             .length > 0
             ? `${table.fields
@@ -265,7 +263,13 @@ export function jsonToPostgreSQL(obj) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n);\n${table.indices
+        }\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${table.comment}';\n` : ""}${table.fields
+          .map((field) =>
+            field.comment.trim() !== ""
+              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${field.comment}';\n`
+              : "",
+          )
+          .join("")}\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
@@ -381,12 +385,10 @@ export function jsonToMariaDB(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
-        }CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
+              `\t\`${
                 field.name
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
@@ -405,7 +407,7 @@ export function jsonToMariaDB(obj) {
                       )}', \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }`,
+              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -414,7 +416,7 @@ export function jsonToMariaDB(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n);${`\n${table.indices
+        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};${`\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${

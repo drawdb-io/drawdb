@@ -1,4 +1,4 @@
-import { exportFieldComment, parseDefault } from "./shared";
+import { parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 
@@ -6,14 +6,10 @@ export function toMySQL(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
-        }CREATE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${exportFieldComment(field.comment)}\t\`${
-                field.name
-              }\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
+              `\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.increment ? " AUTO_INCREMENT" : ""
