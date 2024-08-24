@@ -1,4 +1,4 @@
-import { exportFieldComment, parseDefault } from "./shared";
+import { exportFieldComment, getInlineFK, parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 
@@ -41,20 +41,4 @@ export function toSqlite(diagram) {
         .join("\n")}`;
     })
     .join("\n");
-}
-
-export function getInlineFK(table, obj) {
-  let fks = [];
-  obj.references.forEach((r) => {
-    if (r.startTableId === table.id) {
-      fks.push(
-        `\tFOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-          obj.tables[r.endTableId].name
-        }"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
-      );
-    }
-  });
-  return fks.join(",\n");
 }

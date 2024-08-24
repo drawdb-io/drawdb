@@ -26,3 +26,19 @@ export function exportFieldComment(comment) {
     .map((commentLine) => `\t-- ${commentLine}\n`)
     .join("");
 }
+
+export function getInlineFK(table, obj) {
+  let fks = [];
+  obj.references.forEach((r) => {
+    if (r.startTableId === table.id) {
+      fks.push(
+        `\tFOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
+          obj.tables[r.endTableId].name
+        }"("${
+          obj.tables[r.endTableId].fields[r.endFieldId].name
+        }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
+      );
+    }
+  });
+  return fks.join(",\n");
+}

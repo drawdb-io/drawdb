@@ -1,5 +1,5 @@
 import { dbToTypes, defaultTypes } from "../../data/datatypes";
-import { parseDefault } from "./shared";
+import { getInlineFK, parseDefault } from "./shared";
 
 export function getJsonType(f) {
   if (!Object.keys(defaultTypes).includes(f.type)) {
@@ -325,21 +325,6 @@ export function getSQLiteType(field) {
   }
 }
 
-export function getInlineFK(table, obj) {
-  let fk = "";
-  obj.references.forEach((r) => {
-    if (fk !== "") return;
-    if (r.startTableId === table.id) {
-      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-        obj.tables[r.endTableId].name
-      }"("${
-        obj.tables[r.endTableId].fields[r.endFieldId].name
-      }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
-    }
-  });
-  return fk;
-}
-
 export function jsonToSQLite(obj) {
   return obj.tables
     .map((table) => {
@@ -367,7 +352,7 @@ export function jsonToSQLite(obj) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }\t${inlineFK}\n);\n${table.indices
+      }${inlineFK}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
