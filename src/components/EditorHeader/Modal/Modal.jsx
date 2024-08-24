@@ -90,6 +90,12 @@ export default function Modal({
     if (importData.title) {
       setTitle(importData.title);
     }
+    if (databases[database].hasEnums && importData.enums) {
+      setEnums(importData.enums);
+    }
+    if (databases[database].hasTypes && importData.types) {
+      setTypes(importData.types);
+    }
   };
 
   const loadDiagram = async (id) => {
