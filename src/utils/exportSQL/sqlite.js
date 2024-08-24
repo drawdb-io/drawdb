@@ -29,7 +29,7 @@ export function toSqlite(diagram) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }\t${inlineFK}\n);\n${table.indices
+      }${inlineFK}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
@@ -44,16 +44,17 @@ export function toSqlite(diagram) {
 }
 
 export function getInlineFK(table, obj) {
-  let fk = "";
+  let fks = [];
   obj.references.forEach((r) => {
-    if (fk !== "") return;
     if (r.startTableId === table.id) {
-      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-        obj.tables[r.endTableId].name
-      }"("${
-        obj.tables[r.endTableId].fields[r.endFieldId].name
-      }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
+      fks.push(
+        `\tFOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
+          obj.tables[r.endTableId].name
+        }"("${
+          obj.tables[r.endTableId].fields[r.endFieldId].name
+        }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
+      );
     }
   });
-  return fk;
+  return fks.join(",\n");
 }
