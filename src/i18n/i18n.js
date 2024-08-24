@@ -28,6 +28,7 @@ import { gu, gujarati } from "./locales/gu";
 import { it, italian } from "./locales/it";
 import { ko, korean } from "./locales/ko";
 import { od, odia } from "./locales/od";
+import { bn, bengali } from "./locales/beng";
 
 export const languages = [
   english,
@@ -57,6 +58,7 @@ export const languages = [
   italian,
   korean,
   odia,
+  bengali
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -96,6 +98,7 @@ i18n
       it,
       ko,
       od,
+      bn
     },
   });
 
