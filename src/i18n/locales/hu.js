@@ -122,7 +122,7 @@ const hu = {
     values: "Értékek",
     size: "Méret",
     precision: "Pontosság",
-    set_precision: "Pontosság: (méret, számjegyek)",
+    set_precision: "Pontosság: 'méret, számjegyek'",
     use_for_batch_input: "Több értéket vesszővel elválasztva adhat meg",
     indices: "Indexek",
     add_index: "Új index",
@@ -235,6 +235,7 @@ const hu = {
     declare_array: "Tömb megadása",
     empty_index_name: "A(z) '{{tableName}}' táblában egy indexnek nincs megadva név",
     didnt_find_diagram: "Hoppá! A diagram nem található.",
+    unsigned: "Előjel nélküli",
   },
 };
 
