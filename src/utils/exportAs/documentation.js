@@ -5,8 +5,8 @@ export function jsonToDocumentation(obj) {
 
   const documentationSummary = obj.tables
     .map((table) => {
-      return `\t- [${table.name}](#${table.name})\n`;
-    }).join("");
+      return `\t- [${table.name}](#${table.name})`;
+    }).join("\n");
 
   const documentationEntities = obj.tables
     .map((table) => {
@@ -22,7 +22,9 @@ export function jsonToDocumentation(obj) {
               : "");
           return `| **${field.name}** | ${fieldType} | ${field.primary ? "🔑 PK, " : ""}` +
             `${field.nullable ? "null " : "not null "}${field.unique ? ", unique" : ""}${field.increment?", autoincrement":""}` +
-            `${field.default ? `, default: ${field.default}` : ""} | |${field.comment ? field.comment : ""} |`;
+            `${field.default ? `, default: ${field.default}` : ""} | ` +
+            `${relationshipByField(table.id, obj.relationships, field.id)}` +
+            ` |${field.comment ? field.comment : ""} |`;
 
         }).join("\n");
       return `### ${table.name}\n${table.comment ? table.comment : ""}\n` +
@@ -31,17 +33,25 @@ export function jsonToDocumentation(obj) {
         `${fields}\n\n`;
     }).join("");
   
+  function relationshipByField(table, relationships, fieldId) {
+    return relationships.filter(r => r.startTableId === table && r.startFieldId === fieldId)
+              .map((rel) => rel.name);
+
+  }
+  
   const documentationRelationships = obj.relationships?.length
     ? obj.relationships
       .map((r) => {
-        console.log(r);
         const startTable = obj.tables[r.startTableId].name;
         const endTable = obj.tables[r.endTableId].name;
         return `- **${startTable} to ${endTable}**: ${r.cardinality} (${r.comment ? r.comment : ""})\n`;
       }).join("") : "";
   
+  console.log(obj.tables);
+  console.log(obj.relationships);
+  
   return `# ${obj.title} Database Documentation\n## Summary\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
-          `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n`+
+          `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
           `## Introduction\n${obj.notes}\n## Database type\n- **Database system:** `+
           `${obj.database.type}\n## Table structure\n\n${documentationEntities}`+
           `\n\n## Relationships\n${documentationRelationships}\n\n`+
