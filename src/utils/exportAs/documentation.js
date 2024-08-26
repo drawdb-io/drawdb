@@ -27,7 +27,7 @@ export function jsonToDocumentation(obj) {
             ` |${field.comment ? field.comment : ""} |`;
 
         }).join("\n");
-      return `### ${table.name}\n${table.comment ? table.comment : ""}\n` +
+      return `### ${table.name}\n${table.comment ? table.comment : ""}\n\n` +
         `| Name        | Type          | Settings                      | References                    | Note                           |\n` +
         `|-------------|---------------|-------------------------------|-------------------------------|--------------------------------|\n` +
         `${fields}\n\n`;
@@ -44,16 +44,16 @@ export function jsonToDocumentation(obj) {
       .map((r) => {
         const startTable = obj.tables[r.startTableId].name;
         const endTable = obj.tables[r.endTableId].name;
-        return `- **${startTable} to ${endTable}**: ${r.cardinality} (${r.comment ? r.comment : ""})\n`;
+        return `- **${startTable} to ${endTable}**: ${r.cardinality} ${r.comment ? "(" + r.comment + ")" : ""}\n`;
       }).join("") : "";
   
   console.log(obj.tables);
   console.log(obj.relationships);
   
-  return `# ${obj.title} Database Documentation\n## Summary\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
+  return `# ${obj.title} documentation\n## Summary\n\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
           `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
-          `## Introduction\n${obj.notes}\n## Database type\n- **Database system:** `+
+          `## Introduction\n\n## Database type\n\n- **Database system:** `+
           `${obj.database.type}\n## Table structure\n\n${documentationEntities}`+
-          `\n\n## Relationships\n${documentationRelationships}\n\n`+
-          `## Database Diagram\n\`\`\`${jsonToMermaid(obj)}\`\`\``;
+          `\n\n## Relationships\n\n${documentationRelationships}\n\n`+
+          `## Database Diagram\n\n\`\`\`${jsonToMermaid(obj)}\`\`\``;
 }

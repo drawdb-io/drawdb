@@ -1065,7 +1065,7 @@ export default function ControlPanel({
         ],
         function: () => {},
       },
-      Documentation: {
+      documentation: {
         children: [
             {
               Markdown: () => {
