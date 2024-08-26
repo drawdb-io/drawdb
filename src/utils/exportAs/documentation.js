@@ -1,5 +1,6 @@
 import { dbToTypes } from "../../data/datatypes";
 import { jsonToMermaid } from "./mermaid";
+import { databases } from "../../data/databases";
 
 export function jsonToDocumentation(obj) {
 
@@ -44,16 +45,13 @@ export function jsonToDocumentation(obj) {
       .map((r) => {
         const startTable = obj.tables[r.startTableId].name;
         const endTable = obj.tables[r.endTableId].name;
-        return `- **${startTable} to ${endTable}**: ${r.cardinality} ${r.comment ? "(" + r.comment + ")" : ""}\n`;
+        return `- **${startTable} to ${endTable}**: ${r.cardinality}\n`;
       }).join("") : "";
-  
-  console.log(obj.tables);
-  console.log(obj.relationships);
   
   return `# ${obj.title} documentation\n## Summary\n\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
           `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
           `## Introduction\n\n## Database type\n\n- **Database system:** `+
-          `${obj.database.type}\n## Table structure\n\n${documentationEntities}`+
+    `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}`+
           `\n\n## Relationships\n\n${documentationRelationships}\n\n`+
           `## Database Diagram\n\n\`\`\`${jsonToMermaid(obj)}\`\`\``;
 }

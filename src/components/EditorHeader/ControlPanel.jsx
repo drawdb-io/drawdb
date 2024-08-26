@@ -1062,29 +1062,24 @@ export default function ControlPanel({
               }));
             },
           },
-        ],
-        function: () => {},
-      },
-      documentation: {
-        children: [
-            {
-              Markdown: () => {
-                setModal(MODAL.CODE);
-                const result = jsonToDocumentation({
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  database: database,
-                  title: title,
-                });
-                setExportData((prev) => ({
-                  ...prev,
-                  data: result,
-                  extension: "md",
-                }));
-              }
+          {
+            Readme: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToDocumentation({
+                tables: tables,
+                relationships: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "md",
+              }));
             }
+          },
         ],
         function: () => {},
       },

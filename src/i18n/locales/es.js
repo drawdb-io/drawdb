@@ -212,7 +212,6 @@ const es = {
     edit_relationship: "{{extra}} Editar relación {{refName}}",
     delete_relationship: "Eliminar relación {{refName}}",
     not_found: "No encontrado",
-    documentation: "Documentación",
   },
 };
 
