@@ -1063,7 +1063,7 @@ export default function ControlPanel({
             },
           },
           {
-            Readme: () => {
+            readme: () => {
               setModal(MODAL.CODE);
               const result = jsonToDocumentation({
                 tables: tables,

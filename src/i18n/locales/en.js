@@ -236,6 +236,7 @@ const en = {
     empty_index_name: "Declared an index with no name in table '{{tableName}}'",
     didnt_find_diagram: "Oops! Didn't find the diagram.",
     unsigned: "Unsigned",
+    readme: "README",
   },
 };
 
