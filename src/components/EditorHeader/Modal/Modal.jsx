@@ -42,6 +42,7 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
+import Share from "./Share";
 
 const languageExtension = {
   sql: [sql()],
@@ -328,6 +329,8 @@ export default function Modal({
         return <SetTableWidth />;
       case MODAL.LANGUAGE:
         return <Language />;
+      case MODAL.SHARE:
+        return <Share />;
       default:
         return <></>;
     }

@@ -1365,8 +1365,9 @@ export default function ControlPanel({
               className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
               size="default"
               icon={<IconShareStroked />}
+              onClick={() => setModal(MODAL.SHARE)}
             >
-              Share
+              {t("share")}
             </Button>
           </div>
         )}
