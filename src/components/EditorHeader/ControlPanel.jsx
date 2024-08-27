@@ -9,6 +9,7 @@ import {
   IconUndo,
   IconRedo,
   IconEdit,
+  IconShareStroked,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
@@ -1355,8 +1356,22 @@ export default function ControlPanel({
 
   return (
     <>
-      {layout.header && header()}
-      {layout.toolbar && toolbar()}
+      <div>
+        {layout.header && (
+          <div className="flex justify-between items-center me-7">
+            {header()}
+            <Button
+              type="primary"
+              className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+              size="default"
+              icon={<IconShareStroked />}
+            >
+              Share
+            </Button>
+          </div>
+        )}
+        {layout.toolbar && toolbar()}
+      </div>
       <Modal
         modal={modal}
         exportData={exportData}
@@ -1579,7 +1594,7 @@ export default function ControlPanel({
               width={54}
               src={icon}
               alt="logo"
-              className="ms-8 min-w-[54px]"
+              className="ms-7 min-w-[54px]"
             />
           </Link>
           <div className="ms-1 mt-1">
