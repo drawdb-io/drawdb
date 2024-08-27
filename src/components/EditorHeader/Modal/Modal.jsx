@@ -43,6 +43,7 @@ import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
 import Share from "./Share";
+import GithubToken from "./GithubToken";
 
 const languageExtension = {
   sql: [sql()],
@@ -82,6 +83,9 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
+  const [token, setToken] = useState(
+    localStorage.getItem("github_token") ?? "",
+  );
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -238,6 +242,14 @@ export default function Modal({
         setModal(MODAL.NONE);
         createNewDiagram(selectedTemplateId);
         return;
+      case MODAL.GITHUB_TOKEN:
+        setModal(MODAL.NONE);
+        if (token !== "") {
+          localStorage.setItem("github_token", token);
+        } else {
+          localStorage.removeItem("github_token");
+        }
+        return;
       default:
         setModal(MODAL.NONE);
         return;
@@ -320,7 +332,7 @@ export default function Modal({
           );
         } else {
           return (
-            <div className="text-center my-3">
+            <div className="text-center my-3 text-sky-600">
               <Spin tip={t("loading")} size="large" />
             </div>
           );
@@ -330,7 +342,9 @@ export default function Modal({
       case MODAL.LANGUAGE:
         return <Language />;
       case MODAL.SHARE:
-        return <Share />;
+        return <Share setModal={setModal} />;
+      case MODAL.GITHUB_TOKEN:
+        return <GithubToken token={token} setToken={setToken} />;
       default:
         return <></>;
     }

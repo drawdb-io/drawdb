@@ -1,14 +1,21 @@
-import { Button, Banner } from "@douyinfe/semi-ui";
+import { Banner, Button, Spin } from "@douyinfe/semi-ui";
 import { IconLink } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import { Octokit } from "octokit";
+import { useState } from "react";
+import { MODAL } from "../../../data/constants";
 
-export default function Share() {
+export default function Share({ setModal }) {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
   const generateLink = async () => {
+    setLoading(true);
+    const userToken = localStorage.getItem("github_token");
+
     const octokit = new Octokit({
-      auth: import.meta.env.VITE_GITHUB_ACCESS_TOKEN,
+      auth:
+        userToken ?? import.meta.env.VITE_GITHUB_ACCESS_TOKEN,
     });
 
     try {
@@ -27,30 +34,52 @@ export default function Share() {
       console.log(res);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div id="share" className="space-y-4">
       <Banner
         fullMode={false}
         type="info"
         icon={null}
         closeIcon={null}
-        description="When you generate a link a gist with the JSON representation of the
-        diagram will get created. This will not start a real-time collaboration
-        session."
+        description={
+          <ul className="list-disc ms-4">
+            <li>
+              Generating a link will create a gist with the JSON representation
+              of the diagram.
+            </li>
+            <li>
+              You can create the gist from your account by providing your token
+              <button
+                onClick={() => setModal(MODAL.GITHUB_TOKEN)}
+                className="ms-1 text-sky-500 hover:underline font-semibold"
+              >
+                here
+              </button>
+              .
+            </li>
+            <li>
+              Sharing will not create a live real-time collaboration session.
+            </li>
+          </ul>
+        }
       />
-      <Button
-        type="primary"
-        theme="solid"
-        className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
-        size="default"
-        icon={<IconLink />}
-        onClick={generateLink}
-      >
-        {t("generate_link")}
-      </Button>
+      <div className="text-center">
+        <Button
+          type="primary"
+          theme="solid"
+          className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+          size="default"
+          icon={loading ? <Spin /> : <IconLink />}
+          onClick={generateLink}
+        >
+          {t("generate_link")}
+        </Button>
+      </div>
     </div>
   );
 }
