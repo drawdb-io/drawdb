@@ -1072,6 +1072,8 @@ export default function ControlPanel({
                 subjectAreas: areas,
                 database: database,
                 title: title,
+                ...(databases[database].hasTypes && { types: types }),
+                ...(databases[database].hasEnums && { enums: enums }),
               });
               setExportData((prev) => ({
                 ...prev,

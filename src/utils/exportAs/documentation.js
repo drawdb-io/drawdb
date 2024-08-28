@@ -11,6 +11,10 @@ export function jsonToDocumentation(obj) {
 
   const documentationEntities = obj.tables
     .map((table) => {
+      let enums = "";
+      let indexes = table.indices.length > 0 ? table.indices.map((index) => {
+        return `| ${index.name} | ${index.unique ? "✅" : ""} | ${index.fields.join(", ")} |`;
+      }).join("\n") : "";
       const fields = table.fields
         .map((field) => {
           const fieldType =
@@ -21,18 +25,20 @@ export function jsonToDocumentation(obj) {
             field.size !== ""
               ? "(" + field.size + ")"
               : "");
+          enums += (field.type === "ENUM" && field.values && field.values.length > 0) ?
+            `##### ${field.name}\n\n${field.values.map((index) => `- ${index}`).join("\n")}\n` : "";
           return `| **${field.name}** | ${fieldType} | ${field.primary ? "🔑 PK, " : ""}` +
             `${field.nullable ? "null " : "not null "}${field.unique ? ", unique" : ""}${field.increment?", autoincrement":""}` +
             `${field.default ? `, default: ${field.default}` : ""} | ` +
             `${relationshipByField(table.id, obj.relationships, field.id)}` +
             ` |${field.comment ? field.comment : ""} |`;
-
         }).join("\n");
-      return `### ${table.name}\n${table.comment ? table.comment : ""}\n\n` +
+      return `### ${table.name}\n${table.comment ? table.comment : ""}\n` +
         `| Name        | Type          | Settings                      | References                    | Note                           |\n` +
         `|-------------|---------------|-------------------------------|-------------------------------|--------------------------------|\n` +
-        `${fields}\n\n`;
-    }).join("");
+        `${fields} \n${enums.length > 0 ? "\n#### Enums\n" + enums : ""}\n` +
+        `${indexes.length > 0 ? "\n#### Indexes\n| Name | Unique | Fields |\n|------|--------|--------|\n" + indexes : ""}`;
+    }).join("\n\n");
   
   function relationshipByField(table, relationships, fieldId) {
     return relationships.filter(r => r.startTableId === table && r.startFieldId === fieldId)
@@ -48,10 +54,17 @@ export function jsonToDocumentation(obj) {
         return `- **${startTable} to ${endTable}**: ${r.cardinality}\n`;
       }).join("") : "";
   
+  const documentationTypes = obj.types.map((type) => {
+    return `| Name        | fields        | Note                           |\n` +
+           `|-------------|---------------|--------------------------------|\n` +
+           `| ${type.name} | ${type.fields.map((field) => field.name).join(", ")} | ${type.comment ? type.comment : ""} |`;
+  }).join("\n");
+  
   return `# ${obj.title} documentation\n## Summary\n\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
           `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
           `## Introduction\n\n## Database type\n\n- **Database system:** `+
-    `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}`+
-          `\n\n## Relationships\n\n${documentationRelationships}\n\n`+
-          `## Database Diagram\n\n\`\`\`${jsonToMermaid(obj)}\`\`\``;
+          `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}`+
+          `\n\n## Relationships\n\n${documentationRelationships}\n\n` +
+          `## Types\n\n${documentationTypes}\n\n` +
+          `## Database Diagram\n\n\`\`\`mermaid\n${jsonToMermaid(obj)}\n\`\`\``;
 }
