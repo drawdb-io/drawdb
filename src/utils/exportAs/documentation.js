@@ -38,7 +38,7 @@ export function jsonToDocumentation(obj) {
         `|-------------|---------------|-------------------------------|-------------------------------|--------------------------------|\n` +
         `${fields} \n${enums.length > 0 ? "\n#### Enums\n" + enums : ""}\n` +
         `${indexes.length > 0 ? "\n#### Indexes\n| Name | Unique | Fields |\n|------|--------|--------|\n" + indexes : ""}`;
-    }).join("\n\n");
+    }).join("\n");
   
   function relationshipByField(table, relationships, fieldId) {
     return relationships.filter(r => r.startTableId === table && r.startFieldId === fieldId)
@@ -64,7 +64,7 @@ export function jsonToDocumentation(obj) {
           `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
           `## Introduction\n\n## Database type\n\n- **Database system:** `+
           `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}`+
-          `\n\n## Relationships\n\n${documentationRelationships}\n\n` +
-          `## Types\n\n${documentationTypes}\n\n` +
+          `\n## Relationships\n\n${documentationRelationships}\n` +
+          `${databases[obj.database].hasTypes && obj.types.length > 0 ? `## Types\n\n` + documentationTypes`\n\n` : "" }` +
           `## Database Diagram\n\n\`\`\`mermaid\n${jsonToMermaid(obj)}\n\`\`\``;
 }
