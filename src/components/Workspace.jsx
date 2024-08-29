@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, createContext } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -24,8 +24,11 @@ import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 
+export const IdContext = createContext({ gistId: "" });
+
 export default function WorkSpace() {
   const [id, setId] = useState(0);
+  const [gistId, setGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
@@ -72,6 +75,7 @@ export default function WorkSpace() {
           .add({
             database: database,
             name: title,
+            gistId: gistId ?? "",
             lastModified: new Date(),
             tables: tables,
             references: relationships,
@@ -100,6 +104,7 @@ export default function WorkSpace() {
             notes: notes,
             areas: areas,
             todos: tasks,
+            gistId: gistId ?? "",
             pan: transform.pan,
             zoom: transform.zoom,
             ...(databases[database].hasEnums && { enums: enums }),
@@ -146,6 +151,7 @@ export default function WorkSpace() {
     setSaveState,
     database,
     enums,
+    gistId,
   ]);
 
   const load = useCallback(async () => {
@@ -161,6 +167,7 @@ export default function WorkSpace() {
               setDatabase(DB.GENERIC);
             }
             setId(d.id);
+            setGistId(d.gistId);
             setTitle(d.name);
             setTables(d.tables);
             setRelationships(d.references);
@@ -196,6 +203,7 @@ export default function WorkSpace() {
               setDatabase(DB.GENERIC);
             }
             setId(diagram.id);
+            setGistId(diagram.gistId);
             setTitle(diagram.name);
             setTables(diagram.tables);
             setRelationships(diagram.references);
@@ -328,10 +336,14 @@ export default function WorkSpace() {
   ]);
 
   useEffect(() => {
+    setSaveState(State.SAVING);
+  }, [gistId, setSaveState]);
+
+  useEffect(() => {
     if (saveState !== State.SAVING) return;
 
     save();
-  }, [id, saveState, save]);
+  }, [id, gistId, saveState, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -341,14 +353,16 @@ export default function WorkSpace() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
-      <ControlPanel
-        diagramId={id}
-        setDiagramId={setId}
-        title={title}
-        setTitle={setTitle}
-        lastSaved={lastSaved}
-        setLastSaved={setLastSaved}
-      />
+      <IdContext.Provider value={{ gistId, setGistId }}>
+        <ControlPanel
+          diagramId={id}
+          setDiagramId={setId}
+          title={title}
+          setTitle={setTitle}
+          lastSaved={lastSaved}
+          setLastSaved={setLastSaved}
+        />
+      </IdContext.Provider>
       <div
         className="flex h-full overflow-y-auto"
         onPointerUp={(e) => e.isPrimary && setResize(false)}
