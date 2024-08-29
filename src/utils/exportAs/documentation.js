@@ -54,11 +54,11 @@ export function jsonToDocumentation(obj) {
         return `- **${startTable} to ${endTable}**: ${r.cardinality}\n`;
       }).join("") : "";
   
-  const documentationTypes = obj.types.map((type) => {
+  const documentationTypes = databases[obj.database].hasTypes && obj.types.length > 0 ? obj.types.map((type) => {
     return `| Name        | fields        | Note                           |\n` +
            `|-------------|---------------|--------------------------------|\n` +
            `| ${type.name} | ${type.fields.map((field) => field.name).join(", ")} | ${type.comment ? type.comment : ""} |`;
-  }).join("\n");
+  }).join("\n") : "";
   
   return `# ${obj.title} documentation\n## Summary\n\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n`+
           `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n`+
