@@ -9,6 +9,7 @@ import {
   IconUndo,
   IconRedo,
   IconEdit,
+  IconShareStroked,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
@@ -70,7 +71,6 @@ import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
-import ShareButton from "./ShareButton";
 
 export default function ControlPanel({
   diagramId,
@@ -1363,7 +1363,15 @@ export default function ControlPanel({
         {layout.header && (
           <div className="flex justify-between items-center me-7">
             {header()}
-            <ShareButton setModal={setModal} />
+            <Button
+              type="primary"
+              className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+              size="default"
+              icon={<IconShareStroked />}
+              onClick={() => setModal(MODAL.SHARE)}
+            >
+              {t("share")}
+            </Button>{" "}
           </div>
         )}
         {layout.toolbar && toolbar()}

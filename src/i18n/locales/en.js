@@ -237,7 +237,7 @@ const en = {
     didnt_find_diagram: "Oops! Didn't find the diagram.",
     unsigned: "Unsigned",
     share: "Share",
-    generate_link: "Generate link",
+    copy_link: "Copy link",
     github_token: "GitHub Token",
   },
 };
