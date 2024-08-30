@@ -71,6 +71,7 @@ import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
+import Share from "./Modal/Share";
 
 export default function ControlPanel({
   diagramId,
@@ -1376,6 +1377,7 @@ export default function ControlPanel({
         )}
         {layout.toolbar && toolbar()}
       </div>
+      <Share modal={modal} setModal={setModal}/>
       <Modal
         modal={modal}
         exportData={exportData}

@@ -1,13 +1,14 @@
-import { Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
+import { Button, Input, Modal, Spin, Toast } from "@douyinfe/semi-ui";
 import { MODAL } from "../../../data/constants";
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Octokit } from "octokit";
 import { IdContext } from "../../Workspace";
 import { IconLink } from "@douyinfe/semi-icons";
+import { isRtl } from "../../../i18n/utils/rtl";
 
-export default function Share({ setModal }) {
-  const { t } = useTranslation();
+export default function Share({ modal, setModal }) {
+  const { t, i18n } = useTranslation();
   const { gistId, setGistId } = useContext(IdContext);
   const [loading, setLoading] = useState(false);
 
@@ -78,7 +79,7 @@ export default function Share({ setModal }) {
       } catch (e) {
         console.error(e);
       } finally {
-        setModal(MODAL.SHARE);
+        setLoading(false);
       }
     };
     updateOrGenerateLink();
@@ -95,20 +96,48 @@ export default function Share({ setModal }) {
       });
   };
 
-  if (loading)
-    return (
-      <div className="text-blue-500 text-center">
-        <Spin size="middle" />
-        <div>{t("loading")}</div>
-      </div>
-    );
-
   return (
-    <div className="flex gap-3">
-      <Input value={url} size="large" />
-      <Button size="large" theme="solid" icon={<IconLink />} onClick={copyLink}>
-        {t("copy_link")}
-      </Button>
-    </div>
+    <Modal
+      visible={modal === MODAL.SHARE}
+      style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+      title={t("share")}
+      footer={<></>}
+      onCancel={() => setModal(MODAL.NONE)}
+      centered
+      closeOnEsc={true}
+      cancelText={t("cancel")}
+      width={600}
+      bodyStyle={{
+        maxHeight: window.innerHeight - 280,
+        overflow: "auto",
+        direction: "ltr",
+      }}
+    >
+      {loading ? (
+        <div className="text-blue-500 text-center">
+          <Spin size="middle" />
+          <div>{t("loading")}</div>
+        </div>
+      ) : (
+        <div>
+          <div className="flex gap-3">
+            <Input value={url} size="large" />
+            <Button
+              size="large"
+              theme="solid"
+              icon={<IconLink />}
+              onClick={copyLink}
+            >
+              {t("copy_link")}
+            </Button>
+          </div>
+          <hr className="opacity-20 mt-3 mb-1" />
+          <div className="text-xs">
+            * Sharing this link will not create a live real-time collaboration
+            session
+          </div>
+        </div>
+      )}
+    </Modal>
   );
 }

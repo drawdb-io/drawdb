@@ -42,7 +42,6 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
-import Share from "./Share";
 import GithubToken from "./GithubToken";
 
 const languageExtension = {
@@ -257,6 +256,7 @@ export default function Modal({
   };
 
   const getModalBody = () => {
+    if (modal === MODAL.SHARE) return;
     switch (modal) {
       case MODAL.IMPORT:
         return (
@@ -341,8 +341,8 @@ export default function Modal({
         return <SetTableWidth />;
       case MODAL.LANGUAGE:
         return <Language />;
-      case MODAL.SHARE:
-        return <Share setModal={setModal} />;
+      // case MODAL.SHARE:
+      //   return <Share setModal={setModal} />;
       case MODAL.GITHUB_TOKEN:
         return <GithubToken token={token} setToken={setToken} />;
       default:
@@ -354,7 +354,7 @@ export default function Modal({
     <SemiUIModal
       style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       title={getModalTitle(modal)}
-      visible={modal !== MODAL.NONE}
+      visible={modal !== MODAL.NONE && modal !== MODAL.SHARE}
       onOk={getModalOnOk}
       afterClose={() => {
         setExportData(() => ({
