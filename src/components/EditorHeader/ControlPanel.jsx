@@ -70,6 +70,7 @@ import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
+import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 
 export default function ControlPanel({
   diagramId,
@@ -1060,6 +1061,26 @@ export default function ControlPanel({
                 extension: "md",
               }));
             },
+          },
+          {
+            readme: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToDocumentation({
+                tables: tables,
+                relationships: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
+                ...(databases[database].hasTypes && { types: types }),
+                ...(databases[database].hasEnums && { enums: enums }),
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "md",
+              }));
+            }
           },
         ],
         function: () => {},

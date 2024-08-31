@@ -217,6 +217,7 @@ const fr = {
     edit_relationship: "{{extra}} Modifier la relation {{refName}}",
     delete_relationship: "Supprimer la relation {{refName}}",
     not_found: "Non trouvé",
+    readme: "README",
   },
 };
 
