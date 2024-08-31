@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -71,7 +71,7 @@ import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
-import Share from "./Modal/Share";
+import { IdContext } from "../Workspace";
 
 export default function ControlPanel({
   diagramId,
@@ -114,6 +114,7 @@ export default function ControlPanel({
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
+  const { setGistId } = useContext(IdContext);
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -783,6 +784,7 @@ export default function ControlPanel({
               setEnums([]);
               setUndoStack([]);
               setRedoStack([]);
+              setGistId("");
             })
             .catch(() => Toast.error(t("oops_smth_went_wrong")));
         },
@@ -1372,12 +1374,11 @@ export default function ControlPanel({
               onClick={() => setModal(MODAL.SHARE)}
             >
               {t("share")}
-            </Button>{" "}
+            </Button>
           </div>
         )}
         {layout.toolbar && toolbar()}
       </div>
-      <Share modal={modal} setModal={setModal}/>
       <Modal
         modal={modal}
         exportData={exportData}

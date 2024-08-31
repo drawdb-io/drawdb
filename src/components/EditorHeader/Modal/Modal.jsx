@@ -33,6 +33,7 @@ import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
 import Language from "./Language";
+import Share from "./Share";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -256,7 +257,6 @@ export default function Modal({
   };
 
   const getModalBody = () => {
-    if (modal === MODAL.SHARE) return;
     switch (modal) {
       case MODAL.IMPORT:
         return (
@@ -341,8 +341,8 @@ export default function Modal({
         return <SetTableWidth />;
       case MODAL.LANGUAGE:
         return <Language />;
-      // case MODAL.SHARE:
-      //   return <Share setModal={setModal} />;
+      case MODAL.SHARE:
+        return <Share title={title} />;
       case MODAL.GITHUB_TOKEN:
         return <GithubToken token={token} setToken={setToken} />;
       default:
@@ -354,7 +354,7 @@ export default function Modal({
     <SemiUIModal
       style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       title={getModalTitle(modal)}
-      visible={modal !== MODAL.NONE && modal !== MODAL.SHARE}
+      visible={modal !== MODAL.NONE}
       onOk={getModalOnOk}
       afterClose={() => {
         setExportData(() => ({

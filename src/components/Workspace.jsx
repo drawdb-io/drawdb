@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback, createContext } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useMemo,
+} from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -23,6 +29,8 @@ import { Modal } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
+import { useSearchParams } from "react-router-dom";
+import { Octokit } from "octokit";
 
 export const IdContext = createContext({ gistId: "" });
 
@@ -54,7 +62,13 @@ export default function WorkSpace() {
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
-
+  let [searchParams] = useSearchParams();
+  const userToken = localStorage.getItem("github_token");
+  const octokit = useMemo(() => {
+    return new Octokit({
+      auth: userToken ?? import.meta.env.VITE_GITHUB_ACCESS_TOKEN,
+    });
+  }, [userToken]);
   const handleResize = (e) => {
     if (!resize) return;
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
@@ -307,6 +321,24 @@ export default function WorkSpace() {
     selectedDb,
   ]);
 
+  const loadFromGist = useCallback(
+    async (shareId) => {
+      try {
+        const res = await octokit.request(`GET /gists/${shareId}`, {
+          gist_id: shareId,
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        });
+        const diagramSrc = res.data.files["share.json"].content;
+        console.log(diagramSrc);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [octokit],
+  );
+
   useEffect(() => {
     if (
       tables?.length === 0 &&
@@ -336,7 +368,9 @@ export default function WorkSpace() {
   ]);
 
   useEffect(() => {
-    setSaveState(State.SAVING);
+    if (gistId && gistId !== "") {
+      setSaveState(State.SAVING);
+    }
   }, [gistId, setSaveState]);
 
   useEffect(() => {
@@ -348,8 +382,13 @@ export default function WorkSpace() {
   useEffect(() => {
     document.title = "Editor | drawDB";
 
-    load();
-  }, [load]);
+    const shareId = searchParams.get("shareId");
+    if (shareId) {
+      loadFromGist(shareId);
+    } else {
+      load();
+    }
+  }, [load, searchParams, loadFromGist]);
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">

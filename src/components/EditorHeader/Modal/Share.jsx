@@ -1,16 +1,27 @@
-import { Button, Input, Modal, Spin, Toast } from "@douyinfe/semi-ui";
-import { MODAL } from "../../../data/constants";
+import { Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Octokit } from "octokit";
 import { IdContext } from "../../Workspace";
 import { IconLink } from "@douyinfe/semi-icons";
-import { isRtl } from "../../../i18n/utils/rtl";
+import {
+  useAreas,
+  useDiagram,
+  useEnums,
+  useNotes,
+  useTypes,
+} from "../../../hooks";
+import { databases } from "../../../data/databases";
 
-export default function Share({ modal, setModal }) {
-  const { t, i18n } = useTranslation();
+export default function Share({ title }) {
+  const { t } = useTranslation();
   const { gistId, setGistId } = useContext(IdContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { tables, relationships, database } = useDiagram();
+  const { notes } = useNotes();
+  const { areas } = useAreas();
+  const { types } = useTypes();
+  const { enums } = useEnums();
 
   const userToken = localStorage.getItem("github_token");
   const octokit = useMemo(() => {
@@ -23,6 +34,19 @@ export default function Share({ modal, setModal }) {
     [gistId],
   );
 
+  const diagramToString = useCallback(() => {
+    return JSON.stringify({
+      tables: tables,
+      relationships: relationships,
+      notes: notes,
+      subjectAreas: areas,
+      database: database,
+      ...(databases[database].hasTypes && { types: types }),
+      ...(databases[database].hasEnums && { enums: enums }),
+      title: title,
+    });
+  }, [areas, notes, tables, relationships, database, title, enums, types]);
+
   const updateGist = useCallback(async () => {
     setLoading(true);
     try {
@@ -30,8 +54,8 @@ export default function Share({ modal, setModal }) {
         gist_id: gistId,
         description: "drawDB diagram",
         files: {
-          "test.json": {
-            content: '{"Hello":"SEAMAN"}',
+          "share.json": {
+            content: diagramToString(),
           },
         },
         headers: {
@@ -43,7 +67,7 @@ export default function Share({ modal, setModal }) {
     } finally {
       setLoading(false);
     }
-  }, [gistId, octokit]);
+  }, [gistId, octokit, diagramToString]);
 
   const generateLink = useCallback(async () => {
     setLoading(true);
@@ -52,8 +76,8 @@ export default function Share({ modal, setModal }) {
         description: "drawDB diagram",
         public: false,
         files: {
-          "test.json": {
-            content: '{"Hello":"WORLD"}',
+          "share.json": {
+            content: diagramToString(),
           },
         },
         headers: {
@@ -66,7 +90,7 @@ export default function Share({ modal, setModal }) {
     } finally {
       setLoading(false);
     }
-  }, [octokit, setGistId]);
+  }, [octokit, setGistId, diagramToString]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
@@ -83,7 +107,7 @@ export default function Share({ modal, setModal }) {
       }
     };
     updateOrGenerateLink();
-  }, [gistId, generateLink, setModal, updateGist]);
+  }, [gistId, generateLink, updateGist]);
 
   const copyLink = () => {
     navigator.clipboard
@@ -96,48 +120,32 @@ export default function Share({ modal, setModal }) {
       });
   };
 
+  if (loading)
+    return (
+      <div className="text-blue-500 text-center">
+        <Spin size="middle" />
+        <div>{t("loading")}</div>
+      </div>
+    );
+
   return (
-    <Modal
-      visible={modal === MODAL.SHARE}
-      style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
-      title={t("share")}
-      footer={<></>}
-      onCancel={() => setModal(MODAL.NONE)}
-      centered
-      closeOnEsc={true}
-      cancelText={t("cancel")}
-      width={600}
-      bodyStyle={{
-        maxHeight: window.innerHeight - 280,
-        overflow: "auto",
-        direction: "ltr",
-      }}
-    >
-      {loading ? (
-        <div className="text-blue-500 text-center">
-          <Spin size="middle" />
-          <div>{t("loading")}</div>
-        </div>
-      ) : (
-        <div>
-          <div className="flex gap-3">
-            <Input value={url} size="large" />
-            <Button
-              size="large"
-              theme="solid"
-              icon={<IconLink />}
-              onClick={copyLink}
-            >
-              {t("copy_link")}
-            </Button>
-          </div>
-          <hr className="opacity-20 mt-3 mb-1" />
-          <div className="text-xs">
-            * Sharing this link will not create a live real-time collaboration
-            session
-          </div>
-        </div>
-      )}
-    </Modal>
+    <div>
+      <div className="flex gap-3">
+        <Input value={url} size="large" />
+        <Button
+          size="large"
+          theme="solid"
+          icon={<IconLink />}
+          onClick={copyLink}
+        >
+          {t("copy_link")}
+        </Button>
+      </div>
+      <hr className="opacity-20 mt-3 mb-1" />
+      <div className="text-xs">
+        * Sharing this link will not create a live real-time collaboration
+        session
+      </div>
+    </div>
   );
 }
