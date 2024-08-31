@@ -65,6 +65,6 @@ export function jsonToDocumentation(obj) {
           `## Introduction\n\n## Database type\n\n- **Database system:** `+
           `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}`+
           `\n## Relationships\n\n${documentationRelationships}\n` +
-          `${databases[obj.database].hasTypes && obj.types.length > 0 ? `## Types\n\n` + documentationTypes`\n\n` : "" }` +
+          `${databases[obj.database].hasTypes && obj.types.length > 0 ? `## Types\n\n` + documentationTypes + `\n\n` : "" }` +
           `## Database Diagram\n\n\`\`\`mermaid\n${jsonToMermaid(obj)}\n\`\`\``;
 }
