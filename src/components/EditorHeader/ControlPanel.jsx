@@ -1363,15 +1363,17 @@ export default function ControlPanel({
         {layout.header && (
           <div className="flex justify-between items-center me-7">
             {header()}
-            <Button
-              type="primary"
-              className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
-              size="default"
-              icon={<IconShareStroked />}
-              onClick={() => setModal(MODAL.SHARE)}
-            >
-              {t("share")}
-            </Button>
+            {window.name.split(" ")[0] !== "t" && (
+              <Button
+                type="primary"
+                className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+                size="default"
+                icon={<IconShareStroked />}
+                onClick={() => setModal(MODAL.SHARE)}
+              >
+                {t("share")}
+              </Button>
+            )}
           </div>
         )}
         {layout.toolbar && toolbar()}
