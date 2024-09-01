@@ -331,12 +331,35 @@ export default function WorkSpace() {
           },
         });
         const diagramSrc = res.data.files["share.json"].content;
-        console.log(diagramSrc);
+        const d = JSON.parse(diagramSrc);
+        console.log(d);
+        window.name = "";
+        setDatabase(d.database);
+        setTitle(d.title);
+        setTables(d.tables);
+        setRelationships(d.relationships);
+        setNotes(d.notes);
+        setAreas(d.subjectAreas);
+        if (databases[d.database].hasTypes) {
+          setTypes(d.types ?? []);
+        }
+        if (databases[d.database].hasEnums) {
+          setEnums(d.enums ?? []);
+        }
       } catch (e) {
         console.log(e);
       }
     },
-    [octokit],
+    [
+      octokit,
+      setAreas,
+      setDatabase,
+      setEnums,
+      setNotes,
+      setRelationships,
+      setTables,
+      setTypes,
+    ],
   );
 
   useEffect(() => {
