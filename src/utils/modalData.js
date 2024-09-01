@@ -25,8 +25,6 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
-    case MODAL.GITHUB_TOKEN:
-      return i18n.t("github_token");
     default:
       return "";
   }

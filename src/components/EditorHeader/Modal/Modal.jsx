@@ -43,7 +43,6 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
-import GithubToken from "./GithubToken";
 
 const languageExtension = {
   sql: [sql()],
@@ -83,9 +82,6 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
-  const [token, setToken] = useState(
-    localStorage.getItem("github_token") ?? "",
-  );
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -242,14 +238,6 @@ export default function Modal({
         setModal(MODAL.NONE);
         createNewDiagram(selectedTemplateId);
         return;
-      case MODAL.GITHUB_TOKEN:
-        setModal(MODAL.NONE);
-        if (token !== "") {
-          localStorage.setItem("github_token", token);
-        } else {
-          localStorage.removeItem("github_token");
-        }
-        return;
       default:
         setModal(MODAL.NONE);
         return;
@@ -343,8 +331,6 @@ export default function Modal({
         return <Language />;
       case MODAL.SHARE:
         return <Share title={title} />;
-      case MODAL.GITHUB_TOKEN:
-        return <GithubToken token={token} setToken={setToken} />;
       default:
         return <></>;
     }

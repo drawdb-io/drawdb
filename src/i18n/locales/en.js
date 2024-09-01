@@ -238,7 +238,6 @@ const en = {
     unsigned: "Unsigned",
     share: "Share",
     copy_link: "Copy link",
-    github_token: "GitHub Token",
   },
 };
 

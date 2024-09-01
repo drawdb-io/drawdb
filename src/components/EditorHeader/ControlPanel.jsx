@@ -1293,9 +1293,6 @@ export default function ControlPanel({
       language: {
         function: () => setModal(MODAL.LANGUAGE),
       },
-      github_token: {
-        function: () => setModal(MODAL.GITHUB_TOKEN),
-      },
       flush_storage: {
         warning: {
           title: t("flush_storage"),
