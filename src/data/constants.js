@@ -77,6 +77,7 @@ export const State = {
   SAVED: 2,
   LOADING: 3,
   ERROR: 4,
+  FAILED_TO_LOAD: 5,
 };
 
 export const MODAL = {
@@ -91,6 +92,7 @@ export const MODAL = {
   IMPORT_SRC: 8,
   TABLE_WIDTH: 9,
   LANGUAGE: 10,
+  SHARE: 11,
 };
 
 export const STATUS = {

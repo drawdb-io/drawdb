@@ -236,7 +236,12 @@ const en = {
     empty_index_name: "Declared an index with no name in table '{{tableName}}'",
     didnt_find_diagram: "Oops! Didn't find the diagram.",
     unsigned: "Unsigned",
+    share: "Share",
+    copy_link: "Copy link",
     readme: "README",
+    failed_to_load: "Failed to load. Make sure the link is correct.",
+    share_info:
+      "* Sharing this link will not create a live real-time collaboration session.",
   },
 };
 

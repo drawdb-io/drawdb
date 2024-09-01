@@ -33,6 +33,7 @@ import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
 import Language from "./Language";
+import Share from "./Share";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -319,7 +320,7 @@ export default function Modal({
           );
         } else {
           return (
-            <div className="text-center my-3">
+            <div className="text-center my-3 text-sky-600">
               <Spin tip={t("loading")} size="large" />
             </div>
           );
@@ -328,6 +329,8 @@ export default function Modal({
         return <SetTableWidth />;
       case MODAL.LANGUAGE:
         return <Language />;
+      case MODAL.SHARE:
+        return <Share title={title} />;
       default:
         return <></>;
     }
@@ -371,7 +374,9 @@ export default function Modal({
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
+        hidden: modal === MODAL.SHARE,
       }}
+      hasCancel={modal !== MODAL.SHARE}
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{
