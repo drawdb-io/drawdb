@@ -57,7 +57,7 @@ export default function WorkSpace() {
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
-  let [searchParams] = useSearchParams();
+  let [searchParams, setSearchParams] = useSearchParams();
   const handleResize = (e) => {
     if (!resize) return;
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
@@ -70,6 +70,8 @@ export default function WorkSpace() {
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
 
     if (saveAsDiagram) {
+      searchParams.delete("shareId");
+      setSearchParams(searchParams);
       if (
         (id === 0 && window.name === "") ||
         window.name.split(" ")[0] === "lt"
@@ -144,6 +146,8 @@ export default function WorkSpace() {
         });
     }
   }, [
+    searchParams,
+    setSearchParams,
     tables,
     relationships,
     notes,
@@ -317,9 +321,11 @@ export default function WorkSpace() {
 
   const loadFromGist = useCallback(
     async (shareId) => {
-      const d = await db.diagrams.get({ loadedFromGistId: shareId });
-      if (d) {
-        window.name = "d " + d.id;
+      const existingDiagram = await db.diagrams.get({
+        loadedFromGistId: shareId,
+      });
+      if (existingDiagram) {
+        window.name = "d " + existingDiagram.id;
       } else {
         window.name = "";
       }
@@ -332,7 +338,7 @@ export default function WorkSpace() {
         });
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
-        setGistId("")
+        setGistId("");
         setUndoStack([]);
         setRedoStack([]);
         setLoadedFromGistId(shareId);
