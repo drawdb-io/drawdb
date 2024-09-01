@@ -388,7 +388,9 @@ export default function Modal({
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
+        hidden: modal === MODAL.SHARE,
       }}
+      hasCancel={modal !== MODAL.SHARE}
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{

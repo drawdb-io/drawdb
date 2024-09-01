@@ -9,6 +9,7 @@ import {
   useDiagram,
   useEnums,
   useNotes,
+  useTransform,
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
@@ -22,6 +23,7 @@ export default function Share({ title }) {
   const { areas } = useAreas();
   const { types } = useTypes();
   const { enums } = useEnums();
+  const { transform } = useTransform();
 
   const userToken = localStorage.getItem("github_token");
   const octokit = useMemo(() => {
@@ -44,8 +46,19 @@ export default function Share({ title }) {
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
       title: title,
+      transform: transform,
     });
-  }, [areas, notes, tables, relationships, database, title, enums, types]);
+  }, [
+    areas,
+    notes,
+    tables,
+    relationships,
+    database,
+    title,
+    enums,
+    types,
+    transform,
+  ]);
 
   const updateGist = useCallback(async () => {
     setLoading(true);

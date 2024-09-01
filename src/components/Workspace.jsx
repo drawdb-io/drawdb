@@ -37,6 +37,7 @@ export const IdContext = createContext({ gistId: "" });
 export default function WorkSpace() {
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
+  const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
@@ -98,6 +99,7 @@ export default function WorkSpace() {
             todos: tasks,
             pan: transform.pan,
             zoom: transform.zoom,
+            loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
           })
@@ -121,6 +123,7 @@ export default function WorkSpace() {
             gistId: gistId ?? "",
             pan: transform.pan,
             zoom: transform.zoom,
+            loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
           })
@@ -166,6 +169,7 @@ export default function WorkSpace() {
     database,
     enums,
     gistId,
+    loadedFromGistId,
   ]);
 
   const load = useCallback(async () => {
@@ -182,6 +186,7 @@ export default function WorkSpace() {
             }
             setId(d.id);
             setGistId(d.gistId);
+            setLoadedFromGistId(d.loadedFromGistId);
             setTitle(d.name);
             setTables(d.tables);
             setRelationships(d.references);
@@ -218,6 +223,7 @@ export default function WorkSpace() {
             }
             setId(diagram.id);
             setGistId(diagram.gistId);
+            setLoadedFromGistId(diagram.loadedFromGistId);
             setTitle(diagram.name);
             setTables(diagram.tables);
             setRelationships(diagram.references);
@@ -323,6 +329,13 @@ export default function WorkSpace() {
 
   const loadFromGist = useCallback(
     async (shareId) => {
+      const d = await db.diagrams.get({ loadedFromGistId: shareId });
+      if (d) {
+        window.name = "d " + d.id;
+      } else {
+        window.name = "";
+      }
+
       try {
         const res = await octokit.request(`GET /gists/${shareId}`, {
           gist_id: shareId,
@@ -332,14 +345,16 @@ export default function WorkSpace() {
         });
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
-        console.log(d);
-        window.name = "";
+        setUndoStack([]);
+        setRedoStack([]);
+        setLoadedFromGistId(shareId);
         setDatabase(d.database);
         setTitle(d.title);
         setTables(d.tables);
         setRelationships(d.relationships);
         setNotes(d.notes);
         setAreas(d.subjectAreas);
+        setTransform(d.transform);
         if (databases[d.database].hasTypes) {
           setTypes(d.types ?? []);
         }
@@ -359,6 +374,9 @@ export default function WorkSpace() {
       setRelationships,
       setTables,
       setTypes,
+      setTransform,
+      setRedoStack,
+      setUndoStack,
     ],
   );
 
