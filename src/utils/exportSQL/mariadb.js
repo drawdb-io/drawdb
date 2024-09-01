@@ -1,4 +1,4 @@
-import { exportFieldComment, parseDefault } from "./shared";
+import { parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 
@@ -9,7 +9,7 @@ export function toMariaDB(diagram) {
         `CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${exportFieldComment(field.comment)}\t\`${
+              `\t\`${
                 field.name
               }\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
