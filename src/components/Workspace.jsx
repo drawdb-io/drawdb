@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  createContext,
-  useMemo,
-} from "react";
+import { useState, useEffect, useCallback, createContext } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -30,7 +24,7 @@ import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
-import { Octokit } from "octokit";
+import { octokit } from "../data/octokit";
 
 export const IdContext = createContext({ gistId: "" });
 
@@ -64,12 +58,6 @@ export default function WorkSpace() {
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
   let [searchParams] = useSearchParams();
-  const userToken = localStorage.getItem("github_token");
-  const octokit = useMemo(() => {
-    return new Octokit({
-      auth: userToken ?? import.meta.env.VITE_GITHUB_ACCESS_TOKEN,
-    });
-  }, [userToken]);
   const handleResize = (e) => {
     if (!resize) return;
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
@@ -335,7 +323,6 @@ export default function WorkSpace() {
       } else {
         window.name = "";
       }
-
       try {
         const res = await octokit.request(`GET /gists/${shareId}`, {
           gist_id: shareId,
@@ -345,6 +332,7 @@ export default function WorkSpace() {
         });
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
+        setGistId("")
         setUndoStack([]);
         setRedoStack([]);
         setLoadedFromGistId(shareId);
@@ -366,7 +354,6 @@ export default function WorkSpace() {
       }
     },
     [
-      octokit,
       setAreas,
       setDatabase,
       setEnums,

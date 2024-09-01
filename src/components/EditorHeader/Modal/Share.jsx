@@ -1,7 +1,6 @@
 import { Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
-import { useCallback, useContext, useEffect, useState, useMemo } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Octokit } from "octokit";
 import { IdContext } from "../../Workspace";
 import { IconLink } from "@douyinfe/semi-icons";
 import {
@@ -13,6 +12,7 @@ import {
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
+import { octokit } from "../../../data/octokit";
 
 export default function Share({ title }) {
   const { t } = useTranslation();
@@ -24,17 +24,8 @@ export default function Share({ title }) {
   const { types } = useTypes();
   const { enums } = useEnums();
   const { transform } = useTransform();
-
-  const userToken = localStorage.getItem("github_token");
-  const octokit = useMemo(() => {
-    return new Octokit({
-      auth: userToken ?? import.meta.env.VITE_GITHUB_ACCESS_TOKEN,
-    });
-  }, [userToken]);
-  const url = useMemo(
-    () => window.location.href + "?shareId=" + gistId,
-    [gistId],
-  );
+  const url =
+    window.location.origin + window.location.pathname + "?shareId=" + gistId;
 
   const diagramToString = useCallback(() => {
     return JSON.stringify({
@@ -80,7 +71,7 @@ export default function Share({ title }) {
     } finally {
       setLoading(false);
     }
-  }, [gistId, octokit, diagramToString]);
+  }, [gistId, diagramToString]);
 
   const generateLink = useCallback(async () => {
     setLoading(true);
@@ -103,7 +94,7 @@ export default function Share({ title }) {
     } finally {
       setLoading(false);
     }
-  }, [octokit, setGistId, diagramToString]);
+  }, [setGistId, diagramToString]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
