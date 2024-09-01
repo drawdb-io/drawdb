@@ -356,6 +356,7 @@ export default function WorkSpace() {
         }
       } catch (e) {
         console.log(e);
+        setSaveState(State.FAILED_TO_LOAD);
       }
     },
     [
@@ -369,6 +370,7 @@ export default function WorkSpace() {
       setTransform,
       setRedoStack,
       setUndoStack,
+      setSaveState,
     ],
   );
 

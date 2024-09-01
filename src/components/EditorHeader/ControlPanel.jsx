@@ -1084,7 +1084,7 @@ export default function ControlPanel({
                 data: result,
                 extension: "md",
               }));
-            }
+            },
           },
         ],
         function: () => {},
@@ -1604,6 +1604,8 @@ export default function ControlPanel({
         return t("saving");
       case State.ERROR:
         return t("failed_to_save");
+      case State.FAILED_TO_LOAD:
+        return t("failed_to_load");
       default:
         return "";
     }

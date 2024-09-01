@@ -146,10 +146,7 @@ export default function Share({ title }) {
         </Button>
       </div>
       <hr className="opacity-20 mt-3 mb-1" />
-      <div className="text-xs">
-        * Sharing this link will not create a live real-time collaboration
-        session
-      </div>
+      <div className="text-xs">{t("share_info")}</div>
     </div>
   );
 }
