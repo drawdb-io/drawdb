@@ -524,6 +524,7 @@ export default function Canvas() {
           </svg>
         )}
         <svg
+          id="diagram"
           ref={canvasRef}
           onPointerMove={handlePointerMove}
           onPointerDown={handlePointerDown}
