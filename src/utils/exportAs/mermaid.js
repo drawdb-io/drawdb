@@ -1,13 +1,18 @@
+import { Cardinality } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import i18n from "../../i18n/i18n";
 
 export function jsonToMermaid(obj) {
   function getMermaidRelationship(relationship) {
     switch (relationship) {
-      case "One to one":
+      case i18n.t(Cardinality.ONE_TO_ONE):
+      case Cardinality.ONE_TO_ONE:
         return "||--||";
-      case "One to many":
+      case i18n.t(Cardinality.MANY_TO_ONE_TO_ONE):
+      case Cardinality.MANY_TO_ONE:
         return "||--o{";
-      case "Many to one":
+      case i18n.t(Cardinality.ONE_TO_MANY):
+      case Cardinality.ONE_TO_MANY:
         return "}o--||";
       default:
         return "--";

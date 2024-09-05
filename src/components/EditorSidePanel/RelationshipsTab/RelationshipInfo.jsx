@@ -190,7 +190,7 @@ export default function RelationshipInfo({ data }) {
         <div className="font-semibold my-1">{t("cardinality")}:</div>
         <Select
           optionList={Object.values(Cardinality).map((v) => ({
-            label: v,
+            label: t(v),
             value: v,
           }))}
           value={data.cardinality}

@@ -2,26 +2,32 @@ import { useRef } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
+import { useTranslation } from "react-i18next";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
   const { tables } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
   const pathRef = useRef();
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
 
   switch (data.cardinality) {
+    // the translated values are to ensure backwards compatibility
+    case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
       cardinalityStart = "n";
       cardinalityEnd = "1";
       break;
+    case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
       cardinalityStart = "1";
       cardinalityEnd = "n";
       break;
+    case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
       cardinalityStart = "1";
       cardinalityEnd = "1";
