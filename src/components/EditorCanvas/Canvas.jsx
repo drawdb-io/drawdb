@@ -87,6 +87,8 @@ export default function Canvas() {
    * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (type === ObjectType.TABLE) {
@@ -138,6 +140,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerMove = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (linking) {
@@ -226,6 +230,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     // don't pan if the sidesheet for editing a table is open
@@ -309,6 +315,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerUp = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (coordsDidUpdate(dragging.element)) {

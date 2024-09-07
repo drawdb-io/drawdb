@@ -3,6 +3,8 @@ import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
+import { SideSheet } from "@douyinfe/semi-ui";
+import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
@@ -79,67 +81,90 @@ export default function Relationship({ data }) {
   };
 
   return (
-    <g className="select-none group" onDoubleClick={edit}>
-      <path
-        ref={pathRef}
-        d={calcPath(
-          {
-            ...data,
-            startTable: {
-              x: tables[data.startTableId].x,
-              y: tables[data.startTableId].y,
+    <>
+      <g className="select-none group" onDoubleClick={edit}>
+        <path
+          ref={pathRef}
+          d={calcPath(
+            {
+              ...data,
+              startTable: {
+                x: tables[data.startTableId].x,
+                y: tables[data.startTableId].y,
+              },
+              endTable: {
+                x: tables[data.endTableId].x,
+                y: tables[data.endTableId].y,
+              },
             },
-            endTable: {
-              x: tables[data.endTableId].x,
-              y: tables[data.endTableId].y,
-            },
-          },
-          settings.tableWidth,
+            settings.tableWidth,
+          )}
+          stroke="gray"
+          className="group-hover:stroke-sky-700"
+          fill="none"
+          strokeWidth={2}
+          cursor="pointer"
+        />
+        {pathRef.current && settings.showCardinality && (
+          <>
+            <circle
+              cx={cardinalityStartX}
+              cy={cardinalityStartY}
+              r="12"
+              fill="grey"
+              className="group-hover:fill-sky-700"
+            />
+            <text
+              x={cardinalityStartX}
+              y={cardinalityStartY}
+              fill="white"
+              strokeWidth="0.5"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {cardinalityStart}
+            </text>
+            <circle
+              cx={cardinalityEndX}
+              cy={cardinalityEndY}
+              r="12"
+              fill="grey"
+              className="group-hover:fill-sky-700"
+            />
+            <text
+              x={cardinalityEndX}
+              y={cardinalityEndY}
+              fill="white"
+              strokeWidth="0.5"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {cardinalityEnd}
+            </text>
+          </>
         )}
-        stroke="gray"
-        className="group-hover:stroke-sky-700"
-        fill="none"
-        strokeWidth={2}
-        cursor="pointer"
-      />
-      {pathRef.current && settings.showCardinality && (
-        <>
-          <circle
-            cx={cardinalityStartX}
-            cy={cardinalityStartY}
-            r="12"
-            fill="grey"
-            className="group-hover:fill-sky-700"
-          />
-          <text
-            x={cardinalityStartX}
-            y={cardinalityStartY}
-            fill="white"
-            strokeWidth="0.5"
-            textAnchor="middle"
-            alignmentBaseline="middle"
-          >
-            {cardinalityStart}
-          </text>
-          <circle
-            cx={cardinalityEndX}
-            cy={cardinalityEndY}
-            r="12"
-            fill="grey"
-            className="group-hover:fill-sky-700"
-          />
-          <text
-            x={cardinalityEndX}
-            y={cardinalityEndY}
-            fill="white"
-            strokeWidth="0.5"
-            textAnchor="middle"
-            alignmentBaseline="middle"
-          >
-            {cardinalityEnd}
-          </text>
-        </>
-      )}
-    </g>
+      </g>
+      <SideSheet
+        title={t("edit")}
+        size="small"
+        visible={
+          selectedElement.element === ObjectType.RELATIONSHIP &&
+          selectedElement.id === data.id &&
+          selectedElement.open &&
+          !layout.sidebar
+        }
+        onCancel={() => {
+          setSelectedElement((prev) => ({
+            ...prev,
+            open: false,
+          }));
+        }}
+        style={{ paddingBottom: "16px" }}
+      >
+        <div className="sidesheet-theme">
+          <RelationshipInfo data={data} />
+        </div>
+      </SideSheet>
+    </>
   );
 }

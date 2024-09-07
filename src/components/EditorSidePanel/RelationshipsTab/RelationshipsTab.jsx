@@ -14,34 +14,47 @@ export default function RelationshipsTab() {
   return (
     <>
       <SearchBar />
-      <Collapse
-        activeKey={
-          selectedElement.open &&
-          selectedElement.element === ObjectType.RELATIONSHIP
-            ? `${selectedElement.id}`
-            : ""
-        }
-        keepDOM
-        lazyRender
-        onChange={(k) =>
-          setSelectedElement((prev) => ({
-            ...prev,
-            open: true,
-            id: parseInt(k),
-            element: ObjectType.RELATIONSHIP,
-          }))
-        }
-        accordion
-      >
-        {relationships.length <= 0 ? (
-          <Empty
-            title={t("no_relationships")}
-            text={t("no_relationships_text")}
-          />
-        ) : (
-          relationships.map((r) => <RelationshipInfo key={r.id} data={r} />)
-        )}
-      </Collapse>
+      {relationships.length <= 0 ? (
+        <Empty
+          title={t("no_relationships")}
+          text={t("no_relationships_text")}
+        />
+      ) : (
+        <Collapse
+          activeKey={
+            selectedElement.open &&
+            selectedElement.element === ObjectType.RELATIONSHIP
+              ? `${selectedElement.id}`
+              : ""
+          }
+          keepDOM
+          lazyRender
+          onChange={(k) =>
+            setSelectedElement((prev) => ({
+              ...prev,
+              open: true,
+              id: parseInt(k),
+              element: ObjectType.RELATIONSHIP,
+            }))
+          }
+          accordion
+        >
+          {relationships.map((r) => (
+            <div id={`scroll_ref_${r.id}`} key={"relationship_" + r.id}>
+              <Collapse.Panel
+                header={
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                    {r.name}
+                  </div>
+                }
+                itemKey={`${r.id}`}
+              >
+                <RelationshipInfo data={r} />
+              </Collapse.Panel>
+            </div>
+          ))}
+        </Collapse>
+      )}
     </>
   );
 }

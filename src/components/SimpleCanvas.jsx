@@ -117,7 +117,7 @@ function Relationship({ relationship, tables }) {
   }
 
   return (
-    <g className="select-none" onClick={() => console.log(pathRef.current)}>
+    <g className="select-none">
       <path
         ref={pathRef}
         d={calcPath({

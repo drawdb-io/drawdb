@@ -1,12 +1,4 @@
-import {
-  Collapse,
-  Row,
-  Col,
-  Select,
-  Button,
-  Popover,
-  Table,
-} from "@douyinfe/semi-ui";
+import { Row, Col, Select, Button, Popover, Table } from "@douyinfe/semi-ui";
 import {
   IconDeleteStroked,
   IconLoopTextStroked,
@@ -128,110 +120,100 @@ export default function RelationshipInfo({ data }) {
   };
 
   return (
-    <div id={`scroll_ref_${data.id}`}>
-      <Collapse.Panel
-        header={
-          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-            {data.name}
-          </div>
-        }
-        itemKey={`${data.id}`}
-      >
-        <div className="flex justify-between items-center mb-3">
-          <div className="me-3">
-            <span className="font-semibold">{t("primary")}: </span>
-            {tables[data.endTableId].name}
-          </div>
-          <div className="mx-1">
-            <span className="font-semibold">{t("foreign")}: </span>
-            {tables[data.startTableId].name}
-          </div>
-          <div className="ms-1">
-            <Popover
-              content={
-                <div className="p-2 popover-theme">
-                  <Table
-                    columns={columns}
-                    dataSource={[
-                      {
-                        key: "1",
-                        foreign: `${tables[data.startTableId].name}(${
-                          tables[data.startTableId].fields[data.startFieldId]
-                            .name
-                        })`,
-                        primary: `${tables[data.endTableId].name}(${
-                          tables[data.endTableId].fields[data.endFieldId].name
-                        })`,
-                      },
-                    ]}
-                    pagination={false}
-                    size="small"
-                    bordered
-                  />
-                  <div className="mt-2">
-                    <Button
-                      icon={<IconLoopTextStroked />}
-                      block
-                      onClick={swapKeys}
-                    >
-                      {t("swap")}
-                    </Button>
-                  </div>
-                </div>
-              }
-              trigger="click"
-              position="rightTop"
-              showArrow
-            >
-              <Button icon={<IconMore />} type="tertiary" />
-            </Popover>
-          </div>
+    <>
+      <div className="flex justify-between items-center mb-3">
+        <div className="me-3">
+          <span className="font-semibold">{t("primary")}: </span>
+          {tables[data.endTableId].name}
         </div>
-        <div className="font-semibold my-1">{t("cardinality")}:</div>
-        <Select
-          optionList={Object.values(Cardinality).map((v) => ({
-            label: t(v),
-            value: v,
-          }))}
-          value={data.cardinality}
-          className="w-full"
-          onChange={changeCardinality}
-        />
-        <Row gutter={6} className="my-3">
-          <Col span={12}>
-            <div className="font-semibold">{t("on_update")}: </div>
-            <Select
-              optionList={Object.values(Constraint).map((v) => ({
-                label: v,
-                value: v,
-              }))}
-              value={data.updateConstraint}
-              className="w-full"
-              onChange={(value) => changeConstraint("update", value)}
-            />
-          </Col>
-          <Col span={12}>
-            <div className="font-semibold">{t("on_delete")}: </div>
-            <Select
-              optionList={Object.values(Constraint).map((v) => ({
-                label: v,
-                value: v,
-              }))}
-              value={data.deleteConstraint}
-              className="w-full"
-              onChange={(value) => changeConstraint("delete", value)}
-            />
-          </Col>
-        </Row>
-        <Button
-          icon={<IconDeleteStroked />}
-          block
-          type="danger"
-          onClick={() => deleteRelationship(data.id)}
-        >
-          {t("delete")}
-        </Button>
-      </Collapse.Panel>
-    </div>
+        <div className="mx-1">
+          <span className="font-semibold">{t("foreign")}: </span>
+          {tables[data.startTableId].name}
+        </div>
+        <div className="ms-1">
+          <Popover
+            content={
+              <div className="p-2 popover-theme">
+                <Table
+                  columns={columns}
+                  dataSource={[
+                    {
+                      key: "1",
+                      foreign: `${tables[data.startTableId].name}(${
+                        tables[data.startTableId].fields[data.startFieldId].name
+                      })`,
+                      primary: `${tables[data.endTableId].name}(${
+                        tables[data.endTableId].fields[data.endFieldId].name
+                      })`,
+                    },
+                  ]}
+                  pagination={false}
+                  size="small"
+                  bordered
+                />
+                <div className="mt-2">
+                  <Button
+                    icon={<IconLoopTextStroked />}
+                    block
+                    onClick={swapKeys}
+                  >
+                    {t("swap")}
+                  </Button>
+                </div>
+              </div>
+            }
+            trigger="click"
+            position="rightTop"
+            showArrow
+          >
+            <Button icon={<IconMore />} type="tertiary" />
+          </Popover>
+        </div>
+      </div>
+      <div className="font-semibold my-1">{t("cardinality")}:</div>
+      <Select
+        optionList={Object.values(Cardinality).map((v) => ({
+          label: t(v),
+          value: v,
+        }))}
+        value={data.cardinality}
+        className="w-full"
+        onChange={changeCardinality}
+      />
+      <Row gutter={6} className="my-3">
+        <Col span={12}>
+          <div className="font-semibold">{t("on_update")}: </div>
+          <Select
+            optionList={Object.values(Constraint).map((v) => ({
+              label: v,
+              value: v,
+            }))}
+            value={data.updateConstraint}
+            className="w-full"
+            onChange={(value) => changeConstraint("update", value)}
+          />
+        </Col>
+        <Col span={12}>
+          <div className="font-semibold">{t("on_delete")}: </div>
+          <Select
+            optionList={Object.values(Constraint).map((v) => ({
+              label: v,
+              value: v,
+            }))}
+            value={data.deleteConstraint}
+            className="w-full"
+            onChange={(value) => changeConstraint("delete", value)}
+          />
+        </Col>
+      </Row>
+      <Button
+        icon={<IconDeleteStroked />}
+        block
+        type="danger"
+        onClick={() => deleteRelationship(data.id)}
+      >
+        {t("delete")}
+      </Button>
+    </>
   );
 }
