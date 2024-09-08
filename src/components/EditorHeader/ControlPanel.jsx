@@ -73,6 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import { pushToGitHub } from "../../utils/exportSQL/sentToGithub.js";
 
 export default function ControlPanel({
   diagramId,
@@ -937,6 +938,25 @@ export default function ControlPanel({
           }));
         },
       },
+
+      push_to_github:{
+        function: () => {
+          const src = jsonToMySQL({
+            tables: tables,
+            references: relationships,
+            types: types,
+            database: database,
+          });
+
+          pushToGitHub(src);
+
+          setExportData((prev) => ({
+            ...prev,
+            data: src,
+            extension: "sql",
+          }));
+        },
+      },
       export_as: {
         children: [
           {
@@ -1377,6 +1397,7 @@ export default function ControlPanel({
     preventDefault: true,
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("ctrl+alt+s", menu.file.push_to_github.function, { preventDefault: true });
 
   return (
     <>

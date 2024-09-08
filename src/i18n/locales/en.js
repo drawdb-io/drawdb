@@ -25,6 +25,7 @@ const en = {
     import_from_source: "Import from SQL",
     export_as: "Export as",
     export_source: "Export SQL",
+    push_to_github: "Push To Github",
     models: "Models",
     exit: "Exit",
     edit: "Edit",
