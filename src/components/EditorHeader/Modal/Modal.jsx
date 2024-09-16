@@ -148,7 +148,6 @@ export default function Modal({
         database: database === DB.GENERIC ? importDb : database,
       });
     } catch (err) {
-      console.log(err)
       setError({
         type: STATUS.ERROR,
         message:
