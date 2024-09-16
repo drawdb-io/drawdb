@@ -30,7 +30,7 @@
     "jsonschema": "^1.4.1",
     "jspdf": "^2.5.1",
     "lexical": "^0.12.5",
-    "node-sql-parser": "^5.3.1",
+    "node-sql-parser": "^5.3.2",
     "octokit": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
