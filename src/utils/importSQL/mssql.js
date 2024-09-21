@@ -9,7 +9,7 @@ const affinity = {
   ),
   [DB.GENERIC]: new Proxy(
     {
-      INT: "INTEGER",
+      INTEGER: "INT",
       TINYINT: "SMALLINT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",

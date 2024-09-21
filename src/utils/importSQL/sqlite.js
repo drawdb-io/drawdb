@@ -23,7 +23,7 @@ const affinity = {
   ),
   [DB.GENERIC]: new Proxy(
     {
-      INT: "INTEGER",
+      INTEGER: "INT",
       TINYINT: "SMALLINT",
       MEDIUMINT: "INTEGER",
       INT2: "INTEGER",
@@ -40,7 +40,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
 
-  ast.forEach((e) => {
+  const parseSingleStatement = (e) => {
     if (e.type === "create") {
       if (e.keyword === "table") {
         const table = {};
@@ -201,7 +201,13 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
         if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
       }
     }
-  });
+  };
+
+  if (Array.isArray(ast)) {
+    ast.forEach((e) => parseSingleStatement(e));
+  } else {
+    parseSingleStatement(ast);
+  }
 
   relationships.forEach((r, i) => (r.id = i));
 

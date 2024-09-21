@@ -9,7 +9,7 @@ const affinity = {
   ),
   [DB.GENERIC]: new Proxy(
     {
-      INT: "INTEGER",
+      INTEGER: "INT",
       TINYINT: "SMALLINT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",
@@ -23,7 +23,7 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
 
-  ast.forEach((e) => {
+  const parseSingleStatement = (e) => {
     if (e.type === "create") {
       if (e.keyword === "table") {
         const table = {};
@@ -250,7 +250,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
         }
       });
     }
-  });
+  };
+
+  if (Array.isArray(ast)) {
+    ast.forEach((e) => parseSingleStatement(e));
+  } else {
+    parseSingleStatement(ast);
+  }
 
   relationships.forEach((r, i) => (r.id = i));
 

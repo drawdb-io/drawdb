@@ -9,7 +9,7 @@ const affinity = {
   ),
   [DB.GENERIC]: new Proxy(
     {
-      INT: "INTEGER",
+      INTEGER: "INT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",
     },
@@ -23,7 +23,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
   const types = [];
   const enums = [];
 
-  ast.forEach((e) => {
+  const parseSingleStatement = (e) => {
     if (e.type === "create") {
       if (e.keyword === "table") {
         const table = {};
@@ -315,7 +315,13 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         }
       });
     }
-  });
+  };
+
+  if (Array.isArray(ast)) {
+    ast.forEach((e) => parseSingleStatement(e));
+  } else {
+    parseSingleStatement(ast);
+  }
 
   relationships.forEach((r, i) => (r.id = i));
 
