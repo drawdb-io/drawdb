@@ -57,7 +57,7 @@ const handleDiagramChanges = (diagramChanges) => {
         break;
 
       case 2:
-        if (obj.id === oldObj.id && obj.name !== oldObj.name) {
+        if (oldObj && obj.id === oldObj.id && obj.name !== oldObj.name) {
           const oldDdbFile = diagramToDdbFile(oldObj);
           deleteDdbFiles([oldDdbFile]);
         }
