@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
+    "start:prod": "node server.js",
     "build": "webpack"
   },
   "keywords": [],
