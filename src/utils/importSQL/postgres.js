@@ -245,6 +245,33 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             values: e.create_definitions.value.map((x) => x.value),
           };
           enums.push(newEnum);
+        } else if (Array.isArray(e.create_definitions)) {
+          const type = {
+            name: e.name.name,
+            fields: [],
+          };
+          e.create_definitions.forEach((d) => {
+            const field = {};
+            if (d.resource === "column") {
+              field.name = d.column.column.expr.value;
+
+              let type = d.definition.dataType;
+              if (!dbToTypes[diagramDb][type]) {
+                type = affinity[diagramDb][type];
+              }
+              field.type = type;
+            }
+            if (d.definition["length"]) {
+              if (d.definition.scale) {
+                field.size = d.definition["length"] + "," + d.definition.scale;
+              } else {
+                field.size = d.definition["length"];
+              }
+            }
+
+            type.fields.push(field);
+          });
+          types.push(type);
         }
       }
     } else if (e.type === "alter") {
