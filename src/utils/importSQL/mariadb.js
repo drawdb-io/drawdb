@@ -119,7 +119,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
               const endFieldId = tables[endTableId].fields.findIndex(
                 (f) => f.name === endField,
               );
-              if (endField === -1) return;
+              if (endFieldId === -1) return;
 
               const startFieldId = table.fields.findIndex(
                 (f) => f.name === startField,
@@ -223,7 +223,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
           const endFieldId = tables[endTableId].fields.findIndex(
             (f) => f.name === endField,
           );
-          if (endField === -1) return;
+          if (endFieldId === -1) return;
 
           const startFieldId = tables[startTableId].fields.findIndex(
             (f) => f.name === startField,
