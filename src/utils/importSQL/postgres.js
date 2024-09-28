@@ -282,11 +282,13 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
-          const startField = expr.create_definitions.definition[0].column;
+          const startField =
+            expr.create_definitions.definition[0].column.expr.value;
           const endTable =
             expr.create_definitions.reference_definition.table[0].table;
           const endField =
-            expr.create_definitions.reference_definition.definition[0].column;
+            expr.create_definitions.reference_definition.definition[0].column
+              .expr.value;
           let updateConstraint = "No action";
           let deleteConstraint = "No action";
           expr.create_definitions.reference_definition.on_action.forEach(
