@@ -236,6 +236,12 @@ const hu = {
     empty_index_name: "A(z) '{{tableName}}' táblában egy indexnek nincs megadva név",
     didnt_find_diagram: "Hoppá! A diagram nem található.",
     unsigned: "Előjel nélküli",
+    share: "Megosztás",
+    copy_link: "Hivatkozás másolása",
+    readme: "OLVASS_EL",
+    failed_to_load: "A betöltés sikertelen. Ellenőrizze a hivatkozás helyességét!",
+    share_info:
+        "* Ezen hivatkozás megosztása nem fog létrehozni élő, valósidejű együttműködési munkamenetet.",
   },
 };
 
