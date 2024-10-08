@@ -21,6 +21,7 @@
     "axios": "^1.7.4",
     "classnames": "^2.5.1",
     "dexie": "^3.2.4",
+    "dexie-observable": "^4.0.1-beta.13",
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.18.0",
