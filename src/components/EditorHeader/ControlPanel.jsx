@@ -73,6 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import DatabasesSwitcher from "./DatabasesSwitcher";
 
 export default function ControlPanel({
   diagramId,
@@ -80,6 +81,7 @@ export default function ControlPanel({
   title,
   setTitle,
   lastSaved,
+  setLastSaved,
 }) {
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
@@ -1640,6 +1642,10 @@ export default function ControlPanel({
                   title={databases[database].name + " diagram"}
                 />
               )}
+              <DatabasesSwitcher
+                setLastSaved={setLastSaved}
+                diagramId={diagramId}
+              />
               <div
                 className="text-xl  me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
