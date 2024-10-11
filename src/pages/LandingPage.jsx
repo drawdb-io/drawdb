@@ -15,7 +15,7 @@ import screenshot from "../assets/screenshot.png";
 import FadeIn from "../animations/FadeIn";
 import axios from "axios";
 import { languages } from "../i18n/i18n";
-import { Tweet } from "react-tweet";
+// import { Tweet } from "react-tweet";
 
 function shortenNumber(number) {
   if (number < 1000) return number;
@@ -30,9 +30,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      await axios
-        .get("https://api.github-star-counter.workers.dev/user/drawdb-io")
-        .then((res) => setStats(res.data));
+      // await axios
+      //   .get("https://api.github-star-counter.workers.dev/user/drawdb-io")
+      //   .then((res) => setStats(res.data));
     };
 
     document.body.setAttribute("theme-mode", "light");
@@ -144,7 +144,7 @@ export default function LandingPage() {
                 better, support us by donating.
               </div>
               <a
-                href="https://buymeacoffee.com/drawdb"
+                // href="https://buymeacoffee.com/drawdb"
                 className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-9 py-2.5 shadow mt-2"
               >
                 Support us{" "}
@@ -215,7 +215,7 @@ export default function LandingPage() {
       </div>
 
       {/* Tweets */}
-      <div className="px-40 mt-6 md:px-8">
+      {/*<div className="px-40 mt-6 md:px-8">
         <div className="text-center text-2xl md:text-xl font-medium">
           What the internet says about us
         </div>
@@ -229,7 +229,7 @@ export default function LandingPage() {
           <Tweet id="1776842268042756248" />
         </div>
       </div>
-
+      */}
       {/* Contact us */}
       <svg
         viewBox="0 0 1440 54"
@@ -255,7 +255,7 @@ export default function LandingPage() {
           <div className="md:block md:space-y-3 flex gap-3 justify-center">
             <a
               className="inline-block"
-              href="https://github.com/drawdb-io/drawdb"
+              // href="https://github.com/drawdb-io/drawdb"
               target="_blank"
               rel="noreferrer"
             >
@@ -268,7 +268,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://discord.gg/BrjZgNrmR6"
+              // href="https://discord.gg/BrjZgNrmR6"
               target="_blank"
               rel="noreferrer"
             >
@@ -281,7 +281,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://x.com/drawdb_"
+              // href="https://x.com/drawdb_"
               target="_blank"
               rel="noreferrer"
             >
@@ -298,7 +298,7 @@ export default function LandingPage() {
             </div>
             <div>Your support means a lot to us!</div>
             <a
-              href="https://buymeacoffee.com/drawdb"
+              // href="https://buymeacoffee.com/drawdb"
               className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-16 py-2.5 shadow mt-2"
             >
               Support us{" "}

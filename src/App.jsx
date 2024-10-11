@@ -8,7 +8,7 @@ import Templates from "./pages/Templates";
 import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
-import NotFound from "./pages/NotFound";
+// import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -50,7 +50,7 @@ export default function App() {
             }
           />
           <Route path="/templates" element={<Templates />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </BrowserRouter>
     </SettingsContextProvider>
