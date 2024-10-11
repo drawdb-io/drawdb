@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://stella0320.github.io/drawdb-extention/#",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

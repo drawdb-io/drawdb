@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
 import Survey from "./pages/Survey";
@@ -13,7 +13,7 @@ import { useSettings } from "./hooks";
 export default function App() {
   return (
     <SettingsContextProvider>
-      <BrowserRouter>
+      <HashRouter>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -52,7 +52,7 @@ export default function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<LandingPage />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </SettingsContextProvider>
   );
 }
