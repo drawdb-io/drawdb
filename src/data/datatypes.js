@@ -857,9 +857,8 @@ const postgresTypesBase = {
       return field.default.length <= field.size;
     },
     hasCheck: true,
-    isSized: true,
+    isSized: false,
     hasPrecision: false,
-    defaultSize: 65535,
     hasQuotes: true,
   },
   BYTEA: {
