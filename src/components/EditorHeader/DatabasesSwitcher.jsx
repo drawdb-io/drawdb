@@ -33,7 +33,7 @@ export default function DatabasesSwitcher({ setLastSaved, diagramId }) {
         ].filter(cls => cls).join(' ');
 
         return (
-            <div style={style} className={optionCls} onClick={() => onClick()} onMouseEnter={e => onMouseEnter()}>
+            <div style={style} className={optionCls} onClick={() => onClick()} onMouseEnter={() => onMouseEnter()}>
                 {databases[value].image && (
                     <img
                       src={databases[value].image}
