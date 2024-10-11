@@ -7,8 +7,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import Thumbnail from "../components/Thumbnail";
 import logo_light from "../assets/logo_light_160.png";
 import template_screenshot from "../assets/template_screenshot.png";
-
+import packageInfo from '../../package.json';
 export default function Templates() {
+  const hostname = packageInfo.homepage;
+  // for normal
+  // const newWindow = window.open("/editor", "_blank");
   const defaultTemplates = useLiveQuery(() =>
     db.templates.where({ custom: 0 }).toArray()
   );
@@ -22,12 +25,12 @@ export default function Templates() {
   };
 
   const editTemplate = (id) => {
-    const newWindow = window.open("/editor", "_blank");
+    const newWindow = window.open(hostname + "/editor", "_blank");
     newWindow.name = "t " + id;
   };
 
   const forkTemplate = (id) => {
-    const newWindow = window.open("/editor", "_blank");
+    const newWindow = window.open(hostname + "/editor", "_blank");
     newWindow.name = "lt " + id;
   };
 

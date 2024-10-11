@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "index.html#",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

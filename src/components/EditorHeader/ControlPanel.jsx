@@ -73,7 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
-
+import packageInfo from '../../../package.json';
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -718,7 +718,6 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-
   const menu = {
     file: {
       new: {
@@ -726,7 +725,10 @@ export default function ControlPanel({
       },
       new_window: {
         function: () => {
-          const newWindow = window.open("/editor", "_blank");
+          // for chrome extention
+          const newWindow = window.open(packageInfo.homepage + "/editor", "_blank");
+          // for normal
+          // const newWindow = window.open("/editor", "_blank");
           newWindow.name = window.name;
         },
       },
@@ -1333,17 +1335,17 @@ export default function ControlPanel({
     },
     help: {
       shortcuts: {
-        function: () => window.open("/shortcuts", "_blank"),
+        function: () => window.open(packageInfo.homepage + "/shortcuts", "_blank"),
         shortcut: "Ctrl+H",
       },
       ask_on_discord: {
         function: () => window.open("https://discord.gg/BrjZgNrmR6", "_blank"),
       },
       report_bug: {
-        function: () => window.open("/bug-report", "_blank"),
+        function: () => window.open(packageInfo.homepage + "/bug-report", "_blank"),
       },
       feedback: {
-        function: () => window.open("/survey", "_blank"),
+        function: () => window.open(packageInfo.homepage + "/survey", "_blank"),
       },
     },
   };

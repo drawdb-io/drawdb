@@ -43,7 +43,7 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
-
+import packageInfo from '../../../../package.json';
 const languageExtension = {
   sql: [sql()],
   json: [json()],
@@ -59,6 +59,7 @@ export default function Modal({
   setExportData,
   importDb,
 }) {
+  
   const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
@@ -189,7 +190,8 @@ export default function Modal({
   };
 
   const createNewDiagram = (id) => {
-    const newWindow = window.open("/editor");
+    const hostname = packageInfo.homepage;
+    const newWindow = window.open(hostname + "/editor");
     newWindow.name = "lt " + id;
   };
 
