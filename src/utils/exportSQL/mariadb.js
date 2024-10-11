@@ -11,7 +11,7 @@ export function toMariaDB(diagram) {
             (field) =>
               `\t\`${
                 field.name
-              }\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${field.type}${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""

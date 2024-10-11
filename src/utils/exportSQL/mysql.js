@@ -9,7 +9,7 @@ export function toMySQL(diagram) {
         `CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `\t\`${field.name}\` ${field.type}${field.unsigned ? " UNSIGNED" : ""}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
+              `\t\`${field.name}\` ${field.type}${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}${field.unsigned ? " UNSIGNED" : ""}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.increment ? " AUTO_INCREMENT" : ""
