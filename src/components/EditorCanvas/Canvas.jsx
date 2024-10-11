@@ -82,14 +82,6 @@ export default function Canvas() {
   });
   
   const [noteResize, setNoteResize] = useState({ id: -1, dir: "none" });
-  const [initNoteCoords, setInitNoteCoords] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    pointerX: 0,
-    pointerY: 0,
-  });
   /**
    * @param {PointerEvent} e
    * @param {*} id
@@ -164,6 +156,7 @@ export default function Canvas() {
       dragging.element === ObjectType.NONE &&
       areaResize.id === -1 && noteResize.id === -1
     ) {
+      // 滑鼠抓住桌布
       if (!settings.panning) {
         return;
       }
@@ -189,6 +182,7 @@ export default function Canvas() {
       dragging.id >= 0 &&
       areaResize.id === -1
     ) {
+      // 滑鼠抓住Area物件
       updateArea(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
@@ -199,46 +193,56 @@ export default function Canvas() {
       dragging.id >= 0 &&
       noteResize.id === -1
     ) {
+      // 滑鼠抓住Note物件
       updateNote(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
       
     } else if (noteResize.id !== -1) {
+      // 滑鼠調整Note物件大小
       if (noteResize.dir === "none") return;
-      let newDims = { ...initNoteCoords };
+      let newDims = { ...initCoords };
       delete newDims.pointerX;
       delete newDims.pointerY;
       setPanning((old) => ({ ...old, isPanning: false }));
       switch (noteResize.dir) {
         case "br":
-          newDims.width = pointer.spaces.diagram.x - initNoteCoords.x;
-          newDims.height = pointer.spaces.diagram.y - initNoteCoords.y;
+          newDims.width = pointer.spaces.diagram.x - initCoords.x;
+          newDims.height = pointer.spaces.diagram.y - initCoords.y;
           break;
         case "tl":
           newDims.x = pointer.spaces.diagram.x;
           newDims.y = pointer.spaces.diagram.y;
           newDims.width =
-          initNoteCoords.x + initNoteCoords.width - pointer.spaces.diagram.x;
+          initCoords.x + initCoords.width - pointer.spaces.diagram.x;
           newDims.height =
-          initNoteCoords.y + initNoteCoords.height - pointer.spaces.diagram.y;
+          initCoords.y + initCoords.height - pointer.spaces.diagram.y;
           break;
         case "tr":
           newDims.y = pointer.spaces.diagram.y;
-          newDims.width = pointer.spaces.diagram.x - initNoteCoords.x;
+          newDims.width = pointer.spaces.diagram.x - initCoords.x;
           newDims.height =
-          initNoteCoords.y + initNoteCoords.height - pointer.spaces.diagram.y;
+          initCoords.y + initCoords.height - pointer.spaces.diagram.y;
           break;
         case "bl":
           newDims.x = pointer.spaces.diagram.x;
           newDims.width =
-          initNoteCoords.x + initNoteCoords.width - pointer.spaces.diagram.x;
-          newDims.height = pointer.spaces.diagram.y - initNoteCoords.y;
+          initCoords.x + initCoords.width - pointer.spaces.diagram.x;
+          newDims.height = pointer.spaces.diagram.y - initCoords.y;
           break;
       }
 
+      // Note寬度最大500px，最想寬度50px
+      if (newDims.width > 500) {
+        newDims.width = 500;
+      } else if (newDims.width < 50) {
+        newDims.width = 50;
+      }
+      
       updateNote(noteResize.id, {... newDims });
     } else if (areaResize.id !== -1) {
+      // 滑鼠調整Area物件大小
       if (areaResize.dir === "none") return;
       let newDims = { ...initCoords };
       delete newDims.pointerX;
@@ -271,6 +275,7 @@ export default function Canvas() {
           newDims.height = pointer.spaces.diagram.y - initCoords.y;
           break;
       }
+      
       
       updateArea(areaResize.id, { ...newDims });
     }
@@ -335,10 +340,10 @@ export default function Canvas() {
 
   const didNoteResize = (id) => {
    return !(
-      notes[id].x === initNoteCoords.x &&
-      notes[id].y === initNoteCoords.y &&
-      notes[id].width === initNoteCoords.width &&
-      notes[id].height === initNoteCoords.height
+      notes[id].x === initCoords.x &&
+      notes[id].y === initCoords.y &&
+      notes[id].width === initCoords.width &&
+      notes[id].height === initCoords.height
     );
   };
 
@@ -455,10 +460,10 @@ export default function Canvas() {
           aid: noteResize.id,
           undo: {
             ...notes[noteResize.id],
-            x: initNoteCoords.x,
-            y: initNoteCoords.y,
-            width: initNoteCoords.width,
-            height: initNoteCoords.height,
+            x: initCoords.x,
+            y: initCoords.y,
+            width: initCoords.width,
+            height: initCoords.height,
           },
           redo: notes[noteResize.id],
           message: t("edit_note", {
@@ -471,14 +476,6 @@ export default function Canvas() {
     }
     setAreaResize({ id: -1, dir: "none" });
     setNoteResize({ id: -1, dir: "none" });
-    setInitNoteCoords({
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-      pointerX: 0,
-      pointerY: 0,
-    });
     setInitCoords({
       x: 0,
       y: 0,
@@ -672,7 +669,7 @@ export default function Canvas() {
                 handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
               }
               setResize={setNoteResize}
-              setInitNoteCoords={setInitNoteCoords}
+              setInitCoords={setInitCoords}
             />
           ))}
         </svg>

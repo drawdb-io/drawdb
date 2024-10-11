@@ -23,7 +23,7 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 
-export default function Note({data, onPointerDown, setResize, setInitNoteCoords}) {
+export default function Note({data, onPointerDown, setResize, setInitCoords}) {
   const r = 3;
   const fold = 24;
   const [editField, setEditField] = useState({});
@@ -42,7 +42,7 @@ export default function Note({data, onPointerDown, setResize, setInitNoteCoords}
   } = useCanvas();
   const handleResize = (e, dir) => {
     setResize({ id: data.id, dir: dir });
-    setInitNoteCoords({
+    setInitCoords({
       x: data.x,
       y: data.y,
       width: data.width,
