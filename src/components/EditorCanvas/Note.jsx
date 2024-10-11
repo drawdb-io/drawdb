@@ -13,27 +13,44 @@ import {
   IconCheckboxTick,
 } from "@douyinfe/semi-icons";
 import {
+  useCanvas,
   useLayout,
   useUndoRedo,
   useSelect,
   useNotes,
   useSaveState,
+  useSettings,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 
-export default function Note({ data, onPointerDown }) {
-  const w = 180;
+export default function Note({data, onPointerDown, setResize, setInitCoords}) {
   const r = 3;
   const fold = 24;
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
+  const { settings } = useSettings();
   const { layout } = useLayout();
   const { t } = useTranslation();
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
-
+  const {
+    pointer: {
+      spaces: { diagram: pointer },
+    },
+  } = useCanvas();
+  const handleResize = (e, dir) => {
+    setResize({ id: data.id, dir: dir });
+    setInitCoords({
+      x: data.x,
+      y: data.y,
+      width: data.width,
+      height: data.height,
+      pointerX: pointer.x,
+      pointerY: pointer.y,
+    });
+  };
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${data.id}`);
     textarea.style.height = "0";
@@ -92,15 +109,16 @@ export default function Note({ data, onPointerDown }) {
       }}
     >
       <path
-        d={`M${data.x + fold} ${data.y} L${data.x + w - r} ${
+        d={`M${data.x + fold} ${data.y} L${data.x + data.width - r} ${
           data.y
-        } A${r} ${r} 0 0 1 ${data.x + w} ${data.y + r} L${data.x + w} ${
+        } A${r} ${r} 0 0 1 ${data.x + data.width} ${data.y + r} L${data.x + data.width} ${
           data.y + data.height - r
-        } A${r} ${r} 0 0 1 ${data.x + w - r} ${data.y + data.height} L${
+        } A${r} ${r} 0 0 1 ${data.x + data.width - r} ${data.y + data.height} L${
           data.x + r
         } ${data.y + data.height} A${r} ${r} 0 0 1 ${data.x} ${
           data.y + data.height - r
         } L${data.x} ${data.y + fold}`}
+        // Hi
         fill={data.color}
         stroke={
           hovered
@@ -136,8 +154,8 @@ export default function Note({ data, onPointerDown }) {
       <foreignObject
         x={data.x}
         y={data.y}
-        width={w}
-        height={data.height}
+        width={data.width > 0 ? data.width : 0}
+        height={data.height > 0 ? data.height : 0}
         onPointerDown={onPointerDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
@@ -307,6 +325,50 @@ export default function Note({ data, onPointerDown }) {
           />
         </div>
       </foreignObject>
+      {hovered && (
+        <>
+          <circle
+            cx={data.x + 1}
+            cy={data.y + 1}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            cursor="nwse-resize"
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tl")}
+          />
+          <circle
+            cx={data.x + data.width -1}
+            cy={data.y + 1}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            cursor="nesw-resize"
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "tr")}
+          />
+          <circle
+            cx={data.x + 1}
+            cy={data.y + data.height -1}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            cursor="nesw-resize"
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "bl")}
+          />
+          <circle
+            cx={data.x + data.width -1}
+            cy={data.y + data.height -1}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            cursor="nwse-resize"
+            onPointerDown={(e) => e.isPrimary && handleResize(e, "br")}
+          />
+        </>
+      )}
     </g>
   );
 }
