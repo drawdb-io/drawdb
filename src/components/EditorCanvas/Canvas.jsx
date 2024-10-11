@@ -21,7 +21,7 @@ import {
   useNotes,
   useLayout,
 } from "../../hooks";
-import { useTranslation } from "react-i18next";
+import { useTranslation, withSSR } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
 
@@ -80,17 +80,26 @@ export default function Canvas() {
     pointerX: 0,
     pointerY: 0,
   });
-
+  
+  const [noteResize, setNoteResize] = useState({ id: -1, dir: "none" });
+  const [initNoteCoords, setInitNoteCoords] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    pointerX: 0,
+    pointerY: 0,
+  });
   /**
    * @param {PointerEvent} e
    * @param {*} id
    * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
+    
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
-
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setGrabOffset({
@@ -141,19 +150,19 @@ export default function Canvas() {
    */
   const handlePointerMove = (e) => {
     if (selectedElement.open && !layout.sidebar) return;
-
     if (!e.isPrimary) return;
-
+    
     if (linking) {
       setLinkingLine({
         ...linkingLine,
         endX: pointer.spaces.diagram.x,
         endY: pointer.spaces.diagram.y,
       });
+      
     } else if (
       panning.isPanning &&
       dragging.element === ObjectType.NONE &&
-      areaResize.id === -1
+      areaResize.id === -1 && noteResize.id === -1
     ) {
       if (!settings.panning) {
         return;
@@ -174,6 +183,7 @@ export default function Canvas() {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
+      
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
@@ -183,11 +193,51 @@ export default function Canvas() {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
-    } else if (dragging.element === ObjectType.NOTE && dragging.id >= 0) {
+      
+    } else if (
+      dragging.element === ObjectType.NOTE &&
+      dragging.id >= 0 &&
+      noteResize.id === -1
+    ) {
       updateNote(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,
       });
+      
+    } else if (noteResize.id !== -1) {
+      if (noteResize.dir === "none") return;
+      let newDims = { ...initNoteCoords };
+      delete newDims.pointerX;
+      delete newDims.pointerY;
+      setPanning((old) => ({ ...old, isPanning: false }));
+      switch (noteResize.dir) {
+        case "br":
+          newDims.width = pointer.spaces.diagram.x - initNoteCoords.x;
+          newDims.height = pointer.spaces.diagram.y - initNoteCoords.y;
+          break;
+        case "tl":
+          newDims.x = pointer.spaces.diagram.x;
+          newDims.y = pointer.spaces.diagram.y;
+          newDims.width =
+          initNoteCoords.x + initNoteCoords.width - pointer.spaces.diagram.x;
+          newDims.height =
+          initNoteCoords.y + initNoteCoords.height - pointer.spaces.diagram.y;
+          break;
+        case "tr":
+          newDims.y = pointer.spaces.diagram.y;
+          newDims.width = pointer.spaces.diagram.x - initNoteCoords.x;
+          newDims.height =
+          initNoteCoords.y + initNoteCoords.height - pointer.spaces.diagram.y;
+          break;
+        case "bl":
+          newDims.x = pointer.spaces.diagram.x;
+          newDims.width =
+          initNoteCoords.x + initNoteCoords.width - pointer.spaces.diagram.x;
+          newDims.height = pointer.spaces.diagram.y - initNoteCoords.y;
+          break;
+      }
+
+      updateNote(noteResize.id, {... newDims });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
       let newDims = { ...initCoords };
@@ -221,7 +271,7 @@ export default function Canvas() {
           newDims.height = pointer.spaces.diagram.y - initCoords.y;
           break;
       }
-
+      
       updateArea(areaResize.id, { ...newDims });
     }
   };
@@ -280,6 +330,15 @@ export default function Canvas() {
       areas[id].y === initCoords.y &&
       areas[id].width === initCoords.width &&
       areas[id].height === initCoords.height
+    );
+  };
+
+  const didNoteResize = (id) => {
+   return !(
+      notes[id].x === initNoteCoords.x &&
+      notes[id].y === initNoteCoords.y &&
+      notes[id].width === initNoteCoords.width &&
+      notes[id].height === initNoteCoords.height
     );
   };
 
@@ -387,8 +446,39 @@ export default function Canvas() {
         },
       ]);
       setRedoStack([]);
+    } else if (noteResize.id !== -1 && didNoteResize(noteResize.id)) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.NOTE,
+          aid: noteResize.id,
+          undo: {
+            ...notes[noteResize.id],
+            x: initNoteCoords.x,
+            y: initNoteCoords.y,
+            width: initNoteCoords.width,
+            height: initNoteCoords.height,
+          },
+          redo: notes[noteResize.id],
+          message: t("edit_note", {
+            areaName: notes[noteResize.id].name,
+            extra: "[resize]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
     }
     setAreaResize({ id: -1, dir: "none" });
+    setNoteResize({ id: -1, dir: "none" });
+    setInitNoteCoords({
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      pointerX: 0,
+      pointerY: 0,
+    });
     setInitCoords({
       x: 0,
       y: 0,
@@ -581,6 +671,8 @@ export default function Canvas() {
               onPointerDown={(e) =>
                 handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
               }
+              setResize={setNoteResize}
+              setInitNoteCoords={setInitNoteCoords}
             />
           ))}
         </svg>

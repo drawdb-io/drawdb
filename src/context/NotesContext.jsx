@@ -22,6 +22,7 @@ export default function NotesContextProvider({ children }) {
       });
     } else {
       const height = 88;
+      const width = 180;
       setNotes((prev) => [
         ...prev,
         {
@@ -32,6 +33,7 @@ export default function NotesContextProvider({ children }) {
           content: "",
           color: defaultNoteTheme,
           height,
+          width
         },
       ]);
     }
