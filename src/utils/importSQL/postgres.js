@@ -38,8 +38,16 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           if (d.resource === "column") {
             field.name = d.column.column.expr.value;
 
-            let type = types.find((t) => t.name === d.definition.dataType)?.name
-            type ??= enums.find((t) => t.name === d.definition.dataType)?.name
+            let type = types.find((t) =>
+              new RegExp(`^(${t.name}|"${t.name}")$`).test(
+                d.definition.dataType,
+              ),
+            )?.name;
+            type ??= enums.find((t) =>
+              new RegExp(`^(${t.name}|"${t.name}")$`).test(
+                d.definition.dataType,
+              ),
+            )?.name;
             if (!type && !dbToTypes[diagramDb][type])
               type = affinity[diagramDb][type];
             field.type = type || d.definition.dataType;
