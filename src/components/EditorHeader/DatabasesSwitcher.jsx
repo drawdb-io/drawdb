@@ -4,9 +4,9 @@ import { DB, State } from "../../data/constants";
 import { useDiagram, useSaveState } from "../../hooks";
 import { db } from "../../data/db";
 
-const databasesWithoutGeneric = Object.keys(databases).filter(db => databases[db].label !== DB.GENERIC);
+const databasesWithoutGeneric = Object.keys(databases).filter(db => ![DB.GENERIC, DB.MARIADB, DB.MSSQL].includes(databases[db].label));
 
-export default function DatabasesSwitcher({ setLastSaved, diagramId }) {
+export default function DatabasesSwitcher({ setLastSaved, diagramId, setPrevDatabase }) {
     const { database, setDatabase } = useDiagram();
     const { setSaveState } = useSaveState();
 
@@ -57,6 +57,7 @@ export default function DatabasesSwitcher({ setLastSaved, diagramId }) {
             }).then(() => {
                 setSaveState(State.SAVED);
                 setLastSaved(new Date().toLocaleString());
+                setPrevDatabase(database);
                 setDatabase(selectedDb);
             });
     };
