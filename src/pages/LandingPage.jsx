@@ -88,9 +88,9 @@ export default function LandingPage() {
                 </div>
               </div>
             </FadeIn>
-            <div className="flex items-start justify-start gap-4 mt-4 font-semibold md:mt-12">
+            <div className="mt-4 font-semibold md:mt-12">
               <button
-                className="py-3 transition-all duration-300 bg-white border rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100"
+                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white border rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100"
                 onClick={() =>
                   document
                     .getElementById("learn-more")
