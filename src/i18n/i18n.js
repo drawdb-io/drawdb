@@ -31,6 +31,7 @@ import { od, odia } from "./locales/od";
 import { bn, bengali } from "./locales/bn";
 import { ka, kannada } from "./locales/ka";
 import { pl, polish } from "./locales/pl";
+import { no, norwegian } from "./locales/no";
 
 export const languages = [
   english,
@@ -62,7 +63,8 @@ export const languages = [
   odia,
   bengali,
   kannada,
-  polish
+  polish,
+  norwegian
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -104,7 +106,8 @@ i18n
       od,
       bn,
       ka,
-      pl
+      pl,
+      no
     },
   });
 
