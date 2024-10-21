@@ -81,10 +81,6 @@ app.get('/api/diagrams', (_req, res) => {
   });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(DRAWDB_HOME, 'index.html'));
-});
-
 app.listen(DRAWDB_PORT, () => {
   console.log(`DrawDB is running on port ${DRAWDB_PORT}`);
 });

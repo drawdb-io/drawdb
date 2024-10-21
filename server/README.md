@@ -11,7 +11,7 @@ This is a Node.js application that serves static files for the DrawDB frontend a
 ```bash
 export DRAWDB_FILE_DIR=/some-dir-to-write-ddb-files
 cd server
-npm run dev
+npm run start
 ```
 
 The server will be running at `http://localhost:8080` (or the port specified by `DRAWDB_PORT`).
