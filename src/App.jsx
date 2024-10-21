@@ -5,7 +5,6 @@ import Survey from "./pages/Survey";
 import BugReport from "./pages/BugReport";
 import Shortcuts from "./pages/Shortcuts";
 import Templates from "./pages/Templates";
-import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
 import NotFound from "./pages/NotFound";
@@ -16,9 +15,8 @@ export default function App() {
       <BrowserRouter>
         <RestoreScroll />
         <Routes>
-          <Route path="/" element={<LandingPage />} />
           <Route
-            path="/editor"
+            path="/"
             element={
               <ThemedPage>
                 <Editor />

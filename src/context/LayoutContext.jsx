@@ -4,7 +4,7 @@ export const LayoutContext = createContext(null);
 
 export default function LayoutContextProvider({ children }) {
   const [layout, setLayout] = useState({
-    header: true,
+    header: false,
     sidebar: true,
     issues: true,
     toolbar: true,

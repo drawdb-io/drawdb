@@ -3,8 +3,6 @@ import {
   IconCaretdown,
   IconChevronRight,
   IconChevronLeft,
-  IconChevronUp,
-  IconChevronDown,
   IconSaveStroked,
   IconUndo,
   IconRedo,
@@ -118,8 +116,6 @@ export default function ControlPanel({
   const { setGistId } = useContext(IdContext);
   const navigate = useNavigate();
 
-  const invertLayout = (component) =>
-    setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
 
   const undo = () => {
     if (undoStack.length === 0) return;
@@ -776,7 +772,7 @@ export default function ControlPanel({
             .delete(diagramId)
             .then(() => {
               setDiagramId(0);
-              setTitle("Untitled diagram");
+              setTitle("user-diagram");
               setTables([]);
               setRelationships([]);
               setAreas([]);
@@ -1563,31 +1559,18 @@ export default function ControlPanel({
               <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("theme")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
-              onClick={() => {
-                const body = document.body;
-                if (body.hasAttribute("theme-mode")) {
-                  if (body.getAttribute("theme-mode") === "light") {
-                    menu["view"]["theme"].children[1]["dark"]();
-                  } else {
-                    menu["view"]["theme"].children[0]["light"]();
-                  }
-                }
-              }}
-            >
-              <i className="fa-solid fa-circle-half-stroke" />
-            </button>
-          </Tooltip>
         </div>
-        <button
-          onClick={() => invertLayout("header")}
-          className="flex items-center"
+        <Button
+          size="small"
+          type="tertiary"
+          icon={
+            saveState === State.LOADING || saveState === State.SAVING ? (
+              <Spin size="small" />
+            ) : null
+          }
         >
-          {layout.header ? <IconChevronUp /> : <IconChevronDown />}
-        </button>
+          {getState()}
+        </Button>
       </div>
     );
   }

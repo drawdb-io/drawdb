@@ -36,7 +36,7 @@ export function diagramToDdbFile(diagram) {
 export function ddbFileToDiagram(ddb) {
     const {
         database = DB.GENERIC,
-        title = "Untitled Diagram",
+        title = "user-diagram",
         tables,
         date,
         relationships,

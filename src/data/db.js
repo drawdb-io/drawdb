@@ -47,31 +47,32 @@ const debouncedChangesHandler = debounce(async (changes) => {
   handleDiagramChanges(changes.filter(c => c.table === "diagrams"))
 }, 1500);
 
-const handleDiagramChanges = (diagramChanges) => {
-  diagramChanges.forEach(({ type, obj, oldObj }) => {
-    const ddbFile = diagramToDdbFile(obj);
+const handleDiagramChanges = async (diagramChanges) => {
+  for (let index = 0; index < diagramChanges.length; index++) {
+    const { type, obj, oldObj } = diagramChanges[index];
+    const ddbFile = obj ? diagramToDdbFile(obj) : null;
+    const oldDdbFile = oldObj ? diagramToDdbFile(oldObj) : null;
 
     switch (type) {
       case 1:
-        writeDdbFiles([ddbFile]);
+        await writeDdbFiles([ddbFile]);
         break;
 
       case 2:
         if (oldObj && obj.id === oldObj.id && obj.name !== oldObj.name) {
-          const oldDdbFile = diagramToDdbFile(oldObj);
-          deleteDdbFiles([oldDdbFile]);
+          await deleteDdbFiles([oldDdbFile]);
         }
-        writeDdbFiles([ddbFile]);
+        await writeDdbFiles([ddbFile]);
         break;
 
       case 3:
-        deleteDdbFiles([ddbFile]);
+        await deleteDdbFiles([oldDdbFile]);
         break;
 
       default:
         break;
     }
-  })
+  }
 }
 
 db.on('changes', debouncedChangesHandler)
