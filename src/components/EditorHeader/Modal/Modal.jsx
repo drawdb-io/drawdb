@@ -148,17 +148,16 @@ export default function Modal({
         database: database === DB.GENERIC ? importDb : database,
       });
     } catch (err) {
+      let message = err.message;
+      if (err.location) {
+          message = err.name + " [Ln " + err.location.start.line + ", Col " + err.location.start.column + "]: " + err.message;
+      }
+
       setError({
         type: STATUS.ERROR,
-        message:
-          err.name +
-          " [Ln " +
-          err.location.start.line +
-          ", Col " +
-          err.location.start.column +
-          "]: " +
-          err.message,
+        message
       });
+
       return;
     }
 
