@@ -33,6 +33,7 @@ import { ka, kannada } from "./locales/ka";
 import { pl, polish } from "./locales/pl";
 import { no, norwegian } from "./locales/no";
 import { sv, swedish } from "./locales/sv-se";
+import { ur, urdu } from "./locales/ur";
 
 export const languages = [
   english,
@@ -67,6 +68,7 @@ export const languages = [
   polish,
   norwegian,
   swedish,
+  urdu,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -111,6 +113,7 @@ i18n
       pl,
       no,
       sv,
+      ur,
     },
   });
 
