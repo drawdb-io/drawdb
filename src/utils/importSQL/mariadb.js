@@ -105,7 +105,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
                   }
                 });
               });
-            } else if (d.constraint_type === "FOREIGN KEY") {
+            } else if (d.constraint_type.toLowerCase() === "foreign key") {
               const relationship = {};
               const startTableId = table.id;
               const startTable = e.table[0].table;
@@ -187,7 +187,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
       e.expr.forEach((expr) => {
         if (
           expr.action === "add" &&
-          expr.create_definitions.constraint_type === "FOREIGN KEY"
+          expr.create_definitions.constraint_type.toLowerCase() === "foreign key"
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
