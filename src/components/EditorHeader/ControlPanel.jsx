@@ -1382,7 +1382,10 @@ export default function ControlPanel({
     <>
       <div>
         {layout.header && (
-          <div className="flex justify-between items-center me-7">
+          <div
+            className="flex justify-between items-center me-7"
+            style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+          >
             {header()}
             {window.name.split(" ")[0] !== "t" && (
               <Button
