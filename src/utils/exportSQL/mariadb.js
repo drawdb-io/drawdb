@@ -1,6 +1,21 @@
 import { parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
+import { DB } from "../../data/constants";
+
+function parseType(field) {
+  let res = field.type;
+
+  if (field.type === "SET" || field.type === "ENUM") {
+    res += `${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}`;
+  }
+
+  if (dbToTypes[DB.MARIADB][field.type].isSized) {
+    res += `${field.size && field.size !== "" ? "(" + field.size + ")" : ""}`;
+  }
+
+  return res;
+}
 
 export function toMariaDB(diagram) {
   return `${diagram.tables
@@ -9,9 +24,7 @@ export function toMariaDB(diagram) {
         `CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `\t\`${
-                field.name
-              }\` ${field.type}${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
+              `\t\`${field.name}\` ${parseType(field)}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""
