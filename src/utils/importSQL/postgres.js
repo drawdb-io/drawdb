@@ -78,6 +78,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 }
               } else if (d.default_val.value.type === "null") {
                 defaultValue = "NULL";
+              } else if (d.default_val.value.type === "cast") {
+                defaultValue = d.default_val.value.expr.value;
               } else {
                 defaultValue = d.default_val.value.value.toString();
               }
@@ -278,7 +280,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
       e.expr.forEach((expr) => {
         if (
           expr.action === "add" &&
-          expr.create_definitions.constraint_type.toLowerCase() === "foreign key"
+          expr.create_definitions.constraint_type.toLowerCase() ===
+            "foreign key"
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
