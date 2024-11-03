@@ -147,44 +147,51 @@ export default function Modal({
       ast = parser.astify(importSource.src, {
         database: database === DB.GENERIC ? importDb : database,
       });
-    } catch (err) {
-      let message = err.message;
-      if (err.location) {
-          message = err.name + " [Ln " + err.location.start.line + ", Col " + err.location.start.column + "]: " + err.message;
-      }
+    } catch (error) {
+      const message = error.location
+        ? `${error.name} [Ln ${error.location.start.line}, Col ${error.location.start.column}]: ${error.message}`
+        : error.message;
 
-      setError({
-        type: STATUS.ERROR,
-        message
-      });
-
+      setError({ type: STATUS.ERROR, message });
       return;
     }
 
-    const d = importSQL(
-      ast,
-      database === DB.GENERIC ? importDb : database,
-      database,
-    );
-    if (importSource.overwrite) {
-      setTables(d.tables);
-      setRelationships(d.relationships);
-      setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
-      setNotes([]);
-      setAreas([]);
-      if (databases[database].hasTypes) setTypes(d.types ?? []);
-      if (databases[database].hasEnums) setEnums(d.enums ?? []);
-      setUndoStack([]);
-      setRedoStack([]);
-    } else {
-      setTables((prev) =>
-        [...prev, ...d.tables].map((t, i) => ({ ...t, id: i })),
+    try {
+      const diagramData = importSQL(
+        ast,
+        database === DB.GENERIC ? importDb : database,
+        database,
       );
-      setRelationships((prev) =>
-        [...prev, ...d.relationships].map((r, i) => ({ ...r, id: i })),
-      );
+
+      if (importSource.overwrite) {
+        setTables(diagramData.tables);
+        setRelationships(diagramData.relationships);
+        setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+        setNotes([]);
+        setAreas([]);
+        if (databases[database].hasTypes) setTypes(diagramData.types ?? []);
+        if (databases[database].hasEnums) setEnums(diagramData.enums ?? []);
+        setUndoStack([]);
+        setRedoStack([]);
+      } else {
+        setTables((prev) =>
+          [...prev, ...diagramData.tables].map((t, i) => ({ ...t, id: i })),
+        );
+        setRelationships((prev) =>
+          [...prev, ...diagramData.relationships].map((r, i) => ({
+            ...r,
+            id: i,
+          })),
+        );
+      }
+
+      setModal(MODAL.NONE);
+    } catch (error) {
+      setError({
+        type: STATUS.ERROR,
+        message: `Please check for syntax errors or let us know about the error.`,
+      });
     }
-    setModal(MODAL.NONE);
   };
 
   const createNewDiagram = (id) => {
