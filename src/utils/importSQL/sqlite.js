@@ -40,6 +40,58 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
 
+  const addRelationshipFromReferenceDef = (
+    startTable,
+    startFieldName,
+    referenceDefinition,
+  ) => {
+    const relationship = {};
+    const endTableName = referenceDefinition.table[0].table;
+    const endField = referenceDefinition.definition[0].column;
+
+    const endTableId = tables.findIndex((t) => t.name === endTableName);
+    if (endTableId === -1) return;
+
+    const endFieldId = tables[endTableId].fields.findIndex(
+      (f) => f.name === endField,
+    );
+    if (endFieldId === -1) return;
+
+    const startFieldId = startTable.fields.findIndex(
+      (f) => f.name === startFieldName,
+    );
+    if (startFieldId === -1) return;
+
+    relationship.name = startTable.name + "_" + startFieldName + "_fk";
+    relationship.startTableId = startTable.id;
+    relationship.endTableId = endTableId;
+    relationship.endFieldId = endFieldId;
+    relationship.startFieldId = startFieldId;
+    let updateConstraint = "No action";
+    let deleteConstraint = "No action";
+    referenceDefinition.on_action.forEach((c) => {
+      if (c.type === "on update") {
+        updateConstraint = c.value.value;
+        updateConstraint =
+          updateConstraint[0].toUpperCase() + updateConstraint.substring(1);
+      } else if (c.type === "on delete") {
+        deleteConstraint = c.value.value;
+        deleteConstraint =
+          deleteConstraint[0].toUpperCase() + deleteConstraint.substring(1);
+      }
+    });
+
+    relationship.updateConstraint = updateConstraint;
+    relationship.deleteConstraint = deleteConstraint;
+
+    if (startTable.fields[startFieldId].unique) {
+      relationship.cardinality = Cardinality.ONE_TO_ONE;
+    } else {
+      relationship.cardinality = Cardinality.MANY_TO_ONE;
+    }
+    relationships.push(relationship);
+  };
+
   const parseSingleStatement = (e) => {
     if (e.type === "create") {
       if (e.keyword === "table") {
@@ -111,8 +163,15 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             if (d.check) {
               field.check = buildSQLFromAST(d.check.definition[0], DB.SQLITE);
             }
-
             table.fields.push(field);
+
+            if (d.reference_definition) {
+              addRelationshipFromReferenceDef(
+                table,
+                field.name,
+                d.reference_definition,
+              );
+            }
           } else if (d.resource === "constraint") {
             if (d.constraint_type === "primary key") {
               d.definition.forEach((c) => {
@@ -123,57 +182,11 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
                 });
               });
             } else if (d.constraint_type.toLowerCase() === "foreign key") {
-              const relationship = {};
-              const startTableId = table.id;
-              const startTable = e.table[0].table;
-              const startField = d.definition[0].column;
-              const endTable = d.reference_definition.table[0].table;
-              const endField = d.reference_definition.definition[0].column;
-
-              const endTableId = tables.findIndex((t) => t.name === endTable);
-              if (endTableId === -1) return;
-
-              const endFieldId = tables[endTableId].fields.findIndex(
-                (f) => f.name === endField,
+              addRelationshipFromReferenceDef(
+                table,
+                d.definition[0].column,
+                d.reference_definition,
               );
-              if (endFieldId === -1) return;
-
-              const startFieldId = table.fields.findIndex(
-                (f) => f.name === startField,
-              );
-              if (startFieldId === -1) return;
-
-              relationship.name = startTable + "_" + startField + "_fk";
-              relationship.startTableId = startTableId;
-              relationship.endTableId = endTableId;
-              relationship.endFieldId = endFieldId;
-              relationship.startFieldId = startFieldId;
-              let updateConstraint = "No action";
-              let deleteConstraint = "No action";
-              d.reference_definition.on_action.forEach((c) => {
-                if (c.type === "on update") {
-                  updateConstraint = c.value.value;
-                  updateConstraint =
-                    updateConstraint[0].toUpperCase() +
-                    updateConstraint.substring(1);
-                } else if (c.type === "on delete") {
-                  deleteConstraint = c.value.value;
-                  deleteConstraint =
-                    deleteConstraint[0].toUpperCase() +
-                    deleteConstraint.substring(1);
-                }
-              });
-
-              relationship.updateConstraint = updateConstraint;
-              relationship.deleteConstraint = deleteConstraint;
-
-              if (table.fields[startFieldId].unique) {
-                relationship.cardinality = Cardinality.ONE_TO_ONE;
-              } else {
-                relationship.cardinality = Cardinality.MANY_TO_ONE;
-              }
-
-              relationships.push(relationship);
             }
           }
         });
