@@ -17,7 +17,6 @@
     "@uiw/codemirror-theme-github": "^4.21.25",
     "@uiw/codemirror-theme-vscode": "^4.21.25",
     "@uiw/react-codemirror": "^4.21.25",
-    "@vercel/analytics": "^1.2.2",
     "axios": "^1.7.4",
     "classnames": "^2.5.1",
     "dexie": "^3.2.4",
