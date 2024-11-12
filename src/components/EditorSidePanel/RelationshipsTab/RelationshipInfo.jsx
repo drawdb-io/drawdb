@@ -139,11 +139,12 @@ export default function RelationshipInfo({ data }) {
                   dataSource={[
                     {
                       key: "1",
-                      foreign: `${tables[data.startTableId].name}(${
-                        tables[data.startTableId].fields[data.startFieldId].name
+                      foreign: `${tables[data.startTableId]?.name}(${
+                        tables[data.startTableId].fields[data.startFieldId]
+                          ?.name
                       })`,
-                      primary: `${tables[data.endTableId].name}(${
-                        tables[data.endTableId].fields[data.endFieldId].name
+                      primary: `${tables[data.endTableId]?.name}(${
+                        tables[data.endTableId].fields[data.endFieldId]?.name
                       })`,
                     },
                   ]}
