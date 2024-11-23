@@ -8,13 +8,12 @@ import {
   useDiagram,
   useEnums,
   useNotes,
-  useSaveState,
   useTransform,
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { octokit } from "../../../data/octokit";
-import { MODAL, State } from "../../../data/constants";
+import { MODAL } from "../../../data/constants";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -26,7 +25,6 @@ export default function Share({ title, setModal }) {
   const { types } = useTypes();
   const { enums } = useEnums();
   const { transform } = useTransform();
-  const { setSaveState } = useSaveState();
   const url =
     window.location.origin + window.location.pathname + "?shareId=" + gistId;
 
@@ -64,11 +62,10 @@ export default function Share({ title, setModal }) {
       });
       setGistId("");
       setModal(MODAL.NONE);
-      setSaveState(State.SAVING);
     } catch (e) {
       console.error(e);
     }
-  }, [gistId, setGistId, setModal, setSaveState]);
+  }, [gistId, setGistId, setModal]);
 
   const updateGist = useCallback(async () => {
     setLoading(true);
