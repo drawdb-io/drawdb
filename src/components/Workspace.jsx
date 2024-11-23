@@ -65,6 +65,8 @@ export default function WorkSpace() {
   };
 
   const save = useCallback(async () => {
+    if (saveState !== State.SAVING) return;
+
     const name = window.name.split(" ");
     const op = name[0];
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
@@ -72,10 +74,7 @@ export default function WorkSpace() {
     if (saveAsDiagram) {
       searchParams.delete("shareId");
       setSearchParams(searchParams);
-      if (
-        (id === 0 && window.name === "") ||
-        window.name.split(" ")[0] === "lt"
-      ) {
+      if ((id === 0 && window.name === "") || op === "lt") {
         await db.diagrams
           .add({
             database: database,
@@ -162,6 +161,7 @@ export default function WorkSpace() {
     enums,
     gistId,
     loadedFromGistId,
+    saveState
   ]);
 
   const load = useCallback(async () => {
@@ -283,52 +283,7 @@ export default function WorkSpace() {
         });
     };
 
-    if (window.name === "") {
-      loadLatestDiagram();
-    } else {
-      const name = window.name.split(" ");
-      const op = name[0];
-      const id = parseInt(name[1]);
-      switch (op) {
-        case "d": {
-          loadDiagram(id);
-          break;
-        }
-        case "t":
-        case "lt": {
-          loadTemplate(id);
-          break;
-        }
-        default:
-          break;
-      }
-    }
-  }, [
-    setTransform,
-    setRedoStack,
-    setUndoStack,
-    setRelationships,
-    setTables,
-    setAreas,
-    setNotes,
-    setTypes,
-    setTasks,
-    setDatabase,
-    database,
-    setEnums,
-    selectedDb,
-  ]);
-
-  const loadFromGist = useCallback(
-    async (shareId) => {
-      const existingDiagram = await db.diagrams.get({
-        loadedFromGistId: shareId,
-      });
-      if (existingDiagram) {
-        window.name = "d " + existingDiagram.id;
-      } else {
-        window.name = "";
-      }
+    const loadFromGist = async (shareId) => {
       try {
         const res = await octokit.request(`GET /gists/${shareId}`, {
           gist_id: shareId,
@@ -358,21 +313,62 @@ export default function WorkSpace() {
         console.log(e);
         setSaveState(State.FAILED_TO_LOAD);
       }
-    },
-    [
-      setAreas,
-      setDatabase,
-      setEnums,
-      setNotes,
-      setRelationships,
-      setTables,
-      setTypes,
-      setTransform,
-      setRedoStack,
-      setUndoStack,
-      setSaveState,
-    ],
-  );
+    };
+
+    const shareId = searchParams.get("shareId");
+    if (shareId) {
+      const existingDiagram = await db.diagrams.get({
+        loadedFromGistId: shareId,
+      });
+
+      if (existingDiagram) {
+        window.name = "d " + existingDiagram.id;
+        setId(existingDiagram.id);
+      } else {
+        window.name = "";
+        setId(0);
+      }
+      await loadFromGist(shareId);
+      return;
+    }
+
+    if (window.name === "") {
+      await loadLatestDiagram();
+    } else {
+      const name = window.name.split(" ");
+      const op = name[0];
+      const id = parseInt(name[1]);
+      switch (op) {
+        case "d": {
+          await loadDiagram(id);
+          break;
+        }
+        case "t":
+        case "lt": {
+          await loadTemplate(id);
+          break;
+        }
+        default:
+          break;
+      }
+    }
+  }, [
+    setTransform,
+    setRedoStack,
+    setUndoStack,
+    setRelationships,
+    setTables,
+    setAreas,
+    setNotes,
+    setTypes,
+    setTasks,
+    setDatabase,
+    database,
+    setEnums,
+    selectedDb,
+    setSaveState,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (
@@ -399,31 +395,19 @@ export default function WorkSpace() {
     tasks?.length,
     transform.zoom,
     title,
+    gistId,
     setSaveState,
   ]);
 
   useEffect(() => {
-    if (gistId && gistId !== "") {
-      setSaveState(State.SAVING);
-    }
-  }, [gistId, setSaveState]);
-
-  useEffect(() => {
-    if (saveState !== State.SAVING) return;
-
     save();
-  }, [id, gistId, saveState, save]);
+  }, [saveState, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
 
-    const shareId = searchParams.get("shareId");
-    if (shareId) {
-      loadFromGist(shareId);
-    } else {
-      load();
-    }
-  }, [load, searchParams, loadFromGist]);
+    load();
+  }, [load]);
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">

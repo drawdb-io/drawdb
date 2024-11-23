@@ -237,6 +237,7 @@ const en = {
     didnt_find_diagram: "Oops! Didn't find the diagram.",
     unsigned: "Unsigned",
     share: "Share",
+    unshare: "Unshare",
     copy_link: "Copy link",
     readme: "README",
     failed_to_load: "Failed to load. Make sure the link is correct.",
