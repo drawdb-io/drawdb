@@ -336,7 +336,7 @@ export default function Modal({
       case MODAL.LANGUAGE:
         return <Language />;
       case MODAL.SHARE:
-        return <Share title={title} />;
+        return <Share title={title} setModal={setModal} />;
       default:
         return <></>;
     }

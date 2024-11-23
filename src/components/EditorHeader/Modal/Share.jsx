@@ -8,13 +8,15 @@ import {
   useDiagram,
   useEnums,
   useNotes,
+  useSaveState,
   useTransform,
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { octokit } from "../../../data/octokit";
+import { MODAL, State } from "../../../data/constants";
 
-export default function Share({ title }) {
+export default function Share({ title, setModal }) {
   const { t } = useTranslation();
   const { gistId, setGistId } = useContext(IdContext);
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,7 @@ export default function Share({ title }) {
   const { types } = useTypes();
   const { enums } = useEnums();
   const { transform } = useTransform();
+  const { setSaveState } = useSaveState();
   const url =
     window.location.origin + window.location.pathname + "?shareId=" + gistId;
 
@@ -50,6 +53,22 @@ export default function Share({ title }) {
     types,
     transform,
   ]);
+
+  const unshare = useCallback(async () => {
+    try {
+      await octokit.request(`DELETE /gists/${gistId}`, {
+        gist_id: gistId,
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+      setGistId("");
+      setModal(MODAL.NONE);
+      setSaveState(State.SAVING);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [gistId, setGistId, setModal, setSaveState]);
 
   const updateGist = useCallback(async () => {
     setLoading(true);
@@ -136,17 +155,16 @@ export default function Share({ title }) {
     <div>
       <div className="flex gap-3">
         <Input value={url} size="large" />
-        <Button
-          size="large"
-          theme="solid"
-          icon={<IconLink />}
-          onClick={copyLink}
-        >
+      </div>
+      <div className="text-xs mt-2">{t("share_info")}</div>
+      <div className="flex gap-2 mt-3">
+        <Button block onClick={unshare}>
+          {t("unshare")}
+        </Button>
+        <Button block theme="solid" icon={<IconLink />} onClick={copyLink}>
           {t("copy_link")}
         </Button>
       </div>
-      <hr className="opacity-20 mt-3 mb-1" />
-      <div className="text-xs">{t("share_info")}</div>
     </div>
   );
 }
