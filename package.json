@@ -15,7 +15,7 @@
     "@douyinfe/semi-ui": "^2.51.3",
     "@lexical/react": "^0.12.5",
     "@uiw/codemirror-theme-github": "^4.21.25",
-    "@uiw/codemirror-theme-vscode": "^4.21.25",
+    "@uiw/codemirror-theme-vscode": "^4.23.6",
     "@uiw/react-codemirror": "^4.21.25",
     "@vercel/analytics": "^1.2.2",
     "axios": "^1.7.4",

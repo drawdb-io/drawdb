@@ -516,6 +516,9 @@ export default function ControlPanel({
   const viewStrictMode = () => {
     setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
   };
+  const toggleDBMLEditor = () => {
+    setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
+  };
   const viewFieldSummary = () => {
     setSettings((prev) => ({
       ...prev,
@@ -1175,6 +1178,15 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
+      dbml_editor: {
+        state: layout.dbmlEditor ? (
+          <i className="bi bi-toggle-off" />
+        ) : (
+          <i className="bi bi-toggle-on" />
+        ),
+        function: toggleDBMLEditor,
+        shortcut: "Alt+E",
+      },
       strict_mode: {
         state: settings.strictMode ? (
           <i className="bi bi-toggle-off" />
@@ -1386,6 +1398,7 @@ export default function ControlPanel({
     preventDefault: true,
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
 
   return (
     <>

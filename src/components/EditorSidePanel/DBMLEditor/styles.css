@@ -1,0 +1,11 @@
+.cm-editor {
+  font-size: 13px;
+}
+
+.ͼ1o {
+  background-color: var(--semi-color-bg-0);
+}
+
+.ͼ1o .cm-gutters {
+  background-color: var(--semi-color-bg-0);
+}
