@@ -7,7 +7,7 @@
   "description": "Free, simple, and intuitive online database design tool and SQL generator.",
   "author": "1ilit",
   "scripts": {
-    "dev": "vite && npm run electron",
+    "dev": "vite",
     "electron": "electron .",
     "build": "vite build && electron-builder",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
