@@ -35,6 +35,14 @@ npm install
 npm run dev
 ```
 
+### Local Development Electron
+
+First, ensure that the Local Development is running. Then, you can start the Electron development environment:
+
+```bash
+npm run electron
+```
+
 ### Build
 
 ```bash
