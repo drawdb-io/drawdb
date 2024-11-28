@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
 import Survey from "./pages/Survey";
@@ -13,7 +13,8 @@ import NotFound from "./pages/NotFound";
 export default function App() {
   return (
     <SettingsContextProvider>
-      <BrowserRouter>
+      {/* Cambiado de BrowserRouter a HashRouter */}
+      <HashRouter>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -52,7 +53,7 @@ export default function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </SettingsContextProvider>
   );
 }

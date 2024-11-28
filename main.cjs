@@ -1,40 +1,29 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
+const { app, BrowserWindow, Menu } = require('electron');
+const path = require('path');
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 function createWindow() {
-    const isDev = !app.isPackaged; // Detectar si es entorno de desarrollo
+    const isDev = !app.isPackaged;
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        //icon: path.join(__dirname, 'public/favicon.ico'),
+        icon: path.join(__dirname, 'favicon.ico'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true, // Mejora la seguridad
-            enableRemoteModule: false, // Deshabilitar módulos remotos por seguridad
-            nodeIntegration: false, // Desactiva integración con Node.js
+            contextIsolation: true,
+            enableRemoteModule: false,
         },
     });
 
     if (isDev) {
-        // En desarrollo, cargar la URL del servidor de Vite
         win.loadURL('http://localhost:5173');
-        win.webContents.openDevTools(); // Abrir herramientas de desarrollo
+        win.webContents.openDevTools(); 
     } else {
-        // En producción, cargar el archivo index.html de la carpeta dist
-        win.loadFile(path.join(__dirname, 'dist/index.html'));
+        win.loadURL(`file://${path.join(__dirname, 'dist/index.html')}`);
+        Menu.setApplicationMenu(null);
     }
-
-    if (!isDev) {
-        import('@vercel/analytics').then(({ inject }) => inject());
-      }
 }
-
-
-
-  
-
 
 app.whenReady().then(() => {
     createWindow();

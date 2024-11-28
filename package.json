@@ -62,6 +62,12 @@
     "win": {
       "target": "nsis",
       "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": ["AppImage", "deb", "rpm"]
     }
   },
   "devDependencies": {
