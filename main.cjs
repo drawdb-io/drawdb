@@ -4,17 +4,20 @@ const path = require('path');
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 function createWindow() {
+
     const isDev = !app.isPackaged;
     const win = new BrowserWindow({
         width: 800,
         height: 600,
-        icon: path.join(__dirname, 'favicon.ico'),
+        icon: path.join(__dirname, 'public/icon.ico'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             enableRemoteModule: false,
         },
     });
+
+    win.maximize();
 
     if (isDev) {
         win.loadURL('http://localhost:5173');

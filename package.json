@@ -60,6 +60,7 @@
       "node_modules/**/*"
     ],
     "win": {
+      "icon": "public/icon.ico",
       "target": "nsis",
       "signAndEditExecutable": false
     },
