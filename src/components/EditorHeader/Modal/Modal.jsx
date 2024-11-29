@@ -12,7 +12,6 @@ import {
   useAreas,
   useEnums,
   useNotes,
-  useSettings,
   useDiagram,
   useTransform,
   useTypes,
@@ -34,20 +33,11 @@ import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
 import Language from "./Language";
 import Share from "./Share";
-import CodeMirror from "@uiw/react-codemirror";
-import { sql } from "@codemirror/lang-sql";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { json } from "@codemirror/lang-json";
-import { githubLight } from "@uiw/codemirror-theme-github";
+import Code from "./Code";
 import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
-
-const languageExtension = {
-  sql: [sql()],
-  json: [json()],
-};
 
 export default function Modal({
   modal,
@@ -64,7 +54,6 @@ export default function Modal({
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
-  const { settings } = useSettings();
   const { setEnums } = useEnums();
   const { setTasks } = useTasks();
   const { setTransform } = useTransform();
@@ -303,14 +292,7 @@ export default function Modal({
               {modal === MODAL.IMG ? (
                 <Image src={exportData.data} alt="Diagram" height={280} />
               ) : (
-                <CodeMirror
-                  value={exportData.data}
-                  height="360px"
-                  extensions={languageExtension[exportData.extension]}
-                  onChange={() => {}}
-                  editable={false}
-                  theme={settings.mode === "dark" ? vscodeDark : githubLight}
-                />
+                <Code value={exportData.data} language={exportData.extension} />
               )}
               <div className="text-sm font-semibold mt-2">{t("filename")}:</div>
               <Input
