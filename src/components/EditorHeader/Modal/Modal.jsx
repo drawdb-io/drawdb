@@ -369,7 +369,8 @@ export default function Modal({
       width={getModalWidth(modal)}
       bodyStyle={{
         maxHeight: window.innerHeight - 280,
-        overflow: "auto",
+        overflow:
+          modal === MODAL.CODE || modal === MODAL.IMG ? "hidden" : "auto",
         direction: "ltr",
       }}
     >
