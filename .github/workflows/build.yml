@@ -28,7 +28,3 @@ jobs:
       run: npm run lint
     - name: Run vite build
       run: npm run build
-    - name: Publish artifacts
-      run: npm run publish
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}

@@ -96,7 +96,8 @@
     "linux": {
       "icon": "public/icon.png",
       "target": "AppImage"
-    }
+    },
+    "publish": null
   },
   "overrides": {
     "follow-redirects": "^1.15.4"
