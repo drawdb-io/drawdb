@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
 import Survey from "./pages/Survey";
@@ -10,10 +10,40 @@ import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
 import NotFound from "./pages/NotFound";
 
+function isElectron() {
+  if (
+    typeof window !== "undefined" &&
+    typeof window.process === "object" &&
+    window.process.type === "renderer"
+  ) {
+    return true;
+  }
+
+  if (
+    typeof process !== "undefined" &&
+    typeof process.versions === "object" &&
+    !!process.versions.electron
+  ) {
+    return true;
+  }
+
+  if (
+    typeof navigator === "object" &&
+    typeof navigator.userAgent === "string" &&
+    navigator.userAgent.indexOf("Electron") >= 0
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+const Router = isElectron() ? HashRouter : BrowserRouter;
+
 export default function App() {
   return (
     <SettingsContextProvider>
-      <HashRouter>
+      <Router>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -52,7 +82,7 @@ export default function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </HashRouter>
+      </Router>
     </SettingsContextProvider>
   );
 }
