@@ -237,6 +237,7 @@ const hu = {
     didnt_find_diagram: "Hoppá! A diagram nem található.",
     unsigned: "Előjel nélküli",
     share: "Megosztás",
+    unshare: "Megosztás megszüntetése",
     copy_link: "Hivatkozás másolása",
     readme: "OLVASS_EL",
     failed_to_load: "A betöltés sikertelen. Ellenőrizze a hivatkozás helyességét!",
