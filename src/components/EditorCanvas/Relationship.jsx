@@ -5,7 +5,7 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, CrowZM } from "./RelationshipFormat";
+import { CrowOM, CrowOO, CrowZM, DefaultNotation } from "./RelationshipFormat";
 
 
 export default function Relationship({ data }) {
@@ -15,32 +15,48 @@ export default function Relationship({ data }) {
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
   const pathRef = useRef();
+  const type = settings.notation === 'default' ? 0 : 10;
+  const relationshipType=(5,type);
+
   let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
   let cardinalityvar;
-  let type = 10;
-  let relationshipType=(5,type);
 
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
-      cardinalityStart = "n";
-      cardinalityEnd = "(1,*)";
-      cardinalityvar="1";
+      if (settings.notation === 'default') {
+        cardinalityStart = "n";
+        cardinalityEnd = "1";
+      } else {
+        cardinalityStart = "(1,*)";
+        cardinalityEnd = "(1,1)";
+        cardinalityvar="1";
+      }
       break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
-      cardinalityStart = "1";
-      cardinalityEnd = "n";
-      cardinalityvar="2";
+      if (settings.notation === 'default') {
+        cardinalityStart = "1";
+        cardinalityEnd = "n";
+      } else {
+        cardinalityStart = "(1,1)";
+        cardinalityEnd = "(1,*)";
+        cardinalityvar="2";
+      }
       break;
     case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
-      cardinalityStart = "1";
-      cardinalityEnd = "1";
-      cardinalityvar="3";
+      if (settings.notation === 'default') {
+        cardinalityStart = "1";
+        cardinalityEnd = "1";
+      } else {
+        cardinalityStart = "(1,1)";
+        cardinalityEnd = "(1,1)";
+        cardinalityvar="3";
+      }
       break;
     default:
       break;
@@ -55,10 +71,14 @@ export default function Relationship({ data }) {
 
 
   if (pathRef.current) {
-    const pathLength = pathRef.current.getTotalLength();
+    const pathLength = settings.notation === 'default' ?
+      pathRef.current.getTotalLength() - cardinalityOffset:
+      pathRef.current.getTotalLength();
+
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
+
     const point2 = pathRef.current.getPointAtLength(
       pathLength,
     );
@@ -88,9 +108,11 @@ export default function Relationship({ data }) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
-  if (cardinalityEndX < cardinalityStartX){
-    direction=-1
+
+  if (settings.notation === 'crows_foot' && cardinalityEndX < cardinalityStartX){
+    direction = -1;
   }
+
   return (
     <>
       <g className="select-none group" onDoubleClick={edit}>
@@ -113,16 +135,17 @@ export default function Relationship({ data }) {
           stroke="gray"
           className="group-hover:stroke-sky-700"
           fill="none"
-          stroke-dasharray={relationshipType} 
+          strokeDasharray={relationshipType}
           strokeWidth={2}
           cursor="pointer"
         />
 
-        {CrowOM(pathRef.current,settings.showCardinality, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd)}
-        {CrowOO(pathRef.current,settings.showCardinality, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd)}
-        {CrowZM(pathRef.current,settings.showCardinality, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd)}
+        {CrowOM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {CrowOO(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {CrowZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {DefaultNotation(pathRef.current,settings.notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd)}
       </g>
-      
+
       <SideSheet
         title={t("edit")}
         size="small"
