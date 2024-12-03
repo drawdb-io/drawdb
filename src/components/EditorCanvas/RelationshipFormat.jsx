@@ -1,6 +1,6 @@
-export function CrowOM(pathRef, settings, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd){
-    return( 
-        pathRef && settings && (cardinalityvar==2)  &&(
+export function CrowOM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+    return(
+        pathRef && notation === 'crows_foot' && (cardinalityvar==2)  &&(
             <>
               <line
                 x1={cardinalityEndX-(20*direction)}
@@ -37,6 +37,16 @@ export function CrowOM(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
                     textAnchor="middle"
                     alignmentBaseline="middle"
                 >
+                    {cardinalityStart}
+                </text>
+                <text
+                    x={cardinalityEndX-15}
+                    y={cardinalityEndY-15}
+                    fill="black"
+                    strokeWidth="0.5"
+                    textAnchor="middle"
+                    alignmentBaseline="middle"
+                >
                     {cardinalityEnd}
                 </text>
                 <line
@@ -62,11 +72,10 @@ export function CrowOM(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
     )
 }
 
-export function CrowOO(pathRef, settings, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd){
-    return( 
-        pathRef && settings && cardinalityvar==3  &&(
-            <>  
-            {console.log(settings) }        
+export function CrowOO(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalitySart, cardinalityEnd){
+    return(
+        pathRef && notation === 'crows_foot' && cardinalityvar==3  &&(
+            <>
             <line
               x1={cardinalityEndX-(15*direction)}
               y1={cardinalityEndY+10}
@@ -76,7 +85,7 @@ export function CrowOO(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
               strokeWidth='2'
               className="group-hover:fill-sky-700"
             />
-            
+
             <line
               x1={cardinalityEndX-(10*direction)}
               y1={cardinalityEndY+10}
@@ -104,7 +113,7 @@ export function CrowOO(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
               strokeWidth='2'
               className="group-hover:fill-sky-700"
             />
-            
+
             <text
               x={cardinalityStartX}
               y={cardinalityStartY-15}
@@ -113,7 +122,17 @@ export function CrowOO(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
               textAnchor="middle"
               alignmentBaseline="middle"
             >
-              {cardinalityEnd}
+              {cardinalitySart}
+            </text>
+            <text
+                x={cardinalityEndX-15}
+                y={cardinalityEndY-15}
+                fill="black"
+                strokeWidth="0.5"
+                textAnchor="middle"
+                alignmentBaseline="middle"
+            >
+                {cardinalityEnd}
             </text>
             </>
         )
@@ -121,9 +140,9 @@ export function CrowOO(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
 }
 
 
-export function CrowZM(pathRef, settings, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityEnd){
-  return( 
-      pathRef && settings && (cardinalityvar==1)  &&(
+export function CrowZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+  return(
+      pathRef && notation === 'crows_foot' && (cardinalityvar==1)  &&(
           <>
             <circle
               cx={cardinalityEndX-24}
@@ -160,6 +179,16 @@ export function CrowZM(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
                   textAnchor="middle"
                   alignmentBaseline="middle"
               >
+                  {cardinalityStart}
+              </text>
+              <text
+                  x={cardinalityEndX-15}
+                  y={cardinalityEndY-15}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
                   {cardinalityEnd}
               </text>
               <line
@@ -180,6 +209,49 @@ export function CrowZM(pathRef, settings, cardinalityvar, cardinalityEndX, cardi
                 strokeWidth='2'
                 className="group-hover:fill-sky-700"
               />
+          </>
+      )
+  )
+}
+
+export function DefaultNotation(pathRef, notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd){
+  return(
+      pathRef && notation === 'default' && (
+        <>
+            <circle
+              cx={cardinalityStartX}
+              cy={cardinalityStartY}
+              r="12"
+              fill="grey"
+              className="group-hover:fill-sky-700"
+            />
+            <text
+              x={cardinalityStartX}
+              y={cardinalityStartY}
+              fill="white"
+              strokeWidth="0.5"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {cardinalityStart}
+            </text>
+            <circle
+              cx={cardinalityEndX}
+              cy={cardinalityEndY}
+              r="12"
+              fill="grey"
+              className="group-hover:fill-sky-700"
+            />
+            <text
+              x={cardinalityEndX}
+              y={cardinalityEndY}
+              fill="white"
+              strokeWidth="0.5"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {cardinalityEnd}
+            </text>
           </>
       )
   )
