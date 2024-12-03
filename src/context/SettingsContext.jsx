@@ -9,6 +9,7 @@ export const SettingsContext = createContext({
   autosave: true,
   panning: true,
   showCardinality: true,
+  notation: "default",
   tableWidth: tableWidth,
   showDebugCoordinates: false,
 });
@@ -22,6 +23,7 @@ export default function SettingsContextProvider({ children }) {
     autosave: true,
     panning: true,
     showCardinality: true,
+    notation: "default",
     tableWidth: tableWidth,
     showDebugCoordinates: false,
   });
