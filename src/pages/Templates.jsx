@@ -7,6 +7,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import Thumbnail from "../components/Thumbnail";
 import logo_light from "../assets/logo_light_160.png";
 import template_screenshot from "../assets/template_screenshot.png";
+import { isElectron } from "../utils/electronUtils";
 
 export default function Templates() {
   const defaultTemplates = useLiveQuery(() =>
@@ -22,13 +23,23 @@ export default function Templates() {
   };
 
   const editTemplate = (id) => {
+    if(isElectron()){
+      const newWindow = window.open("#/editor", "_blank");
+      newWindow.name = "t " + id;
+    }else{
     const newWindow = window.open("/editor", "_blank");
     newWindow.name = "t " + id;
+    }
   };
 
   const forkTemplate = (id) => {
+    if(isElectron()){
+      const newWindow = window.open("#/editor", "_blank");
+      newWindow.name = "lt " + id;
+    }else{
     const newWindow = window.open("/editor", "_blank");
     newWindow.name = "lt " + id;
+    }
   };
 
   useEffect(() => {

@@ -73,6 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import { isElectron } from "../../utils/electronUtils";
 
 export default function ControlPanel({
   diagramId,
@@ -1333,20 +1334,39 @@ export default function ControlPanel({
     },
     help: {
       shortcuts: {
-        function: () => window.open("/shortcuts", "_blank"),
+        function: () => isElectron()
+          ? (window.location.href = "#/shortcuts")
+          : window.open("/shortcuts", "_blank"),
         shortcut: "Ctrl+H",
       },
       ask_on_discord: {
-        function: () => window.open("https://discord.gg/BrjZgNrmR6", "_blank"),
+        function: () => {
+          const discordAppUrl = "discord://invite/BrjZgNrmR6";
+          const fallbackUrl = "https://discord.gg/BrjZgNrmR6";
+          try {
+            if (isElectron()) {
+              window.electron(discordAppUrl);
+            } else {
+              window.open(fallbackUrl, "_blank");
+            }
+          } catch (error) {
+            window.open(fallbackUrl, "_blank");
+          }
+        },
       },
       report_bug: {
-        function: () => window.open("/bug-report", "_blank"),
+        function: () => isElectron()
+          ? (window.location.href = "#/bug-report")
+          : window.open("/bug-report", "_blank"),
       },
       feedback: {
-        function: () => window.open("/survey", "_blank"),
+        function: () => isElectron()
+          ? (window.location.href = "#/survey")
+          : window.open("/survey", "_blank"),
       },
     },
   };
+
 
   useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
   useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
@@ -1387,7 +1407,7 @@ export default function ControlPanel({
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
-            {window.name.split(" ")[0] !== "t" && (
+            {!isElectron() && window.name.split(" ")[0] !== "t" && (
               <Button
                 type="primary"
                 className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"

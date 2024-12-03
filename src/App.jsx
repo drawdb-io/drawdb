@@ -9,25 +9,7 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import { useSettings } from "./hooks";
 import NotFound from "./pages/NotFound";
-
-function isElectron() {
-  if (
-    typeof window !== "undefined" &&
-    typeof window.process === "object" &&
-    window.process.type === "renderer"
-  ) {
-    return true;
-  }
-  if (
-    typeof navigator === "object" &&
-    typeof navigator.userAgent === "string" &&
-    navigator.userAgent.indexOf("Electron") >= 0
-  ) {
-    return true;
-  }
-
-  return false;
-}
+import {isElectron} from "./utils/electronUtils"
 
 const Router = isElectron() ? HashRouter : BrowserRouter;
 
