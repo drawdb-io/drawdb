@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../../hooks";
 import { databases } from "../../data/databases";
 
-const SelectDbModal = (props) => {
+export default memo(function SelectDbModal(props) {
   const { showSelectDbModal, onOk } = props;
   const { t } = useTranslation();
   const { settings } = useSettings();
@@ -53,6 +53,4 @@ const SelectDbModal = (props) => {
       </div>
     </Modal>
   );
-};
-
-export default memo(SelectDbModal);
+});

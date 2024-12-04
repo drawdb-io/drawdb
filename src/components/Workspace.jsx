@@ -160,7 +160,7 @@ export default function WorkSpace() {
     enums,
     gistId,
     loadedFromGistId,
-    saveState
+    saveState,
   ]);
   const load = useCallback(async () => {
     let initDatabase = database;
@@ -403,11 +403,14 @@ export default function WorkSpace() {
     load();
   }, [load]);
 
-  const handleSelectedDb = useCallback((selectedDb) => {
-    if (selectedDb === "") return;
-    setDatabase(selectedDb);
-    setShowSelectDbModal(false);
-  }, []);
+  const handleSelectedDb = useCallback(
+    (selectedDb) => {
+      if (selectedDb === "") return;
+      setDatabase(selectedDb);
+      setShowSelectDbModal(false);
+    },
+    [setDatabase, setShowSelectDbModal],
+  );
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
       <IdContext.Provider value={{ gistId, setGistId }}>
