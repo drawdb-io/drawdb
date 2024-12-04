@@ -207,6 +207,9 @@ const zh = {
     edit_relationship: "{{extra}} 编辑关系 {{refName}}",
     delete_relationship: "删除关系 {{refName}}",
     not_found: "未找到",
+    pick_db: "选择数据库",
+    generic: "通用的",
+    generic_description: "通用的图表可以导出为任何SQL风格，但支持的数据类型较少。",
   },
 };
 

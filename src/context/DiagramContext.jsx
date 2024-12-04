@@ -8,7 +8,7 @@ export const DiagramContext = createContext(null);
 
 export default function DiagramContextProvider({ children }) {
   const { t } = useTranslation();
-  const [database, setDatabase] = useState(DB.GENERIC);
+  const [database, setDatabase] = useState("");
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const { transform } = useTransform();

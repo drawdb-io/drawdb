@@ -19,7 +19,7 @@ import {
   useEnums,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
-import { Modal } from "@douyinfe/semi-ui";
+import SelectDbModal from "./Modal/SelectDbModal";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
@@ -37,7 +37,6 @@ export default function WorkSpace() {
   const [width, setWidth] = useState(340);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
-  const [selectedDb, setSelectedDb] = useState("");
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
@@ -56,7 +55,7 @@ export default function WorkSpace() {
     setDatabase,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   let [searchParams, setSearchParams] = useSearchParams();
   const handleResize = (e) => {
     if (!resize) return;
@@ -163,8 +162,8 @@ export default function WorkSpace() {
     loadedFromGistId,
     saveState
   ]);
-
   const load = useCallback(async () => {
+    let initDatabase = database;
     const loadLatestDiagram = async () => {
       await db.diagrams
         .orderBy("lastModified")
@@ -195,24 +194,20 @@ export default function WorkSpace() {
             window.name = `d ${d.id}`;
           } else {
             window.name = "";
-            if (selectedDb === "") setShowSelectDbModal(true);
+            if (initDatabase === "") setShowSelectDbModal(true);
           }
         })
         .catch((error) => {
           console.log(error);
         });
     };
-
     const loadDiagram = async (id) => {
       await db.diagrams
         .get(id)
         .then((diagram) => {
           if (diagram) {
-            if (diagram.database) {
-              setDatabase(diagram.database);
-            } else {
-              setDatabase(DB.GENERIC);
-            }
+            initDatabase = diagram.database || DB.GENERIC;
+            setDatabase(initDatabase);
             setId(diagram.id);
             setGistId(diagram.gistId);
             setLoadedFromGistId(diagram.loadedFromGistId);
@@ -228,10 +223,10 @@ export default function WorkSpace() {
             });
             setUndoStack([]);
             setRedoStack([]);
-            if (databases[database].hasTypes) {
+            if (databases[initDatabase].hasTypes) {
               setTypes(diagram.types ?? []);
             }
-            if (databases[database].hasEnums) {
+            if (databases[initDatabase].hasEnums) {
               setEnums(diagram.enums ?? []);
             }
             window.name = `d ${diagram.id}`;
@@ -267,19 +262,19 @@ export default function WorkSpace() {
             });
             setUndoStack([]);
             setRedoStack([]);
-            if (databases[database].hasTypes) {
+            if (databases[initDatabase].hasTypes) {
               setTypes(diagram.types ?? []);
             }
-            if (databases[database].hasEnums) {
+            if (databases[initDatabase].hasEnums) {
               setEnums(diagram.enums ?? []);
             }
           } else {
-            if (selectedDb === "") setShowSelectDbModal(true);
+            if (initDatabase === "") setShowSelectDbModal(true);
           }
         })
         .catch((error) => {
           console.log(error);
-          if (selectedDb === "") setShowSelectDbModal(true);
+          if (initDatabase === "") setShowSelectDbModal(true);
         });
     };
 
@@ -365,7 +360,6 @@ export default function WorkSpace() {
     setDatabase,
     database,
     setEnums,
-    selectedDb,
     setSaveState,
     searchParams,
   ]);
@@ -409,6 +403,11 @@ export default function WorkSpace() {
     load();
   }, [load]);
 
+  const handleSelectedDb = useCallback((selectedDb) => {
+    if (selectedDb === "") return;
+    setDatabase(selectedDb);
+    setShowSelectDbModal(false);
+  }, []);
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
       <IdContext.Provider value={{ gistId, setGistId }}>
@@ -447,48 +446,10 @@ export default function WorkSpace() {
           )}
         </div>
       </div>
-      <Modal
-        centered
-        size="medium"
-        closable={false}
-        hasCancel={false}
-        title={t("pick_db")}
-        okText={t("confirm")}
-        visible={showSelectDbModal}
-        onOk={() => {
-          if (selectedDb === "") return;
-          setDatabase(selectedDb);
-          setShowSelectDbModal(false);
-        }}
-        okButtonProps={{ disabled: selectedDb === "" }}
-      >
-        <div className="grid grid-cols-3 gap-4 place-content-center">
-          {Object.values(databases).map((x) => (
-            <div
-              key={x.name}
-              onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 py-3 px-4 rounded-md border-2 select-none ${
-                settings.mode === "dark"
-                  ? "bg-zinc-700 hover:bg-zinc-600"
-                  : "bg-zinc-100 hover:bg-zinc-200"
-              } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
-            >
-              <div className="font-semibold">{x.name}</div>
-              {x.image && (
-                <img
-                  src={x.image}
-                  className="h-10"
-                  style={{
-                    filter:
-                      "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
-                  }}
-                />
-              )}
-              <div className="text-xs">{x.description}</div>
-            </div>
-          ))}
-        </div>
-      </Modal>
+      <SelectDbModal
+        showSelectDbModal={showSelectDbModal}
+        onOk={handleSelectedDb}
+      />
     </div>
   );
 }
