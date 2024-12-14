@@ -67,7 +67,7 @@
     "appId": "com.drawDB.id",
     "productName": "drawDB",
     "directories": {
-      "output": "dist",
+      "output": "install",
       "buildResources": "public"
     },
     "files": [
