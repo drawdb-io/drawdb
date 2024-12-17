@@ -51,6 +51,7 @@ const en = {
     show_cardinality: "Show cardinality",
     default_notation: "Default notation",
     crows_foot_notation: "Crow's foot notation",
+    idef1x_notation: "IDEF1X notation",
     notation: "Notation",
     theme: "Theme",
     light: "Light",

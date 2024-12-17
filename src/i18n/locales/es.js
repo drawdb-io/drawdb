@@ -52,6 +52,7 @@ const es = {
     notation: "Notación",
     default_notation: "Notación predeterminada",
     crows_foot_notation: "Notación Crow's Foot",
+    idef1x_notation: "Notación IDEF1X",
     theme: "Tema",
     light: "Claro",
     dark: "Oscuro",
