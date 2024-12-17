@@ -1246,6 +1246,12 @@ export default function ControlPanel({
               setSettings((prev) => ({ ...prev, notation: "crows_foot" }));
             },
           },
+          {
+            idef1x_notation: () => {
+              console.log(settings.notation);
+              setSettings((prev) => ({ ...prev, notation: "idef1x" }));
+            },
+          },
         ],
         function: () => {},
       },

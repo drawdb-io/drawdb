@@ -5,7 +5,7 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, CrowZM, DefaultNotation } from "./RelationshipFormat";
+import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation } from "./RelationshipFormat";
 
 
 export default function Relationship({ data }) {
@@ -109,7 +109,7 @@ export default function Relationship({ data }) {
     }
   };
 
-  if (settings.notation === 'crows_foot' && cardinalityEndX < cardinalityStartX){
+  if ((settings.notation === 'crows_foot' || settings.notation === 'idef1x') && cardinalityEndX < cardinalityStartX){
     direction = -1;
   }
 
@@ -144,6 +144,7 @@ export default function Relationship({ data }) {
         {CrowOO(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
         {CrowZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
         {DefaultNotation(pathRef.current,settings.notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd)}
+        {IDEFZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
       </g>
 
       <SideSheet
