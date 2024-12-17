@@ -256,3 +256,41 @@ export function DefaultNotation(pathRef, notation, cardinalityEndX, cardinalityE
       )
   )
 }
+
+export function IDEFZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+  return(
+      pathRef && notation === 'idef1x' && (cardinalityvar==1)  &&(
+          <>
+            <circle
+              cx={cardinalityEndX-(3*direction)}
+              cy={cardinalityEndY}
+              r="4"
+              stroke="gray"
+              strokeWidth='2'
+              fill="grey"
+              className="group-hover:fill-sky-700"
+            />
+              <text
+                  x={cardinalityStartX}
+                  y={cardinalityStartY-10}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityStart}
+              </text>
+              <text
+                  x={cardinalityEndX-15}
+                  y={cardinalityEndY-15}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityEnd}
+              </text>
+          </>
+      )
+  )
+}
