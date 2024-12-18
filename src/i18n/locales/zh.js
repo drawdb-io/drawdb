@@ -210,6 +210,7 @@ const zh = {
     pick_db: "选择数据库",
     generic: "通用的",
     generic_description: "通用的图表可以导出为任何SQL风格，但支持的数据类型较少。",
+    unsigned: "无符号",
   },
 };
 

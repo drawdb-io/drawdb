@@ -302,7 +302,7 @@ export default function FieldDetails({ data, tid, index }) {
       {databases[database].hasUnsignedTypes &&
         dbToTypes[database][data.type].signed && (
           <div className="flex justify-between items-center my-3">
-            <div className="font-medium">{t("Unsigned")}</div>
+            <div className="font-medium">{t("unsigned")}</div>
             <Checkbox
               value="unsigned"
               checked={data.unsigned}
