@@ -102,7 +102,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             if (d.constraint_type === "primary key") {
               d.definition.forEach((c) => {
                 table.fields.forEach((f) => {
-                  if (f.name === c.column && !f.primary) {
+                  if (f.name === c.column.expr.value && !f.primary) {
                     f.primary = true;
                   }
                 });
