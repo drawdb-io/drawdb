@@ -6,6 +6,7 @@ import {
 } from "@douyinfe/semi-icons";
 import {
   Cardinality,
+  SubtypeRestriction,
   Constraint,
   Action,
   ObjectType,
@@ -93,6 +94,29 @@ export default function RelationshipInfo({ data }) {
     setRelationships((prev) =>
       prev.map((e, idx) =>
         idx === data.id ? { ...e, cardinality: value } : e,
+      ),
+    );
+  };
+
+  const changeSubtypeRestriction = (value) => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.RELATIONSHIP,
+        rid: data.id,
+        undo: { subtype_restriction: data.subtype_restriction },
+        redo: { subtype_restriction: value },
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[subtype_restriction]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev.map((e, idx) =>
+        idx === data.id ? { ...e, subtype_restriction: value } : e,
       ),
     );
   };
@@ -206,7 +230,7 @@ export default function RelationshipInfo({ data }) {
       />
       <Row gutter={6} className="my-3">
         <Col span={12}>
-        <div className="font-semibold my-1" >{'Subtype'}:
+        <div className="font-semibold my-1" >{t("subtype")}:
         </div>
         </Col>
         <Col span={12}>
@@ -216,7 +240,20 @@ export default function RelationshipInfo({ data }) {
           />
         </Col>
       </Row>
-      {console.log(data)}
+      {data.subtype &&
+        <Row gutter={6} className="my-3">
+          <div className="font-semibold my-1">{t("subtype_restriction")}:</div>
+          <Select
+            optionList={Object.values(SubtypeRestriction).map((v) => ({
+              label: t(v),
+              value: v,
+            }))}
+            value={data.subtype_restriction}
+            className="w-full"
+            onChange={changeSubtypeRestriction}
+          />
+        </Row>
+      }
       <Row gutter={6} className="my-3">
         <Col span={12}>
           <div className="font-semibold">{t("on_update")}: </div>

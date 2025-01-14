@@ -436,6 +436,7 @@ export default function Canvas() {
       }_fk`,
       id: relationships.length,
       subtype: false,
+      subtype_restriction: "",
     };
     delete newRelationship.startX;
     delete newRelationship.startY;
