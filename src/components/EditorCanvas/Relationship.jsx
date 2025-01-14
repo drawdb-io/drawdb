@@ -5,7 +5,7 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation } from "./RelationshipFormat";
+import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation, sub01 } from "./RelationshipFormat";
 
 
 export default function Relationship({ data }) {
@@ -16,7 +16,7 @@ export default function Relationship({ data }) {
   const { t } = useTranslation();
   const pathRef = useRef();
   const type = settings.notation === 'default' ? 0 : 10;
-  const relationshipType=(5,type);
+  const relationshipType=(0,0);
 
   let direction = 1;
   let cardinalityStart = "1";
@@ -25,8 +25,8 @@ export default function Relationship({ data }) {
 
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
-    case t(Cardinality.MANY_TO_ONE):
-    case Cardinality.MANY_TO_ONE:
+    case t(Cardinality.ZERO_TO_MANY):
+    case Cardinality.ZERO_TO_MANY:
       if (settings.notation === 'default') {
         cardinalityStart = "n";
         cardinalityEnd = "1";
@@ -145,6 +145,7 @@ export default function Relationship({ data }) {
         {CrowZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
         {DefaultNotation(pathRef.current,settings.notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd)}
         {IDEFZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {sub01(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
       </g>
 
       <SideSheet

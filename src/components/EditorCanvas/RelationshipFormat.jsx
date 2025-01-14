@@ -145,7 +145,7 @@ export function CrowZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardi
       pathRef && notation === 'crows_foot' && (cardinalityvar==1)  &&(
           <>
             <circle
-              cx={cardinalityEndX-24}
+              cx={cardinalityEndX-(24*direction)}
               cy={cardinalityEndY}
               r="4"
               stroke="gray"
@@ -294,3 +294,98 @@ export function IDEFZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardi
       )
   )
 }
+
+export function sub01(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+  return(
+      pathRef && notation === 'idef1x' && (cardinalityvar==2)  &&(
+          <>
+            <circle
+              cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
+              cy={cardinalityEndY}
+              r="8"
+              stroke="gray"
+              strokeWidth='2'
+              fill="white"
+              className="group-hover:fill-sky-700"
+            />
+            <line
+              x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
+              y1={cardinalityEndY+20}
+              x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
+              y2={cardinalityEndY-20}
+              stroke="gray"
+              strokeWidth='2'
+              className="group-hover:fill-sky-700"
+            />
+              <text
+                  x={cardinalityStartX}
+                  y={cardinalityStartY-10}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityStart}
+              </text>
+              <text
+                  x={cardinalityEndX-15}
+                  y={cardinalityEndY-15}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityEnd}
+              </text>
+          </>
+      )
+  )
+}
+
+export function sub011(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+  return(
+      pathRef && notation === 'idef1x' && (cardinalityvar==3)  &&(
+          <>
+            <circle
+              cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
+              cy={cardinalityEndY}
+              r="8"
+              stroke="gray"
+              strokeWidth='2'
+              fill="white"
+              className="group-hover:fill-sky-700"
+            />
+            <line
+              x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
+              y1={cardinalityEndY+20}
+              x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
+              y2={cardinalityEndY-20}
+              stroke="gray"
+              strokeWidth='2'
+              className="group-hover:fill-sky-700"
+            />
+              <text
+                  x={cardinalityStartX}
+                  y={cardinalityStartY-10}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityStart}
+              </text>
+              <text
+                  x={cardinalityEndX-15}
+                  y={cardinalityEndY-15}
+                  fill="black"
+                  strokeWidth="0.5"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+              >
+                  {cardinalityEnd}
+              </text>
+          </>
+      )
+  )
+}
+

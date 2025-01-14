@@ -140,7 +140,7 @@ const en = {
     swap: "Swap",
     one_to_one: "One to one",
     one_to_many: "One to many",
-    many_to_one: "Many to one",
+    zero_to_many: "Zero to many",
     content: "Content",
     types_info:
       "This feature is meant for object-relational DBMSs like PostgreSQL.\nIf used for MySQL or MariaDB a JSON type will be generated with the corresponding json validation check.\nIf used for SQLite it will be translated to a BLOB.\nIf used for MSSQL a type alias to the first field will be generated.",

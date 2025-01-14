@@ -85,7 +85,7 @@ function Relationship({ relationship, tables }) {
   let cardinalityEnd = "1";
 
   switch (relationship.cardinality) {
-    case Cardinality.MANY_TO_ONE:
+    case Cardinality.ZERO_TO_MANY:
       cardinalityStart = "n";
       cardinalityEnd = "1";
       break;
