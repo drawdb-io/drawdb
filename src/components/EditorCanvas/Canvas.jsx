@@ -3,6 +3,7 @@ import {
   Action,
   Cardinality,
   Constraint,
+  SubtypeRestriction,
   ObjectType,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";

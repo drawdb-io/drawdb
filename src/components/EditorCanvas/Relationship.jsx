@@ -1,11 +1,11 @@
 import { useRef } from "react";
-import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import { Cardinality, ObjectType, Tab, SubtypeRestriction } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation, sub01 } from "./RelationshipFormat";
+import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation, subDP, subDT, subOP, subOT } from "./RelationshipFormat";
 
 
 export default function Relationship({ data }) {
@@ -22,6 +22,7 @@ export default function Relationship({ data }) {
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
   let cardinalityvar;
+  let subtypevar;
 
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
@@ -60,6 +61,35 @@ export default function Relationship({ data }) {
       break;
     default:
       break;
+  }
+
+  switch (data.subtype_restriction){
+    case t(SubtypeRestriction.DISJOINT_TOTAL):
+    case SubtypeRestriction.DISJOINT_TOTAL:
+      subtypevar="1";
+      console.log(subtypevar)
+    break;
+
+    case t(SubtypeRestriction.DISJOINT_PARTIAL):
+    case SubtypeRestriction.DISJOINT_PARTIAL:
+      subtypevar="2";
+      console.log(subtypevar)
+    break;
+    
+    case t(SubtypeRestriction.OVERLAPPING_TOTAL):
+    case SubtypeRestriction.OVERLAPPING_TOTAL:
+      subtypevar="3";
+      console.log(subtypevar)
+    break;
+
+  case t(SubtypeRestriction.OVERLAPPING_PARTIAL):
+  case SubtypeRestriction.OVERLAPPING_PARTIAL:
+    subtypevar="4";
+    console.log(subtypevar)
+  break;
+  default:
+  break;
+
   }
 
   let cardinalityStartX = 0;
@@ -145,7 +175,10 @@ export default function Relationship({ data }) {
         {CrowZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
         {DefaultNotation(pathRef.current,settings.notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd)}
         {IDEFZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
-        {sub01(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {subDP(pathRef.current,settings.notation, subtypevar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {subDT(pathRef.current,settings.notation, subtypevar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {subOT(pathRef.current,settings.notation, subtypevar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {subOP(pathRef.current,settings.notation, subtypevar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
       </g>
 
       <SideSheet
