@@ -21,8 +21,28 @@ export default function Relationship({ data }) {
   let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
-  let cardinalityvar;
 
+  const formats = {
+    notation: {
+      default:  {
+        one_to_one: DefaultNotation,
+        one_to_many: DefaultNotation,
+        many_to_one: DefaultNotation,
+      },
+      crows_foot: {
+        one_to_one: CrowOO,
+        one_to_many: CrowOM,
+        many_to_one: CrowOM,
+      },
+      idef1x: {
+        one_to_one: IDEFZM,
+        one_to_many: IDEFZM,
+        many_to_one: IDEFZM,
+      },
+    }
+  }
+
+  let format;
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
@@ -33,8 +53,8 @@ export default function Relationship({ data }) {
       } else {
         cardinalityStart = "(1,*)";
         cardinalityEnd = "(1,1)";
-        cardinalityvar="1";
       }
+      format = formats.notation[settings.notation].many_to_one;
       break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
@@ -44,8 +64,8 @@ export default function Relationship({ data }) {
       } else {
         cardinalityStart = "(1,1)";
         cardinalityEnd = "(1,*)";
-        cardinalityvar="2";
       }
+      format = formats.notation[settings.notation].one_to_many;
       break;
     case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
@@ -55,10 +75,11 @@ export default function Relationship({ data }) {
       } else {
         cardinalityStart = "(1,1)";
         cardinalityEnd = "(1,1)";
-        cardinalityvar="3";
       }
+      format = formats.notation[settings.notation].one_to_one;
       break;
     default:
+      format = formats.default.one_to_one;
       break;
   }
 
@@ -140,11 +161,7 @@ export default function Relationship({ data }) {
           cursor="pointer"
         />
 
-        {CrowOM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
-        {CrowOO(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
-        {CrowZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
-        {DefaultNotation(pathRef.current,settings.notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd)}
-        {IDEFZM(pathRef.current,settings.notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd)}
+        {format(pathRef.current, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY, direction, cardinalityStart, cardinalityEnd)}
       </g>
 
       <SideSheet

@@ -1,6 +1,6 @@
-export function CrowOM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+export function CrowOM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
     return(
-        pathRef && notation === 'crows_foot' && (cardinalityvar==2)  &&(
+        pathRef &&(
             <>
               <line
                 x1={cardinalityEndX-(20*direction)}
@@ -72,9 +72,9 @@ export function CrowOM(pathRef, notation, cardinalityvar, cardinalityEndX, cardi
     )
 }
 
-export function CrowOO(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalitySart, cardinalityEnd){
+export function CrowOO(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalitySart, cardinalityEnd){
     return(
-        pathRef && notation === 'crows_foot' && cardinalityvar==3  &&(
+        pathRef && (
             <>
             <line
               x1={cardinalityEndX-(15*direction)}
@@ -140,9 +140,9 @@ export function CrowOO(pathRef, notation, cardinalityvar, cardinalityEndX, cardi
 }
 
 
-export function CrowZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+export function CrowZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
   return(
-      pathRef && notation === 'crows_foot' && (cardinalityvar==1)  &&(
+      pathRef &&(
           <>
             <circle
               cx={cardinalityEndX-24}
@@ -214,9 +214,9 @@ export function CrowZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardi
   )
 }
 
-export function DefaultNotation(pathRef, notation, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  cardinalityStart, cardinalityEnd){
+export function DefaultNotation(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY, direction, cardinalityStart, cardinalityEnd){
   return(
-      pathRef && notation === 'default' && (
+      pathRef && (
         <>
             <circle
               cx={cardinalityStartX}
@@ -257,9 +257,9 @@ export function DefaultNotation(pathRef, notation, cardinalityEndX, cardinalityE
   )
 }
 
-export function IDEFZM(pathRef, notation, cardinalityvar, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+export function IDEFZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
   return(
-      pathRef && notation === 'idef1x' && (cardinalityvar==1)  &&(
+      pathRef && (
           <>
             <circle
               cx={cardinalityEndX-(3*direction)}
