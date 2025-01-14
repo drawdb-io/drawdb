@@ -435,6 +435,7 @@ export default function Canvas() {
         tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
       }_fk`,
       id: relationships.length,
+      subtype: false,
     };
     delete newRelationship.startX;
     delete newRelationship.startY;

@@ -1,4 +1,4 @@
-import { Row, Col, Select, Button, Popover, Table } from "@douyinfe/semi-ui";
+import { Row, Col, Select, Button, Popover, Table, Checkbox } from "@douyinfe/semi-ui";
 import {
   IconDeleteStroked,
   IconLoopTextStroked,
@@ -97,6 +97,30 @@ export default function RelationshipInfo({ data }) {
     );
   };
 
+  const toggleSubtype = () => {
+    const prevVal = data.subtype;
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.RELATIONSHIP,
+        rid: data.id,
+        undo: { subtype: data.subtype },
+        redo: { subtype: !data.subtype },
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[subtype]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev.map((e, idx) =>
+        idx === data.id ? { ...e, subtype: !prevVal } : e,
+      ),
+    );
+  };
+
   const changeConstraint = (key, value) => {
     const undoKey = `${key}Constraint`;
     setUndoStack((prev) => [
@@ -180,6 +204,19 @@ export default function RelationshipInfo({ data }) {
         className="w-full"
         onChange={changeCardinality}
       />
+      <Row gutter={6} className="my-3">
+        <Col span={12}>
+        <div className="font-semibold my-1" >{'Subtype'}:
+        </div>
+        </Col>
+        <Col span={12}>
+          <Checkbox
+            checked={data.subtype}
+            onChange={toggleSubtype}
+          />
+        </Col>
+      </Row>
+      {console.log(data)}
       <Row gutter={6} className="my-3">
         <Col span={12}>
           <div className="font-semibold">{t("on_update")}: </div>
