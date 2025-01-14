@@ -34,6 +34,13 @@ export const Cardinality = {
   MANY_TO_ONE: "many_to_one",
 };
 
+export const SubtypeRestriction = {
+  DISJOINT_TOTAL: "disjoint_total",
+  DISJOINT_PARTIAL: "disjoint_partial",
+  OVERLAPPING_TOTAL: "overlapping_total",
+  OVERLAPPING_PARTIAL: "overlapping_partial",
+};
+
 export const Constraint = {
   NONE: "No action",
   RESTRICT: "Restrict",
