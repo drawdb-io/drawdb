@@ -75,6 +75,7 @@ export default function TypesContextProvider({ children }) {
         addType,
         updateType,
         deleteType,
+        typesCount: types.length,
       }}
     >
       {children}

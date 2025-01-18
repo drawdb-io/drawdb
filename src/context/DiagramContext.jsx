@@ -262,6 +262,8 @@ export default function DiagramContextProvider({ children }) {
         deleteRelationship,
         database,
         setDatabase,
+        tablesCount: tables.length,
+        relationshipsCount: relationships.length,
       }}
     >
       {children}
