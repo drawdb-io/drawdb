@@ -27,7 +27,7 @@ export default function RelationshipsTab() {
               ? `${selectedElement.id}`
               : ""
           }
-          keepDOM
+          keepDOM={false}
           lazyRender
           onChange={(k) =>
             setSelectedElement((prev) => ({

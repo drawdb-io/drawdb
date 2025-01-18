@@ -62,6 +62,7 @@ export default function SidePanel({ width, resize, setResize }) {
             type="card"
             activeKey={selectedElement.currentTab}
             lazyRender
+            keepDOM={false}
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }

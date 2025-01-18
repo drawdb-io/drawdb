@@ -160,7 +160,7 @@ export default function TableInfo({ data }) {
         >
           <Collapse
             activeKey={indexActiveKey}
-            keepDOM
+            keepDOM={false}
             lazyRender
             onChange={(itemKey) => setIndexActiveKey(itemKey)}
             accordion
@@ -187,7 +187,7 @@ export default function TableInfo({ data }) {
         style={{ marginTop: "12px", marginBottom: "12px" }}
         headerLine={false}
       >
-        <Collapse keepDOM lazyRender>
+        <Collapse keepDOM={false} lazyRender>
           <Collapse.Panel header={t("comment")} itemKey="1">
             <TextArea
               field="comment"

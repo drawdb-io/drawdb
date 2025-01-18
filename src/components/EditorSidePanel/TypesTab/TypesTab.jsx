@@ -49,7 +49,7 @@ export default function TypesTab() {
               ? `${selectedElement.id}`
               : ""
           }
-          keepDOM
+          keepDOM={false}
           lazyRender
           onChange={(id) =>
             setSelectedElement((prev) => ({

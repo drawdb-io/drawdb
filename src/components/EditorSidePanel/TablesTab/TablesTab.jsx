@@ -31,7 +31,7 @@ export default function TablesTab() {
               ? `${selectedElement.id}`
               : ""
           }
-          keepDOM
+          keepDOM={false}
           lazyRender
           onChange={(k) =>
             setSelectedElement((prev) => ({
