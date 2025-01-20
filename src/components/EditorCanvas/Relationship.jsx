@@ -1,10 +1,17 @@
 import { useRef } from "react";
-import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import {
+  Cardinality,
+  darkBgTheme,
+  ObjectType,
+  Tab,
+} from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
+
+const labelFontSize = 16;
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
@@ -12,7 +19,11 @@ export default function Relationship({ data }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
+
+  const theme = localStorage.getItem("theme");
+
   const pathRef = useRef();
+  const labelRef = useRef();
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -42,11 +53,21 @@ export default function Relationship({ data }) {
   let cardinalityEndX = 0;
   let cardinalityStartY = 0;
   let cardinalityEndY = 0;
+  let labelX = 0;
+  let labelY = 0;
+
+  let labelWidth = labelRef.current?.getBBox().width ?? 0;
+  let labelHeight = labelRef.current?.getBBox().height ?? 0;
 
   const cardinalityOffset = 28;
 
   if (pathRef.current) {
     const pathLength = pathRef.current.getTotalLength();
+
+    const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
+    labelX = labelPoint.x - (labelWidth ?? 0) / 2;
+    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
+
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
@@ -105,6 +126,28 @@ export default function Relationship({ data }) {
           strokeWidth={2}
           cursor="pointer"
         />
+        {settings.showRelationshipLabels && (
+          <>
+            <rect
+              x={labelX - 2}
+              y={labelY - labelFontSize}
+              fill={theme === "dark" ? darkBgTheme : "white"}
+              width={labelWidth + 4}
+              height={labelHeight}
+            />
+            <text
+              x={labelX}
+              y={labelY}
+              fill={theme === "dark" ? "lightgrey" : "#333"}
+              fontSize={labelFontSize}
+              fontWeight={500}
+              ref={labelRef}
+              className="group-hover:fill-sky-700"
+            >
+              {data.name}
+            </text>
+          </>
+        )}
         {pathRef.current && settings.showCardinality && (
           <>
             <circle

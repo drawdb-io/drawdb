@@ -3,6 +3,7 @@ import {
   Action,
   Cardinality,
   Constraint,
+  darkBgTheme,
   ObjectType,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
@@ -498,7 +499,7 @@ export default function Canvas() {
         className="w-full h-full"
         style={{
           cursor: pointer.style,
-          backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
+          backgroundColor: theme === "dark" ? darkBgTheme : "white",
         }}
       >
         {settings.showGrid && (

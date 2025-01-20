@@ -243,6 +243,7 @@ const en = {
     failed_to_load: "Failed to load. Make sure the link is correct.",
     share_info:
       "* Sharing this link will not create a live real-time collaboration session.",
+    show_relationship_labels: "Show relationship labels",
   },
 };
 
