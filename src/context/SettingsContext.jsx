@@ -9,6 +9,7 @@ const defaultSettings = {
   autosave: true,
   panning: true,
   showCardinality: true,
+  notation: "default",
   tableWidth: tableWidth,
   showDebugCoordinates: false,
 };

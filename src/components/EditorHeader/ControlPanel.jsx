@@ -1220,17 +1220,37 @@ export default function ControlPanel({
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
       },
-      show_cardinality: {
-        state: settings.showCardinality ? (
-          <i className="bi bi-toggle-on" />
-        ) : (
-          <i className="bi bi-toggle-off" />
-        ),
-        function: () =>
-          setSettings((prev) => ({
-            ...prev,
-            showCardinality: !prev.showCardinality,
-          })),
+      // show_cardinality: {
+      //   state: settings.showCardinality ? (
+      //     <i className="bi bi-toggle-on" />
+      //   ) : (
+      //     <i className="bi bi-toggle-off" />
+      //   ),
+      //   function: () =>
+      //     setSettings((prev) => ({
+      //       ...prev,
+      //       showCardinality: !prev.showCardinality,
+      //     })),
+      // },
+      notation: {
+        children: [
+          {
+            default_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: "default" }));
+            },
+          },
+          {
+            crows_foot_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: "crows_foot" }));
+            },
+          },
+          {
+            idef1x_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: "idef1x" }));
+            },
+          },
+        ],
+        function: () => {},
       },
       show_debug_coordinates: {
         state: settings.showDebugCoordinates ? (
