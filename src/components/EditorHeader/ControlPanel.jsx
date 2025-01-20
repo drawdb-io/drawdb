@@ -105,6 +105,7 @@ export default function ControlPanel({
     setRelationships,
     addRelationship,
     deleteRelationship,
+    updateRelationship,
     database,
   } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
@@ -275,9 +276,7 @@ export default function ControlPanel({
           updateTable(a.tid, a.undo);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e)),
-        );
+        updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
           updateType(a.tid, {
@@ -455,9 +454,7 @@ export default function ControlPanel({
           updateTable(a.tid, a.redo, false);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e)),
-        );
+        updateRelationship(a.rid, a.redo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
           updateType(a.tid, {
