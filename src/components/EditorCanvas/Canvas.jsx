@@ -431,9 +431,9 @@ export default function Canvas() {
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `${tables[linkingLine.startTableId].name}_${
+      name: `fk_${tables[linkingLine.startTableId].name}_${
         tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_fk`,
+      }_${tables[hoveredTable.tableId].name}`,
       id: relationships.length,
     };
     delete newRelationship.startX;

@@ -61,9 +61,9 @@ export default function RelationshipInfo({ data }) {
         idx === data.id
           ? {
               ...e,
-              name: `${tables[e.startTableId].name}_${
-                tables[e.startTableId].fields[e.startFieldId].name
-              }_fk`,
+              name: `fk_${tables[e.endTableId].name}_${
+                tables[e.endTableId].fields[e.endFieldId].name
+              }_${tables[e.startTableId].name}`,
               startTableId: e.endTableId,
               startFieldId: e.endFieldId,
               endTableId: e.startTableId,
