@@ -23,6 +23,7 @@ export const noteThemes = [
 
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
+export const darkBgTheme = "#16161A";
 export const tableHeaderHeight = 50;
 export const tableWidth = 220;
 export const tableFieldHeight = 36;
