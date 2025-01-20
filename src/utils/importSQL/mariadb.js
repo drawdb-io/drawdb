@@ -126,7 +126,8 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
               );
               if (startFieldId === -1) return;
 
-              relationship.name = startTable + "_" + startField + "_fk";
+              relationship.name =
+                "fk_" + startTable + "_" + startField + "_" + endTable;
               relationship.startTableId = startTableId;
               relationship.endTableId = endTableId;
               relationship.endFieldId = endFieldId;
@@ -187,7 +188,8 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
       e.expr.forEach((expr) => {
         if (
           expr.action === "add" &&
-          expr.create_definitions.constraint_type.toLowerCase() === "foreign key"
+          expr.create_definitions.constraint_type.toLowerCase() ===
+            "foreign key"
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
@@ -230,7 +232,8 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
           );
           if (startFieldId === -1) return;
 
-          relationship.name = startTable + "_" + startField + "_fk";
+          relationship.name =
+            "fk_" + startTable + "_" + startField + "_" + endTable;
           relationship.startTableId = startTableId;
           relationship.startFieldId = startFieldId;
           relationship.endTableId = endTableId;
