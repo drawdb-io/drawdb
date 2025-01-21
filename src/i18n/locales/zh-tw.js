@@ -235,6 +235,7 @@ const zh_tw = {
     declare_array: "宣告陣列",
     empty_index_name: "在表格 '{{tableName}}' 中宣告了一個沒有名稱的索引",
     didnt_find_diagram: "糟糕！找不到圖表。",
+    unsigned: "無符號",
   },
 };
 
