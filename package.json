@@ -3,9 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "main.cjs",
+  "description": "Free, simple, and intuitive online database design tool and SQL generator.",
+  "author": "1ilit",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "electron": "electron .",
+    "build": "vite build && electron-builder",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -22,6 +26,7 @@
     "classnames": "^2.5.1",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
+    "electron-is": "^3.0.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.18.0",
     "html-to-image": "^1.11.11",
@@ -46,6 +51,8 @@
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
@@ -55,6 +62,43 @@
     "prettier": "3.2.5",
     "tailwindcss": "^3.3.6",
     "vite": "^5.4.1"
+  },
+  "build": {
+    "appId": "com.drawDB.id",
+    "productName": "drawDB",
+    "directories": {
+      "output": "install",
+      "buildResources": "public"
+    },
+    "files": [
+      "dist/**/*",
+      "main.cjs",
+      "package.json",
+      "node_modules/**/*",
+      "public/icon.ico"
+    ],
+    "win": {
+      "icon": "public/icon.ico",
+      "target": "nsis",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "drawDB"
+    },
+    "mac": {
+      "icon": "public/icon.icns",
+      "target": "dmg"
+    },
+    "linux": {
+      "icon": "public/icon.png",
+      "target": "AppImage"
+    },
+    "publish": null
   },
   "overrides": {
     "follow-redirects": "^1.15.4"
