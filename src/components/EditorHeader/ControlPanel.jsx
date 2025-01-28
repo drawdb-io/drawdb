@@ -1107,7 +1107,7 @@ export default function ControlPanel({
           title: t("clear"),
           message: t("are_you_sure_clear"),
         },
-        function: () => {
+        function: async () => {
           setTables([]);
           setRelationships([]);
           setAreas([]);
@@ -1116,6 +1116,20 @@ export default function ControlPanel({
           setTypes([]);
           setUndoStack([]);
           setRedoStack([]);
+
+          if (!diagramId) {
+            console.error("Something went wrong.");
+            return;
+          }
+
+          db.table("diagrams")
+            .delete(diagramId)
+            .then(() => {
+              console.info('Deleted diagram successfully.')
+            })
+            .catch((error) => {
+              console.error(`Error deleting records with gistId '${diagramId}':`, error);
+            });
         },
       },
       edit: {
