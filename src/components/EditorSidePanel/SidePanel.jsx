@@ -92,31 +92,12 @@ export default function SidePanel({ width, resize, setResize }) {
         style={{ width: `${width}px` }}
       >
         <div className="h-full flex-1 overflow-y-auto">
-<<<<<<< HEAD
-          <Tabs
-            type="card"
-            activeKey={selectedElement.currentTab}
-            lazyRender
-            keepDOM={false}
-            onChange={(key) =>
-              setSelectedElement((prev) => ({ ...prev, currentTab: key }))
-            }
-            collapsible
-            tabBarStyle={{ direction: "ltr" }}
-          >
-            {tabList.length &&
-              tabList.map((tab) => (
-                <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                  <div className="p-2">{tab.component}</div>
-                </TabPane>
-              ))}
-          </Tabs>
-=======
           {layout.dbmlEditor ? (
             <Tabs
               type="card"
               activeKey={selectedElement.currentTab}
               lazyRender
+              keepDOM={false}
               onChange={(key) =>
                 setSelectedElement((prev) => ({ ...prev, currentTab: key }))
               }
@@ -137,7 +118,6 @@ export default function SidePanel({ width, resize, setResize }) {
           ) : (
             <DBMLEditor />
           )}
->>>>>>> feb41e8 (Add dbml editor to sidepanel)
         </div>
         {layout.issues && (
           <div className="mt-auto border-t-2 border-color shadow-inner">

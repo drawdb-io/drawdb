@@ -1444,7 +1444,7 @@ export default function ControlPanel({
   function toolbar() {
     return (
       <div
-        className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme"
+        className="py-1.5 px-5 flex justify-between items-center rounded-lg my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme"
         style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       >
         <div className="flex justify-start items-center">

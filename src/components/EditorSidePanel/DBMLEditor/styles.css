@@ -9,3 +9,15 @@
 .ͼ1o .cm-gutters {
   background-color: var(--semi-color-bg-0);
 }
+
+.ͼ1.cm-focused {
+  outline: none;
+}
+
+.ͼ16 {
+  background-color: #1e1e1e00;
+}
+
+.ͼ16 .cm-gutters {
+  background-color: rgba(var(--semi-grey-1), 0.3);
+}

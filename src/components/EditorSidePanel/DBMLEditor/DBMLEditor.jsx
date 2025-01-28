@@ -2,28 +2,28 @@ import { useEffect, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
 import { languageExtension } from "../../../data/editorExtensions";
-import { useSettings } from "../../../hooks";
+import { useDiagram, useSettings } from "../../../hooks";
 import { useDebounceValue } from "usehooks-ts";
-import { Parser } from "@dbml/core";
 import "./styles.css";
-
-const parser = new Parser();
+import { fromDBML } from "../../../utils/dbml/fromDBML";
 
 export default function DBMLEditor() {
   const { settings } = useSettings();
+  const { setTables } = useDiagram();
   const [value, setValue] = useState("");
   const [debouncedValue] = useDebounceValue(value, 1000);
 
   useEffect(() => {
     if (debouncedValue) {
       try {
-        const database = parser.parse(debouncedValue, "dbml");
-        console.log(database);
+        const { tables } = fromDBML(debouncedValue);
+        console.log(tables);
+        setTables(tables);
       } catch (e) {
-        console.log(e);
+        console.log("error: ", e);
       }
     }
-  }, [debouncedValue]);
+  }, [debouncedValue, setTables]);
 
   return (
     <div>

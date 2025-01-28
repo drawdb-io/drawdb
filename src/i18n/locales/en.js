@@ -243,11 +243,8 @@ const en = {
     failed_to_load: "Failed to load. Make sure the link is correct.",
     share_info:
       "* Sharing this link will not create a live real-time collaboration session.",
-<<<<<<< HEAD
     show_relationship_labels: "Show relationship labels",
-=======
     dbml_editor: "DBML editor",
->>>>>>> feb41e8 (Add dbml editor to sidepanel)
   },
 };
 
