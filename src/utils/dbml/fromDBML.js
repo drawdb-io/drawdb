@@ -3,34 +3,6 @@ import { arrangeTables } from "../arrangeTables";
 
 const parser = new Parser();
 
-/**
-
-{
-      "id": 0,
-      "name": "some_table",
-      "x": 812.9083754222163,
-      "y": 400.3451698134321,
-      "fields": [
-        {
-          "name": "id",
-          "type": "INT",
-          "default": "",
-          "check": "",
-          "primary": true,
-          "unique": true,
-          "notNull": true,
-          "increment": true,
-          "comment": "",
-          "id": 0
-        }
-      ],
-      "comment": "",
-      "indices": [],
-      "color": "#175e7a",
-      "key": 1737222753837
-    }
- */
-
 export function fromDBML(src) {
   const ast = parser.parse(src, "dbml");
 

@@ -115,3 +115,8 @@ export const DB = {
   MARIADB: "mariadb",
   GENERIC: "generic",
 };
+
+export const ErrorType = {
+  DIAGRAM: "diagram",
+  DBML: "dbml",
+};

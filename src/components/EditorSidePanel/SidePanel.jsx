@@ -16,7 +16,7 @@ import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
 import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { databases } from "../../data/databases";
 import EnumsTab from "./EnumsTab/EnumsTab";
 import { isRtl } from "../../i18n/utils/rtl";
@@ -32,6 +32,7 @@ export default function SidePanel({ width, resize, setResize }) {
   const { typesCount } = useTypes();
   const { enumsCount } = useEnums();
   const { t } = useTranslation();
+  const [issues, setIssues] = useState({ diagram: [], dbml: [] });
 
   const tabList = useMemo(() => {
     const tabs = [
@@ -116,12 +117,12 @@ export default function SidePanel({ width, resize, setResize }) {
                 ))}
             </Tabs>
           ) : (
-            <DBMLEditor />
+            <DBMLEditor setIssues={setIssues}/>
           )}
         </div>
         {layout.issues && (
           <div className="mt-auto border-t-2 border-color shadow-inner">
-            <Issues />
+            <Issues issues={issues} setIssues={setIssues} />
           </div>
         )}
       </div>

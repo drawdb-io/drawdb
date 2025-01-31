@@ -7,7 +7,7 @@ import { useDebounceValue } from "usehooks-ts";
 import "./styles.css";
 import { fromDBML } from "../../../utils/dbml/fromDBML";
 
-export default function DBMLEditor() {
+export default function DBMLEditor({ setIssues }) {
   const { settings } = useSettings();
   const { setTables } = useDiagram();
   const [value, setValue] = useState("");
@@ -20,10 +20,10 @@ export default function DBMLEditor() {
         console.log(tables);
         setTables(tables);
       } catch (e) {
-        console.log("error: ", e);
+        setIssues((prev) => ({ ...prev, dbml: e.diags.map((x) => x.message) }));
       }
     }
-  }, [debouncedValue, setTables]);
+  }, [debouncedValue, setTables, setIssues]);
 
   return (
     <div>
