@@ -94,6 +94,8 @@ export default function SidePanel({ width, resize, setResize }) {
       >
         <div className="h-full flex-1 overflow-y-auto">
           {layout.dbmlEditor ? (
+            <DBMLEditor setIssues={setIssues} />
+          ) : (
             <Tabs
               type="card"
               activeKey={selectedElement.currentTab}
@@ -116,8 +118,6 @@ export default function SidePanel({ width, resize, setResize }) {
                   </TabPane>
                 ))}
             </Tabs>
-          ) : (
-            <DBMLEditor setIssues={setIssues}/>
           )}
         </div>
         {layout.issues && (

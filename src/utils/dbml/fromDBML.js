@@ -28,7 +28,7 @@ export function fromDBML(src) {
         field.default = column.dbdefault ?? "";
         field.check = "";
         field.primary = !!column.pk;
-        field.unique = true;
+        field.unique = !!column.pk;
         field.notNull = !!column.not_null;
         field.increment = !!column.increment;
         field.comment = column.note ?? "";

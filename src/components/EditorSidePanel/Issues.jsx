@@ -2,7 +2,13 @@ import { useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
-import { useEnums, useSettings, useDiagram, useTypes } from "../../hooks";
+import {
+  useEnums,
+  useSettings,
+  useDiagram,
+  useTypes,
+  useLayout,
+} from "../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function Issues({ issues, setIssues }) {
@@ -11,6 +17,7 @@ export default function Issues({ issues, setIssues }) {
   const { settings } = useSettings();
   const { enums } = useEnums();
   const { tables, relationships, database } = useDiagram();
+  const { layout } = useLayout();
 
   useEffect(() => {
     const findIssues = async () => {
@@ -61,7 +68,7 @@ export default function Issues({ issues, setIssues }) {
             <div className="mb-1">{t("strict_mode_is_on_no_issues")}</div>
           ) : issues.dbml.length > 0 || issues.diagram.length > 0 ? (
             <>
-              {!settings.dbmlEditor &&
+              {!layout.dbmlEditor &&
                 issues.dbml.map((e, i) => (
                   <div key={i} className="py-1 flex gap-2">
                     <i className="opacity-60 bi bi-braces" />
