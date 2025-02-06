@@ -73,6 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import { jsonToDBML } from "../../utils/exportAs/dbml";
 
 export default function ControlPanel({
   diagramId,
@@ -1083,6 +1084,26 @@ export default function ControlPanel({
                 ...prev,
                 data: result,
                 extension: "md",
+              }));
+            },
+          },
+          {
+            DBML: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToDBML({
+                tables: tables,
+                references: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
+                ...(databases[database].hasTypes && { types: types }),
+                ...(databases[database].hasEnums && { enums: enums }),
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "dbml",
               }));
             },
           },
