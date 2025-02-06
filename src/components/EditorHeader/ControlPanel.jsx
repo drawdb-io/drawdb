@@ -73,6 +73,8 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import DatabasesSwitcher from "./DatabasesSwitcher";
+import { convertTableSchema } from "../../utils/typesMappings";
 
 export default function ControlPanel({
   diagramId,
@@ -80,6 +82,7 @@ export default function ControlPanel({
   title,
   setTitle,
   lastSaved,
+  setLastSaved,
 }) {
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
@@ -108,6 +111,7 @@ export default function ControlPanel({
     updateRelationship,
     database,
   } = useDiagram();
+  const [prevDatabase, setPrevDatabase] = useState(database);
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
@@ -920,8 +924,9 @@ export default function ControlPanel({
         function: () => {
           if (database === DB.GENERIC) return;
           setModal(MODAL.CODE);
+          const newTables = tables.map(table =>  convertTableSchema(table, prevDatabase, database));
           const src = exportSQL({
-            tables: tables,
+            tables: newTables,
             references: relationships,
             types: types,
             database: database,
@@ -1652,6 +1657,11 @@ export default function ControlPanel({
                   title={databases[database].name + " diagram"}
                 />
               )}
+              <DatabasesSwitcher
+                setLastSaved={setLastSaved}
+                diagramId={diagramId}
+                setPrevDatabase={setPrevDatabase}
+              />
               <div
                 className="text-xl  me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
