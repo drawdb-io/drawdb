@@ -137,6 +137,43 @@ export function getTypeString(
   }
 }
 
+export function jsonToOracle(obj) {
+  return `${obj.tables
+    .map(
+      (table) =>
+        `CREATE TABLE "${table.name}" (\n${table.fields
+          .map(
+            (field) =>
+              `"${field.name}" ${getTypeString(field, obj.database, "oracle")}${
+                field.notNull ? " NOT NULL" : ""
+              }${field.unique ? " UNIQUE" : ""}${
+                field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""
+              }${field.check ? ` CHECK(${field.check})` : ""}`,
+          )
+          .join(",\n")}${
+          table.fields.filter((f) => f.primary).length > 0
+            ? `,\nPRIMARY KEY(${table.fields
+                .filter((f) => f.primary)
+                .map((f) => `"${f.name}"`)
+                .join(", ")})`
+            : ""
+        }\n);\n${table.indices
+          .map(
+            (i) =>
+              `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name}"\nON "${table.name}" (${i.fields
+                .map((f) => `"${f}"`)
+                .join(", ")});`,
+          )
+          .join("\n")}`,
+    )
+    .join("\n")}\n${obj.references
+    .map(
+      (r) =>
+        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${obj.tables[r.startTableId].fields[r.startFieldId].name}") REFERENCES "${obj.tables[r.endTableId].name}"("${obj.tables[r.endTableId].fields[r.endFieldId].name}")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
+    )
+    .join("\n")}`;
+}
+
 export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
