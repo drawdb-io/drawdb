@@ -62,6 +62,11 @@
   color: inherit;
 }
 
+:disabled {
+  /* inherit Semi's cursor style for disabled elements */
+  cursor: inherit;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
