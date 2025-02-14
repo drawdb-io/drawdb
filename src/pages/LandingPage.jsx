@@ -16,6 +16,7 @@ import FadeIn from "../animations/FadeIn";
 import axios from "axios";
 import { languages } from "../i18n/i18n";
 import { Tweet } from "react-tweet";
+import { socials } from "../data/socials";
 
 function shortenNumber(number) {
   if (number < 1000) return number;
@@ -255,7 +256,7 @@ export default function LandingPage() {
           <div className="md:block md:space-y-3 flex gap-3 justify-center">
             <a
               className="inline-block"
-              href="https://github.com/drawdb-io/drawdb"
+              href={socials.github}
               target="_blank"
               rel="noreferrer"
             >
@@ -268,7 +269,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://discord.gg/BrjZgNrmR6"
+              href={socials.discord}
               target="_blank"
               rel="noreferrer"
             >
@@ -281,7 +282,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://x.com/drawdb_"
+              href={socials.twitter}
               target="_blank"
               rel="noreferrer"
             >
@@ -363,7 +364,10 @@ const features = [
     content: (
       <div>
         Speed up development with keyboard shortuts. See all available shortcuts
-        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
+        <Link
+          to={`${socials.docs}/shortcuts`}
+          className="ms-1.5 text-blue-500 hover:underline"
+        >
           here
         </Link>
         .
