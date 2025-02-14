@@ -73,6 +73,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import { socials } from "../../data/socials";
 
 export default function ControlPanel({
   diagramId,
@@ -1341,12 +1342,15 @@ export default function ControlPanel({
       },
     },
     help: {
-      shortcuts: {
-        function: () => window.open("/shortcuts", "_blank"),
+      docs: {
+        function: () => window.open(`${socials.docs}`, "_blank"),
         shortcut: "Ctrl+H",
       },
+      shortcuts: {
+        function: () => window.open(`${socials.docs}/shortcuts`, "_blank"),
+      },
       ask_on_discord: {
-        function: () => window.open("https://discord.gg/BrjZgNrmR6", "_blank"),
+        function: () => window.open(socials.discord, "_blank"),
       },
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
@@ -1382,7 +1386,7 @@ export default function ControlPanel({
   });
   useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
   useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
-  useHotkeys("ctrl+h, meta+h", () => window.open("/shortcuts", "_blank"), {
+  useHotkeys("ctrl+h, meta+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
   useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });

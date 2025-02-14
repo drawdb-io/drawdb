@@ -3,7 +3,6 @@ import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
 import Survey from "./pages/Survey";
 import BugReport from "./pages/BugReport";
-import Shortcuts from "./pages/Shortcuts";
 import Templates from "./pages/Templates";
 import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
@@ -30,14 +29,6 @@ export default function App() {
             element={
               <ThemedPage>
                 <Survey />
-              </ThemedPage>
-            }
-          />
-          <Route
-            path="/shortcuts"
-            element={
-              <ThemedPage>
-                <Shortcuts />
               </ThemedPage>
             }
           />
