@@ -52,3 +52,10 @@ docker run -p 3000:80 drawdb
 ```
 
 Set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample` for the survey and bug report forms.
+
+### Issues
+
+The width of the tables is not dynamic, causing the tables to overlap when the atrribute names are too long. 
+It is not a problem since the configuration allows us to adjust the width of the tables. Therefore, currently 
+only the width constant was modified. If the user requires the width to be dynamic, it is necessary to implement a 
+function that calculates the width of the table based on the length of the attribute names.
