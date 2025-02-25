@@ -101,16 +101,29 @@ export default function Table(props) {
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2">
-                <Button
-                  type="tertiary"
-                  size="small"
-                  style={{
-                    backgroundColor: "#808080b5",
-                    color: "black",
-                    marginRight: "6px",
-                  }}
-                  onClick={() => setShowDataType(!showDataType)}
-                />
+                <Popover
+                  content={
+                    <div className=" popover-theme flex justify-between items-center pb-2" style={{ direction: "ltr" }}>
+                      <p className="me-4 font-bold">{t("Click to toggle datatype visibility")}</p>
+                    </div>
+                  }
+                  trigger="hover"
+                  position="top"
+                  showArrow
+                >
+                  <Button
+
+                    type="tertiary"
+                    size="small"
+                    // icon={<IconInfoCircle />}
+                    style={{
+                      backgroundColor: "#808080b5",
+                      color: "black",
+                      marginRight: "6px",
+                    }}
+                    onClick={() => setShowDataType(!showDataType)}
+                  />
+                </Popover>
                 <Button
                   icon={<IconEdit />}
                   size="small"
