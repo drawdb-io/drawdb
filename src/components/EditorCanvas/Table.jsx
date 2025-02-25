@@ -12,6 +12,8 @@ import {
   IconMinus,
   IconDeleteStroked,
   IconKeyStroked,
+  IconEyeOpened,
+  IconEyeClosedSolid
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
@@ -115,10 +117,10 @@ export default function Table(props) {
 
                     type="tertiary"
                     size="small"
-                    // icon={<IconInfoCircle />}
+                    icon={showDataType ? <IconEyeOpened /> : <IconEyeClosedSolid />}
                     style={{
-                      backgroundColor: "#808080b5",
-                      color: "black",
+                      backgroundColor: "#2f68adb3",
+                      color: "white",
                       marginRight: "6px",
                     }}
                     onClick={() => setShowDataType(!showDataType)}
