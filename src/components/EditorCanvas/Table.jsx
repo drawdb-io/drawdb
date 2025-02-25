@@ -22,6 +22,8 @@ import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
+  // show data type state
+  const [showDataType, setShowDataType] = useState(true);
   const [hoveredField, setHoveredField] = useState(-1);
   const { database } = useDiagram();
   const {
@@ -76,16 +78,14 @@ export default function Table(props) {
         <div
           onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${
-                 selectedElement.id === tableData.id &&
-                 selectedElement.element === ObjectType.TABLE
-                   ? "border-solid border-blue-500"
-                   : "border-zinc-500"
-               }`}
+               select-none rounded-lg w-full ${settings.mode === "light"
+              ? "bg-zinc-100 text-zinc-800"
+              : "bg-zinc-800 text-zinc-200"
+            } ${selectedElement.id === tableData.id &&
+              selectedElement.element === ObjectType.TABLE
+              ? "border-solid border-blue-500"
+              : "border-zinc-500"
+            }`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -93,15 +93,24 @@ export default function Table(props) {
             style={{ backgroundColor: tableData.color }}
           />
           <div
-            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
-              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
-            }`}
+            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
+              }`}
           >
             <div className=" px-3 overflow-hidden text-ellipsis whitespace-nowrap">
               {tableData.name}
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2">
+                <Button
+                  type="tertiary"
+                  size="small"
+                  style={{
+                    backgroundColor: "#808080b5",
+                    color: "black",
+                    marginRight: "6px",
+                  }}
+                  onClick={() => setShowDataType(!showDataType)}
+                />
                 <Button
                   icon={<IconEdit />}
                   size="small"
@@ -126,9 +135,8 @@ export default function Table(props) {
                       </div>
                       <div>
                         <strong
-                          className={`${
-                            tableData.indices.length === 0 ? "" : "block"
-                          }`}
+                          className={`${tableData.indices.length === 0 ? "" : "block"
+                            }`}
                         >
                           {t("indices")}:
                         </strong>{" "}
@@ -139,11 +147,10 @@ export default function Table(props) {
                             {tableData.indices.map((index, k) => (
                               <div
                                 key={k}
-                                className={`flex items-center my-1 px-2 py-1 rounded ${
-                                  settings.mode === "light"
-                                    ? "bg-gray-100"
-                                    : "bg-zinc-800"
-                                }`}
+                                className={`flex items-center my-1 px-2 py-1 rounded ${settings.mode === "light"
+                                  ? "bg-gray-100"
+                                  : "bg-zinc-800"
+                                  }`}
                               >
                                 <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
                                 <div>
@@ -202,8 +209,8 @@ export default function Table(props) {
                         {e.type +
                           ((dbToTypes[database][e.type].isSized ||
                             dbToTypes[database][e.type].hasPrecision) &&
-                          e.size &&
-                          e.size !== ""
+                            e.size &&
+                            e.size !== ""
                             ? "(" + e.size + ")"
                             : "")}
                       </p>
@@ -282,11 +289,10 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`${
-          index === tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+        className={`${index === tableData.fields.length - 1
+          ? ""
+          : "border-b border-gray-400"
+          } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
 
@@ -308,9 +314,8 @@ export default function Table(props) {
         }}
       >
         <div
-          className={`${
-            hoveredField === index ? "text-zinc-400" : ""
-          } flex items-center gap-2 overflow-hidden`}
+          className={`${hoveredField === index ? "text-zinc-400" : ""
+            } flex items-center gap-2 overflow-hidden`}
         >
           <button
             className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
@@ -362,8 +367,8 @@ export default function Table(props) {
                 {fieldData.type +
                   ((dbToTypes[database][fieldData.type].isSized ||
                     dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
+                    fieldData.size &&
+                    fieldData.size !== ""
                     ? "(" + fieldData.size + ")"
                     : "")}
               </span>
