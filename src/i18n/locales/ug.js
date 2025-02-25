@@ -1,5 +1,4 @@
 const uyghur = {
-    name: "ئۇيغۇرچە",
     name: "Uyghur",
     native_name: "ئۇيغۇرچە",
     code: "ug",
