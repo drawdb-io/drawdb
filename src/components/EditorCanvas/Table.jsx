@@ -361,17 +361,21 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span>?</span>}
-              <span>
-                {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
-                    fieldData.size &&
-                    fieldData.size !== ""
-                    ? "(" + fieldData.size + ")"
-                    : "")}
-              </span>
+              {showDataType && (
+                <>
+                  {fieldData.primary && <IconKeyStroked />}
+                  {!fieldData.notNull && <span>?</span>}
+                  <span>
+                    {fieldData.type +
+                      ((dbToTypes[database][fieldData.type].isSized ||
+                        dbToTypes[database][fieldData.type].hasPrecision) &&
+                        fieldData.size &&
+                        fieldData.size !== ""
+                        ? "(" + fieldData.size + ")"
+                        : "")}
+                  </span>
+                </>
+              )}
             </div>
           )}
         </div>
