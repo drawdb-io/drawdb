@@ -74,6 +74,7 @@ import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
+import { toDBML } from "../../utils/exportAs/dbml";
 
 export default function ControlPanel({
   diagramId,
@@ -964,6 +965,21 @@ export default function ControlPanel({
             },
           },
           {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
+                },
+              );
+              setModal(MODAL.IMG);
+            },
+          },
+          {
             JSON: () => {
               setModal(MODAL.CODE);
               const result = JSON.stringify(
@@ -988,18 +1004,18 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+            DBML: () => {
+              setModal(MODAL.CODE);
+              const result = toDBML({
+                tables,
+                relationships,
+                enums,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "dbml",
+              }));
             },
           },
           {
