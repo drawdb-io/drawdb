@@ -12,6 +12,7 @@ import { fa, persian } from "./locales/fa";
 import { hi, hindi } from "./locales/hi";
 import { uk, ukrainian } from "./locales/uk";
 import { ru, russian } from "./locales/ru";
+import { ro, romanian } from "./locales/ro";
 import { tr, turkish } from "./locales/tr";
 import { mr, marathi } from "./locales/mr";
 import { fr, french } from "./locales/fr";
@@ -51,6 +52,7 @@ export const languages = [
   marathi,
   ukrainian,
   russian,
+  romanian,
   turkish,
   french,
   punjabi,
@@ -99,6 +101,7 @@ i18n
       mr,
       uk,
       ru,
+      ro,
       tr,
       fr,
       pa,
