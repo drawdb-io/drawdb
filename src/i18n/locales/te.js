@@ -8,6 +8,7 @@ const te = {
   translation: {
     report_bug: "బగ్ నివేదించండి",
     import_from: "దిగుమతి",
+    import: "దిగుమతి",
     file: "ఫైల్",
     new: "క్రొత్త",
     new_window: "క్రొత్త విండో",

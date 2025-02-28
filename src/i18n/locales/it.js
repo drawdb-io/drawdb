@@ -8,7 +8,8 @@ const it = {
   translation: {
     report_bug: "Segnalare un bug",
     import_from: "Importa",
-    file: "File ",
+    import: "Importa",
+    file: "File",
     new: "Nuovo",
     new_window: "Nuova Finestra",
     open: "Apri",

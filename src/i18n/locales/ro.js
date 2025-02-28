@@ -8,6 +8,7 @@ const ro = {
   translation: {
     report_bug: "Raportează o eroare",
     import_from: "Import",
+    import: "Import",
     file: "Fișier",
     new: "Nou",
     new_window: "Fereastră nouă",

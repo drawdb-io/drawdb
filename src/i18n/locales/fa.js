@@ -8,6 +8,7 @@ const fa = {
   translation: {
     report_bug: "گزارش خطا",
     import_from: "وارد کردن",
+    import: "وارد کردن",
     file: "فایل",
     new: "جدید",
     new_window: "پنجره جدید",

@@ -8,6 +8,7 @@ const jp = {
   translation: {
     report_bug: "バグを報告",
     import_from: "インポート",
+    import: "インポート",
     file: "ファイル",
     new: "新規",
     new_window: "新しいウィンドウ",

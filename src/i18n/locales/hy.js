@@ -8,6 +8,7 @@ const hy = {
   translation: {
     report_bug: "Զեկուցել սխալի մասին",
     import_from: "Ներմուծել",
+    import: "Ներմուծել",
     file: "Ֆայլ",
     new: "Նոր",
     new_window: "Նոր պատուհան",

@@ -7,7 +7,8 @@ const french = {
 const fr = {
   translation: {
     report_bug: "Signaler un bug",
-    import_from: "Importer",
+    import_from: "Importer de",
+    import: "Importer",
     file: "Fichier",
     new: "Nouveau",
     new_window: "Nouvelle fenêtre",

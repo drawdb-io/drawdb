@@ -8,6 +8,7 @@ const bn = {
   translation: {
     report_bug: "বাগ রিপোর্ট করুন",
     import_from: "ইম্পোর্ট করুন",
+    import: "ইম্পোর্ট করুন",
     file: "ফাইল",
     new: "নতুন",
     new_window: "নতুন উইন্ডো",

@@ -7,6 +7,7 @@ const english = {
 const en = {
   translation: {
     report_bug: "Report a bug",
+    import: "Import",
     import_from: "Import from",
     file: "File",
     new: "New",

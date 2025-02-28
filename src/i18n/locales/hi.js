@@ -8,6 +8,7 @@ const hi = {
   translation: {
     report_bug: "बग रिपोर्ट करें",
     import_from: "इम्पोर्ट",
+    import: "इम्पोर्ट",
     file: "फ़ाइल",
     new: "नया",
     new_window: "नई विंडो",

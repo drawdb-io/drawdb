@@ -126,7 +126,13 @@ export default function ImportDiagram({
   };
 
   const loadDBMLData = (e) => {
-    setImportData(fromDBML(e.target.result));
+    try {
+      setImportData(fromDBML(e.target.result));
+    } catch (error) {
+      const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
+
+      setError({ type: STATUS.ERROR, message });
+    }
   };
 
   const getAcceptableFileTypes = () => {

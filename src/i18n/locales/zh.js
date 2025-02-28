@@ -8,6 +8,7 @@ const zh = {
   translation: {
     report_bug: "报告问题",
     import_from: "导入",
+    import: "导入",
     file: "文件",
     new: "新建",
     new_window: "在新标签中打开",

@@ -8,6 +8,7 @@ const he = {
   translation: {
     report_bug: "דווח על באג",
     import_from: "ייבוא",
+    import: "ייבוא",
     file: "קובץ",
     new: "חדש",
     new_window: "חלון חדש",

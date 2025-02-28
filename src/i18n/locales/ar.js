@@ -8,6 +8,7 @@ const ar = {
   translation: {
     report_bug: "الإبلاغ عن خطأ",
     import_from: "استيراد",
+    import: "استيراد",
     file: "ملف",
     new: "جديد",
     new_window: "نافذة جديدة",

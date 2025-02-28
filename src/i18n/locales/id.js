@@ -8,6 +8,7 @@ const id = {
   translation: {
     report_bug: "Laporkan bug",
     import_from: "Impor",
+    import: "Impor",
     file: "Berkas",
     new: "Baru",
     new_window: "Jendela baru",

@@ -8,6 +8,7 @@ const ka = {
   translation: {
     report_bug: "ದೋಷವನ್ನು ವರದಿ ಮಾಡಿ",
     import_from: "ಆಮದು",
+    import: "ಆಮದು",
     file: "ಫೈಲ್",
     new: "ಹೊಸ",
     new_window: "ಹೊಸ ಕಿಟಕಿ",

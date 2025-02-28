@@ -8,6 +8,7 @@ const tr = {
   translation: {
     report_bug: "Hata bildir",
     import_from: "İçe aktar",
+    import: "İçe aktar",
     file: "Dosya",
     new: "Yeni",
     new_window: "Yeni pencere",

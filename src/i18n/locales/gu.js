@@ -8,6 +8,7 @@ const gu = {
   translation: {
     report_bug: "બગ રિપોર્ટ કરો",
     import_from: "આયાત",
+    import: "આયાત",
     file: "ફાઇલ",
     new: "નવું",
     new_window: "નવું વિંડો",

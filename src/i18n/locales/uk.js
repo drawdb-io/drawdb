@@ -8,6 +8,7 @@ const uk = {
   translation: {
     report_bug: "Повідомити про помилку",
     import_from: "Імпортувати",
+    import: "Імпортувати",
     file: "Файл",
     new: "Новий",
     new_window: "Нове вікно",

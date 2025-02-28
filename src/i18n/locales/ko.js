@@ -8,6 +8,7 @@ const ko = {
   translation: {
     report_bug: "문제 보고",
     import_from: "가져오기",
+    import: "가져오기",
     file: "파일",
     new: "새로 만들기",
     new_window: "새 탭에서 열기",

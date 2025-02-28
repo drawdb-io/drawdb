@@ -8,6 +8,7 @@ const tm = {
   translation: {
     report_bug: "பிழையைப் புகாரளிக்கவும்",
     import_from: "இறக்குமதி",
+    import: "இறக்குமதி",
     file: "கோப்பு",
     new: "புதியது",
     new_window: "புதிய சாளரம்",

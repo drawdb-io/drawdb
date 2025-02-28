@@ -8,6 +8,7 @@ const da = {
   translation: {
     report_bug: "Rapportér en fejl",
     import_from: "Importér",
+    import: "Importér",
     file: "Fil",
     new: "Ny",
     new_window: "Nyt vindue",

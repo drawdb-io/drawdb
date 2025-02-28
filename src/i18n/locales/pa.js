@@ -8,6 +8,7 @@ const pa = {
   translation: {
     report_bug: "ਬੱਗ ਰਿਪੋਰਟ ਕਰੋ",
     import_from: "ਇੰਪੋਰਟ ਕਰੋ",
+    import: "ਇੰਪੋਰਟ ਕਰੋ",
     file: "ਫਾਈਲ",
     new: "ਨਵਾਂ",
     new_window: "ਨਵੀਂ ਵਿੰਡੋ",

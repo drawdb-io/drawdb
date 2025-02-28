@@ -8,6 +8,7 @@ const ur = {
   translation: {
     report_bug: "بگ رپورٹ کریں",
     import_from: "درآمد کریں",
+    import: "درآمد کریں",
     file: "فائل",
     new: "نیا",
     new_window: "نیا ونڈو",

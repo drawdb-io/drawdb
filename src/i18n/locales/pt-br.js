@@ -8,6 +8,7 @@ const pt = {
   translation: {
     report_bug: "Reportar um erro",
     import_from: "Importar",
+    import: "Importar",
     file: "Arquivo",
     new: "Novo",
     new_window: "Nova janela",

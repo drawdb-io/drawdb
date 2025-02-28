@@ -8,6 +8,7 @@ const zh_tw = {
   translation: {
     report_bug: "回報錯誤",
     import_from: "匯入",
+    import: "匯入",
     file: "檔案",
     new: "新增",
     new_window: "新視窗",

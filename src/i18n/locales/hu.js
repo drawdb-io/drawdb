@@ -8,6 +8,7 @@ const hu = {
   translation: {
     report_bug: "Hiba jelentése",
     import_from: "Importálás",
+    import: "Importálás",
     file: "Fájl",
     new: "Új",
     new_window: "Új ablak",

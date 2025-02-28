@@ -8,6 +8,7 @@ const vi = {
   translation: {
     report_bug: "Báo cáo lỗi",
     import_from: "Nhập",
+    import: "Nhập",
     file: "Tệp",
     new: "Tạo mới",
     new_window: "Tạo mới cửa sổ",
