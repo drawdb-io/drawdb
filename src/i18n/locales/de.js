@@ -7,7 +7,7 @@ const german = {
 const de = {
   translation: {
     report_bug: "Einen Fehler melden",
-    import: "Importieren",
+    import_from: "Importieren",
     file: "Datei",
     new: "Neu",
     new_window: "Neues Fenster",
@@ -153,7 +153,6 @@ const de = {
     confirm: "Bestätigen",
     last_modified: "Zuletzt geändert",
     drag_and_drop_files: "Ziehen Sie die Datei hierher oder klicken Sie, um sie hochzuladen.",
-    support_json_and_ddb: "JSON- und DDB-Dateien werden unterstützt",
     upload_sql_to_generate_diagrams:
       "Laden Sie eine SQL-Datei hoch, um Ihre Tabellen und Spalten automatisch zu generieren.",
     overwrite_existing_diagram: "Vorhandenes Diagramm überschreiben",

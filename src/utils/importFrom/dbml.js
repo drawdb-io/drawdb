@@ -8,6 +8,7 @@ export function fromDBML(src) {
 
   const tables = [];
   const enums = [];
+  const relationships = [];
 
   for (const schema of ast.schemas) {
     for (const table of schema.tables) {
@@ -61,7 +62,7 @@ export function fromDBML(src) {
     }
   }
 
-  const diagram = { tables, enums };
+  const diagram = { tables, enums, relationships };
 
   arrangeTables(diagram);
 

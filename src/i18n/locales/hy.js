@@ -7,7 +7,7 @@ const armenian = {
 const hy = {
   translation: {
     report_bug: "Զեկուցել սխալի մասին",
-    import: "Ներմուծել",
+    import_from: "Ներմուծել",
     file: "Ֆայլ",
     new: "Նոր",
     new_window: "Նոր պատուհան",
@@ -161,7 +161,6 @@ const hy = {
     last_modified: "Վերջին փոփոխությունը",
     drag_and_drop_files:
       "Քաշեք և թողեք ֆայլը այստեղ կամ սեղմեք բեռնելու համար։",
-    support_json_and_ddb: "Աջակցվում են JSON և DDB ֆայլեր",
     upload_sql_to_generate_diagrams:
       "Վերբեռնեք sql ֆայլ՝ ձեր աղյուսակներն ու սյունակները ավտոմատ ստեղծելու համար։",
     overwrite_existing_diagram: "Փոխարինել առկա սխեման",
