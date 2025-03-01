@@ -115,3 +115,8 @@ export const DB = {
   MARIADB: "mariadb",
   GENERIC: "generic",
 };
+
+export const IMPORT_FROM = {
+  JSON: 0,
+  DBML: 1,
+};

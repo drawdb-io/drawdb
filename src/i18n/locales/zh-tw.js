@@ -7,6 +7,7 @@ const traditionalChinese = {
 const zh_tw = {
   translation: {
     report_bug: "回報錯誤",
+    import_from: "匯入",
     import: "匯入",
     file: "檔案",
     new: "新增",
@@ -18,8 +19,7 @@ const zh_tw = {
     template_saved: "範本已儲存！",
     rename: "重新命名",
     delete_diagram: "刪除圖表",
-    are_you_sure_delete_diagram:
-      "您確定要刪除此圖表嗎？此操作無法復原。",
+    are_you_sure_delete_diagram: "您確定要刪除此圖表嗎？此操作無法復原。",
     oops_smth_went_wrong: "糟糕！發生錯誤。",
     import_diagram: "匯入圖表",
     import_from_source: "從 SQL 匯入",
@@ -31,8 +31,7 @@ const zh_tw = {
     undo: "復原",
     redo: "重做",
     clear: "清除",
-    are_you_sure_clear:
-      "您確定要清除圖表嗎？此操作無法復原。",
+    are_you_sure_clear: "您確定要清除圖表嗎？此操作無法復原。",
     cut: "剪下",
     copy: "複製",
     paste: "貼上",
@@ -105,8 +104,7 @@ const zh_tw = {
     no_types: "沒有型別",
     no_types_text: "建立您自己的自訂資料型別",
     no_issues: "未偵測到問題。",
-    strict_mode_is_on_no_issues:
-      "嚴謹模式已關閉，因此不會顯示任何問題。",
+    strict_mode_is_on_no_issues: "嚴謹模式已關閉，因此不會顯示任何問題。",
     name: "名稱",
     type: "型別",
     null: "允許空值",
@@ -157,12 +155,9 @@ const zh_tw = {
     confirm: "確認",
     last_modified: "上次修改時間",
     drag_and_drop_files: "拖曳檔案到此處或點選上傳。",
-    support_json_and_ddb: "支援 JSON 和 DDB 檔案",
-    upload_sql_to_generate_diagrams:
-      "上傳 SQL 檔案以自動產生表格和欄位。",
+    upload_sql_to_generate_diagrams: "上傳 SQL 檔案以自動產生表格和欄位。",
     overwrite_existing_diagram: "覆寫現有圖表",
-    only_mysql_supported:
-      "*目前僅支援載入 MySQL 指令碼。",
+    only_mysql_supported: "*目前僅支援載入 MySQL 指令碼。",
     blank: "空白",
     filename: "檔案名稱",
     table_w_no_name: "宣告了一個沒有名稱的表格",
@@ -175,10 +170,8 @@ const zh_tw = {
       "表格 '{{tableName}}' 中欄位 '{{fieldName}}' 的預設值與其型別不符",
     not_null_is_null:
       "表格 '{{tableName}}' 中的 '{{fieldName}}' 欄位為 NOT NULL，但預設值為 NULL",
-    duplicate_fields:
-      "表格 '{{tableName}}' 中的欄位名稱 '{{fieldName}}' 重複",
-    duplicate_index:
-      "表格 '{{tableName}}' 中的索引名稱 '{{indexName}}' 重複",
+    duplicate_fields: "表格 '{{tableName}}' 中的欄位名稱 '{{fieldName}}' 重複",
+    duplicate_index: "表格 '{{tableName}}' 中的索引名稱 '{{indexName}}' 重複",
     empty_index: "表格 '{{tableName}}' 中的索引未指定任何欄位",
     no_primary_key: "表格 '{{tableName}}' 沒有主鍵",
     type_with_no_name: "宣告了一個沒有名稱的型別",

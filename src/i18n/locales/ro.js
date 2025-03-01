@@ -7,6 +7,7 @@ const romanian = {
 const ro = {
   translation: {
     report_bug: "Raportează o eroare",
+    import_from: "Import",
     import: "Import",
     file: "Fișier",
     new: "Nou",
@@ -69,7 +70,8 @@ const ro = {
     table_width: "Lățimea tabelului",
     language: "Limbă",
     flush_storage: "Golește depozitorea",
-    are_you_sure_flush_storage: "Esti sigur că vrei să golesți depozitorea? Aceasta va șterge ireversibil toate diagramele și modelele personalizate.",
+    are_you_sure_flush_storage:
+      "Esti sigur că vrei să golesți depozitorea? Aceasta va șterge ireversibil toate diagramele și modelele personalizate.",
     storage_flushed: "Depozitorea a fost golită",
     help: "Ajutor",
     shortcuts: "Scurtături",
@@ -100,11 +102,13 @@ const ro = {
     no_subject_areas: "Fără zone de subiecte",
     no_subject_areas_text: "Adaugă zone de subiecte pentru a grupa tabelele!",
     no_notes: "Fără note",
-    no_notes_text: "Folosește notele pentru a înregistra informații suplimentare",
+    no_notes_text:
+      "Folosește notele pentru a înregistra informații suplimentare",
     no_types: "Fără tipuri",
     no_types_text: "Creează-ți propriile tipuri de date personalizate",
     no_issues: "Nu au fost detectate probleme.",
-    strict_mode_is_on_no_issues: "Modul strict este dezactivat, așa că nu vor fi afișate probleme.",
+    strict_mode_is_on_no_issues:
+      "Modul strict este dezactivat, așa că nu vor fi afișate probleme.",
     name: "Nume",
     type: "Tip",
     null: "Null",
@@ -114,7 +118,8 @@ const ro = {
     autoincrement: "Increment automat",
     default_value: "Implicit",
     check: "Verifică expresia",
-    this_will_appear_as_is: "*Aceasta va apărea așa cum este în scriptul generat.",
+    this_will_appear_as_is:
+      "*Aceasta va apărea așa cum este în scriptul generat.",
     comment: "Comentariu",
     add_field: "Adaugă câmp",
     values: "Valori",
@@ -136,7 +141,8 @@ const ro = {
     one_to_many: "Unul la mulți",
     many_to_one: "Mulți la unul",
     content: "Conținut",
-    types_info: "Această caracteristică este destinată DBMS-urilor obiect-relaționale precum PostgreSQL.\nDacă este folosită pentru MySQL sau MariaDB, un tip JSON va fi generat cu validarea corespunzătoare a json.\nDacă este folosită pentru SQLite, va fi tradusă într-un BLOB.\nDacă este folosită pentru MSSQL, va fi generat un alias de tip pentru primul câmp.",
+    types_info:
+      "Această caracteristică este destinată DBMS-urilor obiect-relaționale precum PostgreSQL.\nDacă este folosită pentru MySQL sau MariaDB, un tip JSON va fi generat cu validarea corespunzătoare a json.\nDacă este folosită pentru SQLite, va fi tradusă într-un BLOB.\nDacă este folosită pentru MSSQL, va fi generat un alias de tip pentru primul câmp.",
     table_deleted: "Tabel șters",
     area_deleted: "Zonă ștearsă",
     note_deleted: "Notă ștearsă",
@@ -153,22 +159,29 @@ const ro = {
     create: "Creează",
     confirm: "Confirmați",
     last_modified: "Ultima modificare",
-    drag_and_drop_files: "Trageți și plasați fișierul aici sau faceți clic pentru a încărca.",
-    support_json_and_ddb: "Fișiere JSON și DDB sunt acceptate",
-    upload_sql_to_generate_diagrams: "Încărcați un fișier SQL pentru a genera automat tabelele și coloanele.",
+    drag_and_drop_files:
+      "Trageți și plasați fișierul aici sau faceți clic pentru a încărca.",
+    upload_sql_to_generate_diagrams:
+      "Încărcați un fișier SQL pentru a genera automat tabelele și coloanele.",
     overwrite_existing_diagram: "Suprascrie diagrama existentă",
-    only_mysql_supported: "*Deocamdată, este acceptat doar încărcarea scripturilor MySQL.",
+    only_mysql_supported:
+      "*Deocamdată, este acceptat doar încărcarea scripturilor MySQL.",
     blank: "Gol",
     filename: "Nume fișier",
     table_w_no_name: "A fost declarat un tabel fără nume",
     duplicate_table_by_name: "Tabel duplicat cu numele '{{tableName}}'",
     empty_field_name: "Nume câmp gol `nume` în tabelul '{{tableName}}'",
     empty_field_type: "Tip câmp gol `tip` în tabelul '{{tableName}}'",
-    no_values_for_field: "'{{fieldName}}' câmp din tabelul '{{tableName}}' este de tip `{{type}}` dar nu au fost specificate valori",
-    default_doesnt_match_type: "Valoarea implicită pentru câmpul '{{fieldName}}' din tabelul '{{tableName}}' nu se potrivește cu tipul său",
-    not_null_is_null: "'{{fieldName}}' câmp din tabelul '{{tableName}}' NU ESTE NULL dar are valoarea implicită NULL",
-    duplicate_fields: "Câmpuri duplicate în tabelul '{{tableName}}' cu numele '{{fieldName}}'",
-    duplicate_index: "Index duplicat cu numele '{{indexName}}' în tabelul '{{tableName}}'",
+    no_values_for_field:
+      "'{{fieldName}}' câmp din tabelul '{{tableName}}' este de tip `{{type}}` dar nu au fost specificate valori",
+    default_doesnt_match_type:
+      "Valoarea implicită pentru câmpul '{{fieldName}}' din tabelul '{{tableName}}' nu se potrivește cu tipul său",
+    not_null_is_null:
+      "'{{fieldName}}' câmp din tabelul '{{tableName}}' NU ESTE NULL dar are valoarea implicită NULL",
+    duplicate_fields:
+      "Câmpuri duplicate în tabelul '{{tableName}}' cu numele '{{fieldName}}'",
+    duplicate_index:
+      "Index duplicat cu numele '{{indexName}}' în tabelul '{{tableName}}'",
     empty_index: "Index în tabelul '{{tableName}}' nu indexează nici o coloană",
     no_primary_key: "Tabelul '{{tableName}}' nu are cheie primară",
     type_with_no_name: "A fost declarat un tip fără nume",
@@ -176,8 +189,10 @@ const ro = {
     type_w_no_fields: "A fost declarat un tip gol '{{typeName}}' fără câmpuri",
     empty_type_field_name: "Nume câmp gol `nume` în tipul '{{typeName}}'",
     empty_type_field_type: "Tip câmp gol `tip` în tipul '{{typeName}}'",
-    no_values_for_type_field: "'{{fieldName}}' câmp din tipul '{{typeName}}' este de tip `{{type}}` dar nu au fost specificate valori",
-    duplicate_type_fields: "Câmpuri duplicate în tipul '{{typeName}}' cu numele '{{fieldName}}'",
+    no_values_for_type_field:
+      "'{{fieldName}}' câmp din tipul '{{typeName}}' este de tip `{{type}}` dar nu au fost specificate valori",
+    duplicate_type_fields:
+      "Câmpuri duplicate în tipul '{{typeName}}' cu numele '{{fieldName}}'",
     duplicate_reference: "Referință duplicată cu numele '{{refName}}'",
     circular_dependency: "Dependență circulară implicând tabelul '{{refName}}'",
     timeline: "Cronologie",
@@ -209,7 +224,8 @@ const ro = {
     not_found: "Nu a fost găsit",
     pick_db: "Alege o bază de date",
     generic: "General",
-    generic_description: "Diagramele generale pot fi exportate în orice tip de SQL, dar susțin câteva tipuri de date.",
+    generic_description:
+      "Diagramele generale pot fi exportate în orice tip de SQL, dar susțin câteva tipuri de date.",
     enums: "Enumerații",
     add_enum: "Adaugă enumerație",
     edit_enum: "{{extra}} Editează enumerația {{enumName}}",
@@ -220,7 +236,8 @@ const ro = {
     no_enums: "Fără enumerații",
     no_enums_text: "Definiți enumerații aici",
     declare_array: "Declarați un array",
-    empty_index_name: "A fost declarat un index fără nume în tabelul '{{tableName}}'",
+    empty_index_name:
+      "A fost declarat un index fără nume în tabelul '{{tableName}}'",
     didnt_find_diagram: "Oops! Nu am găsit diagrama.",
     unsigned: "Fără semn",
     share: "Împărtășește",
@@ -228,9 +245,10 @@ const ro = {
     copy_link: "Copiază linkul",
     readme: "README",
     failed_to_load: "Eșec la încărcare. Asigurați-vă că linkul este corect.",
-    share_info: "*Împărtășirea acestui link nu va crea o sesiune de colaborare în timp real.",
+    share_info:
+      "*Împărtășirea acestui link nu va crea o sesiune de colaborare în timp real.",
     show_relationship_labels: "Arată etichetele relațiilor",
-    docs: "Documentație"
+    docs: "Documentație",
   },
 };
 

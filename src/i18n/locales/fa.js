@@ -7,6 +7,7 @@ const persian = {
 const fa = {
   translation: {
     report_bug: "گزارش خطا",
+    import_from: "وارد کردن",
     import: "وارد کردن",
     file: "فایل",
     new: "جدید",
@@ -18,7 +19,8 @@ const fa = {
     template_saved: "الگو ذخیره شد!",
     rename: "تغییر نام",
     delete_diagram: "حذف نمودار",
-    are_you_sure_delete_diagram: "آیا مطمئن هستید که می‌خواهید این نمودار را حذف کنید؟ این عملیات غیر قابل برگشت است.",
+    are_you_sure_delete_diagram:
+      "آیا مطمئن هستید که می‌خواهید این نمودار را حذف کنید؟ این عملیات غیر قابل برگشت است.",
     oops_smth_went_wrong: "اوه! مشکلی پیش آمد.",
     import_diagram: "وارد کردن نمودار",
     import_from_source: "وارد کردن از SQL",
@@ -30,7 +32,8 @@ const fa = {
     undo: "واگرد",
     redo: "از نو",
     clear: "پاک کردن",
-    are_you_sure_clear: "آیا مطمئن هستید که می‌خواهید نمودار را پاک کنید؟ این عملیات غیر قابل برگشت است.",
+    are_you_sure_clear:
+      "آیا مطمئن هستید که می‌خواهید نمودار را پاک کنید؟ این عملیات غیر قابل برگشت است.",
     cut: "برش",
     copy: "کپی",
     paste: "چسباندن",
@@ -60,7 +63,8 @@ const fa = {
     table_width: "عرض جدول",
     language: "زبان",
     flush_storage: "پاک کردن حافظه",
-    are_you_sure_flush_storage: "آیا مطمئن هستید که می‌خواهید حافظه را پاک کنید؟ این عمل تمام نمودارها و الگوهای سفارشی شما را به طور غیر قابل برگشت حذف می‌کند.",
+    are_you_sure_flush_storage:
+      "آیا مطمئن هستید که می‌خواهید حافظه را پاک کنید؟ این عمل تمام نمودارها و الگوهای سفارشی شما را به طور غیر قابل برگشت حذف می‌کند.",
     storage_flushed: "حافظه پاک شد",
     help: "راهنما",
     shortcuts: "میانبرها",
@@ -89,13 +93,15 @@ const fa = {
     no_relationships: "بدون رابطه",
     no_relationships_text: "برای اتصال فیلدها و تشکیل روابط بکشید!",
     no_subject_areas: "بدون ناحیه موضوعی",
-    no_subject_areas_text: "ناحیه‌های موضوعی را برای گروه‌بندی جدول‌ها اضافه کنید!",
+    no_subject_areas_text:
+      "ناحیه‌های موضوعی را برای گروه‌بندی جدول‌ها اضافه کنید!",
     no_notes: "بدون یادداشت",
     no_notes_text: "از یادداشت‌ها برای ثبت اطلاعات اضافی استفاده کنید",
     no_types: "بدون نوع",
     no_types_text: "نوع داده سفارشی خود را بسازید",
     no_issues: "هیچ مشکلی شناسایی نشد.",
-    strict_mode_is_on_no_issues: "حالت سختگیرانه خاموش است بنابراین هیچ مشکلی نمایش داده نخواهد شد.",
+    strict_mode_is_on_no_issues:
+      "حالت سختگیرانه خاموش است بنابراین هیچ مشکلی نمایش داده نخواهد شد.",
     name: "نام",
     type: "نوع",
     null: "خالی",
@@ -105,7 +111,8 @@ const fa = {
     autoincrement: "افزایش خودکار",
     default_value: "پیش‌فرض",
     check: "عبارت بررسی",
-    this_will_appear_as_is: "*این در اسکریپت تولید شده به همان صورت نمایش داده می‌شود.",
+    this_will_appear_as_is:
+      "*این در اسکریپت تولید شده به همان صورت نمایش داده می‌شود.",
     comment: "نظر",
     add_field: "افزودن فیلد",
     values: "مقادیر",
@@ -127,7 +134,8 @@ const fa = {
     one_to_many: "یک به چند",
     many_to_one: "چند به یک",
     content: "محتوا",
-    types_info: "این ویژگی برای DBMS‌های شیء‌گرا مانند PostgreSQL طراحی شده است.\nاگر برای MySQL یا MariaDB استفاده شود، نوع JSON با بررسی اعتبار json متناظر تولید می‌شود.\nاگر برای SQLite استفاده شود، به BLOB ترجمه می‌شود.\nاگر برای MSSQL استفاده شود، یک نام مستعار نوع برای فیلد اول تولید می‌شود.",
+    types_info:
+      "این ویژگی برای DBMS‌های شیء‌گرا مانند PostgreSQL طراحی شده است.\nاگر برای MySQL یا MariaDB استفاده شود، نوع JSON با بررسی اعتبار json متناظر تولید می‌شود.\nاگر برای SQLite استفاده شود، به BLOB ترجمه می‌شود.\nاگر برای MSSQL استفاده شود، یک نام مستعار نوع برای فیلد اول تولید می‌شود.",
     table_deleted: "جدول حذف شد",
     area_deleted: "ناحیه حذف شد",
     note_deleted: "یادداشت حذف شد",
@@ -144,22 +152,29 @@ const fa = {
     create: "ایجاد",
     confirm: "تأیید",
     last_modified: "آخرین ویرایش",
-    drag_and_drop_files: "فایل را اینجا بکشید و رها کنید یا کلیک کنید تا بارگذاری شود.",
-    support_json_and_ddb: "فایل‌های JSON و DDB پشتیبانی می‌شوند",
-    upload_sql_to_generate_diagrams: "یک فایل sql را بارگذاری کنید تا جداول و ستون‌هایتان به‌طور خودکار تولید شوند.",
+    drag_and_drop_files:
+      "فایل را اینجا بکشید و رها کنید یا کلیک کنید تا بارگذاری شود.",
+    upload_sql_to_generate_diagrams:
+      "یک فایل sql را بارگذاری کنید تا جداول و ستون‌هایتان به‌طور خودکار تولید شوند.",
     overwrite_existing_diagram: "بازنویسی نمودار موجود",
-    only_mysql_supported: "*در حال حاضر فقط بارگذاری اسکریپت‌های MySQL پشتیبانی می‌شود.",
+    only_mysql_supported:
+      "*در حال حاضر فقط بارگذاری اسکریپت‌های MySQL پشتیبانی می‌شود.",
     blank: "خالی",
     filename: "نام فایل",
     table_w_no_name: "جدولی بدون نام اعلام شد",
     duplicate_table_by_name: "جدول تکراری با نام '{{tableName}}'",
     empty_field_name: "فیلد خالی name در جدول '{{tableName}}'",
     empty_field_type: "فیلد خالی type در جدول '{{tableName}}'",
-    no_values_for_field: "فیلد '{{fieldName}}' جدول '{{tableName}}' از نوع {{type}} است اما هیچ مقداری مشخص نشده است",
-    default_doesnt_match_type: "مقدار پیش‌فرض برای فیلد '{{fieldName}}' در جدول '{{tableName}}' با نوع آن مطابقت ندارد",
-    not_null_is_null: "فیلد '{{fieldName}}' جدول '{{tableName}}' غیر خالی است اما پیش‌فرض آن خالی است",
-    duplicate_fields: "فیلدهای تکراری جدول به نام '{{fieldName}}' در جدول '{{tableName}}'",
-    duplicate_index: "شاخص تکراری به نام '{{indexName}}' در جدول '{{tableName}}'",
+    no_values_for_field:
+      "فیلد '{{fieldName}}' جدول '{{tableName}}' از نوع {{type}} است اما هیچ مقداری مشخص نشده است",
+    default_doesnt_match_type:
+      "مقدار پیش‌فرض برای فیلد '{{fieldName}}' در جدول '{{tableName}}' با نوع آن مطابقت ندارد",
+    not_null_is_null:
+      "فیلد '{{fieldName}}' جدول '{{tableName}}' غیر خالی است اما پیش‌فرض آن خالی است",
+    duplicate_fields:
+      "فیلدهای تکراری جدول به نام '{{fieldName}}' در جدول '{{tableName}}'",
+    duplicate_index:
+      "شاخص تکراری به نام '{{indexName}}' در جدول '{{tableName}}'",
     empty_index: "شاخص در جدول '{{tableName}}' هیچ ستونی را شاخص نمی‌کند",
     no_primary_key: "جدول '{{tableName}}' کلید اصلی ندارد",
     type_with_no_name: "نوعی بدون نام اعلام شد",
@@ -167,8 +182,10 @@ const fa = {
     type_w_no_fields: "نوع خالی '{{typeName}}' بدون فیلد اعلام شد",
     empty_type_field_name: "فیلد `name` خالی در نوع '{{typeName}}'",
     empty_type_field_type: "فیلد `type` خالی در نوع '{{typeName}}'",
-    no_values_for_type_field: "'{{fieldName}}' فیلد از نوع '{{typeName}}' از نوع `{{type}}` است اما هیچ مقداری مشخص نشده است",
-    duplicate_type_fields: "فیلدهای تکراری نوع با نام '{{fieldName}}' در نوع '{{typeName}}'",
+    no_values_for_type_field:
+      "'{{fieldName}}' فیلد از نوع '{{typeName}}' از نوع `{{type}}` است اما هیچ مقداری مشخص نشده است",
+    duplicate_type_fields:
+      "فیلدهای تکراری نوع با نام '{{fieldName}}' در نوع '{{typeName}}'",
     duplicate_reference: "ارجاع تکراری به نام '{{refName}}'",
     circular_dependency: "وابستگی دورانی شامل جدول '{{refName}}'",
     timeline: "جدول زمانی",
@@ -197,10 +214,8 @@ const fa = {
     add_relationship: "اضافه کردن ارتباط",
     edit_relationship: "{{extra}} ویرایش ارتباط {{refName}}",
     delete_relationship: "حذف ارتباط {{refName}}",
-    not_found: "یافت نشد"
-        
-    },
-  };
-  
-  export { fa,persian };
-  
+    not_found: "یافت نشد",
+  },
+};
+
+export { fa, persian };
