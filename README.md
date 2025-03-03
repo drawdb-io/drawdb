@@ -15,9 +15,6 @@
     <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
         <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
     </a>
-    <a href="https://buymeacoffee.com/drawdb" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Support%20us-grey?logo=buymeacoffee" alt="Support us"/>
-    </a>
 </div>
 
 <h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="drawdb.png"></h3>
