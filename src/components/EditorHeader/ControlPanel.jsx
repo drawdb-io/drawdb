@@ -24,7 +24,6 @@ import {
   Popconfirm,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
-import { saveAs } from "file-saver";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
@@ -1047,30 +1046,6 @@ export default function ControlPanel({
                 );
                 doc.save(`${exportData.filename}.pdf`);
               });
-            },
-          },
-          {
-            DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  title: title,
-                  date: new Date().toISOString(),
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  database: database,
-                  ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),
-                },
-                null,
-                2,
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
-              });
-              saveAs(blob, `${exportData.filename}.ddb`);
             },
           },
           {
