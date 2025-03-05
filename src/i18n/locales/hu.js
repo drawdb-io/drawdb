@@ -7,8 +7,8 @@ const hungarian = {
 const hu = {
   translation: {
     report_bug: "Hiba jelentése",
-    import_from: "Importálás",
     import: "Importálás",
+    import_from: "Importálás innen",
     file: "Fájl",
     new: "Új",
     new_window: "Új ablak",
@@ -255,6 +255,9 @@ const hu = {
       "A betöltés sikertelen. Ellenőrizze a hivatkozás helyességét!",
     share_info:
       "* Ezen hivatkozás megosztása nem fog létrehozni élő, valósidejű együttműködési munkamenetet.",
+    show_relationship_labels: "Kapcsolatcímkék",
+    docs: "Dokumentáció",
+    supported_types: "Támogatott fájltípusok:",
   },
 };
 
