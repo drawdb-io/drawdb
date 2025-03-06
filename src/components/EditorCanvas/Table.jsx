@@ -16,7 +16,7 @@ import {
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
-import { useTranslation } from "react-i18next";
+import { useTranslation} from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
@@ -296,7 +296,7 @@ export default function Table(props) {
         className={`
           ${
           (fieldData.primary && settings.notation !== "default" )
-            ? "border"
+            ? "border-b border-gray-400"
             : ""
           } ${
           (!fieldData.primary && settings.notation !== "default" )
@@ -315,9 +315,17 @@ export default function Table(props) {
             ? "border-b border-gray-400"
             : ""
           } ${
+            (fieldData.primary && settings.notation === "default")
+              ? "border-b border-gray-400"
+              : ""
+          }${
+            (settings.notation === "default" && index !== tableData.fields.length - 1 && fieldData.primary === false)
+              ? "border-b border-gray-400"
+              : ""
+          }${
             // Checa que cuando seas el último se redondee
           (settings.notation === "default" && index === tableData.fields.length - 1)
-            ? "border-b border-gray-400"
+            ? "rounded-b-md"
             : ""
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onPointerEnter={(e) => {
@@ -393,19 +401,35 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
-              {(fieldData.primary && settings.notation === "default") && <IconKeyStroked />}
-              {(fieldData.notNull && settings.notation !== "default") && <span>NOT NULL</span>}
-              {(!fieldData.notNull && settings.notation !== "default") && <span>NULL</span>}
-              {(!fieldData.notNull && settings.notation === "default") && <span>?</span>}
-              <span>
-                {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? "(" + fieldData.size + ")"
-                    : "")}
-              </span>
+              {settings.notation !== "default" ? (
+                <>
+                <span>
+                  {fieldData.type +
+                    ((dbToTypes[database][fieldData.type].isSized ||
+                      dbToTypes[database][fieldData.type].hasPrecision) &&
+                    fieldData.size &&
+                    fieldData.size !== ""
+                      ? "(" + fieldData.size + ")"
+                      : "")}
+                </span>
+                {(fieldData.notNull && <span>NOT NULL</span>)}
+                {(!fieldData.notnull && <span>NULL</span>)}
+                </>
+              ) : (
+                <>
+                  {fieldData.primary && <IconKeyStroked/>}
+                  {!fieldData.notNull && <span>?</span>}
+                  <span>
+                  {fieldData.type +
+                    ((dbToTypes[database][fieldData.type].isSized ||
+                      dbToTypes[database][fieldData.type].hasPrecision) &&
+                    fieldData.size &&
+                    fieldData.size !== ""
+                      ? "(" + fieldData.size + ")"
+                      : "")}
+                </span>
+                </>
+              )}
             </div>
           )}
         </div>
