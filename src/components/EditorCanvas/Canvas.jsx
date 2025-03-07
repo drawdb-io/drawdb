@@ -450,7 +450,7 @@ export default function Canvas() {
     (e) => {
       e.preventDefault();
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         // How "eager" the viewport is to
         // center the cursor's coordinates
         const eagernessFactor = 0.05;
