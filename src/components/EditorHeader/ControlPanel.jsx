@@ -1363,35 +1363,35 @@ export default function ControlPanel({
     },
   };
 
-  useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
-  useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
-  useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
-  useHotkeys("ctrl+s, meta+s", save, { preventDefault: true });
-  useHotkeys("ctrl+o, meta+o", open, { preventDefault: true });
-  useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
-  useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
-  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
-  useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
-  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
+  useHotkeys("mod+i", fileImport, { preventDefault: true });
+  useHotkeys("mod+z", undo, { preventDefault: true });
+  useHotkeys("mod+y", redo, { preventDefault: true });
+  useHotkeys("mod+s", save, { preventDefault: true });
+  useHotkeys("mod+o", open, { preventDefault: true });
+  useHotkeys("mod+e", edit, { preventDefault: true });
+  useHotkeys("mod+d", duplicate, { preventDefault: true });
+  useHotkeys("mod+c", copy, { preventDefault: true });
+  useHotkeys("mod+v", paste, { preventDefault: true });
+  useHotkeys("mod+x", cut, { preventDefault: true });
   useHotkeys("delete", del, { preventDefault: true });
-  useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
-  useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
-  useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
-  useHotkeys("ctrl+shift+m, meta+shift+m", viewStrictMode, {
+  useHotkeys("mod+shift+g", viewGrid, { preventDefault: true });
+  useHotkeys("mod+up", zoomIn, { preventDefault: true });
+  useHotkeys("mod+down", zoomOut, { preventDefault: true });
+  useHotkeys("mod+shift+m", viewStrictMode, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+f, meta+shift+f", viewFieldSummary, {
+  useHotkeys("mod+shift+f", viewFieldSummary, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+s, meta+shift+s", saveDiagramAs, {
+  useHotkeys("mod+shift+s", saveDiagramAs, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
-  useHotkeys("ctrl+h, meta+h", () => window.open(socials.docs, "_blank"), {
+  useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
+  useHotkeys("mod+r", resetView, { preventDefault: true });
+  useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
 
   return (
     <>
