@@ -4,7 +4,6 @@ import { IconCrossStroked } from "@douyinfe/semi-icons";
 import SimpleCanvas from "../components/SimpleCanvas";
 import Navbar from "../components/Navbar";
 import { diagram } from "../data/heroDiagram";
-import { Steps } from "@douyinfe/semi-ui";
 import mysql_icon from "../assets/mysql.png";
 import postgres_icon from "../assets/postgres.png";
 import sqlite_icon from "../assets/sqlite.png";
@@ -13,23 +12,43 @@ import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
+import screenshot from "../assets/screenshot.png";
 import FadeIn from "../animations/FadeIn";
-import SlideIn from "../animations/SlideIn";
+import axios from "axios";
+import { languages } from "../i18n/i18n";
+import { Tweet } from "react-tweet";
+import { socials } from "../data/socials";
+
+function shortenNumber(number) {
+  if (number < 1000) return number;
+
+  if (number >= 1000 && number < 1_000_000)
+    return `${(number / 1000).toFixed(1)}k`;
+}
 
 export default function LandingPage() {
   const [showSurvey, setShowSurvey] = useState(true);
+  const [stats, setStats] = useState({ stars: 18000, forks: 1200 });
 
   useEffect(() => {
+    const fetchStats = async () => {
+      await axios
+        .get("https://api.github-star-counter.workers.dev/user/drawdb-io")
+        .then((res) => setStats(res.data));
+    };
+
     document.body.setAttribute("theme-mode", "light");
     document.title =
       "drawDB | Online database diagram editor and SQL generator";
-  });
+
+    fetchStats();
+  }, []);
 
   return (
     <div>
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-screen bg-zinc-100">
         {showSurvey && (
-          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-gradient-to-r from-slate-700 from-10% via-slate-500 to-slate-700">
+          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-gradient-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
             <Link to="/survey" className="hover:underline">
               Help us improve! Share your feedback.
             </Link>
@@ -40,27 +59,40 @@ export default function LandingPage() {
             </div>
           </div>
         )}
-        <Navbar />
-        <div className="flex-1 flex-col relative">
+        <FadeIn duration={0.6}>
+          <Navbar />
+        </FadeIn>
+
+        {/* Hero section */}
+        <div className="flex-1 flex-col relative mx-4 md:mx-0 mb-4 rounded-3xl bg-white">
           <div className="h-full md:hidden">
             <SimpleCanvas diagram={diagram} zoom={0.85} />
           </div>
-          <div className="hidden md:block h-full bg-dots"></div>
-          <div className="absolute left-12 top-[50%] translate-y-[-50%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 text-center">
+          <div className="hidden md:block h-full bg-dots" />
+          <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800">
             <FadeIn duration={0.75}>
-              <div className="text-4xl font-bold tracking-wide">
-                <h1 className="py-1 bg-gradient-to-r from-slate-700 from-10% via-slate-500 to-slate-700 inline-block text-transparent bg-clip-text">
+              <div className="md:px-3">
+                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-gradient-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
                   Draw, Copy, and Paste
                 </h1>
-              </div>
-              <div className="text-lg font-semibold mt-3">
-                Free, simple, and intuitive database design tool and SQL
-                generator.
+                <div className="text-lg font-medium mt-1 sliding-vertical">
+                  Free and open source, simple, and intuitive database design
+                  editor, data-modeler, and SQL generator.{" "}
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                    No sign up
+                  </span>
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                    Free of charge
+                  </span>
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                    Quick and easy
+                  </span>
+                </div>
               </div>
             </FadeIn>
-            <div className="mt-4 flex gap-4 justify-center font-semibold">
+            <div className="mt-4 font-semibold md:mt-12">
               <button
-                className="bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
+                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white border rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100"
                 onClick={() =>
                   document
                     .getElementById("learn-more")
@@ -71,100 +103,95 @@ export default function LandingPage() {
               </button>
               <Link
                 to="/editor"
-                className="bg-slate-700 text-white px-4 py-2 rounded shadow-lg hover:bg-slate-600 transition-all duration-200"
+                className="inline-block py-3 text-white transition-all duration-300 rounded-full shadow-lg bg-sky-900 ps-7 pe-6 hover:bg-sky-800"
               >
-                Try it for yourself
+                Try it for yourself <i className="bi bi-arrow-right ms-1"></i>
               </Link>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Learn more */}
       <div id="learn-more">
-        <div className="bg-zinc-100 py-20 px-24 md:px-8 rounded-b-[40px]">
-          <FadeIn duration={1}>
-            <div className="text-2xl text-slate-900 font-bold text-center mb-10 md:hidden">
-              Entity-Relationship diagrams simplified
+        <div className="bg-zinc-100 py-10 px-28 md:px-8">
+          <div className="flex justify-center items-center gap-28 md:block">
+            <div className="text-center mb-4">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+                {shortenNumber(stats.stars)}
+              </div>
+              <div className="ms-1 mt-1 font-medium tracking-wide">
+                GitHub stars
+              </div>
             </div>
-            <div className="md:hidden">
-              <Steps type="basic" current={3}>
-                <Steps.Step
-                  title="Create tables"
-                  description="Define tables with the necessary fields and indices."
-                />
-                <Steps.Step
-                  title="Add relationships"
-                  description="Build relationships by simply dragging"
-                />
-                <Steps.Step
-                  title="Export"
-                  description="Export to your preferred SQL flavor"
-                />
-              </Steps>
+            <div className="text-center mb-4">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+                {shortenNumber(stats.forks)}
+              </div>
+              <div className="ms-1 mt-1 font-medium tracking-wide">
+                GitHub forks
+              </div>
             </div>
-          </FadeIn>
-          <div className="mt-20 text-center w-[75%] sm:w-full mx-auto shadow-sm rounded-lg border p-12 bg-white">
-            <div className="text-2xl font-bold text-slate-900 mb-8">
-              Why drawDB?
+            <div className="text-center mb-4">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+                {shortenNumber(languages.length)}
+              </div>
+              <div className="ms-1 mt-1 font-medium tracking-wide">
+                Languages
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 md:grid-cols-1 h-full">
-              <SlideIn delay={0} duration={0.4} className="h-full">
-                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                  <span className="text-white bg-green-400 rounded-full py-2.5 px-3">
-                    <i className="fa-solid fa-credit-card"></i>
-                  </span>
-                  <div className="mt-6 text-lg font-semibold text-slate-700">
-                    Free
-                  </div>
-                  <div className="text-sm mt-3">
-                    drawDB is completely free of charge.
-                  </div>
-                </div>
-              </SlideIn>
-              <SlideIn delay={1 * 0.4} duration={0.4} className="h-full">
-                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                  <span className="text-white bg-blue-400 rounded-full py-2.5 px-3">
-                    <i className="fa-solid fa-user-xmark"></i>
-                  </span>
-                  <div className="mt-6 text-lg font-semibold text-slate-700">
-                    No registration
-                  </div>
-                  <div className="text-sm mt-3">
-                    No need to sign up or login. Just jump into development.
-                  </div>
-                </div>
-              </SlideIn>
-              <SlideIn delay={2 * 0.4} duration={0.4} className="h-full">
-                <div className="h-full border rounded-lg p-6 hover:bg-slate-100 transition-all duration-300">
-                  <span className="text-white bg-emerald-400 rounded-full py-2.5 px-3">
-                    <i className="fa-regular fa-star "></i>
-                  </span>
-                  <div className="mt-6 text-lg font-semibold text-slate-700">
-                    Simple to use
-                  </div>
-                  <div className="text-sm mt-3">
-                    Intuitive design that&apos;s easy to navigate.
-                  </div>
-                </div>
-              </SlideIn>
+          </div>
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-sm rounded-2xl border p-6 bg-white space-y-3">
+            <div className="text-lg font-medium">
+              Build diagrams with a few clicks, see the full picture, export SQL
+              scripts, customize your editor, and more.
             </div>
+            <img src={screenshot} className="mx-auto" />
+          </div>
+          <div className="text-lg font-medium text-center mt-12 mb-6">
+            Design for your database
+          </div>
+          <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
+            {dbs.map((s, i) => (
+              <img
+                key={"icon-" + i}
+                src={s.icon}
+                style={{ height: s.height }}
+                className="opacity-70 hover:opacity-100 transition-opacity duration-300 md:scale-[0.7] md:mx-auto"
+              />
+            ))}
           </div>
         </div>
+        <svg
+          viewBox="0 0 1440 54"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          className="bg-transparent"
+        >
+          <path
+            d="M0 54C0 54 320 0 720 0C1080 0 1440 54 1440 54V0H0V100Z"
+            fill="#f4f4f5"
+          />
+        </svg>
       </div>
-      <div id="features" className="py-20 px-36 md:px-8">
+
+      {/* Features */}
+      <div id="features" className="py-8 px-36 md:px-8">
         <FadeIn duration={1}>
-          <div className="text-2xl font-bold text-center">
-            Here is what drawDB offers
+          <div className="text-base font-medium text-center text-sky-900">
+            More than just an editor
           </div>
-          <div className="text-sm opacity-75 text-center">
-            More coming soon...
+          <div className="text-2xl mt-1 font-medium text-center">
+            What drawDB has to offer
           </div>
           <div className="grid grid-cols-3 gap-8 mt-10 md:grid-cols-2 sm:grid-cols-1">
             {features.map((f, i) => (
               <div
-                key={i}
-                className="rounded-xl hover:bg-zinc-100 border shadow-sm hover:-translate-y-2 transition-all duration-300"
+                key={"feature" + i}
+                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-sm hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="bg-sky-700 py-1 rounded-t-xl" />
+                <div className="bg-sky-700 px-0.5 rounded-l-xl" />
                 <div className="px-8 py-4 ">
                   <div className="text-lg font-semibold mb-3">{f.title}</div>
                   {f.content}
@@ -175,73 +202,49 @@ export default function LandingPage() {
           </div>
         </FadeIn>
       </div>
-      <div className="bg-zinc-100 py-20 px-32 md:px-8 rounded-t-[40px]">
-        <div className="text-center text-2xl font-bold mb-4">
-          We support these DBMS
+
+      {/* Tweets */}
+      <div className="px-40 mt-6 md:px-8">
+        <div className="text-center text-2xl md:text-xl font-medium">
+          What the internet says about us
         </div>
-        <div className="grid grid-cols-3 grid-rows-2 gap-y-[4rem] place-items-center items-baseline sm:grid-cols-1 sm:grid-rows-1 sm:gap-10">
-          <img
-            src={mysql_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-20"
-          />
-          <img
-            src={postgres_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-12"
-          />
-          <img
-            src={sqlite_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
-          />
-          <img
-            src={mariadb_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
-          />
-          <img
-            src={sql_server_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16"
-          />
-          <img
-            src={oraclesql_icon}
-            className="opacity-70 hover:opacity-100 transition-all duration-300 h-16 scale-[300%]"
-          />
+        <div
+          data-theme="light"
+          className="grid grid-cols-2 place-items-center md:grid-cols-1"
+        >
+          <Tweet id="1816111365125218343" />
+          <Tweet id="1817933406337905021" />
+          <Tweet id="1785457354777006524" />
+          <Tweet id="1776842268042756248" />
         </div>
-        <div className="mt-16 mb-2 text-2xl font-bold text-center">
+      </div>
+
+      {/* Contact us */}
+      <svg
+        viewBox="0 0 1440 54"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        width="100%"
+        className="bg-transparent -scale-100"
+      >
+        <path
+          d="M0 48 C0 48 320 0 720 0C1080 0 1440 48 1440 48V0H0V100Z"
+          fill="#f4f4f5"
+        />
+      </svg>
+      <div className="bg-zinc-100 py-8 px-32 md:px-8">
+        <div className="mt-4 mb-2 text-2xl font-bold text-center">
           Reach out to us
         </div>
         <div className="text-lg text-center mb-4">
-          Your feedback is important to us. Share your thoughts and help us
-          improve.
+          We love hearing from you. Join our community on Discord, GitHub, and
+          X.
         </div>
         <div className="px-36 text-center md:px-8">
-          <div className="w-full flex gap-8 sm:block">
-            <Link
-              to="/survey"
-              className="w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
-            >
-              <div>Take a survey</div>
-              <i className="bi bi-arrow-right"></i>
-            </Link>
-            <Link
-              to="/bug-report"
-              className="sm:mt-2 w-full flex items-center gap-2 font-semibold justify-center bg-white shadow-lg px-9 py-2 rounded border border-zinc-200 hover:bg-zinc-100 transition-all duration-300"
-            >
-              <div>Report a bug</div>
-              <i className="bi bi-arrow-right"></i>
-            </Link>
-          </div>
-          <div className="mt-10">
-            Connect with us at
+          <div className="md:block md:space-y-3 flex gap-3 justify-center">
             <a
-              href="mailto:drawdb@outlook.com"
-              className="text-blue-500 font-semibold hover:underline ms-1.5"
-            >
-              drawdb@outlook.com
-            </a>
-          </div>
-          <div className="sm:block flex gap-3 justify-center">
-            <a
-              className="inline-block mt-2"
-              href="https://github.com/drawdb-io/drawdb"
+              className="inline-block"
+              href={socials.github}
               target="_blank"
               rel="noreferrer"
             >
@@ -253,8 +256,8 @@ export default function LandingPage() {
               </div>
             </a>
             <a
-              className="inline-block mt-2"
-              href="https://discord.gg/BrjZgNrmR6"
+              className="inline-block"
+              href={socials.discord}
               target="_blank"
               rel="noreferrer"
             >
@@ -265,9 +268,21 @@ export default function LandingPage() {
                 </div>
               </div>
             </a>
+            <a
+              className="inline-block"
+              href={socials.twitter}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="text-white bg-zinc-800 hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-12 py-4 rounded-lg">
+                <i className="text-2xl bi bi-twitter-x" />
+                <div className="text-lg  font-bold">Follow us on X</div>
+              </div>
+            </a>
           </div>
         </div>
       </div>
+
       <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold px-3">
         Attention! The diagrams are saved in your browser. Before clearing the
         browser make sure to back up your data.
@@ -279,6 +294,15 @@ export default function LandingPage() {
     </div>
   );
 }
+
+const dbs = [
+  { icon: mysql_icon, height: 80 },
+  { icon: postgres_icon, height: 48 },
+  { icon: sqlite_icon, height: 64 },
+  { icon: mariadb_icon, height: 64 },
+  { icon: sql_server_icon, height: 64 },
+  { icon: oraclesql_icon, height: 172 },
+];
 
 const features = [
   {
@@ -292,11 +316,10 @@ const features = [
     footer: "",
   },
   {
-    title: "Import",
+    title: "Reverse engineer",
     content: (
       <div>
-        Already have a diagram? Import a DDL script, or a JSON file to generate
-        or a diagram.
+        Already have a schema? Import a DDL script to generate a diagram.
       </div>
     ),
     footer: "",
@@ -316,7 +339,10 @@ const features = [
     content: (
       <div>
         Speed up development with keyboard shortuts. See all available shortcuts
-        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
+        <Link
+          to={`${socials.docs}/shortcuts`}
+          className="ms-1.5 text-blue-500 hover:underline"
+        >
           here
         </Link>
         .
@@ -379,7 +405,7 @@ const features = [
     content: (
       <div>
         Add custom types for object-relational databases, or create custom JSON
-        schemes and alias types.
+        schemes.
       </div>
     ),
     footer: "",

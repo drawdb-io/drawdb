@@ -8,6 +8,7 @@ const en = {
   translation: {
     report_bug: "Report a bug",
     import: "Import",
+    import_from: "Import from",
     file: "File",
     new: "New",
     new_window: "New window",
@@ -122,7 +123,7 @@ const en = {
     values: "Values",
     size: "Size",
     precision: "Precision",
-    set_precision: "Set precision: (size, digits)",
+    set_precision: "Set precision: 'size, digits'",
     use_for_batch_input: "Use , for batch input",
     indices: "Indices",
     add_index: "Add index",
@@ -157,7 +158,6 @@ const en = {
     confirm: "Confirm",
     last_modified: "Last modified",
     drag_and_drop_files: "Drag and drop the file here or click to upload.",
-    support_json_and_ddb: "JSON and DDB files are supported",
     upload_sql_to_generate_diagrams:
       "Upload an sql file to autogenerate your tables and columns.",
     overwrite_existing_diagram: "Overwrite existing diagram",
@@ -183,7 +183,7 @@ const en = {
     no_primary_key: "Table '{{tableName}}' has no primary key",
     type_with_no_name: "Declared a type with no name",
     duplicate_types: "Duplicate types by the name '{{typeName}}'",
-    type_w_no_fields: "Declared an empty type '{{typeName}}'with no fields",
+    type_w_no_fields: "Declared an empty type '{{typeName}}' with no fields",
     empty_type_field_name: "Empty field `name` in type '{{typeName}}'",
     empty_type_field_type: "Empty field `type` in type '{{typeName}}'",
     no_values_for_type_field:
@@ -191,7 +191,7 @@ const en = {
     duplicate_type_fields:
       "Duplicate type fields by name '{{fieldName}}' in type '{{typeName}}'",
     duplicate_reference: "Duplicate reference by the name '{{refName}}'",
-    circular_dependency: "Circular dependency involvind table '{{refName}}'",
+    circular_dependency: "Circular dependency involving table '{{refName}}'",
     timeline: "Timeline",
     priority: "Priority",
     none: "None",
@@ -235,6 +235,17 @@ const en = {
     declare_array: "Declare array",
     empty_index_name: "Declared an index with no name in table '{{tableName}}'",
     didnt_find_diagram: "Oops! Didn't find the diagram.",
+    unsigned: "Unsigned",
+    share: "Share",
+    unshare: "Unshare",
+    copy_link: "Copy link",
+    readme: "README",
+    failed_to_load: "Failed to load. Make sure the link is correct.",
+    share_info:
+      "* Sharing this link will not create a live real-time collaboration session.",
+    show_relationship_labels: "Show relationship labels",
+    docs: "Docs",
+    supported_types: "Supported file types:",
   },
 };
 

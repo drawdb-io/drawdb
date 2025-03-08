@@ -246,6 +246,12 @@ export default function DiagramContextProvider({ children }) {
     );
   };
 
+  const updateRelationship = (id, updatedValues) => {
+    setRelationships((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t)),
+    );
+  };
+
   return (
     <DiagramContext.Provider
       value={{
@@ -260,8 +266,11 @@ export default function DiagramContextProvider({ children }) {
         setRelationships,
         addRelationship,
         deleteRelationship,
+        updateRelationship,
         database,
         setDatabase,
+        tablesCount: tables.length,
+        relationshipsCount: relationships.length,
       }}
     >
       {children}

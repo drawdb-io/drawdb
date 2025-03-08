@@ -1,5 +1,6 @@
+import { exportFieldComment, getInlineFK, parseDefault } from "./shared";
+
 import { dbToTypes } from "../../data/datatypes";
-import { parseDefault } from "./shared";
 
 export function toSqlite(diagram) {
   return diagram.tables
@@ -10,7 +11,7 @@ export function toSqlite(diagram) {
       }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
         .map(
           (field) =>
-            `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
+            `${exportFieldComment(field.comment)}\t"${
               field.name
             }" ${field.type}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
@@ -28,7 +29,7 @@ export function toSqlite(diagram) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }\t${inlineFK}\n);\n${table.indices
+      }${inlineFK}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
@@ -40,19 +41,4 @@ export function toSqlite(diagram) {
         .join("\n")}`;
     })
     .join("\n");
-}
-
-export function getInlineFK(table, obj) {
-  let fk = "";
-  obj.references.forEach((r) => {
-    if (fk !== "") return;
-    if (r.startTableId === table.id) {
-      fk = `FOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-        obj.tables[r.endTableId].name
-      }"("${
-        obj.tables[r.endTableId].fields[r.endFieldId].name
-      }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`;
-    }
-  });
-  return fk;
 }

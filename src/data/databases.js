@@ -14,6 +14,7 @@ export const databases = new Proxy(
       label: DB.MYSQL,
       image: mysqlImage,
       hasTypes: false,
+      hasUnsignedTypes: true,
     },
     [DB.POSTGRES]: {
       name: "PostgreSQL",
@@ -34,6 +35,7 @@ export const databases = new Proxy(
       label: DB.MARIADB,
       image: mariadbImage,
       hasTypes: false,
+      hasUnsignedTypes: true,
     },
     [DB.MSSQL]: {
       name: "MSSQL",

@@ -12,13 +12,14 @@
   "dependencies": {
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-sql": "^6.6.3",
+    "@dbml/core": "^3.9.7-alpha.0",
     "@douyinfe/semi-ui": "^2.51.3",
     "@lexical/react": "^0.12.5",
     "@uiw/codemirror-theme-github": "^4.21.25",
     "@uiw/codemirror-theme-vscode": "^4.21.25",
     "@uiw/react-codemirror": "^4.21.25",
     "@vercel/analytics": "^1.2.2",
-    "axios": "^1.6.2",
+    "axios": "^1.7.4",
     "classnames": "^2.5.1",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
@@ -30,12 +31,14 @@
     "jsonschema": "^1.4.1",
     "jspdf": "^2.5.1",
     "lexical": "^0.12.5",
-    "node-sql-parser": "^5.0.0",
+    "node-sql-parser": "^5.3.6",
+    "octokit": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
     "react-i18next": "^14.1.1",
     "react-router-dom": "^6.21.0",
+    "react-tweet": "^3.2.1",
     "url": "^0.11.1",
     "usehooks-ts": "^3.1.0"
   },
@@ -52,7 +55,7 @@
     "postcss": "^8.4.32",
     "prettier": "3.2.5",
     "tailwindcss": "^3.3.6",
-    "vite": "^5.0.11"
+    "vite": "^5.4.1"
   },
   "overrides": {
     "follow-redirects": "^1.15.4"

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Button, Input, TagInput } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useEnums, useUndoRedo } from "../../../hooks";
+import { useDiagram, useEnums, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
 export default function EnumDetails({ data, i }) {
   const { t } = useTranslation();
   const { deleteEnum, updateEnum } = useEnums();
+  const { tables, updateField } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
 
@@ -19,10 +20,29 @@ export default function EnumDetails({ data, i }) {
           value={data.name}
           placeholder={t("name")}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
-          onChange={(value) => updateEnum(i, { name: value })}
+          onChange={(value) => {
+            updateEnum(i, { name: value });
+            tables.forEach((table, i) => {
+              table.fields.forEach((field, j) => {
+                if (field.type.toLowerCase() === data.name.toLowerCase()) {
+                  updateField(i, j, { type: value.toUpperCase() });
+                }
+              });
+            });
+          }}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
+
+            const updatedFields = tables.reduce((acc, table) => {
+              table.fields.forEach((field, i) => {
+                if (field.type.toLowerCase() === data.name.toLowerCase()) {
+                  acc.push({ tid: table.id, fid: i });
+                }
+              });
+              return acc;
+            }, []);
+
             setUndoStack((prev) => [
               ...prev,
               {
@@ -31,6 +51,7 @@ export default function EnumDetails({ data, i }) {
                 id: i,
                 undo: editField,
                 redo: { name: e.target.value },
+                updatedFields,
                 message: t("edit_enum", {
                   enumName: e.target.value,
                   extra: "[name]",

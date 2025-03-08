@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, createContext } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -22,9 +22,16 @@ import FloatingControls from "./FloatingControls";
 import { Modal } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
+import { isRtl } from "../i18n/utils/rtl";
+import { useSearchParams } from "react-router-dom";
+import { octokit } from "../data/octokit";
+
+export const IdContext = createContext({ gistId: "" });
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
+  const [gistId, setGistId] = useState("");
+  const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(340);
@@ -49,28 +56,30 @@ export default function WorkSpace() {
     setDatabase,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
-  const { t } = useTranslation();
-
+  const { t, i18n } = useTranslation();
+  let [searchParams, setSearchParams] = useSearchParams();
   const handleResize = (e) => {
     if (!resize) return;
-    const w = e.clientX;
+    const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
     if (w > 340) setWidth(w);
   };
 
   const save = useCallback(async () => {
+    if (saveState !== State.SAVING) return;
+
     const name = window.name.split(" ");
     const op = name[0];
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
 
     if (saveAsDiagram) {
-      if (
-        (id === 0 && window.name === "") ||
-        window.name.split(" ")[0] === "lt"
-      ) {
+      searchParams.delete("shareId");
+      setSearchParams(searchParams);
+      if ((id === 0 && window.name === "") || op === "lt") {
         await db.diagrams
           .add({
             database: database,
             name: title,
+            gistId: gistId ?? "",
             lastModified: new Date(),
             tables: tables,
             references: relationships,
@@ -79,6 +88,7 @@ export default function WorkSpace() {
             todos: tasks,
             pan: transform.pan,
             zoom: transform.zoom,
+            loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
           })
@@ -99,8 +109,10 @@ export default function WorkSpace() {
             notes: notes,
             areas: areas,
             todos: tasks,
+            gistId: gistId ?? "",
             pan: transform.pan,
             zoom: transform.zoom,
+            loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
           })
@@ -133,6 +145,8 @@ export default function WorkSpace() {
         });
     }
   }, [
+    searchParams,
+    setSearchParams,
     tables,
     relationships,
     notes,
@@ -145,6 +159,9 @@ export default function WorkSpace() {
     setSaveState,
     database,
     enums,
+    gistId,
+    loadedFromGistId,
+    saveState
   ]);
 
   const load = useCallback(async () => {
@@ -160,6 +177,8 @@ export default function WorkSpace() {
               setDatabase(DB.GENERIC);
             }
             setId(d.id);
+            setGistId(d.gistId);
+            setLoadedFromGistId(d.loadedFromGistId);
             setTitle(d.name);
             setTables(d.tables);
             setRelationships(d.references);
@@ -195,6 +214,8 @@ export default function WorkSpace() {
               setDatabase(DB.GENERIC);
             }
             setId(diagram.id);
+            setGistId(diagram.gistId);
+            setLoadedFromGistId(diagram.loadedFromGistId);
             setTitle(diagram.name);
             setTables(diagram.tables);
             setRelationships(diagram.references);
@@ -262,20 +283,69 @@ export default function WorkSpace() {
         });
     };
 
+    const loadFromGist = async (shareId) => {
+      try {
+        const res = await octokit.request(`GET /gists/${shareId}`, {
+          gist_id: shareId,
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        });
+        const diagramSrc = res.data.files["share.json"].content;
+        const d = JSON.parse(diagramSrc);
+        setUndoStack([]);
+        setRedoStack([]);
+        setLoadedFromGistId(shareId);
+        setDatabase(d.database);
+        setTitle(d.title);
+        setTables(d.tables);
+        setRelationships(d.relationships);
+        setNotes(d.notes);
+        setAreas(d.subjectAreas);
+        setTransform(d.transform);
+        if (databases[d.database].hasTypes) {
+          setTypes(d.types ?? []);
+        }
+        if (databases[d.database].hasEnums) {
+          setEnums(d.enums ?? []);
+        }
+      } catch (e) {
+        console.log(e);
+        setSaveState(State.FAILED_TO_LOAD);
+      }
+    };
+
+    const shareId = searchParams.get("shareId");
+    if (shareId) {
+      const existingDiagram = await db.diagrams.get({
+        loadedFromGistId: shareId,
+      });
+
+      if (existingDiagram) {
+        window.name = "d " + existingDiagram.id;
+        setId(existingDiagram.id);
+      } else {
+        window.name = "";
+        setId(0);
+      }
+      await loadFromGist(shareId);
+      return;
+    }
+
     if (window.name === "") {
-      loadLatestDiagram();
+      await loadLatestDiagram();
     } else {
       const name = window.name.split(" ");
       const op = name[0];
       const id = parseInt(name[1]);
       switch (op) {
         case "d": {
-          loadDiagram(id);
+          await loadDiagram(id);
           break;
         }
         case "t":
         case "lt": {
-          loadTemplate(id);
+          await loadTemplate(id);
           break;
         }
         default:
@@ -296,6 +366,8 @@ export default function WorkSpace() {
     database,
     setEnums,
     selectedDb,
+    setSaveState,
+    searchParams,
   ]);
 
   useEffect(() => {
@@ -323,14 +395,13 @@ export default function WorkSpace() {
     tasks?.length,
     transform.zoom,
     title,
+    gistId,
     setSaveState,
   ]);
 
   useEffect(() => {
-    if (saveState !== State.SAVING) return;
-
     save();
-  }, [id, saveState, save]);
+  }, [saveState, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -340,14 +411,16 @@ export default function WorkSpace() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
-      <ControlPanel
-        diagramId={id}
-        setDiagramId={setId}
-        title={title}
-        setTitle={setTitle}
-        lastSaved={lastSaved}
-        setLastSaved={setLastSaved}
-      />
+      <IdContext.Provider value={{ gistId, setGistId }}>
+        <ControlPanel
+          diagramId={id}
+          setDiagramId={setId}
+          title={title}
+          setTitle={setTitle}
+          lastSaved={lastSaved}
+          setLastSaved={setLastSaved}
+        />
+      </IdContext.Provider>
       <div
         className="flex h-full overflow-y-auto"
         onPointerUp={(e) => e.isPrimary && setResize(false)}
@@ -358,6 +431,7 @@ export default function WorkSpace() {
           // https://stackoverflow.com/a/70976017/1137077
           e.target.releasePointerCapture(e.pointerId);
         }}
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       >
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />

@@ -7,7 +7,7 @@ export default function Language() {
   const { i18n } = useTranslation();
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-4 md:grid-cols-2 gap-4">
       {languages.map((l) => (
         <button
           key={l.code}

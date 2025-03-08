@@ -1,18 +1,30 @@
-import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
+
+import { dbToTypes } from "../../data/datatypes";
+import { DB } from "../../data/constants";
+
+function parseType(field) {
+  let res = field.type;
+
+  if (field.type === "SET" || field.type === "ENUM") {
+    res += `${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}`;
+  }
+
+  if (dbToTypes[DB.MYSQL][field.type].isSized) {
+    res += `${field.size && field.size !== "" ? "(" + field.size + ")" : ""}`;
+  }
+
+  return res;
+}
 
 export function toMySQL(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
-        `${
-          table.comment === "" ? "" : `/* ${table.comment} */\n`
-        }CREATE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE TABLE \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t\`${
-                field.name
-              }\` ${field.type}${(field.size !== undefined && field.size !== "")? "(" + field.size + ")" : ""}${
+              `\t\`${field.name}\` ${parseType(field)}${field.unsigned ? " UNSIGNED" : ""}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.increment ? " AUTO_INCREMENT" : ""

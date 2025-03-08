@@ -4,8 +4,9 @@ import i18n from "../i18n/i18n";
 export const getModalTitle = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
-    case MODAL.IMPORT_SRC:
       return i18n.t("import_diagram");
+    case MODAL.IMPORT_SRC:
+      return i18n.t("import_from_source");
     case MODAL.CODE:
       return i18n.t("export");
     case MODAL.IMG:
@@ -22,8 +23,21 @@ export const getModalTitle = (modal) => {
       return i18n.t("table_width");
     case MODAL.LANGUAGE:
       return i18n.t("language");
+    case MODAL.SHARE:
+      return i18n.t("share");
     default:
       return "";
+  }
+};
+
+export const getModalWidth = (modal) => {
+  switch (modal) {
+    case MODAL.LANGUAGE:
+    case MODAL.OPEN:
+    case MODAL.NEW:
+      return 740;
+    default:
+      return 600;
   }
 };
 
@@ -43,6 +57,8 @@ export const getOkText = (modal) => {
       return i18n.t("save_as");
     case MODAL.NEW:
       return i18n.t("create");
+    case MODAL.SHARE:
+      return i18n.t("share");
     default:
       return i18n.t("confirm");
   }

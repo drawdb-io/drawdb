@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
+  IconChevronLeft,
   IconChevronUp,
   IconChevronDown,
   IconSaveStroked,
   IconUndo,
   IconRedo,
   IconEdit,
+  IconShareStroked,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
@@ -22,7 +24,6 @@ import {
   Popconfirm,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
-import { saveAs } from "file-saver";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
@@ -39,6 +40,7 @@ import {
   MODAL,
   SIDESHEET,
   DB,
+  IMPORT_FROM,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -68,6 +70,12 @@ import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
 import { exportSQL } from "../../utils/exportSQL";
 import { databases } from "../../data/databases";
+import { jsonToMermaid } from "../../utils/exportAs/mermaid";
+import { isRtl } from "../../i18n/utils/rtl";
+import { jsonToDocumentation } from "../../utils/exportAs/documentation";
+import { IdContext } from "../Workspace";
+import { socials } from "../../data/socials";
+import { toDBML } from "../../utils/exportAs/dbml";
 
 export default function ControlPanel({
   diagramId,
@@ -85,6 +93,7 @@ export default function ControlPanel({
     filename: `${title}_${new Date().toISOString()}`,
     extension: "",
   });
+  const [importFrom, setImportFrom] = useState(IMPORT_FROM.JSON);
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -100,6 +109,7 @@ export default function ControlPanel({
     setRelationships,
     addRelationship,
     deleteRelationship,
+    updateRelationship,
     database,
   } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
@@ -109,7 +119,8 @@ export default function ControlPanel({
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { setGistId } = useContext(IdContext);
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -269,9 +280,7 @@ export default function ControlPanel({
           updateTable(a.tid, a.undo);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.undo } : e)),
-        );
+        updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
           updateType(a.tid, {
@@ -299,9 +308,23 @@ export default function ControlPanel({
           );
         } else if (a.component === "self") {
           updateType(a.tid, a.undo);
+          if (a.updatedFields) {
+            if (a.undo.name) {
+              a.updatedFields.forEach((x) =>
+                updateField(x.tid, x.fid, { type: a.undo.name.toUpperCase() }),
+              );
+            }
+          }
         }
       } else if (a.element === ObjectType.ENUM) {
         updateEnum(a.id, a.undo);
+        if (a.updatedFields) {
+          if (a.undo.name) {
+            a.updatedFields.forEach((x) =>
+              updateField(x.tid, x.fid, { type: a.undo.name.toUpperCase() }),
+            );
+          }
+        }
       }
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -435,9 +458,7 @@ export default function ControlPanel({
           updateTable(a.tid, a.redo, false);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        setRelationships((prev) =>
-          prev.map((e, idx) => (idx === a.rid ? { ...e, ...a.redo } : e)),
-        );
+        updateRelationship(a.rid, a.redo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
           updateType(a.tid, {
@@ -461,9 +482,23 @@ export default function ControlPanel({
           });
         } else if (a.component === "self") {
           updateType(a.tid, a.redo);
+          if (a.updatedFields) {
+            if (a.redo.name) {
+              a.updatedFields.forEach((x) =>
+                updateField(x.tid, x.fid, { type: a.redo.name.toUpperCase() }),
+              );
+            }
+          }
         }
       } else if (a.element === ObjectType.ENUM) {
         updateEnum(a.id, a.redo);
+        if (a.updatedFields) {
+          if (a.redo.name) {
+            a.updatedFields.forEach((x) =>
+              updateField(x.tid, x.fid, { type: a.redo.name.toUpperCase() }),
+            );
+          }
+        }
       }
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.PAN) {
@@ -751,13 +786,23 @@ export default function ControlPanel({
               setEnums([]);
               setUndoStack([]);
               setRedoStack([]);
+              setGistId("");
             })
             .catch(() => Toast.error(t("oops_smth_went_wrong")));
         },
       },
-      import_diagram: {
-        function: fileImport,
-        shortcut: "Ctrl+I",
+      import_from: {
+        children: [
+          {
+            JSON: fileImport,
+          },
+          {
+            DBML: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.DBML);
+            },
+          },
+        ],
       },
       import_from_source: {
         ...(database === DB.GENERIC && {
@@ -947,6 +992,21 @@ export default function ControlPanel({
             },
           },
           {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
+                },
+              );
+              setModal(MODAL.IMG);
+            },
+          },
+          {
             JSON: () => {
               setModal(MODAL.CODE);
               const result = JSON.stringify(
@@ -971,18 +1031,18 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+            DBML: () => {
+              setModal(MODAL.CODE);
+              const result = toDBML({
+                tables,
+                relationships,
+                enums,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "dbml",
+              }));
             },
           },
           {
@@ -1006,27 +1066,41 @@ export default function ControlPanel({
             },
           },
           {
-            DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  title: title,
-                  date: new Date().toISOString(),
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  database: database,
-                  ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),
-                },
-                null,
-                2,
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
+            MERMAID: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToMermaid({
+                tables: tables,
+                relationships: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
               });
-              saveAs(blob, `${exportData.filename}.ddb`);
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "md",
+              }));
+            },
+          },
+          {
+            readme: () => {
+              setModal(MODAL.CODE);
+              const result = jsonToDocumentation({
+                tables: tables,
+                relationships: relationships,
+                notes: notes,
+                subjectAreas: areas,
+                database: database,
+                title: title,
+                ...(databases[database].hasTypes && { types: types }),
+                ...(databases[database].hasEnums && { enums: enums }),
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "md",
+              }));
             },
           },
         ],
@@ -1175,6 +1249,18 @@ export default function ControlPanel({
             showCardinality: !prev.showCardinality,
           })),
       },
+      show_relationship_labels: {
+        state: settings.showRelationshipLabels ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showRelationshipLabels: !prev.showRelationshipLabels,
+          })),
+      },
       show_debug_coordinates: {
         state: settings.showDebugCoordinates ? (
           <i className="bi bi-toggle-on" />
@@ -1214,11 +1300,11 @@ export default function ControlPanel({
       },
       zoom_in: {
         function: zoomIn,
-        shortcut: "Ctrl+Up/Wheel",
+        shortcut: "Ctrl+(Up/Wheel)",
       },
       zoom_out: {
         function: zoomOut,
-        shortcut: "Ctrl+Down/Wheel",
+        shortcut: "Ctrl+(Down/Wheel)",
       },
       fullscreen: {
         state: fullscreen ? (
@@ -1275,12 +1361,15 @@ export default function ControlPanel({
       },
     },
     help: {
-      shortcuts: {
-        function: () => window.open("/shortcuts", "_blank"),
+      docs: {
+        function: () => window.open(`${socials.docs}`, "_blank"),
         shortcut: "Ctrl+H",
       },
+      shortcuts: {
+        function: () => window.open(`${socials.docs}/shortcuts`, "_blank"),
+      },
       ask_on_discord: {
-        function: () => window.open("https://discord.gg/BrjZgNrmR6", "_blank"),
+        function: () => window.open(socials.discord, "_blank"),
       },
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
@@ -1291,40 +1380,60 @@ export default function ControlPanel({
     },
   };
 
-  useHotkeys("ctrl+i, meta+i", fileImport, { preventDefault: true });
-  useHotkeys("ctrl+z, meta+z", undo, { preventDefault: true });
-  useHotkeys("ctrl+y, meta+y", redo, { preventDefault: true });
-  useHotkeys("ctrl+s, meta+s", save, { preventDefault: true });
-  useHotkeys("ctrl+o, meta+o", open, { preventDefault: true });
-  useHotkeys("ctrl+e, meta+e", edit, { preventDefault: true });
-  useHotkeys("ctrl+d, meta+d", duplicate, { preventDefault: true });
-  useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
-  useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
-  useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
+  useHotkeys("mod+i", fileImport, { preventDefault: true });
+  useHotkeys("mod+z", undo, { preventDefault: true });
+  useHotkeys("mod+y", redo, { preventDefault: true });
+  useHotkeys("mod+s", save, { preventDefault: true });
+  useHotkeys("mod+o", open, { preventDefault: true });
+  useHotkeys("mod+e", edit, { preventDefault: true });
+  useHotkeys("mod+d", duplicate, { preventDefault: true });
+  useHotkeys("mod+c", copy, { preventDefault: true });
+  useHotkeys("mod+v", paste, { preventDefault: true });
+  useHotkeys("mod+x", cut, { preventDefault: true });
   useHotkeys("delete", del, { preventDefault: true });
-  useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
-  useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
-  useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
-  useHotkeys("ctrl+shift+m, meta+shift+m", viewStrictMode, {
+  useHotkeys("mod+shift+g", viewGrid, { preventDefault: true });
+  useHotkeys("mod+up", zoomIn, { preventDefault: true });
+  useHotkeys("mod+down", zoomOut, { preventDefault: true });
+  useHotkeys("mod+shift+m", viewStrictMode, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+f, meta+shift+f", viewFieldSummary, {
+  useHotkeys("mod+shift+f", viewFieldSummary, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+s, meta+shift+s", saveDiagramAs, {
+  useHotkeys("mod+shift+s", saveDiagramAs, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
-  useHotkeys("ctrl+h, meta+h", () => window.open("/shortcuts", "_blank"), {
+  useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
+  useHotkeys("mod+r", resetView, { preventDefault: true });
+  useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
 
   return (
     <>
-      {layout.header && header()}
-      {layout.toolbar && toolbar()}
+      <div>
+        {layout.header && (
+          <div
+            className="flex justify-between items-center me-7"
+            style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+          >
+            {header()}
+            {window.name.split(" ")[0] !== "t" && (
+              <Button
+                type="primary"
+                className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+                size="default"
+                icon={<IconShareStroked />}
+                onClick={() => setModal(MODAL.SHARE)}
+              >
+                {t("share")}
+              </Button>
+            )}
+          </div>
+        )}
+        {layout.toolbar && toolbar()}
+      </div>
       <Modal
         modal={modal}
         exportData={exportData}
@@ -1333,6 +1442,7 @@ export default function ControlPanel({
         setTitle={setTitle}
         setDiagramId={setDiagramId}
         setModal={setModal}
+        importFrom={importFrom}
         importDb={importDb}
       />
       <Sidesheet
@@ -1344,15 +1454,20 @@ export default function ControlPanel({
 
   function toolbar() {
     return (
-      <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
+      <div
+        className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme"
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+      >
         <div className="flex justify-start items-center">
           <LayoutDropdown />
           <Divider layout="vertical" margin="8px" />
           <Dropdown
             style={{ width: "240px" }}
-            position="bottomLeft"
+            position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
             render={
-              <Dropdown.Menu>
+              <Dropdown.Menu
+                style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+              >
                 <Dropdown.Item
                   onClick={fitWindow}
                   style={{ display: "flex", justifyContent: "space-between" }}
@@ -1525,6 +1640,8 @@ export default function ControlPanel({
         return t("saving");
       case State.ERROR:
         return t("failed_to_save");
+      case State.FAILED_TO_LOAD:
+        return t("failed_to_load");
       default:
         return "";
     }
@@ -1532,14 +1649,17 @@ export default function ControlPanel({
 
   function header() {
     return (
-      <nav className="flex justify-between pt-1 items-center whitespace-nowrap">
+      <nav
+        className="flex justify-between pt-1 items-center whitespace-nowrap"
+        style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+      >
         <div className="flex justify-start items-center">
           <Link to="/">
             <img
               width={54}
               src={icon}
               alt="logo"
-              className="ms-8 min-w-[54px]"
+              className="ms-7 min-w-[54px]"
             />
           </Link>
           <div className="ms-1 mt-1">
@@ -1578,7 +1698,10 @@ export default function ControlPanel({
                   <Dropdown
                     key={category}
                     position="bottomLeft"
-                    style={{ width: "240px" }}
+                    style={{
+                      width: "240px",
+                      direction: isRtl(i18n.language) ? "rtl" : "ltr",
+                    }}
                     render={
                       <Dropdown.Menu>
                         {Object.keys(menu[category]).map((item, index) => {
@@ -1612,7 +1735,12 @@ export default function ControlPanel({
                                   onClick={menu[category][item].function}
                                 >
                                   {t(item)}
-                                  <IconChevronRight />
+
+                                  {isRtl(i18n.language) ? (
+                                    <IconChevronLeft />
+                                  ) : (
+                                    <IconChevronRight />
+                                  )}
                                 </Dropdown.Item>
                               </Dropdown>
                             );

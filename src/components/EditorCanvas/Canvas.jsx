@@ -3,6 +3,7 @@ import {
   Action,
   Cardinality,
   Constraint,
+  darkBgTheme,
   ObjectType,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
@@ -23,6 +24,7 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
+import { areFieldsCompatible } from "../../utils/utils";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -34,7 +36,8 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship } = useDiagram();
+  const { tables, updateTable, relationships, addRelationship, database } =
+    useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
@@ -85,6 +88,8 @@ export default function Canvas() {
    * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (type === ObjectType.TABLE) {
@@ -136,6 +141,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerMove = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (linking) {
@@ -224,6 +231,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     // don't pan if the sidesheet for editing a table is open
@@ -307,6 +316,8 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerUp = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
     if (!e.isPrimary) return;
 
     if (coordsDidUpdate(dragging.element)) {
@@ -399,8 +410,11 @@ export default function Canvas() {
     if (hoveredTable.tableId < 0) return;
     if (hoveredTable.field < 0) return;
     if (
-      tables[linkingLine.startTableId].fields[linkingLine.startFieldId].type !==
-      tables[hoveredTable.tableId].fields[hoveredTable.field].type
+      !areFieldsCompatible(
+        database,
+        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
+        tables[hoveredTable.tableId].fields[hoveredTable.field],
+      )
     ) {
       Toast.info(t("cannot_connect"));
       return;
@@ -418,9 +432,9 @@ export default function Canvas() {
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `${tables[linkingLine.startTableId].name}_${
+      name: `fk_${tables[linkingLine.startTableId].name}_${
         tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_fk`,
+      }_${tables[hoveredTable.tableId].name}`,
       id: relationships.length,
     };
     delete newRelationship.startX;
@@ -436,7 +450,7 @@ export default function Canvas() {
     (e) => {
       e.preventDefault();
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         // How "eager" the viewport is to
         // center the cursor's coordinates
         const eagernessFactor = 0.05;
@@ -485,7 +499,7 @@ export default function Canvas() {
         className="w-full h-full"
         style={{
           cursor: pointer.style,
-          backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
+          backgroundColor: theme === "dark" ? darkBgTheme : "white",
         }}
       >
         {settings.showGrid && (
@@ -519,6 +533,7 @@ export default function Canvas() {
           </svg>
         )}
         <svg
+          id="diagram"
           ref={canvasRef}
           onPointerMove={handlePointerMove}
           onPointerDown={handlePointerDown}

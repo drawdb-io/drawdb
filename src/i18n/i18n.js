@@ -12,6 +12,7 @@ import { fa, persian } from "./locales/fa";
 import { hi, hindi } from "./locales/hi";
 import { uk, ukrainian } from "./locales/uk";
 import { ru, russian } from "./locales/ru";
+import { ro, romanian } from "./locales/ro";
 import { tr, turkish } from "./locales/tr";
 import { mr, marathi } from "./locales/mr";
 import { fr, french } from "./locales/fr";
@@ -20,6 +21,23 @@ import { pa, punjabi } from "./locales/pa";
 import { hy, armenian } from "./locales/hy";
 import { ar, arabic } from "./locales/ar";
 import { zh_tw, traditionalChinese } from "./locales/zh-tw";
+import { hu, hungarian } from "./locales/hu";
+import { id, indonesian } from "./locales/id";
+import { te, telugu } from "./locales/te";
+import { tm, tamil } from "./locales/tm";
+import { gu, gujarati } from "./locales/gu";
+import { it, italian } from "./locales/it";
+import { ko, korean } from "./locales/ko";
+import { od, odia } from "./locales/od";
+import { bn, bengali } from "./locales/bn";
+import { ka, kannada } from "./locales/ka";
+import { pl, polish } from "./locales/pl";
+import { no, norwegian } from "./locales/no";
+import { sv, swedish } from "./locales/sv-se";
+import { ur, urdu } from "./locales/ur";
+import { jp, japanese} from "./locales/jp"
+import {ne, nepali} from "./locales/ne"
+import {ug, uyghur} from "./locales/ug";
 
 export const languages = [
   english,
@@ -34,6 +52,7 @@ export const languages = [
   marathi,
   ukrainian,
   russian,
+  romanian,
   turkish,
   french,
   punjabi,
@@ -41,6 +60,23 @@ export const languages = [
   arabic,
   traditionalChinese,
   hebrew,
+  hungarian,
+  indonesian,
+  telugu,
+  tamil,
+  gujarati,
+  italian,
+  korean,
+  odia,
+  bengali,
+  kannada,
+  polish,
+  norwegian,
+  swedish,
+  urdu,
+  japanese,
+  nepali,
+  uyghur
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -65,6 +101,7 @@ i18n
       mr,
       uk,
       ru,
+      ro,
       tr,
       fr,
       pa,
@@ -72,6 +109,23 @@ i18n
       ar,
       "zh-TW": zh_tw,
       he,
+      hu,
+      id,
+      te,
+      tm,
+      gu,
+      it,
+      ko,
+      od,
+      bn,
+      ka,
+      pl,
+      no,
+      sv,
+      ur,
+      jp,
+      ne,
+      ug
     },
   });
 

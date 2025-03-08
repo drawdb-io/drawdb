@@ -74,6 +74,7 @@ export default function EnumsContextProvider({ children }) {
         addEnum,
         updateEnum,
         deleteEnum,
+        enumsCount: enums.length,
       }}
     >
       {children}

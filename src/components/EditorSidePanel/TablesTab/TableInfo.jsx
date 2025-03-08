@@ -14,11 +14,12 @@ import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
+import { dbToTypes } from "../../../data/datatypes";
 
 export default function TableInfo({ data }) {
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const { deleteTable, updateTable, updateField, setRelationships } =
+  const { deleteTable, updateTable, updateField, setRelationships, database } =
     useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -63,6 +64,7 @@ export default function TableInfo({ data }) {
         <div
           key={"field_" + j}
           className={`cursor-pointer ${drag.draggingOverIndexList.includes(j) ? "opacity-25" : ""}`}
+          style={{ direction: "ltr" }}
           draggable
           onDragStart={() => {
             setDrag((prev) => ({ ...prev, draggingElementIndex: j }));
@@ -105,8 +107,20 @@ export default function TableInfo({ data }) {
             const a = data.fields[index];
             const b = data.fields[j];
 
-            updateField(data.id, index, { ...b, id: index });
-            updateField(data.id, j, { ...a, id: j });
+            updateField(data.id, index, {
+              ...b,
+              ...(!dbToTypes[database][b.type].isSized && { size: "" }),
+              ...(!dbToTypes[database][b.type].hasCheck && { check: "" }),
+              ...(dbToTypes[database][b.type].noDefault && { default: "" }),
+              id: index,
+            });
+            updateField(data.id, j, {
+              ...a,
+              ...(!dbToTypes[database][a.type].isSized && { size: "" }),
+              ...(!dbToTypes[database][a.type].hasCheck && { check: "" }),
+              ...(!dbToTypes[database][a.type].noDefault && { default: "" }),
+              id: j,
+            });
 
             setRelationships((prev) =>
               prev.map((e) => {
@@ -146,7 +160,7 @@ export default function TableInfo({ data }) {
         >
           <Collapse
             activeKey={indexActiveKey}
-            keepDOM
+            keepDOM={false}
             lazyRender
             onChange={(itemKey) => setIndexActiveKey(itemKey)}
             accordion
@@ -173,7 +187,7 @@ export default function TableInfo({ data }) {
         style={{ marginTop: "12px", marginBottom: "12px" }}
         headerLine={false}
       >
-        <Collapse keepDOM lazyRender>
+        <Collapse keepDOM={false} lazyRender>
           <Collapse.Panel header={t("comment")} itemKey="1">
             <TextArea
               field="comment"
