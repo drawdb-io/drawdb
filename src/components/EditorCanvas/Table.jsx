@@ -412,8 +412,8 @@ export default function Table(props) {
                       ? "(" + fieldData.size + ")"
                       : "")}
                 </span>
-                {(fieldData.notNull && <span>NOT NULL</span>)}
-                {(!fieldData.notnull && <span>NULL</span>)}
+                {!fieldData.notNull && <span>NULL</span>}
+                {fieldData.notNull && <span>NOT NULL</span>}  
                 </>
               ) : (
                 <>
