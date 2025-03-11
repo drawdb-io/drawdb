@@ -61,7 +61,7 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
   return (
     <>
       <foreignObject
@@ -295,10 +295,15 @@ export default function Table(props) {
       <div
         className={`
           ${
-          (fieldData.primary && settings.notation !== "default" )
+          (fieldData.primary && settings.notation !== "default" && primaryKeyCount === 1)
             ? "border-b border-gray-400"
             : ""
-          } ${
+          }${
+            (fieldData.primary && settings.notation !== "default" && index ===primaryKeyCount - 1)
+              ? "border-b border-gray-400"
+              : ""
+            } 
+          ${
           (!fieldData.primary && settings.notation !== "default" )
             ? "border-l border-r"
             : ""
