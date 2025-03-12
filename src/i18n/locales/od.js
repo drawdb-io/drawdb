@@ -7,6 +7,7 @@ const odia = {
 const od = {
   translation: {
     report_bug: "ବଗ୍ ରିପୋର୍ଟ କରନ୍ତୁ",
+    import_from: "ଆମଦାନି",
     import: "ଆମଦାନି",
     file: "ଫାଇଲ୍",
     new: "ନୂତନ",
@@ -152,7 +153,6 @@ const od = {
     last_modified: "ଶେଷ ସମୟରେ ସଂଶୋଧିତ",
     drag_and_drop_files:
       "ଫାଇଲ୍କୁ ଏଠାରେ ଟାଣନ୍ତୁ ଏବଂ ଛାଡନ୍ତୁ କିମ୍ବା ଅପଲୋଡ୍ କରିବାକୁ କ୍ଲିକ୍ କରନ୍ତୁ।",
-    support_json_and_ddb: "JSON ଏବଂ DDB ଫାଇଲ୍ଗୁଡିକ ସମର୍ଥିତ",
     upload_sql_to_generate_diagrams:
       "ଆପଣଙ୍କର ଟେବଲ୍ ଏବଂ କଲମ୍ଗୁଡିକୁ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ଜେନେରେଟ୍ କରିବାକୁ ଏକ sql ଫାଇଲ୍ ଅପଲୋଡ୍ କରନ୍ତୁ।",
     overwrite_existing_diagram: "ବର୍ତ୍ତମାନର ଡାୟାଗ୍ରାମ୍କୁ ଅଧିଲେଖନ କରନ୍ତୁ",

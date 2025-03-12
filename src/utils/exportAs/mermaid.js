@@ -10,10 +10,10 @@ export function jsonToMermaid(obj) {
         return "||--||";
       case i18n.t(Cardinality.MANY_TO_ONE_TO_ONE):
       case Cardinality.MANY_TO_ONE:
-        return "||--o{";
+        return "}o--||";
       case i18n.t(Cardinality.ONE_TO_MANY):
       case Cardinality.ONE_TO_MANY:
-        return "}o--||";
+        return "||--o{";
       default:
         return "--";
     }

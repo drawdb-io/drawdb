@@ -138,7 +138,8 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
               );
               if (startFieldId === -1) return;
 
-              relationship.name = startTable + "_" + startField + "_fk";
+              relationship.name =
+                "fk_" + startTable + "_" + startField + "_" + endTable;
               relationship.startTableId = startTableId;
               relationship.endTableId = endTableId;
               relationship.endFieldId = endFieldId;
@@ -199,7 +200,8 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
       e.expr.forEach((expr) => {
         if (
           expr.action === "add" &&
-          expr.create_definitions.constraint_type.toLowerCase() === "foreign key"
+          expr.create_definitions.constraint_type.toLowerCase() ===
+            "foreign key"
         ) {
           const relationship = {};
           const startTable = e.table[0].table;
@@ -242,7 +244,8 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
           );
           if (startFieldId === -1) return;
 
-          relationship.name = startTable + "_" + startField + "_fk";
+          relationship.name =
+            "fk_" + startTable + "_" + startField + "_" + endTable;
           relationship.startTableId = startTableId;
           relationship.startFieldId = startFieldId;
           relationship.endTableId = endTableId;
@@ -266,16 +269,18 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
 
   if (ast.go_next) {
     let x = { ...ast };
-    let done = Array.isArray(x.go_next);
+    let done = false;
     while (!done) {
       parseSingleStatement(x.ast);
+      done = Array.isArray(x.go_next) && x.go_next.length === 0;
       x = { ...x.go_next };
-      done = Array.isArray(x.go_next);
     }
   } else if (Array.isArray(ast)) {
     ast.forEach((e) => {
       parseSingleStatement(e);
     });
+  } else if (typeof ast === "object") {
+    parseSingleStatement(ast);
   }
 
   return { tables, relationships };

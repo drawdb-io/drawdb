@@ -1,6 +1,14 @@
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { Tab } from "../../data/constants";
-import { useLayout, useSelect, useDiagram } from "../../hooks";
+import {
+  useLayout,
+  useSelect,
+  useDiagram,
+  useAreas,
+  useNotes,
+  useEnums,
+  useTypes,
+} from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
 import TypesTab from "./TypesTab/TypesTab";
 import Issues from "./Issues";
@@ -17,24 +25,40 @@ import i18n from "../../i18n/i18n";
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
-  const { database } = useDiagram();
+  const { database, tablesCount, relationshipsCount } = useDiagram();
+  const { areasCount } = useAreas();
+  const { notesCount } = useNotes();
+  const { typesCount } = useTypes();
+  const { enumsCount } = useEnums();
   const { t } = useTranslation();
 
   const tabList = useMemo(() => {
     const tabs = [
-      { tab: t("tables"), itemKey: Tab.TABLES, component: <TablesTab /> },
       {
-        tab: t("relationships"),
+        tab: `${t("tables")} (${tablesCount})`,
+        itemKey: Tab.TABLES,
+        component: <TablesTab />,
+      },
+      {
+        tab: `${t("relationships")} (${relationshipsCount})`,
         itemKey: Tab.RELATIONSHIPS,
         component: <RelationshipsTab />,
       },
-      { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
-      { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
+      {
+        tab: `${t("subject_areas")} (${areasCount})`,
+        itemKey: Tab.AREAS,
+        component: <AreasTab />,
+      },
+      {
+        tab: `${t("notes")} (${notesCount})`,
+        itemKey: Tab.NOTES,
+        component: <NotesTab />,
+      },
     ];
 
     if (databases[database].hasTypes) {
       tabs.push({
-        tab: t("types"),
+        tab: `${t("types")} (${typesCount})`,
         itemKey: Tab.TYPES,
         component: <TypesTab />,
       });
@@ -42,14 +66,23 @@ export default function SidePanel({ width, resize, setResize }) {
 
     if (databases[database].hasEnums) {
       tabs.push({
-        tab: t("enums"),
+        tab: `${t("enums")} (${enumsCount})`,
         itemKey: Tab.ENUMS,
         component: <EnumsTab />,
       });
     }
 
     return isRtl(i18n.language) ? tabs.reverse() : tabs;
-  }, [t, database]);
+  }, [
+    t,
+    database,
+    tablesCount,
+    relationshipsCount,
+    areasCount,
+    typesCount,
+    enumsCount,
+    notesCount,
+  ]);
 
   return (
     <div className="flex h-full">
@@ -62,6 +95,7 @@ export default function SidePanel({ width, resize, setResize }) {
             type="card"
             activeKey={selectedElement.currentTab}
             lazyRender
+            keepDOM={false}
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }

@@ -91,7 +91,14 @@ export default function NotesContextProvider({ children }) {
 
   return (
     <NotesContext.Provider
-      value={{ notes, setNotes, updateNote, addNote, deleteNote }}
+      value={{
+        notes,
+        setNotes,
+        updateNote,
+        addNote,
+        deleteNote,
+        notesCount: notes.length,
+      }}
     >
       {children}
     </NotesContext.Provider>

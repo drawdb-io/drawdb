@@ -237,7 +237,7 @@ const defaultTypesBase = {
     isSized: false,
     hasCheck: false,
     hasPrecision: false,
-    noDefault: true,
+    noDefault: false,
   },
   ENUM: {
     type: "ENUM",
@@ -1208,7 +1208,7 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     hasQuotes: true,
-    noDefault: true,
+    noDefault: false,
   },
   XML: {
     type: "XML",

@@ -3,6 +3,7 @@ import {
   Action,
   Cardinality,
   Constraint,
+  darkBgTheme,
   ObjectType,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
@@ -431,9 +432,9 @@ export default function Canvas() {
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `${tables[linkingLine.startTableId].name}_${
+      name: `fk_${tables[linkingLine.startTableId].name}_${
         tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_fk`,
+      }_${tables[hoveredTable.tableId].name}`,
       id: relationships.length,
     };
     delete newRelationship.startX;
@@ -449,7 +450,7 @@ export default function Canvas() {
     (e) => {
       e.preventDefault();
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         // How "eager" the viewport is to
         // center the cursor's coordinates
         const eagernessFactor = 0.05;
@@ -498,7 +499,7 @@ export default function Canvas() {
         className="w-full h-full"
         style={{
           cursor: pointer.style,
-          backgroundColor: theme === "dark" ? "rgba(22, 22, 26, 1)" : "white",
+          backgroundColor: theme === "dark" ? darkBgTheme : "white",
         }}
       >
         {settings.showGrid && (

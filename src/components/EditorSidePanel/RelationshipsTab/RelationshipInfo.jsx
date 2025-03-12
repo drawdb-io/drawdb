@@ -1,4 +1,12 @@
-import { Row, Col, Select, Button, Popover, Table } from "@douyinfe/semi-ui";
+import {
+  Row,
+  Col,
+  Select,
+  Button,
+  Popover,
+  Table,
+  Input,
+} from "@douyinfe/semi-ui";
 import {
   IconDeleteStroked,
   IconLoopTextStroked,
@@ -13,6 +21,7 @@ import {
 import { useDiagram, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const columns = [
   {
@@ -27,8 +36,10 @@ const columns = [
 
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { tables, setRelationships, deleteRelationship } = useDiagram();
+  const { tables, setRelationships, deleteRelationship, updateRelationship } =
+    useDiagram();
   const { t } = useTranslation();
+  const [editField, setEditField] = useState({});
 
   const swapKeys = () => {
     setUndoStack((prev) => [
@@ -61,9 +72,9 @@ export default function RelationshipInfo({ data }) {
         idx === data.id
           ? {
               ...e,
-              name: `${tables[e.startTableId].name}_${
-                tables[e.startTableId].fields[e.startFieldId].name
-              }_fk`,
+              name: `fk_${tables[e.endTableId].name}_${
+                tables[e.endTableId].fields[e.endFieldId].name
+              }_${tables[e.startTableId].name}`,
               startTableId: e.endTableId,
               startFieldId: e.endFieldId,
               endTableId: e.startTableId,
@@ -121,6 +132,36 @@ export default function RelationshipInfo({ data }) {
 
   return (
     <>
+      <div className="flex items-center mb-2.5">
+        <div className="text-md font-semibold break-keep">{t("name")}: </div>
+        <Input
+          value={data.name}
+          validateStatus={data.name.trim() === "" ? "error" : "default"}
+          placeholder={t("name")}
+          className="ms-2"
+          onChange={(value) => updateRelationship(data.id, { name: value })}
+          onFocus={(e) => setEditField({ name: e.target.value })}
+          onBlur={(e) => {
+            if (e.target.value === editField.name) return;
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.RELATIONSHIP,
+                component: "self",
+                rid: data.id,
+                undo: editField,
+                redo: { name: e.target.value },
+                message: t("edit_relationship", {
+                  refName: e.target.value,
+                  extra: "[name]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+          }}
+        />
+      </div>
       <div className="flex justify-between items-center mb-3">
         <div className="me-3">
           <span className="font-semibold">{t("primary")}: </span>

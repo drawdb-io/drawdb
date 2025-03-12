@@ -23,6 +23,7 @@ export const noteThemes = [
 
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
+export const darkBgTheme = "#16161A";
 export const tableHeaderHeight = 50;
 export const tableWidth = 220;
 export const tableFieldHeight = 36;
@@ -113,4 +114,9 @@ export const DB = {
   SQLITE: "sqlite",
   MARIADB: "mariadb",
   GENERIC: "generic",
+};
+
+export const IMPORT_FROM = {
+  JSON: 0,
+  DBML: 1,
 };

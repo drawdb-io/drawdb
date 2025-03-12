@@ -7,6 +7,7 @@ const arabic = {
 const ar = {
   translation: {
     report_bug: "الإبلاغ عن خطأ",
+    import_from: "استيراد",
     import: "استيراد",
     file: "ملف",
     new: "جديد",
@@ -105,8 +106,7 @@ const ar = {
     no_types: "لا توجد أنواع",
     no_types_text: "اصنع أنواع البيانات المخصصة الخاصة بك",
     no_issues: "لم يتم اكتشاف أي مشكلات.",
-    strict_mode_is_on_no_issues:
-      "وضع صارم معطل لذا لن يتم عرض أي مشكلات.",
+    strict_mode_is_on_no_issues: "وضع صارم معطل لذا لن يتم عرض أي مشكلات.",
     name: "الاسم",
     type: "النوع",
     null: "فارغ",
@@ -157,12 +157,10 @@ const ar = {
     confirm: "تأكيد",
     last_modified: "آخر تعديل",
     drag_and_drop_files: "اسحب وأسقط الملف هنا أو انقر للتحميل.",
-    support_json_and_ddb: "تدعم ملفات JSON و DDB",
     upload_sql_to_generate_diagrams:
       "قم بتحميل ملف SQL لتوليد الجداول والأعمدة تلقائيًا.",
     overwrite_existing_diagram: "الكتابة فوق المخطط الحالي",
-    only_mysql_supported:
-      "*في الوقت الحالي، يتم دعم تحميل نصوص MySQL فقط.",
+    only_mysql_supported: "*في الوقت الحالي، يتم دعم تحميل نصوص MySQL فقط.",
     blank: "فارغ",
     filename: "اسم الملف",
     table_w_no_name: "تم إعلان جدول بدون اسم",
