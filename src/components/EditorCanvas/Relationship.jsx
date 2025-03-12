@@ -108,7 +108,7 @@ export default function Relationship({ data }) {
 
 
   if (pathRef.current) {
-    const pathLength = pathRef.current.getTotalLength();
+    const pathLength = pathRef.current.getTotalLength() - cardinalityOffset;
 
     const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
@@ -200,45 +200,6 @@ export default function Relationship({ data }) {
             </text>
           </>
         )}
-        {pathRef.current && settings.showCardinality && (
-          <>
-            <circle
-              cx={cardinalityStartX}
-              cy={cardinalityStartY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-              x={cardinalityStartX}
-              y={cardinalityStartY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityStart}
-            </text>
-            <circle
-              cx={cardinalityEndX}
-              cy={cardinalityEndY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-              x={cardinalityEndX}
-              y={cardinalityEndY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityEnd}
-            </text>
-          </>
-        )}
-        
         {format(pathRef.current, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY, direction, cardinalityStart, cardinalityEnd)}
       </g>
 
