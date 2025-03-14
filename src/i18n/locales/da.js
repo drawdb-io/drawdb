@@ -7,6 +7,7 @@ const danish = {
 const da = {
   translation: {
     report_bug: "Rapportér en fejl",
+    import_from: "Importér",
     import: "Importér",
     file: "Fil",
     new: "Ny",
@@ -109,7 +110,8 @@ const da = {
     autoincrement: "Auto-inkrementel",
     default_value: "Standardværdi",
     check: "Tjek udtryk",
-    this_will_appear_as_is: "*Dette vil fremstå i det generede script som det er.",
+    this_will_appear_as_is:
+      "*Dette vil fremstå i det generede script som det er.",
     comment: "Kommentar",
     add_field: "Tilføj felt",
     values: "værdier",
@@ -150,7 +152,6 @@ const da = {
     confirm: "Bekræft",
     last_modified: "Sidst ændret",
     drag_and_drop_files: "Træk og drop filen her eller klik for at uploade.",
-    support_json_and_ddb: "JSON og DDB filer er understøttet",
     upload_sql_to_generate_diagrams:
       "Upload en sql fil for at auto-generere dine tabeller og kolonner.",
     overwrite_existing_diagram: "Overskriv eksisterende diagram",

@@ -7,6 +7,7 @@ const indonesian = {
 const id = {
   translation: {
     report_bug: "Laporkan bug",
+    import_from: "Impor",
     import: "Impor",
     file: "Berkas",
     new: "Baru",
@@ -19,7 +20,7 @@ const id = {
     rename: "Ubah nama",
     delete_diagram: "Hapus diagram",
     are_you_sure_delete_diagram:
-        "Apakah Anda yakin ingin menghapus diagram ini? Operasi ini tidak bisa dibatalkan.",
+      "Apakah Anda yakin ingin menghapus diagram ini? Operasi ini tidak bisa dibatalkan.",
     oops_smth_went_wrong: "Ups! Ada yang salah.",
     import_diagram: "Impor diagram",
     import_from_source: "Impor dari SQL",
@@ -31,7 +32,8 @@ const id = {
     undo: "Batalkan",
     redo: "Ulangi",
     clear: "Bersihkan",
-    are_you_sure_clear: "Apakah Anda yakin ingin membersihkan diagram ini? Ini tidak bisa dibatalkan.",
+    are_you_sure_clear:
+      "Apakah Anda yakin ingin membersihkan diagram ini? Ini tidak bisa dibatalkan.",
     cut: "Potong",
     copy: "Salin",
     paste: "Tempel",
@@ -69,7 +71,7 @@ const id = {
     language: "Bahasa",
     flush_storage: "Bersihkan penyimpanan",
     are_you_sure_flush_storage:
-        "Apakah Anda yakin ingin membersihkan penyimpanan? Ini akan menghapus semua diagram dan template kustom Anda secara permanen.",
+      "Apakah Anda yakin ingin membersihkan penyimpanan? Ini akan menghapus semua diagram dan template kustom Anda secara permanen.",
     storage_flushed: "Penyimpanan dibersihkan",
     help: "Bantuan",
     shortcuts: "Pintasan",
@@ -96,7 +98,8 @@ const id = {
     no_tables: "Tidak ada tabel",
     no_tables_text: "Mulai bangun diagram Anda!",
     no_relationships: "Tidak ada hubungan",
-    no_relationships_text: "Seret untuk menghubungkan bidang dan membentuk hubungan!",
+    no_relationships_text:
+      "Seret untuk menghubungkan bidang dan membentuk hubungan!",
     no_subject_areas: "Tidak ada area subjek",
     no_subject_areas_text: "Tambahkan area subjek untuk mengelompokkan tabel!",
     no_notes: "Tidak ada catatan",
@@ -104,7 +107,8 @@ const id = {
     no_types: "Tidak ada tipe",
     no_types_text: "Buat tipe data kustom Anda sendiri",
     no_issues: "Tidak ada masalah yang terdeteksi.",
-    strict_mode_is_on_no_issues: "Mode ketat dimatikan sehingga tidak ada masalah yang akan ditampilkan.",
+    strict_mode_is_on_no_issues:
+      "Mode ketat dimatikan sehingga tidak ada masalah yang akan ditampilkan.",
     name: "Nama",
     type: "Jenis",
     null: "Kosong",
@@ -114,7 +118,8 @@ const id = {
     autoincrement: "Autoincrement",
     default_value: "Nilai default",
     check: "Periksa ekspresi",
-    this_will_appear_as_is: "*Ini akan muncul dalam skrip yang dihasilkan sebagaimana adanya.",
+    this_will_appear_as_is:
+      "*Ini akan muncul dalam skrip yang dihasilkan sebagaimana adanya.",
     comment: "Komentar",
     add_field: "Tambah bidang",
     values: "Nilai",
@@ -137,13 +142,14 @@ const id = {
     many_to_one: "Banyak ke satu",
     content: "Konten",
     types_info:
-        "Fitur ini ditujukan untuk DBMS objek-relasional seperti PostgreSQL.\nJika digunakan untuk MySQL atau MariaDB, tipe JSON akan dihasilkan dengan validasi json yang sesuai.\nJika digunakan untuk SQLite, itu akan diterjemahkan menjadi BLOB.\nJika digunakan untuk MSSQL, alias tipe ke bidang pertama akan dihasilkan.",
+      "Fitur ini ditujukan untuk DBMS objek-relasional seperti PostgreSQL.\nJika digunakan untuk MySQL atau MariaDB, tipe JSON akan dihasilkan dengan validasi json yang sesuai.\nJika digunakan untuk SQLite, itu akan diterjemahkan menjadi BLOB.\nJika digunakan untuk MSSQL, alias tipe ke bidang pertama akan dihasilkan.",
     table_deleted: "Tabel dihapus",
     area_deleted: "Area dihapus",
     note_deleted: "Catatan dihapus",
     relationship_deleted: "Hubungan dihapus",
     type_deleted: "Jenis dihapus",
-    cannot_connect: "Tidak dapat menghubungkan, kolom memiliki tipe yang berbeda",
+    cannot_connect:
+      "Tidak dapat menghubungkan, kolom memiliki tipe yang berbeda",
     copied_to_clipboard: "Disalin ke papan klip",
     create_new_diagram: "Buat diagram baru",
     cancel: "Batal",
@@ -154,9 +160,10 @@ const id = {
     create: "Buat",
     confirm: "Konfirmasi",
     last_modified: "Terakhir diubah",
-    drag_and_drop_files: "Seret dan lepas file di sini atau klik untuk mengunggah.",
-    support_json_and_ddb: "File JSON dan DDB didukung",
-    upload_sql_to_generate_diagrams: "Unggah file SQL untuk mengotomatiskan tabel dan kolom Anda.",
+    drag_and_drop_files:
+      "Seret dan lepas file di sini atau klik untuk mengunggah.",
+    upload_sql_to_generate_diagrams:
+      "Unggah file SQL untuk mengotomatiskan tabel dan kolom Anda.",
     overwrite_existing_diagram: "Timpa diagram yang ada",
     only_mysql_supported: "*Saat ini hanya memuat skrip MySQL yang didukung.",
     blank: "Kosong",
@@ -166,25 +173,32 @@ const id = {
     empty_field_name: "Nama bidang `name` kosong dalam tabel '{{tableName}}'",
     empty_field_type: "Jenis bidang `type` kosong dalam tabel '{{tableName}}'",
     no_values_for_field:
-        "Bidang '{{fieldName}}' dalam tabel '{{tableName}}' adalah tipe `{{type}}` tetapi tidak ada nilai yang ditentukan",
+      "Bidang '{{fieldName}}' dalam tabel '{{tableName}}' adalah tipe `{{type}}` tetapi tidak ada nilai yang ditentukan",
     default_doesnt_match_type:
-        "Nilai default untuk bidang '{{fieldName}}' dalam tabel '{{tableName}}' tidak sesuai dengan tipenya",
+      "Nilai default untuk bidang '{{fieldName}}' dalam tabel '{{tableName}}' tidak sesuai dengan tipenya",
     not_null_is_null:
-        "Bidang '{{fieldName}}' dalam tabel '{{tableName}}' adalah TIDAK NULL tetapi memiliki nilai default NULL",
-    duplicate_fields: "Bidang tabel duplikat dengan nama '{{fieldName}}' dalam tabel '{{tableName}}'",
-    duplicate_index: "Indeks duplikat dengan nama '{{indexName}}' dalam tabel '{{tableName}}'",
-    empty_index: "Indeks dalam tabel '{{tableName}}' tidak mengindeks kolom apapun",
+      "Bidang '{{fieldName}}' dalam tabel '{{tableName}}' adalah TIDAK NULL tetapi memiliki nilai default NULL",
+    duplicate_fields:
+      "Bidang tabel duplikat dengan nama '{{fieldName}}' dalam tabel '{{tableName}}'",
+    duplicate_index:
+      "Indeks duplikat dengan nama '{{indexName}}' dalam tabel '{{tableName}}'",
+    empty_index:
+      "Indeks dalam tabel '{{tableName}}' tidak mengindeks kolom apapun",
     no_primary_key: "Tabel '{{tableName}}' tidak memiliki kunci utama",
     type_with_no_name: "Mendeklarasikan tipe tanpa nama",
     duplicate_types: "Tipe duplikat dengan nama '{{typeName}}'",
     type_w_no_fields: "Mendeklarasikan tipe '{{typeName}}' kosong tanpa bidang",
-    empty_type_field_name: "Nama bidang `name` kosong dalam tipe '{{typeName}}'",
-    empty_type_field_type: "Jenis bidang `type` kosong dalam tipe '{{typeName}}'",
+    empty_type_field_name:
+      "Nama bidang `name` kosong dalam tipe '{{typeName}}'",
+    empty_type_field_type:
+      "Jenis bidang `type` kosong dalam tipe '{{typeName}}'",
     no_values_for_type_field:
-        "Bidang '{{fieldName}}' dalam tipe '{{typeName}}' adalah tipe `{{type}}` tetapi tidak ada nilai yang ditentukan",
-    duplicate_type_fields: "Bidang tipe duplikat dengan nama '{{fieldName}}' dalam tipe '{{typeName}}'",
+      "Bidang '{{fieldName}}' dalam tipe '{{typeName}}' adalah tipe `{{type}}` tetapi tidak ada nilai yang ditentukan",
+    duplicate_type_fields:
+      "Bidang tipe duplikat dengan nama '{{fieldName}}' dalam tipe '{{typeName}}'",
     duplicate_reference: "Referensi duplikat dengan nama '{{refName}}'",
-    circular_dependency: "Ketergantungan siklik yang melibatkan tabel '{{refName}}'",
+    circular_dependency:
+      "Ketergantungan siklik yang melibatkan tabel '{{refName}}'",
     timeline: "Garis waktu",
     priority: "Prioritas",
     none: "Tidak ada",
@@ -214,7 +228,8 @@ const id = {
     not_found: "Tidak ditemukan",
     pick_db: "Pilih basis data",
     generic: "Generik",
-    generic_description: "Diagram generik dapat diekspor ke SQL mana pun tetapi mendukung sedikit tipe data.",
+    generic_description:
+      "Diagram generik dapat diekspor ke SQL mana pun tetapi mendukung sedikit tipe data.",
     enums: "Enums",
     add_enum: "Tambah enum",
     edit_enum: "{{extra}} Edit enum {{enumName}}",
@@ -225,7 +240,8 @@ const id = {
     no_enums: "Tidak ada enum",
     no_enums_text: "Definisikan enum di sini",
     declare_array: "Deklarasikan array",
-    empty_index_name: "Mendeklarasikan indeks tanpa nama dalam tabel '{{tableName}}'",
+    empty_index_name:
+      "Mendeklarasikan indeks tanpa nama dalam tabel '{{tableName}}'",
     didnt_find_diagram: "Ups! Tidak menemukan diagram.",
   },
 };

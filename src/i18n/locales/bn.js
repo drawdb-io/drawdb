@@ -7,6 +7,7 @@ const bengali = {
 const bn = {
   translation: {
     report_bug: "বাগ রিপোর্ট করুন",
+    import_from: "ইম্পোর্ট করুন",
     import: "ইম্পোর্ট করুন",
     file: "ফাইল",
     new: "নতুন",
@@ -160,7 +161,6 @@ const bn = {
     last_modified: "শেষ সংশোধন",
     drag_and_drop_files:
       "ফাইলটি এখানে ড্র্যাগ এবং ড্রপ করুন বা আপলোড করতে ক্লিক করুন।",
-    support_json_and_ddb: "JSON এবং DDB ফাইলগুলি সমর্থিত",
     upload_sql_to_generate_diagrams:
       "আপনার টেবিল এবং কলামগুলি স্বয়ংক্রিয়ভাবে তৈরি করতে একটি SQL ফাইল আপলোড করুন।",
     overwrite_existing_diagram: "বিদ্যমান ডায়াগ্রামটি ওভাররাইট করুন",

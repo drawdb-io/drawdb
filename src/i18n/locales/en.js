@@ -8,6 +8,7 @@ const en = {
   translation: {
     report_bug: "Report a bug",
     import: "Import",
+    import_from: "Import from",
     file: "File",
     new: "New",
     new_window: "New window",
@@ -157,7 +158,6 @@ const en = {
     confirm: "Confirm",
     last_modified: "Last modified",
     drag_and_drop_files: "Drag and drop the file here or click to upload.",
-    support_json_and_ddb: "JSON and DDB files are supported",
     upload_sql_to_generate_diagrams:
       "Upload an sql file to autogenerate your tables and columns.",
     overwrite_existing_diagram: "Overwrite existing diagram",
@@ -245,6 +245,7 @@ const en = {
       "* Sharing this link will not create a live real-time collaboration session.",
     show_relationship_labels: "Show relationship labels",
     docs: "Docs",
+    supported_types: "Supported file types:",
   },
 };
 
