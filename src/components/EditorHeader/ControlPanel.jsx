@@ -837,6 +837,12 @@ export default function ControlPanel({
                 setImportDb(DB.MSSQL);
               },
             },
+            {
+              Oracle: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.ORACLESQL);
+              },
+            },
           ],
         }),
         function: () => {
