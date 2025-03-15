@@ -1221,7 +1221,6 @@ export default function ControlPanel({
             showDataTypes: !prevSettings.showDataTypes
           }));
         },
-        shortcut: "Ctrl+Shift+D",
       },
       show_grid: {
         state: settings.showGrid ? (
