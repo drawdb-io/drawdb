@@ -30,6 +30,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToOracleSQL,
 } from "../../utils/exportSQL/generic";
 import {
   ObjectType,
@@ -836,6 +837,12 @@ export default function ControlPanel({
                 setImportDb(DB.MSSQL);
               },
             },
+            {
+              Oracle: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.ORACLESQL);
+              },
+            },
           ],
         }),
         function: () => {
@@ -915,6 +922,22 @@ export default function ControlPanel({
               MSSQL: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToSQLServer({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
+            },
+            {
+              OracleSQL: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToOracleSQL({
                   tables: tables,
                   references: relationships,
                   types: types,
