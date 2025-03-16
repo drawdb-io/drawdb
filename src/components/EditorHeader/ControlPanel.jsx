@@ -1217,10 +1217,8 @@ export default function ControlPanel({
         ) : (
           <i className="bi bi-toggle-off" />
         ),
-        function: () => {
-            showDataTypes: !prevSettings.showDataTypes
-          }));
-        },
+        function: () =>
+          setSettings((prev) => ({ ...prev, showDataTypes: !prev.showDataTypes })),
       },
       show_grid: {
         state: settings.showGrid ? (
