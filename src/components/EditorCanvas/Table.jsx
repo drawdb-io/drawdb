@@ -16,7 +16,7 @@ import {
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
-import { useTranslation } from "react-i18next";
+import { useTranslation} from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
@@ -61,7 +61,7 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
-
+  const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
   return (
     <>
       <foreignObject
@@ -70,34 +70,45 @@ export default function Table(props) {
         y={tableData.y}
         width={settings.tableWidth}
         height={height}
-        className="group drop-shadow-lg rounded-md cursor-move"
+        className="group drop-shadow-lg  cursor-move"
         onPointerDown={onPointerDown}
       >
         <div
           onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
+               select-none w-full ${
+                 settings.notation !== "default"
+                   ? "transparent no-border"
+                   : "rounded-lg"
                } ${
                  selectedElement.id === tableData.id &&
-                 selectedElement.element === ObjectType.TABLE
+                   selectedElement.element === ObjectType.TABLE
                    ? "border-solid border-blue-500"
                    : "border-zinc-500"
                }`}
           style={{ direction: "ltr" }}
         >
           <div
-            className="h-[10px] w-full rounded-t-md"
-            style={{ backgroundColor: tableData.color }}
+            className={`h-[10px] w-full ${
+               settings.notation !== "default"
+                 ? ""
+                 : "rounded-t-md"
+            }`}
+            style={{ backgroundColor: tableData.color, height: settings.notation !== "default" ? 0 : "10px" }}
           />
           <div
             className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
               settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
+            } ${
+              settings.notation !== "default" ? "transparent" : ""
             }`}
           >
-            <div className=" px-3 overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className={` px-3 overflow-hidden text-ellipsis whitespace-nowrap ${
+               settings.notation !== "default"
+                 ? ""
+                 : ""
+            }`}
+            >
               {tableData.name}
             </div>
             <div className="hidden group-hover:block">
@@ -282,10 +293,45 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`${
-          index === tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
+        className={`
+          ${
+          (fieldData.primary && settings.notation !== "default" && primaryKeyCount === 1)
+            ? "border-b border-gray-400"
+            : ""
+          }${
+            (fieldData.primary && settings.notation !== "default" && index ===primaryKeyCount - 1)
+              ? "border-b border-gray-400"
+              : ""
+            } 
+          ${
+          (!fieldData.primary && settings.notation !== "default" )
+            ? "border-l border-r"
+            : ""
+          } ${
+          settings.mode === "light"
+            ? "bg-zinc-100 text-zinc-800"
+            : "bg-zinc-800 text-zinc-200"
+          } ${
+          (settings.notation !== "default" && index !== tableData.fields.length - 1)
+            ? "border-l border-r border-gray-400"
+            : ""
+          } ${
+          (settings.notation !== "default" && index === tableData.fields.length - 1)
+            ? "border-b border-gray-400"
+            : ""
+          } ${
+            (fieldData.primary && settings.notation === "default")
+              ? "border-b border-gray-400"
+              : ""
+          }${
+            (settings.notation === "default" && index !== tableData.fields.length - 1 && fieldData.primary === false)
+              ? "border-b border-gray-400"
+              : ""
+          }${
+            // Checa que cuando seas el último se redondee
+          (settings.notation === "default" && index === tableData.fields.length - 1)
+            ? "rounded-b-md"
+            : ""
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
@@ -313,7 +359,11 @@ export default function Table(props) {
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
-            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+            className={`flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full ${
+              (fieldData.primary && settings.notation !== "default")
+                ? "bg-[#ff2222cc]"
+                : "bg-[#2f68adcc]"
+            }`}
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
@@ -356,17 +406,35 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span>?</span>}
-              <span>
-                {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? "(" + fieldData.size + ")"
-                    : "")}
-              </span>
+              {settings.notation !== "default" ? (
+                <>
+                <span>
+                  {fieldData.type +
+                    ((dbToTypes[database][fieldData.type].isSized ||
+                      dbToTypes[database][fieldData.type].hasPrecision) &&
+                    fieldData.size &&
+                    fieldData.size !== ""
+                      ? "(" + fieldData.size + ")"
+                      : "")}
+                </span>
+                {!fieldData.notNull && <span>NULL</span>}
+                {fieldData.notNull && <span>NOT NULL</span>}  
+                </>
+              ) : (
+                <>
+                  {fieldData.primary && <IconKeyStroked/>}
+                  {!fieldData.notNull && <span>?</span>}
+                  <span>
+                  {fieldData.type +
+                    ((dbToTypes[database][fieldData.type].isSized ||
+                      dbToTypes[database][fieldData.type].hasPrecision) &&
+                    fieldData.size &&
+                    fieldData.size !== ""
+                      ? "(" + fieldData.size + ")"
+                      : "")}
+                </span>
+                </>
+              )}
             </div>
           )}
         </div>

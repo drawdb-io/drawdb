@@ -10,6 +10,7 @@ const defaultSettings = {
   panning: true,
   showCardinality: true,
   showRelationshipLabels: true,
+  notation: "default",
   tableWidth: tableWidth,
   showDebugCoordinates: false,
 };
