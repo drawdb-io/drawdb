@@ -354,7 +354,7 @@ export default function Table(props) {
               icon={<IconMinus />}
               onClick={() => deleteField(fieldData, tableData.id)}
             />
-          ) : (
+          ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
               {!fieldData.notNull && <span>?</span>}
@@ -362,13 +362,14 @@ export default function Table(props) {
                 {fieldData.type +
                   ((dbToTypes[database][fieldData.type].isSized ||
                     dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? "(" + fieldData.size + ")"
+                    fieldData.size &&
+                    fieldData.size !== ""
+                    ? `(${fieldData.size})`
                     : "")}
               </span>
             </div>
-          )}
+          ) : null
+          }
         </div>
       </div>
     );
