@@ -220,9 +220,11 @@ export function jsonToPostgreSQL(obj) {
     } else {
       return `CREATE TYPE ${type.name} AS (\n${type.fields
         .map((f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`)
-        .join(
-          "\n",
-        )}\n);\n${type.comment != "" ? `\nCOMMENT ON TYPE ${type.name} IS '${type.comment}';\n` : ""}`;
+        .join(",\n")}\n);\n${
+        type.comment && type.comment.trim() != ""
+          ? `\nCOMMENT ON TYPE ${type.name} IS '${type.comment}';\n`
+          : ""
+      }`;
     }
   })}\n${obj.tables
     .map(
