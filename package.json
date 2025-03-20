@@ -30,7 +30,7 @@
     "i18next": "^23.11.4",
     "i18next-browser-languagedetector": "^8.0.0",
     "jsonschema": "^1.4.1",
-    "jspdf": "^2.5.1",
+    "jspdf": "^3.0.1",
     "lexical": "^0.12.5",
     "node-sql-parser": "^5.3.7",
     "octokit": "^4.0.2",
