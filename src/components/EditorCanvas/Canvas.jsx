@@ -494,7 +494,7 @@ export default function Canvas() {
   const theme = localStorage.getItem("theme");
 
   return (
-    <div className="flex-grow h-full touch-none" id="canvas">
+    <div className="grow h-full touch-none" id="canvas">
       <div
         className="w-full h-full"
         style={{
@@ -587,7 +587,7 @@ export default function Canvas() {
         </svg>
       </div>
       {settings.showDebugCoordinates && (
-        <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-sm pointer-events-none select-none">
+        <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-xs pointer-events-none select-none">
           <table className="table-auto grow">
             <thead>
               <tr>

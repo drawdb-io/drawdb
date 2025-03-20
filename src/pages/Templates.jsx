@@ -88,7 +88,7 @@ export default function Templates() {
                           {t.title}
                         </div>
                         <button
-                          className="border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
+                          className="border rounded-sm px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
                           onClick={() => forkTemplate(t.id)}
                         >
                           <i className="fa-solid fa-code-fork"></i>
@@ -121,7 +121,7 @@ export default function Templates() {
                           </div>
                           <div>
                             <button
-                              className="me-1 border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
+                              className="me-1 border rounded-sm px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300"
                               onClick={() => forkTemplate(c.id)}
                             >
                               <i className="fa-solid fa-code-fork"></i>
@@ -130,7 +130,7 @@ export default function Templates() {
                         </div>
                         <div className="flex justify-around mt-2">
                           <button
-                            className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500"
+                            className="w-full text-center flex justify-center items-center border rounded-sm px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-blue-500"
                             onClick={() => editTemplate(c.id)}
                           >
                             <i className="bi bi-pencil-fill"></i>
@@ -138,7 +138,7 @@ export default function Templates() {
                           </button>
                           <div className="border-l border-gray-300 mx-2" />
                           <button
-                            className="w-full text-center flex justify-center items-center border rounded px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-red-500"
+                            className="w-full text-center flex justify-center items-center border rounded-sm px-2 py-1 bg-white hover:bg-gray-200 transition-all duration-300 text-red-500"
                             onClick={() => deleteTemplate(c.id)}
                           >
                             <IconDeleteStroked />
@@ -162,7 +162,7 @@ export default function Templates() {
                   <div className="grid grid-cols-5 sm:grid-cols-1 gap-4 place-content-center my-4">
                     <img
                       src={template_screenshot}
-                      className="border col-span-3 sm:cols-span-1 rounded"
+                      className="border col-span-3 sm:cols-span-1 rounded-sm"
                     />
                     <div className="col-span-2 sm:cols-span-1">
                       <div className="text-xl font-bold my-4">

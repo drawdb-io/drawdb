@@ -47,7 +47,7 @@ export default function LandingPage() {
     <div>
       <div className="flex flex-col h-screen bg-zinc-100">
         {showSurvey && (
-          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-gradient-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
+          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
             <Link to="/survey" className="hover:underline">
               Help us improve! Share your feedback.
             </Link>
@@ -71,7 +71,7 @@ export default function LandingPage() {
           <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800">
             <FadeIn duration={0.75}>
               <div className="md:px-3">
-                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-gradient-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
+                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
                   Draw, Copy, and Paste
                 </h1>
                 <div className="text-lg font-medium mt-1 sliding-vertical">
@@ -140,7 +140,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-sm rounded-2xl border p-6 bg-white space-y-3">
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3">
             <div className="text-lg font-medium">
               Build diagrams with a few clicks, see the full picture, export SQL
               scripts, customize your editor, and more.
@@ -188,7 +188,7 @@ export default function LandingPage() {
             {features.map((f, i) => (
               <div
                 key={"feature" + i}
-                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-sm hover:-translate-y-2 transition-all duration-300"
+                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-xs hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="bg-sky-700 px-0.5 rounded-l-xl" />
                 <div className="px-8 py-4 ">

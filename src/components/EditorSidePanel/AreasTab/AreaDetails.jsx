@@ -89,7 +89,7 @@ export default function AreaInfo({ data, i }) {
           showArrow
         >
           <div
-            className="h-[32px] w-[32px] rounded"
+            className="h-[32px] w-[32px] rounded-sm"
             style={{ backgroundColor: data.color }}
           />
         </Popover>
