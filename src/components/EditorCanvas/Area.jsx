@@ -105,45 +105,41 @@ export default function Area({
         onPointerDown={onPointerDown}
       >
         <div
-          className={`border-2 ${
+          className={`w-full h-full p-2 rounded cursor-move border-2 ${
             isHovered
               ? "border-dashed border-blue-500"
               : selectedElement.element === ObjectType.AREA &&
                   selectedElement.id === data.id
-                ? "border-blue-500"
-                : "border-slate-400"
-          } w-full h-full cursor-move rounded`}
+                ? "border-blue-500 opacity-100"
+                : "border-slate-400 opacity-100"
+          }`}
+          style={{ backgroundColor: `${data.color}66` }}
         >
-          <div
-            className="w-fill p-2 h-full"
-            style={{ backgroundColor: `${data.color}66` }}
-          >
-            <div className="flex justify-between gap-1 w-full">
-              <div className="text-color select-none overflow-hidden text-ellipsis">
-                {data.name}
-              </div>
-              {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
-                <Popover
-                  visible={areaIsSelected() && !layout.sidebar}
-                  onClickOutSide={onClickOutSide}
-                  stopPropagation
-                  content={<EditPopoverContent data={data} />}
-                  trigger="custom"
-                  position="rightTop"
-                  showArrow
-                >
-                  <Button
-                    icon={<IconEdit />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
-                    onClick={edit}
-                  />
-                </Popover>
-              )}
+          <div className="flex justify-between gap-1 w-full">
+            <div className="text-color select-none overflow-hidden text-ellipsis">
+              {data.name}
             </div>
+            {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
+              <Popover
+                visible={areaIsSelected() && !layout.sidebar}
+                onClickOutSide={onClickOutSide}
+                stopPropagation
+                content={<EditPopoverContent data={data} />}
+                trigger="custom"
+                position="rightTop"
+                showArrow
+              >
+                <Button
+                  icon={<IconEdit />}
+                  size="small"
+                  theme="solid"
+                  style={{
+                    backgroundColor: "#2F68ADB3",
+                  }}
+                  onClick={edit}
+                />
+              </Popover>
+            )}
           </div>
         </div>
       </foreignObject>
@@ -269,7 +265,7 @@ function EditPopoverContent({ data }) {
           showArrow
         >
           <div
-            className="h-[32px] w-[32px] rounded"
+            className="h-[32px] w-[32px] rounded-sm"
             style={{ backgroundColor: data.color }}
           />
         </Popover>

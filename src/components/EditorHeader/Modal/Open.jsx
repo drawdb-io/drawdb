@@ -48,7 +48,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
                     key={d.id}
                     className={`${
                       selectedDiagramId === d.id
-                        ? "bg-blue-300 bg-opacity-30"
+                        ? "bg-blue-300/30"
                         : "hover-1"
                     }`}
                     onClick={() => {

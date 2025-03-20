@@ -257,7 +257,7 @@ export default function Note({ data, onPointerDown }) {
                           showArrow
                         >
                           <div
-                            className="h-[32px] w-[32px] rounded"
+                            className="h-[32px] w-[32px] rounded-sm"
                             style={{ backgroundColor: data.color }}
                           />
                         </Popover>
@@ -302,7 +302,7 @@ export default function Note({ data, onPointerDown }) {
               })
             }
             onBlur={handleBlur}
-            className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
+            className="w-full resize-none outline-hidden overflow-y-hidden border-none select-none"
             style={{ backgroundColor: data.color }}
           />
         </div>
