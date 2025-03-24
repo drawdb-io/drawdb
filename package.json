@@ -47,7 +47,7 @@
     "@tailwindcss/postcss": "^4.0.14",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
@@ -56,7 +56,7 @@
     "postcss": "^8.4.32",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
-    "vite": "^5.4.1"
+    "vite": "^6.2.3"
   },
   "overrides": {
     "follow-redirects": "^1.15.4"
