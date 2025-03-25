@@ -27,3 +27,5 @@ jobs:
       run: npm run lint
     - name: Run vite build
       run: npm run build
+    - name: Run tests
+      run: npm run test

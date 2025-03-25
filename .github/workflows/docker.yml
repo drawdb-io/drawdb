@@ -2,8 +2,8 @@ name: Docker Build and Push
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - '**'
 
 concurrency:
   group: "docker-image"
@@ -27,12 +27,15 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GH_TOKEN }}
-    
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Downcase REPO variable
+      run: |
+        echo "REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
+
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
         push: true
-        tags: ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        tags: ghcr.io/${{ env.REPO }}:${{ github.ref_name }}, ghcr.io/${{ env.REPO }}:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
-
