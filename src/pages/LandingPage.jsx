@@ -8,6 +8,7 @@ import mysql_icon from "../assets/mysql.png";
 import postgres_icon from "../assets/postgres.png";
 import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
+import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
@@ -150,7 +151,7 @@ export default function LandingPage() {
           <div className="text-lg font-medium text-center mt-12 mb-6">
             Design for your database
           </div>
-          <div className="flex justify-center items-center gap-8 md:block">
+          <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
             {dbs.map((s, i) => (
               <img
                 key={"icon-" + i}
@@ -300,6 +301,7 @@ const dbs = [
   { icon: sqlite_icon, height: 64 },
   { icon: mariadb_icon, height: 64 },
   { icon: sql_server_icon, height: 64 },
+  { icon: oraclesql_icon, height: 172 },
 ];
 
 const features = [
