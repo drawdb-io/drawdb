@@ -48,7 +48,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 d.definition.dataType,
               ),
             )?.name;
-            if (!type && !dbToTypes[diagramDb][type])
+            if (!type && !dbToTypes[diagramDb][d.definition.dataType])
               type = affinity[diagramDb][type];
             field.type = type || d.definition.dataType;
 
