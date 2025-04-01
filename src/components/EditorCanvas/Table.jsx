@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Tab,
   ObjectType,
@@ -37,8 +37,14 @@ export default function Table(props) {
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
 
+  const borderColor = useMemo(
+    () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
+    [settings.mode],
+  );
+
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+
   const openEditor = () => {
     if (!layout.sidebar) {
       setSelectedElement((prev) => ({
@@ -84,7 +90,7 @@ export default function Table(props) {
                  selectedElement.id === tableData.id &&
                  selectedElement.element === ObjectType.TABLE
                    ? "border-solid border-blue-500"
-                   : "border-zinc-500"
+                   : borderColor
                }`}
           style={{ direction: "ltr" }}
         >
@@ -313,7 +319,7 @@ export default function Table(props) {
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
-            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+            className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
@@ -354,7 +360,7 @@ export default function Table(props) {
               icon={<IconMinus />}
               onClick={() => deleteField(fieldData, tableData.id)}
             />
-          ) : (
+          ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
               {!fieldData.notNull && <span>?</span>}
@@ -364,11 +370,11 @@ export default function Table(props) {
                     dbToTypes[database][fieldData.type].hasPrecision) &&
                   fieldData.size &&
                   fieldData.size !== ""
-                    ? "(" + fieldData.size + ")"
+                    ? `(${fieldData.size})`
                     : "")}
               </span>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     );

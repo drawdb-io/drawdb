@@ -133,7 +133,7 @@ export default function NoteInfo({ data, nid }) {
             showArrow
           >
             <div
-              className="h-[32px] w-[32px] rounded mb-2"
+              className="h-[32px] w-[32px] rounded-sm mb-2"
               style={{ backgroundColor: data.color }}
             />
           </Popover>

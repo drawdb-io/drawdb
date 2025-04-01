@@ -42,7 +42,7 @@ export default function Code({ value, language }) {
       />
       <button
         onClick={copyCode}
-        className={`absolute right-4 top-2 px-2 py-1 rounded ${settings.mode === "dark" ? "bg-zinc-700" : "bg-zinc-200"}`}
+        className={`absolute right-4 top-2 px-2 py-1 rounded-sm ${settings.mode === "dark" ? "bg-zinc-700" : "bg-zinc-200"}`}
       >
         <i className={`bi bi-clipboard${copied ? "-check" : ""} me-2`} />
         {t("copy")}
