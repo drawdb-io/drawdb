@@ -462,12 +462,12 @@ export default function WorkSpace() {
         }}
         okButtonProps={{ disabled: selectedDb === "" }}
       >
-        <div className="grid grid-cols-3 gap-4 place-content-center">
+        <div className="grid grid-cols-4 gap-4 place-content-center">
           {Object.values(databases).map((x) => (
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 py-3 px-4 rounded-md border-2 select-none ${
+              className={`space-y-3 p-3 rounded-md border-2 select-none ${
                 settings.mode === "dark"
                   ? "bg-zinc-700 hover:bg-zinc-600"
                   : "bg-zinc-100 hover:bg-zinc-200"
@@ -477,7 +477,7 @@ export default function WorkSpace() {
               {x.image && (
                 <img
                   src={x.image}
-                  className="h-10"
+                  className="h-8"
                   style={{
                     filter:
                       "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
