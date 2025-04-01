@@ -20,6 +20,7 @@ import {
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
+import { Parser as OracleParser } from "oracle-sql-parser";
 import {
   getModalTitle,
   getModalWidth,
@@ -131,12 +132,21 @@ export default function Modal({
   };
 
   const parseSQLAndLoadDiagram = () => {
-    const parser = new Parser();
+    const targetDatabase = database === DB.GENERIC ? importDb : database;
+
     let ast = null;
     try {
-      ast = parser.astify(importSource.src, {
-        database: database === DB.GENERIC ? importDb : database,
-      });
+      if (targetDatabase === DB.ORACLESQL) {
+        const oracleParser = new OracleParser();
+
+        ast = oracleParser.parse(importSource.src);
+      } else {
+        const parser = new Parser();
+
+        ast = parser.astify(importSource.src, {
+          database: targetDatabase,
+        });
+      }
     } catch (error) {
       const message = error.location
         ? `${error.name} [Ln ${error.location.start.line}, Col ${error.location.start.column}]: ${error.message}`

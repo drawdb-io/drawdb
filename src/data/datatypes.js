@@ -55,6 +55,16 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: true,
   },
+  NUMBER: {
+    type: "NUMBER",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    canIncrement: false,
+  },
   FLOAT: {
     type: "FLOAT",
     checkDefault: (field) => {
@@ -110,6 +120,20 @@ const defaultTypesBase = {
     defaultSize: 255,
     hasQuotes: true,
   },
+  VARCHAR2: {
+    type: "VARCHAR2",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 225,
+    hasQuotes: true,
+  },
   TEXT: {
     type: "TEXT",
     checkDefault: (field) => true,
@@ -140,7 +164,9 @@ const defaultTypesBase = {
       }
       const content = field.default.split(" ");
       const date = content[0].split("-");
-      return Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038;
+      return (
+        Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038
+      );
     },
     hasCheck: false,
     isSized: false,
@@ -217,6 +243,22 @@ const defaultTypesBase = {
   },
   BLOB: {
     type: "BLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  CLOB: {
+    type: "CLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  NCLOB: {
+    type: "NCLOB",
     checkDefault: (field) => true,
     isSized: false,
     hasCheck: false,
@@ -405,7 +447,9 @@ const mysqlTypesBase = {
       }
       const content = field.default.split(" ");
       const date = content[0].split("-");
-      return Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038;
+      return (
+        Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038
+      );
     },
     hasCheck: false,
     isSized: false,
@@ -913,8 +957,9 @@ const postgresTypesBase = {
     checkDefault: (field) => {
       const specialValues = ["now", "allballs"];
       return (
-        /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d([+-]\d{2}:\d{2})?$/.test(field.default) ||
-        specialValues.includes(field.default.toLowerCase())
+        /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d([+-]\d{2}:\d{2})?$/.test(
+          field.default,
+        ) || specialValues.includes(field.default.toLowerCase())
       );
     },
     hasCheck: false,
@@ -939,7 +984,8 @@ const postgresTypesBase = {
       ];
       return (
         /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default) ||
-        (Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038) ||
+        (Number.parseInt(date[0]) >= 1970 &&
+          Number.parseInt(date[0]) <= 2038) ||
         specialValues.includes(field.default.toLowerCase())
       );
     },
@@ -1118,7 +1164,11 @@ const postgresTypesBase = {
           elementsStr = field.default.slice(1, -1);
         }
         elements = JSON.parse(elementsStr);
-        return Array.isArray(elements) && elements.length === field.size && elements.every(Number.isFinite);
+        return (
+          Array.isArray(elements) &&
+          elements.length === field.size &&
+          elements.every(Number.isFinite)
+        );
       } catch (e) {
         return false;
       }
@@ -1128,7 +1178,7 @@ const postgresTypesBase = {
     hasPrecision: false,
     hasQuotes: true,
   },
-  HALFVEC:{
+  HALFVEC: {
     type: "HALFVEC",
     checkDefault: (field) => {
       let elements;
@@ -1138,7 +1188,11 @@ const postgresTypesBase = {
           elementsStr = field.default.slice(1, -1);
         }
         elements = JSON.parse(elementsStr);
-        return Array.isArray(elements) && elements.length === field.size && elements.every(Number.isFinite);
+        return (
+          Array.isArray(elements) &&
+          elements.length === field.size &&
+          elements.every(Number.isFinite)
+        );
       } catch (e) {
         return false;
       }
@@ -1155,9 +1209,9 @@ const postgresTypesBase = {
       if (strHasQuotes(field.default)) {
         elementsStr = field.default.slice(1, -1);
       }
-      const lengthStr = elementsStr.split('/')[1]
-      const length = Number.parseInt(lengthStr)
-      return length === field.size
+      const lengthStr = elementsStr.split("/")[1];
+      const length = Number.parseInt(lengthStr);
+      return length === field.size;
     },
     hasCheck: true,
     isSized: true,
@@ -1320,7 +1374,9 @@ const sqliteTypesBase = {
       }
       const content = field.default.split(" ");
       const date = content[0].split("-");
-      return Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038;
+      return (
+        Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038
+      );
     },
     hasCheck: false,
     isSized: false,
@@ -1581,7 +1637,9 @@ const mssqlTypesBase = {
       }
       const content = field.default.split(" ");
       const date = content[0].split("-");
-      return Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038;
+      return (
+        Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038
+      );
     },
     hasCheck: false,
     isSized: false,
@@ -1747,6 +1805,218 @@ export const mssqlTypes = new Proxy(mssqlTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
+const oraclesqlTypesBase = {
+  INTEGER: {
+    type: "INTEGER",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  NUMBER: {
+    type: "NUMBER",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+    canIncrement: false,
+  },
+  FLOAT: {
+    type: "FLOAT",
+    checkDefault: (field) => {
+      return /^-?\d+(\.\d+)?$/.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: true,
+  },
+  LONG: {
+    type: "LONG",
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
+  VARCHAR2: {
+    type: "VARCHAR2",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 4000,
+    hasQuotes: true,
+  },
+  NVARCHAR2: {
+    type: "VARCHAR2",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 4000,
+    hasQuotes: true,
+  },
+  CHAR: {
+    type: "CHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  NCHAR: {
+    type: "NCHAR",
+    checkDefault: (field) => {
+      if (strHasQuotes(field.default)) {
+        return field.default.length - 2 <= field.size;
+      }
+      return field.default.length <= field.size;
+    },
+    hasCheck: true,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 1,
+    hasQuotes: true,
+  },
+  CLOB: {
+    type: "CLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  NCLOB: {
+    type: "NCLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  BLOB: {
+    type: "BLOB",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  BFILE: {
+    type: "BFILE",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  JSON: {
+    type: "JSON",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  VECTOR: {
+    type: "VECTOR",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  DATE: {
+    type: "DATE",
+    checkDefault: (field) => {
+      return /^\d{4}-\d{2}-\d{2}$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  TIMESTAMP: {
+    type: "TIMESTAMP",
+    checkDefault: (field) => {
+      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
+        return true;
+      }
+      return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(
+        field.default,
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: true,
+    hasQuotes: true,
+  },
+  INTERVAL: {
+    type: "INTERVAL",
+    checkDefault: (field) => {
+      return /^INTERVAL\s'\d+'(\s+DAY|HOUR|MINUTE|SECOND)?$/.test(
+        field.default,
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  BOOLEAN: {
+    type: "BOOLEAN",
+    checkDefault: (field) => {
+      return (
+        field.default === "0" ||
+        field.default === "1" ||
+        field.default.toUpperCase() === "TRUE" ||
+        field.default.toUpperCase() === "FALSE"
+      );
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+  },
+  RAW: {
+    type: "RAW",
+    checkDefault: (field) => {
+      return /^[0-9A-Fa-f]+$/.test(field.default);
+    },
+    hasCheck: false,
+    isSized: true,
+    hasPrecision: false,
+    defaultSize: 2000,
+    hasQuotes: false,
+  },
+};
+
+export const oraclesqlTypes = new Proxy(oraclesqlTypesBase, {
+  get: (target, prop) => (prop in target ? target[prop] : false),
+});
+
 const dbToTypesBase = {
   [DB.GENERIC]: defaultTypes,
   [DB.MYSQL]: mysqlTypes,
@@ -1754,6 +2024,7 @@ const dbToTypesBase = {
   [DB.SQLITE]: sqliteTypes,
   [DB.MSSQL]: mssqlTypes,
   [DB.MARIADB]: mysqlTypes,
+  [DB.ORACLESQL]: oraclesqlTypes,
 };
 
 export const dbToTypes = new Proxy(dbToTypesBase, {
