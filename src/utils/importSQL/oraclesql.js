@@ -1,6 +1,24 @@
-import { Cardinality, Constraint } from "../../data/constants";
+import { Cardinality, Constraint, DB } from "../../data/constants";
+import { dbToTypes } from "../../data/datatypes";
 
-export function fromOracleSQL(ast) {
+const affinity = {
+  [DB.ORACLESQL]: new Proxy(
+    { INT: "INTEGER" },
+    { NUMERIC: "NUMBER" },
+    { DECIMAL: "NUMBER" },
+    { CHARACTER: "CHAR" },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+  [DB.GENERIC]: new Proxy(
+    {
+      INTEGER: "INT",
+      MEDIUMINT: "INTEGER",
+    },
+    { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
+  ),
+};
+
+export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
   const tables = [];
   const relationships = [];
   const enums = [];
@@ -22,6 +40,9 @@ export function fromOracleSQL(ast) {
             field.name = d.name;
 
             let type = d.type.type.toUpperCase();
+            if (!dbToTypes[diagramDb][type]) {
+              type = affinity[diagramDb][type];
+            }
             field.type = type;
 
             if (d.type.scale && d.type.precision) {
