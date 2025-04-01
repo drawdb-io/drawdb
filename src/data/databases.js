@@ -50,6 +50,7 @@ export const databases = new Proxy(
       hasTypes: false,
       hasEnums: false,
       hasArrays: false,
+      beta: true,
     },
     [DB.GENERIC]: {
       name: i18n.t("generic"),
