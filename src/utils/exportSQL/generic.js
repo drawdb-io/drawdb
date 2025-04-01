@@ -1,3 +1,4 @@
+import { DB } from "../../data/constants";
 import { dbToTypes, defaultTypes } from "../../data/datatypes";
 import { getInlineFK, parseDefault } from "./shared";
 
@@ -42,10 +43,10 @@ export function generateSchema(type) {
 export function getTypeString(
   field,
   currentDb,
-  dbms = "mysql",
+  dbms = DB.MYSQL,
   baseType = false,
 ) {
-  if (dbms === "mysql") {
+  if (dbms === DB.MYSQL) {
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
     }
@@ -62,7 +63,7 @@ export function getTypeString(
       return "JSON";
     }
     return field.type;
-  } else if (dbms === "postgres") {
+  } else if (dbms === DB.POSTGRES) {
     if (field.type === "SMALLINT" && field.increment) {
       return "smallserial";
     }
@@ -97,7 +98,7 @@ export function getTypeString(
       return `${field.type.toLowerCase()}${field.size ? `(${field.size})` : ""}`;
     }
     return field.type.toLowerCase();
-  } else if (dbms === "mssql") {
+  } else if (dbms === DB.MSSQL) {
     let type = field.type;
     switch (field.type) {
       case "ENUM":
@@ -134,22 +135,11 @@ export function getTypeString(
     }
 
     return type;
-  } else if (dbms === "oraclesql") {
+  } else if (dbms === DB.ORACLESQL) {
     let oracleType;
     switch (field.type) {
-      case "INT":
-      case "INTEGER":
-      case "SMALLINT":
       case "BIGINT":
-      case "DECIMAL":
-      case "NUMERIC":
-      case "REAL":
-      case "FLOAT":
-      case "DOUBLE":
         oracleType = "NUMBER";
-        break;
-      case "CHAR":
-        oracleType = "CHAR";
         break;
       case "VARCHAR":
         oracleType = "VARCHAR2";
@@ -158,35 +148,23 @@ export function getTypeString(
         oracleType = "CLOB";
         break;
       case "TIME":
-        oracleType = "TIMESTAMP";
-        break;
-      case "TIMESTAMP":
-      case "DATE":
       case "DATETIME":
-        oracleType = field.type;
-        break;
-      case "BOOLEAN":
-        oracleType = "NUMBER(1)";
+        oracleType = "TIMESTAMP";
         break;
       case "BINARY":
       case "VARBINARY":
         oracleType = "RAW";
         break;
-      case "BLOB":
-        oracleType = "BLOB";
-        break;
-      case "JSON":
-        oracleType = "JSON";
-        break;
       case "UUID":
         oracleType = "RAW(16)";
         break;
-      case "ENUM":
       case "SET":
-        oracleType = "VARCHAR2";
+      case "ENUM":
+        oracleType = field.name + "_t";
         break;
       default:
-        throw new Error(`Unsupported type for Oracle: ${field.type}`);
+        oracleType = field.type;
+        break;
     }
     const typeInfo = dbToTypes[currentDb][oracleType];
     if (typeInfo.isSized || typeInfo.hasPrecision) {
@@ -195,12 +173,6 @@ export function getTypeString(
       } else {
         return `${oracleType}${field.size ? `(${field.size})` : ""}`;
       }
-    }
-
-    if (field.type === "ENUM" || field.type === "SET") {
-      oracleType += ` CHECK (${field.name} IN (${field.values
-        .map((v) => `'${v}'`)
-        .join(", ")}))`;
     }
 
     return oracleType;
@@ -283,13 +255,15 @@ export function jsonToPostgreSQL(obj) {
           type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
         }CREATE TYPE ${type.name} AS (\n${type.fields
           .map(
-            (f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`,
+            (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
           )
           .join("\n")}\n);`
       );
     } else {
       return `CREATE TYPE ${type.name} AS (\n${type.fields
-        .map((f) => `\t${f.name} ${getTypeString(f, obj.database, "postgres")}`)
+        .map(
+          (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
+        )
         .join(",\n")}\n);\n${
         type.comment && type.comment.trim() != ""
           ? `\nCOMMENT ON TYPE ${type.name} IS '${type.comment}';\n`
@@ -317,7 +291,7 @@ export function jsonToPostgreSQL(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
                 field.name
-              }" ${getTypeString(field, obj.database, "postgres")}${
+              }" ${getTypeString(field, obj.database, DB.POSTGRES)}${
                 field.notNull ? " NOT NULL" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
@@ -447,7 +421,7 @@ export function jsonToMariaDB(obj) {
             (field) =>
               `\t\`${
                 field.name
-              }\` ${getTypeString(field, obj.database, "oraclesql")}${field.notNull ? " NOT NULL" : ""}${
+              }\` ${getTypeString(field, obj.database, DB.MYSQL)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
               }${field.unique ? " UNIQUE" : ""}${
                 field.default !== ""
@@ -506,7 +480,7 @@ export function jsonToSQLServer(obj) {
       }CREATE TYPE [${type.name}] FROM ${
         type.fields.length < 0
           ? ""
-          : `${getTypeString(type.fields[0], obj.database, "mssql", true)}`
+          : `${getTypeString(type.fields[0], obj.database, DB.MSSQL, true)}`
       };\nGO\n`;
     })
     .join("\n")}\n${obj.tables
@@ -519,7 +493,7 @@ export function jsonToSQLServer(obj) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t[${
                 field.name
-              }] ${getTypeString(field, obj.database, "mssql")}${
+              }] ${getTypeString(field, obj.database, DB.MSSQL)}${
                 field.notNull ? " NOT NULL" : ""
               }${field.increment ? " IDENTITY" : ""}${
                 field.unique ? " UNIQUE" : ""
@@ -569,13 +543,30 @@ export function jsonToOracleSQL(obj) {
     .map(
       (table) =>
         `${
+          table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
+            .length > 0
+            ? `${table.fields
+                .filter((f) => f.type === "ENUM" || f.type === "SET")
+                .map(
+                  (f) =>
+                    `CREATE DOMAIN "${f.name}_t" AS ENUM (${f.values
+                      .map((v) => `'${v}'`)
+                      .join(", ")});\n`,
+                )
+                .join("\n")}\n`
+            : ""
+        }${
           table.comment === "" ? "" : `/* ${table.comment} */\n`
         }CREATE TABLE "${table.name}" (\n${table.fields
           .map(
             (field) =>
               `${field.comment === "" ? "" : `  -- ${field.comment}\n`}  "${
                 field.name
-              }" ${getTypeString(field, obj.database, "oraclesql")}${field.primary ? "" : field.notNull ? (table.indices.some((index) => index.fields.some((f) => f === field.name)) ? " NOT NULL" : field.unique ? " NOT NULL UNIQUE" : " UNIQUE") : ""}${
+              }" ${getTypeString(field, obj.database, DB.ORACLESQL)}${
+                field.notNull ? " NOT NULL" : ""
+              }${field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""}${
+                field.unique ? " UNIQUE" : ""
+              }${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, obj.database)}`
                   : ""
@@ -605,9 +596,7 @@ export function jsonToOracleSQL(obj) {
     .join("\n\n")}\n${obj.references
     .map(
       (r) =>
-        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD CONSTRAINT fk_${
-          r.startTableId
-        }_${r.endTableId} FOREIGN KEY ("${
+        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
           obj.tables[r.startTableId].fields[r.startFieldId].name
         }") REFERENCES "${obj.tables[r.endTableId].name}"("${
           obj.tables[r.endTableId].fields[r.endFieldId].name
