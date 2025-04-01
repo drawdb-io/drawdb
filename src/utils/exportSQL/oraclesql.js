@@ -12,7 +12,7 @@ export function toOracleSQL(diagram) {
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
                 field.name
-              }" ${field.type}${field.size !== undefined && field.size !== "" ? "(" + field.size + ")" : ""}${
+              }" ${field.type}${field.size && Boolean(field.size.trim()) ? "(" + field.size + ")" : ""}${
                 field.notNull ? " NOT NULL" : ""
               }${
                 field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""

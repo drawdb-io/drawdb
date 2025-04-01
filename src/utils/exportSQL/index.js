@@ -18,7 +18,7 @@ export function exportSQL(diagram) {
       return toMariaDB(diagram);
     case DB.MSSQL:
       return toMSSQL(diagram);
-    case DB.ORACLE:
+    case DB.ORACLESQL:
       return toOracleSQL(diagram);
     default:
       return "";
