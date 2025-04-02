@@ -1856,7 +1856,7 @@ const oraclesqlTypesBase = {
     hasCheck: true,
     isSized: true,
     hasPrecision: false,
-    defaultSize: 4000,
+    defaultSize: 255,
     hasQuotes: true,
   },
   NVARCHAR2: {
@@ -1870,7 +1870,7 @@ const oraclesqlTypesBase = {
     hasCheck: true,
     isSized: true,
     hasPrecision: false,
-    defaultSize: 4000,
+    defaultSize: 255,
     hasQuotes: true,
   },
   CHAR: {
@@ -2008,7 +2008,7 @@ const oraclesqlTypesBase = {
     hasCheck: false,
     isSized: true,
     hasPrecision: false,
-    defaultSize: 2000,
+    defaultSize: 255,
     hasQuotes: false,
   },
 };
