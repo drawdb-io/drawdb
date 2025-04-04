@@ -98,6 +98,7 @@ export const SIDESHEET = {
   NONE: 0,
   TODO: 1,
   TIMELINE: 2,
+  REVISIONS: 3,
 };
 
 export const DB = {
