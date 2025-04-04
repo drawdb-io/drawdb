@@ -254,6 +254,7 @@ const en = {
     export_saved_data: "Export saved data",
     dbml_view: "DBML view",
     tab_view: "Tab view",
+    revisions: "Revisions",
   },
 };
 

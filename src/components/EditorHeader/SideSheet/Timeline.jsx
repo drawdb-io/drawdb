@@ -8,7 +8,7 @@ export default function Timeline() {
 
   if (undoStack.length > 0) {
     return (
-      <List className="sidesheet-theme">
+      <List>
         {[...undoStack].reverse().map((e, i) => (
           <List.Item
             key={i}
@@ -24,6 +24,6 @@ export default function Timeline() {
       </List>
     );
   } else {
-    return <div className="m-5 sidesheet-theme">{t("no_activity")}</div>;
+    return <div className="m-5">{t("no_activity")}</div>;
   }
 }
