@@ -258,6 +258,7 @@ const en = {
     tab_view: "Tab view",
     label: "Label",
     many_side_label: "Many(n) side label",
+    revisions: "Revisions",
   },
 };
 

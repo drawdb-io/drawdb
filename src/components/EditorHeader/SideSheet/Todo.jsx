@@ -106,7 +106,7 @@ export default function Todo() {
 
   return (
     <>
-      <div className="flex justify-between items-center mx-5 mb-2 sidesheet-theme">
+      <div className="flex justify-between items-center mx-5 mb-2">
         <Dropdown
           render={
             <Dropdown.Menu>
@@ -153,7 +153,7 @@ export default function Todo() {
         </Button>
       </div>
       {tasks.length > 0 ? (
-        <List className="sidesheet-theme">
+        <List>
           {tasks.map((task, i) => (
             <List.Item
               key={i}
@@ -267,7 +267,7 @@ export default function Todo() {
           ))}
         </List>
       ) : (
-        <div className="m-5 sidesheet-theme">{t("no_tasks")}</div>
+        <div className="m-5">{t("no_tasks")}</div>
       )}
     </>
   );
