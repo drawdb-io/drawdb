@@ -259,6 +259,7 @@ const en = {
     label: "Label",
     many_side_label: "Many(n) side label",
     revisions: "Revisions",
+    no_saved_revisions: "No saved revisions",
   },
 };
 

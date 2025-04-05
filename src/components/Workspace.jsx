@@ -287,8 +287,8 @@ export default function WorkSpace() {
 
     const loadFromGist = async (shareId) => {
       try {
-        const res = await get(shareId);
-        const diagramSrc = res.data.files["share.json"].content;
+        const gist = await get(shareId);
+        const diagramSrc = gist.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
         setGistId(shareId);
         setUndoStack([]);
