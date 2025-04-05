@@ -28,7 +28,7 @@ export default function Sidesheet({ type, onClose }) {
       case SIDESHEET.TODO:
         return <Todo />;
       case SIDESHEET.REVISIONS:
-        return <Revisions />;
+        return <Revisions open={type !== SIDESHEET.NONE} />;
       default:
         break;
     }

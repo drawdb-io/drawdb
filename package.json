@@ -33,6 +33,7 @@
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
     "nanoid": "^5.1.5",
+    "moment": "^2.30.1",
     "node-sql-parser": "^5.3.11",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
