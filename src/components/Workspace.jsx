@@ -26,6 +26,7 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { octokit } from "../data/octokit";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const IdContext = createContext({ gistId: "" });
 
 export default function WorkSpace() {
