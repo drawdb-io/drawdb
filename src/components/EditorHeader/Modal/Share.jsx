@@ -66,6 +66,7 @@ export default function Share({ title, setModal }) {
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
+      setLoading(true);
       try {
         setLoading(true);
         if (!gistId || gistId === "") {

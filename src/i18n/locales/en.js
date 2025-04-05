@@ -257,6 +257,7 @@ const en = {
     dbml_view: "DBML view",
     tab_view: "Tab view",
     revisions: "Revisions",
+    no_saved_revisions: "No saved revisions",
   },
 };
 
