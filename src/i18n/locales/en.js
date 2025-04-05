@@ -258,6 +258,8 @@ const en = {
     tab_view: "Tab view",
     revisions: "Revisions",
     no_saved_revisions: "No saved revisions",
+    version: "Version",
+    record_version: "Record version",
   },
 };
 

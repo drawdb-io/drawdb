@@ -32,3 +32,17 @@ export async function get(gistId) {
 
   return res.data;
 }
+
+export async function getCommits(gistId, perPage = 20, page = 1) {
+  const res = await octokit.request(
+    `GET /gists/${gistId}/commits?per_page=${perPage}&page=${page}`,
+    {
+      gist_id: gistId,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    },
+  );
+
+  return res.data;
+}
