@@ -1,17 +1,7 @@
 import { useState } from "react";
-import {
-  Action,
-  ObjectType,
-  Tab,
-  State,
-  noteThemes,
-} from "../../data/constants";
-import { Input, Button, Popover } from "@douyinfe/semi-ui";
-import {
-  IconEdit,
-  IconDeleteStroked,
-  IconCheckboxTick,
-} from "@douyinfe/semi-icons";
+import { Action, ObjectType, Tab, State } from "../../data/constants";
+import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
+import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
   useLayout,
   useUndoRedo,
@@ -209,58 +199,33 @@ export default function Note({ data, onPointerDown }) {
                             setRedoStack([]);
                           }}
                         />
-                        <Popover
-                          content={
-                            <div className="popover-theme">
-                              <div className="font-medium mb-1">
-                                {t("theme")}
-                              </div>
-                              <hr />
-                              <div className="py-3">
-                                {noteThemes.map((c) => (
-                                  <button
-                                    key={c}
-                                    style={{ backgroundColor: c }}
-                                    className="p-3 rounded-full mx-1"
-                                    onClick={() => {
-                                      setUndoStack((prev) => [
-                                        ...prev,
-                                        {
-                                          action: Action.EDIT,
-                                          element: ObjectType.NOTE,
-                                          nid: data.id,
-                                          undo: { color: data.color },
-                                          redo: { color: c },
-                                          message: t("edit_note", {
-                                            noteTitle: data.title,
-                                            extra: "[color]",
-                                          }),
-                                        },
-                                      ]);
-                                      setRedoStack([]);
-                                      updateNote(data.id, { color: c });
-                                    }}
-                                  >
-                                    {data.color === c ? (
-                                      <IconCheckboxTick
-                                        style={{ color: "white" }}
-                                      />
-                                    ) : (
-                                      <IconCheckboxTick style={{ color: c }} />
-                                    )}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          }
-                          position="rightTop"
-                          showArrow
+                        <ColorPicker
+                          onChange={({ hex: color }) => {
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.NOTE,
+                                nid: data.id,
+                                undo: { color: data.color },
+                                redo: { color },
+                                message: t("edit_note", {
+                                  noteTitle: data.title,
+                                  extra: "[color]",
+                                }),
+                              },
+                            ]);
+                            setRedoStack([]);
+                            updateNote(data.id, { color });
+                          }}
+                          usePopover={true}
+                          value={ColorPicker.colorStringToValue(data.color)}
                         >
                           <div
                             className="h-[32px] w-[32px] rounded-sm"
                             style={{ backgroundColor: data.color }}
                           />
-                        </Popover>
+                        </ColorPicker>
                       </div>
                       <div className="flex">
                         <Button

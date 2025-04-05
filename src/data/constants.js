@@ -1,26 +1,3 @@
-export const tableThemes = [
-  "#f03c3c",
-  "#ff4f81",
-  "#bc49c4",
-  "#a751e8",
-  "#7c4af0",
-  "#6360f7",
-  "#7d9dff",
-  "#32c9b0",
-  "#3cde7d",
-  "#89e667",
-  "#ffe159",
-  "#ff9159",
-];
-
-export const noteThemes = [
-  "#ffdfd9",
-  "#fcf7ac",
-  "#cffcb1",
-  "#c7d2ff",
-  "#e7c7ff",
-];
-
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
 export const darkBgTheme = "#16161A";

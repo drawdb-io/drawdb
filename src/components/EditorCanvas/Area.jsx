@@ -1,13 +1,7 @@
 import { useRef, useState } from "react";
-import { Button, Popover, Input } from "@douyinfe/semi-ui";
+import { Button, Popover, Input, ColorPicker } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
-import {
-  Tab,
-  Action,
-  ObjectType,
-  defaultBlue,
-  State,
-} from "../../data/constants";
+import { Tab, Action, ObjectType, State } from "../../data/constants";
 import {
   useCanvas,
   useLayout,
@@ -17,7 +11,6 @@ import {
   useAreas,
   useSaveState,
 } from "../../hooks";
-import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
 
@@ -193,7 +186,6 @@ export default function Area({
 
 function EditPopoverContent({ data }) {
   const [editField, setEditField] = useState({});
-  const { setSaveState } = useSaveState();
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
@@ -227,48 +219,28 @@ function EditPopoverContent({ data }) {
             setRedoStack([]);
           }}
         />
-        <Popover
-          content={
-            <div className="popover-theme">
-              <ColorPalette
-                currentColor={data.color}
-                onPickColor={(c) => {
-                  setUndoStack((prev) => [
-                    ...prev,
-                    {
-                      action: Action.EDIT,
-                      element: ObjectType.AREA,
-                      aid: data.id,
-                      undo: { color: data.color },
-                      redo: { color: c },
-                      message: t("edit_area", {
-                        areaName: data.name,
-                        extra: "[color]",
-                      }),
-                    },
-                  ]);
-                  setRedoStack([]);
-                  updateArea(data.id, {
-                    color: c,
-                  });
-                }}
-                onClearColor={() => {
-                  updateArea(data.id, {
-                    color: defaultBlue,
-                  });
-                  setSaveState(State.SAVING);
-                }}
-              />
-            </div>
-          }
-          position="rightTop"
-          showArrow
-        >
-          <div
-            className="h-[32px] w-[32px] rounded-sm"
-            style={{ backgroundColor: data.color }}
-          />
-        </Popover>
+        <ColorPicker
+          onChange={({ hex: color }) => {
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.AREA,
+                aid: data.id,
+                undo: { color: data.color },
+                redo: { color },
+                message: t("edit_area", {
+                  areaName: data.name,
+                  extra: "[color]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            updateArea(data.id, { color });
+          }}
+          usePopover={true}
+          value={ColorPicker.colorStringToValue(data.color)}
+        />
       </div>
       <div className="flex">
         <Button
