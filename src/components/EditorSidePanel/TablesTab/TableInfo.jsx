@@ -5,12 +5,11 @@ import {
   TextArea,
   Button,
   Card,
-  Popover,
+  ColorPicker,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
-import ColorPalette from "../../ColorPicker";
+import { Action, ObjectType } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
@@ -223,63 +222,29 @@ export default function TableInfo({ data }) {
         </Collapse>
       </Card>
       <div className="flex justify-between items-center gap-1 mb-2">
-        <div>
-          <Popover
-            content={
-              <div className="popover-theme">
-                <ColorPalette
-                  currentColor={data.color}
-                  onClearColor={() => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: defaultBlue },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: defaultBlue });
-                  }}
-                  onPickColor={(c) => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: c },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: c });
-                  }}
-                />
-              </div>
-            }
-            trigger="click"
-            position="bottomLeft"
-            showArrow
-          >
-            <div
-              className="h-[32px] w-[32px] rounded-sm"
-              style={{ backgroundColor: data.color }}
-            />
-          </Popover>
-        </div>
+        <ColorPicker
+          onChange={({ hex: color }) => {
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.TABLE,
+                component: "self",
+                tid: data.id,
+                undo: { color: data.color },
+                redo: { color },
+                message: t("edit_table", {
+                  tableName: data.name,
+                  extra: "[color]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            updateTable(data.id, { color });
+          }}
+          usePopover={true}
+          value={ColorPicker.colorStringToValue(data.color)}
+        />
         <div className="flex gap-1">
           <Button
             block
