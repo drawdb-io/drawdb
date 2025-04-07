@@ -27,7 +27,8 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
-  const relationshipType = data.lineType || "0";
+  const type = settings.notation === 'default' ? 0 : 10;
+  const relationshipType=(5,type);
   let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
