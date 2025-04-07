@@ -25,6 +25,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
+import { getRectFromEndpoints } from "../../utils/getRectFromEndpoints";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -80,6 +81,13 @@ export default function Canvas() {
     height: 0,
     pointerX: 0,
     pointerY: 0,
+  });
+  const [bulkSelectRectPts, setBulkSelectRectPts] = useState({
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0,
+    show: false,
   });
 
   /**
@@ -224,6 +232,12 @@ export default function Canvas() {
       }
 
       updateArea(areaResize.id, { ...newDims });
+    } else if (bulkSelectRectPts.show) {
+      setBulkSelectRectPts((prev) => ({
+        ...prev,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+      }));
     }
   };
 
@@ -243,14 +257,24 @@ export default function Canvas() {
     )
       return;
 
-    setPanning({
-      isPanning: true,
-      panStart: transform.pan,
-      // Diagram space depends on the current panning.
-      // Use screen space to avoid circular dependencies and undefined behavior.
-      cursorStart: pointer.spaces.screen,
-    });
-    pointer.setStyle("grabbing");
+    if (!settings.panning) {
+      setBulkSelectRectPts({
+        x1: pointer.spaces.diagram.x,
+        y1: pointer.spaces.diagram.y,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+        show: true,
+      });
+    } else {
+      setPanning({
+        isPanning: true,
+        panStart: transform.pan,
+        // Diagram space depends on the current panning.
+        // Use screen space to avoid circular dependencies and undefined behavior.
+        cursorStart: pointer.spaces.screen,
+      });
+      pointer.setStyle("grabbing");
+    }
   };
 
   const coordsDidUpdate = (element) => {
@@ -341,6 +365,16 @@ export default function Canvas() {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+
+    if (bulkSelectRectPts.show) {
+      setBulkSelectRectPts((prev) => ({
+        ...prev,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+        show: false,
+      }));
+    }
+
     if (panning.isPanning && didPan()) {
       setUndoStack((prev) => [
         ...prev,
@@ -520,7 +554,7 @@ export default function Canvas() {
                   cy="4"
                   r="0.85"
                   fill="rgb(99, 152, 191)"
-                ></circle>
+                />
               </pattern>
             </defs>
             <rect
@@ -529,7 +563,7 @@ export default function Canvas() {
               width="100%"
               height="100%"
               fill="url(#pattern-circles)"
-            ></rect>
+            />
           </svg>
         )}
         <svg
@@ -584,6 +618,15 @@ export default function Canvas() {
               }
             />
           ))}
+          {bulkSelectRectPts.show && (
+            <rect
+              {...getRectFromEndpoints(bulkSelectRectPts)}
+              stroke="grey"
+              fill="grey"
+              fillOpacity={0.15}
+              strokeDasharray={10}
+            />
+          )}
         </svg>
       </div>
       {settings.showDebugCoordinates && (
