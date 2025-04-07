@@ -1,4 +1,14 @@
-export function CrowOM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+export function CrowOM(
+  pathRef, 
+  cardinalityEndX, 
+  cardinalityEndY, 
+  cardinalityStartX, 
+  cardinalityStartY,  
+  direction, 
+  cardinalityStart, 
+  cardinalityEnd
+) {
+    
     return(
         pathRef &&(
             <>
@@ -30,9 +40,9 @@ export function CrowOM(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
                     className="group-hover:fill-sky-700"
                 />
                 <text
-                    x={cardinalityStartX}
-                    y={cardinalityStartY-10}
-                    fill="black"
+                    x={cardinalityStartX-5}
+                    y={cardinalityStartY-20}
+                    fill= "gray"
                     strokeWidth="0.5"
                     textAnchor="middle"
                     alignmentBaseline="middle"
@@ -40,9 +50,9 @@ export function CrowOM(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
                     {cardinalityStart}
                 </text>
                 <text
-                    x={cardinalityEndX-15}
-                    y={cardinalityEndY-15}
-                    fill="black"
+                    x={cardinalityEndX-8}
+                    y={cardinalityEndY-24}
+                    fill="gray"
                     strokeWidth="0.5"
                     textAnchor="middle"
                     alignmentBaseline="middle"
@@ -72,7 +82,16 @@ export function CrowOM(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
     )
 }
 
-export function CrowOO(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalitySart, cardinalityEnd){
+export function CrowOO(
+  pathRef, 
+  cardinalityEndX, 
+  cardinalityEndY, 
+  cardinalityStartX, 
+  cardinalityStartY,  
+  direction, 
+  cardinalitySart, 
+  cardinalityEnd
+) {
     return(
         pathRef && (
             <>
@@ -115,9 +134,9 @@ export function CrowOO(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
             />
 
             <text
-              x={cardinalityStartX}
-              y={cardinalityStartY-15}
-              fill="black"
+              x={cardinalityStartX-8}
+              y={cardinalityStartY-20}
+              fill="gray"
               strokeWidth="0.5"
               textAnchor="middle"
               alignmentBaseline="middle"
@@ -126,8 +145,8 @@ export function CrowOO(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
             </text>
             <text
                 x={cardinalityEndX-15}
-                y={cardinalityEndY-15}
-                fill="black"
+                y={cardinalityEndY-20}
+                fill="gray"
                 strokeWidth="0.5"
                 textAnchor="middle"
                 alignmentBaseline="middle"
@@ -139,82 +158,14 @@ export function CrowOO(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
     )
 }
 
-
-export function CrowZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
-  return(
-      pathRef &&(
-          <>
-            <circle
-              cx={cardinalityEndX-24}
-              cy={cardinalityEndY}
-              r="4"
-              stroke="gray"
-              strokeWidth='2'
-              fill="none"
-              className="group-hover:fill-sky-700"
-            />
-              <line
-                  x1={cardinalityEndX-(20*direction)}
-                  y1={cardinalityEndY}
-                  x2={cardinalityEndX+1}
-                  y2={cardinalityEndY-10}
-                  stroke="gray"
-                  strokeWidth='2'
-                  className="group-hover:fill-sky-700"
-              />
-              <line
-                  x1={cardinalityEndX-20*direction}
-                  y1={cardinalityEndY}
-                  x2={cardinalityEndX+1}
-                  y2={cardinalityEndY+10}
-                  stroke="gray"
-                  strokeWidth='2'
-                  className="group-hover:fill-sky-700"
-              />
-              <text
-                  x={cardinalityStartX}
-                  y={cardinalityStartY-10}
-                  fill="black"
-                  strokeWidth="0.5"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-              >
-                  {cardinalityStart}
-              </text>
-              <text
-                  x={cardinalityEndX-15}
-                  y={cardinalityEndY-15}
-                  fill="black"
-                  strokeWidth="0.5"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-              >
-                  {cardinalityEnd}
-              </text>
-              <line
-                x1={cardinalityStartX-(15*direction)}
-                y1={cardinalityStartY+10}
-                x2={cardinalityStartX-(15*direction)}
-                y2={cardinalityStartY-10}
-                stroke="gray"
-                strokeWidth='2'
-                className="group-hover:fill-sky-700"
-              />
-              <line
-                x1={cardinalityStartX-(10*direction)}
-                y1={cardinalityStartY+10}
-                x2={cardinalityStartX-(10*direction)}
-                y2={cardinalityStartY-10}
-                stroke="gray"
-                strokeWidth='2'
-                className="group-hover:fill-sky-700"
-              />
-          </>
-      )
-  )
-}
-
-export function DefaultNotation(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY, direction, cardinalityStart, cardinalityEnd){
+export function DefaultNotation(
+  pathRef, 
+  cardinalityEndX, 
+  cardinalityEndY, cardinalityStartX, 
+  cardinalityStartY, 
+  cardinalityStart, 
+  cardinalityEnd
+) {
   return(
       pathRef && (
         <>
@@ -257,7 +208,16 @@ export function DefaultNotation(pathRef, cardinalityEndX, cardinalityEndY, cardi
   )
 }
 
-export function IDEFZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY,  direction, cardinalityStart, cardinalityEnd){
+export function IDEFZM(
+  pathRef, 
+  cardinalityEndX, 
+  cardinalityEndY, 
+  cardinalityStartX, 
+  cardinalityStartY,  
+  direction, 
+  cardinalityStart, 
+  cardinalityEnd
+) {
   return(
       pathRef && (
           <>
@@ -271,9 +231,9 @@ export function IDEFZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
               className="group-hover:fill-sky-700"
             />
               <text
-                  x={cardinalityStartX}
-                  y={cardinalityStartY-10}
-                  fill="black"
+                  x={cardinalityStartX-8}
+                  y={cardinalityStartY-20}
+                  fill="grey"
                   strokeWidth="0.5"
                   textAnchor="middle"
                   alignmentBaseline="middle"
@@ -282,8 +242,8 @@ export function IDEFZM(pathRef, cardinalityEndX, cardinalityEndY, cardinalitySta
               </text>
               <text
                   x={cardinalityEndX-15}
-                  y={cardinalityEndY-15}
-                  fill="black"
+                  y={cardinalityEndY-20}
+                  fill="grey"
                   strokeWidth="0.5"
                   textAnchor="middle"
                   alignmentBaseline="middle"

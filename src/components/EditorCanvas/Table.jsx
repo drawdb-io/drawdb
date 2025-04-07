@@ -5,6 +5,7 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
+  Notation,
 } from "../../data/constants";
 import {
   IconEdit,
@@ -77,8 +78,8 @@ export default function Table(props) {
           onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
                select-none w-full ${
-                 settings.notation !== "default"
-                   ? "transparent no-border"
+                 settings.notation !== Notation.DEFAULT
+                   ? "border-none"
                    : "rounded-lg"
                } ${
                  selectedElement.id === tableData.id &&
@@ -90,21 +91,23 @@ export default function Table(props) {
         >
           <div
             className={`h-[10px] w-full ${
-               settings.notation !== "default"
+               settings.notation !== Notation.DEFAULT
                  ? ""
                  : "rounded-t-md"
             }`}
-            style={{ backgroundColor: tableData.color, height: settings.notation !== "default" ? 0 : "10px" }}
+            style={{ backgroundColor: tableData.color, height: settings.notation !== Notation.DEFAULT ? 0 : "10px" }}
           />
           <div
             className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
-              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
-            } ${
-              settings.notation !== "default" ? "transparent" : ""
+              settings.notation !== Notation.DEFAULT
+              ? "bg-transparent"
+              : settings.mode === "light"
+              ? "bg-zinc-200"
+              : "bg-zinc-900"
             }`}
           >
             <div className={` px-3 overflow-hidden text-ellipsis whitespace-nowrap ${
-               settings.notation !== "default"
+               settings.notation !== Notation.DEFAULT
                  ? ""
                  : ""
             }`}
@@ -294,17 +297,23 @@ export default function Table(props) {
     return (
       <div
         className={`
-          ${
-          (fieldData.primary && settings.notation !== "default" && primaryKeyCount === 1)
+          ${(tableData.fields.length === 1 && settings.notation === Notation.DEFAULT)
+            ? "rounded-b-md"
+            : ""
+          }${(tableData.fields.length === 1 && settings.notation !== Notation.DEFAULT)
+            ? "border-l border-r border-gray-400"
+            : ""
+          }${
+          (fieldData.primary && settings.notation !== Notation.DEFAULT && primaryKeyCount === 1)
             ? "border-b border-gray-400"
             : ""
           }${
-            (fieldData.primary && settings.notation !== "default" && index ===primaryKeyCount - 1)
+            (fieldData.primary && settings.notation !== Notation.DEFAULT && index ===primaryKeyCount - 1)
               ? "border-b border-gray-400"
               : ""
             } 
           ${
-          (!fieldData.primary && settings.notation !== "default" )
+          (!fieldData.primary && settings.notation !== Notation.DEFAULT )
             ? "border-l border-r"
             : ""
           } ${
@@ -312,24 +321,23 @@ export default function Table(props) {
             ? "bg-zinc-100 text-zinc-800"
             : "bg-zinc-800 text-zinc-200"
           } ${
-          (settings.notation !== "default" && index !== tableData.fields.length - 1)
+          (settings.notation !== Notation.DEFAULT && index !== tableData.fields.length - 1)
             ? "border-l border-r border-gray-400"
             : ""
           } ${
-          (settings.notation !== "default" && index === tableData.fields.length - 1)
+          (settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
             ? "border-b border-gray-400"
             : ""
           } ${
-            (fieldData.primary && settings.notation === "default")
+            (fieldData.primary && settings.notation === Notation.DEFAULT)
               ? "border-b border-gray-400"
               : ""
           }${
-            (settings.notation === "default" && index !== tableData.fields.length - 1 && fieldData.primary === false)
+            (settings.notation === Notation.DEFAULT && index !== tableData.fields.length - 1 && fieldData.primary === false)
               ? "border-b border-gray-400"
               : ""
           }${
-            // Checa que cuando seas el último se redondee
-          (settings.notation === "default" && index === tableData.fields.length - 1)
+          (settings.notation === Notation.DEFAULT && index === tableData.fields.length - 1)
             ? "rounded-b-md"
             : ""
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
@@ -360,7 +368,7 @@ export default function Table(props) {
         >
           <button
             className={`flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full ${
-              (fieldData.primary && settings.notation !== "default")
+              (fieldData.primary && settings.notation !== Notation.DEFAULT)
                 ? "bg-[#ff2222cc]"
                 : "bg-[#2f68adcc]"
             }`}
@@ -406,7 +414,7 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
-              {settings.notation !== "default" ? (
+              {settings.notation !== Notation.DEFAULT ? (
                 <>
                 <span>
                   {fieldData.type +

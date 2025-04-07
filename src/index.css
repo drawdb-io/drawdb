@@ -134,8 +134,7 @@
 }
 
 .table-border {
-  /* border-color: rgba(var(--semi-grey-2), 1); */
-  border-color: rgba(0, 255, 0, 1);
+  border-color: rgba(var(--semi-grey-2), 1);
 }
 
 .bg-dots {
@@ -191,12 +190,4 @@
   100% {
     opacity: 0;
   }
-}
-
-.transparent {
-	background-color: transparent;
-}
-
-.no-border {
-	border: none;
 }

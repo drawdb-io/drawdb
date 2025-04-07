@@ -40,6 +40,7 @@ import {
   SIDESHEET,
   DB,
   IMPORT_FROM,
+  Notation,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -1220,33 +1221,33 @@ export default function ControlPanel({
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
       },
-      // show_cardinality: {
-      //   state: settings.showCardinality ? (
-      //     <i className="bi bi-toggle-on" />
-      //   ) : (
-      //     <i className="bi bi-toggle-off" />
-      //   ),
-      //   function: () =>
-      //     setSettings((prev) => ({
-      //       ...prev,
-      //       showCardinality: !prev.showCardinality,
-      //     })),
-      // },
+      show_cardinality: {
+        state: settings.showCardinality ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showCardinality: !prev.showCardinality,
+          })),
+      },
       notation: {
         children: [
           {
             default_notation: () => {
-              setSettings((prev) => ({ ...prev, notation: "default" }));
+              setSettings((prev) => ({ ...prev, notation: Notation.DEFAULT }));
             },
           },
           {
             crows_foot_notation: () => {
-              setSettings((prev) => ({ ...prev, notation: "crows_foot" }));
+              setSettings((prev) => ({ ...prev, notation: Notation.CROWS_FOOT }));
             },
           },
           {
             idef1x_notation: () => {
-              setSettings((prev) => ({ ...prev, notation: "idef1x" }));
+              setSettings((prev) => ({ ...prev, notation: Notation.IDEF1X }));
             },
           },
         ],

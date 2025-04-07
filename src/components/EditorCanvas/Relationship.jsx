@@ -2,6 +2,7 @@ import { useRef } from "react";
 import {
   Cardinality,
   darkBgTheme,
+  Notation,
   ObjectType,
   Tab,
 } from "../../data/constants";
@@ -10,7 +11,7 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation } from "./RelationshipFormat";
+import { CrowOM, CrowOO, IDEFZM, DefaultNotation } from "./RelationshipFormat";
 
 
 const labelFontSize = 16;
@@ -26,9 +27,7 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
-  const type = settings.notation === 'default' ? 0 : 10;
-  const relationshipType=(5,type);
-
+  const relationshipType = data.lineType || "0";
   let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -58,7 +57,7 @@ export default function Relationship({ data }) {
     // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
-      if (settings.notation === 'default') {
+      if (settings.notation === Notation.DEFAULT) {
         cardinalityStart = "n";
         cardinalityEnd = "1";
       } else {
@@ -69,7 +68,7 @@ export default function Relationship({ data }) {
       break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
-      if (settings.notation === 'default') {
+      if (settings.notation === Notation.DEFAULT) {
         cardinalityStart = "1";
         cardinalityEnd = "n";
       } else {
@@ -80,7 +79,7 @@ export default function Relationship({ data }) {
       break;
     case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
-      if (settings.notation === 'default') {
+      if (settings.notation === Notation.DEFAULT) {
         cardinalityStart = "1";
         cardinalityEnd = "1";
       } else {
@@ -148,7 +147,7 @@ export default function Relationship({ data }) {
     }
   };
 
-  if ((settings.notation === 'crows_foot' || settings.notation === 'idef1x') && cardinalityEndX < cardinalityStartX){
+  if ((settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X) && cardinalityEndX < cardinalityStartX){
     direction = -1;
   }
 
@@ -178,6 +177,20 @@ export default function Relationship({ data }) {
           strokeWidth={2}
           cursor="pointer"
         />
+        {settings.showCardinality && (
+          <>
+            {format(
+              pathRef,
+              cardinalityEndX,
+              cardinalityEndY,
+              cardinalityStartX,
+              cardinalityStartY,
+              direction,
+              cardinalityStart,
+              cardinalityEnd,
+            )}
+          </>
+        )}
         {settings.showRelationshipLabels && (
           <>
             <rect
@@ -200,7 +213,6 @@ export default function Relationship({ data }) {
             </text>
           </>
         )}
-        {format(pathRef.current, cardinalityEndX, cardinalityEndY, cardinalityStartX, cardinalityStartY, direction, cardinalityStart, cardinalityEnd)}
       </g>
 
       <SideSheet
