@@ -52,7 +52,7 @@ export default function Modal({
   importFrom,
 }) {
   const { t, i18n } = useTranslation();
-  const { setTables, setRelationships, database, setDatabase } = useDiagram();
+  const { tables, setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -63,7 +63,7 @@ export default function Modal({
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [importSource, setImportSource] = useState({
     src: "",
-    overwrite: true,
+    overwrite: false,
   });
   const [importData, setImportData] = useState(null);
   const [error, setError] = useState({
@@ -174,12 +174,15 @@ export default function Modal({
         setUndoStack([]);
         setRedoStack([]);
       } else {
+        const initialTablesLength = tables.length;
         setTables((prev) =>
           [...prev, ...diagramData.tables].map((t, i) => ({ ...t, id: i })),
         );
         setRelationships((prev) =>
           [...prev, ...diagramData.relationships].map((r, i) => ({
             ...r,
+            startTableId: initialTablesLength + r.startTableId,
+            endTableId: initialTablesLength + r.endTableId,
             id: i,
           })),
         );
@@ -355,7 +358,7 @@ export default function Modal({
         setImportData(null);
         setImportSource({
           src: "",
-          overwrite: true,
+          overwrite: false,
         });
       }}
       onCancel={() => {
