@@ -112,7 +112,7 @@ export default function Note({ data, onPointerDown }) {
         }
         strokeDasharray={hovered ? 4 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <path
         d={`M${data.x} ${data.y + fold} L${data.x + fold - r} ${
@@ -130,7 +130,7 @@ export default function Note({ data, onPointerDown }) {
         }
         strokeDasharray={hovered ? 4 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <foreignObject
         x={data.x}
