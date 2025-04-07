@@ -17,8 +17,9 @@ import {
   Constraint,
   Action,
   ObjectType,
+  Notation,
 } from "../../../data/constants";
-import { useDiagram, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -40,6 +41,7 @@ export default function RelationshipInfo({ data }) {
     useDiagram();
   const { t } = useTranslation();
   const [editField, setEditField] = useState({});
+  const { settings } = useSettings();
 
   const swapKeys = () => {
     setUndoStack((prev) => [
@@ -130,6 +132,44 @@ export default function RelationshipInfo({ data }) {
     );
   };
 
+  const changeIdentifyingRelationship = (value) => {
+    if ( Notation.DEFAULT === true) return;
+
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.RELATIONSHIP,
+        rid: data.id,
+        undo: { identifying: data.identifying, lineType: data.lineType },
+        redo: { identifying: value, lineType: value ? "5,5" : "0" },
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[identifying]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev.map((e, idx) =>
+        idx === data.id ? { ...e, identifying: value, lineType: value ? "5,5" : "0" } : e,
+      ),
+    );
+    setTables((prev) =>
+      prev.map((table) =>
+        table.id === data.startTableId
+          ? {
+              ...table,
+              fields: table.fields.map((field) =>
+                field.id === data.startFieldId
+                  ? { ...field, identifying: value }
+                  : field,
+              ),
+            }
+          : table,
+      ),
+    );
+  }
   return (
     <>
       <div className="flex items-center mb-2.5">
@@ -248,6 +288,17 @@ export default function RelationshipInfo({ data }) {
           />
         </Col>
       </Row>
+      {settings.notation !== Notation.DEFAULT && (
+        <Button
+          icon={<IconLoopTextStroked />}
+          block
+          type={data.identifying ? "primary" : "default"}
+          onClick={() => changeIdentifyingRelationship(!data.identifying)}
+        >
+          {data.identifying ? t("Identifying") : t("no Identifying")}
+        </Button>
+      )}
+      <div className="my-2"></div>
       <Button
         icon={<IconDeleteStroked />}
         block

@@ -11,7 +11,7 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
-import { CrowOM, CrowOO, IDEFZM, DefaultNotation } from "./RelationshipFormat";
+import { CrowOM, CrowOO, CrowZM, IDEFZM, DefaultNotation } from "./RelationshipFormat";
 
 
 const labelFontSize = 16;
@@ -37,17 +37,17 @@ export default function Relationship({ data }) {
       default:  {
         one_to_one: DefaultNotation,
         one_to_many: DefaultNotation,
-        many_to_one: DefaultNotation,
+        zero_to_many: DefaultNotation,
       },
       crows_foot: {
         one_to_one: CrowOO,
         one_to_many: CrowOM,
-        many_to_one: CrowOM,
+        zero_to_many: CrowZM,
       },
       idef1x: {
         one_to_one: IDEFZM,
         one_to_many: IDEFZM,
-        many_to_one: IDEFZM,
+        zero_to_many: IDEFZM,
       },
     }
   }
@@ -55,17 +55,6 @@ export default function Relationship({ data }) {
   let format;
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
-    case t(Cardinality.MANY_TO_ONE):
-    case Cardinality.MANY_TO_ONE:
-      if (settings.notation === Notation.DEFAULT) {
-        cardinalityStart = "n";
-        cardinalityEnd = "1";
-      } else {
-        cardinalityStart = "(1,*)";
-        cardinalityEnd = "(1,1)";
-      }
-      format = formats.notation[settings.notation].many_to_one;
-      break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
       if (settings.notation === Notation.DEFAULT) {
@@ -90,6 +79,17 @@ export default function Relationship({ data }) {
       break;
     default:
       format = formats.default.one_to_one;
+      break;
+    case t(Cardinality.ZERO_TO_MANY):
+    case Cardinality.ZERO_TO_MANY:
+      if (settings.notation === Notation.DEFAULT) {
+        cardinalityStart = "0";
+        cardinalityEnd = "n";
+      } else {
+        cardinalityStart = "(0,1)";
+        cardinalityEnd = "(0,*)";
+      }
+      format = formats.notation[settings.notation].zero_to_many;
       break;
   }
 

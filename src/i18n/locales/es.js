@@ -134,7 +134,7 @@ const es = {
     swap: "Intercambiar",
     one_to_one: "Uno a uno",
     one_to_many: "Uno a muchos",
-    many_to_one: "Muchos a uno",
+    Zero_to_much: "Zero a Muchos",
     content: "Contenido",
     types_info:
       "Esta característica está destinada a DBMSs objeto-relacionales como PostgreSQL.\nSi se usa para MySQL o MariaDB, se generará un tipo JSON con la verificación de validación json correspondiente.\nSi se usa para SQLite, se traducirá a un BLOB.\nSi se usa para MSSQL, se generará un alias de tipo al primer campo.",

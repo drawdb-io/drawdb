@@ -158,6 +158,83 @@ export function CrowOO(
     )
 }
 
+export function CrowZM(
+  pathRef, 
+  cardinalityEndX, 
+  cardinalityEndY, 
+  cardinalityStartX, 
+  cardinalityStartY,  
+  direction, 
+  cardinalityStart, 
+  cardinalityEnd
+) {
+  return (
+    pathRef && (
+      <>
+        <circle
+          cx={cardinalityEndX - 24}
+          cy={cardinalityEndY}
+          r="4"
+          stroke="gray"
+          strokeWidth="2"
+          fill="none"
+          className="group-hover:fill-sky-700"
+        />
+        <line
+          x1={cardinalityEndX - (20 * direction)}
+          y1={cardinalityEndY}
+          x2={cardinalityEndX + 1}
+          y2={cardinalityEndY - 10}
+          stroke="gray"
+          strokeWidth="2"
+          className="group-hover:fill-sky-700"
+        />
+        <line
+          x1={cardinalityEndX - 20 * direction}
+          y1={cardinalityEndY}
+          x2={cardinalityEndX + 1}
+          y2={cardinalityEndY + 10}
+          stroke="gray"
+          strokeWidth="2"
+          className="group-hover:fill-sky-700"
+        />
+        <polygon
+          points={`
+            ${cardinalityStartX - (15 * direction)},${cardinalityStartY} 
+            ${cardinalityStartX - (20 * direction)},${cardinalityStartY - 5} 
+            ${cardinalityStartX - (25 * direction)},${cardinalityStartY} 
+            ${cardinalityStartX - (20 * direction)},${cardinalityStartY + 5}
+          `}
+          stroke="gray"
+          strokeWidth="2"
+          fill="none"
+          className="group-hover:fill-sky-700"
+        />
+        <text
+          x={cardinalityStartX - 8}
+          y={cardinalityStartY - 20}
+          fill="grey"
+          strokeWidth="0.5"
+          textAnchor="middle"
+          alignmentBaseline="middle"
+        >
+          {cardinalityStart}
+        </text>
+        <text
+          x={cardinalityEndX - 10}
+          y={cardinalityEndY - 20}
+          fill="grey"
+          strokeWidth="0.5"
+          textAnchor="middle"
+          alignmentBaseline="middle"
+        >
+          {cardinalityEnd}
+        </text>
+      </>
+    )
+  );
+}
+
 export function DefaultNotation(
   pathRef, 
   cardinalityEndX, 

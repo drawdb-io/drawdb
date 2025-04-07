@@ -32,7 +32,7 @@ export const tableColorStripHeight = 7;
 export const Cardinality = {
   ONE_TO_ONE: "one_to_one",
   ONE_TO_MANY: "one_to_many",
-  MANY_TO_ONE: "many_to_one",
+  ZERO_TO_MANY: "zero_to_many",
 };
 export const Notation = {
   DEFAULT: "default",
