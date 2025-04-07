@@ -55,7 +55,6 @@ export default function ImportSource({
         <Checkbox
           aria-label="overwrite checkbox"
           checked={importData.overwrite}
-          defaultChecked
           onChange={(e) =>
             setImportData((prev) => ({
               ...prev,
