@@ -5,6 +5,8 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
+  tableFieldHeight,
+  tableHeaderHeight,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -25,7 +27,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
-import { getRectFromEndpoints } from "../../utils/getRectFromEndpoints";
+import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -45,7 +47,11 @@ export default function Canvas() {
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const {
+    selectedElement,
+    setSelectedElement,
+    setBulkSelectedElements,
+  } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
@@ -90,9 +96,75 @@ export default function Canvas() {
     show: false,
   });
 
+  const collectSelectedElements = () => {
+    const rect = getRectFromEndpoints(bulkSelectRectPts);
+
+    const elements = [];
+
+    tables.forEach((table) => {
+      if (
+        isInsideRect(
+          {
+            x: table.x,
+            y: table.y,
+            width: settings.tableWidth,
+            height:
+              table.fields.length * tableFieldHeight + tableHeaderHeight + 7,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: table.id,
+          type: ObjectType.TABLE,
+        });
+      }
+    });
+
+    areas.forEach((area) => {
+      if (
+        isInsideRect(
+          {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: area.id,
+          type: ObjectType.AREA,
+        });
+      }
+    });
+
+    notes.forEach((note) => {
+      if (
+        isInsideRect(
+          {
+            x: note.x,
+            y: note.y,
+            width: 180,
+            height: note.height,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: note.id,
+          type: ObjectType.NOTE,
+        });
+      }
+    });
+
+    setBulkSelectedElements(elements);
+  };
+
   /**
    * @param {PointerEvent} e
-   * @param {*} id
+   * @param {number} id
    * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
@@ -373,6 +445,7 @@ export default function Canvas() {
         y2: pointer.spaces.diagram.y,
         show: false,
       }));
+      collectSelectedElements();
     }
 
     if (panning.isPanning && didPan()) {
@@ -478,7 +551,6 @@ export default function Canvas() {
     addRelationship(newRelationship);
   };
 
-  // Handle mouse wheel scrolling
   useEventListener(
     "wheel",
     (e) => {

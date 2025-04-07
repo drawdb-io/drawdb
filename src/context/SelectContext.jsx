@@ -13,9 +13,17 @@ export default function SelectContextProvider({ children }) {
     open: false, // open popover or sidesheet when sidebar is disabled
     openFromToolbar: false, // this is to handle triggering onClickOutside when sidebar is disabled
   });
+  const [bulkSelectedElements, setBulkSelectedElements] = useState([]);
 
   return (
-    <SelectContext.Provider value={{ selectedElement, setSelectedElement }}>
+    <SelectContext.Provider
+      value={{
+        selectedElement,
+        setSelectedElement,
+        bulkSelectedElements,
+        setBulkSelectedElements,
+      }}
+    >
       {children}
     </SelectContext.Provider>
   );
