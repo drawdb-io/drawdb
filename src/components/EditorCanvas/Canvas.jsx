@@ -539,6 +539,7 @@ export default function Canvas() {
         id: -1,
         open: false,
       }));
+      setBulkSelectedElements([]);
     }
     setPanning((old) => ({ ...old, isPanning: false }));
     pointer.setStyle("default");
