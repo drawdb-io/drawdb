@@ -110,7 +110,7 @@ export default function Note({ data, onPointerDown }) {
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
         strokeWidth="2"
       />
@@ -128,7 +128,7 @@ export default function Note({ data, onPointerDown }) {
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
         strokeWidth="2"
       />
