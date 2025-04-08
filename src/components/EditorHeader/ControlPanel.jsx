@@ -131,6 +131,22 @@ export default function ControlPanel({
     if (undoStack.length === 0) return;
     const a = undoStack[undoStack.length - 1];
     setUndoStack((prev) => prev.filter((_, i) => i !== prev.length - 1));
+
+    if (a.bulk) {
+      for (const element of a.elements) {
+        if (element.type === ObjectType.TABLE) {
+          updateTable(element.id, element.undo);
+        } else if (element.type === ObjectType.AREA) {
+          updateArea(element.id, element.undo);
+        } else if (element.type === ObjectType.NOTE) {
+          updateNote(element.id, element.undo);
+        }
+      }
+      setRedoStack((prev) => [...prev, a]);
+      console.log(a);
+      return;
+    }
+
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         deleteTable(tables[tables.length - 1].id, false);
@@ -341,6 +357,21 @@ export default function ControlPanel({
     if (redoStack.length === 0) return;
     const a = redoStack[redoStack.length - 1];
     setRedoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
+
+    if (a.bulk) {
+      for (const element of a.elements) {
+        if (element.type === ObjectType.TABLE) {
+          updateTable(element.id, element.redo);
+        } else if (element.type === ObjectType.AREA) {
+          updateArea(element.id, element.redo);
+        } else if (element.type === ObjectType.NOTE) {
+          updateNote(element.id, element.redo);
+        }
+      }
+      setUndoStack((prev) => [...prev, a]);
+      return;
+    }
+
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         addTable(null, false);
@@ -1577,6 +1608,23 @@ export default function ControlPanel({
               }
             >
               <i className="fa-solid fa-magnifying-glass-minus" />
+            </button>
+          </Tooltip>
+          <Tooltip
+            content={settings.panning ? t("multiselect") : t("panning")}
+            position="bottom"
+          >
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg w-10"
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, panning: !prev.panning }))
+              }
+            >
+              {settings.panning ? (
+                <i className="fa-solid fa-expand" />
+              ) : (
+                <i className="fa-regular fa-hand"></i>
+              )}
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

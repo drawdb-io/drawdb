@@ -5,6 +5,8 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
+  tableFieldHeight,
+  tableHeaderHeight,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -25,6 +27,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
+import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -44,12 +47,18 @@ export default function Canvas() {
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform, setTransform } = useTransform();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const {
+    selectedElement,
+    setSelectedElement,
+    bulkSelectedElements,
+    setBulkSelectedElements,
+  } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,
     id: -1,
     prevX: 0,
     prevY: 0,
+    initialPositions: [],
   });
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
@@ -81,10 +90,96 @@ export default function Canvas() {
     pointerX: 0,
     pointerY: 0,
   });
+  const [bulkSelectRectPts, setBulkSelectRectPts] = useState({
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0,
+    show: false,
+  });
+
+  const collectSelectedElements = () => {
+    const rect = getRectFromEndpoints(bulkSelectRectPts);
+
+    const elements = [];
+
+    tables.forEach((table) => {
+      if (
+        isInsideRect(
+          {
+            x: table.x,
+            y: table.y,
+            width: settings.tableWidth,
+            height:
+              table.fields.length * tableFieldHeight + tableHeaderHeight + 7,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: table.id,
+          type: ObjectType.TABLE,
+        });
+      }
+    });
+
+    areas.forEach((area) => {
+      if (
+        isInsideRect(
+          {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: area.id,
+          type: ObjectType.AREA,
+        });
+      }
+    });
+
+    notes.forEach((note) => {
+      if (
+        isInsideRect(
+          {
+            x: note.x,
+            y: note.y,
+            width: 180,
+            height: note.height,
+          },
+          rect,
+        )
+      ) {
+        elements.push({
+          id: note.id,
+          type: ObjectType.NOTE,
+        });
+      }
+    });
+
+    setBulkSelectedElements(elements);
+  };
+
+  const getElement = (element) => {
+    switch (element.type) {
+      case ObjectType.TABLE:
+        return tables[element.id];
+      case ObjectType.AREA:
+        return areas[element.id];
+      case ObjectType.NOTE:
+        return notes[element.id];
+      default:
+        return { x: 0, y: 0 };
+    }
+  };
 
   /**
    * @param {PointerEvent} e
-   * @param {*} id
+   * @param {number} id
    * @param {ObjectType[keyof ObjectType]} type
    */
   const handlePointerDownOnElement = (e, id, type) => {
@@ -98,36 +193,52 @@ export default function Canvas() {
         x: table.x - pointer.spaces.diagram.x,
         y: table.y - pointer.spaces.diagram.y,
       });
-      setDragging({
+      setDragging((prev) => ({
+        ...prev,
+        id,
         element: type,
-        id: id,
         prevX: table.x,
         prevY: table.y,
-      });
+      }));
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
       setGrabOffset({
         x: area.x - pointer.spaces.diagram.x,
         y: area.y - pointer.spaces.diagram.y,
       });
-      setDragging({
+      setDragging((prev) => ({
+        ...prev,
+        id,
         element: type,
-        id: id,
         prevX: area.x,
         prevY: area.y,
-      });
+      }));
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
       setGrabOffset({
         x: note.x - pointer.spaces.diagram.x,
         y: note.y - pointer.spaces.diagram.y,
       });
-      setDragging({
+      setDragging((prev) => ({
+        ...prev,
+        id,
         element: type,
-        id: id,
         prevX: note.x,
         prevY: note.y,
-      });
+      }));
+    }
+
+    if (bulkSelectedElements.length) {
+      setDragging((prev) => ({
+        ...prev,
+        initialPositions: bulkSelectedElements.map((element) => ({
+          ...element,
+          undo: {
+            x: getElement(element).x,
+            y: getElement(element).y,
+          },
+        })),
+      }));
     }
     setSelectedElement((prev) => ({
       ...prev,
@@ -151,6 +262,42 @@ export default function Canvas() {
         endX: pointer.spaces.diagram.x,
         endY: pointer.spaces.diagram.y,
       });
+    } else if (
+      dragging.element !== ObjectType.NONE &&
+      dragging.id >= 0 &&
+      bulkSelectedElements.length
+    ) {
+      const currentX = pointer.spaces.diagram.x + grabOffset.x;
+      const currentY = pointer.spaces.diagram.y + grabOffset.y;
+      const deltaX = currentX - dragging.prevX;
+      const deltaY = currentY - dragging.prevY;
+
+      for (const element of bulkSelectedElements) {
+        if (element.type === ObjectType.TABLE) {
+          updateTable(element.id, {
+            x: tables[element.id].x + deltaX,
+            y: tables[element.id].y + deltaY,
+          });
+        }
+        if (element.type === ObjectType.AREA) {
+          updateArea(element.id, {
+            x: areas[element.id].x + deltaX,
+            y: areas[element.id].y + deltaY,
+          });
+        }
+        if (element.type === ObjectType.NOTE) {
+          updateNote(element.id, {
+            x: notes[element.id].x + deltaX,
+            y: notes[element.id].y + deltaY,
+          });
+        }
+      }
+
+      setDragging((prev) => ({
+        ...prev,
+        prevX: currentX,
+        prevY: currentY,
+      }));
     } else if (
       panning.isPanning &&
       dragging.element === ObjectType.NONE &&
@@ -224,6 +371,12 @@ export default function Canvas() {
       }
 
       updateArea(areaResize.id, { ...newDims });
+    } else if (bulkSelectRectPts.show) {
+      setBulkSelectRectPts((prev) => ({
+        ...prev,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+      }));
     }
   };
 
@@ -243,36 +396,39 @@ export default function Canvas() {
     )
       return;
 
-    setPanning({
-      isPanning: true,
-      panStart: transform.pan,
-      // Diagram space depends on the current panning.
-      // Use screen space to avoid circular dependencies and undefined behavior.
-      cursorStart: pointer.spaces.screen,
-    });
-    pointer.setStyle("grabbing");
+    if (!settings.panning) {
+      setBulkSelectRectPts({
+        x1: pointer.spaces.diagram.x,
+        y1: pointer.spaces.diagram.y,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+        show: true,
+      });
+      pointer.setStyle("crosshair");
+    } else {
+      setPanning({
+        isPanning: true,
+        panStart: transform.pan,
+        // Diagram space depends on the current panning.
+        // Use screen space to avoid circular dependencies and undefined behavior.
+        cursorStart: pointer.spaces.screen,
+      });
+      pointer.setStyle("grabbing");
+    }
   };
 
   const coordsDidUpdate = (element) => {
-    switch (element) {
-      case ObjectType.TABLE:
-        return !(
-          dragging.prevX === tables[dragging.id].x &&
-          dragging.prevY === tables[dragging.id].y
-        );
-      case ObjectType.AREA:
-        return !(
-          dragging.prevX === areas[dragging.id].x &&
-          dragging.prevY === areas[dragging.id].y
-        );
-      case ObjectType.NOTE:
-        return !(
-          dragging.prevX === notes[dragging.id].x &&
-          dragging.prevY === notes[dragging.id].y
-        );
-      default:
-        return false;
-    }
+    const elementData = getElement(element);
+    const updated = !(
+      dragging.prevX === elementData.x && dragging.prevY === elementData.y
+    );
+
+    return (
+      updated ||
+      dragging.initialPositions.some(
+        (el) => !(el.undo.x === elementData.x && el.undo.y === elementData.y),
+      )
+    );
   };
 
   const didResize = (id) => {
@@ -287,31 +443,6 @@ export default function Canvas() {
   const didPan = () =>
     !(transform.pan.x === panning.x && transform.pan.y === panning.y);
 
-  const getMovedElementDetails = () => {
-    switch (dragging.element) {
-      case ObjectType.TABLE:
-        return {
-          name: tables[dragging.id].name,
-          x: Math.round(tables[dragging.id].x),
-          y: Math.round(tables[dragging.id].y),
-        };
-      case ObjectType.AREA:
-        return {
-          name: areas[dragging.id].name,
-          x: Math.round(areas[dragging.id].x),
-          y: Math.round(areas[dragging.id].y),
-        };
-      case ObjectType.NOTE:
-        return {
-          name: notes[dragging.id].title,
-          x: Math.round(notes[dragging.id].x),
-          y: Math.round(notes[dragging.id].y),
-        };
-      default:
-        return false;
-    }
-  };
-
   /**
    * @param {PointerEvent} e
    */
@@ -320,27 +451,74 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    if (coordsDidUpdate(dragging.element)) {
-      const info = getMovedElementDetails();
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.MOVE,
-          element: dragging.element,
-          x: dragging.prevX,
-          y: dragging.prevY,
-          toX: info.x,
-          toY: info.y,
+    if (coordsDidUpdate({ id: dragging.id, type: dragging.element })) {
+      if (bulkSelectedElements.length) {
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.MOVE,
+            bulk: true,
+            message: t("bulk_update"),
+            elements: dragging.initialPositions.map((element) => ({
+              ...element,
+              redo: {
+                x: getElement(element).x,
+                y: getElement(element).y,
+              },
+            })),
+          },
+        ]);
+        setSelectedElement((prev) => ({
+          ...prev,
+          element: ObjectType.NONE,
+          id: -1,
+          open: false,
+        }));
+      } else {
+        const element = getElement({
           id: dragging.id,
-          message: t("move_element", {
-            coords: `(${info.x}, ${info.y})`,
-            name: info.name,
-          }),
-        },
-      ]);
+          type: dragging.element,
+        });
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.MOVE,
+            element: dragging.element,
+            x: dragging.prevX,
+            y: dragging.prevY,
+            toX: element.x,
+            toY: element.y,
+            id: dragging.id,
+            message: t("move_element", {
+              coords: `(${element.x}, ${element.y})`,
+              name: getElement({
+                id: dragging.id,
+                type: dragging.element,
+              }).name,
+            }),
+          },
+        ]);
+      }
       setRedoStack([]);
     }
-    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setDragging({
+      element: ObjectType.NONE,
+      id: -1,
+      prevX: 0,
+      prevY: 0,
+      initialPositions: [],
+    });
+
+    if (bulkSelectRectPts.show) {
+      setBulkSelectRectPts((prev) => ({
+        ...prev,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
+        show: false,
+      }));
+      collectSelectedElements();
+    }
+
     if (panning.isPanning && didPan()) {
       setUndoStack((prev) => [
         ...prev,
@@ -361,11 +539,14 @@ export default function Canvas() {
         id: -1,
         open: false,
       }));
+      setBulkSelectedElements([]);
     }
     setPanning((old) => ({ ...old, isPanning: false }));
     pointer.setStyle("default");
+
     if (linking) handleLinking();
     setLinking(false);
+
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
       setUndoStack((prev) => [
         ...prev,
@@ -402,7 +583,13 @@ export default function Canvas() {
 
   const handleGripField = () => {
     setPanning((old) => ({ ...old, isPanning: false }));
-    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setDragging({
+      element: ObjectType.NONE,
+      id: -1,
+      prevX: 0,
+      prevY: 0,
+      initialPositions: [],
+    });
     setLinking(true);
   };
 
@@ -444,7 +631,6 @@ export default function Canvas() {
     addRelationship(newRelationship);
   };
 
-  // Handle mouse wheel scrolling
   useEventListener(
     "wheel",
     (e) => {
@@ -520,7 +706,7 @@ export default function Canvas() {
                   cy="4"
                   r="0.85"
                   fill="rgb(99, 152, 191)"
-                ></circle>
+                />
               </pattern>
             </defs>
             <rect
@@ -529,7 +715,7 @@ export default function Canvas() {
               width="100%"
               height="100%"
               fill="url(#pattern-circles)"
-            ></rect>
+            />
           </svg>
         )}
         <svg
@@ -584,6 +770,15 @@ export default function Canvas() {
               }
             />
           ))}
+          {bulkSelectRectPts.show && (
+            <rect
+              {...getRectFromEndpoints(bulkSelectRectPts)}
+              stroke="grey"
+              fill="grey"
+              fillOpacity={0.15}
+              strokeDasharray={10}
+            />
+          )}
         </svg>
       </div>
       {settings.showDebugCoordinates && (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
 import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
@@ -22,7 +22,8 @@ export default function Note({ data, onPointerDown }) {
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${data.id}`);
@@ -71,6 +72,16 @@ export default function Note({ data, onPointerDown }) {
     }
   };
 
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === data.id &&
+        selectedElement.element === ObjectType.NOTE) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.NOTE && e.id === data.id,
+      )
+    );
+  }, [selectedElement, data, bulkSelectedElements]);
+
   return (
     <g
       onPointerEnter={(e) => e.isPrimary && setHovered(true)}
@@ -95,14 +106,13 @@ export default function Note({ data, onPointerDown }) {
         stroke={
           hovered
             ? "rgb(59 130 246)"
-            : selectedElement.element === ObjectType.NOTE &&
-                selectedElement.id === data.id
+            : isSelected
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <path
         d={`M${data.x} ${data.y + fold} L${data.x + fold - r} ${
@@ -114,14 +124,13 @@ export default function Note({ data, onPointerDown }) {
         stroke={
           hovered
             ? "rgb(59 130 246)"
-            : selectedElement.element === ObjectType.NOTE &&
-                selectedElement.id === data.id
+            : isSelected
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <foreignObject
         x={data.x}

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button, Popover, Input, ColorPicker } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import { Tab, Action, ObjectType, State } from "../../data/constants";
@@ -30,7 +30,8 @@ export default function Area({
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
 
   const handleResize = (e, dir) => {
     setResize({ id: data.id, dir: dir });
@@ -82,10 +83,20 @@ export default function Area({
     setSaveState(State.SAVING);
   };
 
-  const areaIsSelected = () =>
+  const areaIsOpen = () =>
     selectedElement.element === ObjectType.AREA &&
     selectedElement.id === data.id &&
     selectedElement.open;
+
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === data.id &&
+        selectedElement.element === ObjectType.AREA) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.AREA && e.id === data.id,
+      )
+    );
+  }, [selectedElement, data, bulkSelectedElements]);
 
   return (
     <g ref={ref}>
@@ -101,8 +112,7 @@ export default function Area({
           className={`w-full h-full p-2 rounded cursor-move border-2 ${
             isHovered
               ? "border-dashed border-blue-500"
-              : selectedElement.element === ObjectType.AREA &&
-                  selectedElement.id === data.id
+              : isSelected
                 ? "border-blue-500 opacity-100"
                 : "border-slate-400 opacity-100"
           }`}
@@ -112,9 +122,9 @@ export default function Area({
             <div className="text-color select-none overflow-hidden text-ellipsis">
               {data.name}
             </div>
-            {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
+            {(isHovered || (areaIsOpen() && !layout.sidebar)) && (
               <Popover
-                visible={areaIsSelected() && !layout.sidebar}
+                visible={areaIsOpen() && !layout.sidebar}
                 onClickOutSide={onClickOutSide}
                 stopPropagation
                 content={<EditPopoverContent data={data} />}

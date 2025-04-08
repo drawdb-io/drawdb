@@ -35,7 +35,8 @@ export default function Table(props) {
   const { deleteTable, deleteField } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
 
   const borderColor = useMemo(
     () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
@@ -44,6 +45,15 @@ export default function Table(props) {
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === tableData.id &&
+        selectedElement.element === ObjectType.TABLE) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
+      )
+    );
+  }, [selectedElement, tableData, bulkSelectedElements]);
 
   const openEditor = () => {
     if (!layout.sidebar) {
@@ -86,12 +96,7 @@ export default function Table(props) {
                  settings.mode === "light"
                    ? "bg-zinc-100 text-zinc-800"
                    : "bg-zinc-800 text-zinc-200"
-               } ${
-                 selectedElement.id === tableData.id &&
-                 selectedElement.element === ObjectType.TABLE
-                   ? "border-solid border-blue-500"
-                   : borderColor
-               }`}
+               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
           style={{ direction: "ltr" }}
         >
           <div
