@@ -404,6 +404,7 @@ export default function Canvas() {
         y2: pointer.spaces.diagram.y,
         show: true,
       });
+      pointer.setStyle("crosshair");
     } else {
       setPanning({
         isPanning: true,

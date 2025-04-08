@@ -1610,6 +1610,23 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
+          <Tooltip
+            content={settings.panning ? t("multiselect") : t("panning")}
+            position="bottom"
+          >
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg w-10"
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, panning: !prev.panning }))
+              }
+            >
+              {settings.panning ? (
+                <i className="fa-solid fa-expand" />
+              ) : (
+                <i className="fa-regular fa-hand"></i>
+              )}
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
