@@ -234,13 +234,13 @@ export default function BugReport() {
               <hr
                 className={`${
                   theme === "dark" ? "border-zinc-700" : "border-zinc-300"
-                } flex-grow`}
+                } grow`}
               />
               <div className="text-sm font-semibold m-2">Alternatively</div>
               <hr
                 className={`${
                   theme === "dark" ? "border-zinc-700" : "border-zinc-300"
-                } flex-grow`}
+                } grow`}
               />
             </div>
             <Button

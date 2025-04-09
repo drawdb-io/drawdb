@@ -49,6 +49,7 @@ const en = {
     field_details: "Field details",
     reset_view: "Reset view",
     show_grid: "Show grid",
+    show_datatype: "Show datatype",
     show_cardinality: "Show cardinality",
     default_notation: "Default",
     crows_foot_notation: "Crow's foot",
@@ -250,6 +251,8 @@ const en = {
     show_relationship_labels: "Show relationship labels",
     docs: "Docs",
     supported_types: "Supported file types:",
+    bulk_update: "Bulk update",
+    multiselect: "Multiselect",
   },
 };
 

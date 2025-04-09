@@ -1,17 +1,6 @@
 import { Cardinality } from "../../data/constants";
 import { parseDefault } from "../exportSQL/shared";
 
-function hasColumnSettings(field) {
-  return (
-    field.primary ||
-    field.notNull ||
-    field.increment ||
-    field.unique ||
-    (field.comment && field.comment.trim() != "") ||
-    (field.default && field.default.trim() != "")
-  );
-}
-
 function columnDefault(field, database) {
   if (!field.default || field.default.trim() === "") {
     return "";
@@ -29,15 +18,22 @@ function columnComment(field) {
 }
 
 function columnSettings(field, database) {
-  if (!hasColumnSettings(field)) {
+  let constraints = [];
+
+  field.primary && constraints.push("pk");
+  field.increment && constraints.push("increment");
+  field.notNull && constraints.push("not null");
+  field.unique && constraints.push("unique");
+  constraints.push(columnDefault(field, database));
+  constraints.push(columnComment(field, database));
+
+  constraints = constraints.filter((x) => Boolean(x));
+
+  if (!constraints.length) {
     return "";
   }
 
-  return ` [ ${field.primary ? "pk " : ""}${
-    field.increment ? "increment " : ""
-  }${field.notNull ? "not null " : ""}${
-    field.unique ? "unique " : ""
-  }${columnDefault(field, database)}${columnComment(field, database)}]`;
+  return ` [ ${constraints.join(", ")} ]`;
 }
 
 function cardinality(rel) {
@@ -96,7 +92,7 @@ export function toDBML(diagram) {
           rel,
         )} ${diagram.tables[rel.endTableId].name}.${
           diagram.tables[rel.endTableId].fields[rel.endFieldId].name
-        } [ delete: ${rel.deleteConstraint.toLowerCase()}, on update: ${rel.updateConstraint.toLowerCase()} ]\n}`,
+        } [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`,
     )
     .join("\n\n")}`;
 }

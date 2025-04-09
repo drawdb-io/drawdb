@@ -1,17 +1,7 @@
-import { useState } from "react";
-import {
-  Action,
-  ObjectType,
-  Tab,
-  State,
-  noteThemes,
-} from "../../data/constants";
-import { Input, Button, Popover } from "@douyinfe/semi-ui";
-import {
-  IconEdit,
-  IconDeleteStroked,
-  IconCheckboxTick,
-} from "@douyinfe/semi-icons";
+import { useMemo, useState } from "react";
+import { Action, ObjectType, Tab, State } from "../../data/constants";
+import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
+import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
   useLayout,
   useUndoRedo,
@@ -32,7 +22,8 @@ export default function Note({ data, onPointerDown }) {
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${data.id}`);
@@ -81,6 +72,16 @@ export default function Note({ data, onPointerDown }) {
     }
   };
 
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === data.id &&
+        selectedElement.element === ObjectType.NOTE) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.NOTE && e.id === data.id,
+      )
+    );
+  }, [selectedElement, data, bulkSelectedElements]);
+
   return (
     <g
       onPointerEnter={(e) => e.isPrimary && setHovered(true)}
@@ -105,14 +106,13 @@ export default function Note({ data, onPointerDown }) {
         stroke={
           hovered
             ? "rgb(59 130 246)"
-            : selectedElement.element === ObjectType.NOTE &&
-                selectedElement.id === data.id
+            : isSelected
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <path
         d={`M${data.x} ${data.y + fold} L${data.x + fold - r} ${
@@ -124,14 +124,13 @@ export default function Note({ data, onPointerDown }) {
         stroke={
           hovered
             ? "rgb(59 130 246)"
-            : selectedElement.element === ObjectType.NOTE &&
-                selectedElement.id === data.id
+            : isSelected
               ? "rgb(59 130 246)"
               : "rgb(168 162 158)"
         }
-        strokeDasharray={hovered ? 4 : 0}
+        strokeDasharray={hovered ? 5 : 0}
         strokeLinejoin="round"
-        strokeWidth="1.2"
+        strokeWidth="2"
       />
       <foreignObject
         x={data.x}
@@ -209,58 +208,33 @@ export default function Note({ data, onPointerDown }) {
                             setRedoStack([]);
                           }}
                         />
-                        <Popover
-                          content={
-                            <div className="popover-theme">
-                              <div className="font-medium mb-1">
-                                {t("theme")}
-                              </div>
-                              <hr />
-                              <div className="py-3">
-                                {noteThemes.map((c) => (
-                                  <button
-                                    key={c}
-                                    style={{ backgroundColor: c }}
-                                    className="p-3 rounded-full mx-1"
-                                    onClick={() => {
-                                      setUndoStack((prev) => [
-                                        ...prev,
-                                        {
-                                          action: Action.EDIT,
-                                          element: ObjectType.NOTE,
-                                          nid: data.id,
-                                          undo: { color: data.color },
-                                          redo: { color: c },
-                                          message: t("edit_note", {
-                                            noteTitle: data.title,
-                                            extra: "[color]",
-                                          }),
-                                        },
-                                      ]);
-                                      setRedoStack([]);
-                                      updateNote(data.id, { color: c });
-                                    }}
-                                  >
-                                    {data.color === c ? (
-                                      <IconCheckboxTick
-                                        style={{ color: "white" }}
-                                      />
-                                    ) : (
-                                      <IconCheckboxTick style={{ color: c }} />
-                                    )}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          }
-                          position="rightTop"
-                          showArrow
+                        <ColorPicker
+                          onChange={({ hex: color }) => {
+                            setUndoStack((prev) => [
+                              ...prev,
+                              {
+                                action: Action.EDIT,
+                                element: ObjectType.NOTE,
+                                nid: data.id,
+                                undo: { color: data.color },
+                                redo: { color },
+                                message: t("edit_note", {
+                                  noteTitle: data.title,
+                                  extra: "[color]",
+                                }),
+                              },
+                            ]);
+                            setRedoStack([]);
+                            updateNote(data.id, { color });
+                          }}
+                          usePopover={true}
+                          value={ColorPicker.colorStringToValue(data.color)}
                         >
                           <div
-                            className="h-[32px] w-[32px] rounded"
+                            className="h-[32px] w-[32px] rounded-sm"
                             style={{ backgroundColor: data.color }}
                           />
-                        </Popover>
+                        </ColorPicker>
                       </div>
                       <div className="flex">
                         <Button
@@ -302,7 +276,7 @@ export default function Note({ data, onPointerDown }) {
               })
             }
             onBlur={handleBlur}
-            className="w-full resize-none outline-none overflow-y-hidden border-none select-none"
+            className="w-full resize-none outline-hidden overflow-y-hidden border-none select-none"
             style={{ backgroundColor: data.color }}
           />
         </div>

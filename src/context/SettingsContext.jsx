@@ -4,6 +4,7 @@ const defaultSettings = {
   strictMode: false,
   showFieldSummary: true,
   showGrid: true,
+  showDataTypes: true,
   mode: "light",
   autosave: true,
   panning: true,

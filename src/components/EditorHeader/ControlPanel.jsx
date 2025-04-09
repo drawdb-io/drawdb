@@ -20,6 +20,7 @@ import {
   InputNumber,
   Tooltip,
   Spin,
+  Tag,
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
@@ -30,6 +31,7 @@ import {
   jsonToSQLite,
   jsonToMariaDB,
   jsonToSQLServer,
+  jsonToOracleSQL,
 } from "../../utils/exportSQL/generic";
 import {
   ObjectType,
@@ -130,6 +132,22 @@ export default function ControlPanel({
     if (undoStack.length === 0) return;
     const a = undoStack[undoStack.length - 1];
     setUndoStack((prev) => prev.filter((_, i) => i !== prev.length - 1));
+
+    if (a.bulk) {
+      for (const element of a.elements) {
+        if (element.type === ObjectType.TABLE) {
+          updateTable(element.id, element.undo);
+        } else if (element.type === ObjectType.AREA) {
+          updateArea(element.id, element.undo);
+        } else if (element.type === ObjectType.NOTE) {
+          updateNote(element.id, element.undo);
+        }
+      }
+      setRedoStack((prev) => [...prev, a]);
+      console.log(a);
+      return;
+    }
+
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         deleteTable(tables[tables.length - 1].id, false);
@@ -340,6 +358,21 @@ export default function ControlPanel({
     if (redoStack.length === 0) return;
     const a = redoStack[redoStack.length - 1];
     setRedoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
+
+    if (a.bulk) {
+      for (const element of a.elements) {
+        if (element.type === ObjectType.TABLE) {
+          updateTable(element.id, element.redo);
+        } else if (element.type === ObjectType.AREA) {
+          updateArea(element.id, element.redo);
+        } else if (element.type === ObjectType.NOTE) {
+          updateNote(element.id, element.redo);
+        }
+      }
+      setUndoStack((prev) => [...prev, a]);
+      return;
+    }
+
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
         addTable(null, false);
@@ -794,13 +827,15 @@ export default function ControlPanel({
       import_from: {
         children: [
           {
-            JSON: fileImport,
+            function: fileImport,
+            name: "JSON",
           },
           {
-            DBML: () => {
+            function: () => {
               setModal(MODAL.IMPORT);
               setImportFrom(IMPORT_FROM.DBML);
             },
+            name: "DBML",
           },
         ],
       },
@@ -808,34 +843,47 @@ export default function ControlPanel({
         ...(database === DB.GENERIC && {
           children: [
             {
-              MySQL: () => {
+              function: () => {
                 setModal(MODAL.IMPORT_SRC);
                 setImportDb(DB.MYSQL);
               },
+              name: "MySQL",
             },
             {
-              PostgreSQL: () => {
+              function: () => {
                 setModal(MODAL.IMPORT_SRC);
                 setImportDb(DB.POSTGRES);
               },
+              name: "PostgreSQL",
             },
             {
-              SQLite: () => {
+              function: () => {
                 setModal(MODAL.IMPORT_SRC);
                 setImportDb(DB.SQLITE);
               },
+              name: "SQLite",
             },
             {
-              MariaDB: () => {
+              function: () => {
                 setModal(MODAL.IMPORT_SRC);
                 setImportDb(DB.MARIADB);
               },
+              name: "MariaDB",
             },
             {
-              MSSQL: () => {
+              function: () => {
                 setModal(MODAL.IMPORT_SRC);
                 setImportDb(DB.MSSQL);
               },
+              name: "MSSQL",
+            },
+            {
+              function: () => {
+                setModal(MODAL.IMPORT_SRC);
+                setImportDb(DB.ORACLESQL);
+              },
+              name: "Oracle",
+              label: "Beta",
             },
           ],
         }),
@@ -849,7 +897,8 @@ export default function ControlPanel({
         ...(database === DB.GENERIC && {
           children: [
             {
-              MySQL: () => {
+              name: "MySQL",
+              function: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToMySQL({
                   tables: tables,
@@ -865,7 +914,8 @@ export default function ControlPanel({
               },
             },
             {
-              PostgreSQL: () => {
+              name: "PostgreSQL",
+              function: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToPostgreSQL({
                   tables: tables,
@@ -881,7 +931,8 @@ export default function ControlPanel({
               },
             },
             {
-              SQLite: () => {
+              name: "SQLite",
+              function: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToSQLite({
                   tables: tables,
@@ -897,7 +948,8 @@ export default function ControlPanel({
               },
             },
             {
-              MariaDB: () => {
+              name: "MariaDB",
+              function: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToMariaDB({
                   tables: tables,
@@ -913,9 +965,28 @@ export default function ControlPanel({
               },
             },
             {
-              MSSQL: () => {
+              name: "MSSQL",
+              function: () => {
                 setModal(MODAL.CODE);
                 const src = jsonToSQLServer({
+                  tables: tables,
+                  references: relationships,
+                  types: types,
+                  database: database,
+                });
+                setExportData((prev) => ({
+                  ...prev,
+                  data: src,
+                  extension: "sql",
+                }));
+              },
+            },
+            {
+              label: "Beta",
+              name: "Oracle",
+              function: () => {
+                setModal(MODAL.CODE);
+                const src = jsonToOracleSQL({
                   tables: tables,
                   references: relationships,
                   types: types,
@@ -950,7 +1021,8 @@ export default function ControlPanel({
       export_as: {
         children: [
           {
-            PNG: () => {
+            name: "PNG",
+            function: () => {
               toPng(document.getElementById("canvas")).then(function (dataUrl) {
                 setExportData((prev) => ({
                   ...prev,
@@ -962,7 +1034,8 @@ export default function ControlPanel({
             },
           },
           {
-            JPEG: () => {
+            name: "JPEG",
+            function: () => {
               toJpeg(document.getElementById("canvas"), { quality: 0.95 }).then(
                 function (dataUrl) {
                   setExportData((prev) => ({
@@ -976,7 +1049,8 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
+            name: "SVG",
+            function: () => {
               const filter = (node) => node.tagName !== "i";
               toSvg(document.getElementById("canvas"), { filter: filter }).then(
                 function (dataUrl) {
@@ -991,7 +1065,8 @@ export default function ControlPanel({
             },
           },
           {
-            JSON: () => {
+            name: "JSON",
+            function: () => {
               setModal(MODAL.CODE);
               const result = JSON.stringify(
                 {
@@ -1015,7 +1090,8 @@ export default function ControlPanel({
             },
           },
           {
-            DBML: () => {
+            name: "DBML",
+            function: () => {
               setModal(MODAL.CODE);
               const result = toDBML({
                 tables,
@@ -1030,7 +1106,8 @@ export default function ControlPanel({
             },
           },
           {
-            PDF: () => {
+            name: "PDF",
+            function: () => {
               const canvas = document.getElementById("canvas");
               toJpeg(canvas).then(function (dataUrl) {
                 const doc = new jsPDF("l", "px", [
@@ -1050,7 +1127,8 @@ export default function ControlPanel({
             },
           },
           {
-            MERMAID: () => {
+            name: "Mermaid",
+            function: () => {
               setModal(MODAL.CODE);
               const result = jsonToMermaid({
                 tables: tables,
@@ -1068,7 +1146,8 @@ export default function ControlPanel({
             },
           },
           {
-            readme: () => {
+            name: "Markdown",
+            function: () => {
               setModal(MODAL.CODE);
               const result = jsonToDocumentation({
                 tables: tables,
@@ -1212,6 +1291,18 @@ export default function ControlPanel({
         function: resetView,
         shortcut: "Ctrl+R",
       },
+      show_datatype: {
+        state: settings.showDataTypes ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showDataTypes: !prev.showDataTypes,
+          })),
+      },
       show_grid: {
         state: settings.showGrid ? (
           <i className="bi bi-toggle-on" />
@@ -1280,7 +1371,8 @@ export default function ControlPanel({
       theme: {
         children: [
           {
-            light: () => {
+            name: t("light"),
+            function: () => {
               const body = document.body;
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "light");
@@ -1290,7 +1382,8 @@ export default function ControlPanel({
             },
           },
           {
-            dark: () => {
+            name: t("dark"),
+            function: () => {
               const body = document.body;
               if (body.hasAttribute("theme-mode")) {
                 body.setAttribute("theme-mode", "dark");
@@ -1426,7 +1519,7 @@ export default function ControlPanel({
             {window.name.split(" ")[0] !== "t" && (
               <Button
                 type="primary"
-                className="text-base me-2 pe-6 ps-5 py-[18px] rounded-md"
+                className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
                 size="default"
                 icon={<IconShareStroked />}
                 onClick={() => setModal(MODAL.SHARE)}
@@ -1509,7 +1602,7 @@ export default function ControlPanel({
             }
             trigger="click"
           >
-            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+            <div className="py-1 px-2 hover-2 rounded-sm flex items-center justify-center">
               <div className="w-[40px]">
                 {Math.floor(transform.zoom * 100)}%
               </div>
@@ -1520,7 +1613,7 @@ export default function ControlPanel({
           </Dropdown>
           <Tooltip content={t("zoom_in")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }))
               }
@@ -1530,7 +1623,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("zoom_out")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-lg"
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
               onClick={() =>
                 setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
               }
@@ -1538,10 +1631,27 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
+          <Tooltip
+            content={settings.panning ? t("multiselect") : t("panning")}
+            position="bottom"
+          >
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg w-10"
+              onClick={() =>
+                setSettings((prev) => ({ ...prev, panning: !prev.panning }))
+              }
+            >
+              {settings.panning ? (
+                <i className="fa-solid fa-expand" />
+              ) : (
+                <i className="fa-regular fa-hand"></i>
+              )}
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={undo}
             >
               <IconUndo
@@ -1552,7 +1662,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("redo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={redo}
             >
               <IconRedo
@@ -1564,7 +1674,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("add_table")} position="bottom">
             <button
-              className="flex items-center py-1 px-2 hover-2 rounded"
+              className="flex items-center py-1 px-2 hover-2 rounded-sm"
               onClick={() => addTable()}
             >
               <IconAddTable />
@@ -1572,7 +1682,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_area")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={() => addArea()}
             >
               <IconAddArea />
@@ -1580,7 +1690,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("add_note")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={() => addNote()}
             >
               <IconAddNote />
@@ -1589,7 +1699,7 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center"
               onClick={save}
             >
               <IconSaveStroked size="extra-large" />
@@ -1597,7 +1707,7 @@ export default function ControlPanel({
           </Tooltip>
           <Tooltip content={t("to_do")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
             >
               <i className="fa-regular fa-calendar-check" />
@@ -1606,14 +1716,14 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("theme")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => {
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
                   if (body.getAttribute("theme-mode") === "light") {
-                    menu["view"]["theme"].children[1]["dark"]();
+                    menu["view"]["theme"].children[1].function();
                   } else {
-                    menu["view"]["theme"].children[0]["light"]();
+                    menu["view"]["theme"].children[0].function();
                   }
                 }
               }}
@@ -1712,7 +1822,7 @@ export default function ControlPanel({
                           if (menu[category][item].children) {
                             return (
                               <Dropdown
-                                style={{ width: "120px" }}
+                                style={{ width: "150px" }}
                                 key={item}
                                 position="rightTop"
                                 render={
@@ -1721,9 +1831,18 @@ export default function ControlPanel({
                                       (e, i) => (
                                         <Dropdown.Item
                                           key={i}
-                                          onClick={Object.values(e)[0]}
+                                          onClick={e.function}
+                                          className="flex justify-between"
                                         >
-                                          {t(Object.keys(e)[0])}
+                                          <span>{e.name}</span>
+                                          {e.label && (
+                                            <Tag
+                                              size="small"
+                                              color="light-blue"
+                                            >
+                                              {e.label}
+                                            </Tag>
+                                          )}
                                         </Dropdown.Item>
                                       ),
                                     )}
@@ -1794,7 +1913,7 @@ export default function ControlPanel({
                       </Dropdown.Menu>
                     }
                   >
-                    <div className="px-3 py-1 hover-2 rounded">
+                    <div className="px-3 py-1 hover-2 rounded-sm">
                       {t(category)}
                     </div>
                   </Dropdown>

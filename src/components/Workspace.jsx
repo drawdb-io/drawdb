@@ -19,7 +19,7 @@ import {
   useEnums,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
-import { Modal } from "@douyinfe/semi-ui";
+import { Modal, Tag } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
@@ -161,7 +161,7 @@ export default function WorkSpace() {
     enums,
     gistId,
     loadedFromGistId,
-    saveState
+    saveState,
   ]);
 
   const load = useCallback(async () => {
@@ -467,17 +467,24 @@ export default function WorkSpace() {
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 py-3 px-4 rounded-md border-2 select-none ${
+              className={`space-y-3 p-3 rounded-md border-2 select-none ${
                 settings.mode === "dark"
                   ? "bg-zinc-700 hover:bg-zinc-600"
                   : "bg-zinc-100 hover:bg-zinc-200"
               } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
             >
-              <div className="font-semibold">{x.name}</div>
+              <div className="flex items-center justify-between">
+                <div className="font-semibold">{x.name}</div>
+                {x.beta && (
+                  <Tag size="small" color="light-blue">
+                    Beta
+                  </Tag>
+                )}
+              </div>
               {x.image && (
                 <img
                   src={x.image}
-                  className="h-10"
+                  className="h-8"
                   style={{
                     filter:
                       "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",

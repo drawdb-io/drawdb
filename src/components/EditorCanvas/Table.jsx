@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Tab,
   ObjectType,
@@ -36,10 +36,26 @@ export default function Table(props) {
   const { deleteTable, deleteField } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
+
+  const borderColor = useMemo(
+    () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
+    [settings.mode],
+  );
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === tableData.id &&
+        selectedElement.element === ObjectType.TABLE) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
+      )
+    );
+  }, [selectedElement, tableData, bulkSelectedElements]);
+
   const openEditor = () => {
     if (!layout.sidebar) {
       setSelectedElement((prev) => ({
@@ -86,7 +102,17 @@ export default function Table(props) {
                    selectedElement.element === ObjectType.TABLE
                    ? "border-solid border-blue-500"
                    : "border-zinc-500"
-               }`}
+               } ${
+                 settings.mode === "light"
+                   ? "bg-zinc-100 text-zinc-800"
+                   : "bg-zinc-800 text-zinc-200"
+               } ${isSelected ? "border-solid border-blue-500" : borderColor}
+               `}
+               select-none rounded-lg w-full ${
+                 settings.mode === "light"
+                   ? "bg-zinc-100 text-zinc-800"
+                   : "bg-zinc-800 text-zinc-200"
+               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -412,7 +438,7 @@ export default function Table(props) {
               icon={<IconMinus />}
               onClick={() => deleteField(fieldData, tableData.id)}
             />
-          ) : (
+          ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
               {settings.notation !== Notation.DEFAULT ? (
                 <>
@@ -444,7 +470,7 @@ export default function Table(props) {
                 </>
               )}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     );
