@@ -31,6 +31,7 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "jsonschema": "^1.4.1",
     "jspdf": "^3.0.1",
+    "jszip": "^3.10.1",
     "lexical": "^0.12.5",
     "node-sql-parser": "^5.3.8",
     "octokit": "^4.0.2",

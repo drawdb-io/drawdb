@@ -77,6 +77,7 @@ import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
+import { exportSavedData } from "../../utils/exportSavedData";
 
 export default function ControlPanel({
   diagramId,
@@ -1418,6 +1419,9 @@ export default function ControlPanel({
       },
       language: {
         function: () => setModal(MODAL.LANGUAGE),
+      },
+      export_saved_data: {
+        function: exportSavedData,
       },
       flush_storage: {
         warning: {
