@@ -441,7 +441,7 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(transform.pan.x === panning.x && transform.pan.y === panning.y);
+    !(transform.pan.x === panning.panStart.x && transform.pan.y === panning.panStart.y);
 
   /**
    * @param {PointerEvent} e
@@ -524,7 +524,7 @@ export default function Canvas() {
         ...prev,
         {
           action: Action.PAN,
-          undo: { x: panning.x, y: panning.y },
+          undo: { x: panning.panStart.x, y: panning.panStart.y },
           redo: transform.pan,
           message: t("move_element", {
             coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
