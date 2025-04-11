@@ -2,11 +2,12 @@ const kannada = {
   name: "Kannada",
   native_name: "ಕನ್ನಡ",
   code: "ka",
-}
+};
 
 const ka = {
   translation: {
     report_bug: "ದೋಷವನ್ನು ವರದಿ ಮಾಡಿ",
+    import_from: "ಆಮದು",
     import: "ಆಮದು",
     file: "ಫೈಲ್",
     new: "ಹೊಸ",
@@ -97,7 +98,8 @@ const ka = {
     no_tables: "ಯಾವುದೇ ಕೋಷ್ಟಕಗಳಿಲ್ಲ",
     no_tables_text: "ನಿಮ್ಮ ಚಿತ್ರವನ್ನು ನಿರ್ಮಿಸಲು ಪ್ರಾರಂಭಿಸಿ!",
     no_relationships: "ಯಾವುದೇ ಸಂಬಂಧಗಳಿಲ್ಲ",
-    no_relationships_text: "ಕ್ಷೇತ್ರಗಳನ್ನು ಸಂಪರ್ಕಿಸಲು ಎಳೆಯಿರಿ ಮತ್ತು ಸಂಬಂಧಗಳನ್ನು ರೂಪಿಸಿ!",
+    no_relationships_text:
+      "ಕ್ಷೇತ್ರಗಳನ್ನು ಸಂಪರ್ಕಿಸಲು ಎಳೆಯಿರಿ ಮತ್ತು ಸಂಬಂಧಗಳನ್ನು ರೂಪಿಸಿ!",
     no_subject_areas: "ಯಾವುದೇ ವಿಷಯ ಪ್ರದೇಶಗಳಿಲ್ಲ",
     no_subject_areas_text: "ಕೋಷ್ಟಕಗಳನ್ನು ಗುಂಪು ಮಾಡಲು ವಿಷಯ ಪ್ರದೇಶಗಳನ್ನು ಸೇರಿಸಿ!",
     no_notes: "ಯಾವುದೇ ಟಿಪ್ಪಣಿಗಳಿಲ್ಲ",
@@ -116,7 +118,8 @@ const ka = {
     autoincrement: "ಸ್ವಯಂವೃದ್ಧಿ",
     default_value: "ಪೂರ್ವನಿಯೋಜಿತ",
     check: "ಪರಿಶೀಲನೆ",
-    this_will_appear_as_is: "*ಇದು ತಯಾರಿಸಲಾದ ಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಹಾಗೆಯೇ ಕಾಣಿಸುತ್ತದೆ.",
+    this_will_appear_as_is:
+      "*ಇದು ತಯಾರಿಸಲಾದ ಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಹಾಗೆಯೇ ಕಾಣಿಸುತ್ತದೆ.",
     comment: "ಟಿಪ್ಪಣಿ",
     add_field: "ಕ್ಷೇತ್ರವನ್ನು ಸೇರಿಸಿ",
     values: "ಮೌಲ್ಯಗಳು",
@@ -156,8 +159,8 @@ const ka = {
     create: "ರಚಿಸಿ",
     confirm: "ದೃಢೀಕರಿಸಿ",
     last_modified: "ಕೊನೆಯದಾಗಿ ಬದಲಾಯಿಸಲಾಗಿದೆ",
-    drag_and_drop_files: "ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆಯಿರಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ.",
-    support_json_and_ddb: "JSON ಮತ್ತು DDB ಫೈಲ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ",
+    drag_and_drop_files:
+      "ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಎಳೆಯಿರಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ.",
     upload_sql_to_generate_diagrams:
       "ನಿಮ್ಮ ಕೋಷ್ಟಕಗಳು ಮತ್ತು ಕಂಬಿಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ತಯಾರಿಸಲು sql ಫೈಲ್ ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
     overwrite_existing_diagram: "ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಚಿತ್ರವನ್ನು ಮರುಬರೆಯಿರಿ",
@@ -179,11 +182,13 @@ const ka = {
       "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಹೆಸರಿನ ಮೂಲಕ ನಕಲು ಕೋಷ್ಟಕ ಕ್ಷೇತ್ರಗಳು '{{fieldName}}'",
     duplicate_index:
       "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಹೆಸರಿನ ಮೂಲಕ ನಕಲು ಸೂಚಿ '{{indexName}}'",
-    empty_index: "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಸೂಚಿ ಯಾವುದೇ ಕಂಬಿಗಳನ್ನು ಸೂಚಿಸುತ್ತಿಲ್ಲ",
+    empty_index:
+      "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಸೂಚಿ ಯಾವುದೇ ಕಂಬಿಗಳನ್ನು ಸೂಚಿಸುತ್ತಿಲ್ಲ",
     no_primary_key: "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಪ್ರಾಥಮಿಕ ಕೀ ಇಲ್ಲ",
     type_with_no_name: "ಹೆಸರಿಲ್ಲದ ಪ್ರಕಾರವನ್ನು ಘೋಷಿಸಲಾಗಿದೆ",
     duplicate_types: "ಹೆಸರಿನ ಮೂಲಕ ನಕಲು ಪ್ರಕಾರಗಳು '{{typeName}}'",
-    type_w_no_fields: "ಕ್ಷೇತ್ರಗಳಿಲ್ಲದ ಖಾಲಿ ಪ್ರಕಾರ '{{typeName}}' ಅನ್ನು ಘೋಷಿಸಲಾಗಿದೆ",
+    type_w_no_fields:
+      "ಕ್ಷೇತ್ರಗಳಿಲ್ಲದ ಖಾಲಿ ಪ್ರಕಾರ '{{typeName}}' ಅನ್ನು ಘೋಷಿಸಲಾಗಿದೆ",
     empty_type_field_name: "ಪ್ರಕಾರ '{{typeName}}' ನಲ್ಲಿ ಖಾಲಿ ಕ್ಷೇತ್ರ `ಹೆಸರು`",
     empty_type_field_type: "ಪ್ರಕಾರ '{{typeName}}' ನಲ್ಲಿ ಖಾಲಿ ಕ್ಷೇತ್ರ `ಪ್ರಕಾರ`",
     no_values_for_type_field:
@@ -233,13 +238,15 @@ const ka = {
     no_enums: "ಯಾವುದೇ ಎನಮ್‌ಗಳಿಲ್ಲ",
     no_enums_text: "ಇಲ್ಲಿ ಎನಮ್‌ಗಳನ್ನು ವ್ಯಾಖ್ಯಾನಿಸಿ",
     declare_array: "ಅರೆ ಅನ್ನು ಘೋಷಿಸಿ",
-    empty_index_name: "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಹೆಸರಿಲ್ಲದ ಸೂಚಿಯನ್ನು ಘೋಷಿಸಲಾಗಿದೆ",
+    empty_index_name:
+      "ಕೋಷ್ಟಕ '{{tableName}}' ನಲ್ಲಿ ಹೆಸರಿಲ್ಲದ ಸೂಚಿಯನ್ನು ಘೋಷಿಸಲಾಗಿದೆ",
     didnt_find_diagram: "ಅಯ್ಯೋ! ಚಿತ್ರವನ್ನು ಕಂಡುಹಿಡಿಯಲಿಲ್ಲ.",
     unsigned: "ಅನ್‌ಸೈನ್ ಮಾಡಲಾಗಿದೆ",
     share: "ಹಂಚಿಕೊಳ್ಳಿ",
     copy_link: "ಲಿಂಕ್ ನಕಲಿಸಿ",
     readme: "README",
-    failed_to_load: "ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ. ಲಿಂಕ್ ಸರಿಯಾಗಿದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+    failed_to_load:
+      "ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ. ಲಿಂಕ್ ಸರಿಯಾಗಿದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
     share_info:
       "* ಈ ಲಿಂಕ್ ಅನ್ನು ಹಂಚಿಕೊಳ್ಳುವುದರಿಂದ ಲೈವ್ ರಿಯಲ್-ಟೈಮ್ ಸಹಯೋಗ ಸೆಷನ್ ರಚಿಸಲಾಗುವುದಿಲ್ಲ.",
   },

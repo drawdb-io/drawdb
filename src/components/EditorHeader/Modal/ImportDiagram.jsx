@@ -3,7 +3,7 @@ import {
   jsonDiagramIsValid,
 } from "../../../utils/validateSchema";
 import { Upload, Banner } from "@douyinfe/semi-ui";
-import { DB, STATUS } from "../../../data/constants";
+import { DB, IMPORT_FROM, STATUS } from "../../../data/constants";
 import {
   useAreas,
   useEnums,
@@ -12,8 +12,14 @@ import {
   useTypes,
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
+import { fromDBML } from "../../../utils/importFrom/dbml";
 
-export default function ImportDiagram({ setImportData, error, setError }) {
+export default function ImportDiagram({
+  setImportData,
+  error,
+  setError,
+  importFrom,
+}) {
   const { areas } = useAreas();
   const { notes } = useNotes();
   const { tables, relationships, database } = useDiagram();
@@ -32,6 +38,125 @@ export default function ImportDiagram({ setImportData, error, setError }) {
     );
   };
 
+  const loadJsonData = (file, e) => {
+    let jsonObject = null;
+    try {
+      jsonObject = JSON.parse(e.target.result);
+    } catch (error) {
+      setError({
+        type: STATUS.ERROR,
+        message: "The file contains an error.",
+      });
+      return;
+    }
+
+    if (file.type === "application/json") {
+      if (!jsonDiagramIsValid(jsonObject)) {
+        setError({
+          type: STATUS.ERROR,
+          message: "The file is missing necessary properties for a diagram.",
+        });
+        return;
+      }
+    } else if (file.name.split(".").pop() === "ddb") {
+      if (!ddbDiagramIsValid(jsonObject)) {
+        setError({
+          type: STATUS.ERROR,
+          message: "The file is missing necessary properties for a diagram.",
+        });
+        return;
+      }
+    }
+
+    if (!jsonObject.database) {
+      jsonObject.database = DB.GENERIC;
+    }
+
+    if (jsonObject.database !== database) {
+      setError({
+        type: STATUS.ERROR,
+        message:
+          "The imported diagram and the open diagram don't use matching databases.",
+      });
+      return;
+    }
+
+    let ok = true;
+    jsonObject.relationships.forEach((rel) => {
+      if (
+        !jsonObject.tables[rel.startTableId] ||
+        !jsonObject.tables[rel.endTableId]
+      ) {
+        setError({
+          type: STATUS.ERROR,
+          message: `Relationship ${rel.name} references a table that does not exist.`,
+        });
+        ok = false;
+        return;
+      }
+
+      if (
+        !jsonObject.tables[rel.startTableId].fields[rel.startFieldId] ||
+        !jsonObject.tables[rel.endTableId].fields[rel.endFieldId]
+      ) {
+        setError({
+          type: STATUS.ERROR,
+          message: `Relationship ${rel.name} references a field that does not exist.`,
+        });
+        ok = false;
+        return;
+      }
+    });
+
+    if (!ok) return;
+
+    setImportData(jsonObject);
+    if (diagramIsEmpty()) {
+      setError({
+        type: STATUS.OK,
+        message: "Everything looks good. You can now import.",
+      });
+    } else {
+      setError({
+        type: STATUS.WARNING,
+        message:
+          "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+      });
+    }
+  };
+
+  const loadDBMLData = (e) => {
+    try {
+      setImportData(fromDBML(e.target.result));
+    } catch (error) {
+      const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
+
+      setError({ type: STATUS.ERROR, message });
+    }
+  };
+
+  const getAcceptableFileTypes = () => {
+    switch (importFrom) {
+      case IMPORT_FROM.JSON:
+        return "application/json,.ddb";
+      case IMPORT_FROM.DBML:
+        return ".dbml";
+      default:
+        return "";
+    }
+  };
+
+  const getDragSubText = () => {
+    switch (importFrom) {
+      case IMPORT_FROM.JSON:
+        return `${t("supported_types")} JSON, DDB`;
+      case IMPORT_FROM.DBML:
+        return `${t("supported_types")} DBML`;
+      default:
+        return "";
+    }
+  };
+
   return (
     <div>
       <Upload
@@ -43,91 +168,8 @@ export default function ImportDiagram({ setImportData, error, setError }) {
           }
           const reader = new FileReader();
           reader.onload = async (e) => {
-            let jsonObject = null;
-            try {
-              jsonObject = JSON.parse(e.target.result);
-            } catch (error) {
-              setError({
-                type: STATUS.ERROR,
-                message: "The file contains an error.",
-              });
-              return;
-            }
-            if (f.type === "application/json") {
-              if (!jsonDiagramIsValid(jsonObject)) {
-                setError({
-                  type: STATUS.ERROR,
-                  message:
-                    "The file is missing necessary properties for a diagram.",
-                });
-                return;
-              }
-            } else if (f.name.split(".").pop() === "ddb") {
-              if (!ddbDiagramIsValid(jsonObject)) {
-                setError({
-                  type: STATUS.ERROR,
-                  message:
-                    "The file is missing necessary properties for a diagram.",
-                });
-                return;
-              }
-            }
-
-            if (!jsonObject.database) {
-              jsonObject.database = DB.GENERIC;
-            }
-
-            if (jsonObject.database !== database) {
-              setError({
-                type: STATUS.ERROR,
-                message:
-                  "The imported diagram and the open diagram don't use matching databases.",
-              });
-              return;
-            }
-
-            let ok = true;
-            jsonObject.relationships.forEach((rel) => {
-              if (
-                !jsonObject.tables[rel.startTableId] ||
-                !jsonObject.tables[rel.endTableId]
-              ) {
-                setError({
-                  type: STATUS.ERROR,
-                  message: `Relationship ${rel.name} references a table that does not exist.`,
-                });
-                ok = false;
-                return;
-              }
-
-              if (
-                !jsonObject.tables[rel.startTableId].fields[rel.startFieldId] ||
-                !jsonObject.tables[rel.endTableId].fields[rel.endFieldId]
-              ) {
-                setError({
-                  type: STATUS.ERROR,
-                  message: `Relationship ${rel.name} references a field that does not exist.`,
-                });
-                ok = false;
-                return;
-              }
-            });
-
-            if (!ok) return;
-
-            setImportData(jsonObject);
-            if (diagramIsEmpty()) {
-              setError({
-                type: STATUS.OK,
-                message: "Everything looks good. You can now import.",
-              });
-            } else {
-              setError({
-                type: STATUS.WARNING,
-                message:
-                  "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
-              });
-            }
+            if (importFrom == IMPORT_FROM.JSON) loadJsonData(f, e);
+            if (importFrom == IMPORT_FROM.DBML) loadDBMLData(e);
           };
           reader.readAsText(f);
 
@@ -140,8 +182,8 @@ export default function ImportDiagram({ setImportData, error, setError }) {
         }}
         draggable={true}
         dragMainText={t("drag_and_drop_files")}
-        dragSubText={t("support_json_and_ddb")}
-        accept="application/json,.ddb"
+        dragSubText={getDragSubText()}
+        accept={getAcceptableFileTypes()}
         onRemove={() =>
           setError({
             type: STATUS.NONE,

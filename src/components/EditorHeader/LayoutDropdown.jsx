@@ -68,7 +68,7 @@ export default function LayoutDropdown() {
       }
       trigger="click"
     >
-      <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+      <div className="py-1 px-2 hover-2 rounded-sm flex items-center justify-center">
         <IconRowsStroked size="extra-large" />
         <div>
           <IconCaretdown />

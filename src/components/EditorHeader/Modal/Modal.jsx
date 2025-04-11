@@ -20,6 +20,7 @@ import {
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
+import { Parser as OracleParser } from "oracle-sql-parser";
 import {
   getModalTitle,
   getModalWidth,
@@ -48,9 +49,10 @@ export default function Modal({
   exportData,
   setExportData,
   importDb,
+  importFrom,
 }) {
   const { t, i18n } = useTranslation();
-  const { setTables, setRelationships, database, setDatabase } = useDiagram();
+  const { tables, setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -61,7 +63,7 @@ export default function Modal({
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [importSource, setImportSource] = useState({
     src: "",
-    overwrite: true,
+    overwrite: false,
   });
   const [importData, setImportData] = useState(null);
   const [error, setError] = useState({
@@ -75,8 +77,8 @@ export default function Modal({
   const overwriteDiagram = () => {
     setTables(importData.tables);
     setRelationships(importData.relationships);
-    setAreas(importData.subjectAreas);
-    setNotes(importData.notes);
+    setAreas(importData.subjectAreas ?? []);
+    setNotes(importData.notes ?? []);
     if (importData.title) {
       setTitle(importData.title);
     }
@@ -130,12 +132,21 @@ export default function Modal({
   };
 
   const parseSQLAndLoadDiagram = () => {
-    const parser = new Parser();
+    const targetDatabase = database === DB.GENERIC ? importDb : database;
+
     let ast = null;
     try {
-      ast = parser.astify(importSource.src, {
-        database: database === DB.GENERIC ? importDb : database,
-      });
+      if (targetDatabase === DB.ORACLESQL) {
+        const oracleParser = new OracleParser();
+
+        ast = oracleParser.parse(importSource.src);
+      } else {
+        const parser = new Parser();
+
+        ast = parser.astify(importSource.src, {
+          database: targetDatabase,
+        });
+      }
     } catch (error) {
       const message = error.location
         ? `${error.name} [Ln ${error.location.start.line}, Col ${error.location.start.column}]: ${error.message}`
@@ -163,12 +174,15 @@ export default function Modal({
         setUndoStack([]);
         setRedoStack([]);
       } else {
+        const initialTablesLength = tables.length;
         setTables((prev) =>
           [...prev, ...diagramData.tables].map((t, i) => ({ ...t, id: i })),
         );
         setRelationships((prev) =>
           [...prev, ...diagramData.relationships].map((r, i) => ({
             ...r,
+            startTableId: initialTablesLength + r.startTableId,
+            endTableId: initialTablesLength + r.endTableId,
             id: i,
           })),
         );
@@ -247,6 +261,7 @@ export default function Modal({
             setImportData={setImportData}
             error={error}
             setError={setError}
+            importFrom={importFrom}
           />
         );
       case MODAL.IMPORT_SRC:
@@ -343,7 +358,7 @@ export default function Modal({
         setImportData(null);
         setImportSource({
           src: "",
-          overwrite: true,
+          overwrite: false,
         });
       }}
       onCancel={() => {

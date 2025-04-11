@@ -7,6 +7,7 @@ const chinese = {
 const zh = {
   translation: {
     report_bug: "报告问题",
+    import_from: "导入",
     import: "导入",
     file: "文件",
     new: "新建",
@@ -147,7 +148,6 @@ const zh = {
     confirm: "确认",
     last_modified: "最后修改",
     drag_and_drop_files: "拖放文件到此处或点击上传。",
-    support_json_and_ddb: "支持 JSON 和 DDB 文件",
     upload_sql_to_generate_diagrams: "上传 SQL 文件以自动生成表和列。",
     overwrite_existing_diagram: "覆盖现有图表",
     only_mysql_supported: "目前仅支持加载 MySQL 脚本。",

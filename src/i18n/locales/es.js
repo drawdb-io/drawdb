@@ -7,8 +7,9 @@ const spanish = {
 const es = {
   translation: {
     report_bug: "Reportar Error",
+    import_from: "Importar",
     import: "Importar",
-    file: "Archivo ",
+    file: "Archivo",
     new: "Nuevo",
     new_window: "Nueva Ventana",
     open: "Abrir",
@@ -138,7 +139,8 @@ const es = {
     note_deleted: "Nota eliminada",
     relationship_deleted: "Relación eliminada",
     type_deleted: "Tipo eliminado",
-    cannot_connect: "No se puede conectar, las columnas tienen diferentes tipos",
+    cannot_connect:
+      "No se puede conectar, las columnas tienen diferentes tipos",
     copied_to_clipboard: "Copiado al portapapeles",
     create_new_diagram: "Crear nuevo diagrama",
     cancel: "Cancelar",
@@ -149,8 +151,8 @@ const es = {
     create: "Crear",
     confirm: "Confirmar",
     last_modified: "Última modificación",
-    drag_and_drop_files: "Arrastra y suelta el archivo aquí o haz clic para subir.",
-    support_json_and_ddb: "Se admiten archivos JSON y DDB",
+    drag_and_drop_files:
+      "Arrastra y suelta el archivo aquí o haz clic para subir.",
     upload_sql_to_generate_diagrams:
       "Sube un archivo sql para autogenerar tus tablas y columnas.",
     overwrite_existing_diagram: "Sobrescribir diagrama existente",
@@ -184,7 +186,8 @@ const es = {
     duplicate_type_fields:
       "Campos de tipo duplicados por nombre '{{fieldName}}' en el tipo '{{typeName}}'",
     duplicate_reference: "Referencia duplicada con el nombre '{{refName}}'",
-    circular_dependency: "Dependencia circular involucrando la tabla '{{refName}}'",
+    circular_dependency:
+      "Dependencia circular involucrando la tabla '{{refName}}'",
     timeline: "Linea del tiempo",
     priority: "Prioridad",
     none: "Ninguno",

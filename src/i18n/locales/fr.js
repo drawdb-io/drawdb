@@ -7,6 +7,7 @@ const french = {
 const fr = {
   translation: {
     report_bug: "Signaler un bug",
+    import_from: "Importer de",
     import: "Importer",
     file: "Fichier",
     new: "Nouveau",
@@ -155,7 +156,6 @@ const fr = {
     last_modified: "Dernière modification",
     drag_and_drop_files:
       "Glissez et déposez les fichiers ici ou cliquez pour les télécharger.",
-    support_json_and_ddb: "Les fichiers JSON et DDB sont pris en charge",
     upload_sql_to_generate_diagrams:
       "Téléchargez un fichier SQL pour générer automatiquement vos tables et colonnes.",
     overwrite_existing_diagram: "Écraser le diagramme existant",

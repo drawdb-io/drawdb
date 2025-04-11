@@ -3,6 +3,7 @@ import postgresImage from "../assets/postgres-icon.png";
 import sqliteImage from "../assets/sqlite-icon.png";
 import mariadbImage from "../assets/mariadb-icon.png";
 import mssqlImage from "../assets/mssql-icon.png";
+import oraclesqlImage from "../assets/oraclesql-icon.png";
 import i18n from "../i18n/i18n";
 import { DB } from "./constants";
 
@@ -41,6 +42,15 @@ export const databases = new Proxy(
       label: DB.MSSQL,
       image: mssqlImage,
       hasTypes: false,
+    },
+    [DB.ORACLESQL]: {
+      name: "Oracle SQL",
+      label: DB.ORACLESQL,
+      image: oraclesqlImage,
+      hasTypes: false,
+      hasEnums: false,
+      hasArrays: false,
+      beta: true,
     },
     [DB.GENERIC]: {
       name: i18n.t("generic"),

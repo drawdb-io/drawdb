@@ -8,6 +8,7 @@ import mysql_icon from "../assets/mysql.png";
 import postgres_icon from "../assets/postgres.png";
 import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
+import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
@@ -16,6 +17,7 @@ import FadeIn from "../animations/FadeIn";
 import axios from "axios";
 import { languages } from "../i18n/i18n";
 import { Tweet } from "react-tweet";
+import { socials } from "../data/socials";
 
 function shortenNumber(number) {
   if (number < 1000) return number;
@@ -46,7 +48,7 @@ export default function LandingPage() {
     <div>
       <div className="flex flex-col h-screen bg-zinc-100">
         {showSurvey && (
-          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-gradient-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
+          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
             <Link to="/survey" className="hover:underline">
               Help us improve! Share your feedback.
             </Link>
@@ -70,7 +72,7 @@ export default function LandingPage() {
           <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800">
             <FadeIn duration={0.75}>
               <div className="md:px-3">
-                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-gradient-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
+                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
                   Draw, Copy, and Paste
                 </h1>
                 <div className="text-lg font-medium mt-1 sliding-vertical">
@@ -138,21 +140,8 @@ export default function LandingPage() {
                 Languages
               </div>
             </div>
-            <div className="w-96 md:w-full h-full md:text-center">
-              <div>
-                Join our community, become one of us. Help us become bigger and
-                better, support us by donating.
-              </div>
-              <a
-                href="https://buymeacoffee.com/drawdb"
-                className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-9 py-2.5 shadow mt-2"
-              >
-                Support us{" "}
-                <i className="ms-2 text-rose-600 fa-regular fa-heart"></i>
-              </a>
-            </div>
           </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-sm rounded-2xl border p-6 bg-white space-y-3">
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3">
             <div className="text-lg font-medium">
               Build diagrams with a few clicks, see the full picture, export SQL
               scripts, customize your editor, and more.
@@ -162,7 +151,7 @@ export default function LandingPage() {
           <div className="text-lg font-medium text-center mt-12 mb-6">
             Design for your database
           </div>
-          <div className="flex justify-center items-center gap-8 md:block">
+          <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
             {dbs.map((s, i) => (
               <img
                 key={"icon-" + i}
@@ -200,7 +189,7 @@ export default function LandingPage() {
             {features.map((f, i) => (
               <div
                 key={"feature" + i}
-                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-sm hover:-translate-y-2 transition-all duration-300"
+                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-xs hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="bg-sky-700 px-0.5 rounded-l-xl" />
                 <div className="px-8 py-4 ">
@@ -255,7 +244,7 @@ export default function LandingPage() {
           <div className="md:block md:space-y-3 flex gap-3 justify-center">
             <a
               className="inline-block"
-              href="https://github.com/drawdb-io/drawdb"
+              href={socials.github}
               target="_blank"
               rel="noreferrer"
             >
@@ -268,7 +257,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://discord.gg/BrjZgNrmR6"
+              href={socials.discord}
               target="_blank"
               rel="noreferrer"
             >
@@ -281,7 +270,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href="https://x.com/drawdb_"
+              href={socials.twitter}
               target="_blank"
               rel="noreferrer"
             >
@@ -289,20 +278,6 @@ export default function LandingPage() {
                 <i className="text-2xl bi bi-twitter-x" />
                 <div className="text-lg  font-bold">Follow us on X</div>
               </div>
-            </a>
-          </div>
-          <div className="my-8">
-            <div>
-              If you&apos;re finding drawDB useful and would like to help us in
-              improving and adding new features, consider making a donation.
-            </div>
-            <div>Your support means a lot to us!</div>
-            <a
-              href="https://buymeacoffee.com/drawdb"
-              className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-16 py-2.5 shadow mt-2"
-            >
-              Support us{" "}
-              <i className="ms-2 text-rose-600 fa-regular fa-heart"></i>
             </a>
           </div>
         </div>
@@ -326,6 +301,7 @@ const dbs = [
   { icon: sqlite_icon, height: 64 },
   { icon: mariadb_icon, height: 64 },
   { icon: sql_server_icon, height: 64 },
+  { icon: oraclesql_icon, height: 172 },
 ];
 
 const features = [
@@ -363,7 +339,10 @@ const features = [
     content: (
       <div>
         Speed up development with keyboard shortuts. See all available shortcuts
-        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
+        <Link
+          to={`${socials.docs}/shortcuts`}
+          className="ms-1.5 text-blue-500 hover:underline"
+        >
           here
         </Link>
         .

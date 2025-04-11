@@ -1,13 +1,7 @@
-import { useRef, useState } from "react";
-import { Button, Popover, Input } from "@douyinfe/semi-ui";
+import { useMemo, useRef, useState } from "react";
+import { Button, Popover, Input, ColorPicker } from "@douyinfe/semi-ui";
 import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
-import {
-  Tab,
-  Action,
-  ObjectType,
-  defaultBlue,
-  State,
-} from "../../data/constants";
+import { Tab, Action, ObjectType, State } from "../../data/constants";
 import {
   useCanvas,
   useLayout,
@@ -17,7 +11,6 @@ import {
   useAreas,
   useSaveState,
 } from "../../hooks";
-import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
 
@@ -37,7 +30,8 @@ export default function Area({
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
-  const { selectedElement, setSelectedElement } = useSelect();
+  const { selectedElement, setSelectedElement, bulkSelectedElements } =
+    useSelect();
 
   const handleResize = (e, dir) => {
     setResize({ id: data.id, dir: dir });
@@ -89,10 +83,20 @@ export default function Area({
     setSaveState(State.SAVING);
   };
 
-  const areaIsSelected = () =>
+  const areaIsOpen = () =>
     selectedElement.element === ObjectType.AREA &&
     selectedElement.id === data.id &&
     selectedElement.open;
+
+  const isSelected = useMemo(() => {
+    return (
+      (selectedElement.id === data.id &&
+        selectedElement.element === ObjectType.AREA) ||
+      bulkSelectedElements.some(
+        (e) => e.type === ObjectType.AREA && e.id === data.id,
+      )
+    );
+  }, [selectedElement, data, bulkSelectedElements]);
 
   return (
     <g ref={ref}>
@@ -105,45 +109,40 @@ export default function Area({
         onPointerDown={onPointerDown}
       >
         <div
-          className={`border-2 ${
+          className={`w-full h-full p-2 rounded cursor-move border-2 ${
             isHovered
               ? "border-dashed border-blue-500"
-              : selectedElement.element === ObjectType.AREA &&
-                  selectedElement.id === data.id
-                ? "border-blue-500"
-                : "border-slate-400"
-          } w-full h-full cursor-move rounded`}
+              : isSelected
+                ? "border-blue-500 opacity-100"
+                : "border-slate-400 opacity-100"
+          }`}
+          style={{ backgroundColor: `${data.color}66` }}
         >
-          <div
-            className="w-fill p-2 h-full"
-            style={{ backgroundColor: `${data.color}66` }}
-          >
-            <div className="flex justify-between gap-1 w-full">
-              <div className="text-color select-none overflow-hidden text-ellipsis">
-                {data.name}
-              </div>
-              {(isHovered || (areaIsSelected() && !layout.sidebar)) && (
-                <Popover
-                  visible={areaIsSelected() && !layout.sidebar}
-                  onClickOutSide={onClickOutSide}
-                  stopPropagation
-                  content={<EditPopoverContent data={data} />}
-                  trigger="custom"
-                  position="rightTop"
-                  showArrow
-                >
-                  <Button
-                    icon={<IconEdit />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
-                    onClick={edit}
-                  />
-                </Popover>
-              )}
+          <div className="flex justify-between gap-1 w-full">
+            <div className="text-color select-none overflow-hidden text-ellipsis">
+              {data.name}
             </div>
+            {(isHovered || (areaIsOpen() && !layout.sidebar)) && (
+              <Popover
+                visible={areaIsOpen() && !layout.sidebar}
+                onClickOutSide={onClickOutSide}
+                stopPropagation
+                content={<EditPopoverContent data={data} />}
+                trigger="custom"
+                position="rightTop"
+                showArrow
+              >
+                <Button
+                  icon={<IconEdit />}
+                  size="small"
+                  theme="solid"
+                  style={{
+                    backgroundColor: "#2F68ADB3",
+                  }}
+                  onClick={edit}
+                />
+              </Popover>
+            )}
           </div>
         </div>
       </foreignObject>
@@ -197,7 +196,6 @@ export default function Area({
 
 function EditPopoverContent({ data }) {
   const [editField, setEditField] = useState({});
-  const { setSaveState } = useSaveState();
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
@@ -231,48 +229,28 @@ function EditPopoverContent({ data }) {
             setRedoStack([]);
           }}
         />
-        <Popover
-          content={
-            <div className="popover-theme">
-              <ColorPalette
-                currentColor={data.color}
-                onPickColor={(c) => {
-                  setUndoStack((prev) => [
-                    ...prev,
-                    {
-                      action: Action.EDIT,
-                      element: ObjectType.AREA,
-                      aid: data.id,
-                      undo: { color: data.color },
-                      redo: { color: c },
-                      message: t("edit_area", {
-                        areaName: data.name,
-                        extra: "[color]",
-                      }),
-                    },
-                  ]);
-                  setRedoStack([]);
-                  updateArea(data.id, {
-                    color: c,
-                  });
-                }}
-                onClearColor={() => {
-                  updateArea(data.id, {
-                    color: defaultBlue,
-                  });
-                  setSaveState(State.SAVING);
-                }}
-              />
-            </div>
-          }
-          position="rightTop"
-          showArrow
-        >
-          <div
-            className="h-[32px] w-[32px] rounded"
-            style={{ backgroundColor: data.color }}
-          />
-        </Popover>
+        <ColorPicker
+          onChange={({ hex: color }) => {
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.AREA,
+                aid: data.id,
+                undo: { color: data.color },
+                redo: { color },
+                message: t("edit_area", {
+                  areaName: data.name,
+                  extra: "[color]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            updateArea(data.id, { color });
+          }}
+          usePopover={true}
+          value={ColorPicker.colorStringToValue(data.color)}
+        />
       </div>
       <div className="flex">
         <Button
