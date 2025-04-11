@@ -2,6 +2,7 @@ import { useRef } from "react";
 import {
   Cardinality,
   darkBgTheme,
+  Notation,
   ObjectType,
   Tab,
 } from "../../data/constants";
@@ -10,6 +11,8 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
+import { CrowOM, CrowOO, IDEFZM, DefaultNotation } from "./RelationshipFormat";
+
 
 const labelFontSize = 16;
 
@@ -24,28 +27,70 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
-
+  const type = settings.notation === 'default' ? 0 : 10;
+  const relationshipType=(5,type);
+  let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
 
+  const formats = {
+    notation: {
+      default:  {
+        one_to_one: DefaultNotation,
+        one_to_many: DefaultNotation,
+        many_to_one: DefaultNotation,
+      },
+      crows_foot: {
+        one_to_one: CrowOO,
+        one_to_many: CrowOM,
+        many_to_one: CrowOM,
+      },
+      idef1x: {
+        one_to_one: IDEFZM,
+        one_to_many: IDEFZM,
+        many_to_one: IDEFZM,
+      },
+    }
+  }
+
+  let format;
   switch (data.cardinality) {
     // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
-      cardinalityStart = "n";
-      cardinalityEnd = "1";
+      if (settings.notation === Notation.DEFAULT) {
+        cardinalityStart = "n";
+        cardinalityEnd = "1";
+      } else {
+        cardinalityStart = "(1,*)";
+        cardinalityEnd = "(1,1)";
+      }
+      format = formats.notation[settings.notation].many_to_one;
       break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
-      cardinalityStart = "1";
-      cardinalityEnd = "n";
+      if (settings.notation === Notation.DEFAULT) {
+        cardinalityStart = "1";
+        cardinalityEnd = "n";
+      } else {
+        cardinalityStart = "(1,1)";
+        cardinalityEnd = "(1,*)";
+      }
+      format = formats.notation[settings.notation].one_to_many;
       break;
     case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
-      cardinalityStart = "1";
-      cardinalityEnd = "1";
+      if (settings.notation === Notation.DEFAULT) {
+        cardinalityStart = "1";
+        cardinalityEnd = "1";
+      } else {
+        cardinalityStart = "(1,1)";
+        cardinalityEnd = "(1,1)";
+      }
+      format = formats.notation[settings.notation].one_to_one;
       break;
     default:
+      format = formats.default.one_to_one;
       break;
   }
 
@@ -61,8 +106,9 @@ export default function Relationship({ data }) {
 
   const cardinalityOffset = 28;
 
+
   if (pathRef.current) {
-    const pathLength = pathRef.current.getTotalLength();
+    const pathLength = pathRef.current.getTotalLength() - cardinalityOffset;
 
     const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
@@ -71,8 +117,9 @@ export default function Relationship({ data }) {
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
+
     const point2 = pathRef.current.getPointAtLength(
-      pathLength - cardinalityOffset,
+      pathLength,
     );
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
@@ -101,6 +148,10 @@ export default function Relationship({ data }) {
     }
   };
 
+  if ((settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X) && cardinalityEndX < cardinalityStartX){
+    direction = -1;
+  }
+
   return (
     <>
       <g className="select-none group" onDoubleClick={edit}>
@@ -123,9 +174,24 @@ export default function Relationship({ data }) {
           stroke="gray"
           className="group-hover:stroke-sky-700"
           fill="none"
+          strokeDasharray={relationshipType}
           strokeWidth={2}
           cursor="pointer"
         />
+        {settings.showCardinality && (
+          <>
+            {format(
+              pathRef,
+              cardinalityEndX,
+              cardinalityEndY,
+              cardinalityStartX,
+              cardinalityStartY,
+              direction,
+              cardinalityStart,
+              cardinalityEnd,
+            )}
+          </>
+        )}
         {settings.showRelationshipLabels && (
           <>
             <rect
@@ -148,45 +214,8 @@ export default function Relationship({ data }) {
             </text>
           </>
         )}
-        {pathRef.current && settings.showCardinality && (
-          <>
-            <circle
-              cx={cardinalityStartX}
-              cy={cardinalityStartY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-              x={cardinalityStartX}
-              y={cardinalityStartY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityStart}
-            </text>
-            <circle
-              cx={cardinalityEndX}
-              cy={cardinalityEndY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-              x={cardinalityEndX}
-              y={cardinalityEndY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityEnd}
-            </text>
-          </>
-        )}
       </g>
+
       <SideSheet
         title={t("edit")}
         size="small"

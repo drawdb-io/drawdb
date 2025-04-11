@@ -11,7 +11,11 @@ export const Cardinality = {
   ONE_TO_MANY: "one_to_many",
   MANY_TO_ONE: "many_to_one",
 };
-
+export const Notation = {
+  DEFAULT: "default",
+  CROWS_FOOT: "crows_foot",
+  IDEF1X: "idef1x",
+}
 export const Constraint = {
   NONE: "No action",
   RESTRICT: "Restrict",
