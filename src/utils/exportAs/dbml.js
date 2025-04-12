@@ -1,4 +1,5 @@
 import { Cardinality } from "../../data/constants";
+import i18n from "../../i18n/i18n";
 import { parseDefault } from "../exportSQL/shared";
 
 function columnDefault(field, database) {
@@ -38,10 +39,13 @@ function columnSettings(field, database) {
 
 function cardinality(rel) {
   switch (rel.cardinality) {
+    case i18n.t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
       return "-";
+    case i18n.t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
       return "<";
+    case i18n.t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
       return ">";
   }
