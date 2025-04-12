@@ -37,7 +37,7 @@ export default function CodeEditor({ showCopyButton, ...props }) {
       />
       {showCopyButton && (
         <Button
-          className={`absolute right-6 bottom-2 z-10`}
+          className="absolute right-6 bottom-2 z-10"
           icon={<IconCopy />}
           onClick={copyCode}
         />
