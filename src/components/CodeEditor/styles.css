@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+.monaco-editor,
+.monaco-editor .overflow-guard {
+  @apply rounded-sm;
+}
