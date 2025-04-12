@@ -1,3 +1,5 @@
+import { Cardinality } from "../data/constants";
+
 export const template2 = {
   tables: [
     {
@@ -304,7 +306,7 @@ export const template2 = {
       endTableId: 1,
       endFieldId: 0,
       name: "employees_dep_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 0,
@@ -315,7 +317,7 @@ export const template2 = {
       endTableId: 2,
       endFieldId: 0,
       name: "employees_pos_id_fk",
-      cardinality: "One to one",
+      cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 1,
@@ -326,7 +328,7 @@ export const template2 = {
       endTableId: 3,
       endFieldId: 0,
       name: "project_assignment_project_id_fk",
-      cardinality: "One to one",
+      cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 2,
@@ -337,7 +339,7 @@ export const template2 = {
       endTableId: 0,
       endFieldId: 0,
       name: "project_assignment_employee_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 3,

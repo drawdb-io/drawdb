@@ -1,3 +1,5 @@
+import { Cardinality } from "../data/constants";
+
 export const template5 = {
   tables: [
     {
@@ -554,7 +556,7 @@ export const template5 = {
       endTableId: 1,
       endFieldId: 0,
       name: "accounts_customer_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 0,
@@ -565,7 +567,7 @@ export const template5 = {
       endTableId: 1,
       endFieldId: 0,
       name: "cards_customer_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 1,
@@ -576,7 +578,7 @@ export const template5 = {
       endTableId: 1,
       endFieldId: 0,
       name: "loans_customer_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 2,
@@ -587,7 +589,7 @@ export const template5 = {
       endTableId: 1,
       endFieldId: 0,
       name: "investments_customer_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 3,
@@ -598,7 +600,7 @@ export const template5 = {
       endTableId: 0,
       endFieldId: 0,
       name: "transactions_account_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 4,
@@ -609,7 +611,7 @@ export const template5 = {
       endTableId: 0,
       endFieldId: 0,
       name: "transfers_to_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 5,
@@ -620,7 +622,7 @@ export const template5 = {
       endTableId: 0,
       endFieldId: 0,
       name: "transfers_from_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 6,

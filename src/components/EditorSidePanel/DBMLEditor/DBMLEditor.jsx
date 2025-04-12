@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import CodeMirror from "@uiw/react-codemirror";
-import { vscodeDark, vscodeLight } from "@uiw/codemirror-theme-vscode";
-import { languageExtension } from "../../../data/editorExtensions";
-import { useDiagram, useEnums, useSettings } from "../../../hooks";
+import { useDiagram, useEnums } from "../../../hooks";
 import { useDebounceValue } from "usehooks-ts";
-import "./styles.css";
 import { fromDBML } from "../../../utils/dbml/fromDBML";
 import { toDBML } from "../../../utils/dbml/toDBML";
+import CodeEditor from "../../CodeEditor";
 
 export default function DBMLEditor({ setIssues }) {
-  const { settings } = useSettings();
   const { setTables } = useDiagram();
   const [value, setValue] = useState("");
   const [debouncedValue] = useDebounceValue(value, 1000);
@@ -31,13 +27,11 @@ export default function DBMLEditor({ setIssues }) {
   }, [debouncedValue, setTables, setIssues]);
 
   return (
-    <div>
-      <CodeMirror
+      <CodeEditor
         value={value}
-        extensions={languageExtension.sql}
+        language="dbml"
         onChange={(v) => setValue(v)}
-        theme={settings.mode === "dark" ? vscodeDark : vscodeLight}
+        height="100%"
       />
-    </div>
   );
 }
