@@ -4,7 +4,10 @@ import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
 export function parseDefault(field, database = DB.GENERIC) {
-  if (!field.default || field.default.trim() == "") {
+  if (
+    !field.default ||
+    (typeof field.default === "string" && field.default.trim() == "")
+  ) {
     return "";
   }
 

@@ -7,7 +7,12 @@ function checkDefault(field, database) {
 
   if (isFunction(field.default)) return true;
 
-  if (!field.notNull && field.default.toLowerCase() === "null") return true;
+  if (
+    !field.notNull &&
+    typeof field.default === "string" &&
+    field.default.toLowerCase() === "null"
+  )
+    return true;
 
   if (!dbToTypes[database][field.type].checkDefault) return true;
 

@@ -3,7 +3,10 @@ import i18n from "../../i18n/i18n";
 import { parseDefault } from "../exportSQL/shared";
 
 function columnDefault(field, database) {
-  if (!field.default || field.default.trim() === "") {
+  if (
+    !field.default ||
+    (typeof field.default === "string" && field.default.trim() === "")
+  ) {
     return "";
   }
 

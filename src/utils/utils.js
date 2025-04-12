@@ -30,7 +30,8 @@ export function strHasQuotes(str) {
 const keywords = ["CURRENT_TIMESTAMP", "NULL"];
 
 export function isKeyword(str) {
-  return keywords.includes(str.toUpperCase());
+  if (typeof str === "string") return keywords.includes(str.toUpperCase());
+  return false;
 }
 
 export function isFunction(str) {
