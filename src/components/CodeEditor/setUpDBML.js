@@ -3,8 +3,6 @@ import { dbToTypes } from "../../data/datatypes";
 export function setUpDBML(monaco, database) {
   monaco.languages.register({ id: "dbml" });
 
-  console.log(Object.keys(dbToTypes[database]));
-
   monaco.languages.setMonarchTokensProvider("dbml", {
     defaultToken: "",
     tokenPostfix: ".dbml",
