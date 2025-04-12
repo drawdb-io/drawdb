@@ -374,7 +374,7 @@ const features = [
     title: "Robust editor",
     content: (
       <div>
-        Undo, redo, copy, paste, duplacate and more. Add tables, subject areas,
+        Undo, redo, copy, paste, duplicate and more. Add tables, subject areas,
         and notes.
       </div>
     ),
