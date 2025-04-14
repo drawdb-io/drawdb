@@ -113,6 +113,7 @@ const en = {
     type: "Type",
     null: "Null",
     not_null: "Not null",
+    nullable: "Nullable",
     primary: "Primary",
     unique: "Unique",
     autoincrement: "Autoincrement",
