@@ -113,6 +113,7 @@ const tm = {
     type: "வகை",
     null: "பூஜ்ஜியம்",
     not_null: "பூஜ்ஜியம் அல்ல",
+    nullable: "காலியாக அனுமதி",
     primary: "முதன்மை",
     unique: "தனித்துவம்",
     autoincrement: "தானாக அதிகரிப்பு",

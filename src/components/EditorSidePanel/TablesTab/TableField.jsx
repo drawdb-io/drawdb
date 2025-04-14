@@ -134,9 +134,10 @@ export default function TableField({ data, tid, index }) {
       </Col>
       <Col span={3}>
         <Button
-          type={data.notNull ? "primary" : "tertiary"}
-          title={t("not_null")}
-          theme={data.notNull ? "solid" : "light"}
+
+          type={data.notNull ? "tertiary" : "primary"}
+          title={t("nullable")}
+          theme={data.notNull ? "light" : "solid"}
           onClick={() => {
             setUndoStack((prev) => [
               ...prev,
