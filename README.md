@@ -48,4 +48,24 @@ docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
+### Script Examples
+
+MSSQL Server Script
+```sql
+CREATE TABLE categories (
+  id INT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT
+);
+
+CREATE TABLE products (
+  id INT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  category_id INT NOT NULL,
+  FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+```
+
 Set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample` for the survey and bug report forms.
