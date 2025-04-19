@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
-import Survey from "./pages/Survey";
 import BugReport from "./pages/BugReport";
 import Templates from "./pages/Templates";
 import LandingPage from "./pages/LandingPage";
@@ -21,14 +20,6 @@ export default function App() {
             element={
               <ThemedPage>
                 <Editor />
-              </ThemedPage>
-            }
-          />
-          <Route
-            path="/survey"
-            element={
-              <ThemedPage>
-                <Survey />
               </ThemedPage>
             }
           />

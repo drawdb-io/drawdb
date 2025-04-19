@@ -2,12 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import logo_light from "../assets/logo_light_160.png";
 import logo_dark from "../assets/logo_dark_160.png";
 import { Banner, Button, Input, Upload, Toast, Spin } from "@douyinfe/semi-ui";
-import {
-  IconSun,
-  IconMoon,
-  IconGithubLogo,
-  IconPaperclip,
-} from "@douyinfe/semi-icons";
+import { IconGithubLogo, IconPaperclip } from "@douyinfe/semi-icons";
 import RichEditor from "../components/LexicalEditor/RichEditor";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { editorConfig } from "../data/editorConfig";
@@ -108,12 +103,8 @@ function Form({ theme }) {
         dragSubText="Upload up to 3 images"
         accept="image/*"
         limit={3}
-      ></Upload>
-      <div className="pt-4 flex justify-between items-center">
-        <div className="text-sm opacity-80">
-          <i className="fa-brands fa-markdown me-1"></i>Styling with markdown is
-          supported
-        </div>
+      />
+      <div className="pt-4 flex justify-end items-center">
         <div className="flex items-center">
           <Button
             onClick={onSubmit}
@@ -140,22 +131,6 @@ export default function BugReport() {
     document.body.setAttribute("class", "theme");
   }, [setTheme]);
 
-  const changeTheme = () => {
-    const body = document.body;
-    const t = body.getAttribute("theme-mode");
-    if (t === "dark") {
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "light");
-        setTheme("light");
-      }
-    } else {
-      if (body.hasAttribute("theme-mode")) {
-        body.setAttribute("theme-mode", "dark");
-        setTheme("dark");
-      }
-    }
-  };
-
   return (
     <>
       <div className="sm:py-3 py-5 px-20 sm:px-6 flex justify-between items-center">
@@ -164,25 +139,12 @@ export default function BugReport() {
             <img
               src={theme === "dark" ? logo_dark : logo_light}
               alt="logo"
-              className="me-2 sm:h-[28px] md:h-[46px] h-[48px]"
+              className="me-2 sm:h-[28px] h-[42px]"
             />
           </Link>
           <div className="ms-4 sm:text-sm xl:text-lg font-semibold">
             Report a bug
           </div>
-        </div>
-        <div className="flex items-center">
-          <Button
-            icon={
-              theme === "dark" ? (
-                <IconSun size="extra-large" />
-              ) : (
-                <IconMoon size="extra-large" />
-              )
-            }
-            theme="borderless"
-            onClick={changeTheme}
-          />
         </div>
       </div>
       <hr

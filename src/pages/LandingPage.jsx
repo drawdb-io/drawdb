@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { IconCrossStroked } from "@douyinfe/semi-icons";
 import SimpleCanvas from "../components/SimpleCanvas";
 import Navbar from "../components/Navbar";
 import { diagram } from "../data/heroDiagram";
@@ -27,7 +26,6 @@ function shortenNumber(number) {
 }
 
 export default function LandingPage() {
-  const [showSurvey, setShowSurvey] = useState(true);
   const [stats, setStats] = useState({ stars: 18000, forks: 1200 });
 
   useEffect(() => {
@@ -47,18 +45,8 @@ export default function LandingPage() {
   return (
     <div>
       <div className="flex flex-col h-screen bg-zinc-100">
-        {showSurvey && (
-          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
-            <Link to="/survey" className="hover:underline">
-              Help us improve! Share your feedback.
-            </Link>
-            <div className="float-right">
-              <button onClick={() => setShowSurvey(false)}>
-                <IconCrossStroked size="small" />
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="text-white font-semibold py-1 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]" />
+
         <FadeIn duration={0.6}>
           <Navbar />
         </FadeIn>
@@ -338,7 +326,8 @@ const features = [
     title: "Keyboard shortcuts",
     content: (
       <div>
-        Speed up development with keyboard shortcuts. See all available shortcuts
+        Speed up development with keyboard shortcuts. See all available
+        shortcuts
         <Link
           to={`${socials.docs}/shortcuts`}
           className="ms-1.5 text-blue-500 hover:underline"
