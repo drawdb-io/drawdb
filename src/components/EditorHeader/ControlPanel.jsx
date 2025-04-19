@@ -42,6 +42,7 @@ import {
   SIDESHEET,
   DB,
   IMPORT_FROM,
+  Notation,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -1323,6 +1324,26 @@ export default function ControlPanel({
             ...prev,
             showCardinality: !prev.showCardinality,
           })),
+      },
+      notation: {
+        children: [
+          {
+            default_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.DEFAULT }));
+            },
+          },
+          {
+            crows_foot_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.CROWS_FOOT }));
+            },
+          },
+          {
+            idef1x_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.IDEF1X }));
+            },
+          },
+        ],
+        function: () => {},
       },
       show_relationship_labels: {
         state: settings.showRelationshipLabels ? (
