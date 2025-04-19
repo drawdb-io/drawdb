@@ -20,8 +20,8 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import { Link } from "react-router-dom";
 import RichEditor from "../components/LexicalEditor/RichEditor";
-import axios from "axios";
 import { questions } from "../data/surveyQuestions";
+import { api } from "../api";
 
 function SurveyForm({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -55,24 +55,20 @@ function SurveyForm({ theme }) {
     setLoading(true);
     editor.update(() => {
       const sendMail = async () => {
-        await axios
-          .post(`${import.meta.env.VITE_BACKEND_URL}/send_email`, {
-            subject: `[SURVEY]: ${new Date().toDateString()}`,
-            message: `${Object.keys(form).map(
-              (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
-            )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
-              editor
-            )}`,
-          })
-          .then(() => {
-            Toast.success("Thanks for the feedback!");
-            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-            resetForm();
-          })
-          .catch(() => {
-            Toast.error("Oops! Something went wrong.");
-            setLoading(false);
-          });
+        try {
+          await api.email.send(
+            `[SURVEY]: ${new Date().toDateString()}`,
+            `${Object.keys(form)
+              .map((k) => `<div>${questions[k]}</div><div>${form[k]}</div>`)
+              .join("\n\n")}<br/>${$generateHtmlFromNodes(editor)}`,
+          );
+          Toast.success("Thanks for the feedback!");
+          editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
+          resetForm();
+        } catch {
+          Toast.error("Oops! Something went wrong.");
+          setLoading(false);
+        }
       };
       sendMail();
     });
