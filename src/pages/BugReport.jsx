@@ -14,9 +14,9 @@ import { editorConfig } from "../data/editorConfig";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { socials } from "../data/socials";
+import { api } from "../api";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -65,21 +65,19 @@ function Form({ theme }) {
     setLoading(true);
     editor.update(() => {
       const sendMail = async () => {
-        await axios
-          .post(`${import.meta.env.VITE_BACKEND_URL}/send_email`, {
-            subject: `[BUG REPORT]: ${data.title}`,
-            message: $generateHtmlFromNodes(editor),
-            attachments: data.attachments,
-          })
-          .then(() => {
-            Toast.success("Bug reported!");
-            editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
-            resetForm();
-          })
-          .catch(() => {
-            Toast.error("Oops! Something went wrong.");
-            setLoading(false);
-          });
+        try {
+          await api.email.send(
+            `[BUG REPORT]: ${data.title}`,
+            $generateHtmlFromNodes(editor),
+            data.attachments,
+          );
+          Toast.success("Bug reported!");
+          editor.dispatchCommand(CLEAR_EDITOR_COMMAND, null);
+          resetForm();
+        } catch {
+          Toast.error("Oops! Something went wrong.");
+          setLoading(false);
+        }
       };
       sendMail();
     });
