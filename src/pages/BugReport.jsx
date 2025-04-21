@@ -11,7 +11,7 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import { Link } from "react-router-dom";
 import { socials } from "../data/socials";
-import { api } from "../api";
+import { send } from "../api/email";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -61,7 +61,7 @@ function Form({ theme }) {
     editor.update(() => {
       const sendMail = async () => {
         try {
-          await api.email.send(
+          await send(
             `[BUG REPORT]: ${data.title}`,
             $generateHtmlFromNodes(editor),
             data.attachments,

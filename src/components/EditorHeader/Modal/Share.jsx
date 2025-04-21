@@ -1,4 +1,4 @@
-import { Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
+import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IdContext } from "../../Workspace";
@@ -12,8 +12,8 @@ import {
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
-import { octokit } from "../../../data/octokit";
 import { MODAL } from "../../../data/constants";
+import { create, del, patch } from "../../../api/gists";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -25,6 +25,7 @@ export default function Share({ title, setModal }) {
   const { types } = useTypes();
   const { enums } = useEnums();
   const { transform } = useTransform();
+  const [error, setError] = useState(null);
   const url =
     window.location.origin + window.location.pathname + "?shareId=" + gistId;
 
@@ -54,80 +55,34 @@ export default function Share({ title, setModal }) {
 
   const unshare = useCallback(async () => {
     try {
-      await octokit.request(`DELETE /gists/${gistId}`, {
-        gist_id: gistId,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
+      await del(gistId);
       setGistId("");
       setModal(MODAL.NONE);
     } catch (e) {
       console.error(e);
+      setError(e);
     }
   }, [gistId, setGistId, setModal]);
-
-  const updateGist = useCallback(async () => {
-    setLoading(true);
-    try {
-      await octokit.request(`PATCH /gists/${gistId}`, {
-        gist_id: gistId,
-        description: "drawDB diagram",
-        files: {
-          "share.json": {
-            content: diagramToString(),
-          },
-        },
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, [gistId, diagramToString]);
-
-  const generateLink = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await octokit.request("POST /gists", {
-        description: "drawDB diagram",
-        public: false,
-        files: {
-          "share.json": {
-            content: diagramToString(),
-          },
-        },
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
-      setGistId(res.data.id);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  }, [setGistId, diagramToString]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
       try {
+        setLoading(true);
         if (!gistId || gistId === "") {
-          await generateLink();
+          const res = await create(diagramToString());
+          setGistId(res.data.id);
         } else {
-          await updateGist();
+          await patch(gistId, diagramToString());
         }
       } catch (e) {
         console.error(e);
+        setError(e);
       } finally {
         setLoading(false);
       }
     };
     updateOrGenerateLink();
-  }, [gistId, generateLink, updateGist]);
+  }, [gistId, diagramToString, setGistId]);
 
   const copyLink = () => {
     navigator.clipboard
@@ -150,18 +105,30 @@ export default function Share({ title, setModal }) {
 
   return (
     <div>
-      <div className="flex gap-3">
-        <Input value={url} size="large" />
-      </div>
-      <div className="text-xs mt-2">{t("share_info")}</div>
-      <div className="flex gap-2 mt-3">
-        <Button block onClick={unshare}>
-          {t("unshare")}
-        </Button>
-        <Button block theme="solid" icon={<IconLink />} onClick={copyLink}>
-          {t("copy_link")}
-        </Button>
-      </div>
+      {error && (
+        <Banner
+          description={t("oops_smth_went_wrong")}
+          type="danger"
+          closeIcon={null}
+          fullMode={false}
+        />
+      )}
+      {!error && (
+        <>
+          <div className="flex gap-3">
+            <Input value={url} size="large" />
+          </div>
+          <div className="text-xs mt-2">{t("share_info")}</div>
+          <div className="flex gap-2 mt-3">
+            <Button block onClick={unshare}>
+              {t("unshare")}
+            </Button>
+            <Button block theme="solid" icon={<IconLink />} onClick={copyLink}>
+              {t("copy_link")}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
