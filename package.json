@@ -30,7 +30,6 @@
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
     "node-sql-parser": "^5.3.8",
-    "octokit": "^4.0.2",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

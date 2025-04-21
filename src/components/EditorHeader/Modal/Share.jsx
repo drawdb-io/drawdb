@@ -12,8 +12,8 @@ import {
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
-import { octokit } from "../../../data/octokit";
 import { MODAL } from "../../../data/constants";
+import { create, del, patch } from "../../../api/gists";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -54,12 +54,7 @@ export default function Share({ title, setModal }) {
 
   const unshare = useCallback(async () => {
     try {
-      await octokit.request(`DELETE /gists/${gistId}`, {
-        gist_id: gistId,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
+      await del(gistId);
       setGistId("");
       setModal(MODAL.NONE);
     } catch (e) {
@@ -70,18 +65,7 @@ export default function Share({ title, setModal }) {
   const updateGist = useCallback(async () => {
     setLoading(true);
     try {
-      await octokit.request(`PATCH /gists/${gistId}`, {
-        gist_id: gistId,
-        description: "drawDB diagram",
-        files: {
-          "share.json": {
-            content: diagramToString(),
-          },
-        },
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
+      await patch(gistId, diagramToString());
     } catch (e) {
       console.error(e);
     } finally {
@@ -92,18 +76,7 @@ export default function Share({ title, setModal }) {
   const generateLink = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await octokit.request("POST /gists", {
-        description: "drawDB diagram",
-        public: false,
-        files: {
-          "share.json": {
-            content: diagramToString(),
-          },
-        },
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      });
+      const res = await create(diagramToString());
       setGistId(res.data.id);
     } catch (e) {
       console.error(e);
