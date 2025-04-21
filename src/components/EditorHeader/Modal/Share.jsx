@@ -69,8 +69,8 @@ export default function Share({ title, setModal }) {
       try {
         setLoading(true);
         if (!gistId || gistId === "") {
-          const res = await create(diagramToString());
-          setGistId(res.data.id);
+          const id = await create(diagramToString());
+          setGistId(id);
         } else {
           await patch(gistId, diagramToString());
         }

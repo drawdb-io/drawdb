@@ -13,7 +13,7 @@ export async function create(content) {
     content,
   });
 
-  return res.data.id;
+  return res.data.data.id;
 }
 
 export async function patch(gistId, content) {
