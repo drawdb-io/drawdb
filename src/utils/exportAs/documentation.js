@@ -5,7 +5,7 @@ import { databases } from "../../data/databases";
 export function jsonToDocumentation(obj) {
   const documentationSummary = obj.tables
     .map((table) => {
-      return `\t- [${table.name}](#${table.name})`;
+      return `\t- [${table.name}](#${table.name.toLowerCase()})`;
     })
     .join("\n");
 
@@ -84,7 +84,7 @@ export function jsonToDocumentation(obj) {
 
   return (
     `# ${obj.title} documentation\n## Summary\n\n- [Introduction](#introduction)\n- [Database Type](#database-type)\n` +
-    `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-Diagram)\n\n` +
+    `- [Table Structure](#table-structure)\n${documentationSummary}\n- [Relationships](#relationships)\n- [Database Diagram](#database-diagram)\n\n` +
     `## Introduction\n\n## Database type\n\n- **Database system:** ` +
     `${databases[obj.database].name}\n## Table structure\n\n${documentationEntities}` +
     `\n## Relationships\n\n${documentationRelationships}\n` +
