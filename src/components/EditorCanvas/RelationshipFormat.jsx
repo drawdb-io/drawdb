@@ -300,33 +300,33 @@ export function subDP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
       pathRef && notation === 'idef1x' && (cardinalityvar=="2")  &&(
           <>
             <circle
-              cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-              cy={cardinalityEndY}
-              r="8"
-              stroke="gray"
-              strokeWidth='2'
-              fill="white"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-                  x={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-                  y={cardinalityEndY+2}
-                  fill="grey"
-                  strokeWidth="0.5"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-              >
-                  D
-            </text>
-            <line
-              x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-              y1={cardinalityEndY+20}
-              x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-              y2={cardinalityEndY-20}
-              stroke="gray"
-              strokeWidth='2'
-              className="group-hover:fill-sky-700"
-            />
+                cx={cardinalityStartX-((-50)*direction)}
+                cy={cardinalityStartY}
+                r="8"
+                stroke="gray"
+                strokeWidth='2'
+                fill="white"
+                className="group-hover:fill-sky-700"
+              />
+              <text
+                    x={cardinalityStartX-((-50)*direction)}
+                    y={cardinalityStartY+2}
+                    fill="grey"
+                    strokeWidth="0.5"
+                    textAnchor="middle"
+                    alignmentBaseline="middle"
+                >
+                    D
+              </text>
+              <line
+                x1={cardinalityStartX-((-58)*direction)}
+                y1={cardinalityStartY+20}
+                x2={cardinalityStartX-((-58)*direction)}
+                y2={cardinalityStartY-20}
+                stroke="gray"
+                strokeWidth='2'
+                className="group-hover:fill-sky-700"
+              />
               <text
                   x={cardinalityStartX}
                   y={cardinalityStartY-10}
@@ -356,43 +356,43 @@ export function subDT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
   return(
     pathRef && notation === 'idef1x' && (subtypevar=="1")  &&(
       <>
-        <circle
-          cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-          cy={cardinalityEndY}
-          r="8"
-          stroke="gray"
-          strokeWidth='2'
-          fill="white"
-          className="group-hover:fill-sky-700"
-        />
-        <text
-              x={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-              y={cardinalityEndY+2}
-              fill="grey"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-          >
-              D
-        </text>
-        <line
-          x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-          y1={cardinalityEndY+20}
-          x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-          y2={cardinalityEndY-20}
-          stroke="gray"
-          strokeWidth='2'
-          className="group-hover:fill-sky-700"
-        />
-        <line
-          x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+44)/3)*direction)}
-          y1={cardinalityEndY+20}
-          x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+44)/3)*direction)}
-          y2={cardinalityEndY-20}
-          stroke="gray"
-          strokeWidth='2'
-          className="group-hover:fill-sky-700"
-        />
+          <circle
+            cx={cardinalityStartX-((-50)*direction)}
+            cy={cardinalityStartY}
+            r="8"
+            stroke="gray"
+            strokeWidth='2'
+            fill="white"
+            className="group-hover:fill-sky-700"
+          />
+          <text
+                x={cardinalityStartX-((-50)*direction)}
+                y={cardinalityStartY+2}
+                fill="grey"
+                strokeWidth="0.5"
+                textAnchor="middle"
+                alignmentBaseline="middle"
+            >
+                D
+          </text>
+          <line
+            x1={cardinalityStartX-((-58)*direction)}
+            y1={cardinalityStartY+20}
+            x2={cardinalityStartX-((-58)*direction)}
+            y2={cardinalityStartY-20}
+            stroke="gray"
+            strokeWidth='2'
+            className="group-hover:fill-sky-700"
+          />
+          <line
+            x1={(cardinalityStartX-((-65)*direction))}
+            y1={cardinalityStartY+20}
+            x2={(cardinalityStartX-((-65)*direction))}
+            y2={cardinalityStartY-20}
+            stroke="gray"
+            strokeWidth='2'
+            className="group-hover:fill-sky-700"
+          />
           <text
               x={cardinalityStartX}
               y={cardinalityStartY-10}
@@ -422,34 +422,34 @@ export function subOP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
   return(
       pathRef && notation === 'idef1x' && (cardinalityvar=="4")  &&(
           <>
-            <circle
-              cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-              cy={cardinalityEndY}
-              r="8"
-              stroke="gray"
-              strokeWidth='2'
-              fill="white"
-              className="group-hover:fill-sky-700"
-            />
-            <text
-                  x={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-                  y={cardinalityEndY+2}
-                  fill="grey"
-                  strokeWidth="0.5"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-              >
-                  O
-            </text>
-            <line
-              x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-              y1={cardinalityEndY+20}
-              x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-              y2={cardinalityEndY-20}
-              stroke="gray"
-              strokeWidth='2'
-              className="group-hover:fill-sky-700"
-            />
+              <circle
+                cx={cardinalityStartX-((-50)*direction)}
+                cy={cardinalityStartY}
+                r="8"
+                stroke="gray"
+                strokeWidth='2'
+                fill="white"
+                className="group-hover:fill-sky-700"
+              />
+              <text
+                    x={cardinalityStartX-((-50)*direction)}
+                    y={cardinalityStartY+2}
+                    fill="grey"
+                    strokeWidth="0.5"
+                    textAnchor="middle"
+                    alignmentBaseline="middle"
+                >
+                    O
+              </text>
+              <line
+                x1={cardinalityStartX-((-58)*direction)}
+                y1={cardinalityStartY+20}
+                x2={cardinalityStartX-((-58)*direction)}
+                y2={cardinalityStartY-20}
+                stroke="gray"
+                strokeWidth='2'
+                className="group-hover:fill-sky-700"
+              />
               <text
                   x={cardinalityStartX}
                   y={cardinalityStartY-10}
@@ -480,8 +480,8 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
     pathRef && notation === 'idef1x' && (subtypevar=="3")  &&(
       <>
         <circle
-          cx={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-          cy={cardinalityEndY}
+          cx={cardinalityStartX-((-50)*direction)}
+          cy={cardinalityStartY}
           r="8"
           stroke="gray"
           strokeWidth='2'
@@ -489,8 +489,8 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
           className="group-hover:fill-sky-700"
         />
         <text
-              x={cardinalityEndX-(((cardinalityEndX-cardinalityStartX)/3)*direction)}
-              y={cardinalityEndY+2}
+              x={cardinalityStartX-((-50)*direction)}
+              y={cardinalityStartY+2}
               fill="grey"
               strokeWidth="0.5"
               textAnchor="middle"
@@ -499,19 +499,19 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
               O
         </text>
         <line
-          x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-          y1={cardinalityEndY+20}
-          x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+24)/3)*direction)}
-          y2={cardinalityEndY-20}
+          x1={cardinalityStartX-((-58)*direction)}
+          y1={cardinalityStartY+20}
+          x2={cardinalityStartX-((-58)*direction)}
+          y2={cardinalityStartY-20}
           stroke="gray"
           strokeWidth='2'
           className="group-hover:fill-sky-700"
         />
         <line
-          x1={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+44)/3)*direction)}
-          y1={cardinalityEndY+20}
-          x2={cardinalityEndX-(((cardinalityEndX-cardinalityStartX+44)/3)*direction)}
-          y2={cardinalityEndY-20}
+          x1={(cardinalityStartX-((-65)*direction))}
+          y1={cardinalityStartY+20}
+          x2={(cardinalityStartX-((-65)*direction))}
+          y2={cardinalityStartY-20}
           stroke="gray"
           strokeWidth='2'
           className="group-hover:fill-sky-700"
