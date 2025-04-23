@@ -300,7 +300,7 @@ export function subDP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
       pathRef && notation === 'idef1x' && (cardinalityvar=="2")  &&(
           <>
             <circle
-                cx={cardinalityStartX-((-50)*direction)}
+                cx={cardinalityStartX-((-40)*direction)}
                 cy={cardinalityStartY}
                 r="8"
                 stroke="gray"
@@ -309,7 +309,7 @@ export function subDP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
                 className="group-hover:fill-sky-700"
               />
               <text
-                    x={cardinalityStartX-((-50)*direction)}
+                    x={cardinalityStartX-((-40)*direction)}
                     y={cardinalityStartY+2}
                     fill="grey"
                     strokeWidth="0.5"
@@ -319,9 +319,9 @@ export function subDP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
                     D
               </text>
               <line
-                x1={cardinalityStartX-((-58)*direction)}
+                x1={cardinalityStartX-((-48)*direction)}
                 y1={cardinalityStartY+20}
-                x2={cardinalityStartX-((-58)*direction)}
+                x2={cardinalityStartX-((-48)*direction)}
                 y2={cardinalityStartY-20}
                 stroke="gray"
                 strokeWidth='2'
@@ -357,7 +357,7 @@ export function subDT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
     pathRef && notation === 'idef1x' && (subtypevar=="1")  &&(
       <>
           <circle
-            cx={cardinalityStartX-((-50)*direction)}
+            cx={cardinalityStartX-((-40)*direction)}
             cy={cardinalityStartY}
             r="8"
             stroke="gray"
@@ -366,7 +366,7 @@ export function subDT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
             className="group-hover:fill-sky-700"
           />
           <text
-                x={cardinalityStartX-((-50)*direction)}
+                x={cardinalityStartX-((-40)*direction)}
                 y={cardinalityStartY+2}
                 fill="grey"
                 strokeWidth="0.5"
@@ -376,18 +376,18 @@ export function subDT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
                 D
           </text>
           <line
-            x1={cardinalityStartX-((-58)*direction)}
+            x1={cardinalityStartX-((-48)*direction)}
             y1={cardinalityStartY+20}
-            x2={cardinalityStartX-((-58)*direction)}
+            x2={cardinalityStartX-((-48)*direction)}
             y2={cardinalityStartY-20}
             stroke="gray"
             strokeWidth='2'
             className="group-hover:fill-sky-700"
           />
           <line
-            x1={(cardinalityStartX-((-65)*direction))}
+            x1={(cardinalityStartX-((-55)*direction))}
             y1={cardinalityStartY+20}
-            x2={(cardinalityStartX-((-65)*direction))}
+            x2={(cardinalityStartX-((-55)*direction))}
             y2={cardinalityStartY-20}
             stroke="gray"
             strokeWidth='2'
@@ -423,7 +423,7 @@ export function subOP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
       pathRef && notation === 'idef1x' && (cardinalityvar=="4")  &&(
           <>
               <circle
-                cx={cardinalityStartX-((-50)*direction)}
+                cx={cardinalityStartX-((-40)*direction)}
                 cy={cardinalityStartY}
                 r="8"
                 stroke="gray"
@@ -432,7 +432,7 @@ export function subOP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
                 className="group-hover:fill-sky-700"
               />
               <text
-                    x={cardinalityStartX-((-50)*direction)}
+                    x={cardinalityStartX-((-40)*direction)}
                     y={cardinalityStartY+2}
                     fill="grey"
                     strokeWidth="0.5"
@@ -442,9 +442,9 @@ export function subOP(pathRef, notation, cardinalityvar, cardinalityEndX, cardin
                     O
               </text>
               <line
-                x1={cardinalityStartX-((-58)*direction)}
+                x1={cardinalityStartX-((-48)*direction)}
                 y1={cardinalityStartY+20}
-                x2={cardinalityStartX-((-58)*direction)}
+                x2={cardinalityStartX-((-48)*direction)}
                 y2={cardinalityStartY-20}
                 stroke="gray"
                 strokeWidth='2'
@@ -480,7 +480,7 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
     pathRef && notation === 'idef1x' && (subtypevar=="3")  &&(
       <>
         <circle
-          cx={cardinalityStartX-((-50)*direction)}
+          cx={cardinalityStartX-((-40)*direction)}
           cy={cardinalityStartY}
           r="8"
           stroke="gray"
@@ -489,7 +489,7 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
           className="group-hover:fill-sky-700"
         />
         <text
-              x={cardinalityStartX-((-50)*direction)}
+              x={cardinalityStartX-((-40)*direction)}
               y={cardinalityStartY+2}
               fill="grey"
               strokeWidth="0.5"
@@ -499,18 +499,18 @@ export function subOT(pathRef, notation, subtypevar, cardinalityEndX, cardinalit
               O
         </text>
         <line
-          x1={cardinalityStartX-((-58)*direction)}
+          x1={cardinalityStartX-((-48)*direction)}
           y1={cardinalityStartY+20}
-          x2={cardinalityStartX-((-58)*direction)}
+          x2={cardinalityStartX-((-48)*direction)}
           y2={cardinalityStartY-20}
           stroke="gray"
           strokeWidth='2'
           className="group-hover:fill-sky-700"
         />
         <line
-          x1={(cardinalityStartX-((-65)*direction))}
+          x1={(cardinalityStartX-((-55)*direction))}
           y1={cardinalityStartY+20}
-          x2={(cardinalityStartX-((-65)*direction))}
+          x2={(cardinalityStartX-((-55)*direction))}
           y2={cardinalityStartY-20}
           stroke="gray"
           strokeWidth='2'
