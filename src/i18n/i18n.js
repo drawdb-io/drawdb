@@ -38,6 +38,7 @@ import { ur, urdu } from "./locales/ur";
 import { jp, japanese} from "./locales/jp"
 import {ne, nepali} from "./locales/ne"
 import {ug, uyghur} from "./locales/ug";
+import {pa_pk,punjabipk  } from "./locales/pa-pk";
 
 export const languages = [
   english,
@@ -76,7 +77,8 @@ export const languages = [
   urdu,
   japanese,
   nepali,
-  uyghur
+  uyghur,
+  punjabipk
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -125,7 +127,8 @@ i18n
       ur,
       jp,
       ne,
-      ug
+      ug,
+      "pa-PK":pa_pk
     },
   });
 
