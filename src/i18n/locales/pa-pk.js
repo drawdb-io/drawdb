@@ -4,7 +4,7 @@ const punjabi = {
   code: "pa-PK",
 };
 
-const pkpa = {
+const pa_pk = {
   translation: {
     report_bug: "مسئلہ رپورٹ کرو",
     import_from: "توں منگاؤ",
@@ -149,4 +149,4 @@ const pkpa = {
   },
 };
 
-export { pkpa, punjabi };
+export { pa_pk, punjabi };
