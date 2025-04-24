@@ -1,4 +1,4 @@
-const punjabi = {
+const punjabipk = {
   name: "Punjabi",
   native_name: "پنجابی",
   code: "pa-PK",
@@ -149,4 +149,4 @@ const pa_pk = {
   },
 };
 
-export { pa_pk, punjabi };
+export { pa_pk, punjabipk };
