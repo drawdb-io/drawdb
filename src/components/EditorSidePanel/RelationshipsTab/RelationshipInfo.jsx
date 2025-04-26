@@ -155,20 +155,6 @@ export default function RelationshipInfo({ data }) {
         idx === data.id ? { ...e, identifying: value, lineType: value ? "5,5" : "0" } : e,
       ),
     );
-    setTables((prev) =>
-      prev.map((table) =>
-        table.id === data.startTableId
-          ? {
-              ...table,
-              fields: table.fields.map((field) =>
-                field.id === data.startFieldId
-                  ? { ...field, identifying: value }
-                  : field,
-              ),
-            }
-          : table,
-      ),
-    );
   }
   return (
     <>
@@ -292,7 +278,7 @@ export default function RelationshipInfo({ data }) {
         <Button
           icon={<IconLoopTextStroked />}
           block
-          type={data.identifying ? "primary" : "default"}
+          type={data.identifying ? "primary" : "secondary"}
           onClick={() => changeIdentifyingRelationship(!data.identifying)}
         >
           {data.identifying ? t("Identifying") : t("no Identifying")}
