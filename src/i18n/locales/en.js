@@ -146,6 +146,7 @@ const en = {
     relationship_deleted: "Relationship deleted",
     type_deleted: "Type deleted",
     cannot_connect: "Cannot connect, the columns have different types",
+    cannot_fk: "Cannot create foreign key from this field",
     copied_to_clipboard: "Copied to clipboard",
     create_new_diagram: "Create new diagram",
     cancel: "Cancel",

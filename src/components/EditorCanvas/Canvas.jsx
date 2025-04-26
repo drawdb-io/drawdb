@@ -400,7 +400,11 @@ export default function Canvas() {
     });
   };
 
-  const handleGripField = () => {
+  const handleGripField = (field) => {
+      if (!field.primary && !(field.notNull && field.unique)) {
+        Toast.info(t("cannot_fk"));
+        return;
+      }
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinking(true);
