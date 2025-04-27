@@ -26,7 +26,7 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get } from "../api/gists";
 
-export const IdContext = createContext({ gistId: "" });
+export const IdContext = createContext({ gistId: "", setGistId: () => {} });
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
