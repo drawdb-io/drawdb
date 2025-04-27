@@ -2017,13 +2017,47 @@ export const oraclesqlTypes = new Proxy(oraclesqlTypesBase, {
   get: (target, prop) => (prop in target ? target[prop] : false),
 });
 
+export const mariadbTypesBase = {
+  UUID: {
+    type: "UUID",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: true,
+    hasPrecision: false,
+    noDefault: false,
+  },
+  INET4: {
+    type: "INET4",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: true,
+    hasPrecision: false,
+    noDefault: false,
+  },
+  INET6: {
+    type: "INET6",
+    checkDefault: (field) => true,
+    isSized: false,
+    hasCheck: true,
+    hasPrecision: false,
+    noDefault: false,
+  },
+};
+
+export const mariadbTypes = new Proxy(
+  { ...mysqlTypes, ...mariadbTypesBase },
+  {
+    get: (target, prop) => (prop in target ? target[prop] : false),
+  },
+);
+
 const dbToTypesBase = {
   [DB.GENERIC]: defaultTypes,
   [DB.MYSQL]: mysqlTypes,
   [DB.POSTGRES]: postgresTypes,
   [DB.SQLITE]: sqliteTypes,
   [DB.MSSQL]: mssqlTypes,
-  [DB.MARIADB]: mysqlTypes,
+  [DB.MARIADB]: mariadbTypes,
   [DB.ORACLESQL]: oraclesqlTypes,
 };
 
