@@ -11,6 +11,7 @@ import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
+import warp from "../assets/warp.png";
 import screenshot from "../assets/screenshot.png";
 import FadeIn from "../animations/FadeIn";
 import axios from "axios";
@@ -103,6 +104,36 @@ export default function LandingPage() {
       {/* Learn more */}
       <div id="learn-more">
         <div className="bg-zinc-100 py-10 px-28 md:px-8">
+          {/* Supported by */}
+          <div className="text-center mb-16">
+            <div className="text-2xl md:text-xl font-bold text-sky-800 mb-8">
+              Supported by
+            </div>
+            <div>
+              <a
+                href="https://warp.dev/drawdb"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={warp}
+                  alt="warp.dev"
+                  width={260}
+                  className="m-auto mb-4"
+                />
+                <div className="font-semibold text-lg md:text-base">
+                  Next-gen AI-powered intelligent terminal for all platforms
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3 mb-12">
+            <div className="text-lg font-medium">
+              Build diagrams with a few clicks, see the full picture, export SQL
+              scripts, customize your editor, and more.
+            </div>
+            <img src={screenshot} className="mx-auto" />
+          </div>
           <div className="flex justify-center items-center gap-28 md:block">
             <div className="text-center mb-4">
               <div className="text-5xl md:text-3xl font-bold text-sky-800">
@@ -128,13 +159,6 @@ export default function LandingPage() {
                 Languages
               </div>
             </div>
-          </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3">
-            <div className="text-lg font-medium">
-              Build diagrams with a few clicks, see the full picture, export SQL
-              scripts, customize your editor, and more.
-            </div>
-            <img src={screenshot} className="mx-auto" />
           </div>
           <div className="text-lg font-medium text-center mt-12 mb-6">
             Design for your database
