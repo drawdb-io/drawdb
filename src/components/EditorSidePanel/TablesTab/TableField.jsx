@@ -137,6 +137,8 @@ export default function TableField({ data, tid, index }) {
           type={data.notNull ? "primary" : "tertiary"}
           title={t("not_null")}
           theme={data.notNull ? "solid" : "light"}
+          disabled={data.primary ? true: false }
+          
           onClick={() => {
             setUndoStack((prev) => [
               ...prev,
