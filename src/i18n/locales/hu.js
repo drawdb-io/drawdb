@@ -49,6 +49,7 @@ const hu = {
     field_details: "Mezők részletei",
     reset_view: "Nézet alaphelyzetbe",
     show_grid: "Rács",
+    show_datatype: "Adattípus",
     show_cardinality: "Kardinalitás",
     theme: "Téma",
     light: "Világos",
@@ -114,6 +115,7 @@ const hu = {
     type: "Típus",
     null: "Null",
     not_null: "Nem null",
+    nullable: "Nullázható",
     primary: "Elsődleges",
     unique: "Egyedi",
     autoincrement: "Automatikus növelés",
@@ -258,6 +260,9 @@ const hu = {
     show_relationship_labels: "Kapcsolatcímkék",
     docs: "Dokumentáció",
     supported_types: "Támogatott fájltípusok:",
+    bulk_update: "Csoportos frissítés",
+    multiselect: "Csoportos kijelölés",
+    export_saved_data: "Mentett adatok exportálása",
   },
 };
 
