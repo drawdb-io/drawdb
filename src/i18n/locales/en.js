@@ -146,7 +146,7 @@ const en = {
     relationship_deleted: "Relationship deleted",
     type_deleted: "Type deleted",
     cannot_connect: "Cannot connect, the columns have different types",
-    cannot_fk: "Only fields that are a primary key or both not null and unique can be selected as a foreign key.",
+    cannot_fk: "Only fields that are a primary key or both not null and unique can be selected as a foreign key",
     copied_to_clipboard: "Copied to clipboard",
     create_new_diagram: "Create new diagram",
     cancel: "Cancel",
