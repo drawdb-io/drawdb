@@ -134,11 +134,10 @@ export default function TableField({ data, tid, index }) {
       </Col>
       <Col span={3}>
         <Button
-          type={data.notNull ? "primary" : "tertiary"}
+          type={data.notNull || data.primary ? "primary" : "tertiary"}
           title={t("not_null")}
-          theme={data.notNull ? "solid" : "light"}
+          theme={data.notNull || data.primary ? "solid" : "light"}
           disabled={data.primary ? true: false }
-          
           onClick={() => {
             setUndoStack((prev) => [
               ...prev,
@@ -164,32 +163,46 @@ export default function TableField({ data, tid, index }) {
         </Button>
       </Col>
       <Col span={3}>
-        <Button
-          type={data.primary ? "primary" : "tertiary"}
-          title={t("primary")}
-          theme={data.primary ? "solid" : "light"}
-          onClick={() => {
-            setUndoStack((prev) => [
-              ...prev,
-              {
-                action: Action.EDIT,
-                element: ObjectType.TABLE,
-                component: "field",
-                tid: tid,
-                fid: index,
-                undo: { primary: data.primary },
-                redo: { primary: !data.primary },
-                message: t("edit_table", {
-                  tableName: tables[tid].name,
-                  extra: "[field]",
-                }),
-              },
-            ]);
-            setRedoStack([]);
-            updateField(tid, index, { primary: !data.primary });
-          }}
-          icon={<IconKeyStroked />}
-        />
+      <Button
+        type={data.primary ? "primary" : "tertiary"}
+        title={t("primary")}
+        theme={data.primary ? "solid" : "light"}
+        onClick={() => {
+          const mustSetNotNull = !data.primary && !data.notNull;
+
+          const undo = { primary: data.primary };
+          const redo = { primary: !data.primary };
+          const changes = { primary: !data.primary };
+
+          if (mustSetNotNull) {
+            undo.notNull = data.notNull;
+            redo.notNull = true;
+            changes.notNull = true;
+          }
+
+          setUndoStack((prev) => [
+            ...prev,
+            {
+              action: Action.EDIT,
+              element: ObjectType.TABLE,
+              component: "field",
+              tid,
+              fid: index,
+              undo,
+              redo,
+              message: t("edit_table", {
+                tableName: tables[tid].name,
+                extra: "[field]",
+              }),
+            },
+          ]);
+
+          setRedoStack([]);
+          updateField(tid, index, changes);
+        }}
+        icon={<IconKeyStroked />}
+      />
+
       </Col>
       <Col span={3}>
         <Popover
