@@ -1,16 +1,19 @@
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram } from "../../../hooks";
-import { ObjectType } from "../../../data/constants";
+import { useSelect, useDiagram, useSaveState } from "../../../hooks";
+import { ObjectType, State } from "../../../data/constants";
+import { useTranslation } from "react-i18next";
+import { DragHandle } from "../../SortableList/DragHandle";
+import { SortableList } from "../../SortableList/SortableList";
 import SearchBar from "./SearchBar";
 import Empty from "../Empty";
 import TableInfo from "./TableInfo";
-import { useTranslation } from "react-i18next";
 
 export default function TablesTab() {
-  const { tables, addTable } = useDiagram();
+  const { tables, addTable, setTables } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
+  const { setSaveState } = useSaveState();
 
   return (
     <>
@@ -43,29 +46,41 @@ export default function TablesTab() {
           }
           accordion
         >
-          {tables.map((t) => (
-            <div id={`scroll_table_${t.id}`} key={t.id}>
-              <Collapse.Panel
-                className="relative"
-                header={
-                  <>
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {t.name}
-                    </div>
-                    <div
-                      className="w-1 h-full absolute top-0 left-0 bottom-0"
-                      style={{ backgroundColor: t.color }}
-                    />
-                  </>
-                }
-                itemKey={`${t.id}`}
-              >
-                <TableInfo data={t} />
-              </Collapse.Panel>
-            </div>
-          ))}
+          <SortableList
+            items={tables}
+            onChange={setTables}
+            afterChange={() => setSaveState(State.SAVING)}
+            renderItem={(item) => <TableListItem table={item} />}
+          />
         </Collapse>
       )}
     </>
+  );
+}
+
+function TableListItem({ table }) {
+  return (
+    <div id={`scroll_table_${table.id}`}>
+      <Collapse.Panel
+        className="relative"
+        header={
+          <>
+            <div className="flex items-center gap-2">
+              <DragHandle id={table.id} />
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {table.name}
+              </div>
+            </div>
+            <div
+              className="w-1 h-full absolute top-0 left-0 bottom-0"
+              style={{ backgroundColor: table.color }}
+            />
+          </>
+        }
+        itemKey={`${table.id}`}
+      >
+        <TableInfo data={table} />
+      </Collapse.Panel>
+    </div>
   );
 }

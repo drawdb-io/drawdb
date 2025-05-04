@@ -28,13 +28,15 @@ import { get } from "../api/gists";
 
 export const IdContext = createContext({ gistId: "", setGistId: () => {} });
 
+const SIDEPANEL_MIN_WIDTH = 384;
+
 export default function WorkSpace() {
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
-  const [width, setWidth] = useState(340);
+  const [width, setWidth] = useState(SIDEPANEL_MIN_WIDTH);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
   const [selectedDb, setSelectedDb] = useState("");
@@ -61,7 +63,7 @@ export default function WorkSpace() {
   const handleResize = (e) => {
     if (!resize) return;
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
-    if (w > 340) setWidth(w);
+    if (w > SIDEPANEL_MIN_WIDTH) setWidth(w);
   };
 
   const save = useCallback(async () => {

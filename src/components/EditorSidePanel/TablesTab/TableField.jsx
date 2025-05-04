@@ -1,11 +1,12 @@
 import { Action, ObjectType } from "../../../data/constants";
-import { Row, Col, Input, Button, Popover, Select } from "@douyinfe/semi-ui";
+import { Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
 import { useEnums, useDiagram, useTypes, useUndoRedo } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { DragHandle } from "../../SortableList/DragHandle";
 
 export default function TableField({ data, tid, index }) {
   const { updateField } = useDiagram();
@@ -17,8 +18,9 @@ export default function TableField({ data, tid, index }) {
   const [editField, setEditField] = useState({});
 
   return (
-    <Row gutter={6} className="hover-1 my-2">
-      <Col span={7}>
+    <div className="hover-1 my-2 flex gap-2 items-center" >
+      <DragHandle id={data.id} />
+      <div className="min-w-20 flex-1/3">
         <Input
           id={`scroll_table_${tid}_input_${index}`}
           value={data.name}
@@ -47,8 +49,8 @@ export default function TableField({ data, tid, index }) {
             setRedoStack([]);
           }}
         />
-      </Col>
-      <Col span={8}>
+      </div>
+      <div className="min-w-24 flex-1/3">
         <Select
           className="w-full"
           optionList={[
@@ -131,10 +133,9 @@ export default function TableField({ data, tid, index }) {
             }
           }}
         />
-      </Col>
-      <Col span={3}>
+      </div>
+      <div>
         <Button
-
           type={data.notNull ? "tertiary" : "primary"}
           title={t("nullable")}
           theme={data.notNull ? "light" : "solid"}
@@ -161,8 +162,8 @@ export default function TableField({ data, tid, index }) {
         >
           ?
         </Button>
-      </Col>
-      <Col span={3}>
+      </div>
+      <div>
         <Button
           type={data.primary ? "primary" : "tertiary"}
           title={t("primary")}
@@ -189,8 +190,8 @@ export default function TableField({ data, tid, index }) {
           }}
           icon={<IconKeyStroked />}
         />
-      </Col>
-      <Col span={3}>
+      </div>
+      <div>
         <Popover
           content={
             <div className="px-1 w-[240px] popover-theme">
@@ -203,7 +204,7 @@ export default function TableField({ data, tid, index }) {
         >
           <Button type="tertiary" icon={<IconMore />} />
         </Popover>
-      </Col>
-    </Row>
+      </div>
+    </div>
   );
 }
