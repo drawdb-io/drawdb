@@ -136,9 +136,63 @@ export default function TableField({ data, tid, index }) {
         <Button
           type={data.notNull || data.primary ? "primary" : "tertiary"}
           title={t("not_null")}
-          theme={data.notNull || data.primary ? "solid" : "light"}
-          disabled={data.primary ? true: false }
+          theme={data.notNull ? "solid" : "light"}
+         
+         
           onClick={() => {
+                if(data.primary){
+                  
+                  return};
+
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                
+                action: Action.EDIT,
+                element: ObjectType.TABLE,
+                component: "field",
+                tid: tid,
+                fid: index,
+                undo: { notNull: data.notNull },
+                
+                redo: { notNull: !data.notNull },
+                
+                message: t("edit_table", {
+                  tableName: tables[tid].name,
+                  extra: "[field]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            
+            updateField(tid, index, { notNull: !data.notNull });
+
+          //}
+
+          }}
+        >
+          ?
+        </Button>
+      </Col>
+      <Col span={3}>
+        <Button
+          type={data.primary ? "primary" : "tertiary"}
+          title={t("primary")}
+          theme={data.primary ? "solid" : "light"}
+          onClick={() => {
+
+            const newStatePK=!data.primary;
+            const stateNull=newStatePK?true: !data.notNull;
+            const mustSetNotNull = !data.primary && !data.notNull;
+            const changes = { primary: !data.primary };
+             
+          const undo= { primary: data.primary , notNull : data.notNull };
+          const redo= { primary: newStatePK , notNull:stateNull };
+          if (mustSetNotNull) {
+            undo.notNull = data.notNull;
+            redo.notNull = true;
+            changes.notNull = true;
+          }      
             setUndoStack((prev) => [
               ...prev,
               {
@@ -147,8 +201,7 @@ export default function TableField({ data, tid, index }) {
                 component: "field",
                 tid: tid,
                 fid: index,
-                undo: { notNull: data.notNull },
-                redo: { notNull: !data.notNull },
+                
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -156,52 +209,11 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, { notNull: !data.notNull });
+            updateField(tid, index, { primary: newStatePK,notNull:stateNull });
           }}
-        >
-          ?
-        </Button>
-      </Col>
-      <Col span={3}>
-      <Button
-        type={data.primary ? "primary" : "tertiary"}
-        title={t("primary")}
-        theme={data.primary ? "solid" : "light"}
-        onClick={() => {
-          const mustSetNotNull = !data.primary && !data.notNull;
-
-          const undo = { primary: data.primary };
-          const redo = { primary: !data.primary };
-          const changes = { primary: !data.primary };
-
-          if (mustSetNotNull) {
-            undo.notNull = data.notNull;
-            redo.notNull = true;
-            changes.notNull = true;
-          }
-
-          setUndoStack((prev) => [
-            ...prev,
-            {
-              action: Action.EDIT,
-              element: ObjectType.TABLE,
-              component: "field",
-              tid,
-              fid: index,
-              undo,
-              redo,
-              message: t("edit_table", {
-                tableName: tables[tid].name,
-                extra: "[field]",
-              }),
-            },
-          ]);
-
-          setRedoStack([]);
-          updateField(tid, index, changes);
-        }}
-        icon={<IconKeyStroked />}
-      />
+          icon={<IconKeyStroked />}
+        />
+      
 
       </Col>
       <Col span={3}>
