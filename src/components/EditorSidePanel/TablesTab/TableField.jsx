@@ -18,11 +18,13 @@ export default function TableField({ data, tid, index }) {
   const [editField, setEditField] = useState({});
 
   return (
-    <div className="hover-1 my-2 flex gap-2 items-center" >
+    <div
+      id={`scroll_table_${tid}_input_${index}`}
+      className="hover-1 my-2 flex gap-2 items-center"
+    >
       <DragHandle id={data.id} />
       <div className="min-w-20 flex-1/3">
         <Input
-          id={`scroll_table_${tid}_input_${index}`}
           value={data.name}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder="Name"

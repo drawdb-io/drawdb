@@ -11,7 +11,6 @@ export default function SearchBar({ tables }) {
 
   const treeData = useMemo(() => {
     return tables.map(({ id, name: parentName, fields }, i) => {
-      console.log(fields)
       const children = fields?.map(({ name }, j) => ({
         tableId: id,
         id: `${j}`,

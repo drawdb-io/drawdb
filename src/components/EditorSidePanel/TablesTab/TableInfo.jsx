@@ -65,13 +65,8 @@ export default function TableInfo({ data }) {
           });
         }}
         afterChange={() => setSaveState(State.SAVING)}
-        renderItem={(item) => (
-          <TableField
-            key={"field_" + item.id}
-            data={item}
-            tid={data.id}
-            index={item.id}
-          />
+        renderItem={(item, i) => (
+          <TableField data={item} tid={data.id} index={i} />
         )}
       />
       {data.indices.length > 0 && (

@@ -12,7 +12,13 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableItem } from "./SortableItem";
 
-export function SortableList({ items, onChange, afterChange, renderItem }) {
+export function SortableList({
+  items,
+  onChange,
+  afterChange,
+  renderItem,
+  type = "",
+}) {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = (event) => {
@@ -34,12 +40,9 @@ export function SortableList({ items, onChange, afterChange, renderItem }) {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        {items.map((item) => (
-          <SortableItem
-            key={`sortable-item-${item.name ?? ""}-${item.id}`}
-            id={item.id}
-          >
-            {renderItem(item)}
+        {items.map((item, i) => (
+          <SortableItem id={item.id} key={`sortable-item-${type}-${item.id}`}>
+            {renderItem(item, i)}
           </SortableItem>
         ))}
       </SortableContext>
