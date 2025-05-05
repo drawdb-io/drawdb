@@ -167,7 +167,7 @@ export default function TableField({ data, tid, index }) {
             
             updateField(tid, index, { notNull: !data.notNull });
 
-          //}
+          
 
           }}
         >
