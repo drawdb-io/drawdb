@@ -304,7 +304,7 @@ export default function Table(props) {
           setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
-            field: index,
+            field: fieldData.id,
           });
         }}
         onPointerLeave={(e) => {
@@ -328,10 +328,10 @@ export default function Table(props) {
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(index);
+              handleGripField();
               setLinkingLine((prev) => ({
                 ...prev,
-                startFieldId: index,
+                startFieldId: fieldData.id,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
                 startY:

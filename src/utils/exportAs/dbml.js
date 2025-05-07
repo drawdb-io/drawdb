@@ -52,6 +52,22 @@ function cardinality(rel) {
 }
 
 export function toDBML(diagram) {
+  const generateRelString = (rel) => {
+    const { fields: startTableFields, name: startTableName } =
+      diagram.tables.find((t) => t.id === rel.startTableId);
+    const { name: startFieldName } = startTableFields.find(
+      (f) => f.id === rel.startFieldId,
+    );
+    const { fields: endTableFields, name: endTableName } = diagram.tables.find(
+      (t) => t.id === rel.endTableId,
+    );
+    const { name: endFieldName } = endTableFields.find(
+      (f) => f.id === rel.endFieldId,
+    );
+
+    `Ref ${rel.name} {\n\t${startTableName}.${startFieldName} ${cardinality(rel)} ${endTableName}.${endFieldName} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
+  };
+
   return `${diagram.enums
     .map(
       (en) =>
@@ -88,15 +104,6 @@ export function toDBML(diagram) {
         }\n}`,
     )
     .join("\n\n")}\n\n${diagram.relationships
-    .map(
-      (rel) =>
-        `Ref ${rel.name} {\n\t${
-          diagram.tables[rel.startTableId].name
-        }.${diagram.tables[rel.startTableId].fields[rel.startFieldId].name} ${cardinality(
-          rel,
-        )} ${diagram.tables[rel.endTableId].name}.${
-          diagram.tables[rel.endTableId].fields[rel.endFieldId].name
-        } [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`,
-    )
+    .map((rel) => generateRelString(rel))
     .join("\n\n")}`;
 }

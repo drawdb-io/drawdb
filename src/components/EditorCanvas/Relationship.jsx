@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import {
   Cardinality,
   darkBgTheme,
@@ -19,6 +19,22 @@ export default function Relationship({ data }) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
+
+  const pathValues = useMemo(() => {
+    const startTable = tables.find((t) => t.id === data.startTableId);
+    const endTable = tables.find((t) => t.id === data.endTableId);
+
+    if (!startTable || !endTable) return null;
+
+    return {
+      startFieldIndex: startTable.fields.findIndex(
+        (f) => f.id === data.startFieldId,
+      ),
+      endFieldIndex: endTable.fields.findIndex((f) => f.id === data.endFieldId),
+      startTable: { x: startTable.x, y: startTable.y },
+      endTable: { x: endTable.x, y: endTable.y },
+    };
+  }, [tables, data]);
 
   const theme = localStorage.getItem("theme");
 
@@ -106,20 +122,7 @@ export default function Relationship({ data }) {
       <g className="select-none group" onDoubleClick={edit}>
         <path
           ref={pathRef}
-          d={calcPath(
-            {
-              ...data,
-              startTable: {
-                x: tables[data.startTableId].x,
-                y: tables[data.startTableId].y,
-              },
-              endTable: {
-                x: tables[data.endTableId].x,
-                y: tables[data.endTableId].y,
-              },
-            },
-            settings.tableWidth,
-          )}
+          d={calcPath(pathValues, settings.tableWidth)}
           stroke="gray"
           className="group-hover:stroke-sky-700"
           fill="none"

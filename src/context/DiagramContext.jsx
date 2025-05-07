@@ -73,13 +73,14 @@ export default function DiagramContextProvider({ children }) {
         }
         return acc;
       }, []);
+      const deletedTable = tables.find((t) => t.id === id);
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.TABLE,
-          data: { table: tables[id], relationship: rels },
-          message: t("delete_table", { tableName: tables[id].name }),
+          data: { table: deletedTable, relationship: rels },
+          message: t("delete_table", { tableName: deletedTable.name }),
         },
       ]);
       setRedoStack([]);
@@ -136,6 +137,7 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
+    const { fields, name } = tables.find((t) => t.id === tid);
     if (addToHistory) {
       const rels = relationships.reduce((acc, r) => {
         if (
@@ -158,7 +160,7 @@ export default function DiagramContextProvider({ children }) {
             relationship: rels,
           },
           message: t("edit_table", {
-            tableName: tables[tid].name,
+            tableName: name,
             extra: "[delete field]",
           }),
         },
@@ -194,7 +196,7 @@ export default function DiagramContextProvider({ children }) {
       return temp;
     });
     updateTable(tid, {
-      fields: tables[tid].fields
+      fields: fields
         .filter((e) => e.id !== field.id)
         .map((t, i) => {
           return { ...t, id: i };

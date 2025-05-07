@@ -47,7 +47,7 @@ export default function TablesTab() {
           accordion
         >
           <SortableList
-            type="table"
+            keyPrefix="tables-tab"
             items={tables}
             onChange={(newTables) => setTables(newTables)}
             afterChange={() => setSaveState(State.SAVING)}

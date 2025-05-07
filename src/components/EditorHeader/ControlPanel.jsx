@@ -662,14 +662,16 @@ export default function ControlPanel({
   };
   const duplicate = () => {
     switch (selectedElement.element) {
-      case ObjectType.TABLE:
+      case ObjectType.TABLE: {
+        const copiedTable = tables.find((t) => t.id === selectedElement.id);
         addTable({
-          ...tables[selectedElement.id],
-          x: tables[selectedElement.id].x + 20,
-          y: tables[selectedElement.id].y + 20,
+          ...copiedTable,
+          x: copiedTable.x + 20,
+          y: copiedTable.y + 20,
           id: tables.length,
         });
         break;
+      }
       case ObjectType.NOTE:
         addNote({
           ...notes[selectedElement.id],
@@ -694,7 +696,9 @@ export default function ControlPanel({
     switch (selectedElement.element) {
       case ObjectType.TABLE:
         navigator.clipboard
-          .writeText(JSON.stringify({ ...tables[selectedElement.id] }))
+          .writeText(
+            JSON.stringify(tables.find((t) => t.id === selectedElement.id)),
+          )
           .catch(() => Toast.error(t("oops_smth_went_wrong")));
         break;
       case ObjectType.NOTE:
@@ -714,6 +718,7 @@ export default function ControlPanel({
   const paste = () => {
     navigator.clipboard.readText().then((text) => {
       let obj = null;
+      console.log(text);
       try {
         obj = JSON.parse(text);
       } catch (error) {
@@ -1208,10 +1213,13 @@ export default function ControlPanel({
           db.table("diagrams")
             .delete(diagramId)
             .then(() => {
-              console.info('Deleted diagram successfully.')
+              console.info("Deleted diagram successfully.");
             })
             .catch((error) => {
-              console.error(`Error deleting records with gistId '${diagramId}':`, error);
+              console.error(
+                `Error deleting records with gistId '${diagramId}':`,
+                error,
+              );
             });
         },
       },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Input,
   TextArea,
@@ -20,6 +20,7 @@ export default function FieldDetails({ data, tid, index }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { updateField, deleteField } = useDiagram();
   const [editField, setEditField] = useState({});
+  const table = useMemo(() => tables.find((t) => t.id === tid), [tables, tid]);
 
   return (
     <div>
@@ -44,7 +45,7 @@ export default function FieldDetails({ data, tid, index }) {
               undo: editField,
               redo: { default: e.target.value },
               message: t("edit_table", {
-                tableName: tables[tid].name,
+                tableName: table.name,
                 extra: "[field]",
               }),
             },
@@ -84,7 +85,7 @@ export default function FieldDetails({ data, tid, index }) {
                   undo: editField,
                   redo: { values: data.values },
                   message: t("edit_table", {
-                    tableName: tables[tid].name,
+                    tableName: table.name,
                     extra: "[field]",
                   }),
                 },
@@ -116,7 +117,7 @@ export default function FieldDetails({ data, tid, index }) {
                   undo: editField,
                   redo: { size: e.target.value },
                   message: t("edit_table", {
-                    tableName: tables[tid].name,
+                    tableName: table.name,
                     extra: "[field]",
                   }),
                 },
@@ -153,7 +154,7 @@ export default function FieldDetails({ data, tid, index }) {
                   undo: editField,
                   redo: { size: e.target.value },
                   message: t("edit_table", {
-                    tableName: tables[tid].name,
+                    tableName: table.name,
                     extra: "[field]",
                   }),
                 },
@@ -186,7 +187,7 @@ export default function FieldDetails({ data, tid, index }) {
                   undo: editField,
                   redo: { check: e.target.value },
                   message: t("edit_table", {
-                    tableName: tables[tid].name,
+                    tableName: table.name,
                     extra: "[field]",
                   }),
                 },
@@ -250,7 +251,7 @@ export default function FieldDetails({ data, tid, index }) {
                   [checkedValues.target.value]: checkedValues.target.checked,
                 },
                 message: t("edit_table", {
-                  tableName: tables[tid].name,
+                  tableName: table.name,
                   extra: "[field]",
                 }),
               },
@@ -285,7 +286,7 @@ export default function FieldDetails({ data, tid, index }) {
                     [checkedValues.target.value]: checkedValues.target.checked,
                   },
                   message: t("edit_table", {
-                    tableName: tables[tid].name,
+                    tableName: table.name,
                     extra: "[field]",
                   }),
                 },
@@ -324,7 +325,7 @@ export default function FieldDetails({ data, tid, index }) {
                         checkedValues.target.checked,
                     },
                     message: t("edit_table", {
-                      tableName: tables[tid].name,
+                      tableName: table.name,
                       extra: "[field]",
                     }),
                   },
@@ -359,7 +360,7 @@ export default function FieldDetails({ data, tid, index }) {
               undo: editField,
               redo: { comment: e.target.value },
               message: t("edit_table", {
-                tableName: tables[tid].name,
+                tableName: table.name,
                 extra: "[field]",
               }),
             },

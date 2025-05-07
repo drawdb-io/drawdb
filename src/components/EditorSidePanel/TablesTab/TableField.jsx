@@ -1,12 +1,12 @@
+import { useMemo, useState } from "react";
 import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
 import { useEnums, useDiagram, useTypes, useUndoRedo } from "../../../hooks";
-import { useState } from "react";
-import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
+import FieldDetails from "./FieldDetails";
 
 export default function TableField({ data, tid, index }) {
   const { updateField } = useDiagram();
@@ -16,16 +16,15 @@ export default function TableField({ data, tid, index }) {
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const table = useMemo(() => tables.find((t) => t.id === tid), [tables, tid]);
 
   return (
-    <div
-      id={`scroll_table_${tid}_input_${index}`}
-      className="hover-1 my-2 flex gap-2 items-center"
-    >
+    <div className="hover-1 my-2 flex gap-2 items-center">
       <DragHandle id={data.id} />
       <div className="min-w-20 flex-1/3">
         <Input
           value={data.name}
+          id={`scroll_table_${tid}_input_${index}`}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder="Name"
           onChange={(value) => updateField(tid, index, { name: value })}
@@ -43,7 +42,7 @@ export default function TableField({ data, tid, index }) {
                 undo: editField,
                 redo: { name: e.target.value },
                 message: t("edit_table", {
-                  tableName: tables[tid].name,
+                  tableName: table.name,
                   extra: "[field]",
                 }),
               },
@@ -86,7 +85,7 @@ export default function TableField({ data, tid, index }) {
                 undo: { type: data.type },
                 redo: { type: value },
                 message: t("edit_table", {
-                  tableName: tables[tid].name,
+                  tableName: table.name,
                   extra: "[field]",
                 }),
               },
@@ -153,7 +152,7 @@ export default function TableField({ data, tid, index }) {
                 undo: { notNull: data.notNull },
                 redo: { notNull: !data.notNull },
                 message: t("edit_table", {
-                  tableName: tables[tid].name,
+                  tableName: table.name,
                   extra: "[field]",
                 }),
               },
@@ -182,7 +181,7 @@ export default function TableField({ data, tid, index }) {
                 undo: { primary: data.primary },
                 redo: { primary: !data.primary },
                 message: t("edit_table", {
-                  tableName: tables[tid].name,
+                  tableName: table.name,
                   extra: "[field]",
                 }),
               },

@@ -84,8 +84,8 @@ export default function ImportDiagram({
     let ok = true;
     jsonObject.relationships.forEach((rel) => {
       if (
-        !jsonObject.tables[rel.startTableId] ||
-        !jsonObject.tables[rel.endTableId]
+        !jsonObject.tables.find(rel.startTableId) ||
+        !jsonObject.tables.find(rel.endTableId)
       ) {
         setError({
           type: STATUS.ERROR,
@@ -96,8 +96,10 @@ export default function ImportDiagram({
       }
 
       if (
-        !jsonObject.tables[rel.startTableId].fields[rel.startFieldId] ||
-        !jsonObject.tables[rel.endTableId].fields[rel.endFieldId]
+        !jsonObject.tables
+          .find(rel.startTableId)
+          .fields.find(rel.startFieldId) ||
+        !jsonObject.tables.find(rel.endTableId).fields.find(rel.endFieldId)
       ) {
         setError({
           type: STATUS.ERROR,

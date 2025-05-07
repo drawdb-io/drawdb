@@ -213,7 +213,7 @@ export function getIssues(diagram) {
     if (visited.includes(tableId)) {
       issues.push(
         i18n.t("circular_dependency", {
-          refName: diagram.tables[tableId].name,
+          refName: diagram.tables.find(tableId)?.name,
         }),
       );
       return;

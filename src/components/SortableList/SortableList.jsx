@@ -17,7 +17,7 @@ export function SortableList({
   onChange,
   afterChange,
   renderItem,
-  type = "",
+  keyPrefix,
 }) {
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -41,7 +41,10 @@ export function SortableList({
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         {items.map((item, i) => (
-          <SortableItem id={item.id} key={`sortable-item-${type}-${item.id}`}>
+          <SortableItem
+            id={item.id}
+            key={`${keyPrefix}-sortable-item-${item.id}`}
+          >
             {renderItem(item, i)}
           </SortableItem>
         ))}

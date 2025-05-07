@@ -121,7 +121,8 @@ function Relationship({ relationship, tables }) {
       <path
         ref={pathRef}
         d={calcPath({
-          ...relationship,
+          startFieldIndex: relationship.startFieldId,
+          endFieldIndex: relationship.endFieldId,
           startTable: {
             x: tables[relationship.startTableId].x,
             y: tables[relationship.startTableId].y,

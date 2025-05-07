@@ -167,7 +167,7 @@ export default function Canvas() {
   const getElement = (element) => {
     switch (element.type) {
       case ObjectType.TABLE:
-        return tables[element.id];
+        return tables.find((t) => t.id === element.id);
       case ObjectType.AREA:
         return areas[element.id];
       case ObjectType.NOTE:
@@ -274,9 +274,10 @@ export default function Canvas() {
 
       for (const element of bulkSelectedElements) {
         if (element.type === ObjectType.TABLE) {
+          const { x, y } = tables.find((e) => e.id === element.id);
           updateTable(element.id, {
-            x: tables[element.id].x + deltaX,
-            y: tables[element.id].y + deltaY,
+            x: x + deltaX,
+            y: y + deltaY,
           });
         }
         if (element.type === ObjectType.AREA) {
@@ -441,7 +442,10 @@ export default function Canvas() {
   };
 
   const didPan = () =>
-    !(transform.pan.x === panning.panStart.x && transform.pan.y === panning.panStart.y);
+    !(
+      transform.pan.x === panning.panStart.x &&
+      transform.pan.y === panning.panStart.y
+    );
 
   /**
    * @param {PointerEvent} e
@@ -596,13 +600,21 @@ export default function Canvas() {
   const handleLinking = () => {
     if (hoveredTable.tableId < 0) return;
     if (hoveredTable.field < 0) return;
-    if (
-      !areFieldsCompatible(
-        database,
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
-        tables[hoveredTable.tableId].fields[hoveredTable.field],
-      )
-    ) {
+
+    const { fields: startTableFields, name: startTableName } = tables.find(
+      (t) => t.id === linkingLine.startTableId,
+    );
+    const { type: startType, name: startFieldName } = startTableFields.find(
+      (f) => f.id === linkingLine.startFieldId,
+    );
+    const { fields: endTableFields, name: endTableName } = tables.find(
+      (t) => t.id === hoveredTable.tableId,
+    );
+    const { type: endType } = endTableFields.find(
+      (f) => f.id === hoveredTable.field,
+    );
+
+    if (!areFieldsCompatible(database, startType, endType)) {
       Toast.info(t("cannot_connect"));
       return;
     }
@@ -619,9 +631,7 @@ export default function Canvas() {
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${tables[linkingLine.startTableId].name}_${
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_${tables[hoveredTable.tableId].name}`,
+      name: `fk_${startTableName}_${startFieldName}_${endTableName}`,
       id: relationships.length,
     };
     delete newRelationship.startX;

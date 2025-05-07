@@ -57,6 +57,7 @@ export default function TableInfo({ data }) {
       </div>
       <SortableList
         items={data.fields}
+        keyPrefix={`table-${data.id}`}
         onChange={(newFields) => {
           setTables((prev) => {
             return prev.map((t) =>
