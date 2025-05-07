@@ -42,7 +42,7 @@ export default function ImportDiagram({
     let jsonObject = null;
     try {
       jsonObject = JSON.parse(e.target.result);
-    } catch (error) {
+    } catch {
       setError({
         type: STATUS.ERROR,
         message: "The file contains an error.",
