@@ -409,38 +409,84 @@ export default function Canvas() {
       }
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setLinkingLine({
+      ...linkingLine,
+      startTableId: field.tableId,
+      startFieldId: field.id,
+      startX: pointer.spaces.diagram.x,
+      startY: pointer.spaces.diagram.y,
+    });
     setLinking(true);
   };
 
   const handleLinking = () => {
     if (hoveredTable.tableId < 0) return;
-    if (hoveredTable.field < 0) return;
-    if (
-      !areFieldsCompatible(
-        database,
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
-        tables[hoveredTable.tableId].fields[hoveredTable.field],
-      )
-    ) {
-      Toast.info(t("cannot_connect"));
+    // if (hoveredTable.field < 0) return;
+
+    const childTable = tables.find((t) => t.id === hoveredTable.tableId);
+    const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
+    const parentField = parentTable.fields[linkingLine.startFieldId];
+    // validar si se realiza una relación recursiva, se me deje realizar la relación
+    const recursiveRelation = parentTable === childTable;
+    if(!recursiveRelation){
+      if (
+        !areFieldsCompatible(
+          database,
+          parentField,
+          childTable,
+        )
+      ) {
+        Toast.info(t("duplicate_field_name"));
+        return;
+      }
+    }
+    // Check if the relationship already exists
+    const alreadyLinked = relationships.some(
+      (rel) =>
+        rel.startTableId === linkingLine.startTableId &&
+        rel.startFieldId === linkingLine.startFieldId &&
+        rel.endTableId === hoveredTable.tableId
+    );
+    if (alreadyLinked) {
+      Toast.info(t("duplicate_relationship"));
       return;
     }
-    if (
-      linkingLine.startTableId === hoveredTable.tableId &&
-      linkingLine.startFieldId === hoveredTable.field
-    )
-      return;
 
+    // Automatically add a new column to the child table
+    const newField = {
+      name: recursiveRelation ? "" : parentField.name,
+      type: parentField.type,
+      size: parentField.size,
+      notNull: true,
+      unique: false,
+      default: "",
+      check: "",
+      primary: false,
+      increment: false,
+      comment: "",
+      foreignK: true,
+      foreignKey: {
+        tableId: parentTable.id,
+        fieldId: parentField.id,
+      },
+      id: childTable.fields.length,
+    };
+
+    //Add the new field to the child table
+    updateTable(childTable.id, {
+      fields: [
+        ...childTable.fields,
+        newField,
+      ],
+    });
     const newRelationship = {
       ...linkingLine,
       endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.field,
+      endFieldId: childTable.fields.length, // The new field is the last one
       cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${tables[linkingLine.startTableId].name}_${
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_${tables[hoveredTable.tableId].name}`,
+      name: `fk_${parentTable.name}_${parentField.name}`,
       id: relationships.length,
     };
     delete newRelationship.startX;
@@ -448,6 +494,7 @@ export default function Canvas() {
     delete newRelationship.endX;
     delete newRelationship.endY;
     addRelationship(newRelationship);
+    setLinking(false);
   };
 
   // Handle mouse wheel scrolling

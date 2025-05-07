@@ -165,6 +165,7 @@ export default function DiagramContextProvider({ children }) {
       ]);
       setRedoStack([]);
     }
+
     setRelationships((prev) => {
       const temp = prev
         .filter(
@@ -193,30 +194,49 @@ export default function DiagramContextProvider({ children }) {
         });
       return temp;
     });
-    updateTable(tid, {
-      fields: tables[tid].fields
-        .filter((e) => e.id !== field.id)
-        .map((t, i) => {
-          return { ...t, id: i };
-        }),
+    // 
+    // Clone tables to avoid mutating the state directly
+    const updatedTables = [...tables];
+  
+    // Detete fields that reference the current field
+    updatedTables.forEach((table) => {
+      const newFields = table.fields.filter(
+        (f) =>
+          !(
+            f.foreignKey &&
+            f.foreignKey.tableId === tid &&
+            f.foreignKey.fieldId === field.id
+          )
+      );
+      table.fields = newFields;
     });
+  
+    // Delete the original field from the currernt table
+    updatedTables[tid].fields = updatedTables[tid].fields
+      .filter((f) => f.id !== field.id)
+      .map((f, i) => ({ ...f, id: i }));
+  
+    // aply changes to the state
+    updatedTables.forEach((table) => updateTable(table.id, { fields: table.fields }));
   };
+  
 
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
-      setRelationships((prev) => {
-        setUndoStack((prevUndo) => [
-          ...prevUndo,
-          {
-            action: Action.ADD,
-            element: ObjectType.RELATIONSHIP,
-            data: data,
-            message: t("add_relationship"),
-          },
-        ]);
-        setRedoStack([]);
-        return [...prev, data];
-      });
+      // First, update the relationships
+      setRelationships((prev) => [...prev, data]);
+  
+      // After that, update the component undo stack
+      setUndoStack((prevUndo) => [
+        ...prevUndo,
+        {
+          action: Action.ADD,
+          element: ObjectType.RELATIONSHIP,
+          data: data,
+          message: t("add_relationship"),
+        },
+      ]);
+      setRedoStack([]);
     } else {
       setRelationships((prev) => {
         const temp = prev.slice();
@@ -227,20 +247,37 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteRelationship = (id, addToHistory = true) => {
+    const relationship = relationships[id];
     if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.RELATIONSHIP,
-          data: relationships[id],
+          data: relationship,
           message: t("delete_relationship", {
-            refName: relationships[id].name,
+            refName: relationship.name,
           }),
         },
       ]);
       setRedoStack([]);
     }
+
+    const chieldTableId = relationship.endTableId;
+    const chieldTable = tables.find((table) => table.id === chieldTableId);
+    const fieldToDelete = chieldTable.fields.find(
+      (field) =>
+        field.foreignKey &&
+      field.foreignKey.tableId === relationship.startTableId &&
+      field.foreignKey.fieldId === relationship.startFieldId,
+    );
+
+    if(fieldToDelete) {
+      updateTable(chieldTableId, {
+        fields: chieldTable.fields.filter((field) => field.id !== fieldToDelete.id),
+      });
+    }
+
     setRelationships((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );

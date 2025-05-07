@@ -37,12 +37,16 @@ export function isFunction(str) {
   return /\w+\([^)]*\)$/.test(str);
 }
 
-export function areFieldsCompatible(db, field1, field2) {
-  const same = field1.type === field2.type;
-  if (dbToTypes[db][field1.type].compatibleWith) {
-    return (
-      dbToTypes[db][field1.type].compatibleWith.includes(field2.type) || same
-    );
-  }
-  return same;
+export function areFieldsCompatible(db, field1, tarjetTable) {
+  if (!field1 || !field1.type) return false;
+
+  if (!tarjetTable || !tarjetTable.fields) return false;
+
+  const existingFIeld = tarjetTable.fields.some(
+    (field) => field.name === field1.name,
+  );
+
+  if (existingFIeld) return false;
+
+  return true;
 }
