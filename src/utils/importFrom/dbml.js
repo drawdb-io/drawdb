@@ -54,35 +54,33 @@ export function fromDBML(src) {
     }
 
     for (const ref of schema.refs) {
-      const startTable = ref.endpoints[0].tableName;
-      const endTable = ref.endpoints[1].tableName;
-      const startField = ref.endpoints[0].fieldNames[0];
-      const endField = ref.endpoints[1].fieldNames[0];
+      const startTableName = ref.endpoints[0].tableName;
+      const endTableName = ref.endpoints[1].tableName;
+      const startFieldName = ref.endpoints[0].fieldNames[0];
+      const endFieldName = ref.endpoints[1].fieldNames[0];
 
-      const startTableId = tables.findIndex((t) => t.name === startTable);
-      if (startTableId === -1) continue;
+      const startTable = tables.find((t) => t.name === startTableName);
+      if (!startTable) continue;
 
-      const endTableId = tables.findIndex((t) => t.name === endTable);
-      if (endTableId === -1) continue;
+      const endTable = tables.find((t) => t.name === endTableName);
+      if (!endTable) continue;
 
-      const endFieldId = tables[endTableId].fields.findIndex(
-        (f) => f.name === endField,
+      const endField = endTable.fields.find((f) => f.name === endFieldName);
+      if (!endField) continue;
+
+      const startField = startTable.fields.find(
+        (f) => f.name === startFieldName,
       );
-      if (endFieldId === -1) continue;
-
-      const startFieldId = tables[startTableId].fields.findIndex(
-        (f) => f.name === startField,
-      );
-      if (startFieldId === -1) continue;
+      if (!startField) continue;
 
       const relationship = {};
 
       relationship.name =
         "fk_" + startTable + "_" + startField + "_" + endTable;
-      relationship.startTableId = startTableId;
-      relationship.endTableId = endTableId;
-      relationship.endFieldId = endFieldId;
-      relationship.startFieldId = startFieldId;
+      relationship.startTableId = startTable.id;
+      relationship.endTableId = endTable.id;
+      relationship.endFieldId = endField.id;
+      relationship.startFieldId = startField.id;
       relationship.id = relationships.length;
 
       relationship.updateConstraint = ref.onDelete

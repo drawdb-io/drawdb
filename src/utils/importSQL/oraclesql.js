@@ -79,32 +79,32 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
           } else if (d.resource === "constraint") {
             const relationship = {};
             const startTableId = table.id;
-            const startField = d.constraint.columns[0];
-            const endField = d.constraint.reference.columns[0];
-            const endTable = d.constraint.reference.object.name;
+            const startFieldName = d.constraint.columns[0];
+            const endFieldName = d.constraint.reference.columns[0];
+            const endTableName = d.constraint.reference.object.name;
 
-            const endTableId = tables.findIndex((t) => t.name === endTable);
-            if (endTableId === -1) return;
+            const endTable = tables.find((t) => t.name === endTableName);
+            if (!endTable) return;
 
-            const endFieldId = tables[endTableId].fields.findIndex(
-              (f) => f.name === endField,
+            const endField = endTable.fields.find(
+              (f) => f.name === endFieldName,
             );
-            if (endFieldId === -1) return;
+            if (!endField) return;
 
-            const startFieldId = table.fields.findIndex(
-              (f) => f.name === startField,
+            const startField = table.fields.find(
+              (f) => f.name === startFieldName,
             );
-            if (startFieldId === -1) return;
+            if (!startField) return;
 
             relationship.startTableId = startTableId;
-            relationship.startFieldId = startFieldId;
-            relationship.endTableId = endTableId;
-            relationship.endFieldId = endFieldId;
+            relationship.startFieldId = startField.id;
+            relationship.endTableId = endTable.id;
+            relationship.endFieldId = endField.id;
             relationship.updateConstraint = Constraint.NONE;
             relationship.name =
               d.name && Boolean(d.name.trim())
                 ? d.name
-                : "fk_" + table.name + "_" + startField + "_" + endTable;
+                : "fk_" + table.name + "_" + startFieldName + "_" + endTableName;
             relationship.deleteConstraint =
               d.constraint.reference.on_delete &&
               Boolean(d.constraint.reference.on_delete.trim())
@@ -112,7 +112,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
                   d.constraint.reference.on_delete.substring(1)
                 : Constraint.NONE;
 
-            if (table.fields[startFieldId].unique) {
+            if (startField.unique) {
               relationship.cardinality = Cardinality.ONE_TO_ONE;
             } else {
               relationship.cardinality = Cardinality.MANY_TO_ONE;

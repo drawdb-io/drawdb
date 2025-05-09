@@ -224,16 +224,20 @@ export function jsonToMySQL(obj) {
           .join("\n")}`}`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE \`${
-          obj.tables[r.startTableId].name
-        }\`\nADD FOREIGN KEY(\`${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = obj.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = obj.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }\`) REFERENCES \`${endName}\`(\`${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+    })
     .join("\n")}`;
 }
 
@@ -327,14 +331,20 @@ export function jsonToPostgreSQL(obj) {
           .join("\n")}`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD FOREIGN KEY("${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${obj.tables[r.endTableId].name}"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = obj.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = obj.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE "${startName}"\nADD FOREIGN KEY("${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }") REFERENCES "${endName}"("${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+    })
     .join("\n")}`;
 }
 
@@ -459,16 +469,20 @@ export function jsonToMariaDB(obj) {
           .join("\n")}`}`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE \`${
-          obj.tables[r.startTableId].name
-        }\`\nADD FOREIGN KEY(\`${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }\`) REFERENCES \`${obj.tables[r.endTableId].name}\`(\`${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = obj.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = obj.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }\`) REFERENCES \`${endName}\`(\`${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+    })
     .join("\n")}`;
 }
 
@@ -527,14 +541,20 @@ export function jsonToSQLServer(obj) {
           .join("")}`,
     )
     .join("\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE [${obj.tables[r.startTableId].name}]\nADD FOREIGN KEY([${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }]) REFERENCES [${obj.tables[r.endTableId].name}]([${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = obj.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = obj.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE [${startName}]\nADD FOREIGN KEY([${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }]) REFERENCES [${endName}]([${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`;
+    })
     .join("\n")}`;
 }
 
@@ -594,13 +614,19 @@ export function jsonToOracleSQL(obj) {
           .join("\n")}`,
     )
     .join("\n\n")}\n${obj.references
-    .map(
-      (r) =>
-        `ALTER TABLE "${obj.tables[r.startTableId].name}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
-          obj.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${obj.tables[r.endTableId].name}"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
-        }");`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = obj.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = obj.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE "${startName}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }") REFERENCES "${endName}"("${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }");`;
+    })
     .join("\n")}`;
 }

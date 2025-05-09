@@ -77,13 +77,20 @@ export function toPostgres(diagram) {
           .join("\n")}\n`,
     )
     .join("\n")}${diagram.references
-    .map(
-      (r) =>
-        `\nALTER TABLE "${diagram.tables[r.startTableId].name}"\nADD FOREIGN KEY("${
-          diagram.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${diagram.tables[r.endTableId].name}"("${
-          diagram.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = diagram.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+
+      const { name: endName, fields: endFields } = diagram.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+
+      return `\nALTER TABLE "${startName}"\nADD FOREIGN KEY("${
+        startFields.find((f) => f.id === r.startFieldId)?.name
+      }") REFERENCES "${endName}"("${
+        endFields.find((f) => f.id === r.endFieldId)?.name
+      }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+    })
     .join("\n")}`;
 }

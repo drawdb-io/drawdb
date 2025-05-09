@@ -27,7 +27,7 @@ export default function TableField({ data, tid, index }) {
           id={`scroll_table_${tid}_input_${index}`}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder="Name"
-          onChange={(value) => updateField(tid, index, { name: value })}
+          onChange={(value) => updateField(tid, data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;

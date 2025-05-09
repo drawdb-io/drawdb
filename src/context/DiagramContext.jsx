@@ -122,12 +122,12 @@ export default function DiagramContextProvider({ children }) {
 
   const updateField = (tid, fid, updatedValues) => {
     setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
+      prev.map((table) => {
+        if (tid === table.id) {
           return {
             ...table,
-            fields: table.fields.map((field, j) =>
-              fid === j ? { ...field, ...updatedValues } : field,
+            fields: table.fields.map((field) =>
+              fid === field.id ? { ...field, ...updatedValues } : field,
             ),
           };
         }
