@@ -95,7 +95,7 @@ export default function TableField({ data, tid, index }) {
               data.increment && !!dbToTypes[database][value].canIncrement;
 
             if (value === "ENUM" || value === "SET") {
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 type: value,
                 default: "",
                 values: data.values ? [...data.values] : [],
@@ -105,13 +105,13 @@ export default function TableField({ data, tid, index }) {
               dbToTypes[database][value].isSized ||
               dbToTypes[database][value].hasPrecision
             ) {
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 type: value,
                 size: dbToTypes[database][value].defaultSize,
                 increment: incr,
               });
             } else if (!dbToTypes[database][value].hasDefault || incr) {
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 type: value,
                 increment: incr,
                 default: "",
@@ -119,13 +119,13 @@ export default function TableField({ data, tid, index }) {
                 values: [],
               });
             } else if (dbToTypes[database][value].hasCheck) {
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 type: value,
                 check: "",
                 increment: incr,
               });
             } else {
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 type: value,
                 increment: incr,
                 size: "",
@@ -158,7 +158,7 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, { notNull: !data.notNull });
+            updateField(tid, data.id, { notNull: !data.notNull });
           }}
         >
           ?
@@ -187,7 +187,7 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, { primary: !data.primary });
+            updateField(tid, data.id, { primary: !data.primary });
           }}
           icon={<IconKeyStroked />}
         />

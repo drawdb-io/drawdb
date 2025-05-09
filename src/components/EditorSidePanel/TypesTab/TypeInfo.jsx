@@ -40,10 +40,12 @@ export default function TypeInfo({ index, data }) {
             className="ms-2"
             onChange={(value) => {
               updateType(index, { name: value });
-              tables.forEach((table, i) => {
-                table.fields.forEach((field, j) => {
+              tables.forEach((table) => {
+                table.fields.forEach((field) => {
                   if (field.type.toLowerCase() === data.name.toLowerCase()) {
-                    updateField(i, j, { type: value.toUpperCase() });
+                    updateField(table.id, field.id, {
+                      type: value.toUpperCase(),
+                    });
                   }
                 });
               });

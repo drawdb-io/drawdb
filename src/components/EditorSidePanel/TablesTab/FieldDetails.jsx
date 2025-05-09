@@ -30,7 +30,7 @@ export default function FieldDetails({ data, tid, index }) {
         placeholder={t("default_value")}
         value={data.default}
         disabled={dbToTypes[database][data.type].noDefault || data.increment}
-        onChange={(value) => updateField(tid, index, { default: value })}
+        onChange={(value) => updateField(tid, data.id, { default: value })}
         onFocus={(e) => setEditField({ default: e.target.value })}
         onBlur={(e) => {
           if (e.target.value === editField.default) return;
@@ -67,7 +67,7 @@ export default function FieldDetails({ data, tid, index }) {
             addOnBlur
             className="my-2"
             placeholder={t("use_for_batch_input")}
-            onChange={(v) => updateField(tid, index, { values: v })}
+            onChange={(v) => updateField(tid, data.id, { values: v })}
             onFocus={() => setEditField({ values: data.values })}
             onBlur={() => {
               if (
@@ -102,7 +102,7 @@ export default function FieldDetails({ data, tid, index }) {
             className="my-2 w-full"
             placeholder={t("size")}
             value={data.size}
-            onChange={(value) => updateField(tid, index, { size: value })}
+            onChange={(value) => updateField(tid, data.id, { size: value })}
             onFocus={(e) => setEditField({ size: e.target.value })}
             onBlur={(e) => {
               if (e.target.value === editField.size) return;
@@ -139,7 +139,7 @@ export default function FieldDetails({ data, tid, index }) {
                 : "error"
             }
             value={data.size}
-            onChange={(value) => updateField(tid, index, { size: value })}
+            onChange={(value) => updateField(tid, data.id, { size: value })}
             onFocus={(e) => setEditField({ size: e.target.value })}
             onBlur={(e) => {
               if (e.target.value === editField.size) return;
@@ -172,7 +172,7 @@ export default function FieldDetails({ data, tid, index }) {
             placeholder={t("check")}
             value={data.check}
             disabled={data.increment}
-            onChange={(value) => updateField(tid, index, { check: value })}
+            onChange={(value) => updateField(tid, data.id, { check: value })}
             onFocus={(e) => setEditField({ check: e.target.value })}
             onBlur={(e) => {
               if (e.target.value === editField.check) return;
@@ -221,7 +221,7 @@ export default function FieldDetails({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, {
+            updateField(tid, data.id, {
               [checkedValues.target.value]: checkedValues.target.checked,
             });
           }}
@@ -257,7 +257,7 @@ export default function FieldDetails({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, {
+            updateField(tid, data.id, {
               increment: !data.increment,
               check: data.increment ? data.check : "",
             });
@@ -292,7 +292,7 @@ export default function FieldDetails({ data, tid, index }) {
                 },
               ]);
               setRedoStack([]);
-              updateField(tid, index, {
+              updateField(tid, data.id, {
                 isArray: checkedValues.target.checked,
                 increment: data.isArray ? data.increment : false,
               });
@@ -331,7 +331,7 @@ export default function FieldDetails({ data, tid, index }) {
                   },
                 ]);
                 setRedoStack([]);
-                updateField(tid, index, {
+                updateField(tid, data.id, {
                   unsigned: checkedValues.target.checked,
                 });
               }}
@@ -345,7 +345,7 @@ export default function FieldDetails({ data, tid, index }) {
         value={data.comment}
         autosize
         rows={2}
-        onChange={(value) => updateField(tid, index, { comment: value })}
+        onChange={(value) => updateField(tid, data.id, { comment: value })}
         onFocus={(e) => setEditField({ comment: e.target.value })}
         onBlur={(e) => {
           if (e.target.value === editField.comment) return;
