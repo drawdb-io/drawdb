@@ -11,7 +11,6 @@ import {
   IconMore,
   IconMinus,
   IconDeleteStroked,
-  IconKeyStroked,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
@@ -362,7 +361,7 @@ export default function Table(props) {
                   width="20" 
                   height="20" 
                   fill="#ff2222cc" 
-                  class="bi bi-key" 
+                  className="bi bi-key" 
                   viewBox="0 0 16 16"
                 >
                   <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 
@@ -379,7 +378,7 @@ export default function Table(props) {
                   width="20" 
                   height="20" 
                   fill="#2f68adcc" 
-                  class="bi bi-key" 
+                  className="bi bi-key" 
                   viewBox="0 0 16 16"
                 >
                   <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 
