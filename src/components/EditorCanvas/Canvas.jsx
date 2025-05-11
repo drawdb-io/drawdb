@@ -507,7 +507,7 @@ export default function Canvas() {
     }
     setDragging({
       element: ObjectType.NONE,
-      id: -1,
+      id: null,
       prevX: 0,
       prevY: 0,
       initialPositions: [],
@@ -589,7 +589,7 @@ export default function Canvas() {
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({
       element: ObjectType.NONE,
-      id: -1,
+      id: null,
       prevX: 0,
       prevY: 0,
       initialPositions: [],

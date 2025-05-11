@@ -80,7 +80,6 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             table.fields.push(field);
           } else if (d.resource === "constraint") {
             const relationship = {};
-            const startTableId = table.id;
             const startFieldName = d.constraint.columns[0];
             const endFieldName = d.constraint.reference.columns[0];
             const endTableName = d.constraint.reference.object.name;
@@ -98,7 +97,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             );
             if (!startField) return;
 
-            relationship.startTableId = startTableId;
+            relationship.startTableId = table.id;
             relationship.startFieldId = startField.id;
             relationship.endTableId = endTable.id;
             relationship.endFieldId = endField.id;
@@ -106,12 +105,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             relationship.name =
               d.name && Boolean(d.name.trim())
                 ? d.name
-                : "fk_" +
-                  table.name +
-                  "_" +
-                  startFieldName +
-                  "_" +
-                  endTableName;
+                : `fk_${table.name}_${startFieldName}_${endTableName}`;
             relationship.deleteConstraint =
               d.constraint.reference.on_delete &&
               Boolean(d.constraint.reference.on_delete.trim())

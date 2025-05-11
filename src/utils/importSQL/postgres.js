@@ -137,13 +137,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               const startField = table.find((f) => f.name === startFieldName);
               if (!startField) return;
 
-              relationship.name =
-                "fk_" +
-                startTableName +
-                "_" +
-                startFieldName +
-                "_" +
-                endTableName;
+              relationship.name = `fk_${startTableName}_${startFieldName}_${endTableName}`;
               relationship.startTableId = startTableId;
               relationship.endTableId = endTable.id;
               relationship.endFieldId = endField.id;

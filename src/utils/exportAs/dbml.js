@@ -65,7 +65,7 @@ export function toDBML(diagram) {
       (f) => f.id === rel.endFieldId,
     );
 
-    `Ref ${rel.name} {\n\t${startTableName}.${startFieldName} ${cardinality(rel)} ${endTableName}.${endFieldName} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
+    return `Ref ${rel.name} {\n\t${startTableName}.${startFieldName} ${cardinality(rel)} ${endTableName}.${endFieldName} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
   };
 
   return `${diagram.enums

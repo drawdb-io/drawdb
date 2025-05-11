@@ -145,7 +145,6 @@ export default function ControlPanel({
         }
       }
       setRedoStack((prev) => [...prev, a]);
-      console.log(a);
       return;
     }
 
@@ -660,7 +659,6 @@ export default function ControlPanel({
   const paste = () => {
     navigator.clipboard.readText().then((text) => {
       let obj = null;
-      console.log(text);
       try {
         obj = JSON.parse(text);
       } catch (error) {
@@ -1148,16 +1146,14 @@ export default function ControlPanel({
           setRedoStack([]);
 
           if (!diagramId) {
-            console.error("Something went wrong.");
+            Toast.error(t("oops_smth_went_wrong"));
             return;
           }
 
           db.table("diagrams")
             .delete(diagramId)
-            .then(() => {
-              console.info("Deleted diagram successfully.");
-            })
             .catch((error) => {
+              Toast.error(t("oops_smth_went_wrong"));
               console.error(
                 `Error deleting records with gistId '${diagramId}':`,
                 error,
