@@ -1,6 +1,7 @@
 import { Parser } from "@dbml/core";
 import { arrangeTables } from "../arrangeTables";
 import { Cardinality, Constraint } from "../../data/constants";
+import { nanoid } from "nanoid";
 
 const parser = new Parser();
 
@@ -14,7 +15,7 @@ export function fromDBML(src) {
   for (const schema of ast.schemas) {
     for (const table of schema.tables) {
       let parsedTable = {};
-      parsedTable.id = tables.length;
+      parsedTable.id = nanoid();
       parsedTable.name = table.name;
       parsedTable.comment = table.note ?? "";
       parsedTable.color = "#175e7a";
@@ -24,7 +25,7 @@ export function fromDBML(src) {
       for (const column of table.fields) {
         const field = {};
 
-        field.id = parsedTable.fields.length;
+        field.id = nanoid();
         field.name = column.name;
         field.type = column.type.type_name.toUpperCase();
         field.default = column.dbdefault ?? "";
@@ -76,7 +77,7 @@ export function fromDBML(src) {
       const relationship = {};
 
       relationship.name =
-        "fk_" + startTable + "_" + startField + "_" + endTable;
+        "fk_" + startTableName + "_" + startFieldName + "_" + endTableName;
       relationship.startTableId = startTable.id;
       relationship.endTableId = endTable.id;
       relationship.endFieldId = endField.id;
