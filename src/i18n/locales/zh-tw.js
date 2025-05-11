@@ -70,6 +70,7 @@ const zh_tw = {
     coordinate_space_diagram: "圖表",
     table_width: "表格寬度",
     language: "語言",
+    export_saved_data: "匯出儲存的資料",
     flush_storage: "清除儲存空間",
     are_you_sure_flush_storage:
       "您確定要清除儲存空間嗎？這將會永久刪除所有圖表和自訂範本。",
