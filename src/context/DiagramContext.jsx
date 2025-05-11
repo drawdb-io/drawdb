@@ -3,6 +3,7 @@ import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
 import { useTransform, useUndoRedo, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
+import { nanoid } from "nanoid";
 
 export const DiagramContext = createContext(null);
 
@@ -16,17 +17,18 @@ export default function DiagramContextProvider({ children }) {
   const { selectedElement, setSelectedElement } = useSelect();
 
   const addTable = (data, addToHistory = true) => {
+    const id = nanoid();
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
-        temp.splice(data.id, 0, data);
-        return temp.map((t, i) => ({ ...t, id: i }));
+        temp.splice(data.index, 0, data);
+        return temp;
       });
     } else {
       setTables((prev) => [
         ...prev,
         {
-          id: prev.length,
+          id,
           name: `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
@@ -41,13 +43,12 @@ export default function DiagramContextProvider({ children }) {
               notNull: true,
               increment: true,
               comment: "",
-              id: 0,
+              id: nanoid(),
             },
           ],
           comment: "",
           indices: [],
           color: defaultBlue,
-          key: Date.now(),
         },
       ]);
     }
@@ -55,6 +56,7 @@ export default function DiagramContextProvider({ children }) {
       setUndoStack((prev) => [
         ...prev,
         {
+          id: data ? data.id : id,
           action: Action.ADD,
           element: ObjectType.TABLE,
           message: t("add_table"),
@@ -66,48 +68,39 @@ export default function DiagramContextProvider({ children }) {
 
   const deleteTable = (id, addToHistory = true) => {
     if (addToHistory) {
-      Toast.success(t("table_deleted"));
       const rels = relationships.reduce((acc, r) => {
         if (r.startTableId === id || r.endTableId === id) {
           acc.push(r);
         }
         return acc;
       }, []);
+      const deletedTable = tables.find((t) => t.id === id);
+      const deletedTableIndex = tables.findIndex((t) => t.id === id);
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.TABLE,
-          data: { table: tables[id], relationship: rels },
-          message: t("delete_table", { tableName: tables[id].name }),
+          data: {
+            table: deletedTable,
+            relationship: rels,
+            index: deletedTableIndex,
+          },
+          message: t("delete_table", { tableName: deletedTable.name }),
         },
       ]);
       setRedoStack([]);
+      Toast.success(t("table_deleted"));
     }
-    setRelationships((prevR) => {
-      return prevR
-        .filter((e) => !(e.startTableId === id || e.endTableId === id))
-        .map((e, i) => {
-          const newR = { ...e };
-
-          if (e.startTableId > id) {
-            newR.startTableId = e.startTableId - 1;
-          }
-          if (e.endTableId > id) {
-            newR.endTableId = e.endTableId - 1;
-          }
-
-          return { ...newR, id: i };
-        });
-    });
-    setTables((prev) => {
-      return prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i }));
-    });
+    setRelationships((prevR) =>
+      prevR.filter((e) => !(e.startTableId === id || e.endTableId === id)),
+    );
+    setTables((prev) => prev.filter((e) => e.id !== id));
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
         ...prev,
         element: ObjectType.NONE,
-        id: -1,
+        id: null,
         open: false,
       }));
     }
@@ -121,12 +114,12 @@ export default function DiagramContextProvider({ children }) {
 
   const updateField = (tid, fid, updatedValues) => {
     setTables((prev) =>
-      prev.map((table, i) => {
-        if (tid === i) {
+      prev.map((table) => {
+        if (tid === table.id) {
           return {
             ...table,
-            fields: table.fields.map((field, j) =>
-              fid === j ? { ...field, ...updatedValues } : field,
+            fields: table.fields.map((field) =>
+              fid === field.id ? { ...field, ...updatedValues } : field,
             ),
           };
         }
@@ -136,6 +129,7 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
+    const { fields, name } = tables.find((t) => t.id === tid);
     if (addToHistory) {
       const rels = relationships.reduce((acc, r) => {
         if (
@@ -155,50 +149,28 @@ export default function DiagramContextProvider({ children }) {
           tid: tid,
           data: {
             field: field,
+            index: fields.findIndex((f) => f.id === field.id),
             relationship: rels,
           },
           message: t("edit_table", {
-            tableName: tables[tid].name,
+            tableName: name,
             extra: "[delete field]",
           }),
         },
       ]);
       setRedoStack([]);
     }
-    setRelationships((prev) => {
-      const temp = prev
-        .filter(
-          (e) =>
-            !(
-              (e.startTableId === tid && e.startFieldId === field.id) ||
-              (e.endTableId === tid && e.endFieldId === field.id)
-            ),
-        )
-        .map((e, i) => {
-          if (e.startTableId === tid && e.startFieldId > field.id) {
-            return {
-              ...e,
-              startFieldId: e.startFieldId - 1,
-              id: i,
-            };
-          }
-          if (e.endTableId === tid && e.endFieldId > field.id) {
-            return {
-              ...e,
-              endFieldId: e.endFieldId - 1,
-              id: i,
-            };
-          }
-          return { ...e, id: i };
-        });
-      return temp;
-    });
+    setRelationships((prev) =>
+      prev.filter(
+        (e) =>
+          !(
+            (e.startTableId === tid && e.startFieldId === field.id) ||
+            (e.endTableId === tid && e.endFieldId === field.id)
+          ),
+      ),
+    );
     updateTable(tid, {
-      fields: tables[tid].fields
-        .filter((e) => e.id !== field.id)
-        .map((t, i) => {
-          return { ...t, id: i };
-        }),
+      fields: fields.filter((e) => e.id !== field.id),
     });
   };
 

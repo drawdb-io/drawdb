@@ -83,10 +83,12 @@ export default function ImportDiagram({
 
     let ok = true;
     jsonObject.relationships.forEach((rel) => {
-      if (
-        !jsonObject.tables[rel.startTableId] ||
-        !jsonObject.tables[rel.endTableId]
-      ) {
+      const startTable = jsonObject.tables.find(
+        (t) => t.id === rel.startTableId,
+      );
+      const endTable = jsonObject.tables.find((t) => t.id === rel.endTableId);
+
+      if (!startTable || !endTable) {
         setError({
           type: STATUS.ERROR,
           message: `Relationship ${rel.name} references a table that does not exist.`,
@@ -96,8 +98,8 @@ export default function ImportDiagram({
       }
 
       if (
-        !jsonObject.tables[rel.startTableId].fields[rel.startFieldId] ||
-        !jsonObject.tables[rel.endTableId].fields[rel.endFieldId]
+        !startTable.fields.find((f) => f.id === rel.startFieldId) ||
+        !endTable.fields.find((f) => f.id === rel.endFieldId)
       ) {
         setError({
           type: STATUS.ERROR,

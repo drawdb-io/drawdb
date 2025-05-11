@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
@@ -47,27 +48,23 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
   ) => {
     const relationship = {};
     const endTableName = referenceDefinition.table[0].table;
-    const endField = referenceDefinition.definition[0].column;
+    const endFieldName = referenceDefinition.definition[0].column;
 
-    const endTableId = tables.findIndex((t) => t.name === endTableName);
-    if (endTableId === -1) return;
+    const endTable = tables.find((t) => t.name === endTableName);
+    if (!endTable) return;
 
-    const endFieldId = tables[endTableId].fields.findIndex(
-      (f) => f.name === endField,
-    );
-    if (endFieldId === -1) return;
+    const endField = endTable.fields.findIndex((f) => f.name === endFieldName);
+    if (!endField) return;
 
-    const startFieldId = startTable.fields.findIndex(
-      (f) => f.name === startFieldName,
-    );
-    if (startFieldId === -1) return;
+    const startField = startTable.fields.find((f) => f.name === startFieldName);
+    if (!startField) return;
 
     relationship.name =
       "fk_" + startTable.name + "_" + startFieldName + "_" + endTableName;
     relationship.startTableId = startTable.id;
-    relationship.endTableId = endTableId;
-    relationship.endFieldId = endFieldId;
-    relationship.startFieldId = startFieldId;
+    relationship.endTableId = endTable.id;
+    relationship.endFieldId = endField.id;
+    relationship.startFieldId = startField.id;
     let updateConstraint = "No action";
     let deleteConstraint = "No action";
     referenceDefinition.on_action.forEach((c) => {
@@ -85,7 +82,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     relationship.updateConstraint = updateConstraint;
     relationship.deleteConstraint = deleteConstraint;
 
-    if (startTable.fields[startFieldId].unique) {
+    if (startField.unique) {
       relationship.cardinality = Cardinality.ONE_TO_ONE;
     } else {
       relationship.cardinality = Cardinality.MANY_TO_ONE;
@@ -102,10 +99,11 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.id = tables.length;
+        table.id = nanoid();
         e.create_definitions.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
+            field.id = nanoid();
             field.name = d.column.column;
 
             let type = d.definition.dataType;
@@ -191,28 +189,22 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             }
           }
         });
-        table.fields.forEach((f, j) => {
-          f.id = j;
-        });
         tables.push(table);
       } else if (e.keyword === "index") {
-        const index = {};
-        index.name = e.index;
-        index.unique = false;
-        if (e.index_type === "unique") index.unique = true;
-        index.fields = [];
-        e.index_columns.forEach((f) => index.fields.push(f.column));
+        const index = {
+          name: e.index,
+          unique: e.index_type === "unique",
+          fields: e.index_columns.map((f) => f.column),
+        };
 
-        let found = -1;
-        tables.forEach((t, i) => {
-          if (found !== -1) return;
-          if (t.name === e.table.table) {
-            t.indices.push(index);
-            found = i;
-          }
-        });
+        const table = tables.find((t) => t.name === e.table.table);
 
-        if (found !== -1) tables[found].indices.forEach((i, j) => (i.id = j));
+        if (table) {
+          table.indices.push(index);
+          table.indices.forEach((i, j) => {
+            i.id = j;
+          });
+        }
       }
     }
   };
