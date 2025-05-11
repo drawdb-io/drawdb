@@ -14,6 +14,7 @@ import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { SortableList } from "../../SortableList/SortableList";
+import { nanoid } from "nanoid";
 
 export default function TableInfo({ data }) {
   const { t } = useTranslation();
@@ -200,6 +201,7 @@ export default function TableInfo({ data }) {
           </Button>
           <Button
             onClick={() => {
+              const id = nanoid();
               setUndoStack((prev) => [
                 ...prev,
                 {
@@ -207,6 +209,7 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "field_add",
                   tid: data.id,
+                  fid: id,
                   message: t("edit_table", {
                     tableName: data.name,
                     extra: "[add field]",
@@ -218,6 +221,7 @@ export default function TableInfo({ data }) {
                 fields: [
                   ...data.fields,
                   {
+                    id,
                     name: "",
                     type: "",
                     default: "",
@@ -227,7 +231,6 @@ export default function TableInfo({ data }) {
                     notNull: false,
                     increment: false,
                     comment: "",
-                    id: data.fields.length,
                   },
                 ],
               });

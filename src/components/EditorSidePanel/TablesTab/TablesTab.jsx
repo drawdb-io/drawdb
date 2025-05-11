@@ -40,7 +40,7 @@ export default function TablesTab() {
             setSelectedElement((prev) => ({
               ...prev,
               open: true,
-              id: parseInt(k),
+              id: k[0],
               element: ObjectType.TABLE,
             }))
           }

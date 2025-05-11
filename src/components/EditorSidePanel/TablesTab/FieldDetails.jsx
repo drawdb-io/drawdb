@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { databases } from "../../../data/databases";
 
-export default function FieldDetails({ data, tid, index }) {
+export default function FieldDetails({ data, tid }) {
   const { t } = useTranslation();
   const { tables, database } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -41,7 +41,7 @@ export default function FieldDetails({ data, tid, index }) {
               element: ObjectType.TABLE,
               component: "field",
               tid: tid,
-              fid: index,
+              fid: data.id,
               undo: editField,
               redo: { default: e.target.value },
               message: t("edit_table", {
@@ -81,7 +81,7 @@ export default function FieldDetails({ data, tid, index }) {
                   element: ObjectType.TABLE,
                   component: "field",
                   tid: tid,
-                  fid: index,
+                  fid: data.id,
                   undo: editField,
                   redo: { values: data.values },
                   message: t("edit_table", {
@@ -113,7 +113,7 @@ export default function FieldDetails({ data, tid, index }) {
                   element: ObjectType.TABLE,
                   component: "field",
                   tid: tid,
-                  fid: index,
+                  fid: data.id,
                   undo: editField,
                   redo: { size: e.target.value },
                   message: t("edit_table", {
@@ -150,7 +150,7 @@ export default function FieldDetails({ data, tid, index }) {
                   element: ObjectType.TABLE,
                   component: "field",
                   tid: tid,
-                  fid: index,
+                  fid: data.id,
                   undo: editField,
                   redo: { size: e.target.value },
                   message: t("edit_table", {
@@ -183,7 +183,7 @@ export default function FieldDetails({ data, tid, index }) {
                   element: ObjectType.TABLE,
                   component: "field",
                   tid: tid,
-                  fid: index,
+                  fid: data.id,
                   undo: editField,
                   redo: { check: e.target.value },
                   message: t("edit_table", {
@@ -211,7 +211,7 @@ export default function FieldDetails({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: {
                   [checkedValues.target.value]: !checkedValues.target.checked,
                 },
@@ -243,7 +243,7 @@ export default function FieldDetails({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: {
                   [checkedValues.target.value]: !checkedValues.target.checked,
                 },
@@ -278,7 +278,7 @@ export default function FieldDetails({ data, tid, index }) {
                   element: ObjectType.TABLE,
                   component: "field",
                   tid: tid,
-                  fid: index,
+                  fid: data.id,
                   undo: {
                     [checkedValues.target.value]: !checkedValues.target.checked,
                   },
@@ -315,7 +315,7 @@ export default function FieldDetails({ data, tid, index }) {
                     element: ObjectType.TABLE,
                     component: "field",
                     tid: tid,
-                    fid: index,
+                    fid: data.id,
                     undo: {
                       [checkedValues.target.value]:
                         !checkedValues.target.checked,
@@ -356,7 +356,7 @@ export default function FieldDetails({ data, tid, index }) {
               element: ObjectType.TABLE,
               component: "field",
               tid: tid,
-              fid: index,
+              fid: data.id,
               undo: editField,
               redo: { comment: e.target.value },
               message: t("edit_table", {

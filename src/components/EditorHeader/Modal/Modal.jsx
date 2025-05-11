@@ -59,8 +59,7 @@ export default function Modal({
   importFrom,
 }) {
   const { t, i18n } = useTranslation();
-  const { tables, setTables, setRelationships, database, setDatabase } =
-    useDiagram();
+  const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -182,15 +181,10 @@ export default function Modal({
         setUndoStack([]);
         setRedoStack([]);
       } else {
-        const initialTablesLength = tables.length;
-        setTables((prev) =>
-          [...prev, ...diagramData.tables].map((t, i) => ({ ...t, id: i })),
-        );
+        setTables((prev) => [...prev, ...diagramData.tables]);
         setRelationships((prev) =>
           [...prev, ...diagramData.relationships].map((r, i) => ({
             ...r,
-            startTableId: initialTablesLength + r.startTableId,
-            endTableId: initialTablesLength + r.endTableId,
             id: i,
           })),
         );

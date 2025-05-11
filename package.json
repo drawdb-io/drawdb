@@ -32,6 +32,7 @@
     "jspdf": "^3.0.1",
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
+    "nanoid": "^5.1.5",
     "node-sql-parser": "^5.3.8",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",

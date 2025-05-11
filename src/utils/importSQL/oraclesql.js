@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
@@ -33,10 +34,11 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.id = tables.length;
+        table.id = nanoid();
         e.table.relational_properties.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
+            field.id = nanoid();
             field.name = d.name;
 
             let type = d.type.type.toUpperCase();
@@ -104,7 +106,12 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             relationship.name =
               d.name && Boolean(d.name.trim())
                 ? d.name
-                : "fk_" + table.name + "_" + startFieldName + "_" + endTableName;
+                : "fk_" +
+                  table.name +
+                  "_" +
+                  startFieldName +
+                  "_" +
+                  endTableName;
             relationship.deleteConstraint =
               d.constraint.reference.on_delete &&
               Boolean(d.constraint.reference.on_delete.trim())

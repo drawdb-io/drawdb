@@ -38,7 +38,7 @@ export default function TableField({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: editField,
                 redo: { name: e.target.value },
                 message: t("edit_table", {
@@ -81,7 +81,7 @@ export default function TableField({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: { type: data.type },
                 redo: { type: value },
                 message: t("edit_table", {
@@ -148,7 +148,7 @@ export default function TableField({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: { notNull: data.notNull },
                 redo: { notNull: !data.notNull },
                 message: t("edit_table", {
@@ -177,7 +177,7 @@ export default function TableField({ data, tid, index }) {
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
-                fid: index,
+                fid: data.id,
                 undo: { primary: data.primary },
                 redo: { primary: !data.primary },
                 message: t("edit_table", {
@@ -196,7 +196,7 @@ export default function TableField({ data, tid, index }) {
         <Popover
           content={
             <div className="px-1 w-[240px] popover-theme">
-              <FieldDetails data={data} index={index} tid={tid} />
+              <FieldDetails data={data} tid={tid} />
             </div>
           }
           trigger="click"

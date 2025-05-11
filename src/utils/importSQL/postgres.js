@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
@@ -32,10 +33,11 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.id = tables.length;
+        table.id = nanoid();
         e.create_definitions.forEach((d) => {
           const field = {};
           if (d.resource === "column") {
+            field.id = nanoid();
             field.name = d.column.column.expr.value;
 
             let type = types.find((t) =>

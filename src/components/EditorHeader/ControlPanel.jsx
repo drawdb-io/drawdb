@@ -78,6 +78,7 @@ import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
+import { nanoid } from "nanoid";
 
 export default function ControlPanel({
   diagramId,
@@ -150,7 +151,7 @@ export default function ControlPanel({
 
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        deleteTable(tables[tables.length - 1].id, false);
+        deleteTable(a.id, false);
       } else if (a.element === ObjectType.AREA) {
         deleteArea(areas[areas.length - 1].id, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -165,10 +166,8 @@ export default function ControlPanel({
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
       if (a.element === ObjectType.TABLE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
+        const { x, y } = tables.find((t) => t.id === a.id);
+        setRedoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setRedoStack((prev) => [
@@ -205,6 +204,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.undo);
       } else if (a.element === ObjectType.TABLE) {
+        const table = tables.find((t) => t.id === a.tid);
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
         } else if (a.component === "field_delete") {
@@ -213,65 +213,24 @@ export default function ControlPanel({
             a.data.relationship.forEach((r) => {
               temp.splice(r.id, 0, r);
             });
-            temp = temp.map((e, i) => {
-              const recoveredRel = a.data.relationship.find(
-                (x) =>
-                  (x.startTableId === e.startTableId &&
-                    x.startFieldId === e.startFieldId) ||
-                  (x.endTableId === e.endTableId &&
-                    x.endFieldId === a.endFieldId),
-              );
-              if (
-                e.startTableId === a.tid &&
-                e.startFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  startFieldId: e.startFieldId + 1,
-                };
-              }
-              if (
-                e.endTableId === a.tid &&
-                e.endFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  endFieldId: e.endFieldId + 1,
-                };
-              }
-              return { ...e, id: i };
-            });
             return temp;
           });
-          setTables((prev) =>
-            prev.map((t) => {
-              if (t.id === a.tid) {
-                const temp = t.fields.slice();
-                temp.splice(a.data.field.id, 0, a.data.field);
-                return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
-              }
-              return t;
-            }),
-          );
+          const updatedFields = table.fields.slice();
+          updatedFields.splice(a.data.index, 0, a.data.field);
+          updateTable(a.tid, { fields: updatedFields });
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
-            fields: tables[a.tid].fields
-              .filter((e) => e.id !== tables[a.tid].fields.length - 1)
-              .map((t, i) => ({ ...t, id: i })),
+            fields: table.fields.filter((e) => e.id !== a.fid),
           });
         } else if (a.component === "index_add") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices
-              .filter((e) => e.id !== tables[a.tid].indices.length - 1)
+            indices: table.indices
+              .filter((e) => e.id !== table.indices.length - 1)
               .map((t, i) => ({ ...t, id: i })),
           });
         } else if (a.component === "index") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices.map((index) =>
+            indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
                     ...index,
@@ -281,19 +240,11 @@ export default function ControlPanel({
             ),
           });
         } else if (a.component === "index_delete") {
-          setTables((prev) =>
-            prev.map((table) => {
-              if (table.id === a.tid) {
-                const temp = table.indices.slice();
-                temp.splice(a.data.id, 0, a.data);
-                return {
-                  ...table,
-                  indices: temp.map((t, i) => ({ ...t, id: i })),
-                };
-              }
-              return table;
-            }),
-          );
+          const updatedIndices = table.indices.slice();
+          updatedIndices.splice(a.data.id, 0, a.data);
+          updateTable(a.tid, {
+            indices: updatedIndices.map((t, i) => ({ ...t, id: i })),
+          });
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
         }
@@ -390,10 +341,8 @@ export default function ControlPanel({
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
       if (a.element === ObjectType.TABLE) {
-        setUndoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
+        const { x, y } = tables.find((t) => t.id == a.id);
+        setUndoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setUndoStack((prev) => [
@@ -429,6 +378,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.redo);
       } else if (a.element === ObjectType.TABLE) {
+        const table = tables.find((t) => t.id === a.tid);
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.redo);
         } else if (a.component === "field_delete") {
@@ -436,7 +386,7 @@ export default function ControlPanel({
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: [
-              ...tables[a.tid].fields,
+              ...table.fields,
               {
                 name: "",
                 type: "",
@@ -447,32 +397,24 @@ export default function ControlPanel({
                 notNull: false,
                 increment: false,
                 comment: "",
-                id: tables[a.tid].fields.length,
+                id: nanoid(),
               },
             ],
           });
         } else if (a.component === "index_add") {
-          setTables((prev) =>
-            prev.map((table) => {
-              if (table.id === a.tid) {
-                return {
-                  ...table,
-                  indices: [
-                    ...table.indices,
-                    {
-                      id: table.indices.length,
-                      name: `index_${table.indices.length}`,
-                      fields: [],
-                    },
-                  ],
-                };
-              }
-              return table;
-            }),
-          );
+          updateTable(a.tid, {
+            indices: [
+              ...table.indices,
+              {
+                id: table.indices.length,
+                name: `index_${table.indices.length}`,
+                fields: [],
+              },
+            ],
+          });
         } else if (a.component === "index") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices.map((index) =>
+            indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
                     ...index,
@@ -483,7 +425,7 @@ export default function ControlPanel({
           });
         } else if (a.component === "index_delete") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices
+            indices: table.indices
               .filter((e) => e.id !== a.data.id)
               .map((t, i) => ({ ...t, id: i })),
           });

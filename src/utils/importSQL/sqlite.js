@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
@@ -98,10 +99,11 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.id = tables.length;
+        table.id = nanoid();
         e.create_definitions.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
+            field.id = nanoid();
             field.name = d.column.column;
 
             let type = d.definition.dataType;
@@ -186,9 +188,6 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
               );
             }
           }
-        });
-        table.fields.forEach((f, j) => {
-          f.id = j;
         });
         tables.push(table);
       } else if (e.keyword === "index") {

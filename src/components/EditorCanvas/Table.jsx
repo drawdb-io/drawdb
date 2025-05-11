@@ -22,7 +22,7 @@ import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
-  const [hoveredField, setHoveredField] = useState(-1);
+  const [hoveredField, setHoveredField] = useState(null);
   const { database } = useDiagram();
   const {
     tableData,
@@ -45,9 +45,10 @@ export default function Table(props) {
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+
   const isSelected = useMemo(() => {
     return (
-      (selectedElement.id === tableData.id &&
+      (selectedElement.id == tableData.id &&
         selectedElement.element === ObjectType.TABLE) ||
       bulkSelectedElements.some(
         (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
@@ -124,7 +125,7 @@ export default function Table(props) {
                   onClick={openEditor}
                 />
                 <Popover
-                  key={tableData.key}
+                  key={tableData.id}
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
@@ -304,13 +305,17 @@ export default function Table(props) {
           setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
-            field: fieldData.id,
+            fieldId: fieldData.id,
           });
         }}
         onPointerLeave={(e) => {
           if (!e.isPrimary) return;
 
-          setHoveredField(-1);
+          setHoveredField(null);
+          setHoveredTable({
+            tableId: null,
+            fieldId: null,
+          });
         }}
         onPointerDown={(e) => {
           // Required for onPointerLeave to trigger when a touch pointer leaves
