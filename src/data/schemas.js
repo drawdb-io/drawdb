@@ -1,7 +1,7 @@
 export const tableSchema = {
   type: "object",
   properties: {
-    id: { type: "integer" },
+    id: { type: ["integer", "string"] },
     name: { type: "string" },
     x: { type: "number" },
     y: { type: "number" },
@@ -10,6 +10,7 @@ export const tableSchema = {
       items: {
         type: "object",
         properties: {
+          id: { type: ["integer", "string"] },
           name: { type: "string" },
           type: { type: "string" },
           default: { type: "string" },
@@ -23,6 +24,7 @@ export const tableSchema = {
           values: { type: "array", items: { type: "string" } },
         },
         required: [
+          "id",
           "name",
           "type",
           "default",
@@ -131,10 +133,10 @@ export const jsonSchema = {
       items: {
         type: "object",
         properties: {
-          startTableId: { type: "integer" },
-          startFieldId: { type: "integer" },
-          endTableId: { type: "integer" },
-          endFieldId: { type: "integer" },
+          startTableId: { type: ["integer", "string"] },
+          startFieldId: { type: ["integer", "string"] },
+          endTableId: { type: ["integer", "string"] },
+          endFieldId: { type: ["integer", "string"] },
           name: { type: "string" },
           cardinality: { type: "string" },
           updateConstraint: { type: "string" },
