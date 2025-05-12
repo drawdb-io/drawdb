@@ -373,8 +373,11 @@ export default function Table(props) {
           ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span>?</span>}
-              <span>
+              {!fieldData.notNull && <span style={{fontFamily: 'monospace'}}>NULL</span>}
+              <span style={{
+                color: dbToTypes[database][fieldData.type].color,
+                fontFamily: 'monospace'
+                }}>
                 {fieldData.type +
                   ((dbToTypes[database][fieldData.type].isSized ||
                     dbToTypes[database][fieldData.type].hasPrecision) &&
