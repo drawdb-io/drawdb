@@ -421,26 +421,19 @@ export default function Canvas() {
 
   const handleLinking = () => {
     if (hoveredTable.tableId < 0) return;
-    // if (hoveredTable.field < 0) return;
-
+    // Get the childTable and parentTable
     const childTable = tables.find((t) => t.id === hoveredTable.tableId);
     const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
-    const parentFields = parentTable.fields.filter((field) => field.primary)
-    // const parentField = parentTable.fields[linkingLine.startFieldId];
-
+    const parentFields = parentTable.fields.filter((field) => field.primary);
+  
     if (parentFields.length === 0) {
       Toast.info(t("no_primary_key"));
       return;
     }
     // If the relationship is recursive
     const recursiveRelation = parentTable === childTable;
-    if(!recursiveRelation){
-      if (
-        !areFieldsCompatible(
-          parentFields,
-          childTable,
-        )
-      ) {
+    if (!recursiveRelation) {
+      if (!areFieldsCompatible(parentFields, childTable)) {
         Toast.info(t("duplicate_field_name"));
         return;
       }
@@ -455,6 +448,8 @@ export default function Canvas() {
       Toast.info(t("duplicate_relationship"));
       return;
     }
+  
+    // Generate new fields for the childTable
     const newFields = parentFields.map((field, index) => ({
       name: recursiveRelation ? "" : field.name,
       type: field.type,
@@ -473,16 +468,21 @@ export default function Canvas() {
       },
       id: childTable.fields.length + index, // Ensure IDs are unique
     }));
-    
-    // Update the table child with all fields
+  
+    // Concatenate the existing fields with the new fields
+    const updatedChildFields = [...childTable.fields, ...newFields];
+  
+    // Update the childTable with the new fields
     updateTable(childTable.id, {
-      fields: [...childTable.fields, ...newFields],
+      fields: updatedChildFields,
     });
-
+  
+    // Use the updated childTable fields to create the new relationship
     const newRelationship = {
       ...linkingLine,
       endTableId: childTable.id,
-      endFieldId: childTable.fields.length, // The new field is the last one
+      // The new fields are added at the end of the childTable fields
+      endFieldId: updatedChildFields.length - 1,
       startTableId: parentTable.id,
       startFieldId: parentFields[0].id,
       Cardinality: Cardinality.ONE_TO_ONE,
@@ -491,10 +491,12 @@ export default function Canvas() {
       name: `fk_${parentTable.name}_${parentFields[0].name}`,
       id: relationships.length,
     };
+
     delete newRelationship.startX;
     delete newRelationship.startY;
     delete newRelationship.endX;
     delete newRelationship.endY;
+    // Add the new relationship to the relationships array
     addRelationship(newRelationship);
     setLinking(false);
   };
