@@ -210,7 +210,11 @@ export default function Table(props) {
                       style={{ direction: "ltr" }}
                     >
                       <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4">
+                      <p
+                        className={
+                          "ms-4 font-mono " + dbToTypes[database][e.type].color
+                        }
+                      >
                         {e.type +
                           ((dbToTypes[database][e.type].isSized ||
                             dbToTypes[database][e.type].hasPrecision) &&
