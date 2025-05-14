@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useSettings } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ export default function DiagramContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { settings } = useSettings();
 
   const addTable = (data, addToHistory = true) => {
     if (data) {
@@ -30,6 +31,7 @@ export default function DiagramContextProvider({ children }) {
           name: `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
+          width: settings.tableWidth,
           fields: [
             {
               name: "id",

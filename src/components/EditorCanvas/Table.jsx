@@ -61,6 +61,7 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
+
   const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
   return (
     <>
@@ -68,7 +69,8 @@ export default function Table(props) {
         key={tableData.id}
         x={tableData.x}
         y={tableData.y}
-        width={settings.tableWidth}
+        // width={settings.tableWidth}
+        width={tableData.width || settings.tableWidth}
         height={height}
         className="group drop-shadow-lg  cursor-move"
         onPointerDown={onPointerDown}
@@ -302,7 +304,7 @@ export default function Table(props) {
             (fieldData.primary && settings.notation !== "default" && index ===primaryKeyCount - 1)
               ? "border-b border-gray-400"
               : ""
-            } 
+            }
           ${
           (!fieldData.primary && settings.notation !== "default" )
             ? "border-l border-r"
@@ -418,7 +420,7 @@ export default function Table(props) {
                       : "")}
                 </span>
                 {!fieldData.notNull && <span>NULL</span>}
-                {fieldData.notNull && <span>NOT NULL</span>}  
+                {fieldData.notNull && <span>NOT NULL</span>}
                 </>
               ) : (
                 <>

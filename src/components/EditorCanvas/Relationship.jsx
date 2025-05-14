@@ -169,7 +169,9 @@ export default function Relationship({ data }) {
                 y: tables[data.endTableId].y,
               },
             },
-            settings.tableWidth,
+            // settings.tableWidth,
+            tables[data.startTableId].width,
+            tables[data.endTableId].width
           )}
           stroke="gray"
           className="group-hover:stroke-sky-700"
