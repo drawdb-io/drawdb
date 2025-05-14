@@ -163,7 +163,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
           }
         });
 
-        e.table_options.forEach((opt) => {
+        e.table_options?.forEach((opt) => {
           if (opt.keyword === "comment") {
             table.comment = opt.value.replace(/^["']|["']$/g, "");
           }
