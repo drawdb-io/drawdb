@@ -29,6 +29,21 @@ import { areFieldsCompatible } from "../../utils/utils";
 export default function Canvas() {
   const { t } = useTranslation();
 
+  const [isAreaSelecting, setIsAreaSelecting] = useState(false);
+  const [selectionArea, setSelectionArea] = useState({
+    startX: 0,
+    startY: 0,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  
+  const [dragStart, setDragStart] = useState({
+    x: 0,
+    y: 0,
+  });
+  
   const canvasRef = useRef(null);
   const canvasContextValue = useCanvas();
   const {
@@ -92,6 +107,18 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    // Alt + left click to select a group of elements
+    // if (e.altKey && e.button === 0) {
+    //   setSelectedElement((prev) => ({
+    //     ...prev,
+    //     element: type,
+    //     id: id,
+    //     open: false,
+    //   }));
+    //   return; // Don't start dragging or other actions
+    // }
+    
+
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setGrabOffset({
@@ -144,6 +171,20 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
+    
+    if (isAreaSelecting) {
+      const currentX = pointer.spaces.diagram.x;
+      const currentY = pointer.spaces.diagram.y;
+      setSelectionArea((prev) => ({
+        ...prev,
+        x: Math.min(prev.startX, currentX),
+        y: Math.min(prev.startY, currentY),
+        width: Math.abs(currentX - prev.startX),
+        height: Math.abs(currentY - prev.startY),
+      }));
+      // Solo se actualiza el área, sin finalizarla aún.
+      return;
+    }
 
     if (linking) {
       setLinkingLine({
@@ -170,11 +211,24 @@ export default function Canvas() {
             (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
-    } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
-      updateTable(dragging.id, {
-        x: pointer.spaces.diagram.x + grabOffset.x,
-        y: pointer.spaces.diagram.y + grabOffset.y,
-      });
+    } else if (dragging.element === ObjectType.TABLE) {
+      if (Array.isArray(dragging.id)) {
+        const deltaX = pointer.spaces.diagram.x - dragStart.x;
+        const deltaY = pointer.spaces.diagram.y - dragStart.y;
+        dragging.id.forEach((tableId) => {
+          const initPos = dragging.initialPositions[tableId];
+          updateTable(tableId, {
+            x: initPos.x + deltaX,
+            y: initPos.y + deltaY,
+          });
+        });
+      } else {
+        // Mover tabla individual (ya implementado)
+        updateTable(dragging.id, {
+          x: pointer.spaces.diagram.x + grabOffset.x,
+          y: pointer.spaces.diagram.y + grabOffset.y,
+        });
+      }
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
@@ -235,6 +289,20 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    // If pressing Alt + left click, start area selection
+    if (e.altKey && e.button === 0) {
+      setIsAreaSelecting(true);
+      setSelectionArea({
+          startX: pointer.spaces.diagram.x,
+          startY: pointer.spaces.diagram.y,
+          x: pointer.spaces.diagram.x,
+          y: pointer.spaces.diagram.y,
+          width: 0,
+          height: 0,
+      });
+      return;
+  }
+
     // don't pan if the sidesheet for editing a table is open
     if (
       selectedElement.element === ObjectType.TABLE &&
@@ -254,6 +322,15 @@ export default function Canvas() {
   };
 
   const coordsDidUpdate = (element) => {
+    // multiple selection
+    if (Array.isArray(dragging.id)) {
+      return dragging.id.some((id) => {
+        const table = tables.find((t) => t.id === id);
+        const initPos = dragging.initialPositions?.[id];
+        return table && initPos ? !(initPos.x === table.x && initPos.y === table.y) : false;
+      });
+    }
+
     switch (element) {
       case ObjectType.TABLE:
         return !(
@@ -319,6 +396,43 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
+
+    if (isAreaSelecting) {
+      const areaBBox = selectionArea;
+      const selectedTables = tables.filter((table) => {
+        return (
+          table.x >= areaBBox.x &&
+          table.x <= areaBBox.x + areaBBox.width &&
+          table.y >= areaBBox.y &&
+          table.y <= areaBBox.y + areaBBox.height
+        );
+      });
+      console.log("Selected tables: ", selectedTables);
+      if (selectedTables.length > 0) {
+        setSelectedElement({
+          ...selectedElement,
+          element: ObjectType.TABLE,
+          id: selectedTables.map((t) => t.id),
+          open: false,
+        });
+        // Inicia drag si lo requieres
+        setDragging({
+          element: ObjectType.TABLE,
+          id: selectedTables.map((t) => t.id),
+          initialPositions: selectedTables.reduce((acc, t) => {
+            acc[t.id] = { x: t.x, y: t.y };
+            return acc;
+          }, {}),
+        });
+        // set start point for dragging
+        setDragStart({
+          x: pointer.spaces.diagram.x,
+          y: pointer.spaces.diagram.y,
+        })
+      }
+      setIsAreaSelecting(false);
+      return;
+    }
 
     if (coordsDidUpdate(dragging.element)) {
       const info = getMovedElementDetails();
@@ -491,6 +605,18 @@ export default function Canvas() {
     { passive: false },
   );
 
+  useEventListener("keyup", (e) => {
+    if (e.key === "Alt") {
+      // Desactiva el modo de selección de área
+      setIsAreaSelecting(false);
+      // Resetea dragging para que deje de mover elementos
+      setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+      // También desactiva el panning en caso de que se estuviera moviendo
+      setPanning((prev) => ({ ...prev, isPanning: false }));
+      // Opcional: restablece el cursor a default
+      pointer.setStyle("default");
+    }
+  });
   const theme = localStorage.getItem("theme");
 
   return (
@@ -555,18 +681,38 @@ export default function Canvas() {
           {relationships.map((e, i) => (
             <Relationship key={i} data={e} />
           ))}
-          {tables.map((table) => (
-            <Table
-              key={table.id}
-              tableData={table}
-              setHoveredTable={setHoveredTable}
-              handleGripField={handleGripField}
-              setLinkingLine={setLinkingLine}
-              onPointerDown={(e) =>
-                handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
-              }
+          {tables.map((table) => {
+            const isMoving =
+              dragging.element === ObjectType.TABLE &&
+              (Array.isArray(dragging.id)
+                ? dragging.id.includes(table.id)
+                : dragging.id === table.id);
+            return (
+              <Table
+                key={table.id}
+                tableData={table}
+                moving={isMoving} // nueva prop
+                setHoveredTable={setHoveredTable}
+                handleGripField={handleGripField}
+                setLinkingLine={setLinkingLine}
+                onPointerDown={(e) =>
+                  handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
+                }
+              />
+            );
+          })}
+          {/*Draw the selection areas*/
+          isAreaSelecting && (
+            <rect
+              x={selectionArea.x}
+              y={selectionArea.y}
+              width={selectionArea.width}
+              height={selectionArea.height}
+              fill="rgba(99, 152, 191, 0.3)"
+              stroke="rgb(99, 152, 191)"
+              strokeWidth="2"
             />
-          ))}
+          )}
           {linking && (
             <path
               d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
