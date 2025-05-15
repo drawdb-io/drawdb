@@ -300,9 +300,13 @@ export default function Table(props) {
           ${(tableData.fields.length === 1 && settings.notation === Notation.DEFAULT)
             ? "rounded-b-md"
             : ""
-          }${(tableData.fields.length === 1 && settings.notation !== Notation.DEFAULT)
-            ? "border-l border-r border-gray-400"
-            : ""
+          }${(settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
+              ? (
+                  primaryKeyCount === tableData.fields.length
+                    ? "border-l border-r border-b border-gray-400"
+                    : "border-b border-gray-400"
+                )
+              : ""
           }${
           (fieldData.primary && settings.notation !== Notation.DEFAULT && primaryKeyCount === 1)
             ? "border-b border-gray-400"
