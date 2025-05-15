@@ -661,7 +661,7 @@ export default function ControlPanel({
       let obj = null;
       try {
         obj = JSON.parse(text);
-      } catch (error) {
+      } catch {
         return;
       }
       const v = new Validator();
