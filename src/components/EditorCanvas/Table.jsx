@@ -81,7 +81,6 @@ export default function Table(props) {
               ? "bg-zinc-100 text-zinc-800"
               : "bg-zinc-800 text-zinc-200"
           } ${
-            // Si se está moviendo, fuerza borde punteado azul
             moving
               ? "border-dashed border-blue-500"
               : selectedElement.id === tableData.id &&

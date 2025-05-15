@@ -106,19 +106,7 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
-
-    // Alt + left click to select a group of elements
-    // if (e.altKey && e.button === 0) {
-    //   setSelectedElement((prev) => ({
-    //     ...prev,
-    //     element: type,
-    //     id: id,
-    //     open: false,
-    //   }));
-    //   return; // Don't start dragging or other actions
-    // }
     
-
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
       setGrabOffset({
@@ -182,7 +170,7 @@ export default function Canvas() {
         width: Math.abs(currentX - prev.startX),
         height: Math.abs(currentY - prev.startY),
       }));
-      // Solo se actualiza el área, sin finalizarla aún.
+      // Only update the area, without finalizing it yet.
       return;
     }
 
@@ -223,7 +211,7 @@ export default function Canvas() {
           });
         });
       } else {
-        // Mover tabla individual (ya implementado)
+        // Move table individually
         updateTable(dragging.id, {
           x: pointer.spaces.diagram.x + grabOffset.x,
           y: pointer.spaces.diagram.y + grabOffset.y,
@@ -415,7 +403,7 @@ export default function Canvas() {
           id: selectedTables.map((t) => t.id),
           open: false,
         });
-        // Inicia drag si lo requieres
+        // Start dragging
         setDragging({
           element: ObjectType.TABLE,
           id: selectedTables.map((t) => t.id),
@@ -607,13 +595,13 @@ export default function Canvas() {
 
   useEventListener("keyup", (e) => {
     if (e.key === "Alt") {
-      // Desactiva el modo de selección de área
+      // deactivate area selection
       setIsAreaSelecting(false);
-      // Resetea dragging para que deje de mover elementos
+      // reset dragging mode
       setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-      // También desactiva el panning en caso de que se estuviera moviendo
+      // also deactivate panning in case it was moving
       setPanning((prev) => ({ ...prev, isPanning: false }));
-      // Opcional: restablece el cursor a default
+      // optional restart cursor to default
       pointer.setStyle("default");
     }
   });
@@ -691,7 +679,7 @@ export default function Canvas() {
               <Table
                 key={table.id}
                 tableData={table}
-                moving={isMoving} // nueva prop
+                moving={isMoving} 
                 setHoveredTable={setHoveredTable}
                 handleGripField={handleGripField}
                 setLinkingLine={setLinkingLine}
