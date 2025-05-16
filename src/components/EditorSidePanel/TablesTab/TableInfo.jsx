@@ -15,8 +15,7 @@ import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
-import { TransformContext } from "../../../context/TransformContext";
-import { useContext } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 export default function TableInfo({ data }) {
