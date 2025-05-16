@@ -15,8 +15,12 @@ import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { TransformContext } from "../../../context/TransformContext";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function TableInfo({ data }) {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships, database } =
@@ -352,6 +356,17 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
+
+          <Button
+            title="Ir a Tabla"
+            onClick={() => {
+                if (data.x != null && data.y != null) {
+                  navigate('/editor', { state: { focusPosition: { x:data.x,y:data.y } } });
+                }
+              }}
+            >{t("Board")}
+          </Button>
+          
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
