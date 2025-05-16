@@ -104,52 +104,68 @@ export default function Canvas() {
    */
   const handlePointerDownOnElement = (e, id, type) => {
     if (selectedElement.open && !layout.sidebar) return;
-
     if (!e.isPrimary) return;
     
+    // Verifica si ya está seleccionado (para selección múltiple)
+    const alreadySelected =
+      Array.isArray(selectedElement.id)
+        ? selectedElement.id.includes(id)
+        : selectedElement.id === id;
+    
+    let elementData;
     if (type === ObjectType.TABLE) {
-      const table = tables.find((t) => t.id === id);
-      setGrabOffset({
-        x: table.x - pointer.spaces.diagram.x,
-        y: table.y - pointer.spaces.diagram.y,
-      });
-      setDragging({
-        element: type,
-        id: id,
-        prevX: table.x,
-        prevY: table.y,
-      });
+      elementData = tables.find((t) => t.id === id);
     } else if (type === ObjectType.AREA) {
-      const area = areas.find((t) => t.id === id);
-      setGrabOffset({
-        x: area.x - pointer.spaces.diagram.x,
-        y: area.y - pointer.spaces.diagram.y,
-      });
-      setDragging({
-        element: type,
-        id: id,
-        prevX: area.x,
-        prevY: area.y,
-      });
+      elementData = areas.find((a) => a.id === id);
     } else if (type === ObjectType.NOTE) {
-      const note = notes.find((t) => t.id === id);
-      setGrabOffset({
-        x: note.x - pointer.spaces.diagram.x,
-        y: note.y - pointer.spaces.diagram.y,
+      elementData = notes.find((n) => n.id === id);
+    }
+    
+    if (!elementData) return;
+    
+    // Calcular offset
+    setGrabOffset({
+      x: elementData.x - pointer.spaces.diagram.x,
+      y: elementData.y - pointer.spaces.diagram.y,
+    });
+    
+    // Si el objeto ya está seleccionado y la selección es múltiple,
+    // almacena la posición inicial de cada uno en la selección
+    if (alreadySelected && Array.isArray(selectedElement.id)) {
+      const initialPositions = {};
+      selectedElement.id.forEach((tableId) => {
+        const tData = tables.find((t) => t.id === tableId);
+        if (tData) {
+          initialPositions[tableId] = { x: tData.x, y: tData.y };
+        }
       });
       setDragging({
         element: type,
-        id: id,
-        prevX: note.x,
-        prevY: note.y,
+        id: selectedElement.id, // multiplo
+        prevX: elementData.x,
+        prevY: elementData.y,
+        initialPositions,
       });
+    } else {
+      // Selecciona individualmente (o si es el primer clic)
+      setDragging({
+        element: type,
+        id: id,
+        prevX: elementData.x,
+        prevY: elementData.y,
+      });
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: type,
+        id: id,
+        open: false,
+      }));
     }
-    setSelectedElement((prev) => ({
-      ...prev,
-      element: type,
-      id: id,
-      open: false,
-    }));
+    // Guarda el punto de partida del drag en diagram space
+    setDragStart({
+      x: pointer.spaces.diagram.x,
+      y: pointer.spaces.diagram.y,
+    });
   };
 
   /**
@@ -273,6 +289,24 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
+    if (e.isPrimary && e.target.id === "diagram") {
+      // if the user clicks on the background, reset the selected element
+      // desactivate area selection and move mode
+      setDragging({
+        element: ObjectType.NONE,
+        id: -1,
+        prevX: 0,
+        prevY: 0,
+      });
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setPanning((prev) => ({ ...prev, isPanning: false }));
+    }
+
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
@@ -355,23 +389,86 @@ export default function Canvas() {
   const getMovedElementDetails = () => {
     switch (dragging.element) {
       case ObjectType.TABLE:
-        return {
-          name: tables[dragging.id].name,
-          x: Math.round(tables[dragging.id].x),
-          y: Math.round(tables[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const table = tables.find((t) => t.id === id);
+            if (table) {
+              sumX += table.x;
+              sumY += table.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} tables`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const table = tables.find((t) => t.id === dragging.id);
+          if (!table) return {};
+          return {
+            name: table.name,
+            x: Math.round(table.x),
+            y: Math.round(table.y),
+          };
+        }
       case ObjectType.AREA:
-        return {
-          name: areas[dragging.id].name,
-          x: Math.round(areas[dragging.id].x),
-          y: Math.round(areas[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const area = areas.find((a) => a.id === id);
+            if (area) {
+              sumX += area.x;
+              sumY += area.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} areas`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const area = areas.find((a) => a.id === dragging.id);
+          if (!area) return {};
+          return {
+            name: area.name,
+            x: Math.round(area.x),
+            y: Math.round(area.y),
+          };
+        }
       case ObjectType.NOTE:
-        return {
-          name: notes[dragging.id].title,
-          x: Math.round(notes[dragging.id].x),
-          y: Math.round(notes[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const note = notes.find((n) => n.id === id);
+            if (note) {
+              sumX += note.x;
+              sumY += note.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} notes`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const note = notes.find((n) => n.id === dragging.id);
+          if (!note) return {};
+          return {
+            name: note.title,
+            x: Math.round(note.x),
+            y: Math.round(note.y),
+          };
+        }
       default:
         return false;
     }
@@ -402,15 +499,6 @@ export default function Canvas() {
           element: ObjectType.TABLE,
           id: selectedTables.map((t) => t.id),
           open: false,
-        });
-        // Start dragging
-        setDragging({
-          element: ObjectType.TABLE,
-          id: selectedTables.map((t) => t.id),
-          initialPositions: selectedTables.reduce((acc, t) => {
-            acc[t.id] = { x: t.x, y: t.y };
-            return acc;
-          }, {}),
         });
         // set start point for dragging
         setDragStart({
@@ -597,12 +685,6 @@ export default function Canvas() {
     if (e.key === "Alt") {
       // deactivate area selection
       setIsAreaSelecting(false);
-      // reset dragging mode
-      setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-      // also deactivate panning in case it was moving
-      setPanning((prev) => ({ ...prev, isPanning: false }));
-      // optional restart cursor to default
-      pointer.setStyle("default");
     }
   });
   const theme = localStorage.getItem("theme");

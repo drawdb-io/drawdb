@@ -81,11 +81,12 @@ export default function Table(props) {
               ? "bg-zinc-100 text-zinc-800"
               : "bg-zinc-800 text-zinc-200"
           } ${
-            moving
+            (moving ||
+              (selectedElement.element === ObjectType.TABLE &&
+                (Array.isArray(selectedElement.id)
+                  ? selectedElement.id.includes(tableData.id)
+                  : selectedElement.id === tableData.id)))
               ? "border-dashed border-blue-500"
-              : selectedElement.id === tableData.id &&
-                selectedElement.element === ObjectType.TABLE
-              ? "border-solid border-blue-500"
               : "border-zinc-500 hover:border-dashed hover:border-blue-500"
           }`}
           style={{ direction: "ltr" }}
