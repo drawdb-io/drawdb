@@ -1,4 +1,4 @@
-import { exportFieldComment, parseDefault } from "./shared";
+import { escapeQuotes, exportFieldComment, parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 
@@ -17,7 +17,7 @@ export function toPostgres(diagram) {
           .map((f) => `\t${f.name} ${f.type}`)
           .join(",\n")}\n);\n\n${
           type.comment && type.comment.trim() !== ""
-            ? `\nCOMMENT ON TYPE "${type.name}" IS '${type.comment}';\n\n`
+            ? `\nCOMMENT ON TYPE "${type.name}" IS '${escapeQuotes(type.comment)}';\n\n`
             : ""
         }`,
     )
@@ -57,12 +57,12 @@ export function toPostgres(diagram) {
             : ""
         }\n);${
           table.comment.trim() !== ""
-            ? `\nCOMMENT ON TABLE "${table.name}" IS '${table.comment}';\n`
+            ? `\nCOMMENT ON TABLE "${table.name}" IS '${escapeQuotes(table.comment)}';\n`
             : ""
         }${table.fields
           .map((field) =>
             field.comment.trim() !== ""
-              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${field.comment}';\n`
+              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${escapeQuotes(field.comment)}';\n`
               : "",
           )
           .join("")}${table.indices
