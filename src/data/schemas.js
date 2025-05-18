@@ -47,7 +47,12 @@ export const tableSchema = {
           unique: { type: "boolean" },
           fields: {
             type: "array",
-            items: { type: "string" },
+            items: { 
+                type: "object", properties: {
+                  type: { type: "string" },
+                  value: { type: "string" }
+                }
+            },
           },
         },
         required: ["name", "unique", "fields"],
