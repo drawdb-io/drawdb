@@ -1,11 +1,10 @@
-import { isFunction, isKeyword, strHasQuotes } from "../utils";
+import { isFunction, isKeyword } from "../utils";
 
 import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
 export function parseDefault(field, database = DB.GENERIC) {
   if (
-    strHasQuotes(field.default) ||
     isFunction(field.default) ||
     isKeyword(field.default) ||
     !dbToTypes[database][field.type].hasQuotes
@@ -13,7 +12,11 @@ export function parseDefault(field, database = DB.GENERIC) {
     return field.default;
   }
 
-  return `'${field.default}'`;
+  return `'${escapeQuotes(field.default)}'`;
+}
+
+export function escapeQuotes(str) {
+  return str.replace(/[']/g, "'$&");
 }
 
 export function exportFieldComment(comment) {

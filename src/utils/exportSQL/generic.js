@@ -1,6 +1,6 @@
 import { DB } from "../../data/constants";
 import { dbToTypes, defaultTypes } from "../../data/datatypes";
-import { getInlineFK, parseDefault } from "./shared";
+import { escapeQuotes, getInlineFK, parseDefault } from "./shared";
 
 export function getJsonType(f) {
   if (!Object.keys(defaultTypes).includes(f.type)) {
@@ -205,7 +205,7 @@ export function jsonToMySQL(obj) {
                       )}", \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
+              }${field.comment ? ` COMMENT '${escapeQuotes(field.comment)}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -214,7 +214,7 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};\n${`\n${table.indices
+        }\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};\n${`\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name}\`\nON \`${table.name}\` (${i.fields
@@ -270,7 +270,7 @@ export function jsonToPostgreSQL(obj) {
         )
         .join(",\n")}\n);\n${
         type.comment && type.comment.trim() != ""
-          ? `\nCOMMENT ON TYPE ${type.name} IS '${type.comment}';\n`
+          ? `\nCOMMENT ON TYPE ${type.name} IS '${escapeQuotes(type.comment)}';\n`
           : ""
       }`;
     }
@@ -313,10 +313,10 @@ export function jsonToPostgreSQL(obj) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${table.comment}';\n` : ""}${table.fields
+        }\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${escapeQuotes(table.comment)}';\n` : ""}${table.fields
           .map((field) =>
             field.comment.trim() !== ""
-              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${field.comment}';\n`
+              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${escapeQuotes(field.comment)}';\n`
               : "",
           )
           .join("")}\n${table.indices
@@ -448,7 +448,7 @@ export function jsonToMariaDB(obj) {
                       )}', \`${field.name}\`))`
                     : ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` COMMENT '${field.comment}'` : ""}`,
+              }${field.comment ? ` COMMENT '${escapeQuotes(field.comment)}'` : ""}`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -457,7 +457,7 @@ export function jsonToMariaDB(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${table.comment}'` : ""};${`\n${table.indices
+        }\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};${`\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
