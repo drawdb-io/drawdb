@@ -234,7 +234,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         const index = {
           name: e.index,
           unique: e.index_type === "unique",
-          fields: e.index_columns.map((f) => f.column),
+          fields: e.index_columns.map((f) => f.column.expr.value),
         };
 
         const table = tables.find((t) => t.name === e.table.table);
