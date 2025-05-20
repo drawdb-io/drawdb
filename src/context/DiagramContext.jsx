@@ -303,11 +303,34 @@ export default function DiagramContextProvider({ children }) {
         temp.splice(data.id, 0, data);
         return temp.map((t, i) => ({ ...t, id: i }));
       });
+
+      const tableIndex = data.endTableId;
+      if(tables[tableIndex]){
+
+        const currentFields = tables[tableIndex].fields;
+        const fieldToInsert = data.endField[0];
+        const exists = currentFields.some((field) => field.id === fieldToInsert.id);
+
+        console.log("[ADD_RELATIONSHIP] Campos actuales de la tabla:", JSON.stringify(currentFields, null, 2));
+        console.log("[ADD_RELATIONSHIP] Verificando si existe column", JSON.stringify(fieldToInsert, null, 2), "→", exists);
+        if (!exists){
+          const newFieldsArray = [
+            ...currentFields.slice(0, data.endFieldId),
+            ...data.endField.map((field) => ({...field})),
+            ...currentFields.slice(data.endFieldId),
+          ];
+          console.log("[ADD_RELATIONSHIP] Campos nuevos de la tabla:", JSON.stringify(newFieldsArray, null, 2));
+          updateTable(tableIndex, {
+            fields: newFieldsArray,
+          });
+        }
+      }
     }
   };
 
   const deleteRelationship = (id, addToHistory = true) => {
     const relationship = relationships[id];
+
     if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,

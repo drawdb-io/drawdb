@@ -490,6 +490,7 @@ export default function Canvas() {
       deleteConstraint: Constraint.NONE,
       name: `fk_${parentTable.name}_${parentFields[0].name}`,
       id: relationships.length,
+      endField: newFields,
     };
 
     delete newRelationship.startX;
