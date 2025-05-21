@@ -181,7 +181,21 @@ export default function DiagramContextProvider({ children }) {
         (r) => r.endTableId === tid && relatedFKFieldIds.includes(r.endFieldId)
       );
     }
-  
+
+    let childFieldsSnapshot = {}
+
+    if (affectedRelationships.length > 0) {
+      affectedRelationships.forEach((rel) => {
+        const childTable = tables.find((t) => t.id === rel.endTableId);
+        if(childTable){
+          childFieldsSnapshot[childTable.id] = JSON.parse(JSON.stringify(childTable.fields));
+        }
+      });
+    }
+
+    console.log("[DELETE_FIELD] childFieldsSnapshot", childFieldsSnapshot);
+
+    const previousFields = JSON.parse(JSON.stringify(currentTable.fields));
     if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,
@@ -193,6 +207,8 @@ export default function DiagramContextProvider({ children }) {
           data: {
             field: field,
             relationship: affectedRelationships,
+            previousFields: previousFields,
+            childFieldsSnapshot: childFieldsSnapshot,
           },
           message: t("edit_table", {
             tableName: currentTable.name,
