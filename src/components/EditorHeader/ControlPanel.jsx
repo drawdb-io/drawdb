@@ -187,26 +187,22 @@ export default function ControlPanel({
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
       } else if (a.component === "field_delete") {
-        // Restaura relaciones
+        // Restores relationships
         setRelationships((prev) => {
           let temp = [...prev];
           a.data.relationship.forEach((r) => {
             temp.splice(r.id, 0, r);
           });
           temp = temp.map((e, i) => ({ ...e, id: i }));
-          console.log(
-            "[UNDO] Relaciones después de restaurar field_delete:",
-            JSON.stringify(temp, null, 2)
-          );
           return temp;
         });
-        // Restaura los fields de la tabla padre
+        // Restores the fields of the parent table
         setTables((prev) =>
           prev.map((t) =>
             t.id === a.tid ? { ...t, fields: a.data.previousFields } : t
           )
         );
-        // Restaura las tablas hijas afectadas, de acuerdo con el snapshot
+        // Restores the affected child tables according to the snapshot
         if (a.data.childFieldsSnapshot) {
           setTables((prev) =>
             prev.map((t) => {

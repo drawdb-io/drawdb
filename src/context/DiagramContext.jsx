@@ -193,8 +193,6 @@ export default function DiagramContextProvider({ children }) {
       });
     }
 
-    console.log("[DELETE_FIELD] childFieldsSnapshot", childFieldsSnapshot);
-
     const previousFields = JSON.parse(JSON.stringify(currentTable.fields));
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -327,15 +325,12 @@ export default function DiagramContextProvider({ children }) {
         const fieldToInsert = data.endField[0];
         const exists = currentFields.some((field) => field.id === fieldToInsert.id);
 
-        console.log("[ADD_RELATIONSHIP] Campos actuales de la tabla:", JSON.stringify(currentFields, null, 2));
-        console.log("[ADD_RELATIONSHIP] Verificando si existe column", JSON.stringify(fieldToInsert, null, 2), "→", exists);
         if (!exists){
           const newFieldsArray = [
             ...currentFields.slice(0, data.endFieldId),
             ...data.endField.map((field) => ({...field})),
             ...currentFields.slice(data.endFieldId),
           ];
-          console.log("[ADD_RELATIONSHIP] Campos nuevos de la tabla:", JSON.stringify(newFieldsArray, null, 2));
           updateTable(tableIndex, {
             fields: newFieldsArray,
           });
