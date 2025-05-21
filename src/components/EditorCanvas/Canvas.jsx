@@ -511,23 +511,72 @@ export default function Canvas() {
     }
 
     if (coordsDidUpdate(dragging.element)) {
-      const info = getMovedElementDetails();
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.MOVE,
-          element: dragging.element,
-          x: dragging.prevX,
-          y: dragging.prevY,
-          toX: info.x,
-          toY: info.y,
-          id: dragging.id,
-          message: t("move_element", {
-            coords: `(${info.x}, ${info.y})`,
-            name: info.name,
-          }),
-        },
-      ]);
+        const info = getMovedElementDetails();
+        setUndoStack((prev) => {
+          // Movimientos múltiples
+          if (Array.isArray(dragging.id)) {
+              const existingIndex = prev.findIndex(
+                  (action) =>
+                      action.action === Action.MOVE &&
+                      action.element === dragging.element &&
+                      Array.isArray(action.id) &&
+                      action.id.length === dragging.id.length
+              );
+              const newAction = {
+                  action: Action.MOVE,
+                  element: dragging.element,
+                  // Estado inicial para cada objeto
+                  initialPositions: dragging.initialPositions,
+                  // Estado final de cada objeto (se captura una vez finalizado el movimiento)
+                  finalPositions: dragging.id.reduce((acc, id) => {
+                      const table = tables.find((t) => t.id === id);
+                      if (table) {
+                          acc[id] = { x: table.x, y: table.y };
+                      }
+                      return acc;
+                  }, {}),
+                  id: dragging.id,
+                  message: t("move_element", {
+                      coords: `(${info.x}, ${info.y})`,
+                      name: info.name,
+                  }),
+              };
+              if (existingIndex !== -1) {
+                  return [
+                      ...prev.slice(0, existingIndex),
+                      newAction,
+                      ...prev.slice(existingIndex + 1),
+                  ];
+              }
+              return [...prev, newAction];
+          }
+          // Caso individual: se registra con "from" y "to"
+          const existingIndex = prev.findIndex(
+              (action) =>
+                  action.action === Action.MOVE &&
+                  action.element === dragging.element &&
+                  action.id === dragging.id
+          );
+          const newAction = {
+              action: Action.MOVE,
+              element: dragging.element,
+              from: { x: dragging.prevX, y: dragging.prevY },
+              to: { x: info.x, y: info.y },
+              id: dragging.id,
+              message: t("move_element", {
+                  coords: `(${info.x}, ${info.y})`,
+                  name: info.name,
+              }),
+          };
+          if (existingIndex !== -1) {
+              return [
+                  ...prev.slice(0, existingIndex),
+                  newAction,
+                  ...prev.slice(existingIndex + 1),
+              ];
+          }
+          return [...prev, newAction];
+      });
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
