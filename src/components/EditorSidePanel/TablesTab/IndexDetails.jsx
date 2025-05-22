@@ -3,13 +3,14 @@ import { Input, Button, Popover, Checkbox, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function IndexDetails({ data, fields, iid, tid }) {
   const { t } = useTranslation();
   const { tables, updateTable } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const table = useMemo(() => tables.find((t) => t.id === tid), [tables, tid]);
 
   return (
     <div className="flex justify-between items-center mb-2">
@@ -36,14 +37,14 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 fields: [...value],
               },
               message: t("edit_table", {
-                tableName: tables[tid].name,
+                tableName: table.name,
                 extra: "[index field]",
               }),
             },
           ]);
           setRedoStack([]);
           updateTable(tid, {
-            indices: tables[tid].indices.map((index) =>
+            indices: table.indices.map((index) =>
               index.id === iid
                 ? {
                     ...index,
@@ -69,7 +70,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
               }
               onChange={(value) =>
                 updateTable(tid, {
-                  indices: tables[tid].indices.map((index) =>
+                  indices: table.indices.map((index) =>
                     index.id === iid
                       ? {
                           ...index,
@@ -92,7 +93,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                     undo: editField,
                     redo: { name: e.target.value },
                     message: t("edit_table", {
-                      tableName: tables[tid].name,
+                      tableName: table.name,
                       extra: "[index]",
                     }),
                   },
@@ -123,14 +124,14 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                           checkedValues.target.checked,
                       },
                       message: t("edit_table", {
-                        tableName: tables[tid].name,
+                        tableName: table.name,
                         extra: "[index field]",
                       }),
                     },
                   ]);
                   setRedoStack([]);
                   updateTable(tid, {
-                    indices: tables[tid].indices.map((index) =>
+                    indices: table.indices.map((index) =>
                       index.id === iid
                         ? {
                             ...index,
@@ -157,14 +158,14 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                     tid: tid,
                     data: data,
                     message: t("edit_table", {
-                      tableName: tables[tid].name,
+                      tableName: table.name,
                       extra: "[delete index]",
                     }),
                   },
                 ]);
                 setRedoStack([]);
                 updateTable(tid, {
-                  indices: tables[tid].indices
+                  indices: table.indices
                     .filter((e) => e.id !== iid)
                     .map((e, j) => ({
                       ...e,

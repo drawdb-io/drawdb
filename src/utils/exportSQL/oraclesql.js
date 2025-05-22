@@ -2,7 +2,6 @@ import { dbToTypes } from "../../data/datatypes";
 import { parseDefault } from "./shared";
 
 export function toOracleSQL(diagram) {
-  console.log(diagram);
   return `${diagram.tables
     .map(
       (table) =>
@@ -47,13 +46,18 @@ export function toOracleSQL(diagram) {
           .join("")}`}`,
     )
     .join("\n")}\n${diagram.references
-    .map(
-      (r) =>
-        `ALTER TABLE "${diagram.tables[r.startTableId].name}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
-          diagram.tables[r.startTableId].fields[r.startFieldId].name
-        }") REFERENCES "${diagram.tables[r.endTableId].name}" ("${
-          diagram.tables[r.endTableId].fields[r.endFieldId].name
-        }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`,
-    )
+    .map((r) => {
+      const { name: startName, fields: startFields } = diagram.tables.find(
+        (t) => t.id === r.startTableId,
+      );
+      const { name: endName, fields: endFields } = diagram.tables.find(
+        (t) => t.id === r.endTableId,
+      );
+      return `ALTER TABLE "${startName}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
+        startFields.find((f) => f.id === r.startFieldId).name
+      }") REFERENCES "${endName}" ("${
+        endFields.find((f) => f.id === r.endFieldId).name
+      }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+    })
     .join("\n")}`;
 }

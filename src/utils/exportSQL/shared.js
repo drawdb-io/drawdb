@@ -1,18 +1,10 @@
-import { isFunction, isKeyword, strHasQuotes } from "../utils";
+import { isFunction, isKeyword } from "../utils";
 
 import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
 export function parseDefault(field, database = DB.GENERIC) {
   if (
-    !field.default ||
-    (typeof field.default === "string" && field.default.trim() == "")
-  ) {
-    return "";
-  }
-
-  if (
-    strHasQuotes(field.default) ||
     isFunction(field.default) ||
     isKeyword(field.default) ||
     !dbToTypes[database][field.type].hasQuotes
@@ -20,7 +12,11 @@ export function parseDefault(field, database = DB.GENERIC) {
     return field.default;
   }
 
-  return `'${field.default}'`;
+  return `'${escapeQuotes(field.default)}'`;
+}
+
+export function escapeQuotes(str) {
+  return str.replace(/[']/g, "'$&");
 }
 
 export function exportFieldComment(comment) {
@@ -39,10 +35,12 @@ export function getInlineFK(table, obj) {
   obj.references.forEach((r) => {
     if (r.startTableId === table.id) {
       fks.push(
-        `\tFOREIGN KEY ("${table.fields[r.startFieldId].name}") REFERENCES "${
-          obj.tables[r.endTableId].name
+        `\tFOREIGN KEY ("${table.fields.find((f) => f.id === r.startFieldId)?.name}") REFERENCES "${
+          obj.tables.find((t) => t.id === r.endTableId)?.name
         }"("${
-          obj.tables[r.endTableId].fields[r.endFieldId].name
+          obj.tables
+            .find((t) => t.id === r.endTableId)
+            .fields.find((f) => f.id === r.endFieldId)?.name
         }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
       );
     }

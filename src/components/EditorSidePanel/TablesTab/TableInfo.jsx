@@ -8,24 +8,21 @@ import {
   ColorPicker,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useUndoRedo } from "../../../hooks";
-import { Action, ObjectType } from "../../../data/constants";
+import { useDiagram, useSaveState, useUndoRedo } from "../../../hooks";
+import { Action, ObjectType, State } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
-import { dbToTypes } from "../../../data/datatypes";
+import { SortableList } from "../../SortableList/SortableList";
+import { nanoid } from "nanoid";
 
 export default function TableInfo({ data }) {
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const { deleteTable, updateTable, updateField, setRelationships, database } =
-    useDiagram();
+  const { deleteTable, updateTable, setTables } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { setSaveState } = useSaveState();
   const [editField, setEditField] = useState({});
-  const [drag, setDrag] = useState({
-    draggingElementIndex: null,
-    draggingOverIndexList: [],
-  });
 
   return (
     <div>
@@ -59,98 +56,21 @@ export default function TableInfo({ data }) {
           }}
         />
       </div>
-      {data.fields.map((f, j) => (
-        <div
-          key={"field_" + j}
-          className={`cursor-pointer ${drag.draggingOverIndexList.includes(j) ? "opacity-25" : ""}`}
-          style={{ direction: "ltr" }}
-          draggable
-          onDragStart={() => {
-            setDrag((prev) => ({ ...prev, draggingElementIndex: j }));
-          }}
-          onDragLeave={() => {
-            setDrag((prev) => ({
-              ...prev,
-              draggingOverIndexList: prev.draggingOverIndexList.filter(
-                (index) => index !== j,
-              ),
-            }));
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            if (drag.draggingElementIndex != null) {
-              if (j !== drag.draggingElementIndex) {
-                setDrag((prev) => {
-                  if (prev.draggingOverIndexList.includes(j)) {
-                    return prev;
-                  }
-
-                  return {
-                    ...prev,
-                    draggingOverIndexList: prev.draggingOverIndexList.concat(j),
-                  };
-                });
-              }
-
-              return;
-            }
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            const index = drag.draggingElementIndex;
-            setDrag({ draggingElementIndex: null, draggingOverIndexList: [] });
-            if (index == null || index === j) {
-              return;
-            }
-
-            const a = data.fields[index];
-            const b = data.fields[j];
-
-            updateField(data.id, index, {
-              ...b,
-              ...(!dbToTypes[database][b.type].isSized && { size: "" }),
-              ...(!dbToTypes[database][b.type].hasCheck && { check: "" }),
-              ...(dbToTypes[database][b.type].noDefault && { default: "" }),
-              id: index,
-            });
-            updateField(data.id, j, {
-              ...a,
-              ...(!dbToTypes[database][a.type].isSized && { size: "" }),
-              ...(!dbToTypes[database][a.type].hasCheck && { check: "" }),
-              ...(!dbToTypes[database][a.type].noDefault && { default: "" }),
-              id: j,
-            });
-
-            setRelationships((prev) =>
-              prev.map((e) => {
-                if (e.startTableId === data.id) {
-                  if (e.startFieldId === index) {
-                    return { ...e, startFieldId: j };
-                  }
-                  if (e.startFieldId === j) {
-                    return { ...e, startFieldId: index };
-                  }
-                }
-                if (e.endTableId === data.id) {
-                  if (e.endFieldId === index) {
-                    return { ...e, endFieldId: j };
-                  }
-                  if (e.endFieldId === j) {
-                    return { ...e, endFieldId: index };
-                  }
-                }
-                return e;
-              }),
+      <SortableList
+        items={data.fields}
+        keyPrefix={`table-${data.id}`}
+        onChange={(newFields) => {
+          setTables((prev) => {
+            return prev.map((t) =>
+              t.id === data.id ? { ...t, fields: newFields } : t,
             );
-          }}
-          onDragEnd={(e) => {
-            e.preventDefault();
-            setDrag({ draggingElementIndex: null, draggingOverIndexList: [] });
-          }}
-        >
-          <TableField data={f} tid={data.id} index={j} />
-        </div>
-      ))}
+          });
+        }}
+        afterChange={() => setSaveState(State.SAVING)}
+        renderItem={(item, i) => (
+          <TableField data={item} tid={data.id} index={i} />
+        )}
+      />
       {data.indices.length > 0 && (
         <Card
           bodyStyle={{ padding: "4px" }}
@@ -281,6 +201,7 @@ export default function TableInfo({ data }) {
           </Button>
           <Button
             onClick={() => {
+              const id = nanoid();
               setUndoStack((prev) => [
                 ...prev,
                 {
@@ -288,6 +209,7 @@ export default function TableInfo({ data }) {
                   element: ObjectType.TABLE,
                   component: "field_add",
                   tid: data.id,
+                  fid: id,
                   message: t("edit_table", {
                     tableName: data.name,
                     extra: "[add field]",
@@ -299,6 +221,7 @@ export default function TableInfo({ data }) {
                 fields: [
                   ...data.fields,
                   {
+                    id,
                     name: "",
                     type: "",
                     default: "",
@@ -308,7 +231,6 @@ export default function TableInfo({ data }) {
                     notNull: false,
                     increment: false,
                     comment: "",
-                    id: data.fields.length,
                   },
                 ],
               });

@@ -22,7 +22,7 @@ import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
-  const [hoveredField, setHoveredField] = useState(-1);
+  const [hoveredField, setHoveredField] = useState(null);
   const { database } = useDiagram();
   const {
     tableData,
@@ -45,9 +45,10 @@ export default function Table(props) {
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+
   const isSelected = useMemo(() => {
     return (
-      (selectedElement.id === tableData.id &&
+      (selectedElement.id == tableData.id &&
         selectedElement.element === ObjectType.TABLE) ||
       bulkSelectedElements.some(
         (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
@@ -124,7 +125,7 @@ export default function Table(props) {
                   onClick={openEditor}
                 />
                 <Popover
-                  key={tableData.key}
+                  key={tableData.id}
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
@@ -209,7 +210,11 @@ export default function Table(props) {
                       style={{ direction: "ltr" }}
                     >
                       <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4">
+                      <p
+                        className={
+                          "ms-4 font-mono " + dbToTypes[database][e.type].color
+                        }
+                      >
                         {e.type +
                           ((dbToTypes[database][e.type].isSized ||
                             dbToTypes[database][e.type].hasPrecision) &&
@@ -304,13 +309,17 @@ export default function Table(props) {
           setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
-            field: index,
+            fieldId: fieldData.id,
           });
         }}
         onPointerLeave={(e) => {
           if (!e.isPrimary) return;
 
-          setHoveredField(-1);
+          setHoveredField(null);
+          setHoveredTable({
+            tableId: null,
+            fieldId: null,
+          });
         }}
         onPointerDown={(e) => {
           // Required for onPointerLeave to trigger when a touch pointer leaves
@@ -328,10 +337,10 @@ export default function Table(props) {
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(index);
+              handleGripField();
               setLinkingLine((prev) => ({
                 ...prev,
-                startFieldId: index,
+                startFieldId: fieldData.id,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
                 startY:
@@ -368,8 +377,12 @@ export default function Table(props) {
           ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
               {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span>?</span>}
-              <span>
+              {!fieldData.notNull && <span className="font-mono">?</span>}
+              <span
+                className={
+                  "font-mono " + dbToTypes[database][fieldData.type].color
+                }
+              >
                 {fieldData.type +
                   ((dbToTypes[database][fieldData.type].isSized ||
                     dbToTypes[database][fieldData.type].hasPrecision) &&

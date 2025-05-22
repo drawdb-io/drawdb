@@ -21,7 +21,7 @@ import {
 import { useDiagram, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 const columns = [
   {
@@ -36,10 +36,30 @@ const columns = [
 
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { tables, setRelationships, deleteRelationship, updateRelationship } =
-    useDiagram();
+  const { tables, deleteRelationship, updateRelationship } = useDiagram();
   const { t } = useTranslation();
   const [editField, setEditField] = useState({});
+
+  const relValues = useMemo(() => {
+    const { fields: startTableFields, name: startTableName } = tables.find(
+      (t) => t.id === data.startTableId,
+    );
+    const { name: startFieldName } = startTableFields.find(
+      (f) => f.id === data.startFieldId,
+    );
+    const { fields: endTableFields, name: endTableName } = tables.find(
+      (t) => t.id === data.endTableId,
+    );
+    const { name: endFieldName } = endTableFields.find(
+      (f) => f.id === data.endFieldId,
+    );
+    return {
+      startTableName,
+      startFieldName,
+      endTableName,
+      endFieldName,
+    };
+  }, [tables, data]);
 
   const swapKeys = () => {
     setUndoStack((prev) => [
@@ -67,22 +87,14 @@ export default function RelationshipInfo({ data }) {
       },
     ]);
     setRedoStack([]);
-    setRelationships((prev) =>
-      prev.map((e, idx) =>
-        idx === data.id
-          ? {
-              ...e,
-              name: `fk_${tables[e.endTableId].name}_${
-                tables[e.endTableId].fields[e.endFieldId].name
-              }_${tables[e.startTableId].name}`,
-              startTableId: e.endTableId,
-              startFieldId: e.endFieldId,
-              endTableId: e.startTableId,
-              endFieldId: e.startFieldId,
-            }
-          : e,
-      ),
-    );
+
+    updateRelationship(data.id, {
+      name: `fk_${relValues.endTableName}_${relValues.endFieldName}_${relValues.startTableName}`,
+      startTableId: data.endTableId,
+      startFieldId: data.endFieldId,
+      endTableId: data.startTableId,
+      endFieldId: data.startFieldId,
+    });
   };
 
   const changeCardinality = (value) => {
@@ -101,11 +113,7 @@ export default function RelationshipInfo({ data }) {
       },
     ]);
     setRedoStack([]);
-    setRelationships((prev) =>
-      prev.map((e, idx) =>
-        idx === data.id ? { ...e, cardinality: value } : e,
-      ),
-    );
+    updateRelationship(data.id, { cardinality: value });
   };
 
   const changeConstraint = (key, value) => {
@@ -125,9 +133,7 @@ export default function RelationshipInfo({ data }) {
       },
     ]);
     setRedoStack([]);
-    setRelationships((prev) =>
-      prev.map((e, idx) => (idx === data.id ? { ...e, [undoKey]: value } : e)),
-    );
+    updateRelationship(data.id, { [undoKey]: value });
   };
 
   return (
@@ -165,11 +171,11 @@ export default function RelationshipInfo({ data }) {
       <div className="flex justify-between items-center mb-3">
         <div className="me-3">
           <span className="font-semibold">{t("primary")}: </span>
-          {tables[data.endTableId].name}
+          {relValues.endTableName}
         </div>
         <div className="mx-1">
           <span className="font-semibold">{t("foreign")}: </span>
-          {tables[data.startTableId].name}
+          {relValues.startTableName}
         </div>
         <div className="ms-1">
           <Popover
@@ -180,13 +186,8 @@ export default function RelationshipInfo({ data }) {
                   dataSource={[
                     {
                       key: "1",
-                      foreign: `${tables[data.startTableId]?.name}(${
-                        tables[data.startTableId].fields[data.startFieldId]
-                          ?.name
-                      })`,
-                      primary: `${tables[data.endTableId]?.name}(${
-                        tables[data.endTableId].fields[data.endFieldId]?.name
-                      })`,
+                      foreign: `${relValues.startTableName}(${relValues.startFieldName})`,
+                      primary: `${relValues.endTableName}(${relValues.endFieldName})`,
                     },
                   ]}
                   pagination={false}

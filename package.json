@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@dbml/core": "^3.9.7-alpha.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@douyinfe/semi-ui": "^2.77.1",
     "@lexical/react": "^0.12.5",
     "@monaco-editor/react": "^4.7.0",
@@ -29,8 +32,8 @@
     "jspdf": "^3.0.1",
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
-    "node-sql-parser": "^5.3.8",
-    "octokit": "^4.0.2",
+    "nanoid": "^5.1.5",
+    "node-sql-parser": "^5.3.9",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -54,7 +57,7 @@
     "postcss": "^8.4.32",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
-    "vite": "^6.2.6"
+    "vite": "^6.3.4"
   },
   "overrides": {
     "follow-redirects": "^1.15.4"

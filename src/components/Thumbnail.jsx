@@ -1,5 +1,4 @@
 import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
-import { calcPath } from "../utils/calcPath";
 
 export default function Thumbnail({ diagram, i, zoom, theme }) {
   return (
@@ -57,25 +56,6 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
               {a.name}
             </div>
           </foreignObject>
-        ))}
-        {diagram.relationships?.map((r, i) => (
-          <path
-            key={i}
-            d={calcPath({
-              ...r,
-              startTable: {
-                x: diagram.tables[r.startTableId].x,
-                y: diagram.tables[r.startTableId].y - tableFieldHeight / 2,
-              },
-              endTable: {
-                x: diagram.tables[r.endTableId].x,
-                y: diagram.tables[r.endTableId].y - tableFieldHeight / 2,
-              },
-            })}
-            fill="none"
-            strokeWidth={2}
-            stroke="gray"
-          />
         ))}
         {diagram.tables?.map((table, i) => {
           const height =

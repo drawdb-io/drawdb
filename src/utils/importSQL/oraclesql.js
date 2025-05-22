@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
@@ -33,10 +34,11 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
-        table.id = tables.length;
+        table.id = nanoid();
         e.table.relational_properties.forEach((d) => {
           if (d.resource === "column") {
             const field = {};
+            field.id = nanoid();
             field.name = d.name;
 
             let type = d.type.type.toUpperCase();
@@ -78,33 +80,32 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             table.fields.push(field);
           } else if (d.resource === "constraint") {
             const relationship = {};
-            const startTableId = table.id;
-            const startField = d.constraint.columns[0];
-            const endField = d.constraint.reference.columns[0];
-            const endTable = d.constraint.reference.object.name;
+            const startFieldName = d.constraint.columns[0];
+            const endFieldName = d.constraint.reference.columns[0];
+            const endTableName = d.constraint.reference.object.name;
 
-            const endTableId = tables.findIndex((t) => t.name === endTable);
-            if (endTableId === -1) return;
+            const endTable = tables.find((t) => t.name === endTableName);
+            if (!endTable) return;
 
-            const endFieldId = tables[endTableId].fields.findIndex(
-              (f) => f.name === endField,
+            const endField = endTable.fields.find(
+              (f) => f.name === endFieldName,
             );
-            if (endFieldId === -1) return;
+            if (!endField) return;
 
-            const startFieldId = table.fields.findIndex(
-              (f) => f.name === startField,
+            const startField = table.fields.find(
+              (f) => f.name === startFieldName,
             );
-            if (startFieldId === -1) return;
+            if (!startField) return;
 
-            relationship.startTableId = startTableId;
-            relationship.startFieldId = startFieldId;
-            relationship.endTableId = endTableId;
-            relationship.endFieldId = endFieldId;
+            relationship.startTableId = table.id;
+            relationship.startFieldId = startField.id;
+            relationship.endTableId = endTable.id;
+            relationship.endFieldId = endField.id;
             relationship.updateConstraint = Constraint.NONE;
             relationship.name =
               d.name && Boolean(d.name.trim())
                 ? d.name
-                : "fk_" + table.name + "_" + startField + "_" + endTable;
+                : `fk_${table.name}_${startFieldName}_${endTableName}`;
             relationship.deleteConstraint =
               d.constraint.reference.on_delete &&
               Boolean(d.constraint.reference.on_delete.trim())
@@ -112,7 +113,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
                   d.constraint.reference.on_delete.substring(1)
                 : Constraint.NONE;
 
-            if (table.fields[startFieldId].unique) {
+            if (startField.unique) {
               relationship.cardinality = Cardinality.ONE_TO_ONE;
             } else {
               relationship.cardinality = Cardinality.MANY_TO_ONE;
