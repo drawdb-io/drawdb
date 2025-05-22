@@ -10,7 +10,7 @@ export const shortcuts = [
   { shortcut: "CTRL+V", title: "Paste selected element", description: "" },
   { shortcut: "CTRL+X", title: "Cut selected element", description: "" },
   { shortcut: "CTRL+D", title: "Duplicate selected element", description: "" },
-  { shortcut: "DEL", title: "Delete selected element", description: "" },
+  { shortcut: "DEL / CTRL + BACKSPACE", title: "Delete selected element", description: "" },
   { shortcut: "CTRL+E", title: "Edit selected element", description: "" },
   {
     shortcut: "CTRL+I",
