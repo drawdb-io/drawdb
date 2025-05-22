@@ -38,12 +38,12 @@ export default function Canvas() {
     width: 0,
     height: 0,
   });
-  
+
   const [dragStart, setDragStart] = useState({
     x: 0,
     y: 0,
   });
-  
+
   const canvasRef = useRef(null);
   const canvasContextValue = useCanvas();
   const {
@@ -490,7 +490,7 @@ export default function Canvas() {
           table.y <= areaBBox.y + areaBBox.height
         );
       });
-      console.log("Selected tables: ", selectedTables);
+
       if (selectedTables.length > 0) {
         setSelectedElement({
           ...selectedElement,
