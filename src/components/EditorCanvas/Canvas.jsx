@@ -106,7 +106,7 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
     if (!e.isPrimary) return;
     
-    // Verifica si ya está seleccionado (para selección múltiple)
+    // Verify if already selected (for multiple selection)
     const alreadySelected =
       Array.isArray(selectedElement.id)
         ? selectedElement.id.includes(id)
@@ -128,9 +128,9 @@ export default function Canvas() {
       x: elementData.x - pointer.spaces.diagram.x,
       y: elementData.y - pointer.spaces.diagram.y,
     });
-    
-    // Si el objeto ya está seleccionado y la selección es múltiple,
-    // almacena la posición inicial de cada uno en la selección
+
+    // If the object is alredy selected and the selection is multiple,
+    // strore the initial position of each one in the selection
     if (alreadySelected && Array.isArray(selectedElement.id)) {
       const initialPositions = {};
       selectedElement.id.forEach((tableId) => {
@@ -141,13 +141,12 @@ export default function Canvas() {
       });
       setDragging({
         element: type,
-        id: selectedElement.id, // multiplo
+        id: selectedElement.id,
         prevX: elementData.x,
         prevY: elementData.y,
         initialPositions,
       });
     } else {
-      // Selecciona individualmente (o si es el primer clic)
       setDragging({
         element: type,
         id: id,
@@ -161,7 +160,6 @@ export default function Canvas() {
         open: false,
       }));
     }
-    // Guarda el punto de partida del drag en diagram space
     setDragStart({
       x: pointer.spaces.diagram.x,
       y: pointer.spaces.diagram.y,
@@ -513,7 +511,6 @@ export default function Canvas() {
     if (coordsDidUpdate(dragging.element)) {
         const info = getMovedElementDetails();
         setUndoStack((prev) => {
-          // Movimientos múltiples
           if (Array.isArray(dragging.id)) {
               const existingIndex = prev.findIndex(
                   (action) =>
@@ -525,9 +522,9 @@ export default function Canvas() {
               const newAction = {
                   action: Action.MOVE,
                   element: dragging.element,
-                  // Estado inicial para cada objeto
+                  // Start position of each object (captured when the drag starts)
                   initialPositions: dragging.initialPositions,
-                  // Estado final de cada objeto (se captura una vez finalizado el movimiento)
+                  // Final positions of each object (captured when the drag ends)
                   finalPositions: dragging.id.reduce((acc, id) => {
                       const table = tables.find((t) => t.id === id);
                       if (table) {
@@ -550,7 +547,6 @@ export default function Canvas() {
               }
               return [...prev, newAction];
           }
-          // Caso individual: se registra con "from" y "to"
           const existingIndex = prev.findIndex(
               (action) =>
                   action.action === Action.MOVE &&
