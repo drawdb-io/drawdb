@@ -105,14 +105,14 @@ export default function Canvas() {
   const handlePointerDownOnElement = (e, id, type) => {
     if (selectedElement.open && !layout.sidebar) return;
     if (!e.isPrimary) return;
-    
+
     // Verify if already selected (for multiple selection)
     const alreadySelected =
       Array.isArray(selectedElement.id)
         ? selectedElement.id.includes(id)
         : selectedElement.id === id;
-    
-    let elementData;
+
+        let elementData;
     if (type === ObjectType.TABLE) {
       elementData = tables.find((t) => t.id === id);
     } else if (type === ObjectType.AREA) {
@@ -120,9 +120,9 @@ export default function Canvas() {
     } else if (type === ObjectType.NOTE) {
       elementData = notes.find((n) => n.id === id);
     }
-    
+
     if (!elementData) return;
-    
+
     // Calcular offset
     setGrabOffset({
       x: elementData.x - pointer.spaces.diagram.x,
@@ -173,7 +173,7 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
-    
+
     if (isAreaSelecting) {
       const currentX = pointer.spaces.diagram.x;
       const currentY = pointer.spaces.diagram.y;
@@ -806,7 +806,7 @@ export default function Canvas() {
               <Table
                 key={table.id}
                 tableData={table}
-                moving={isMoving} 
+                moving={isMoving}
                 setHoveredTable={setHoveredTable}
                 handleGripField={handleGripField}
                 setLinkingLine={setLinkingLine}
