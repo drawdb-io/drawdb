@@ -1,6 +1,6 @@
 import { Cardinality } from "../../data/constants";
 import i18n from "../../i18n/i18n";
-import { parseDefault } from "../exportSQL/shared";
+import { escapeQuotes, parseDefault } from "../exportSQL/shared";
 
 function columnDefault(field, database) {
   if (!field.default || field.default.trim() === "") {
@@ -15,7 +15,7 @@ function columnComment(field) {
     return "";
   }
 
-  return `note: '${field.comment}'`;
+  return `note: '${escapeQuotes(field.comment)}'`;
 }
 
 function columnSettings(field, database) {
@@ -99,7 +99,7 @@ export function toDBML(diagram) {
             : ""
         }${
           table.comment && table.comment.trim() !== ""
-            ? `\n\n\tNote: '${table.comment}'`
+            ? `\n\n\tNote: '${escapeQuotes(table.comment)}'`
             : ""
         }\n}`,
     )
