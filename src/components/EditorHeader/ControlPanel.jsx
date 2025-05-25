@@ -1221,7 +1221,7 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
-      dbml_editor: {
+      dbml_view: {
         state: layout.dbmlEditor ? (
           <i className="bi bi-toggle-off" />
         ) : (

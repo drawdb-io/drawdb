@@ -1,5 +1,6 @@
-import { Tabs, TabPane } from "@douyinfe/semi-ui";
+import { Tabs, TabPane, Button, Divider, Tooltip } from "@douyinfe/semi-ui";
 import { Tab } from "../../data/constants";
+import { IconCode } from "@douyinfe/semi-icons";
 import {
   useLayout,
   useSelect,
@@ -21,10 +22,10 @@ import { databases } from "../../data/databases";
 import EnumsTab from "./EnumsTab/EnumsTab";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
-import DBMLEditor from "./DBMLEditor";
+import DBMLEditor from "./DBMLEditor/DBMLEditor";
 
 export default function SidePanel({ width, resize, setResize }) {
-  const { layout } = useLayout();
+  const { layout, setLayout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { database, tablesCount, relationshipsCount } = useDiagram();
   const { areasCount } = useAreas();
@@ -86,6 +87,10 @@ export default function SidePanel({ width, resize, setResize }) {
     notesCount,
   ]);
 
+  const toggleDBMLEditor = () => {
+    setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
+  };
+
   return (
     <div className="flex h-full">
       <div
@@ -106,6 +111,18 @@ export default function SidePanel({ width, resize, setResize }) {
               }
               collapsible
               tabBarStyle={{ direction: "ltr" }}
+              tabBarExtraContent={
+                <>
+                  <Divider layout="vertical" />
+                  <Tooltip content={t("dbml_view")} position="bottom">
+                    <Button
+                      onClick={toggleDBMLEditor}
+                      icon={<IconCode />}
+                      theme="borderless"
+                    />
+                  </Tooltip>
+                </>
+              }
             >
               {tabList.length &&
                 tabList.map((tab) => (
