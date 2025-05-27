@@ -122,9 +122,6 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             relationships.push(relationship);
           }
         });
-        table.fields.forEach((f, j) => {
-          f.id = j;
-        });
         tables.push(table);
       }
     }
