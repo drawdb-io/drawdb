@@ -6,7 +6,11 @@ import { IconCopy } from "@douyinfe/semi-icons";
 import { setUpDBML } from "./setUpDBML";
 import "./styles.css";
 
-export default function CodeEditor({ showCopyButton, ...props }) {
+export default function CodeEditor({
+  showCopyButton,
+  extraControls,
+  ...props
+}) {
   const { settings } = useSettings();
   const { database } = useDiagram();
   const { t } = useTranslation();
@@ -29,18 +33,21 @@ export default function CodeEditor({ showCopyButton, ...props }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <Editor
         {...props}
         theme={settings.mode === "light" ? "vs" : "vs-dark"}
         onMount={handleEditorMount}
       />
       {showCopyButton && (
-        <Button
-          className="absolute right-6 bottom-2 z-10"
-          icon={<IconCopy />}
-          onClick={copyCode}
-        />
+        <div className="absolute right-6 bottom-2 z-10 space-y-2">
+          <div>{extraControls}</div>
+          <Button
+            icon={<IconCopy />}
+            onClick={copyCode}
+            className="inline-block"
+          />
+        </div>
       )}
     </div>
   );
