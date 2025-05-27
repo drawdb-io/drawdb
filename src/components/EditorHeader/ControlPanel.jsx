@@ -693,6 +693,9 @@ export default function ControlPanel({
     copy();
     del();
   };
+  const toggleDBMLEditor = () => {
+    setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
+  };
   const save = () => setSaveState(State.SAVING);
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
@@ -1218,6 +1221,15 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
+      dbml_view: {
+        state: layout.dbmlEditor ? (
+          <i className="bi bi-toggle-off" />
+        ) : (
+          <i className="bi bi-toggle-on" />
+        ),
+        function: toggleDBMLEditor,
+        shortcut: "Alt+E",
+      },
       strict_mode: {
         state: settings.strictMode ? (
           <i className="bi bi-toggle-off" />
@@ -1446,6 +1458,7 @@ export default function ControlPanel({
     preventDefault: true,
   });
   useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
 
   return (
     <>

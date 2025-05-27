@@ -119,7 +119,7 @@
 }
 
 .toolbar-theme {
-  background-color: rgba(var(--semi-grey-1), 1);
+  background-color: rgba(var(--semi-grey-1), 0.7);
 }
 
 .hover-1:hover {
