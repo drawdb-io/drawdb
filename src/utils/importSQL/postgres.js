@@ -51,8 +51,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               ),
             )?.name;
             if (!type && !dbToTypes[diagramDb][d.definition.dataType])
-              type = affinity[diagramDb][type];
-            field.type = type || d.definition.dataType;
+              type = affinity[diagramDb][d.definition.dataType.toUpperCase()];
+            field.type = type;
 
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
