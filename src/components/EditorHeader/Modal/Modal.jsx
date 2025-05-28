@@ -191,7 +191,8 @@ export default function Modal({
       }
 
       setModal(MODAL.NONE);
-    } catch {
+    } catch (e) {
+      console.log(e)
       setError({
         type: STATUS.ERROR,
         message: `Please check for syntax errors or let us know about the error.`,

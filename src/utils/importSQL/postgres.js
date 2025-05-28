@@ -51,8 +51,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               ),
             )?.name;
             if (!type && !dbToTypes[diagramDb][d.definition.dataType])
-              type = affinity[diagramDb][type];
-            field.type = type || d.definition.dataType;
+              type = affinity[diagramDb][d.definition.dataType.toUpperCase()];
+            field.type = type;
 
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
@@ -134,7 +134,9 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               );
               if (!endField) return;
 
-              const startField = table.find((f) => f.name === startFieldName);
+              const startField = table.fields.find(
+                (f) => f.name === startFieldName,
+              );
               if (!startField) return;
 
               relationship.name = `fk_${startTableName}_${startFieldName}_${endTableName}`;
@@ -225,9 +227,6 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
 
             relationships.forEach((r, i) => (r.id = i));
           }
-        });
-        table.fields.forEach((f, j) => {
-          f.id = j;
         });
         tables.push(table);
       } else if (e.keyword === "index") {

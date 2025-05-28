@@ -168,9 +168,6 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           }
         });
 
-        table.fields.forEach((f, j) => {
-          f.id = j;
-        });
         tables.push(table);
       } else if (e.keyword === "index") {
         const index = {
