@@ -6,6 +6,7 @@ import { useState } from "react";
 import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { Toast } from "@douyinfe/semi-ui";
 
 export default function TableField({ data, tid, index }) {
   const { updateField } = useDiagram();
@@ -137,26 +138,21 @@ export default function TableField({ data, tid, index }) {
           type={data.notNull || data.primary ? "primary" : "tertiary"}
           title={t("not_null")}
           theme={data.notNull ? "solid" : "light"}
-         
-         
           onClick={() => {
                 if(data.primary){
-                  
-                  return};
-
+                  Toast.info(t("pk_has_not_be_null"))
+                  return;
+                }
             setUndoStack((prev) => [
               ...prev,
               {
-                
                 action: Action.EDIT,
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
                 fid: index,
                 undo: { notNull: data.notNull },
-                
                 redo: { notNull: !data.notNull },
-                
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -164,10 +160,8 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            
-            updateField(tid, index, { notNull: !data.notNull });
 
-          
+            updateField(tid, index, { notNull: !data.notNull });
 
           }}
         >
@@ -185,14 +179,14 @@ export default function TableField({ data, tid, index }) {
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
             const changes = { primary: !data.primary };
-             
+
           const undo= { primary: data.primary , notNull : data.notNull };
           const redo= { primary: newStatePK , notNull:stateNull };
           if (mustSetNotNull) {
             undo.notNull = data.notNull;
             redo.notNull = true;
             changes.notNull = true;
-          }      
+          }
             setUndoStack((prev) => [
               ...prev,
               {
@@ -201,7 +195,6 @@ export default function TableField({ data, tid, index }) {
                 component: "field",
                 tid: tid,
                 fid: index,
-                
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -213,7 +206,6 @@ export default function TableField({ data, tid, index }) {
           }}
           icon={<IconKeyStroked />}
         />
-      
 
       </Col>
       <Col span={3}>
