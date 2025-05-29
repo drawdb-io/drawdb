@@ -317,10 +317,10 @@ export default function Table(props) {
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(index);
+              handleGripField(fieldData);
               setLinkingLine((prev) => ({
                 ...prev,
-                startFieldId: index,
+                startFieldId: fieldData.id,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
                 startY:

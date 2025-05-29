@@ -400,7 +400,13 @@ export default function Canvas() {
     });
   };
 
-  const handleGripField = () => {
+  const handleGripField = (field) => {
+      // A field can be a foreign key only if it's a primary key or both NOT NULL and UNIQUE.
+      // If it can't be selected, show an error message and exit.
+      if (!field.primary && !(field.notNull && field.unique)) {
+        Toast.info(t("cannot_fk"));
+        return;
+      }
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinking(true);
