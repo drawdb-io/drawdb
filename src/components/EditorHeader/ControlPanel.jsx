@@ -1770,7 +1770,7 @@ export default function ControlPanel({
                       direction: isRtl(i18n.language) ? "rtl" : "ltr",
                     }}
                     render={
-                      <Dropdown.Menu>
+                      <Dropdown.Menu className="menu max-h-[calc(100vh-80px)] overflow-auto">
                         {Object.keys(menu[category]).map((item, index) => {
                           if (menu[category][item].children) {
                             return (
