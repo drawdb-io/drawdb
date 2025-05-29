@@ -160,9 +160,7 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-
             updateField(tid, index, { notNull: !data.notNull });
-
           }}
         >
           ?
@@ -174,12 +172,10 @@ export default function TableField({ data, tid, index }) {
           title={t("primary")}
           theme={data.primary ? "solid" : "light"}
           onClick={() => {
-
             const newStatePK=!data.primary;
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
             const changes = { primary: !data.primary };
-
           const undo= { primary: data.primary , notNull : data.notNull };
           const redo= { primary: newStatePK , notNull:stateNull };
           if (mustSetNotNull) {
@@ -206,7 +202,6 @@ export default function TableField({ data, tid, index }) {
           }}
           icon={<IconKeyStroked />}
         />
-
       </Col>
       <Col span={3}>
         <Popover
