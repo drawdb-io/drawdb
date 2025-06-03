@@ -104,6 +104,8 @@ export default function Canvas() {
     const elements = [];
 
     tables.forEach((table) => {
+      if (table.locked) return;
+
       if (
         isInsideRect(
           {
@@ -319,6 +321,9 @@ export default function Canvas() {
         },
       }));
     } else if (dragging.element === ObjectType.TABLE && dragging.id !== null) {
+      const table = tables.find((t) => t.id === dragging.id);
+      if (table.locked) return;
+
       updateTable(dragging.id, {
         x: pointer.spaces.diagram.x + grabOffset.x,
         y: pointer.spaces.diagram.y + grabOffset.y,

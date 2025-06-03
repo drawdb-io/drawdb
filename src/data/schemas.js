@@ -38,6 +38,7 @@ export const tableSchema = {
       },
     },
     comment: { type: "string" },
+    locked: { type: "boolean" },
     indices: {
       type: "array",
       items: {
