@@ -32,6 +32,7 @@ export default function DiagramContextProvider({ children }) {
           name: `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
+          locked: false,
           fields: [
             {
               name: "id",
