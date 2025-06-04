@@ -1223,9 +1223,9 @@ export default function ControlPanel({
       },
       dbml_view: {
         state: layout.dbmlEditor ? (
-          <i className="bi bi-toggle-off" />
-        ) : (
           <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
         ),
         function: toggleDBMLEditor,
         shortcut: "Alt+E",

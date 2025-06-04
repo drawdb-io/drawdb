@@ -245,6 +245,8 @@ const zh = {
     supported_types: "支持的文件类型：",
     bulk_update: "批量更新",
     multiselect: "多选",
+    dbml_view: "DBML 视图",
+    tab_view: "标签视图",
   },
 };
 
