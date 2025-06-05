@@ -53,7 +53,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     const endTable = tables.find((t) => t.name === endTableName);
     if (!endTable) return;
 
-    const endField = endTable.fields.findIndex((f) => f.name === endFieldName);
+    const endField = endTable.fields.find((f) => f.name === endFieldName);
     if (!endField) return;
 
     const startField = startTable.fields.find((f) => f.name === startFieldName);
