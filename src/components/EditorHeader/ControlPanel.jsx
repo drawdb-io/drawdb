@@ -80,7 +80,7 @@ import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
-import { getTableHeight } from "../../utils/calculateMeasures";
+import { getTableHeight } from "../../utils/utils.js";
 
 export default function ControlPanel({
   diagramId,
@@ -520,22 +520,28 @@ export default function ControlPanel({
   const fitWindow = () => {
     const canvas = document.getElementById("canvas").getBoundingClientRect();
 
-    let minMaxXY = tables.reduce((acc, table) => {
-      acc.minX = Math.min(acc.minX, table.x);
-      acc.minY = Math.min(acc.minY, table.y);
-      acc.maxX = Math.max(acc.maxX, table.x + settings.tableWidth);
-      acc.maxY = Math.max(acc.maxY, table.y + getTableHeight(table));
-      return acc;
-    }, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
+    const minMaxXY = {
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity,
+    };
 
-    areas.forEach(area => {
+    tables.forEach((table) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table));
+    });
+
+    areas.forEach((area) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, area.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, area.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, area.x + area.width);
       minMaxXY.maxY = Math.max(minMaxXY.maxY, area.y + area.height);
     });
 
-    notes.forEach(note => {
+    notes.forEach((note) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, note.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, note.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, note.x + noteWidth);
@@ -545,9 +551,6 @@ export default function ControlPanel({
     const padding = 10;
     const width = minMaxXY.maxX - minMaxXY.minX + padding;
     const height = minMaxXY.maxY - minMaxXY.minY + padding;
-
-    console.log('width', width, minMaxXY.maxX, minMaxXY.minX);
-    console.log('height', height, minMaxXY.maxY, minMaxXY.minY);
 
     const scaleX = canvas.width / width;
     const scaleY = canvas.height / height;

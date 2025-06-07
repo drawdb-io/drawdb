@@ -1,4 +1,10 @@
-import { tableFieldHeight, tableHeaderHeight, noteWidth, noteRadius, noteFold } from "../data/constants";
+import {
+  tableFieldHeight,
+  tableHeaderHeight,
+  noteWidth,
+  noteRadius,
+  noteFold,
+} from "../data/constants";
 
 export default function Thumbnail({ diagram, i, zoom, theme }) {
   return (

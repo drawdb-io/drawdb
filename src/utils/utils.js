@@ -1,5 +1,11 @@
 import { dbToTypes } from "../data/datatypes";
 
+import {
+  tableFieldHeight,
+  tableHeaderHeight,
+  tableColorStripHeight,
+} from "../data/constants";
+
 export function dataURItoBlob(dataUrl) {
   const byteString = atob(dataUrl.split(",")[1]);
   const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
@@ -45,4 +51,12 @@ export function areFieldsCompatible(db, field1, field2) {
     );
   }
   return same;
+}
+
+export function getTableHeight(table) {
+  return (
+    table.fields.length * tableFieldHeight +
+    tableHeaderHeight +
+    tableColorStripHeight
+  );
 }

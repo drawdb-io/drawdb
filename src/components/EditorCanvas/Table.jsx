@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
-import { getTableHeight } from "../../utils/calculateMeasures";
+import { getTableHeight } from "../../utils/utils.js";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(null);
