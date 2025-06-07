@@ -30,6 +30,7 @@ export default function NotesContextProvider({ children }) {
           y: transform.pan.y - height / 2,
           title: `note_${prev.length}`,
           content: "",
+          locked: false,
           color: defaultNoteTheme,
           height,
         },
