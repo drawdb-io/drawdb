@@ -59,7 +59,6 @@ export const Action = {
   MOVE: 1,
   DELETE: 2,
   EDIT: 3,
-  PAN: 4,
 };
 
 export const State = {

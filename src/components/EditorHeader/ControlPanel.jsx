@@ -297,12 +297,6 @@ export default function ControlPanel({
         }
       }
       setRedoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.PAN) {
-      setTransform((prev) => ({
-        ...prev,
-        pan: a.undo,
-      }));
-      setRedoStack((prev) => [...prev, a]);
     }
   };
 
@@ -476,12 +470,6 @@ export default function ControlPanel({
           }
         }
       }
-      setUndoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.PAN) {
-      setTransform((prev) => ({
-        ...prev,
-        pan: a.redo,
-      }));
       setUndoStack((prev) => [...prev, a]);
     }
   };
