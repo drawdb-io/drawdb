@@ -609,7 +609,7 @@ export default function ControlPanel({
           ...copiedTable,
           x: copiedTable.x + 20,
           y: copiedTable.y + 20,
-          id: tables.length,
+          id: nanoid(),
         });
         break;
       }
@@ -670,7 +670,7 @@ export default function ControlPanel({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,
-          id: tables.length,
+          id: nanoid(),
         });
       } else if (v.validate(obj, areaSchema).valid) {
         addArea({
