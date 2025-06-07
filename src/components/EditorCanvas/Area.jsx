@@ -1,6 +1,11 @@
 import { useMemo, useRef, useState } from "react";
 import { Button, Popover, Input, ColorPicker } from "@douyinfe/semi-ui";
-import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
+import {
+  IconEdit,
+  IconDeleteStroked,
+  IconLock,
+  IconUnlock,
+} from "@douyinfe/semi-icons";
 import { Tab, Action, ObjectType, State } from "../../data/constants";
 import {
   useCanvas,
@@ -30,6 +35,7 @@ export default function Area({
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
+  const { updateArea } = useAreas();
   const { selectedElement, setSelectedElement, bulkSelectedElements } =
     useSelect();
 
@@ -43,6 +49,10 @@ export default function Area({
       pointerX: pointer.x,
       pointerY: pointer.y,
     });
+  };
+
+  const lockUnlockArea = () => {
+    updateArea(data.id, { locked: !data.locked });
   };
 
   const edit = () => {
@@ -123,25 +133,36 @@ export default function Area({
               {data.name}
             </div>
             {(isHovered || (areaIsOpen() && !layout.sidebar)) && (
-              <Popover
-                visible={areaIsOpen() && !layout.sidebar}
-                onClickOutSide={onClickOutSide}
-                stopPropagation
-                content={<EditPopoverContent data={data} />}
-                trigger="custom"
-                position="rightTop"
-                showArrow
-              >
+              <div className="flex items-center gap-1.5">
                 <Button
-                  icon={<IconEdit />}
+                  icon={data.locked ? <IconLock /> : <IconUnlock />}
                   size="small"
                   theme="solid"
                   style={{
                     backgroundColor: "#2F68ADB3",
                   }}
-                  onClick={edit}
+                  onClick={lockUnlockArea}
                 />
-              </Popover>
+                <Popover
+                  visible={areaIsOpen() && !layout.sidebar}
+                  onClickOutSide={onClickOutSide}
+                  stopPropagation
+                  content={<EditPopoverContent data={data} />}
+                  trigger="custom"
+                  position="rightTop"
+                  showArrow
+                >
+                  <Button
+                    icon={<IconEdit />}
+                    size="small"
+                    theme="solid"
+                    style={{
+                      backgroundColor: "#2F68ADB3",
+                    }}
+                    onClick={edit}
+                  />
+                </Popover>
+              </div>
             )}
           </div>
         </div>

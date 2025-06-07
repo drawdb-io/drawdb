@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
 import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
-import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
+import {
+  IconEdit,
+  IconDeleteStroked,
+  IconLock,
+  IconUnlock,
+} from "@douyinfe/semi-icons";
 import {
   useLayout,
   useUndoRedo,
@@ -54,6 +59,10 @@ export default function Note({ data, onPointerDown }) {
       },
     ]);
     setRedoStack([]);
+  };
+
+  const lockUnlockNote = () => {
+    updateNote(data.id, { locked: !data.locked });
   };
 
   const edit = () => {
@@ -152,7 +161,16 @@ export default function Note({ data, onPointerDown }) {
                 selectedElement.id === data.id &&
                 selectedElement.open &&
                 !layout.sidebar)) && (
-              <div>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  icon={data.locked ? <IconLock /> : <IconUnlock />}
+                  size="small"
+                  theme="solid"
+                  style={{
+                    backgroundColor: "#2F68ADB3",
+                  }}
+                  onClick={lockUnlockNote}
+                />
                 <Popover
                   visible={
                     selectedElement.element === ObjectType.NOTE &&
