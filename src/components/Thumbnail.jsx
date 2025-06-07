@@ -1,4 +1,10 @@
-import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
+import {
+  tableFieldHeight,
+  tableHeaderHeight,
+  noteWidth,
+  noteRadius,
+  noteFold,
+} from "../data/constants";
 
 export default function Thumbnail({ diagram, i, zoom, theme }) {
   return (
@@ -111,37 +117,34 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
         {diagram.notes?.map((n) => {
           const x = n.x;
           const y = n.y;
-          const w = 180;
-          const r = 3;
-          const fold = 24;
           const h = n.height;
           return (
             <g key={n.id}>
               <path
-                d={`M${x + fold} ${y} L${x + w - r} ${y} A${r} ${r} 0 0 1 ${
-                  x + w
-                } ${y + r} L${x + w} ${y + h - r} A${r} ${r} 0 0 1 ${
-                  x + w - r
-                } ${y + h} L${x + r} ${y + h} A${r} ${r} 0 0 1 ${x} ${
-                  y + h - r
-                } L${x} ${y + fold}`}
+                d={`M${x + noteFold} ${y} L${x + noteWidth - noteRadius} ${y} A${noteRadius} ${noteRadius} 0 0 1 ${
+                  x + noteWidth
+                } ${y + noteRadius} L${x + noteWidth} ${y + h - noteRadius} A${noteRadius} ${noteRadius} 0 0 1 ${
+                  x + noteWidth - noteRadius
+                } ${y + h} L${x + noteRadius} ${y + h} A${noteRadius} ${noteRadius} 0 0 1 ${x} ${
+                  y + h - noteRadius
+                } L${x} ${y + noteFold}`}
                 fill={n.color}
                 stroke="rgb(168 162 158)"
                 strokeLinejoin="round"
                 strokeWidth="0.5"
               />
               <path
-                d={`M${x} ${y + fold} L${x + fold - r} ${
-                  y + fold
-                } A${r} ${r} 0 0 0 ${x + fold} ${y + fold - r} L${
-                  x + fold
-                } ${y} L${x} ${y + fold} Z`}
+                d={`M${x} ${y + noteFold} L${x + noteFold - noteRadius} ${
+                  y + noteFold
+                } A${noteRadius} ${noteRadius} 0 0 0 ${x + noteFold} ${y + noteFold - noteRadius} L${
+                  x + noteFold
+                } ${y} L${x} ${y + noteFold} Z`}
                 fill={n.color}
                 stroke={"rgb(168 162 158)"}
                 strokeLinejoin="round"
                 strokeWidth="0.5"
               />
-              <foreignObject x={x} y={y} width={w} height={h}>
+              <foreignObject x={x} y={y} width={noteWidth} height={h}>
                 <div className="text-gray-900 w-full h-full px-4 py-2">
                   <label htmlFor={`note_${n.id}`} className="ms-4">
                     {n.title}

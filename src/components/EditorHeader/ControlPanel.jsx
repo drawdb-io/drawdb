@@ -42,6 +42,7 @@ import {
   SIDESHEET,
   DB,
   IMPORT_FROM,
+  noteWidth,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -79,6 +80,7 @@ import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
+import { getTableHeight } from "../../utils/utils";
 
 export default function ControlPanel({
   diagramId,
@@ -516,19 +518,52 @@ export default function ControlPanel({
   const resetView = () =>
     setTransform((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
   const fitWindow = () => {
-    const diagram = document.getElementById("diagram").getBoundingClientRect();
     const canvas = document.getElementById("canvas").getBoundingClientRect();
 
-    const scaleX = canvas.width / diagram.width;
-    const scaleY = canvas.height / diagram.height;
-    const scale = Math.min(scaleX, scaleY);
-    const translateX = canvas.left;
-    const translateY = canvas.top;
+    const minMaxXY = {
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity,
+    };
+
+    tables.forEach((table) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table));
+    });
+
+    areas.forEach((area) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, area.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, area.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, area.x + area.width);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, area.y + area.height);
+    });
+
+    notes.forEach((note) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, note.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, note.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, note.x + noteWidth);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, note.y + note.height);
+    });
+
+    const padding = 10;
+    const width = minMaxXY.maxX - minMaxXY.minX + padding;
+    const height = minMaxXY.maxY - minMaxXY.minY + padding;
+
+    const scaleX = canvas.width / width;
+    const scaleY = canvas.height / height;
+    // Making sure the scale is a multiple of 0.05
+    const scale = Math.floor(Math.min(scaleX, scaleY) * 20) / 20;
+
+    const centerX = (minMaxXY.minX + minMaxXY.maxX) / 2;
+    const centerY = (minMaxXY.minY + minMaxXY.maxY) / 2;
 
     setTransform((prev) => ({
       ...prev,
-      zoom: scale - 0.01,
-      pan: { x: translateX, y: translateY },
+      zoom: scale,
+      pan: { x: centerX, y: centerY },
     }));
   };
   const edit = () => {

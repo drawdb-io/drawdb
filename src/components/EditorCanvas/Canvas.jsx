@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
+import { noteWidth } from "../../data/constants";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -154,7 +155,7 @@ export default function Canvas() {
           {
             x: note.x,
             y: note.y,
-            width: 180,
+            width: noteWidth,
             height: note.height,
           },
           rect,
