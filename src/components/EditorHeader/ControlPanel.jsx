@@ -80,7 +80,7 @@ import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
-import { getTableHeight } from "../../utils/utils.js";
+import { getTableHeight } from "../../utils/utils";
 
 export default function ControlPanel({
   diagramId,
