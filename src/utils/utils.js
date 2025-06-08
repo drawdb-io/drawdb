@@ -43,14 +43,12 @@ export function isFunction(str) {
   return /\w+\([^)]*\)$/.test(str);
 }
 
-export function areFieldsCompatible(db, field1, field2) {
-  const same = field1.type === field2.type;
-  if (dbToTypes[db][field1.type].compatibleWith) {
-    return (
-      dbToTypes[db][field1.type].compatibleWith.includes(field2.type) || same
-    );
-  }
-  return same;
+export function areFieldsCompatible(db, field1Type, field2Type) {
+  const same = field1Type === field2Type;
+  const isCompatible =
+    dbToTypes[db][field1Type].compatibleWith &&
+    dbToTypes[db][field1Type].compatibleWith.includes(field2Type);
+  return same || isCompatible;
 }
 
 export function getTableHeight(table) {
