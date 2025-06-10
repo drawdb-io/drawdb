@@ -1140,7 +1140,7 @@ export default function ControlPanel({
       },
       delete: {
         function: del,
-        shortcut: "Del",
+        shortcut: "Del / Ctrl + Backspace",
       },
       copy_as_image: {
         function: copyAsImage,
@@ -1367,7 +1367,7 @@ export default function ControlPanel({
   useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
   useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
   useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
-  useHotkeys("delete", del, { preventDefault: true });
+  useHotkeys("delete, ctrl+backspace, meta+backspace", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
   useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
