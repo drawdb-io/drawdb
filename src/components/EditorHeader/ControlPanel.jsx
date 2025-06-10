@@ -142,27 +142,50 @@ export default function ControlPanel({
         deleteEnum(enums.length - 1, false);
       }
       setRedoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.MOVE) {
-      if (a.element === ObjectType.TABLE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
-        updateTable(a.id, { x: a.x, y: a.y });
-      } else if (a.element === ObjectType.AREA) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: areas[a.id].x, y: areas[a.id].y },
-        ]);
-        updateArea(a.id, { x: a.x, y: a.y });
-      } else if (a.element === ObjectType.NOTE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: notes[a.id].x, y: notes[a.id].y },
-        ]);
-        updateNote(a.id, { x: a.x, y: a.y });
-      }
-    } else if (a.action === Action.DELETE) {
+      } else if (a.action === Action.MOVE) {
+        // Movimientos múltiples
+        if (Array.isArray(a.id)) {
+          setRedoStack((prev) => [
+            ...prev,
+            {
+              ...a,
+              finalPositions: a.id.reduce((acc, id) => {
+                if (a.element === ObjectType.TABLE) {
+                  acc[id] = { x: tables[id].x, y: tables[id].y };
+                } else if (a.element === ObjectType.AREA) {
+                  acc[id] = { x: areas[id].x, y: areas[id].y };
+                } else if (a.element === ObjectType.NOTE) {
+                  acc[id] = { x: notes[id].x, y: notes[id].y };
+                }
+                return acc;
+              }, {}),
+            },
+          ]);
+          // Revertir cada objeto a su posición inicial
+          a.id.forEach((id) => {
+            if (a.element === ObjectType.TABLE) {
+              updateTable(id, a.initialPositions[id]);
+            } else if (a.element === ObjectType.AREA) {
+              updateArea(id, a.initialPositions[id]);
+            } else if (a.element === ObjectType.NOTE) {
+              updateNote(id, a.initialPositions[id]);
+            }
+          });
+        } else {
+          // Caso individual: se utiliza el campo "from"
+          setRedoStack((prev) => [
+            ...prev,
+            { ...a, to: { x: tables[a.id].x, y: tables[a.id].y } },
+          ]);
+          if (a.element === ObjectType.TABLE) {
+            updateTable(a.id, a.from);
+          } else if (a.element === ObjectType.AREA) {
+            updateArea(a.id, a.from);
+          } else if (a.element === ObjectType.NOTE) {
+            updateNote(a.id, a.from);
+          }
+        }
+      } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
         a.data.relationship.forEach((x) => addRelationship(x, false));
         addTable(a.data.table, false);

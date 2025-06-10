@@ -30,6 +30,7 @@ export default function Table(props) {
     setHoveredTable,
     handleGripField,
     setLinkingLine,
+    moving,
   } = props;
   const { layout } = useLayout();
   const { deleteTable, deleteField } = useDiagram();
@@ -75,17 +76,19 @@ export default function Table(props) {
       >
         <div
           onDoubleClick={openEditor}
-          className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${
-                 selectedElement.id === tableData.id &&
-                 selectedElement.element === ObjectType.TABLE
-                   ? "border-solid border-blue-500"
-                   : "border-zinc-500"
-               }`}
+          className={`border-2 select-none rounded-lg w-full ${
+            settings.mode === "light"
+              ? "bg-zinc-100 text-zinc-800"
+              : "bg-zinc-800 text-zinc-200"
+          } ${
+            (moving ||
+              (selectedElement.element === ObjectType.TABLE &&
+                (Array.isArray(selectedElement.id)
+                  ? selectedElement.id.includes(tableData.id)
+                  : selectedElement.id === tableData.id)))
+              ? "border-dashed border-blue-500"
+              : "border-zinc-500 hover:border-dashed hover:border-blue-500"
+          }`}
           style={{ direction: "ltr" }}
         >
           <div
