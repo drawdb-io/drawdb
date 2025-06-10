@@ -209,57 +209,34 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TABLE) {
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
-        } else if (a.component === "field_delete") {
-          setRelationships((prev) => {
-            let temp = [...prev];
-            a.data.relationship.forEach((r) => {
-              temp.splice(r.id, 0, r);
-            });
-            temp = temp.map((e, i) => {
-              const recoveredRel = a.data.relationship.find(
-                (x) =>
-                  (x.startTableId === e.startTableId &&
-                    x.startFieldId === e.startFieldId) ||
-                  (x.endTableId === e.endTableId &&
-                    x.endFieldId === a.endFieldId),
-              );
-              if (
-                e.startTableId === a.tid &&
-                e.startFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  startFieldId: e.startFieldId + 1,
-                };
-              }
-              if (
-                e.endTableId === a.tid &&
-                e.endFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  endFieldId: e.endFieldId + 1,
-                };
-              }
-              return { ...e, id: i };
-            });
-            return temp;
+      } else if (a.component === "field_delete") {
+        // Restores relationships
+        setRelationships((prev) => {
+          let temp = [...prev];
+          a.data.relationship.forEach((r) => {
+            temp.splice(r.id, 0, r);
           });
+          temp = temp.map((e, i) => ({ ...e, id: i }));
+          return temp;
+        });
+        // Restores the fields of the parent table
+        setTables((prev) =>
+          prev.map((t) =>
+            t.id === a.tid ? { ...t, fields: a.data.previousFields } : t
+          )
+        );
+        // Restores the affected child tables according to the snapshot
+        if (a.data.childFieldsSnapshot) {
           setTables((prev) =>
             prev.map((t) => {
-              if (t.id === a.tid) {
-                const temp = t.fields.slice();
-                temp.splice(a.data.field.id, 0, a.data.field);
-                return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
+              if (a.data.childFieldsSnapshot[t.id]) {
+                return { ...t, fields: a.data.childFieldsSnapshot[t.id] };
               }
               return t;
-            }),
+            })
           );
-        } else if (a.component === "field_add") {
+        }
+      }else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: tables[a.tid].fields
               .filter((e) => e.id !== tables[a.tid].fields.length - 1)

@@ -1,5 +1,3 @@
-import { dbToTypes } from "../data/datatypes";
-
 export function dataURItoBlob(dataUrl) {
   const byteString = atob(dataUrl.split(",")[1]);
   const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
@@ -37,12 +35,17 @@ export function isFunction(str) {
   return /\w+\([^)]*\)$/.test(str);
 }
 
-export function areFieldsCompatible(db, field1, field2) {
-  const same = field1.type === field2.type;
-  if (dbToTypes[db][field1.type].compatibleWith) {
-    return (
-      dbToTypes[db][field1.type].compatibleWith.includes(field2.type) || same
-    );
+export function areFieldsCompatible( parentfields, tarjetTable) {
+
+  for (let i = 0; i < parentfields.length; i++) {
+    const field1 = parentfields[i];
+
+    if (!field1 || !field1.type) return false;
+
+    const field2 = tarjetTable.fields.find((f) => f.name === field1.name);
+
+    if (!field2) return true;
+
   }
-  return same;
+  return false;
 }

@@ -51,7 +51,7 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship, database } =
+  const { tables, updateTable, relationships, addRelationship } =
     useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -644,45 +644,97 @@ export default function Canvas() {
       }
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setLinkingLine({
+      ...linkingLine,
+      startTableId: field.tableId,
+      startFieldId: field.id,
+      startX: pointer.spaces.diagram.x,
+      startY: pointer.spaces.diagram.y,
+    });
     setLinking(true);
   };
 
   const handleLinking = () => {
     if (hoveredTable.tableId < 0) return;
-    if (hoveredTable.field < 0) return;
-    if (
-      !areFieldsCompatible(
-        database,
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
-        tables[hoveredTable.tableId].fields[hoveredTable.field],
-      )
-    ) {
-      Toast.info(t("cannot_connect"));
+    // Get the childTable and parentTable
+    const childTable = tables.find((t) => t.id === hoveredTable.tableId);
+    const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
+    const parentFields = parentTable.fields.filter((field) => field.primary);
+  
+    if (parentFields.length === 0) {
+      Toast.info(t("no_primary_key"));
       return;
     }
-    if (
-      linkingLine.startTableId === hoveredTable.tableId &&
-      linkingLine.startFieldId === hoveredTable.field
-    )
+    // If the relationship is recursive
+    const recursiveRelation = parentTable === childTable;
+    if (!recursiveRelation) {
+      if (!areFieldsCompatible(parentFields, childTable)) {
+        Toast.info(t("duplicate_field_name"));
+        return;
+      }
+    }
+    // Check if the relationship already exists
+    const alreadyLinked = relationships.some(
+      (rel) =>
+        rel.startTableId === linkingLine.startTableId &&
+        rel.endTableId === hoveredTable.tableId
+    );
+    if (alreadyLinked) {
+      Toast.info(t("duplicate_relationship"));
       return;
-
+    }
+  
+    // Generate new fields for the childTable
+    const newFields = parentFields.map((field, index) => ({
+      name: recursiveRelation ? "" : field.name,
+      type: field.type,
+      size: field.size,
+      notNull: true,
+      unique: false,
+      default: "",
+      check: "",
+      primary: false,
+      increment: false,
+      comment: "",
+      foreignK: true,
+      foreignKey: {
+        tableId: parentTable.id,
+        fieldId: field.id,
+      },
+      id: childTable.fields.length + index, // Ensure IDs are unique
+    }));
+  
+    // Concatenate the existing fields with the new fields
+    const updatedChildFields = [...childTable.fields, ...newFields];
+  
+    // Update the childTable with the new fields
+    updateTable(childTable.id, {
+      fields: updatedChildFields,
+    });
+  
+    // Use the updated childTable fields to create the new relationship
     const newRelationship = {
       ...linkingLine,
-      endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.field,
-      cardinality: Cardinality.ONE_TO_ONE,
+      endTableId: childTable.id,
+      // The new fields are added at the end of the childTable fields
+      endFieldId: updatedChildFields.length - 1,
+      startTableId: parentTable.id,
+      startFieldId: parentFields[0].id,
+      Cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${tables[linkingLine.startTableId].name}_${
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_${tables[hoveredTable.tableId].name}`,
+      name: `fk_${parentTable.name}_${parentFields[0].name}`,
       id: relationships.length,
+      endField: newFields,
     };
+
     delete newRelationship.startX;
     delete newRelationship.startY;
     delete newRelationship.endX;
     delete newRelationship.endY;
+    // Add the new relationship to the relationships array
     addRelationship(newRelationship);
+    setLinking(false);
   };
 
   // Handle mouse wheel scrolling
