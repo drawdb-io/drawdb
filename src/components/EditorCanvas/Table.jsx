@@ -108,11 +108,6 @@ export default function Table(props) {
                    : "bg-zinc-800 text-zinc-200"
                } ${isSelected ? "border-solid border-blue-500" : borderColor}
                `}
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -337,7 +332,7 @@ export default function Table(props) {
             (fieldData.primary && settings.notation !== Notation.DEFAULT && index ===primaryKeyCount - 1)
               ? "border-b border-gray-400"
               : ""
-            } 
+            }
           ${
           (!fieldData.primary && settings.notation !== Notation.DEFAULT )
             ? "border-l border-r"
