@@ -7,6 +7,7 @@ const portuguese = {
 const pt = {
   translation: {
     report_bug: "Reportar um erro",
+    import_from: "Importar",
     import: "Importar",
     file: "Arquivo",
     new: "Novo",
@@ -90,7 +91,8 @@ const pt = {
     no_tables: "Sem tabelas",
     no_tables_text: "Comece a construir seu diagrama!",
     no_relationships: "Sem relacionamentos",
-    no_relationships_text: "Arraste para conectar campos e formar relacionamentos!",
+    no_relationships_text:
+      "Arraste para conectar campos e formar relacionamentos!",
     no_subject_areas: "Sem áreas de assunto",
     no_subject_areas_text: "Adicione áreas de assunto para agrupar tabelas!",
     no_notes: "Sem notas",
@@ -149,8 +151,8 @@ const pt = {
     create: "Criar",
     confirm: "Confirmar",
     last_modified: "Última modificação",
-    drag_and_drop_files: "Arraste e solte o arquivo aqui ou clique para fazer upload.",
-    support_json_and_ddb: "Arquivos JSON e DDB são suportados",
+    drag_and_drop_files:
+      "Arraste e solte o arquivo aqui ou clique para fazer upload.",
     upload_sql_to_generate_diagrams:
       "Faça o upload de um arquivo SQL para gerar automaticamente suas tabelas e colunas.",
     overwrite_existing_diagram: "Substituir diagrama existente",

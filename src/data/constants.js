@@ -32,9 +32,13 @@ export const tableColorStripHeight = 7;
 export const Cardinality = {
   ONE_TO_ONE: "one_to_one",
   ONE_TO_MANY: "one_to_many",
-  MANY_TO_ONE: "many_to_one",
+  ZERO_TO_MANY: "zero_to_many",
 };
-
+export const Notation = {
+  DEFAULT: "default",
+  CROWS_FOOT: "crows_foot",
+  IDEF1X: "idef1x",
+}
 export const Constraint = {
   NONE: "No action",
   RESTRICT: "Restrict",
@@ -115,4 +119,9 @@ export const DB = {
   MARIADB: "mariadb",
   ORACLE: "oracledb",
   GENERIC: "generic",
+};
+
+export const IMPORT_FROM = {
+  JSON: 0,
+  DBML: 1,
 };

@@ -24,7 +24,6 @@ import {
   Popconfirm,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
-import { saveAs } from "file-saver";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
@@ -41,6 +40,8 @@ import {
   MODAL,
   SIDESHEET,
   DB,
+  IMPORT_FROM,
+  Notation,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -74,6 +75,8 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import { socials } from "../../data/socials";
+import { toDBML } from "../../utils/exportAs/dbml";
 
 export default function ControlPanel({
   diagramId,
@@ -91,6 +94,7 @@ export default function ControlPanel({
     filename: `${title}_${new Date().toISOString()}`,
     extension: "",
   });
+  const [importFrom, setImportFrom] = useState(IMPORT_FROM.JSON);
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -788,9 +792,18 @@ export default function ControlPanel({
             .catch(() => Toast.error(t("oops_smth_went_wrong")));
         },
       },
-      import_diagram: {
-        function: fileImport,
-        shortcut: "Ctrl+I",
+      import_from: {
+        children: [
+          {
+            JSON: fileImport,
+          },
+          {
+            DBML: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.DBML);
+            },
+          },
+        ],
       },
       import_from_source: {
         ...(database === DB.GENERIC && {
@@ -986,6 +999,21 @@ export default function ControlPanel({
             },
           },
           {
+            SVG: () => {
+              const filter = (node) => node.tagName !== "i";
+              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+                function (dataUrl) {
+                  setExportData((prev) => ({
+                    ...prev,
+                    data: dataUrl,
+                    extension: "svg",
+                  }));
+                },
+              );
+              setModal(MODAL.IMG);
+            },
+          },
+          {
             JSON: () => {
               setModal(MODAL.CODE);
               const result = JSON.stringify(
@@ -1010,18 +1038,18 @@ export default function ControlPanel({
             },
           },
           {
-            SVG: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+            DBML: () => {
+              setModal(MODAL.CODE);
+              const result = toDBML({
+                tables,
+                relationships,
+                enums,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "dbml",
+              }));
             },
           },
           {
@@ -1042,30 +1070,6 @@ export default function ControlPanel({
                 );
                 doc.save(`${exportData.filename}.pdf`);
               });
-            },
-          },
-          {
-            DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  title: title,
-                  date: new Date().toISOString(),
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  database: database,
-                  ...(databases[database].hasTypes && { types: types }),
-                  ...(databases[database].hasEnums && { enums: enums }),
-                },
-                null,
-                2,
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
-              });
-              saveAs(blob, `${exportData.filename}.ddb`);
             },
           },
           {
@@ -1252,6 +1256,26 @@ export default function ControlPanel({
             showCardinality: !prev.showCardinality,
           })),
       },
+      notation: {
+        children: [
+          {
+            default_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.DEFAULT }));
+            },
+          },
+          {
+            crows_foot_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.CROWS_FOOT }));
+            },
+          },
+          {
+            idef1x_notation: () => {
+              setSettings((prev) => ({ ...prev, notation: Notation.IDEF1X }));
+            },
+          },
+        ],
+        function: () => {},
+      },
       show_relationship_labels: {
         state: settings.showRelationshipLabels ? (
           <i className="bi bi-toggle-on" />
@@ -1364,12 +1388,15 @@ export default function ControlPanel({
       },
     },
     help: {
-      shortcuts: {
-        function: () => window.open("/shortcuts", "_blank"),
+      docs: {
+        function: () => window.open(`${socials.docs}`, "_blank"),
         shortcut: "Ctrl+H",
       },
+      shortcuts: {
+        function: () => window.open(`${socials.docs}/shortcuts`, "_blank"),
+      },
       ask_on_discord: {
-        function: () => window.open("https://discord.gg/BrjZgNrmR6", "_blank"),
+        function: () => window.open(socials.discord, "_blank"),
       },
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
@@ -1397,18 +1424,18 @@ export default function ControlPanel({
   useHotkeys("ctrl+shift+m, meta+shift+m", viewStrictMode, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+f, meta+shift+f", viewFieldSummary, {
+  useHotkeys("mod+shift+f", viewFieldSummary, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+shift+s, meta+shift+s", saveDiagramAs, {
+  useHotkeys("mod+shift+s", saveDiagramAs, {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+c, meta+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("ctrl+r, meta+r", resetView, { preventDefault: true });
-  useHotkeys("ctrl+h, meta+h", () => window.open("/shortcuts", "_blank"), {
+  useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
+  useHotkeys("mod+r", resetView, { preventDefault: true });
+  useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
-  useHotkeys("ctrl+alt+w, meta+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
 
   return (
     <>
@@ -1442,6 +1469,7 @@ export default function ControlPanel({
         setTitle={setTitle}
         setDiagramId={setDiagramId}
         setModal={setModal}
+        importFrom={importFrom}
         importDb={importDb}
       />
       <Sidesheet
