@@ -1,3 +1,5 @@
+import { Cardinality } from "../data/constants";
+
 export const template4 = {
   tables: [
     {
@@ -316,7 +318,7 @@ export const template4 = {
       endTableId: 2,
       endFieldId: 0,
       name: "books_author_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 0,
@@ -327,7 +329,7 @@ export const template4 = {
       endTableId: 0,
       endFieldId: 0,
       name: "reservations_book_id_fk",
-      cardinality: "One to one",
+      cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 1,
@@ -338,7 +340,7 @@ export const template4 = {
       endTableId: 4,
       endFieldId: 0,
       name: "reservations_patron_id_fk",
-      cardinality: "One to one",
+      cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 2,
@@ -349,7 +351,7 @@ export const template4 = {
       endTableId: 1,
       endFieldId: 0,
       name: "books_genre_id_fk",
-      cardinality: "Many to one",
+      cardinality: Cardinality.MANY_TO_ONE,
       updateConstraint: "No action",
       deleteConstraint: "No action",
       id: 3,

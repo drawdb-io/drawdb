@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
 import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
-import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
+import {
+  IconEdit,
+  IconDeleteStroked,
+  IconLock,
+  IconUnlock,
+} from "@douyinfe/semi-icons";
 import {
   useLayout,
   useUndoRedo,
@@ -10,11 +15,9 @@ import {
   useSaveState,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
+import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 
 export default function Note({ data, onPointerDown }) {
-  const w = 180;
-  const r = 3;
-  const fold = 24;
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
@@ -56,6 +59,10 @@ export default function Note({ data, onPointerDown }) {
     setRedoStack([]);
   };
 
+  const lockUnlockNote = () => {
+    updateNote(data.id, { locked: !data.locked });
+  };
+
   const edit = () => {
     setSelectedElement((prev) => ({
       ...prev,
@@ -93,15 +100,15 @@ export default function Note({ data, onPointerDown }) {
       }}
     >
       <path
-        d={`M${data.x + fold} ${data.y} L${data.x + w - r} ${
+        d={`M${data.x + noteFold} ${data.y} L${data.x + noteWidth - noteRadius} ${
           data.y
-        } A${r} ${r} 0 0 1 ${data.x + w} ${data.y + r} L${data.x + w} ${
-          data.y + data.height - r
-        } A${r} ${r} 0 0 1 ${data.x + w - r} ${data.y + data.height} L${
-          data.x + r
-        } ${data.y + data.height} A${r} ${r} 0 0 1 ${data.x} ${
-          data.y + data.height - r
-        } L${data.x} ${data.y + fold}`}
+        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + noteWidth} ${data.y + noteRadius} L${data.x + noteWidth} ${
+          data.y + data.height - noteRadius
+        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + noteWidth - noteRadius} ${data.y + data.height} L${
+          data.x + noteRadius
+        } ${data.y + data.height} A${noteRadius} ${noteRadius} 0 0 1 ${data.x} ${
+          data.y + data.height - noteRadius
+        } L${data.x} ${data.y + noteFold}`}
         fill={data.color}
         stroke={
           hovered
@@ -115,11 +122,11 @@ export default function Note({ data, onPointerDown }) {
         strokeWidth="2"
       />
       <path
-        d={`M${data.x} ${data.y + fold} L${data.x + fold - r} ${
-          data.y + fold
-        } A${r} ${r} 0 0 0 ${data.x + fold} ${data.y + fold - r} L${
-          data.x + fold
-        } ${data.y} L${data.x} ${data.y + fold} Z`}
+        d={`M${data.x} ${data.y + noteFold} L${data.x + noteFold - noteRadius} ${
+          data.y + noteFold
+        } A${noteRadius} ${noteRadius} 0 0 0 ${data.x + noteFold} ${data.y + noteFold - noteRadius} L${
+          data.x + noteFold
+        } ${data.y} L${data.x} ${data.y + noteFold} Z`}
         fill={data.color}
         stroke={
           hovered
@@ -135,7 +142,7 @@ export default function Note({ data, onPointerDown }) {
       <foreignObject
         x={data.x}
         y={data.y}
-        width={w}
+        width={noteWidth}
         height={data.height}
         onPointerDown={onPointerDown}
       >
@@ -152,7 +159,16 @@ export default function Note({ data, onPointerDown }) {
                 selectedElement.id === data.id &&
                 selectedElement.open &&
                 !layout.sidebar)) && (
-              <div>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  icon={data.locked ? <IconLock /> : <IconUnlock />}
+                  size="small"
+                  theme="solid"
+                  style={{
+                    backgroundColor: "#2F68ADB3",
+                  }}
+                  onClick={lockUnlockNote}
+                />
                 <Popover
                   visible={
                     selectedElement.element === ObjectType.NOTE &&

@@ -34,11 +34,18 @@ import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
 import Language from "./Language";
 import Share from "./Share";
-import Code from "./Code";
+import CodeEditor from "../../CodeEditor";
 import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
+
+const extensionToLanguage = {
+  md: "markdown",
+  sql: "sql",
+  dbml: "dbml",
+  json: "json",
+};
 
 export default function Modal({
   modal,
@@ -52,7 +59,7 @@ export default function Modal({
   importFrom,
 }) {
   const { t, i18n } = useTranslation();
-  const { tables, setTables, setRelationships, database, setDatabase } = useDiagram();
+  const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -174,22 +181,18 @@ export default function Modal({
         setUndoStack([]);
         setRedoStack([]);
       } else {
-        const initialTablesLength = tables.length;
-        setTables((prev) =>
-          [...prev, ...diagramData.tables].map((t, i) => ({ ...t, id: i })),
-        );
+        setTables((prev) => [...prev, ...diagramData.tables]);
         setRelationships((prev) =>
           [...prev, ...diagramData.relationships].map((r, i) => ({
             ...r,
-            startTableId: initialTablesLength + r.startTableId,
-            endTableId: initialTablesLength + r.endTableId,
             id: i,
           })),
         );
       }
 
       setModal(MODAL.NONE);
-    } catch {
+    } catch (e) {
+      console.log(e)
       setError({
         type: STATUS.ERROR,
         message: `Please check for syntax errors or let us know about the error.`,
@@ -307,7 +310,13 @@ export default function Modal({
               {modal === MODAL.IMG ? (
                 <Image src={exportData.data} alt="Diagram" height={280} />
               ) : (
-                <Code value={exportData.data} language={exportData.extension} />
+                <CodeEditor
+                  height={360}
+                  value={exportData.data}
+                  language={extensionToLanguage[exportData.extension]}
+                  options={{ readOnly: true }}
+                  showCopyButton={true}
+                />
               )}
               <div className="text-sm font-semibold mt-2">{t("filename")}:</div>
               <Input

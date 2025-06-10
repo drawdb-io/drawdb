@@ -78,6 +78,9 @@ import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
+import { exportSavedData } from "../../utils/exportSavedData";
+import { nanoid } from "nanoid";
+import { getTableHeight } from "../../utils/utils";
 
 export default function ControlPanel({
   diagramId,
@@ -144,13 +147,12 @@ export default function ControlPanel({
         }
       }
       setRedoStack((prev) => [...prev, a]);
-      console.log(a);
       return;
     }
 
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        deleteTable(tables[tables.length - 1].id, false);
+        deleteTable(a.id, false);
       } else if (a.element === ObjectType.AREA) {
         deleteArea(areas[areas.length - 1].id, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -165,10 +167,8 @@ export default function ControlPanel({
       setRedoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
       if (a.element === ObjectType.TABLE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
+        const { x, y } = tables.find((t) => t.id === a.id);
+        setRedoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setRedoStack((prev) => [
@@ -205,6 +205,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.undo);
       } else if (a.element === ObjectType.TABLE) {
+        const table = tables.find((t) => t.id === a.tid);
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
         } else if (a.component === "field_delete") {
@@ -213,65 +214,24 @@ export default function ControlPanel({
             a.data.relationship.forEach((r) => {
               temp.splice(r.id, 0, r);
             });
-            temp = temp.map((e, i) => {
-              const recoveredRel = a.data.relationship.find(
-                (x) =>
-                  (x.startTableId === e.startTableId &&
-                    x.startFieldId === e.startFieldId) ||
-                  (x.endTableId === e.endTableId &&
-                    x.endFieldId === a.endFieldId),
-              );
-              if (
-                e.startTableId === a.tid &&
-                e.startFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  startFieldId: e.startFieldId + 1,
-                };
-              }
-              if (
-                e.endTableId === a.tid &&
-                e.endFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  endFieldId: e.endFieldId + 1,
-                };
-              }
-              return { ...e, id: i };
-            });
             return temp;
           });
-          setTables((prev) =>
-            prev.map((t) => {
-              if (t.id === a.tid) {
-                const temp = t.fields.slice();
-                temp.splice(a.data.field.id, 0, a.data.field);
-                return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
-              }
-              return t;
-            }),
-          );
+          const updatedFields = table.fields.slice();
+          updatedFields.splice(a.data.index, 0, a.data.field);
+          updateTable(a.tid, { fields: updatedFields });
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
-            fields: tables[a.tid].fields
-              .filter((e) => e.id !== tables[a.tid].fields.length - 1)
-              .map((t, i) => ({ ...t, id: i })),
+            fields: table.fields.filter((e) => e.id !== a.fid),
           });
         } else if (a.component === "index_add") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices
-              .filter((e) => e.id !== tables[a.tid].indices.length - 1)
+            indices: table.indices
+              .filter((e) => e.id !== table.indices.length - 1)
               .map((t, i) => ({ ...t, id: i })),
           });
         } else if (a.component === "index") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices.map((index) =>
+            indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
                     ...index,
@@ -281,19 +241,11 @@ export default function ControlPanel({
             ),
           });
         } else if (a.component === "index_delete") {
-          setTables((prev) =>
-            prev.map((table) => {
-              if (table.id === a.tid) {
-                const temp = table.indices.slice();
-                temp.splice(a.data.id, 0, a.data);
-                return {
-                  ...table,
-                  indices: temp.map((t, i) => ({ ...t, id: i })),
-                };
-              }
-              return table;
-            }),
-          );
+          const updatedIndices = table.indices.slice();
+          updatedIndices.splice(a.data.id, 0, a.data);
+          updateTable(a.tid, {
+            indices: updatedIndices.map((t, i) => ({ ...t, id: i })),
+          });
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
         }
@@ -345,12 +297,6 @@ export default function ControlPanel({
         }
       }
       setRedoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.PAN) {
-      setTransform((prev) => ({
-        ...prev,
-        pan: a.undo,
-      }));
-      setRedoStack((prev) => [...prev, a]);
     }
   };
 
@@ -390,10 +336,8 @@ export default function ControlPanel({
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
       if (a.element === ObjectType.TABLE) {
-        setUndoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
+        const { x, y } = tables.find((t) => t.id == a.id);
+        setUndoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
         setUndoStack((prev) => [
@@ -429,6 +373,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         updateNote(a.nid, a.redo);
       } else if (a.element === ObjectType.TABLE) {
+        const table = tables.find((t) => t.id === a.tid);
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.redo);
         } else if (a.component === "field_delete") {
@@ -436,7 +381,7 @@ export default function ControlPanel({
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: [
-              ...tables[a.tid].fields,
+              ...table.fields,
               {
                 name: "",
                 type: "",
@@ -447,32 +392,24 @@ export default function ControlPanel({
                 notNull: false,
                 increment: false,
                 comment: "",
-                id: tables[a.tid].fields.length,
+                id: nanoid(),
               },
             ],
           });
         } else if (a.component === "index_add") {
-          setTables((prev) =>
-            prev.map((table) => {
-              if (table.id === a.tid) {
-                return {
-                  ...table,
-                  indices: [
-                    ...table.indices,
-                    {
-                      id: table.indices.length,
-                      name: `index_${table.indices.length}`,
-                      fields: [],
-                    },
-                  ],
-                };
-              }
-              return table;
-            }),
-          );
+          updateTable(a.tid, {
+            indices: [
+              ...table.indices,
+              {
+                id: table.indices.length,
+                name: `index_${table.indices.length}`,
+                fields: [],
+              },
+            ],
+          });
         } else if (a.component === "index") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices.map((index) =>
+            indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
                     ...index,
@@ -483,7 +420,7 @@ export default function ControlPanel({
           });
         } else if (a.component === "index_delete") {
           updateTable(a.tid, {
-            indices: tables[a.tid].indices
+            indices: table.indices
               .filter((e) => e.id !== a.data.id)
               .map((t, i) => ({ ...t, id: i })),
           });
@@ -534,12 +471,6 @@ export default function ControlPanel({
         }
       }
       setUndoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.PAN) {
-      setTransform((prev) => ({
-        ...prev,
-        pan: a.redo,
-      }));
-      setUndoStack((prev) => [...prev, a]);
     }
   };
 
@@ -575,19 +506,52 @@ export default function ControlPanel({
   const resetView = () =>
     setTransform((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
   const fitWindow = () => {
-    const diagram = document.getElementById("diagram").getBoundingClientRect();
     const canvas = document.getElementById("canvas").getBoundingClientRect();
 
-    const scaleX = canvas.width / diagram.width;
-    const scaleY = canvas.height / diagram.height;
-    const scale = Math.min(scaleX, scaleY);
-    const translateX = canvas.left;
-    const translateY = canvas.top;
+    const minMaxXY = {
+      minX: Infinity,
+      minY: Infinity,
+      maxX: -Infinity,
+      maxY: -Infinity,
+    };
+
+    tables.forEach((table) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table));
+    });
+
+    areas.forEach((area) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, area.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, area.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, area.x + area.width);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, area.y + area.height);
+    });
+
+    notes.forEach((note) => {
+      minMaxXY.minX = Math.min(minMaxXY.minX, note.x);
+      minMaxXY.minY = Math.min(minMaxXY.minY, note.y);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, note.x + noteWidth);
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, note.y + note.height);
+    });
+
+    const padding = 10;
+    const width = minMaxXY.maxX - minMaxXY.minX + padding;
+    const height = minMaxXY.maxY - minMaxXY.minY + padding;
+
+    const scaleX = canvas.width / width;
+    const scaleY = canvas.height / height;
+    // Making sure the scale is a multiple of 0.05
+    const scale = Math.floor(Math.min(scaleX, scaleY) * 20) / 20;
+
+    const centerX = (minMaxXY.minX + minMaxXY.maxX) / 2;
+    const centerY = (minMaxXY.minY + minMaxXY.maxY) / 2;
 
     setTransform((prev) => ({
       ...prev,
-      zoom: scale - 0.01,
-      pan: { x: translateX, y: translateY },
+      zoom: scale,
+      pan: { x: centerX, y: centerY },
     }));
   };
   const edit = () => {
@@ -662,14 +626,16 @@ export default function ControlPanel({
   };
   const duplicate = () => {
     switch (selectedElement.element) {
-      case ObjectType.TABLE:
+      case ObjectType.TABLE: {
+        const copiedTable = tables.find((t) => t.id === selectedElement.id);
         addTable({
-          ...tables[selectedElement.id],
-          x: tables[selectedElement.id].x + 20,
-          y: tables[selectedElement.id].y + 20,
-          id: tables.length,
+          ...copiedTable,
+          x: copiedTable.x + 20,
+          y: copiedTable.y + 20,
+          id: nanoid(),
         });
         break;
+      }
       case ObjectType.NOTE:
         addNote({
           ...notes[selectedElement.id],
@@ -694,7 +660,9 @@ export default function ControlPanel({
     switch (selectedElement.element) {
       case ObjectType.TABLE:
         navigator.clipboard
-          .writeText(JSON.stringify({ ...tables[selectedElement.id] }))
+          .writeText(
+            JSON.stringify(tables.find((t) => t.id === selectedElement.id)),
+          )
           .catch(() => Toast.error(t("oops_smth_went_wrong")));
         break;
       case ObjectType.NOTE:
@@ -725,7 +693,7 @@ export default function ControlPanel({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,
-          id: tables.length,
+          id: nanoid(),
         });
       } else if (v.validate(obj, areaSchema).valid) {
         addArea({
@@ -747,6 +715,9 @@ export default function ControlPanel({
   const cut = () => {
     copy();
     del();
+  };
+  const toggleDBMLEditor = () => {
+    setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = () => setSaveState(State.SAVING);
   const open = () => setModal(MODAL.OPEN);
@@ -1190,7 +1161,7 @@ export default function ControlPanel({
           title: t("clear"),
           message: t("are_you_sure_clear"),
         },
-        function: () => {
+        function: async () => {
           setTables([]);
           setRelationships([]);
           setAreas([]);
@@ -1199,6 +1170,21 @@ export default function ControlPanel({
           setTypes([]);
           setUndoStack([]);
           setRedoStack([]);
+
+          if (!diagramId) {
+            Toast.error(t("oops_smth_went_wrong"));
+            return;
+          }
+
+          db.table("diagrams")
+            .delete(diagramId)
+            .catch((error) => {
+              Toast.error(t("oops_smth_went_wrong"));
+              console.error(
+                `Error deleting records with gistId '${diagramId}':`,
+                error,
+              );
+            });
         },
       },
       edit: {
@@ -1258,6 +1244,15 @@ export default function ControlPanel({
         function: () =>
           setLayout((prev) => ({ ...prev, issues: !prev.issues })),
       },
+      dbml_view: {
+        state: layout.dbmlEditor ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: toggleDBMLEditor,
+        shortcut: "Alt+E",
+      },
       strict_mode: {
         state: settings.strictMode ? (
           <i className="bi bi-toggle-off" />
@@ -1289,7 +1284,7 @@ export default function ControlPanel({
       },
       reset_view: {
         function: resetView,
-        shortcut: "Ctrl+R",
+        shortcut: "Enter/Return",
       },
       show_datatype: {
         state: settings.showDataTypes ? (
@@ -1440,6 +1435,9 @@ export default function ControlPanel({
       language: {
         function: () => setModal(MODAL.LANGUAGE),
       },
+      export_saved_data: {
+        function: exportSavedData,
+      },
       flush_storage: {
         warning: {
           title: t("flush_storage"),
@@ -1471,9 +1469,6 @@ export default function ControlPanel({
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
       },
-      feedback: {
-        function: () => window.open("/survey", "_blank"),
-      },
     },
   };
 
@@ -1501,11 +1496,12 @@ export default function ControlPanel({
     preventDefault: true,
   });
   useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("mod+r", resetView, { preventDefault: true });
+  useHotkeys("enter", resetView, { preventDefault: true });
   useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
     preventDefault: true,
   });
   useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
 
   return (
     <>
@@ -1817,7 +1813,7 @@ export default function ControlPanel({
                       direction: isRtl(i18n.language) ? "rtl" : "ltr",
                     }}
                     render={
-                      <Dropdown.Menu>
+                      <Dropdown.Menu className="menu max-h-[calc(100vh-80px)] overflow-auto">
                         {Object.keys(menu[category]).map((item, index) => {
                           if (menu[category][item].children) {
                             return (

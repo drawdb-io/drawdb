@@ -1,7 +1,7 @@
 export const tableSchema = {
   type: "object",
   properties: {
-    id: { type: "integer" },
+    id: { type: ["integer", "string"] },
     name: { type: "string" },
     x: { type: "number" },
     y: { type: "number" },
@@ -10,6 +10,7 @@ export const tableSchema = {
       items: {
         type: "object",
         properties: {
+          id: { type: ["integer", "string"] },
           name: { type: "string" },
           type: { type: "string" },
           default: { type: "string" },
@@ -23,6 +24,7 @@ export const tableSchema = {
           values: { type: "array", items: { type: "string" } },
         },
         required: [
+          "id",
           "name",
           "type",
           "default",
@@ -36,6 +38,7 @@ export const tableSchema = {
       },
     },
     comment: { type: "string" },
+    locked: { type: "boolean" },
     indices: {
       type: "array",
       items: {
@@ -65,6 +68,7 @@ export const areaSchema = {
     y: { type: "number" },
     width: { type: "number" },
     height: { type: "number" },
+    locked: { type: "boolean" },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
   },
   required: ["id", "name", "x", "y", "width", "height", "color"],
@@ -80,6 +84,7 @@ export const noteSchema = {
     content: { type: "string" },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
     height: { type: "number" },
+    locked: { type: "boolean" },
   },
   required: ["id", "x", "y", "title", "content", "color", "height"],
 };
@@ -131,10 +136,10 @@ export const jsonSchema = {
       items: {
         type: "object",
         properties: {
-          startTableId: { type: "integer" },
-          startFieldId: { type: "integer" },
-          endTableId: { type: "integer" },
-          endFieldId: { type: "integer" },
+          startTableId: { type: ["integer", "string"] },
+          startFieldId: { type: ["integer", "string"] },
+          endTableId: { type: ["integer", "string"] },
+          endFieldId: { type: ["integer", "string"] },
           name: { type: "string" },
           cardinality: { type: "string" },
           updateConstraint: { type: "string" },

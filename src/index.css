@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../tailwind.config.js';
 
@@ -67,7 +67,7 @@
   background-color: rgba(var(--semi-blue-6), 1);
 }
 
-.semi-spin-wrapper{
+.semi-spin-wrapper {
   color: inherit;
 }
 
@@ -77,8 +77,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -91,11 +91,15 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: rgba(var(--semi-grey-2), 1);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(var(--semi-grey-3), 1);
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--semi-grey-4), 1);
 }
 
 .theme {
@@ -119,7 +123,7 @@
 }
 
 .toolbar-theme {
-  background-color: rgba(var(--semi-grey-1), 1);
+  background-color: rgba(var(--semi-grey-1), 0.7);
 }
 
 .hover-1:hover {

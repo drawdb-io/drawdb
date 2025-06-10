@@ -22,10 +22,12 @@ export default function EnumDetails({ data, i }) {
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           onChange={(value) => {
             updateEnum(i, { name: value });
-            tables.forEach((table, i) => {
-              table.fields.forEach((field, j) => {
+            tables.forEach((table) => {
+              table.fields.forEach((field) => {
                 if (field.type.toLowerCase() === data.name.toLowerCase()) {
-                  updateField(i, j, { type: value.toUpperCase() });
+                  updateField(table.id, field.id, {
+                    type: value.toUpperCase(),
+                  });
                 }
               });
             });

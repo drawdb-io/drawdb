@@ -24,9 +24,11 @@ import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
-import { octokit } from "../data/octokit";
+import { get } from "../api/gists";
 
-export const IdContext = createContext({ gistId: "" });
+export const IdContext = createContext({ gistId: "", setGistId: () => {} });
+
+const SIDEPANEL_MIN_WIDTH = 384;
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
@@ -34,7 +36,7 @@ export default function WorkSpace() {
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
-  const [width, setWidth] = useState(340);
+  const [width, setWidth] = useState(SIDEPANEL_MIN_WIDTH);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
   const [selectedDb, setSelectedDb] = useState("");
@@ -61,7 +63,7 @@ export default function WorkSpace() {
   const handleResize = (e) => {
     if (!resize) return;
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
-    if (w > 340) setWidth(w);
+    if (w > SIDEPANEL_MIN_WIDTH) setWidth(w);
   };
 
   const save = useCallback(async () => {
@@ -285,12 +287,7 @@ export default function WorkSpace() {
 
     const loadFromGist = async (shareId) => {
       try {
-        const res = await octokit.request(`GET /gists/${shareId}`, {
-          gist_id: shareId,
-          headers: {
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        });
+        const res = await get(shareId);
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
         setUndoStack([]);

@@ -13,6 +13,8 @@ import {
   IconMinus,
   IconDeleteStroked,
   IconKeyStroked,
+  IconLock,
+  IconUnlock,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
@@ -21,9 +23,10 @@ import { useTranslation} from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
+import { getTableHeight } from "../../utils/utils";
 
 export default function Table(props) {
-  const [hoveredField, setHoveredField] = useState(-1);
+  const [hoveredField, setHoveredField] = useState(null);
   const { database } = useDiagram();
   const {
     tableData,
@@ -33,7 +36,7 @@ export default function Table(props) {
     setLinkingLine,
   } = props;
   const { layout } = useLayout();
-  const { deleteTable, deleteField } = useDiagram();
+  const { deleteTable, deleteField, updateTable } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement, bulkSelectedElements } =
@@ -44,17 +47,20 @@ export default function Table(props) {
     [settings.mode],
   );
 
-  const height =
-    tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
+  const height = getTableHeight(tableData);
+
   const isSelected = useMemo(() => {
     return (
-      (selectedElement.id === tableData.id &&
+      (selectedElement.id == tableData.id &&
         selectedElement.element === ObjectType.TABLE) ||
       bulkSelectedElements.some(
         (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
       )
     );
   }, [selectedElement, tableData, bulkSelectedElements]);
+
+  const lockUnlockTable = () =>
+    updateTable(tableData.id, { locked: !tableData.locked });
 
   const openEditor = () => {
     if (!layout.sidebar) {
@@ -136,19 +142,27 @@ export default function Table(props) {
               {tableData.name}
             </div>
             <div className="hidden group-hover:block">
-              <div className="flex justify-end items-center mx-2">
+              <div className="flex justify-end items-center mx-2 space-x-1.5">
+                <Button
+                  icon={tableData.locked ? <IconLock /> : <IconUnlock />}
+                  size="small"
+                  theme="solid"
+                  style={{
+                    backgroundColor: "#2f68adb3",
+                  }}
+                  onClick={lockUnlockTable}
+                />
                 <Button
                   icon={<IconEdit />}
                   size="small"
                   theme="solid"
                   style={{
                     backgroundColor: "#2f68adb3",
-                    marginRight: "6px",
                   }}
                   onClick={openEditor}
                 />
                 <Popover
-                  key={tableData.key}
+                  key={tableData.id}
                   content={
                     <div className="popover-theme">
                       <div className="mb-2">
@@ -233,7 +247,11 @@ export default function Table(props) {
                       style={{ direction: "ltr" }}
                     >
                       <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4">
+                      <p
+                        className={
+                          "ms-4 font-mono " + dbToTypes[database][e.type].color
+                        }
+                      >
                         {e.type +
                           ((dbToTypes[database][e.type].isSized ||
                             dbToTypes[database][e.type].hasPrecision) &&
@@ -368,13 +386,17 @@ export default function Table(props) {
           setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
-            field: index,
+            fieldId: fieldData.id,
           });
         }}
         onPointerLeave={(e) => {
           if (!e.isPrimary) return;
 
-          setHoveredField(-1);
+          setHoveredField(null);
+          setHoveredTable({
+            tableId: null,
+            fieldId: null,
+          });
         }}
         onPointerDown={(e) => {
           // Required for onPointerLeave to trigger when a touch pointer leaves
@@ -396,10 +418,10 @@ export default function Table(props) {
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(index);
+              handleGripField();
               setLinkingLine((prev) => ({
                 ...prev,
-                startFieldId: index,
+                startFieldId: fieldData.id,
                 startTableId: tableData.id,
                 startX: tableData.x + 15,
                 startY:

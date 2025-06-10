@@ -1,4 +1,17 @@
 <div align="center">
+  <sup>Special thanks to:</sup>
+  <br>
+  <a href="https://www.warp.dev/drawdb/" target="_blank">
+    <img alt="Warp sponsorship" width="280" src="https://github.com/user-attachments/assets/c7f141e7-9751-407d-bb0e-d6f2c487b34f">
+    <br>
+    <b>Next-gen AI-powered intelligent terminal for all platforms</b>
+  </a>
+</div>
+
+<br/>
+<br/>
+
+<div align="center">
     <img width="64" alt="drawdb logo" src="./src/assets/icon-dark.png">
     <h1>drawDB</h1>
 </div>
@@ -48,4 +61,4 @@ docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
-Set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample` for the survey and bug report forms.
+If you wish to work with sharing, set up [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is not required unless you want to share files.

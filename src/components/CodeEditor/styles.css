@@ -1,0 +1,4 @@
+.monaco-editor,
+.monaco-editor > .overflow-guard {
+  border-radius: 6px;
+}

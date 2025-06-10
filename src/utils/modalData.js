@@ -34,6 +34,7 @@ export const getModalWidth = (modal) => {
   switch (modal) {
     case MODAL.LANGUAGE:
     case MODAL.OPEN:
+    case MODAL.CODE:
     case MODAL.NEW:
       return 740;
     default:

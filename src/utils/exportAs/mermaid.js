@@ -41,8 +41,10 @@ export function jsonToMermaid(obj) {
   const mermaidRelationships = obj.relationships?.length
     ? obj.relationships
         .map((r) => {
-          const startTable = obj.tables[r.startTableId].name;
-          const endTable = obj.tables[r.endTableId].name;
+          const startTable = obj.tables.find(
+            (t) => t.id === r.startTableId,
+          ).name;
+          const endTable = obj.tables.find((t) => t.id === r.endTableId).name;
           return `\t${startTable} ${getMermaidRelationship(r.cardinality)} ${endTable} : references`;
         })
         .join("\n")

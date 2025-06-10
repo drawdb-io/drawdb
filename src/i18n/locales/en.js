@@ -117,6 +117,7 @@ const en = {
     type: "Type",
     null: "Null",
     not_null: "Not null",
+    nullable: "Nullable",
     primary: "Primary",
     unique: "Unique",
     autoincrement: "Autoincrement",
@@ -253,6 +254,9 @@ const en = {
     supported_types: "Supported file types:",
     bulk_update: "Bulk update",
     multiselect: "Multiselect",
+    export_saved_data: "Export saved data",
+    dbml_view: "DBML view",
+    tab_view: "Tab view",
   },
 };
 

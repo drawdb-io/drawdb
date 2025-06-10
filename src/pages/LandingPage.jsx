@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { IconCrossStroked } from "@douyinfe/semi-icons";
 import SimpleCanvas from "../components/SimpleCanvas";
 import Navbar from "../components/Navbar";
 import { diagram } from "../data/heroDiagram";
@@ -12,6 +11,7 @@ import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
 import discord from "../assets/discord.png";
 import github from "../assets/github.png";
+import warp from "../assets/warp.png";
 import screenshot from "../assets/screenshot.png";
 import FadeIn from "../animations/FadeIn";
 import axios from "axios";
@@ -27,7 +27,6 @@ function shortenNumber(number) {
 }
 
 export default function LandingPage() {
-  const [showSurvey, setShowSurvey] = useState(true);
   const [stats, setStats] = useState({ stars: 18000, forks: 1200 });
 
   useEffect(() => {
@@ -47,18 +46,8 @@ export default function LandingPage() {
   return (
     <div>
       <div className="flex flex-col h-screen bg-zinc-100">
-        {showSurvey && (
-          <div className="text-white font-semibold py-1.5 px-4 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]">
-            <Link to="/survey" className="hover:underline">
-              Help us improve! Share your feedback.
-            </Link>
-            <div className="float-right">
-              <button onClick={() => setShowSurvey(false)}>
-                <IconCrossStroked size="small" />
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="text-white font-semibold py-1 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]" />
+
         <FadeIn duration={0.6}>
           <Navbar />
         </FadeIn>
@@ -115,6 +104,36 @@ export default function LandingPage() {
       {/* Learn more */}
       <div id="learn-more">
         <div className="bg-zinc-100 py-10 px-28 md:px-8">
+          {/* Supported by */}
+          <div className="text-center mb-16">
+            <div className="text-2xl md:text-xl font-bold text-sky-800 mb-8">
+              Supported by
+            </div>
+            <div>
+              <a
+                href="https://warp.dev/drawdb"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src={warp}
+                  alt="warp.dev"
+                  width={260}
+                  className="m-auto mb-4"
+                />
+                <div className="font-semibold text-lg md:text-base">
+                  Next-gen AI-powered intelligent terminal for all platforms
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3 mb-12">
+            <div className="text-lg font-medium">
+              Build diagrams with a few clicks, see the full picture, export SQL
+              scripts, customize your editor, and more.
+            </div>
+            <img src={screenshot} className="mx-auto" />
+          </div>
           <div className="flex justify-center items-center gap-28 md:block">
             <div className="text-center mb-4">
               <div className="text-5xl md:text-3xl font-bold text-sky-800">
@@ -140,13 +159,6 @@ export default function LandingPage() {
                 Languages
               </div>
             </div>
-          </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3">
-            <div className="text-lg font-medium">
-              Build diagrams with a few clicks, see the full picture, export SQL
-              scripts, customize your editor, and more.
-            </div>
-            <img src={screenshot} className="mx-auto" />
           </div>
           <div className="text-lg font-medium text-center mt-12 mb-6">
             Design for your database
@@ -338,7 +350,8 @@ const features = [
     title: "Keyboard shortcuts",
     content: (
       <div>
-        Speed up development with keyboard shortuts. See all available shortcuts
+        Speed up development with keyboard shortcuts. See all available
+        shortcuts
         <Link
           to={`${socials.docs}/shortcuts`}
           className="ms-1.5 text-blue-500 hover:underline"
@@ -354,7 +367,7 @@ const features = [
     title: "Templates",
     content: (
       <div>
-        Start off with pre-built templates. Get a quick start or get inspirition
+        Start off with pre-built templates. Get a quick start or get inspiration
         for your design.
       </div>
     ),
@@ -374,7 +387,7 @@ const features = [
     title: "Robust editor",
     content: (
       <div>
-        Undo, redo, copy, paste, duplacate and more. Add tables, subject areas,
+        Undo, redo, copy, paste, duplicate and more. Add tables, subject areas,
         and notes.
       </div>
     ),
