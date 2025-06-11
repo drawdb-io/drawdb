@@ -36,7 +36,7 @@ export function toMSSQL(diagram) {
       const fieldsSql = table.fields
         .map(
           (field) =>
-            `\t[${field.name}] ${field.type}${
+            `\t[${field.name}] ${field.type}${field.size && `(${field.size})`}${
               field.notNull ? " NOT NULL" : ""
             }${field.increment ? " IDENTITY" : ""}${
               field.unique ? " UNIQUE" : ""
@@ -61,9 +61,7 @@ export function toMSSQL(diagram) {
               .join(", ")})`
           : "";
 
-      const createTableSql = `CREATE TABLE [${
-        table.name
-      }] (\n${fieldsSql}${primaryKeySql}\n);\nGO\n`;
+      const createTableSql = `CREATE TABLE [${table.name}] (\n${fieldsSql}${primaryKeySql}\n);\nGO\n`;
 
       const tableCommentSql = generateAddExtendedPropertySQL(
         table.comment,
@@ -98,9 +96,7 @@ export function toMSSQL(diagram) {
 
       if (!startTable || !endTable) return "";
 
-      const startField = startTable.fields.find(
-        (f) => f.id === r.startFieldId,
-      );
+      const startField = startTable.fields.find((f) => f.id === r.startFieldId);
       const endField = endTable.fields.find((f) => f.id === r.endFieldId);
 
       if (!startField || !endField) return "";
