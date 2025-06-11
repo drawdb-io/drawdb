@@ -196,44 +196,57 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    let locked = false;
+    let prevCoords = { prevX: 0, prevY: 0 };
+
     if (type === ObjectType.TABLE) {
       const table = tables.find((t) => t.id === id);
+      locked = table.locked;
+
       setGrabOffset({
         x: table.x - pointer.spaces.diagram.x,
         y: table.y - pointer.spaces.diagram.y,
       });
-      setDragging((prev) => ({
-        ...prev,
-        id,
-        element: type,
-        prevX: table.x,
-        prevY: table.y,
-      }));
+      prevCoords = { prevX: table.x, prevY: table.y };
     } else if (type === ObjectType.AREA) {
       const area = areas.find((t) => t.id === id);
+      locked = area.locked;
+
       setGrabOffset({
         x: area.x - pointer.spaces.diagram.x,
         y: area.y - pointer.spaces.diagram.y,
       });
-      setDragging((prev) => ({
-        ...prev,
-        id,
-        element: type,
-        prevX: area.x,
-        prevY: area.y,
-      }));
+      prevCoords = { prevX: area.x, prevY: area.y };
     } else if (type === ObjectType.NOTE) {
       const note = notes.find((t) => t.id === id);
+      locked = note.locked;
+
       setGrabOffset({
         x: note.x - pointer.spaces.diagram.x,
         y: note.y - pointer.spaces.diagram.y,
       });
+      prevCoords = { prevX: note.x, prevY: note.y };
+    }
+
+    if (locked) {
+      setPanning({
+        isPanning: true,
+        panStart: transform.pan,
+        cursorStart: pointer.spaces.screen,
+      });
+      pointer.setStyle("grabbing");
+    } else {
       setDragging((prev) => ({
         ...prev,
         id,
         element: type,
-        prevX: note.x,
-        prevY: note.y,
+        ...prevCoords,
+      }));
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: type,
+        id: id,
+        open: false,
       }));
     }
 
@@ -249,12 +262,6 @@ export default function Canvas() {
         })),
       }));
     }
-    setSelectedElement((prev) => ({
-      ...prev,
-      element: type,
-      id: id,
-      open: false,
-    }));
   };
 
   /**
@@ -403,8 +410,6 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
-    if (selectedElement.open && !layout.sidebar) return;
-
     if (!e.isPrimary) return;
 
     // don't pan if the sidesheet for editing a table is open
