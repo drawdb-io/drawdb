@@ -18,6 +18,8 @@ export const otherColor = "text-zinc-500";
 export const dateColor = "text-cyan-500";
 export const tableHeaderHeight = 50;
 export const tableWidth = 220;
+export const gridSize = 24;
+export const gridCircleRadius = 0.85;
 export const tableFieldHeight = 36;
 export const tableColorStripHeight = 7;
 
