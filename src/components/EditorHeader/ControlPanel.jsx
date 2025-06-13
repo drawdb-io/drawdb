@@ -477,6 +477,8 @@ export default function ControlPanel({
   const fileImport = () => setModal(MODAL.IMPORT);
   const viewGrid = () =>
     setSettings((prev) => ({ ...prev, showGrid: !prev.showGrid }));
+  const snapToGrid = () =>
+    setSettings((prev) => ({ ...prev, snapToGrid: !prev.snapToGrid }));
   const zoomIn = () =>
     setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
   const zoomOut = () =>
@@ -1306,6 +1308,14 @@ export default function ControlPanel({
         ),
         function: viewGrid,
         shortcut: "Ctrl+Shift+G",
+      },
+      snap_to_grid: {
+        state: settings.snapToGrid ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: snapToGrid,
       },
       show_cardinality: {
         state: settings.showCardinality ? (

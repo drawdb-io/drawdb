@@ -5,6 +5,7 @@ const defaultSettings = {
   strictMode: false,
   showFieldSummary: true,
   showGrid: true,
+  snapToGrid: false,
   showDataTypes: true,
   mode: "light",
   autosave: true,

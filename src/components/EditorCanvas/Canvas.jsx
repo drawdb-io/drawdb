@@ -7,6 +7,7 @@ import {
   ObjectType,
   tableFieldHeight,
   tableHeaderHeight,
+  gridSize,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -272,6 +273,23 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    const isDragging =
+      dragging.element !== ObjectType.NONE && dragging.id !== null;
+
+    const currentX = pointer.spaces.diagram.x + (isDragging ? grabOffset.x : 0);
+    const currentY = pointer.spaces.diagram.y + (isDragging ? grabOffset.y : 0);
+
+    let finalX = currentX;
+    let finalY = currentY;
+
+    if (settings.snapToGrid) {
+      finalX = Math.round(currentX / gridSize) * gridSize;
+      finalY = Math.round(currentY / gridSize) * gridSize;
+    }
+
+    const deltaX = finalX - dragging.prevX;
+    const deltaY = finalY - dragging.prevY;
+
     if (linking) {
       setLinkingLine({
         ...linkingLine,
@@ -283,11 +301,6 @@ export default function Canvas() {
       dragging.id !== null &&
       bulkSelectedElements.length
     ) {
-      const currentX = pointer.spaces.diagram.x + grabOffset.x;
-      const currentY = pointer.spaces.diagram.y + grabOffset.y;
-      const deltaX = currentX - dragging.prevX;
-      const deltaY = currentY - dragging.prevY;
-
       for (const element of bulkSelectedElements) {
         if (element.type === ObjectType.TABLE) {
           const { x, y } = tables.find((e) => e.id === element.id);
@@ -312,8 +325,8 @@ export default function Canvas() {
 
       setDragging((prev) => ({
         ...prev,
-        prevX: currentX,
-        prevY: currentY,
+        prevX: finalX,
+        prevY: finalY,
       }));
     } else if (
       panning.isPanning &&
@@ -339,8 +352,8 @@ export default function Canvas() {
       if (table.locked) return;
 
       updateTable(dragging.id, {
-        x: pointer.spaces.diagram.x + grabOffset.x,
-        y: pointer.spaces.diagram.y + grabOffset.y,
+        x: finalX,
+        y: finalY,
       });
     } else if (
       dragging.element === ObjectType.AREA &&
@@ -351,16 +364,16 @@ export default function Canvas() {
       if (area.locked) return;
 
       updateArea(dragging.id, {
-        x: pointer.spaces.diagram.x + grabOffset.x,
-        y: pointer.spaces.diagram.y + grabOffset.y,
+        x: dragging.prevX + deltaX,
+        y: dragging.prevY + deltaY,
       });
     } else if (dragging.element === ObjectType.NOTE && dragging.id !== null) {
       const note = notes.find((t) => t.id === dragging.id);
       if (note.locked) return;
 
       updateNote(dragging.id, {
-        x: pointer.spaces.diagram.x + grabOffset.x,
-        y: pointer.spaces.diagram.y + grabOffset.y,
+        x: dragging.prevX + deltaX,
+        y: dragging.prevY + deltaY,
       });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
@@ -371,28 +384,24 @@ export default function Canvas() {
 
       switch (areaResize.dir) {
         case "br":
-          newDims.width = pointer.spaces.diagram.x - initCoords.x;
-          newDims.height = pointer.spaces.diagram.y - initCoords.y;
+          newDims.width = finalX - initCoords.x;
+          newDims.height = finalY - initCoords.y;
           break;
         case "tl":
-          newDims.x = pointer.spaces.diagram.x;
-          newDims.y = pointer.spaces.diagram.y;
-          newDims.width =
-            initCoords.x + initCoords.width - pointer.spaces.diagram.x;
-          newDims.height =
-            initCoords.y + initCoords.height - pointer.spaces.diagram.y;
+          newDims.x = finalX;
+          newDims.y = finalY;
+          newDims.width = initCoords.width - (finalX - initCoords.x);
+          newDims.height = initCoords.height - (finalY - initCoords.y);
           break;
         case "tr":
-          newDims.y = pointer.spaces.diagram.y;
-          newDims.width = pointer.spaces.diagram.x - initCoords.x;
-          newDims.height =
-            initCoords.y + initCoords.height - pointer.spaces.diagram.y;
+          newDims.y = finalY;
+          newDims.width = finalX - initCoords.x;
+          newDims.height = initCoords.height - (finalY - initCoords.y);
           break;
         case "bl":
-          newDims.x = pointer.spaces.diagram.x;
-          newDims.width =
-            initCoords.x + initCoords.width - pointer.spaces.diagram.x;
-          newDims.height = pointer.spaces.diagram.y - initCoords.y;
+          newDims.x = finalX;
+          newDims.width = initCoords.width - (finalX - initCoords.x);
+          newDims.height = finalY - initCoords.y;
           break;
       }
 
@@ -400,8 +409,8 @@ export default function Canvas() {
     } else if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
         ...prev,
-        x2: pointer.spaces.diagram.x,
-        y2: pointer.spaces.diagram.y,
+        x2: dragging.prevX + deltaX,
+        y2: dragging.prevY + deltaY,
       }));
     }
   };
@@ -709,36 +718,6 @@ export default function Canvas() {
           backgroundColor: theme === "dark" ? darkBgTheme : "white",
         }}
       >
-        {settings.showGrid && (
-          <svg className="absolute w-full h-full">
-            <defs>
-              <pattern
-                id="pattern-circles"
-                x="0"
-                y="0"
-                width="24"
-                height="24"
-                patternUnits="userSpaceOnUse"
-                patternContentUnits="userSpaceOnUse"
-              >
-                <circle
-                  id="pattern-circle"
-                  cx="4"
-                  cy="4"
-                  r="0.85"
-                  fill="rgb(99, 152, 191)"
-                />
-              </pattern>
-            </defs>
-            <rect
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              fill="url(#pattern-circles)"
-            />
-          </svg>
-        )}
         <svg
           id="diagram"
           ref={canvasRef}
@@ -748,6 +727,36 @@ export default function Canvas() {
           className="absolute w-full h-full touch-none"
           viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
         >
+          {settings.showGrid && (
+            <defs>
+              <pattern
+                id="pattern-grid"
+                x={0}
+                y={0}
+                width={gridSize}
+                height={gridSize}
+                patternUnits="userSpaceOnUse"
+                patternContentUnits="userSpaceOnUse"
+              >
+                <path
+                  d={`M ${gridSize} 0 L 0 0 0 ${gridSize}`}
+                  fill="none"
+                  stroke="rgb(99, 152, 191)"
+                  strokeWidth="0.5"
+                  strokeOpacity="1"
+                />
+              </pattern>
+            </defs>
+          )}
+          {settings.showGrid && (
+            <rect
+              x={viewBox.left}
+              y={viewBox.top}
+              width={viewBox.width}
+              height={viewBox.height}
+              fill="url(#pattern-grid)"
+            />
+          )}
           {areas.map((a) => (
             <Area
               key={a.id}
