@@ -8,6 +8,7 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   gridSize,
+  gridCircleRadius,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -364,16 +365,16 @@ export default function Canvas() {
       if (area.locked) return;
 
       updateArea(dragging.id, {
-        x: dragging.prevX + deltaX,
-        y: dragging.prevY + deltaY,
+        x: finalX,
+        y: finalY,
       });
     } else if (dragging.element === ObjectType.NOTE && dragging.id !== null) {
       const note = notes.find((t) => t.id === dragging.id);
       if (note.locked) return;
 
       updateNote(dragging.id, {
-        x: dragging.prevX + deltaX,
-        y: dragging.prevY + deltaY,
+        x: finalX,
+        y: finalY,
       });
     } else if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
@@ -409,8 +410,8 @@ export default function Canvas() {
     } else if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
         ...prev,
-        x2: dragging.prevX + deltaX,
-        y2: dragging.prevY + deltaY,
+        x2: finalX,
+        y2: finalY,
       }));
     }
   };
@@ -728,34 +729,34 @@ export default function Canvas() {
           viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
         >
           {settings.showGrid && (
-            <defs>
-              <pattern
-                id="pattern-grid"
-                x={0}
-                y={0}
-                width={gridSize}
-                height={gridSize}
-                patternUnits="userSpaceOnUse"
-                patternContentUnits="userSpaceOnUse"
-              >
-                <path
-                  d={`M ${gridSize} 0 L 0 0 0 ${gridSize}`}
-                  fill="none"
-                  stroke="rgb(99, 152, 191)"
-                  strokeWidth="0.5"
-                  strokeOpacity="1"
-                />
-              </pattern>
-            </defs>
-          )}
-          {settings.showGrid && (
-            <rect
-              x={viewBox.left}
-              y={viewBox.top}
-              width={viewBox.width}
-              height={viewBox.height}
-              fill="url(#pattern-grid)"
-            />
+            <>
+              <defs>
+                <pattern
+                  id="pattern-grid"
+                  x={-gridCircleRadius}
+                  y={-gridCircleRadius}
+                  width={gridSize}
+                  height={gridSize}
+                  patternUnits="userSpaceOnUse"
+                  patternContentUnits="userSpaceOnUse"
+                >
+                  <circle
+                    cx={gridCircleRadius}
+                    cy={gridCircleRadius}
+                    r={gridCircleRadius}
+                    fill="rgb(99, 152, 191)"
+                    opacity="1"
+                  />
+                </pattern>
+              </defs>
+              <rect
+                x={viewBox.left}
+                y={viewBox.top}
+                width={viewBox.width}
+                height={viewBox.height}
+                fill="url(#pattern-grid)"
+              />
+            </>
           )}
           {areas.map((a) => (
             <Area
