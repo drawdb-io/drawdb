@@ -4,6 +4,7 @@ import {
   noteWidth,
   noteRadius,
   noteFold,
+  gridSize,
 } from "../data/constants";
 
 export default function Thumbnail({ diagram, i, zoom, theme }) {
@@ -15,21 +16,21 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
     >
       <defs>
         <pattern
-          id={"pattern-circles-" + i}
+          id={"pattern-grid-" + i}
           x="0"
           y="0"
-          width="10"
-          height="10"
+          width={gridSize * zoom}
+          height={gridSize * zoom}
           patternUnits="userSpaceOnUse"
           patternContentUnits="userSpaceOnUse"
         >
-          <circle
-            id={"pattern-circle-" + i}
-            cx="2"
-            cy="2"
-            r="0.4"
-            fill="rgb(99, 152, 191)"
-          ></circle>
+          <path
+            d={`M ${gridSize * zoom} 0 L 0 0 0 ${gridSize * zoom}`}
+            fill="none"
+            stroke="rgb(99, 152, 191)"
+            strokeWidth={0.5 * zoom}
+            strokeOpacity="1"
+          />
         </pattern>
       </defs>
       <rect
@@ -37,7 +38,7 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
         y="0"
         width="100%"
         height="100%"
-        fill={"url(#pattern-circles-" + i + ")"}
+        fill={"url(#pattern-grid-" + i + ")"}
       ></rect>
       <g
         style={{
