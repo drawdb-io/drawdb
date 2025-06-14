@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Cardinality, DB } from "../../data/constants";
+import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
@@ -144,8 +144,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               relationship.endTableId = endTable.id;
               relationship.endFieldId = endField.id;
               relationship.startFieldId = startField.id;
-              let updateConstraint = "No action";
-              let deleteConstraint = "No action";
+              let updateConstraint = Constraint.NONE;
+              let deleteConstraint = Constraint.NONE;
               d.reference_definition.on_action.forEach((c) => {
                 if (c.type === "on update") {
                   updateConstraint = c.value.value;
@@ -178,8 +178,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             const endTableName = d.reference_definition.table[0].table;
             const endFieldName =
               d.reference_definition.definition[0].column.expr.value;
-            let updateConstraint = "No action";
-            let deleteConstraint = "No action";
+            let updateConstraint = Constraint.NONE;
+            let deleteConstraint = Constraint.NONE;
             d.reference_definition.on_action.forEach((c) => {
               if (c.type === "on update") {
                 updateConstraint = c.value.value;
@@ -297,8 +297,8 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             const endFieldName =
               expr.create_definitions.reference_definition.definition[0].column
                 .expr.value;
-            let updateConstraint = "No action";
-            let deleteConstraint = "No action";
+            let updateConstraint = Constraint.NONE;
+            let deleteConstraint = Constraint.NONE;
             expr.create_definitions.reference_definition.on_action.forEach(
               (c) => {
                 if (c.type === "on update") {
