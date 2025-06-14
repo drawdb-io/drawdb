@@ -63,6 +63,37 @@ export default function Table(props) {
     }
   };
   const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
+
+  const sortedFields = [...tableData.fields].sort((a, b) => {
+    const aIsPK = a.primary;
+    const bIsPK = b.primary;
+    const aIsFK = a.foreignK === true;
+    const bIsFK = b.foreignK === true;
+
+    let groupA;
+    if (aIsPK) {
+      groupA = 1;
+    } else if (!aIsFK) {
+      groupA = 2;
+    } else {
+      groupA = 3;
+    }
+
+    let groupB;
+    if (bIsPK) {
+      groupB = 1;
+    } else if (!bIsFK) {
+      groupB = 2;
+    } else {
+      groupB = 3;
+    }
+
+    if (groupA !== groupB) {
+      return groupA - groupB;
+    }
+    return 0;
+  });
+
   return (
     <>
       <foreignObject
@@ -203,7 +234,7 @@ export default function Table(props) {
               </div>
             </div>
           </div>
-          {tableData.fields.map((e, i) => {
+          {sortedFields.map((e, i) => {
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
@@ -302,23 +333,22 @@ export default function Table(props) {
           ${(tableData.fields.length === 1 && settings.notation === Notation.DEFAULT)
             ? "rounded-b-md"
             : ""
-          }${(settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
+          } ${(settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
               ? (
                   primaryKeyCount === tableData.fields.length
                     ? "border-l border-r border-b border-gray-400"
                     : "border-b border-gray-400"
                 )
               : ""
-          }${
+          } ${
           (fieldData.primary && settings.notation !== Notation.DEFAULT && primaryKeyCount === 1)
             ? "border-b border-gray-400"
             : ""
-          }${
+          } ${
             (fieldData.primary && settings.notation !== Notation.DEFAULT && index ===primaryKeyCount - 1)
               ? "border-b border-gray-400"
               : ""
-            } 
-          ${
+          } ${
           (!fieldData.primary && settings.notation !== Notation.DEFAULT )
             ? "border-l border-r"
             : ""
@@ -338,11 +368,11 @@ export default function Table(props) {
             (fieldData.primary && settings.notation === Notation.DEFAULT)
               ? "border-b border-gray-400"
               : ""
-          }${
+          } ${
             (settings.notation === Notation.DEFAULT && index !== tableData.fields.length - 1 && fieldData.primary === false)
               ? "border-b border-gray-400"
               : ""
-          }${
+          } ${
           (settings.notation === Notation.DEFAULT && index === tableData.fields.length - 1)
             ? "rounded-b-md"
             : ""
@@ -381,25 +411,20 @@ export default function Table(props) {
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(fieldData);
+              handleGripField(fieldData,tableData.id);
+
+              const effectiveColorStripHeight = settings.notation === Notation.DEFAULT ? tableColorStripHeight : 0;
+              const gripYOffset = tableHeaderHeight + effectiveColorStripHeight + (index * tableFieldHeight) + (tableFieldHeight / 2);
+              const gripXOffset = settings.tableWidth / 2; // Or a fixed small offset from table edge
+
               setLinkingLine((prev) => ({
                 ...prev,
-                startFieldId: fieldData.id,
-                startTableId: tableData.id,
-                startX: tableData.x + 15,
-                startY:
-                  tableData.y +
-                  index * tableFieldHeight +
-                  tableHeaderHeight +
-                  tableColorStripHeight +
-                  12,
-                endX: tableData.x + 15,
-                endY:
-                  tableData.y +
-                  index * tableFieldHeight +
-                  tableHeaderHeight +
-                  tableColorStripHeight +
-                  12,
+                // startTableId and startFieldId will be set by handleGripField in Canvas.jsx
+                // This setLinkingLine is primarily for the visual startX/startY of the temporary line.
+                startX: tableData.x + gripXOffset,
+                startY: tableData.y + gripYOffset,
+                endX: tableData.x + gripXOffset,   // Initialize end to start
+                endY: tableData.y + gripYOffset,
               }));
             }}
           />
@@ -420,6 +445,40 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
+              {fieldData.primary &&
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="#ff2222cc"
+                  className="bi bi-key"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
+                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
+                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
+                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
+                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
+                    .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
+                  <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                </svg>}
+              {fieldData.foreignK &&
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="#2f68adcc"
+                  className="bi bi-key"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
+                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
+                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
+                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
+                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
+                    .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
+                  <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                </svg>}
               {settings.notation !== Notation.DEFAULT ? (
                 <>
                 <span>
@@ -436,40 +495,6 @@ export default function Table(props) {
                 </>
               ) : (
                 <>
-                  {fieldData.primary &&
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="#ff2222cc"
-                      className="bi bi-key"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
-                        .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
-                        9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
-                        4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
-                        0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
-                        .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
-                      <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                    </svg>}
-                  {fieldData.foreignK &&
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="#2f68adcc"
-                      className="bi bi-key"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
-                        .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
-                        9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
-                        4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
-                        0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
-                        .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
-                      <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                    </svg>}
                   {!fieldData.notNull && <span>?</span>}
                   <span>
                   {fieldData.type +

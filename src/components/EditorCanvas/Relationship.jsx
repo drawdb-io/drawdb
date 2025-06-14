@@ -5,6 +5,9 @@ import {
   Notation,
   ObjectType,
   Tab,
+  tableFieldHeight,
+  tableHeaderHeight,
+  tableColorStripHeight,
 } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
@@ -27,7 +30,75 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
-  const relationshipType = data.lineType || "0";
+
+  // Helper function to sort fields (same logic as in Table.jsx)
+  const getSortedFields = (fields) => {
+    if (!fields) return [];
+    return [...fields].sort((a, b) => {
+      const aIsPK = a.primary;
+      const bIsPK = b.primary;
+      const aIsFK = a.foreignK === true;
+      const bIsFK = b.foreignK === true;
+
+      let groupA;
+      if (aIsPK) groupA = 1;
+      else if (!aIsFK) groupA = 2;
+      else groupA = 3;
+
+      let groupB;
+      if (bIsPK) groupB = 1;
+      else if (!bIsFK) groupB = 2;
+      else groupB = 3;
+
+      if (groupA !== groupB) return groupA - groupB;
+      return 0;
+    });
+  };
+
+  const startTable = tables[data.startTableId];
+  const endTable = tables[data.endTableId];
+
+  let startFieldYOffset = 0;
+  let endFieldYOffset = 0;
+  const effectiveColorStripHeight = settings.notation === Notation.DEFAULT ? tableColorStripHeight : 0;
+  const totalHeaderHeightForFields = tableHeaderHeight + effectiveColorStripHeight;
+
+  if (startTable && startTable.fields && data.startFieldId !== undefined) {
+    const sortedStartFields = getSortedFields(startTable.fields);
+    const startFieldIndex = sortedStartFields.findIndex(f => f.id === data.startFieldId);
+    if (startFieldIndex !== -1) {
+      startFieldYOffset = totalHeaderHeightForFields + (startFieldIndex * tableFieldHeight) + (tableFieldHeight / 2);
+    } else {
+      // Fallback if field not found, point to middle of table header or top
+      startFieldYOffset = tableHeaderHeight / 2;
+    }
+  }
+
+  if (endTable && endTable.fields && data.endFieldId !== undefined) {
+    const sortedEndFields = getSortedFields(endTable.fields);
+    const endFieldIndex = sortedEndFields.findIndex(f => f.id === data.endFieldId);
+    if (endFieldIndex !== -1) {
+      endFieldYOffset = totalHeaderHeightForFields + (endFieldIndex * tableFieldHeight) + (tableFieldHeight / 2);
+    } else {
+      // Fallback, similar to startFieldYOffset
+      endFieldYOffset = tableHeaderHeight / 2;
+    }
+  }
+
+  // This part for strokeDasharray remains the same
+  let determinedRelationshipType = null;
+  if (endTable && endTable.fields && data.endFieldId !== undefined) {
+    const foreignKeyField = endTable.fields.find(field => field.id === data.endFieldId);
+    if (foreignKeyField) {
+      if (foreignKeyField.primary === true) {
+        determinedRelationshipType = "0";
+      } else {
+        determinedRelationshipType = "5.5"; // Assuming "5.5" is a valid dasharray string like "5,5"
+      }
+    }
+  }
+  const relationshipType = determinedRelationshipType !== null ? determinedRelationshipType : (data.lineType || "0");
+
   let direction = 1;
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -169,23 +240,38 @@ export default function Relationship({ data }) {
     direction = -1;
   }
 
+  const pathData = {
+    ...data,
+    startTable: {
+      x: startTable ? startTable.x : 0,
+      y: startTable ? startTable.y + startFieldYOffset : 0,
+    },
+    endTable: {
+      x: endTable ? endTable.x : 0,
+      y: endTable ? endTable.y + endFieldYOffset : 0,
+    },
+  };
+
   return (
     <>
       <g className="select-none group" onDoubleClick={edit}>
+        {/* Invisible path for larger hit area */}
+        <path
+          d={calcPath(
+            pathData,
+            settings.tableWidth,
+          )}
+          stroke="transparent"
+          fill="none"
+          strokeWidth={15}
+          strokeDasharray={"0"}
+          cursor="pointer"
+        />
+        {/* Visible path */}
         <path
           ref={pathRef}
           d={calcPath(
-            {
-              ...data,
-              startTable: {
-                x: tables[data.startTableId].x,
-                y: tables[data.startTableId].y,
-              },
-              endTable: {
-                x: tables[data.endTableId].x,
-                y: tables[data.endTableId].y,
-              },
-            },
+            pathData,
             settings.tableWidth,
           )}
           stroke="gray"
@@ -193,7 +279,6 @@ export default function Relationship({ data }) {
           fill="none"
           strokeDasharray={relationshipType}
           strokeWidth={2}
-          cursor="pointer"
         />
         {settings.showCardinality && (
           <>
