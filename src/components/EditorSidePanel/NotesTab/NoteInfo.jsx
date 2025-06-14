@@ -15,7 +15,29 @@ export default function NoteInfo({ data, nid }) {
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const [pickedColor, setPickedColor] = useState(undefined);
   const { t } = useTranslation();
+
+  const handleColorPickerChange = () => {
+    if (pickedColor !== undefined) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.NOTE,
+          nid: nid,
+          undo: { color: data.color },
+          redo: { color: pickedColor },
+          message: t("edit_note", {
+            noteTitle: data.title,
+            extra: "[color]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+      setPickedColor(undefined);
+    }
+  };
 
   return (
     <Collapse.Panel
@@ -94,33 +116,21 @@ export default function NoteInfo({ data, nid }) {
           rows={3}
         />
         <div className="ms-2">
-          <ColorPicker
-            onChange={({ hex: color }) => {
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.EDIT,
-                  element: ObjectType.NOTE,
-                  nid: nid,
-                  undo: { color: data.color },
-                  redo: { color },
-                  message: t("edit_note", {
-                    noteTitle: data.title,
-                    extra: "[color]",
-                  }),
-                },
-              ]);
-              setRedoStack([]);
-              updateNote(nid, { color });
-            }}
-            usePopover={true}
-            value={ColorPicker.colorStringToValue(data.color)}
-          >
-            <div
-              className="h-[32px] w-[32px] rounded-sm shrink-0 mb-2"
-              style={{ backgroundColor: data.color }}
-            />
-          </ColorPicker>
+          <div onPointerUp={handleColorPickerChange} onBlur={handleColorPickerChange}>
+            <ColorPicker
+                onChange={({ hex: color }) => {
+                setPickedColor(color);
+                updateNote(nid, { color });
+                }}
+                usePopover={true}
+                value={ColorPicker.colorStringToValue(data.color)}
+            >
+                <div
+                className="h-[32px] w-[32px] rounded-sm shrink-0 mb-2"
+                style={{ backgroundColor: data.color }}
+                />
+            </ColorPicker>
+          </div>
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
