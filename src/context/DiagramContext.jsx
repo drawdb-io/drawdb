@@ -139,7 +139,7 @@ export default function DiagramContextProvider({ children }) {
           if (!fieldAfterDirectUpdate) return { ...table, fields: previousFieldsState };
 
           // Logic to promote a sibling FK to PK if the current field is being set as primary key
-          if (updatedValues.hasOwnProperty('primary') && updatedValues.primary === true) {
+          if (Object.prototype.hasOwnProperty.call(updatedValues, 'primary') && updatedValues.primary === true) {
             if (fieldAfterDirectUpdate.foreignK === true && fieldAfterDirectUpdate.foreignKey) {
               const parentTableIdOfFK = fieldAfterDirectUpdate.foreignKey.tableId;
               const siblingFkFieldsToPromote = newFields.filter(
@@ -162,7 +162,7 @@ export default function DiagramContextProvider({ children }) {
             }
           }
           // Logic to demote a sibling FK if the current field is being set as not primary key
-          else if (updatedValues.hasOwnProperty('primary') && updatedValues.primary === false) {
+          else if (Object.prototype.hasOwnProperty.call(updatedValues, 'primary') && updatedValues.primary === false) {
             const originalFieldStateForDemotionLogic = previousFieldsState.find(f => f.id === fid);
 
             if (originalFieldStateForDemotionLogic &&
@@ -195,7 +195,7 @@ export default function DiagramContextProvider({ children }) {
           }
 
           // Logic to handle notNull
-          if (updatedValues.hasOwnProperty("notNull")) {
+          if (Object.prototype.hasOwnProperty.call(updatedValues, "notNull")) {
             if(fieldAfterDirectUpdate.foreignK === true && fieldAfterDirectUpdate.foreignKey) {
               const parentTableIdOfFK = fieldAfterDirectUpdate.foreignKey.tableId;
               const newNotnullValue = fieldAfterDirectUpdate.notNull;

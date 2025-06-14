@@ -17,7 +17,6 @@ import {
   Constraint,
   Action,
   ObjectType,
-  Notation,
 } from "../../../data/constants";
 import { useDiagram, useUndoRedo} from "../../../hooks";
 import i18n from "../../../i18n/i18n";
