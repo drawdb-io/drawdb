@@ -8,7 +8,7 @@ import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
 import FieldDetails from "./FieldDetails";
 
-export default function TableField({ data, tid, index }) {
+export default function TableField({ data, tid, index, inherited }) {
   const { updateField } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
@@ -21,11 +21,16 @@ export default function TableField({ data, tid, index }) {
   return (
     <div className="hover-1 my-2 flex gap-2 items-center">
       <DragHandle id={data.id} />
-      <div className="min-w-20 flex-1/3">
+      <div
+        className="min-w-20 flex-1/3"
+        style={inherited ? { opacity: 0.6 } : {}}
+      >
         <Input
           value={data.name}
           id={`scroll_table_${tid}_input_${index}`}
-          validateStatus={data.name.trim() === "" ? "error" : "default"}
+          validateStatus={
+            data.name.trim() === "" && !inherited ? "error" : "default"
+          }
           placeholder="Name"
           onChange={(value) => updateField(tid, data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
@@ -49,7 +54,12 @@ export default function TableField({ data, tid, index }) {
             ]);
             setRedoStack([]);
           }}
+          readOnly={inherited}
+          style={inherited ? { backgroundColor: "#f5f5f5" } : {}}
         />
+        {inherited && (
+          <span style={{ fontSize: 12, color: "#888" }}>Inherited</span>
+        )}
       </div>
       <div className="min-w-24 flex-1/3">
         <Select
