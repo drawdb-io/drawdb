@@ -23,6 +23,29 @@ export default function TableInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
   const [editField, setEditField] = useState({});
+  const [pickedColor, setPickedColor] = useState(undefined);
+
+  const handleColorPickerChange = () => {
+    if (pickedColor !== undefined) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.TABLE,
+          component: "self",
+          tid: data.id,
+          undo: { color: data.color },
+          redo: { color: pickedColor },
+          message: t("edit_table", {
+            tableName: data.name,
+            extra: "[color]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+      setPickedColor(undefined);
+    }
+  };
 
   return (
     <div>
@@ -142,29 +165,16 @@ export default function TableInfo({ data }) {
         </Collapse>
       </Card>
       <div className="flex justify-between items-center gap-1 mb-2">
-        <ColorPicker
-          onChange={({ hex: color }) => {
-            setUndoStack((prev) => [
-              ...prev,
-              {
-                action: Action.EDIT,
-                element: ObjectType.TABLE,
-                component: "self",
-                tid: data.id,
-                undo: { color: data.color },
-                redo: { color },
-                message: t("edit_table", {
-                  tableName: data.name,
-                  extra: "[color]",
-                }),
-              },
-            ]);
-            setRedoStack([]);
-            updateTable(data.id, { color });
-          }}
-          usePopover={true}
-          value={ColorPicker.colorStringToValue(data.color)}
-        />
+        <div onPointerUp={handleColorPickerChange} onBlur={handleColorPickerChange}>
+            <ColorPicker
+            onChange={({ hex: color }) => {
+                setPickedColor(color);
+                updateTable(data.id, { color });
+            }}
+            usePopover={true}
+            value={ColorPicker.colorStringToValue(data.color)}
+            />
+        </div>
         <div className="flex gap-1">
           <Button
             block
