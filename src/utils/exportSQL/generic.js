@@ -85,7 +85,7 @@ export function getTypeString(
     if (field.type === "DATETIME") {
       return `timestamp`;
     }
-    if (dbToTypes[currentDb][field.type].isSized) {
+    if (dbToTypes[currentDb][field.type].isSized && field.size) {
       const type =
         field.type === "BINARY"
           ? "bit"
@@ -94,7 +94,11 @@ export function getTypeString(
             : field.type.toLowerCase();
       return `${type}(${field.size})`;
     }
-    if (dbToTypes[currentDb][field.type].hasPrecision && field.size !== "") {
+    if (
+      dbToTypes[currentDb][field.type].hasPrecision &&
+      field.size &&
+      field.size.trim() !== ""
+    ) {
       return `${field.type.toLowerCase()}${field.size ? `(${field.size})` : ""}`;
     }
     return field.type.toLowerCase();

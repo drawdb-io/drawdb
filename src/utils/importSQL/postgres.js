@@ -13,6 +13,7 @@ const affinity = {
       INTEGER: "INT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",
+      "CHATACTER VARYING": "VARCHAR",
     },
     { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
   ),
@@ -50,8 +51,11 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 d.definition.dataType,
               ),
             )?.name;
-            if (!type && !dbToTypes[diagramDb][d.definition.dataType])
-              type = affinity[diagramDb][d.definition.dataType.toUpperCase()];
+
+            type ??=
+              dbToTypes[diagramDb][d.definition.dataType.toUpperCase()].type;
+            type ??= affinity[diagramDb][d.definition.dataType.toUpperCase()];
+
             field.type = type;
 
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
