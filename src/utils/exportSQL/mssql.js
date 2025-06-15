@@ -1,6 +1,7 @@
 import { parseDefault, escapeQuotes } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
+import { DB } from "../../data/constants";
 
 function generateAddExtendedPropertySQL(value, level1name, level2name = null) {
   if (!value || value.trim() === "") {
@@ -34,23 +35,25 @@ export function toMSSQL(diagram) {
   const tablesSql = diagram.tables
     .map((table) => {
       const fieldsSql = table.fields
-        .map(
-          (field) =>
-            `\t[${field.name}] ${field.type}${field.size && `(${field.size})`}${
-              field.notNull ? " NOT NULL" : ""
-            }${field.increment ? " IDENTITY" : ""}${
-              field.unique ? " UNIQUE" : ""
-            }${
-              field.default !== ""
-                ? ` DEFAULT ${parseDefault(field, diagram.database)}`
-                : ""
-            }${
-              field.check === "" ||
-              !dbToTypes[diagram.database][field.type].hasCheck
-                ? ""
-                : ` CHECK(${field.check})`
-            }`,
-        )
+        .map((field) => {
+          const typeMetaData = dbToTypes[DB.MSSQL][field.type.toUpperCase()];
+          const isSized = typeMetaData.isSized || typeMetaData.hasPrecision;
+
+          return `\t[${field.name}] ${field.type}${field.size && isSized ? `(${field.size})` : ""}${
+            field.notNull ? " NOT NULL" : ""
+          }${field.increment ? " IDENTITY" : ""}${
+            field.unique ? " UNIQUE" : ""
+          }${
+            field.default !== ""
+              ? ` DEFAULT ${parseDefault(field, diagram.database)}`
+              : ""
+          }${
+            field.check === "" ||
+            !dbToTypes[diagram.database][field.type].hasCheck
+              ? ""
+              : ` CHECK(${field.check})`
+          }`;
+        })
         .join(",\n");
 
       const primaryKeys = table.fields.filter((f) => f.primary);
