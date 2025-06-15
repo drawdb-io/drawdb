@@ -20,6 +20,7 @@ import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 export default function Note({ data, onPointerDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
+  const [pickedColor, setPickedColor] = useState(undefined);
   const { layout } = useLayout();
   const { t } = useTranslation();
   const { setSaveState } = useSaveState();
@@ -88,6 +89,27 @@ export default function Note({ data, onPointerDown }) {
       )
     );
   }, [selectedElement, data, bulkSelectedElements]);
+
+  const handleColorPickerChange = () => {
+    if (pickedColor !== undefined) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.NOTE,
+          nid: data.id,
+          undo: { color: data.color },
+          redo: { color: pickedColor },
+          message: t("edit_note", {
+            noteTitle: data.title,
+            extra: "[color]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+      setPickedColor(undefined);
+    }
+  };
 
   return (
     <g
@@ -224,33 +246,24 @@ export default function Note({ data, onPointerDown }) {
                             setRedoStack([]);
                           }}
                         />
-                        <ColorPicker
-                          onChange={({ hex: color }) => {
-                            setUndoStack((prev) => [
-                              ...prev,
-                              {
-                                action: Action.EDIT,
-                                element: ObjectType.NOTE,
-                                nid: data.id,
-                                undo: { color: data.color },
-                                redo: { color },
-                                message: t("edit_note", {
-                                  noteTitle: data.title,
-                                  extra: "[color]",
-                                }),
-                              },
-                            ]);
-                            setRedoStack([]);
-                            updateNote(data.id, { color });
-                          }}
-                          usePopover={true}
-                          value={ColorPicker.colorStringToValue(data.color)}
+                        <div
+                          onPointerUp={handleColorPickerChange}
+                          onBlur={handleColorPickerChange}
                         >
-                          <div
-                            className="h-[32px] w-[32px] rounded-sm"
-                            style={{ backgroundColor: data.color }}
-                          />
-                        </ColorPicker>
+                          <ColorPicker
+                            onChange={({ hex: color }) => {
+                              setPickedColor(color);
+                              updateNote(data.id, { color });
+                            }}
+                            usePopover={true}
+                            value={ColorPicker.colorStringToValue(data.color)}
+                          >
+                            <div
+                              className="h-[32px] w-[32px] rounded-sm"
+                              style={{ backgroundColor: data.color }}
+                            />
+                          </ColorPicker>
+                        </div>
                       </div>
                       <div className="flex">
                         <Button
