@@ -15,17 +15,45 @@ import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { SortableList } from "../../SortableList/SortableList";
 import { nanoid } from "nanoid";
+import { Select } from "@douyinfe/semi-ui";
+import { DB } from "../../../data/constants";
 
 export default function TableInfo({ data }) {
+  const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, setTables } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
   const [editField, setEditField] = useState({});
+  // Get inherited field names from parent tables
+  const inheritedFieldNames =
+    Array.isArray(data.inherits) && data.inherits.length > 0
+      ? data.inherits
+          .map((parentName) => {
+            const parent = tables.find((t) => t.name === parentName);
+            return parent ? parent.fields.map((f) => f.name) : [];
+          })
+          .flat()
+      : [];
 
   return (
     <div>
+      {database === DB.POSTGRES && (
+        <div className="mb-2">
+          <div className="text-md font-semibold break-keep">Inherits:</div>
+          <Select
+            multiple
+            value={data.inherits || []}
+            optionList={tables
+              .filter((t) => t.id !== data.id)
+              .map((t) => ({ label: t.name, value: t.name }))}
+            onChange={(value) => updateTable(data.id, { inherits: value })}
+            placeholder="Select parent tables"
+            style={{ width: "100%" }}
+          />
+        </div>
+      )}
       <div className="flex items-center mb-2.5">
         <div className="text-md font-semibold break-keep">{t("name")}: </div>
         <Input
@@ -68,7 +96,12 @@ export default function TableInfo({ data }) {
         }}
         afterChange={() => setSaveState(State.SAVING)}
         renderItem={(item, i) => (
-          <TableField data={item} tid={data.id} index={i} />
+          <TableField
+            data={item}
+            tid={data.id}
+            index={i}
+            inherited={inheritedFieldNames.includes(item.name)}
+          />
         )}
       />
       {data.indices.length > 0 && (
