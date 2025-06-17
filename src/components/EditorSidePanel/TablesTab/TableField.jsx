@@ -137,26 +137,18 @@ export default function TableField({ data, tid, index }) {
           type={data.notNull || data.primary ? "primary" : "tertiary"}
           title={t("not_null")}
           theme={data.notNull ? "solid" : "light"}
-         
-         
           onClick={() => {
-                if(data.primary){
-                  
-                  return};
-
+            if (data.primary) return;
             setUndoStack((prev) => [
               ...prev,
               {
-                
                 action: Action.EDIT,
                 element: ObjectType.TABLE,
                 component: "field",
                 tid: tid,
                 fid: index,
                 undo: { notNull: data.notNull },
-                
                 redo: { notNull: !data.notNull },
-                
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -164,11 +156,7 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            
             updateField(tid, index, { notNull: !data.notNull });
-
-          
-
           }}
         >
           ?
@@ -185,14 +173,14 @@ export default function TableField({ data, tid, index }) {
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
             const changes = { primary: !data.primary };
-             
-          const undo= { primary: data.primary , notNull : data.notNull };
-          const redo= { primary: newStatePK , notNull:stateNull };
-          if (mustSetNotNull) {
-            undo.notNull = data.notNull;
-            redo.notNull = true;
-            changes.notNull = true;
-          }      
+
+            const undo= { primary: data.primary , notNull : data.notNull };
+            const redo= { primary: newStatePK , notNull:stateNull };
+            if (mustSetNotNull) {
+              undo.notNull = data.notNull;
+              redo.notNull = true;
+              changes.notNull = true;
+            }
             setUndoStack((prev) => [
               ...prev,
               {
@@ -201,7 +189,6 @@ export default function TableField({ data, tid, index }) {
                 component: "field",
                 tid: tid,
                 fid: index,
-                
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -209,12 +196,10 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, { primary: newStatePK,notNull:stateNull });
+            updateField(tid, index, { primary: newStatePK, notNull: stateNull });
           }}
           icon={<IconKeyStroked />}
         />
-      
-
       </Col>
       <Col span={3}>
         <Popover

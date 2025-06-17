@@ -355,17 +355,15 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
-
-          <Button
-            title="Ir a Tabla"
-            onClick={() => {
+            <Button
+              title="Go to Board"
+              onClick={() => {
                 if (data.x != null && data.y != null) {
-                  navigate('/editor', { state: { focusPosition: { x:data.x,y:data.y } } });
+                  navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
                 }
               }}
             >{t("Board")}
-          </Button>
-          
+            </Button>
           <Button
             icon={<IconDeleteStroked />}
             type="danger"

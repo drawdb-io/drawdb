@@ -58,7 +58,7 @@ export default function Canvas() {
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  
+
   const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,

@@ -51,7 +51,6 @@ export default function App() {
           />
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<NotFound />} />
-          
         </Routes>
       </BrowserRouter>
     </SettingsContextProvider>
