@@ -62,8 +62,7 @@ export function getIssues(diagram) {
           }),
         );
       }
-
-      if (field.notNull && field.default.toLowerCase() === "null") {
+      if (field.notNull && field.default && field.default.toLowerCase() === "null") {
         issues.push(
           i18n.t("not_null_is_null", {
             tableName: table.name,

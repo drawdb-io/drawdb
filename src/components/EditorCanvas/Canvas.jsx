@@ -44,6 +44,21 @@ export default function Canvas() {
     }
   }, [location, navigate, setTransform]);
 
+  const [isAreaSelecting, setIsAreaSelecting] = useState(false);
+  const [selectionArea, setSelectionArea] = useState({
+    startX: 0,
+    startY: 0,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+
+  const [dragStart, setDragStart] = useState({
+    x: 0,
+    y: 0,
+  });
+
   const canvasRef = useRef(null);
   const canvasContextValue = useCanvas();
   const {
@@ -51,7 +66,7 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship, database } =
+  const { tables, updateTable, relationships, addRelationship } =
     useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -104,52 +119,66 @@ export default function Canvas() {
    */
   const handlePointerDownOnElement = (e, id, type) => {
     if (selectedElement.open && !layout.sidebar) return;
-
     if (!e.isPrimary) return;
 
+    // Verify if already selected (for multiple selection)
+    const alreadySelected =
+      Array.isArray(selectedElement.id)
+        ? selectedElement.id.includes(id)
+        : selectedElement.id === id;
+
+        let elementData;
     if (type === ObjectType.TABLE) {
-      const table = tables.find((t) => t.id === id);
-      setGrabOffset({
-        x: table.x - pointer.spaces.diagram.x,
-        y: table.y - pointer.spaces.diagram.y,
-      });
-      setDragging({
-        element: type,
-        id: id,
-        prevX: table.x,
-        prevY: table.y,
-      });
+      elementData = tables.find((t) => t.id === id);
     } else if (type === ObjectType.AREA) {
-      const area = areas.find((t) => t.id === id);
-      setGrabOffset({
-        x: area.x - pointer.spaces.diagram.x,
-        y: area.y - pointer.spaces.diagram.y,
-      });
-      setDragging({
-        element: type,
-        id: id,
-        prevX: area.x,
-        prevY: area.y,
-      });
+      elementData = areas.find((a) => a.id === id);
     } else if (type === ObjectType.NOTE) {
-      const note = notes.find((t) => t.id === id);
-      setGrabOffset({
-        x: note.x - pointer.spaces.diagram.x,
-        y: note.y - pointer.spaces.diagram.y,
+      elementData = notes.find((n) => n.id === id);
+    }
+
+    if (!elementData) return;
+
+    // Calcular offset
+    setGrabOffset({
+      x: elementData.x - pointer.spaces.diagram.x,
+      y: elementData.y - pointer.spaces.diagram.y,
+    });
+
+    // If the object is alredy selected and the selection is multiple,
+    // strore the initial position of each one in the selection
+    if (alreadySelected && Array.isArray(selectedElement.id)) {
+      const initialPositions = {};
+      selectedElement.id.forEach((tableId) => {
+        const tData = tables.find((t) => t.id === tableId);
+        if (tData) {
+          initialPositions[tableId] = { x: tData.x, y: tData.y };
+        }
       });
       setDragging({
         element: type,
-        id: id,
-        prevX: note.x,
-        prevY: note.y,
+        id: selectedElement.id,
+        prevX: elementData.x,
+        prevY: elementData.y,
+        initialPositions,
       });
+    } else {
+      setDragging({
+        element: type,
+        id: id,
+        prevX: elementData.x,
+        prevY: elementData.y,
+      });
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: type,
+        id: id,
+        open: false,
+      }));
     }
-    setSelectedElement((prev) => ({
-      ...prev,
-      element: type,
-      id: id,
-      open: false,
-    }));
+    setDragStart({
+      x: pointer.spaces.diagram.x,
+      y: pointer.spaces.diagram.y,
+    });
   };
 
   /**
@@ -159,6 +188,20 @@ export default function Canvas() {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
+
+    if (isAreaSelecting) {
+      const currentX = pointer.spaces.diagram.x;
+      const currentY = pointer.spaces.diagram.y;
+      setSelectionArea((prev) => ({
+        ...prev,
+        x: Math.min(prev.startX, currentX),
+        y: Math.min(prev.startY, currentY),
+        width: Math.abs(currentX - prev.startX),
+        height: Math.abs(currentY - prev.startY),
+      }));
+      // Only update the area, without finalizing it yet.
+      return;
+    }
 
     if (linking) {
       setLinkingLine({
@@ -185,11 +228,24 @@ export default function Canvas() {
             (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
-    } else if (dragging.element === ObjectType.TABLE && dragging.id >= 0) {
-      updateTable(dragging.id, {
-        x: pointer.spaces.diagram.x + grabOffset.x,
-        y: pointer.spaces.diagram.y + grabOffset.y,
-      });
+    } else if (dragging.element === ObjectType.TABLE) {
+      if (Array.isArray(dragging.id)) {
+        const deltaX = pointer.spaces.diagram.x - dragStart.x;
+        const deltaY = pointer.spaces.diagram.y - dragStart.y;
+        dragging.id.forEach((tableId) => {
+          const initPos = dragging.initialPositions[tableId];
+          updateTable(tableId, {
+            x: initPos.x + deltaX,
+            y: initPos.y + deltaY,
+          });
+        });
+      } else {
+        // Move table individually
+        updateTable(dragging.id, {
+          x: pointer.spaces.diagram.x + grabOffset.x,
+          y: pointer.spaces.diagram.y + grabOffset.y,
+        });
+      }
     } else if (
       dragging.element === ObjectType.AREA &&
       dragging.id >= 0 &&
@@ -246,9 +302,41 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
+    if (e.isPrimary && e.target.id === "diagram") {
+      // if the user clicks on the background, reset the selected element
+      // desactivate area selection and move mode
+      setDragging({
+        element: ObjectType.NONE,
+        id: -1,
+        prevX: 0,
+        prevY: 0,
+      });
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setPanning((prev) => ({ ...prev, isPanning: false }));
+    }
+
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
+
+    // If pressing Alt + left click, start area selection
+    if (e.altKey && e.button === 0) {
+      setIsAreaSelecting(true);
+      setSelectionArea({
+          startX: pointer.spaces.diagram.x,
+          startY: pointer.spaces.diagram.y,
+          x: pointer.spaces.diagram.x,
+          y: pointer.spaces.diagram.y,
+          width: 0,
+          height: 0,
+      });
+      return;
+  }
 
     // don't pan if the sidesheet for editing a table is open
     if (
@@ -269,6 +357,15 @@ export default function Canvas() {
   };
 
   const coordsDidUpdate = (element) => {
+    // multiple selection
+    if (Array.isArray(dragging.id)) {
+      return dragging.id.some((id) => {
+        const table = tables.find((t) => t.id === id);
+        const initPos = dragging.initialPositions?.[id];
+        return table && initPos ? !(initPos.x === table.x && initPos.y === table.y) : false;
+      });
+    }
+
     switch (element) {
       case ObjectType.TABLE:
         return !(
@@ -305,23 +402,86 @@ export default function Canvas() {
   const getMovedElementDetails = () => {
     switch (dragging.element) {
       case ObjectType.TABLE:
-        return {
-          name: tables[dragging.id].name,
-          x: Math.round(tables[dragging.id].x),
-          y: Math.round(tables[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const table = tables.find((t) => t.id === id);
+            if (table) {
+              sumX += table.x;
+              sumY += table.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} tables`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const table = tables.find((t) => t.id === dragging.id);
+          if (!table) return {};
+          return {
+            name: table.name,
+            x: Math.round(table.x),
+            y: Math.round(table.y),
+          };
+        }
       case ObjectType.AREA:
-        return {
-          name: areas[dragging.id].name,
-          x: Math.round(areas[dragging.id].x),
-          y: Math.round(areas[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const area = areas.find((a) => a.id === id);
+            if (area) {
+              sumX += area.x;
+              sumY += area.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} areas`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const area = areas.find((a) => a.id === dragging.id);
+          if (!area) return {};
+          return {
+            name: area.name,
+            x: Math.round(area.x),
+            y: Math.round(area.y),
+          };
+        }
       case ObjectType.NOTE:
-        return {
-          name: notes[dragging.id].title,
-          x: Math.round(notes[dragging.id].x),
-          y: Math.round(notes[dragging.id].y),
-        };
+        if (Array.isArray(dragging.id)) {
+          let sumX = 0,
+            sumY = 0,
+            count = 0;
+          dragging.id.forEach((id) => {
+            const note = notes.find((n) => n.id === id);
+            if (note) {
+              sumX += note.x;
+              sumY += note.y;
+              count++;
+            }
+          });
+          return {
+            name: `${count} notes`,
+            x: count ? Math.round(sumX / count) : 0,
+            y: count ? Math.round(sumY / count) : 0,
+          };
+        } else {
+          const note = notes.find((n) => n.id === dragging.id);
+          if (!note) return {};
+          return {
+            name: note.title,
+            x: Math.round(note.x),
+            y: Math.round(note.y),
+          };
+        }
       default:
         return false;
     }
@@ -335,24 +495,99 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    if (isAreaSelecting) {
+      const areaBBox = selectionArea;
+      const selectedTables = tables.filter((table) => {
+        return (
+          table.x >= areaBBox.x &&
+          table.x <= areaBBox.x + areaBBox.width &&
+          table.y >= areaBBox.y &&
+          table.y <= areaBBox.y + areaBBox.height
+        );
+      });
+
+      if (selectedTables.length > 0) {
+        setSelectedElement({
+          ...selectedElement,
+          element: ObjectType.TABLE,
+          id: selectedTables.map((t) => t.id),
+          open: false,
+        });
+        // set start point for dragging
+        setDragStart({
+          x: pointer.spaces.diagram.x,
+          y: pointer.spaces.diagram.y,
+        })
+      }
+      setIsAreaSelecting(false);
+      return;
+    }
+
     if (coordsDidUpdate(dragging.element)) {
-      const info = getMovedElementDetails();
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.MOVE,
-          element: dragging.element,
-          x: dragging.prevX,
-          y: dragging.prevY,
-          toX: info.x,
-          toY: info.y,
-          id: dragging.id,
-          message: t("move_element", {
-            coords: `(${info.x}, ${info.y})`,
-            name: info.name,
-          }),
-        },
-      ]);
+        const info = getMovedElementDetails();
+        setUndoStack((prev) => {
+          if (Array.isArray(dragging.id)) {
+              const existingIndex = prev.findIndex(
+                  (action) =>
+                      action.action === Action.MOVE &&
+                      action.element === dragging.element &&
+                      Array.isArray(action.id) &&
+                      action.id.length === dragging.id.length
+              );
+              const newAction = {
+                  action: Action.MOVE,
+                  element: dragging.element,
+                  // Start position of each object (captured when the drag starts)
+                  initialPositions: dragging.initialPositions,
+                  // Final positions of each object (captured when the drag ends)
+                  finalPositions: dragging.id.reduce((acc, id) => {
+                      const table = tables.find((t) => t.id === id);
+                      if (table) {
+                          acc[id] = { x: table.x, y: table.y };
+                      }
+                      return acc;
+                  }, {}),
+                  id: dragging.id,
+                  message: t("move_element", {
+                      coords: `(${info.x}, ${info.y})`,
+                      name: info.name,
+                  }),
+              };
+              if (existingIndex !== -1) {
+                  return [
+                      ...prev.slice(0, existingIndex),
+                      newAction,
+                      ...prev.slice(existingIndex + 1),
+                  ];
+              }
+              return [...prev, newAction];
+          }
+          const existingIndex = prev.findIndex(
+              (action) =>
+                  action.action === Action.MOVE &&
+                  action.element === dragging.element &&
+                  action.id === dragging.id
+          );
+          const newAction = {
+              action: Action.MOVE,
+              element: dragging.element,
+              from: { x: dragging.prevX, y: dragging.prevY },
+              to: { x: info.x, y: info.y },
+              id: dragging.id,
+              message: t("move_element", {
+                  coords: `(${info.x}, ${info.y})`,
+                  name: info.name,
+              }),
+          };
+          if (existingIndex !== -1) {
+              return [
+                  ...prev.slice(0, existingIndex),
+                  newAction,
+                  ...prev.slice(existingIndex + 1),
+              ];
+          }
+          return [...prev, newAction];
+      });
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
@@ -415,48 +650,106 @@ export default function Canvas() {
     });
   };
 
-  const handleGripField = () => {
+  const handleGripField = (field) => {
+      // A field can be a foreign key only if it's a primary key or both NOT NULL and UNIQUE.
+      // If it can't be selected, show an error message and exit.
+      if (!field.primary && !(field.notNull && field.unique)) {
+        Toast.info(t("cannot_fk"));
+        return;
+      }
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setLinkingLine({
+      ...linkingLine,
+      startTableId: field.tableId,
+      startFieldId: field.id,
+      startX: pointer.spaces.diagram.x,
+      startY: pointer.spaces.diagram.y,
+    });
     setLinking(true);
   };
 
   const handleLinking = () => {
     if (hoveredTable.tableId < 0) return;
-    if (hoveredTable.field < 0) return;
-    if (
-      !areFieldsCompatible(
-        database,
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId],
-        tables[hoveredTable.tableId].fields[hoveredTable.field],
-      )
-    ) {
-      Toast.info(t("cannot_connect"));
+    // Get the childTable and parentTable
+    const childTable = tables.find((t) => t.id === hoveredTable.tableId);
+    const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
+    const parentFields = parentTable.fields.filter((field) => field.primary);
+  
+    if (parentFields.length === 0) {
+      Toast.info(t("no_primary_key"));
       return;
     }
-    if (
-      linkingLine.startTableId === hoveredTable.tableId &&
-      linkingLine.startFieldId === hoveredTable.field
-    )
+    // If the relationship is recursive
+    const recursiveRelation = parentTable === childTable;
+    if (!recursiveRelation) {
+      if (!areFieldsCompatible(parentFields, childTable)) {
+        Toast.info(t("duplicate_field_name"));
+        return;
+      }
+    }
+    // Check if the relationship already exists
+    const alreadyLinked = relationships.some(
+      (rel) =>
+        rel.startTableId === linkingLine.startTableId &&
+        rel.endTableId === hoveredTable.tableId
+    );
+    if (alreadyLinked) {
+      Toast.info(t("duplicate_relationship"));
       return;
-
+    }
+  
+    // Generate new fields for the childTable
+    const newFields = parentFields.map((field, index) => ({
+      name: recursiveRelation ? "" : field.name,
+      type: field.type,
+      size: field.size,
+      notNull: true,
+      unique: false,
+      default: "",
+      check: "",
+      primary: false,
+      increment: false,
+      comment: "",
+      foreignK: true,
+      foreignKey: {
+        tableId: parentTable.id,
+        fieldId: field.id,
+      },
+      id: childTable.fields.length + index, // Ensure IDs are unique
+    }));
+  
+    // Concatenate the existing fields with the new fields
+    const updatedChildFields = [...childTable.fields, ...newFields];
+  
+    // Update the childTable with the new fields
+    updateTable(childTable.id, {
+      fields: updatedChildFields,
+    });
+  
+    // Use the updated childTable fields to create the new relationship
     const newRelationship = {
       ...linkingLine,
-      endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.field,
-      cardinality: Cardinality.ONE_TO_ONE,
+      endTableId: childTable.id,
+      // The new fields are added at the end of the childTable fields
+      endFieldId: updatedChildFields.length - 1,
+      startTableId: parentTable.id,
+      startFieldId: parentFields[0].id,
+      Cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${tables[linkingLine.startTableId].name}_${
-        tables[linkingLine.startTableId].fields[linkingLine.startFieldId].name
-      }_${tables[hoveredTable.tableId].name}`,
+      name: `fk_${parentTable.name}_${parentFields[0].name}`,
       id: relationships.length,
+      endField: newFields,
     };
+
     delete newRelationship.startX;
     delete newRelationship.startY;
     delete newRelationship.endX;
     delete newRelationship.endY;
+    // Add the new relationship to the relationships array
     addRelationship(newRelationship);
+    setLinking(false);
   };
 
   // Handle mouse wheel scrolling
@@ -506,6 +799,12 @@ export default function Canvas() {
     { passive: false },
   );
 
+  useEventListener("keyup", (e) => {
+    if (e.key === "Alt") {
+      // deactivate area selection
+      setIsAreaSelecting(false);
+    }
+  });
   const theme = localStorage.getItem("theme");
 
   return (
@@ -570,18 +869,38 @@ export default function Canvas() {
           {relationships.map((e, i) => (
             <Relationship key={i} data={e} />
           ))}
-          {tables.map((table) => (
-            <Table
-              key={table.id}
-              tableData={table}
-              setHoveredTable={setHoveredTable}
-              handleGripField={handleGripField}
-              setLinkingLine={setLinkingLine}
-              onPointerDown={(e) =>
-                handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
-              }
+          {tables.map((table) => {
+            const isMoving =
+              dragging.element === ObjectType.TABLE &&
+              (Array.isArray(dragging.id)
+                ? dragging.id.includes(table.id)
+                : dragging.id === table.id);
+            return (
+              <Table
+                key={table.id}
+                tableData={table}
+                moving={isMoving}
+                setHoveredTable={setHoveredTable}
+                handleGripField={handleGripField}
+                setLinkingLine={setLinkingLine}
+                onPointerDown={(e) =>
+                  handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
+                }
+              />
+            );
+          })}
+          {/*Draw the selection areas*/
+          isAreaSelecting && (
+            <rect
+              x={selectionArea.x}
+              y={selectionArea.y}
+              width={selectionArea.width}
+              height={selectionArea.height}
+              fill="rgba(99, 152, 191, 0.3)"
+              stroke="rgb(99, 152, 191)"
+              strokeWidth="2"
             />
-          ))}
+          )}
           {linking && (
             <path
               d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}

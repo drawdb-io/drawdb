@@ -136,16 +136,65 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
-    if (addToHistory) {
-      const rels = relationships.reduce((acc, r) => {
-        if (
-          (r.startTableId === tid && r.startFieldId === field.id) ||
-          (r.endTableId === tid && r.endFieldId === field.id)
-        ) {
-          acc.push(r);
+    const currentTable = tables[tid];
+  
+    // If table has a composite pk
+    const pkFieldIds = currentTable.fields.filter(f => f.primary).map(f => f.id);
+    const isPartOfCompositePK = field.primary && pkFieldIds.length > 1;
+  
+    // If the field is a composite FK
+    const isPartOfCompositeFK = (() => {
+      if (!field.foreignK) return false;
+      const fkTableId = field.foreignKey.tableId;
+  
+      // Get all the fields Fk pointing to the same tables
+      const relatedFKs = tables[tid].fields.filter(
+        f =>
+          f.foreignK &&
+          f.foreignKey.tableId === fkTableId
+      );
+      return relatedFKs.length > 1;
+    })();
+  
+    // get associated relationships
+    let affectedRelationships = relationships.filter(
+      (r) =>
+        (r.startTableId === tid && r.startFieldId === field.id) ||
+        (r.endTableId === tid && r.endFieldId === field.id)
+    );
+  
+    // If PKs is composite, get all its relationships
+    if (isPartOfCompositePK) {
+      affectedRelationships = relationships.filter(
+        (r) => r.startTableId === tid && pkFieldIds.includes(r.startFieldId)
+      );
+    }
+  
+    // If FKs is composite, get all its relationships
+    if (isPartOfCompositeFK && field.foreignK) {
+      const fkTableId = field.foreignKey.tableId;
+      const relatedFKFieldIds = tables[tid].fields
+        .filter(f => f.foreignK && f.foreignKey.tableId === fkTableId)
+        .map(f => f.id);
+  
+      affectedRelationships = relationships.filter(
+        (r) => r.endTableId === tid && relatedFKFieldIds.includes(r.endFieldId)
+      );
+    }
+
+    let childFieldsSnapshot = {}
+
+    if (affectedRelationships.length > 0) {
+      affectedRelationships.forEach((rel) => {
+        const childTable = tables.find((t) => t.id === rel.endTableId);
+        if(childTable){
+          childFieldsSnapshot[childTable.id] = JSON.parse(JSON.stringify(childTable.fields));
         }
-        return acc;
-      }, []);
+      });
+    }
+
+    const previousFields = JSON.parse(JSON.stringify(currentTable.fields));
+    if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,
         {
@@ -155,92 +204,177 @@ export default function DiagramContextProvider({ children }) {
           tid: tid,
           data: {
             field: field,
-            relationship: rels,
+            relationship: affectedRelationships,
+            previousFields: previousFields,
+            childFieldsSnapshot: childFieldsSnapshot,
           },
           message: t("edit_table", {
-            tableName: tables[tid].name,
+            tableName: currentTable.name,
             extra: "[delete field]",
           }),
         },
       ]);
       setRedoStack([]);
     }
+  
+    // Delete relationships
     setRelationships((prev) => {
+      const affectedRelIds = new Set(affectedRelationships.map((r) => r.id));
+
       const temp = prev
-        .filter(
-          (e) =>
-            !(
-              (e.startTableId === tid && e.startFieldId === field.id) ||
-              (e.endTableId === tid && e.endFieldId === field.id)
-            ),
-        )
-        .map((e, i) => {
-          if (e.startTableId === tid && e.startFieldId > field.id) {
-            return {
-              ...e,
-              startFieldId: e.startFieldId - 1,
-              id: i,
-            };
+        .filter((r) => !affectedRelIds.has(r.id))
+        .map((r, i) => {
+          // Reindex relationships
+          const newRel = { ...r, id: i };
+
+          // Adjust fieldId if there are fields after deleting
+          if (newRel.startTableId === tid && newRel.startFieldId > field.id) {
+            newRel.startFieldId -= 1;
           }
-          if (e.endTableId === tid && e.endFieldId > field.id) {
-            return {
-              ...e,
-              endFieldId: e.endFieldId - 1,
-              id: i,
-            };
+          if (newRel.endTableId === tid && newRel.endFieldId > field.id) {
+            newRel.endFieldId -= 1;
           }
-          return { ...e, id: i };
+
+          return newRel;
         });
+
       return temp;
     });
-    updateTable(tid, {
-      fields: tables[tid].fields
-        .filter((e) => e.id !== field.id)
-        .map((t, i) => {
-          return { ...t, id: i };
-        }),
+  
+    const updatedTables = [...tables];
+  
+    // Delete FKs in child tables if a composite PK is deleted
+    if (isPartOfCompositePK) {
+      affectedRelationships.forEach((rel) => {
+        const childTable = updatedTables.find((t) => t.id === rel.endTableId);
+        const fksToRemove = childTable.fields.filter(
+          (f) =>
+            f.foreignK &&
+            f.foreignKey.tableId === tid &&
+            pkFieldIds.includes(f.foreignKey.fieldId)
+        );
+        childTable.fields = childTable.fields
+          .filter((f) => !fksToRemove.includes(f))
+          .map((f, i) => ({ ...f, id: i }));
+      });
+    }
+  
+    // Delete FKs in child tables if a composite FK is deleted
+    if (isPartOfCompositeFK && field.foreignK) {
+      const fkTableId = field.foreignKey.tableId;
+      const childTable = updatedTables[tid];
+      childTable.fields = childTable.fields
+        .filter(
+          (f) =>
+            !(
+              f.foreignK &&
+              f.foreignKey.tableId === fkTableId
+            )
+        )
+        .map((f, i) => ({ ...f, id: i }));
+    }
+  
+    // Delete any FK references in other tables
+    updatedTables.forEach((table) => {
+      table.fields = table.fields.filter(
+        (f) =>
+          !(
+            f.foreignK &&
+            f.foreignKey.tableId === tid &&
+            f.foreignKey.fieldId === field.id
+          )
+      );
     });
-  };
+  
+    // Delete the field from the table
+    updatedTables[tid].fields = updatedTables[tid].fields
+      .filter((f) => f.id !== field.id)
+      .map((f, i) => ({ ...f, id: i }));
+  
+    // Update the tables state
+    updatedTables.forEach((table) => updateTable(table.id, { fields: table.fields }));
+  };  
 
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
-      setRelationships((prev) => {
-        setUndoStack((prevUndo) => [
-          ...prevUndo,
-          {
-            action: Action.ADD,
-            element: ObjectType.RELATIONSHIP,
-            data: data,
-            message: t("add_relationship"),
-          },
-        ]);
-        setRedoStack([]);
-        return [...prev, data];
-      });
+      // First, update the relationships
+      setRelationships((prev) => [...prev, data]);
+  
+      // After that, update the component undo stack
+      setUndoStack((prevUndo) => [
+        ...prevUndo,
+        {
+          action: Action.ADD,
+          element: ObjectType.RELATIONSHIP,
+          data: data,
+          message: t("add_relationship"),
+        },
+      ]);
+      setRedoStack([]);
     } else {
       setRelationships((prev) => {
         const temp = prev.slice();
         temp.splice(data.id, 0, data);
         return temp.map((t, i) => ({ ...t, id: i }));
       });
+
+      const tableIndex = data.endTableId;
+      if(tables[tableIndex]){
+
+        const currentFields = tables[tableIndex].fields;
+        const fieldToInsert = data.endField[0];
+        const exists = currentFields.some((field) => field.id === fieldToInsert.id);
+
+        if (!exists){
+          const newFieldsArray = [
+            ...currentFields.slice(0, data.endFieldId),
+            ...data.endField.map((field) => ({...field})),
+            ...currentFields.slice(data.endFieldId),
+          ];
+          updateTable(tableIndex, {
+            fields: newFieldsArray,
+          });
+        }
+      }
     }
   };
 
   const deleteRelationship = (id, addToHistory = true) => {
+    const relationship = relationships[id];
+
     if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.DELETE,
           element: ObjectType.RELATIONSHIP,
-          data: relationships[id],
+          data: relationship,
           message: t("delete_relationship", {
-            refName: relationships[id].name,
+            refName: relationship.name,
           }),
         },
       ]);
       setRedoStack([]);
     }
+
+    const chieldTableId = relationship.endTableId;
+    const chieldTable = tables.find((table) => table.id === chieldTableId);
+
+    const fieldsToDelete = chieldTable.fields.filter(
+      (field) =>
+        field.foreignKey &&
+        field.foreignKey.tableId === relationship.startTableId // compare the thableId from the relationship
+    );
+
+    if (fieldsToDelete.length > 0) {
+      updateTable(chieldTableId, {
+        fields: chieldTable.fields.filter(
+          (field) =>
+            !fieldsToDelete.some((toDelete) => toDelete.id === field.id) // Delete all fk from the child table
+        ),
+      });
+    }
+
     setRelationships((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );

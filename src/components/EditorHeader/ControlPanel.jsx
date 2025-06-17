@@ -142,27 +142,50 @@ export default function ControlPanel({
         deleteEnum(enums.length - 1, false);
       }
       setRedoStack((prev) => [...prev, a]);
-    } else if (a.action === Action.MOVE) {
-      if (a.element === ObjectType.TABLE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: tables[a.id].x, y: tables[a.id].y },
-        ]);
-        updateTable(a.id, { x: a.x, y: a.y });
-      } else if (a.element === ObjectType.AREA) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: areas[a.id].x, y: areas[a.id].y },
-        ]);
-        updateArea(a.id, { x: a.x, y: a.y });
-      } else if (a.element === ObjectType.NOTE) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: notes[a.id].x, y: notes[a.id].y },
-        ]);
-        updateNote(a.id, { x: a.x, y: a.y });
-      }
-    } else if (a.action === Action.DELETE) {
+      } else if (a.action === Action.MOVE) {
+        // Movimientos múltiples
+        if (Array.isArray(a.id)) {
+          setRedoStack((prev) => [
+            ...prev,
+            {
+              ...a,
+              finalPositions: a.id.reduce((acc, id) => {
+                if (a.element === ObjectType.TABLE) {
+                  acc[id] = { x: tables[id].x, y: tables[id].y };
+                } else if (a.element === ObjectType.AREA) {
+                  acc[id] = { x: areas[id].x, y: areas[id].y };
+                } else if (a.element === ObjectType.NOTE) {
+                  acc[id] = { x: notes[id].x, y: notes[id].y };
+                }
+                return acc;
+              }, {}),
+            },
+          ]);
+          // Revertir cada objeto a su posición inicial
+          a.id.forEach((id) => {
+            if (a.element === ObjectType.TABLE) {
+              updateTable(id, a.initialPositions[id]);
+            } else if (a.element === ObjectType.AREA) {
+              updateArea(id, a.initialPositions[id]);
+            } else if (a.element === ObjectType.NOTE) {
+              updateNote(id, a.initialPositions[id]);
+            }
+          });
+        } else {
+          // Caso individual: se utiliza el campo "from"
+          setRedoStack((prev) => [
+            ...prev,
+            { ...a, to: { x: tables[a.id].x, y: tables[a.id].y } },
+          ]);
+          if (a.element === ObjectType.TABLE) {
+            updateTable(a.id, a.from);
+          } else if (a.element === ObjectType.AREA) {
+            updateArea(a.id, a.from);
+          } else if (a.element === ObjectType.NOTE) {
+            updateNote(a.id, a.from);
+          }
+        }
+      } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
         a.data.relationship.forEach((x) => addRelationship(x, false));
         addTable(a.data.table, false);
@@ -186,57 +209,34 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.TABLE) {
         if (a.component === "field") {
           updateField(a.tid, a.fid, a.undo);
-        } else if (a.component === "field_delete") {
-          setRelationships((prev) => {
-            let temp = [...prev];
-            a.data.relationship.forEach((r) => {
-              temp.splice(r.id, 0, r);
-            });
-            temp = temp.map((e, i) => {
-              const recoveredRel = a.data.relationship.find(
-                (x) =>
-                  (x.startTableId === e.startTableId &&
-                    x.startFieldId === e.startFieldId) ||
-                  (x.endTableId === e.endTableId &&
-                    x.endFieldId === a.endFieldId),
-              );
-              if (
-                e.startTableId === a.tid &&
-                e.startFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  startFieldId: e.startFieldId + 1,
-                };
-              }
-              if (
-                e.endTableId === a.tid &&
-                e.endFieldId >= a.data.field.id &&
-                !recoveredRel
-              ) {
-                return {
-                  ...e,
-                  id: i,
-                  endFieldId: e.endFieldId + 1,
-                };
-              }
-              return { ...e, id: i };
-            });
-            return temp;
+      } else if (a.component === "field_delete") {
+        // Restores relationships
+        setRelationships((prev) => {
+          let temp = [...prev];
+          a.data.relationship.forEach((r) => {
+            temp.splice(r.id, 0, r);
           });
+          temp = temp.map((e, i) => ({ ...e, id: i }));
+          return temp;
+        });
+        // Restores the fields of the parent table
+        setTables((prev) =>
+          prev.map((t) =>
+            t.id === a.tid ? { ...t, fields: a.data.previousFields } : t
+          )
+        );
+        // Restores the affected child tables according to the snapshot
+        if (a.data.childFieldsSnapshot) {
           setTables((prev) =>
             prev.map((t) => {
-              if (t.id === a.tid) {
-                const temp = t.fields.slice();
-                temp.splice(a.data.field.id, 0, a.data.field);
-                return { ...t, fields: temp.map((t, i) => ({ ...t, id: i })) };
+              if (a.data.childFieldsSnapshot[t.id]) {
+                return { ...t, fields: a.data.childFieldsSnapshot[t.id] };
               }
               return t;
-            }),
+            })
           );
-        } else if (a.component === "field_add") {
+        }
+      }else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: tables[a.tid].fields
               .filter((e) => e.id !== tables[a.tid].fields.length - 1)
@@ -1163,7 +1163,7 @@ export default function ControlPanel({
       },
       delete: {
         function: del,
-        shortcut: "Del",
+        shortcut: "Del / Ctrl + Backspace",
       },
       copy_as_image: {
         function: copyAsImage,
@@ -1390,7 +1390,7 @@ export default function ControlPanel({
   useHotkeys("ctrl+c, meta+c", copy, { preventDefault: true });
   useHotkeys("ctrl+v, meta+v", paste, { preventDefault: true });
   useHotkeys("ctrl+x, meta+x", cut, { preventDefault: true });
-  useHotkeys("delete", del, { preventDefault: true });
+  useHotkeys("delete, ctrl+backspace, meta+backspace", del, { preventDefault: true });
   useHotkeys("ctrl+shift+g, meta+shift+g", viewGrid, { preventDefault: true });
   useHotkeys("ctrl+up, meta+up", zoomIn, { preventDefault: true });
   useHotkeys("ctrl+down, meta+down", zoomOut, { preventDefault: true });
