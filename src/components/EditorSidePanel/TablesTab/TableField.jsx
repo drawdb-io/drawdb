@@ -139,10 +139,10 @@ export default function TableField({ data, tid, index }) {
           title={t("not_null")}
           theme={data.notNull ? "solid" : "light"}
           onClick={() => {
-                if(data.primary){
-                  Toast.info(t("pk_has_not_be_null"))
-                  return;
-                }
+            if(data.primary){
+              Toast.info(t("pk_has_not_be_null"))
+              return;
+            }
             setUndoStack((prev) => [
               ...prev,
               {
@@ -176,13 +176,15 @@ export default function TableField({ data, tid, index }) {
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
             const changes = { primary: !data.primary };
-          const undo= { primary: data.primary , notNull : data.notNull };
-          const redo= { primary: newStatePK , notNull:stateNull };
-          if (mustSetNotNull) {
-            undo.notNull = data.notNull;
-            redo.notNull = true;
-            changes.notNull = true;
-          }
+            
+            const undo= { primary: data.primary , notNull : data.notNull };
+            const redo= { primary: newStatePK , notNull:stateNull };
+            
+            if (mustSetNotNull) {
+              undo.notNull = data.notNull;
+              redo.notNull = true;
+              changes.notNull = true;
+            }
             setUndoStack((prev) => [
               ...prev,
               {
@@ -198,7 +200,7 @@ export default function TableField({ data, tid, index }) {
               },
             ]);
             setRedoStack([]);
-            updateField(tid, index, { primary: newStatePK,notNull:stateNull });
+            updateField(tid, index, { primary: newStatePK, notNull: stateNull });
           }}
           icon={<IconKeyStroked />}
         />

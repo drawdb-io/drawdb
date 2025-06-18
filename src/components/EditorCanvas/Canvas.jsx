@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState,useEffect } from "react";
 import {
   Action,
   Cardinality,
@@ -25,9 +25,24 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible } from "../../utils/utils";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Canvas() {
   const { t } = useTranslation();
+  const { transform, setTransform } = useTransform();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const focusPosition = location.state?.focusPosition;
+    if (focusPosition) {
+      setTransform((prev) => ({
+        ...prev,
+        pan: focusPosition,
+      }));
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location, navigate, setTransform]);
 
   const [isAreaSelecting, setIsAreaSelecting] = useState(false);
   const [selectionArea, setSelectionArea] = useState({
@@ -58,7 +73,7 @@ export default function Canvas() {
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { transform, setTransform } = useTransform();
+
   const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
     element: ObjectType.NONE,

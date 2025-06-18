@@ -16,7 +16,10 @@ import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
+import { useNavigate } from "react-router-dom";
+
 export default function TableInfo({ data }) {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, updateField, setRelationships, database } =
@@ -353,6 +356,15 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
+            <Button
+              title="Go to Board"
+              onClick={() => {
+                if (data.x != null && data.y != null) {
+                  navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
+                }
+              }}
+            >{t("Board")}
+            </Button>
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
