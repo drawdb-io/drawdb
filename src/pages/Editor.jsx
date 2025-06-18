@@ -10,8 +10,11 @@ import TasksContextProvider from "../context/TasksContext";
 import SaveStateContextProvider from "../context/SaveStateContext";
 import EnumsContextProvider from "../context/EnumsContext";
 import WorkSpace from "../components/Workspace";
+import { useThemedPage } from "../hooks";
 
 export default function Editor() {
+  useThemedPage();
+
   return (
     <LayoutContextProvider>
       <TransformContextProvider>

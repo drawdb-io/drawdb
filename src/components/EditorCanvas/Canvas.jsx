@@ -708,15 +708,13 @@ export default function Canvas() {
     { passive: false },
   );
 
-  const theme = localStorage.getItem("theme");
-
   return (
     <div className="grow h-full touch-none" id="canvas">
       <div
         className="w-full h-full"
         style={{
           cursor: pointer.style,
-          backgroundColor: theme === "dark" ? darkBgTheme : "white",
+          backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
         }}
       >
         <svg
