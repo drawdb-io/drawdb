@@ -1357,25 +1357,11 @@ export default function ControlPanel({
         children: [
           {
             name: t("light"),
-            function: () => {
-              const body = document.body;
-              if (body.hasAttribute("theme-mode")) {
-                body.setAttribute("theme-mode", "light");
-              }
-              localStorage.setItem("theme", "light");
-              setSettings((prev) => ({ ...prev, mode: "light" }));
-            },
+            function: () => setSettings((prev) => ({ ...prev, mode: "light" })),
           },
           {
             name: t("dark"),
-            function: () => {
-              const body = document.body;
-              if (body.hasAttribute("theme-mode")) {
-                body.setAttribute("theme-mode", "dark");
-              }
-              localStorage.setItem("theme", "dark");
-              setSettings((prev) => ({ ...prev, mode: "dark" }));
-            },
+            function: () => setSettings((prev) => ({ ...prev, mode: "dark" })),
           },
         ],
         function: () => {},

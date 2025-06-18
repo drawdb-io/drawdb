@@ -12,6 +12,7 @@ import { CLEAR_EDITOR_COMMAND } from "lexical";
 import { Link } from "react-router-dom";
 import { socials } from "../data/socials";
 import { send } from "../api/email";
+import { useSettings, useThemedPage } from "../hooks";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -85,7 +86,7 @@ function Form({ theme }) {
         value={data.title}
         onChange={(v) => setData((prev) => ({ ...prev, title: v }))}
       />
-      <RichEditor theme={theme} placeholder={"Describe the bug"} />
+      <RichEditor theme={theme} placeholder="Describe the bug" />
       <Upload
         action="#"
         ref={uploadRef}
@@ -123,13 +124,16 @@ function Form({ theme }) {
 }
 
 export default function BugReport() {
-  const [theme, setTheme] = useState("");
+  const {
+    settings: { mode: theme },
+  } = useSettings();
 
   useEffect(() => {
-    setTheme(localStorage.getItem("theme"));
     document.title = "Report a bug | drawDB";
     document.body.setAttribute("class", "theme");
-  }, [setTheme]);
+  }, []);
+
+  useThemedPage();
 
   return (
     <>

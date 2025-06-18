@@ -29,6 +29,10 @@ export default function SettingsContextProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    document.body.setAttribute("theme-mode", settings.mode);
+  }, [settings.mode]);
+
+  useEffect(() => {
     localStorage.setItem("settings", JSON.stringify(settings));
   }, [settings]);
 
