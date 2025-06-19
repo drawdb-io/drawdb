@@ -343,7 +343,7 @@ export default function TableInfo({ data }) {
                     notNull: false,
                     increment: false,
                     comment: "",
-                    foreignK: false, 
+                    foreignK: false,
                     id: data.fields.length,
                   },
                 ],

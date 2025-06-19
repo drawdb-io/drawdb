@@ -135,7 +135,7 @@ export const diagram = {
       startFieldId: 1,
       endTableId: 3,
       endFieldId: 0,
-      cardinality: "zero_to_many",
+      cardinality: "one_to_many",
     },
   ],
 };
