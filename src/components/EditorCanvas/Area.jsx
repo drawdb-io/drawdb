@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
-import { Button, Popover, Input, ColorPicker } from "@douyinfe/semi-ui";
+import { Button, Popover, Input } from "@douyinfe/semi-ui";
+import ColorPicker from "../EditorSidePanel/ColorPicker";
 import {
   IconEdit,
   IconDeleteStroked,
@@ -217,30 +218,44 @@ export default function Area({
 
 function EditPopoverContent({ data }) {
   const [editField, setEditField] = useState({});
-  const [pickedColor, setPickedColor] = useState(undefined);
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
+  const initialColorRef = useRef(data.color);
 
-  const handleColorPickerChange = () => {
-    if (pickedColor !== undefined) {
-      setUndoStack((prev) => [
+  const handleColorPick = (color) => {
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.AREA &&
+          e.aid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      const newStack = [
         ...prev,
         {
           action: Action.EDIT,
           element: ObjectType.AREA,
           aid: data.id,
-          undo: { color: data.color },
-          redo: { color: pickedColor },
+          undo: { color: undoColor },
+          redo: { color: color },
           message: t("edit_area", {
             areaName: data.name,
             extra: "[color]",
           }),
         },
-      ]);
-      setRedoStack([]);
-      setPickedColor(undefined);
-    }
+      ];
+      return newStack;
+    });
+    setRedoStack([]);
   };
 
   return (
@@ -272,19 +287,12 @@ function EditPopoverContent({ data }) {
             setRedoStack([]);
           }}
         />
-        <div
-          onPointerUp={handleColorPickerChange}
-          onBlur={handleColorPickerChange}
-        >
-          <ColorPicker
-            onChange={({ hex: color }) => {
-              setPickedColor(color);
-              updateArea(data.id, { color });
-            }}
-            usePopover={true}
-            value={ColorPicker.colorStringToValue(data.color)}
-          />
-        </div>
+        <ColorPicker
+          usePopover={true}
+          value={data.color}
+          onChange={(color) => updateArea(data.id, { color })}
+          onColorPick={(color) => handleColorPick(color)}
+        />
       </div>
       <div className="flex">
         <Button

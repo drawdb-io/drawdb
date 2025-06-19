@@ -1,11 +1,6 @@
-import { useState } from "react";
-import {
-  Button,
-  Collapse,
-  TextArea,
-  Input,
-  ColorPicker,
-} from "@douyinfe/semi-ui";
+import { useState, useRef } from "react";
+import { Button, Collapse, TextArea, Input } from "@douyinfe/semi-ui";
+import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { Action, ObjectType } from "../../../data/constants";
 import { useNotes, useUndoRedo } from "../../../hooks";
@@ -15,28 +10,42 @@ export default function NoteInfo({ data, nid }) {
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
-  const [pickedColor, setPickedColor] = useState(undefined);
   const { t } = useTranslation();
+  const initialColorRef = useRef(data.color);
 
-  const handleColorPickerChange = () => {
-    if (pickedColor !== undefined) {
-      setUndoStack((prev) => [
+  const handleColorPick = (color) => {
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.NOTE &&
+          e.nid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      const newStack = [
         ...prev,
         {
           action: Action.EDIT,
           element: ObjectType.NOTE,
-          nid: nid,
-          undo: { color: data.color },
-          redo: { color: pickedColor },
+          nid: data.id,
+          undo: { color: undoColor },
+          redo: { color: color },
           message: t("edit_note", {
             noteTitle: data.title,
             extra: "[color]",
           }),
         },
-      ]);
-      setRedoStack([]);
-      setPickedColor(undefined);
-    }
+      ];
+      return newStack;
+    });
+    setRedoStack([]);
   };
 
   return (
@@ -115,22 +124,13 @@ export default function NoteInfo({ data, nid }) {
           }}
           rows={3}
         />
-        <div className="ms-2">
-          <div onPointerUp={handleColorPickerChange} onBlur={handleColorPickerChange}>
-            <ColorPicker
-                onChange={({ hex: color }) => {
-                setPickedColor(color);
-                updateNote(nid, { color });
-                }}
-                usePopover={true}
-                value={ColorPicker.colorStringToValue(data.color)}
-            >
-                <div
-                className="h-[32px] w-[32px] rounded-sm shrink-0 mb-2"
-                style={{ backgroundColor: data.color }}
-                />
-            </ColorPicker>
-          </div>
+        <div className="ms-2 flex flex-col gap-2">
+          <ColorPicker
+            usePopover={true}
+            value={data.color}
+            onChange={(color) => updateNote(data.id, { color })}
+            onColorPick={(color) => handleColorPick(color)}
+          />
           <Button
             icon={<IconDeleteStroked />}
             type="danger"
