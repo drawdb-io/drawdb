@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
-import { Input, Button, Popover, ColorPicker } from "@douyinfe/semi-ui";
+import { Input, Button, Popover } from "@douyinfe/semi-ui";
+import ColorPicker from "../EditorSidePanel/ColorPicker";
 import {
   IconEdit,
   IconDeleteStroked,
@@ -27,6 +28,42 @@ export default function Note({ data, onPointerDown }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement, bulkSelectedElements } =
     useSelect();
+  const initialColorRef = useRef(data.color);
+
+  const handleColorPick = (color) => {
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.NOTE &&
+          e.nid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      const newStack = [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.NOTE,
+          nid: data.id,
+          undo: { color: undoColor },
+          redo: { color: color },
+          message: t("edit_note", {
+            noteTitle: data.title,
+            extra: "[color]",
+          }),
+        },
+      ];
+      return newStack;
+    });
+    setRedoStack([]);
+  };
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${data.id}`);
@@ -225,32 +262,11 @@ export default function Note({ data, onPointerDown }) {
                           }}
                         />
                         <ColorPicker
-                          onChange={({ hex: color }) => {
-                            setUndoStack((prev) => [
-                              ...prev,
-                              {
-                                action: Action.EDIT,
-                                element: ObjectType.NOTE,
-                                nid: data.id,
-                                undo: { color: data.color },
-                                redo: { color },
-                                message: t("edit_note", {
-                                  noteTitle: data.title,
-                                  extra: "[color]",
-                                }),
-                              },
-                            ]);
-                            setRedoStack([]);
-                            updateNote(data.id, { color });
-                          }}
                           usePopover={true}
-                          value={ColorPicker.colorStringToValue(data.color)}
-                        >
-                          <div
-                            className="h-[32px] w-[32px] rounded-sm"
-                            style={{ backgroundColor: data.color }}
-                          />
-                        </ColorPicker>
+                          value={data.color}
+                          onChange={(color) => updateNote(data.id, { color })}
+                          onColorPick={(color) => handleColorPick(color)}
+                        />
                       </div>
                       <div className="flex">
                         <Button
