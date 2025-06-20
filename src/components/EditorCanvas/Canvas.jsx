@@ -5,8 +5,6 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
-  tableFieldHeight,
-  tableHeaderHeight,
   gridSize,
   gridCircleRadius,
 } from "../../data/constants";
@@ -309,7 +307,8 @@ export default function Canvas() {
       dragging.id !== null &&
       bulkSelectedElements.length &&
       bulkSelectedElements.some(
-        (element) => element.id === dragging.id && element.type === dragging.element
+        (element) =>
+          element.id === dragging.id && element.type === dragging.element,
       )
     ) {
       for (const element of bulkSelectedElements) {
