@@ -29,7 +29,7 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
-import { areFieldsCompatible } from "../../utils/utils";
+import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { noteWidth, State } from "../../data/constants";
 
@@ -117,8 +117,7 @@ export default function Canvas() {
             x: table.x,
             y: table.y,
             width: settings.tableWidth,
-            height:
-              table.fields.length * tableFieldHeight + tableHeaderHeight + 7,
+            height: getTableHeight(table),
           },
           rect,
         )
@@ -230,14 +229,7 @@ export default function Canvas() {
       prevCoords = { prevX: note.x, prevY: note.y };
     }
 
-    if (locked) {
-      setPanning({
-        isPanning: true,
-        panStart: transform.pan,
-        cursorStart: pointer.spaces.screen,
-      });
-      pointer.setStyle("grabbing");
-    } else {
+    if (!locked) {
       setDragging((prev) => ({
         ...prev,
         id,
@@ -274,6 +266,21 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    if (panning.isPanning) {
+      setTransform((prev) => ({
+        ...prev,
+        pan: {
+          x:
+            panning.panStart.x +
+            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
+          y:
+            panning.panStart.y +
+            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
+        },
+      }));
+      return;
+    }
+
     const isDragging =
       dragging.element !== ObjectType.NONE && dragging.id !== null;
 
@@ -300,26 +307,37 @@ export default function Canvas() {
     } else if (
       dragging.element !== ObjectType.NONE &&
       dragging.id !== null &&
-      bulkSelectedElements.length
+      bulkSelectedElements.length &&
+      bulkSelectedElements.some(
+        (element) => element.id === dragging.id && element.type === dragging.element
+      )
     ) {
       for (const element of bulkSelectedElements) {
         if (element.type === ObjectType.TABLE) {
-          const { x, y } = tables.find((e) => e.id === element.id);
+          const table = tables.find((e) => e.id === element.id);
+          if (table.locked) continue;
+          const { x, y } = table;
           updateTable(element.id, {
             x: x + deltaX,
             y: y + deltaY,
           });
         }
         if (element.type === ObjectType.AREA) {
+          const area = areas[element.id];
+          if (area.locked) continue;
+          const { x, y } = area;
           updateArea(element.id, {
-            x: areas[element.id].x + deltaX,
-            y: areas[element.id].y + deltaY,
+            x: x + deltaX,
+            y: y + deltaY,
           });
         }
         if (element.type === ObjectType.NOTE) {
+          const note = notes[element.id];
+          if (note.locked) continue;
+          const { x, y } = note;
           updateNote(element.id, {
-            x: notes[element.id].x + deltaX,
-            y: notes[element.id].y + deltaY,
+            x: x + deltaX,
+            y: y + deltaY,
           });
         }
       }
@@ -328,25 +346,6 @@ export default function Canvas() {
         ...prev,
         prevX: finalX,
         prevY: finalY,
-      }));
-    } else if (
-      panning.isPanning &&
-      dragging.element === ObjectType.NONE &&
-      areaResize.id === -1
-    ) {
-      if (!settings.panning) {
-        return;
-      }
-      setTransform((prev) => ({
-        ...prev,
-        pan: {
-          x:
-            panning.panStart.x +
-            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
-          y:
-            panning.panStart.y +
-            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
-        },
       }));
     } else if (dragging.element === ObjectType.TABLE && dragging.id !== null) {
       const table = tables.find((t) => t.id === dragging.id);
@@ -430,7 +429,10 @@ export default function Canvas() {
     )
       return;
 
-    if (!settings.panning) {
+    const isMouseLeftButton = e.button === 0;
+    const isMouseMiddleButton = e.button === 1;
+
+    if (isMouseLeftButton) {
       setBulkSelectRectPts({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
@@ -439,7 +441,7 @@ export default function Canvas() {
         show: true,
       });
       pointer.setStyle("crosshair");
-    } else {
+    } else if (isMouseMiddleButton) {
       setPanning({
         isPanning: true,
         panStart: transform.pan,
@@ -488,6 +490,8 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    let bulkMoved = false;
+
     if (coordsDidUpdate({ id: dragging.id, type: dragging.element })) {
       if (bulkSelectedElements.length) {
         setUndoStack((prev) => [
@@ -505,12 +509,7 @@ export default function Canvas() {
             })),
           },
         ]);
-        setSelectedElement((prev) => ({
-          ...prev,
-          element: ObjectType.NONE,
-          id: -1,
-          open: false,
-        }));
+        bulkMoved = true;
       } else {
         const element = getElement({
           id: dragging.id,
@@ -553,18 +552,13 @@ export default function Canvas() {
         y2: pointer.spaces.diagram.y,
         show: false,
       }));
-      collectSelectedElements();
+      if (!bulkMoved) {
+        collectSelectedElements();
+      }
     }
 
     if (panning.isPanning && didPan()) {
       setSaveState(State.SAVING);
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.NONE,
-        id: -1,
-        open: false,
-      }));
-      setBulkSelectedElements([]);
     }
     setPanning((old) => ({ ...old, isPanning: false }));
     pointer.setStyle("default");
