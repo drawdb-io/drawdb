@@ -9,7 +9,6 @@ const defaultSettings = {
   showDataTypes: true,
   mode: "light",
   autosave: true,
-  panning: true,
   showCardinality: true,
   showRelationshipLabels: true,
   tableWidth: tableWidth,
