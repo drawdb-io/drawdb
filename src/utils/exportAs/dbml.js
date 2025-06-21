@@ -78,7 +78,7 @@ export function toDBML(diagram) {
     return `Ref ${rel.name} {\n\t${startTableName}.${startFieldName} ${cardinality(rel)} ${endTableName}.${endFieldName} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
   };
 
-  const enumMap = new Map();
+  let enumDefinitions = "";
 
   for (const table of diagram.tables) {
     for (const field of table.fields) {
@@ -86,22 +86,10 @@ export function toDBML(diagram) {
         (field.type === "ENUM" || field.type === "SET") &&
         Array.isArray(field.values)
       ) {
-        if (!enumMap.has(field.enumName)) {
-          enumMap.set(
-            `${field.name}_${field.values.join("_")}_t`,
-            field.values,
-          );
-        }
+        enumDefinitions += `enum ${field.name}_${field.values.join("_")}_t {\n\t${field.values.join("\n\t")}\n}\n\n`;
       }
     }
   }
-
-  const enumDefinitions = Array.from(enumMap.entries())
-    .map(
-      ([name, values]) =>
-        `enum ${name} {\n${values.map((v) => `\t${v}`).join("\n")}\n}\n\n`,
-    )
-    .join("\n");
 
   return `${diagram.enums
     .map(
