@@ -135,6 +135,7 @@ export default function Note({ data, onPointerDown }) {
         // https://stackoverflow.com/a/70976017/1137077
         e.target.releasePointerCapture(e.pointerId);
       }}
+      onDoubleClick={edit}
     >
       <path
         d={`M${data.x + noteFold} ${data.y} L${data.x + noteWidth - noteRadius} ${
