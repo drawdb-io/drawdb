@@ -55,7 +55,7 @@ function cardinality(rel) {
 function fieldSize(field, database) {
   const typeMetadata = dbToTypes[database][field.type];
 
-  if ((typeMetadata.isSized || typeMetadata.hasPrecision) && field.size)
+  if ((typeMetadata?.isSized || typeMetadata?.hasPrecision) && field.size)
     return `(${field.size})`;
 
   return "";
