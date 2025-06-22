@@ -28,7 +28,7 @@ export function fromDBML(src) {
         field.id = nanoid();
         field.name = column.name;
         field.type = column.type.type_name.toUpperCase();
-        field.default = column.dbdefault ?? "";
+        field.default = column.dbdefault?.value ?? "";
         field.check = "";
         field.primary = !!column.pk;
         field.unique = !!column.pk;
