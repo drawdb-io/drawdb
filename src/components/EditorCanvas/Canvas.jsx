@@ -56,12 +56,15 @@ export default function Canvas() {
     bulkSelectedElements,
     setBulkSelectedElements,
   } = useSelect();
-  const [dragging, setDragging] = useState({
+  const notDragging = {
     element: ObjectType.NONE,
     id: null,
     prevX: 0,
     prevY: 0,
     initialPositions: [],
+  };
+  const [dragging, setDragging] = useState({
+    ...notDragging,
   });
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
@@ -536,13 +539,7 @@ export default function Canvas() {
       }
       setRedoStack([]);
     }
-    setDragging({
-      element: ObjectType.NONE,
-      id: null,
-      prevX: 0,
-      prevY: 0,
-      initialPositions: [],
-    });
+    setDragging({ ...notDragging });
 
     if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
@@ -601,13 +598,7 @@ export default function Canvas() {
 
   const handleGripField = () => {
     setPanning((old) => ({ ...old, isPanning: false }));
-    setDragging({
-      element: ObjectType.NONE,
-      id: null,
-      prevX: 0,
-      prevY: 0,
-      initialPositions: [],
-    });
+    setDragging({ ...notDragging });
     setLinking(true);
   };
 
