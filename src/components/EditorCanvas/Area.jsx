@@ -37,8 +37,12 @@ export default function Area({
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
   const { updateArea } = useAreas();
-  const { selectedElement, setSelectedElement, bulkSelectedElements } =
-    useSelect();
+  const {
+    selectedElement,
+    setSelectedElement,
+    bulkSelectedElements,
+    setBulkSelectedElements,
+  } = useSelect();
 
   const handleResize = (e, dir) => {
     setResize({ id: data.id, dir: dir });
@@ -53,6 +57,9 @@ export default function Area({
   };
 
   const lockUnlockArea = () => {
+    setBulkSelectedElements((prev) =>
+      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.AREA),
+    );
     updateArea(data.id, { locked: !data.locked });
   };
 
