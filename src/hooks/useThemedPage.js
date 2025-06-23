@@ -9,5 +9,10 @@ export default function useThemedPage() {
 
   useLayoutEffect(() => {
     document.body.setAttribute("theme-mode", settings.mode);
+
+    const removeClass = settings.mode === "light" ? "dark" : "light";
+
+    document.documentElement.classList.remove(removeClass);
+    document.documentElement.classList.add(settings.mode);
   }, [settings]);
 }

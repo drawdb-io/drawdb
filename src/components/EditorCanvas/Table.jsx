@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Tab,
   ObjectType,
@@ -21,19 +21,18 @@ import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
-import i18n from "../../i18n/i18n";
 import { getTableHeight } from "../../utils/utils";
+import classNames from "classnames";
+import i18n from "../../i18n/i18n";
 
-export default function Table(props) {
-  const [hoveredField, setHoveredField] = useState(null);
+export default function Table({
+  tableData,
+  onPointerDown,
+  setHoveredTable,
+  handleGripField,
+  setLinkingLine,
+}) {
   const { database } = useDiagram();
-  const {
-    tableData,
-    onPointerDown,
-    setHoveredTable,
-    handleGripField,
-    setLinkingLine,
-  } = props;
   const { layout } = useLayout();
   const { deleteTable, deleteField, updateTable } = useDiagram();
   const { settings } = useSettings();
@@ -41,21 +40,17 @@ export default function Table(props) {
   const { selectedElement, setSelectedElement, bulkSelectedElements } =
     useSelect();
 
-  const borderColor = useMemo(
-    () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
-    [settings.mode],
-  );
-
   const height = getTableHeight(tableData);
 
   const isSelected = useMemo(() => {
-    return (
-      (selectedElement.id == tableData.id &&
-        selectedElement.element === ObjectType.TABLE) ||
-      bulkSelectedElements.some(
-        (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
-      )
+    const isIndividuallySelected =
+      selectedElement.id == tableData.id &&
+      selectedElement.element === ObjectType.TABLE;
+    const isBulkSelected = bulkSelectedElements.some(
+      (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
     );
+
+    return isIndividuallySelected || isBulkSelected;
   }, [selectedElement, tableData, bulkSelectedElements]);
 
   const lockUnlockTable = () =>
@@ -92,85 +87,71 @@ export default function Table(props) {
         y={tableData.y}
         width={settings.tableWidth}
         height={height}
-        className="group drop-shadow-lg rounded-md cursor-move"
+        data-selected={isSelected}
         onPointerDown={onPointerDown}
+        className="group drop-shadow-lg rounded-md cursor-move"
       >
         <div
           onDoubleClick={openEditor}
-          className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
+          className={classNames(
+            "select-none rounded-lg border-2 border-zinc-300 hover:border-dashed hover:border-blue-500",
+            "dark:border-zinc-600 group-data-[selected=true]:border-solid group-data-[selected=true]:!border-blue-500",
+            "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200",
+          )}
           style={{ direction: "ltr" }}
         >
           <div
-            className="h-[10px] w-full rounded-t-md"
+            className="h-2.5 w-full rounded-t-md"
             style={{ backgroundColor: tableData.color }}
           />
-          <div
-            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
-              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
-            }`}
-          >
-            <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
+          <div className="h-10 flex justify-between items-center border-b border-gray-400 bg-zinc-200 dark:bg-zinc-900">
+            <div className="px-2 overflow-hidden text-ellipsis font-bold whitespace-nowrap">
               {tableData.name}
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2 space-x-1.5">
                 <Button
+                  aria-label={t("lock")}
                   icon={tableData.locked ? <IconLock /> : <IconUnlock />}
                   size="small"
                   theme="solid"
-                  style={{
-                    backgroundColor: "#2f68adb3",
-                  }}
+                  style={{ backgroundColor: "#2f68adb3" }}
                   onClick={lockUnlockTable}
                 />
                 <Button
+                  aria-label={t("Edit")}
                   icon={<IconEdit />}
                   size="small"
                   theme="solid"
-                  style={{
-                    backgroundColor: "#2f68adb3",
-                  }}
+                  style={{ backgroundColor: "#2f68adb3" }}
                   onClick={openEditor}
                 />
                 <Popover
                   key={tableData.id}
                   content={
-                    <div className="popover-theme">
-                      <div className="mb-2">
-                        <strong>{t("comment")}:</strong>{" "}
-                        {tableData.comment === "" ? (
-                          t("not_set")
-                        ) : (
-                          <div>{tableData.comment}</div>
-                        )}
+                    <div className="space-y-2 popover-theme">
+                      <div>
+                        <strong>{t("comment")}: </strong>
+                        {tableData.comment || t("not_set")}
                       </div>
                       <div>
                         <strong
-                          className={`${
+                          className={
                             tableData.indices.length === 0 ? "" : "block"
-                          }`}
+                          }
                         >
                           {t("indices")}:
                         </strong>{" "}
                         {tableData.indices.length === 0 ? (
                           t("not_set")
                         ) : (
-                          <div>
+                          <>
                             {tableData.indices.map((index, k) => (
                               <div
                                 key={k}
-                                className={`flex items-center my-1 px-2 py-1 rounded ${
-                                  settings.mode === "light"
-                                    ? "bg-gray-100"
-                                    : "bg-zinc-800"
-                                }`}
+                                className="flex items-center my-1 px-2 py-1 rounded bg-gray-100 dark:bg-zinc-800"
                               >
-                                <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
+                                <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500" />
                                 <div>
                                   {index.fields.map((f) => (
                                     <Tag color="blue" key={f} className="me-1">
@@ -180,14 +161,14 @@ export default function Table(props) {
                                 </div>
                               </div>
                             ))}
-                          </div>
+                          </>
                         )}
                       </div>
                       <Button
+                        aria-label={t("delete")}
+                        block
                         icon={<IconDeleteStroked />}
                         type="danger"
-                        block
-                        style={{ marginTop: "8px" }}
                         onClick={() => deleteTable(tableData.id)}
                       >
                         {t("delete")}
@@ -200,86 +181,70 @@ export default function Table(props) {
                   style={{ width: "200px", wordBreak: "break-word" }}
                 >
                   <Button
+                    aria-label={t("see_more")}
                     icon={<IconMore />}
                     type="tertiary"
                     size="small"
-                    style={{
-                      backgroundColor: "#808080b3",
-                      color: "white",
-                    }}
+                    theme="solid"
                   />
                 </Popover>
               </div>
             </div>
           </div>
-          {tableData.fields.map((e, i) => {
-            return settings.showFieldSummary ? (
+          {tableData.fields.map((fieldData, index) => {
+            const typeInfo = dbToTypes[database][fieldData.type];
+            const showSummary = settings.showFieldSummary;
+
+            const typeDisplay =
+              (typeInfo?.isSized || typeInfo?.hasPrecision) && fieldData.size
+                ? `${fieldData.type}(${fieldData.size})`
+                : fieldData.type;
+
+            const SummaryContent = () => (
+              <div className="popover-theme">
+                <div
+                  className="flex justify-between items-center pb-2"
+                  style={{ direction: "ltr" }}
+                >
+                  <p className="me-4 font-bold">{fieldData.name}</p>
+                  <p className={`ms-4 font-mono ${typeInfo.color}`}>
+                    {typeDisplay}
+                  </p>
+                </div>
+                <hr />
+                <div className="space-x-2 my-2">
+                  {fieldData.primary && <Tag color="blue">{t("primary")}</Tag>}
+                  {fieldData.unique && <Tag color="amber">{t("unique")}</Tag>}
+                  {fieldData.notNull && (
+                    <Tag color="purple">{t("not_null")}</Tag>
+                  )}
+                  {fieldData.increment && (
+                    <Tag color="green">{t("autoincrement")}</Tag>
+                  )}
+                </div>
+                <div>
+                  <strong>{t("default_value")}: </strong>
+                  {fieldData.default || t("not_set")}
+                </div>
+                <div>
+                  <strong>{t("comment")}: </strong>
+                  {fieldData.comment || t("not_set")}
+                </div>
+              </div>
+            );
+
+            return showSummary ? (
               <Popover
-                key={i}
-                content={
-                  <div className="popover-theme">
-                    <div
-                      className="flex justify-between items-center pb-2"
-                      style={{ direction: "ltr" }}
-                    >
-                      <p className="me-4 font-bold">{e.name}</p>
-                      <p
-                        className={
-                          "ms-4 font-mono " + dbToTypes[database][e.type].color
-                        }
-                      >
-                        {e.type +
-                          ((dbToTypes[database][e.type].isSized ||
-                            dbToTypes[database][e.type].hasPrecision) &&
-                          e.size &&
-                          e.size !== ""
-                            ? "(" + e.size + ")"
-                            : "")}
-                      </p>
-                    </div>
-                    <hr />
-                    {e.primary && (
-                      <Tag color="blue" className="me-2 my-2">
-                        {t("primary")}
-                      </Tag>
-                    )}
-                    {e.unique && (
-                      <Tag color="amber" className="me-2 my-2">
-                        {t("unique")}
-                      </Tag>
-                    )}
-                    {e.notNull && (
-                      <Tag color="purple" className="me-2 my-2">
-                        {t("not_null")}
-                      </Tag>
-                    )}
-                    {e.increment && (
-                      <Tag color="green" className="me-2 my-2">
-                        {t("autoincrement")}
-                      </Tag>
-                    )}
-                    <p>
-                      <strong>{t("default_value")}: </strong>
-                      {e.default === "" ? t("not_set") : e.default}
-                    </p>
-                    <p>
-                      <strong>{t("comment")}: </strong>
-                      {e.comment === "" ? t("not_set") : e.comment}
-                    </p>
-                  </div>
-                }
+                key={index}
+                content={<SummaryContent />}
                 position="right"
                 showArrow
-                style={
-                  isRtl(i18n.language)
-                    ? { direction: "rtl" }
-                    : { direction: "ltr" }
-                }
+                style={{ direction: isRtl(i18n.language) ? "rtl" : "ltr" }}
               >
-                {field(e, i)}
+                {field(fieldData, index)}
               </Popover>
             ) : (
-              field(e, i)
+              field(fieldData, index)
             );
           })}
         </div>
@@ -311,15 +276,10 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`${
-          index === tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+        className="border-b border-gray-400 last:border-b-0 group/field h-9 px-2 flex justify-between items-center gap-1 w-full overflow-hidden"
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
 
-          setHoveredField(index);
           setHoveredTable({
             tableId: tableData.id,
             fieldId: fieldData.id,
@@ -328,7 +288,6 @@ export default function Table(props) {
         onPointerLeave={(e) => {
           if (!e.isPrimary) return;
 
-          setHoveredField(null);
           setHoveredTable({
             tableId: null,
             fieldId: null,
@@ -340,13 +299,9 @@ export default function Table(props) {
           e.target.releasePointerCapture(e.pointerId);
         }}
       >
-        <div
-          className={`${
-            hoveredField === index ? "text-zinc-400" : ""
-          } flex items-center gap-2 overflow-hidden`}
-        >
+        <div className="group-hover/field:text-zinc-400 flex items-center gap-2 overflow-hidden">
           <button
-            className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+            className="shrink-0 w-2.5 h-2.5 bg-[#2f68adcc] rounded-full"
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
@@ -376,37 +331,32 @@ export default function Table(props) {
             {fieldData.name}
           </span>
         </div>
-        <div className="text-zinc-400">
-          {hoveredField === index ? (
-            <Button
-              theme="solid"
-              size="small"
-              style={{
-                backgroundColor: "#d42020b3",
-              }}
-              icon={<IconMinus />}
-              onClick={() => deleteField(fieldData, tableData.id)}
-            />
-          ) : settings.showDataTypes ? (
-            <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span className="font-mono">?</span>}
-              <span
-                className={
-                  "font-mono " + dbToTypes[database][fieldData.type].color
-                }
-              >
-                {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? `(${fieldData.size})`
-                    : "")}
-              </span>
-            </div>
-          ) : null}
+        <div className="hidden group-hover/field:inline-block">
+          <Button
+            theme="solid"
+            size="small"
+            style={{ backgroundColor: "#d42020b3" }}
+            icon={<IconMinus />}
+            onClick={() => deleteField(fieldData, tableData.id)}
+          />
         </div>
+
+        {settings.showDataTypes && (
+          <div className="flex gap-1 items-center group-hover/field:hidden">
+            {fieldData.primary && <IconKeyStroked className="text-zinc-400" />}
+            {!fieldData.notNull && <span className="font-mono">?</span>}
+            <span
+              className={`font-mono ${dbToTypes[database][fieldData.type].color}`}
+            >
+              {fieldData.type +
+                ((dbToTypes[database][fieldData.type].isSized ||
+                  dbToTypes[database][fieldData.type].hasPrecision) &&
+                fieldData.size
+                  ? `(${fieldData.size})`
+                  : "")}
+            </span>
+          </div>
+        )}
       </div>
     );
   }
