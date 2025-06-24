@@ -26,7 +26,7 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get } from "../api/gists";
 
-export const IdContext = createContext({ gistId: "", setGistId: () => {} });
+export const IdContext = createContext({ gistId: "", setGistId: () => { } });
 
 const SIDEPANEL_MIN_WIDTH = 384;
 
@@ -65,6 +65,14 @@ export default function WorkSpace() {
     const w = isRtl(i18n.language) ? window.innerWidth - e.clientX : e.clientX;
     if (w > SIDEPANEL_MIN_WIDTH) setWidth(w);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shareId = params.get("shareId");
+    if (shareId) {
+      setGistId(shareId);
+    }
+  }, []);
 
   const save = useCallback(async () => {
     if (saveState !== State.SAVING) return;
@@ -464,11 +472,10 @@ export default function WorkSpace() {
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 p-3 rounded-md border-2 select-none ${
-                settings.mode === "dark"
+              className={`space-y-3 p-3 rounded-md border-2 select-none ${settings.mode === "dark"
                   ? "bg-zinc-700 hover:bg-zinc-600"
                   : "bg-zinc-100 hover:bg-zinc-200"
-              } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
+                } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
             >
               <div className="flex items-center justify-between">
                 <div className="font-semibold">{x.name}</div>
