@@ -897,7 +897,8 @@ const postgresTypesBase = {
     hasPrecision: true,
   },
   "DOUBLE PRECISION": {
-    type: decimalColor,
+    type: "DOUBLE PRECISION",
+    color: decimalColor,
     checkDefault: (field) => {
       return doubleRegex.test(field.default);
     },
