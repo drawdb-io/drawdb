@@ -21,6 +21,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("create_new_diagram");
     case MODAL.TABLE_WIDTH:
       return i18n.t("table_width");
+    case MODAL.DEFAULTS:
+      return i18n.t("defaults");
     case MODAL.LANGUAGE:
       return i18n.t("language");
     case MODAL.SHARE:
@@ -38,6 +40,8 @@ export const getModalWidth = (modal) => {
       return 740;
     default:
       return 600;
+    case MODAL.DEFAULTS:
+      return 500;
   }
 };
 

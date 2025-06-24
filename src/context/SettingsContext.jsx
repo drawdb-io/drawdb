@@ -12,6 +12,10 @@ const defaultSettings = {
   showRelationshipLabels: true,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
+  defaultFieldType: 'INTEGER',
+  defaultTextSize: 40,
+  upperCaseFields: false,
+  defaultNotNull: false
 };
 
 export const SettingsContext = createContext(defaultSettings);

@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useSettings } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ export default function DiagramContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { settings } = useSettings();
 
   const addTable = (data, addToHistory = true) => {
     if (data) {
@@ -27,13 +28,13 @@ export default function DiagramContextProvider({ children }) {
         ...prev,
         {
           id: prev.length,
-          name: `table_${prev.length}`,
+          name: settings.upperCaseFields ? `TABLE_${prev.length}` : `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
           fields: [
             {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
+              name: settings.upperCaseFields ? "ID" : "id",
+              type: database === DB.GENERIC ? "INT" : database === DB.ORACLE ? "NUMBER" : "INTEGER",
               default: "",
               check: "",
               primary: true,
@@ -137,16 +138,16 @@ export default function DiagramContextProvider({ children }) {
 
   const deleteField = (field, tid, addToHistory = true) => {
     const currentTable = tables[tid];
-  
+
     // If table has a composite pk
     const pkFieldIds = currentTable.fields.filter(f => f.primary).map(f => f.id);
     const isPartOfCompositePK = field.primary && pkFieldIds.length > 1;
-  
+
     // If the field is a composite FK
     const isPartOfCompositeFK = (() => {
       if (!field.foreignK) return false;
       const fkTableId = field.foreignKey.tableId;
-  
+
       // Get all the fields Fk pointing to the same tables
       const relatedFKs = tables[tid].fields.filter(
         f =>
@@ -155,28 +156,28 @@ export default function DiagramContextProvider({ children }) {
       );
       return relatedFKs.length > 1;
     })();
-  
+
     // get associated relationships
     let affectedRelationships = relationships.filter(
       (r) =>
         (r.startTableId === tid && r.startFieldId === field.id) ||
         (r.endTableId === tid && r.endFieldId === field.id)
     );
-  
+
     // If PKs is composite, get all its relationships
     if (isPartOfCompositePK) {
       affectedRelationships = relationships.filter(
         (r) => r.startTableId === tid && pkFieldIds.includes(r.startFieldId)
       );
     }
-  
+
     // If FKs is composite, get all its relationships
     if (isPartOfCompositeFK && field.foreignK) {
       const fkTableId = field.foreignKey.tableId;
       const relatedFKFieldIds = tables[tid].fields
         .filter(f => f.foreignK && f.foreignKey.tableId === fkTableId)
         .map(f => f.id);
-  
+
       affectedRelationships = relationships.filter(
         (r) => r.endTableId === tid && relatedFKFieldIds.includes(r.endFieldId)
       );
@@ -216,7 +217,7 @@ export default function DiagramContextProvider({ children }) {
       ]);
       setRedoStack([]);
     }
-  
+
     // Delete relationships
     setRelationships((prev) => {
       const affectedRelIds = new Set(affectedRelationships.map((r) => r.id));
@@ -240,9 +241,9 @@ export default function DiagramContextProvider({ children }) {
 
       return temp;
     });
-  
+
     const updatedTables = [...tables];
-  
+
     // Delete FKs in child tables if a composite PK is deleted
     if (isPartOfCompositePK) {
       affectedRelationships.forEach((rel) => {
@@ -258,7 +259,7 @@ export default function DiagramContextProvider({ children }) {
           .map((f, i) => ({ ...f, id: i }));
       });
     }
-  
+
     // Delete FKs in child tables if a composite FK is deleted
     if (isPartOfCompositeFK && field.foreignK) {
       const fkTableId = field.foreignKey.tableId;
@@ -273,7 +274,7 @@ export default function DiagramContextProvider({ children }) {
         )
         .map((f, i) => ({ ...f, id: i }));
     }
-  
+
     // Delete any FK references in other tables
     updatedTables.forEach((table) => {
       table.fields = table.fields.filter(
@@ -285,21 +286,21 @@ export default function DiagramContextProvider({ children }) {
           )
       );
     });
-  
+
     // Delete the field from the table
     updatedTables[tid].fields = updatedTables[tid].fields
       .filter((f) => f.id !== field.id)
       .map((f, i) => ({ ...f, id: i }));
-  
+
     // Update the tables state
     updatedTables.forEach((table) => updateTable(table.id, { fields: table.fields }));
-  };  
+  };
 
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       // First, update the relationships
       setRelationships((prev) => [...prev, data]);
-  
+
       // After that, update the component undo stack
       setUndoStack((prevUndo) => [
         ...prevUndo,

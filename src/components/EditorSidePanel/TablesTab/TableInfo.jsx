@@ -8,7 +8,7 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
 import { Action, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
@@ -26,6 +26,7 @@ export default function TableInfo({ data }) {
     useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const { settings } = useSettings();
   const [drag, setDrag] = useState({
     draggingElementIndex: null,
     draggingOverIndexList: [],
@@ -40,10 +41,15 @@ export default function TableInfo({ data }) {
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder={t("name")}
           className="ms-2"
-          onChange={(value) => updateTable(data.id, { name: value })}
+          onChange={(value) => updateTable(data.id, {
+              name: settings.upperCaseFields ? value.toUpperCase() : value.toLowerCase()
+          })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
+            const transformedValue = settings.upperCaseFields
+            ? e.target.value.toUpperCase()
+            : e.target.value.toLowerCase();
             setUndoStack((prev) => [
               ...prev,
               {
@@ -52,9 +58,9 @@ export default function TableInfo({ data }) {
                 component: "self",
                 tid: data.id,
                 undo: editField,
-                redo: { name: e.target.value },
+                redo: { name: transformedValue },
                 message: t("edit_table", {
-                  tableName: e.target.value,
+                  tableName: transformedValue,
                   extra: "[name]",
                 }),
               },
@@ -338,19 +344,61 @@ export default function TableInfo({ data }) {
                   ...data.fields,
                   {
                     name: "",
-                    type: "",
+                    type: settings.defaultFieldType,
                     default: "",
                     check: "",
                     primary: false,
                     unique: false,
-                    notNull: false,
+                    notNull: settings.defaultNotNull,
                     increment: false,
                     comment: "",
-                    foreignK: false, 
+                    foreignK: false,
                     id: data.fields.length,
                   },
                 ],
               });
+
+              const incr =
+                data.increment && !!dbToTypes[database][settings.defaultFieldType].canIncrement;
+
+              if (settings.defaultFieldType === "ENUM" || settings.defaultFieldType === "SET") {
+                updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  default: "",
+                  values: data.values ? [...data.values] : [],
+                  increment: incr,
+                });
+              } else if (
+                dbToTypes[database][settings.defaultFieldType].isSized ||
+                dbToTypes[database][settings.defaultFieldType].hasPrecision
+              ) {
+                updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  size: dbToTypes[database][settings.defaultFieldType].defaultSize,
+                  increment: incr,
+                });
+              } else if (!dbToTypes[database][settings.defaultFieldType].hasDefault || incr) {
+                  updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  increment: incr,
+                  default: "",
+                  size: "",
+                  values: [],
+                });
+              } else if (dbToTypes[database][settings.defaultFieldType].hasCheck) {
+                  updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  check: "",
+                  increment: incr,
+                });
+              } else {
+                updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  increment: incr,
+                  size: "",
+                  values: [],
+                });
+              }
             }}
             block
           >
