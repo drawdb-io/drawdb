@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Tab,
   ObjectType,
@@ -22,7 +22,7 @@ import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
-  const { database } = useDiagram();
+  const { database, updateTable } = useDiagram();
   const {
     tableData,
     onPointerDown,
@@ -36,6 +36,39 @@ export default function Table(props) {
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
+
+  useEffect(() => {
+    // Check if we need to update the table name
+    const desiredTableCase = settings.upperCaseFields ? tableData.name.toUpperCase() : tableData.name.toLowerCase();
+    const tableNameNeedsUpdate = tableData.name !== desiredTableCase;
+
+    // Check if any field names need to be updated
+    const fieldsNeedUpdate = tableData.fields.some(field => {
+      const desiredFieldCase = settings.upperCaseFields ? field.name.toUpperCase() : field.name.toLowerCase();
+      return field.name !== desiredFieldCase;
+    });
+
+    // Only update if there are actual changes needed
+    if (tableNameNeedsUpdate || fieldsNeedUpdate) {
+      // Create updated fields with correct case
+      const updatedFields = tableData.fields.map(field => ({
+        ...field,
+        name: settings.upperCaseFields ? field.name.toUpperCase() : field.name.toLowerCase()
+      }));
+
+      // Update both table name and fields
+      updateTable(tableData.id, {
+        name: settings.upperCaseFields ? tableData.name.toUpperCase() : tableData.name.toLowerCase(),
+        fields: updatedFields
+      });
+    }
+  }, [
+    settings.upperCaseFields,
+    tableData.fields,
+    tableData.id,
+    tableData.name,
+    updateTable
+  ]);
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
@@ -358,37 +391,37 @@ export default function Table(props) {
             />
           ) : (
             <div className="flex gap-1 items-center">
-              {fieldData.primary && 
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="20" 
-                  height="20" 
-                  fill="#ff2222cc" 
-                  className="bi bi-key" 
+              {fieldData.primary &&
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="#ff2222cc"
+                  className="bi bi-key"
                   viewBox="0 0 16 16"
                 >
-                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 
-                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 
-                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 
-                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 
-                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 
+                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
+                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
+                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
+                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
+                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
                     .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
                   <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
                 </svg>}
-              {fieldData.foreignK && 
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="20" 
-                  height="20" 
-                  fill="#2f68adcc" 
-                  className="bi bi-key" 
+              {fieldData.foreignK &&
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="#2f68adcc"
+                  className="bi bi-key"
                   viewBox="0 0 16 16"
                 >
-                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 
-                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 
-                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 
-                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 
-                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 
+                  <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0
+                    .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11
+                    9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4
+                    4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5
+                    0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1
                     .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
                   <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
                 </svg>}
