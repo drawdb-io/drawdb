@@ -74,6 +74,7 @@ import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
+import BottonWhithPopover from "./Context";
 
 export default function ControlPanel({
   diagramId,
@@ -1623,6 +1624,7 @@ export default function ControlPanel({
         >
           {layout.header ? <IconChevronUp /> : <IconChevronDown />}
         </button>
+        <BottonWhithPopover/>
       </div>
     );
   }
