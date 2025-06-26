@@ -26,7 +26,7 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get } from "../api/gists";
 
-export const IdContext = createContext({ gistId: "", setGistId: () => { } });
+export const IdContext = createContext({ gistId: "", setGistId: () => {} });
 
 const SIDEPANEL_MIN_WIDTH = 384;
 
@@ -290,7 +290,7 @@ export default function WorkSpace() {
         const res = await get(shareId);
         const diagramSrc = res.data.files["share.json"].content;
         const d = JSON.parse(diagramSrc);
-        setGistId(shareId)
+        setGistId(shareId);
         setUndoStack([]);
         setRedoStack([]);
         setLoadedFromGistId(shareId);
@@ -465,10 +465,11 @@ export default function WorkSpace() {
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 p-3 rounded-md border-2 select-none ${settings.mode === "dark"
-                ? "bg-zinc-700 hover:bg-zinc-600"
-                : "bg-zinc-100 hover:bg-zinc-200"
-                } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
+              className={`space-y-3 p-3 rounded-md border-2 select-none ${
+                settings.mode === "dark"
+                  ? "bg-zinc-700 hover:bg-zinc-600"
+                  : "bg-zinc-100 hover:bg-zinc-200"
+              } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
             >
               <div className="flex items-center justify-between">
                 <div className="font-semibold">{x.name}</div>
