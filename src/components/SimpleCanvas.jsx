@@ -25,8 +25,12 @@ function Table({ table, grab }) {
       height={height}
       className="drop-shadow-lg rounded-md cursor-move"
       onPointerDown={(e) => {
+        // Required for onPointerLeave to trigger when a touch pointer leaves
+        // https://stackoverflow.com/a/70976017/1137077
         e.target.releasePointerCapture(e.pointerId);
+
         if (!e.isPrimary) return;
+
         grab(e);
       }}
       onPointerEnter={(e) => e.isPrimary && setIsHovered(true)}
@@ -38,7 +42,7 @@ function Table({ table, grab }) {
         } select-none rounded-lg w-full bg-zinc-100 text-zinc-800`}
       >
         <div
-          className="h-[10px] w-full rounded-t-md"
+          className={`h-[10px] w-full rounded-t-md`}
           style={{ backgroundColor: table.color }}
         />
         <div className="font-bold h-[40px] flex justify-between items-center border-b border-zinc-400 bg-zinc-200 px-3">
@@ -53,11 +57,15 @@ function Table({ table, grab }) {
             onPointerEnter={(e) => e.isPrimary && setHoveredField(i)}
             onPointerLeave={(e) => e.isPrimary && setHoveredField(-1)}
             onPointerDown={(e) => {
+              // Required for onPointerLeave to trigger when a touch pointer leaves
+              // https://stackoverflow.com/a/70976017/1137077
               e.target.releasePointerCapture(e.pointerId);
             }}
           >
             <div className={hoveredField === i ? "text-zinc-500" : ""}>
-              <button className="w-[9px] h-[9px] bg-[#2f68adcc] rounded-full me-2" />
+              <button
+                className={`w-[9px] h-[9px] bg-[#2f68adcc] rounded-full me-2`}
+              />
               {e.name}
             </div>
             <div className="text-zinc-400">{e.type}</div>
@@ -85,25 +93,13 @@ function Relationship({ relationship, tables }) {
   }
 
   const length = 32;
-  const [refAquired, setRefAquired] = useState(false);
 
+  const [refAquired, setRefAquired] = useState(false);
   useEffect(() => {
     setRefAquired(true);
   }, []);
 
-  const { path } = calcPath({
-    ...relationship,
-    startTable: {
-      x: tables[relationship.startTableId].x,
-      y: tables[relationship.startTableId].y,
-    },
-    endTable: {
-      x: tables[relationship.endTableId].x,
-      y: tables[relationship.endTableId].y,
-    },
-  });
-
-  if (refAquired && pathRef.current) {
+  if (refAquired) {
     const pathLength = pathRef.current.getTotalLength();
     const point1 = pathRef.current.getPointAtLength(length);
     start = { x: point1.x, y: point1.y };
@@ -115,7 +111,17 @@ function Relationship({ relationship, tables }) {
     <g className="select-none">
       <path
         ref={pathRef}
-        d={path}
+        d={calcPath({
+          ...relationship,
+          startTable: {
+            x: tables[relationship.startTableId].x,
+            y: tables[relationship.startTableId].y,
+          },
+          endTable: {
+            x: tables[relationship.endTableId].x,
+            y: tables[relationship.endTableId].y,
+          },
+        })}
         stroke="gray"
         fill="none"
         strokeWidth={2}
