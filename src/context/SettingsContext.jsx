@@ -31,6 +31,10 @@ const defaultSettings = {
     comment: "",
     foreignK: false,
   },
+  defaultFieldType: 'INTEGER',
+  defaultTextSize: 40,
+  upperCaseFields: false,
+  defaultNotNull: false
 };
 
 export const SettingsContext = createContext(defaultSettings);

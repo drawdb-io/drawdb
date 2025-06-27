@@ -34,6 +34,7 @@ import SetTableWidth from "./SetTableWidth";
 import Language from "./Language";
 import Share from "./Share";
 import Code from "./Code";
+import Defaults from "./Defaults";
 import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
@@ -315,6 +316,8 @@ export default function Modal({
         }
       case MODAL.TABLE_WIDTH:
         return <SetTableWidth />;
+      case MODAL.DEFAULTS:
+        return <Defaults />
       case MODAL.LANGUAGE:
         return <Language />;
       case MODAL.SHARE:

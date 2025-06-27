@@ -248,6 +248,11 @@ const en = {
     share_info:
       "* Sharing this link will not create a live real-time collaboration session.",
     show_relationship_labels: "Show relationship labels",
+    defaults: "Defaults",
+    field_defaults: "Field Defaults",
+    default_field_type: "Default Field Type",
+    uppercase_fields: "Uppercase Field Names",
+    default_not_null: "Default Not Null",
   },
 };
 
