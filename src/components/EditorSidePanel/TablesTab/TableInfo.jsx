@@ -48,8 +48,8 @@ export default function TableInfo({ data }) {
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
             const transformedValue = settings.upperCaseFields
-            ? e.target.value.toUpperCase()
-            : e.target.value.toLowerCase();
+              ? e.target.value.toUpperCase()
+              : e.target.value.toLowerCase();
             setUndoStack((prev) => [
               ...prev,
               {
@@ -360,6 +360,32 @@ export default function TableInfo({ data }) {
 
               const incr =
                 data.increment && !!dbToTypes[database][settings.defaultFieldType].canIncrement;
+              // Function to get the default size configured by the user
+              const getUserDefaultSize = (typeName) => {
+                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
+                const userSize = dbSettings[typeName];
+                if (typeof userSize === 'number') {
+                  return userSize;
+                }
+                return dbToTypes[database][typeName]?.defaultSize || '';
+              };
+              // Function to get the combined size for types with precision and scale
+              const getUserDefaultPrecisionScale = (typeName) => {
+                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
+                const userSettings = dbSettings[typeName];
+                if (typeof userSettings === 'object') {
+                  const precision = userSettings?.precision || 10;
+                  const scale = userSettings?.scale;
+                  // If it has a defined scale, combine as "precision,scale"
+                  if (scale !== undefined && scale !== null) {
+                    return `${precision},${scale}`;
+                  }
+                  // If it only has precision, return just the precision
+                  return precision.toString();
+                }
+                // Default value for types with precision
+                return "10";
+              };
 
               if (settings.defaultFieldType === "ENUM" || settings.defaultFieldType === "SET") {
                 updateField(data.id, data.fields.length, {
@@ -368,13 +394,16 @@ export default function TableInfo({ data }) {
                   values: data.values ? [...data.values] : [],
                   increment: incr,
                 });
-              } else if (
-                dbToTypes[database][settings.defaultFieldType].isSized ||
-                dbToTypes[database][settings.defaultFieldType].hasPrecision
-              ) {
+              } else if (dbToTypes[database][settings.defaultFieldType].hasPrecision) {
                 updateField(data.id, data.fields.length, {
                   type: settings.defaultFieldType,
-                  size: dbToTypes[database][settings.defaultFieldType].defaultSize,
+                  size: getUserDefaultPrecisionScale(settings.defaultFieldType),
+                  increment: incr,
+                });
+              } else if (dbToTypes[database][settings.defaultFieldType].isSized) {
+                updateField(data.id, data.fields.length, {
+                  type: settings.defaultFieldType,
+                  size: getUserDefaultSize(settings.defaultFieldType),
                   increment: incr,
                 });
               } else if (!dbToTypes[database][settings.defaultFieldType].hasDefault || incr) {

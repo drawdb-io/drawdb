@@ -354,24 +354,14 @@ const oracleTypesBase = {
     defaultSize: 255,
     hasQuotes: true,
   },
-  TEXT: {
-    type: "TEXT",
+  CLOB: {
+    type: "CLOB",
     checkDefault: (field) => true,
-    hasCheck: false,
-    isSized: true,
-    hasPrecision: false,
-    defaultSize: 65535,
-    hasQuotes: true,
-  },
-  TIME: {
-    type: "TIME",
-    checkDefault: (field) => {
-      return /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default);
-    },
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
     hasQuotes: true,
+    noDefault: true,
   },
   TIMESTAMP: {
     type: "TIMESTAMP",
@@ -401,49 +391,15 @@ const oracleTypesBase = {
     hasPrecision: false,
     hasQuotes: true,
   },
-  DATETIME: {
-    type: "DATETIME",
+  RAW: {
+    type: "RAW",
     checkDefault: (field) => {
-      if (field.default.toUpperCase() === "CURRENT_TIMESTAMP") {
-        return true;
-      }
-      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
-        return false;
-      }
-      const c = field.default.split(" ");
-      const d = c[0].split("-");
-      return parseInt(d[0]) >= 1000 && parseInt(d[0]) <= 9999;
-    },
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  BOOLEAN: {
-    type: "BOOLEAN",
-    checkDefault: (field) => {
-      return (
-        field.default.toLowerCase() === "false" ||
-        field.default.toLowerCase() === "true" ||
-        field.default === "0" ||
-        field.default === "1"
-      );
-    },
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-  },
-  BINARY: {
-    type: "BINARY",
-    checkDefault: (field) => {
-      return (
-        field.default.length <= field.size && binaryRegex.test(field.default)
-      );
+      return field.default.length <= field.size;
     },
     hasCheck: false,
     isSized: true,
     hasPrecision: false,
-    defaultSize: 1,
+    defaultSize: 255,
     hasQuotes: true,
   },
   BLOB: {
