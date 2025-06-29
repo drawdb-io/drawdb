@@ -23,7 +23,7 @@ export function toPostgres(diagram) {
     )
     .join("\n");
 
-  return `${enumStatements}${enumStatements.trim() !== "" ? `\n${typeStatements}` : typeStatements}${diagram.tables
+  return `${diagram.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n\n${enumStatements}${enumStatements.trim() !== "" ? `\n${typeStatements}` : typeStatements}${diagram.tables
     .map(
       (table) =>
         `CREATE TABLE "${table.name}" (\n${table.fields

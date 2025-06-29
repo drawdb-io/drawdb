@@ -3,7 +3,7 @@ import { exportFieldComment, getInlineFK, parseDefault } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
 export function toSqlite(diagram) {
-  return diagram.tables
+  return `${diagram.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n\n${diagram.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, diagram);
       return `${
@@ -40,5 +40,5 @@ export function toSqlite(diagram) {
         )
         .join("\n")}`;
     })
-    .join("\n");
+    .join("\n")}`;
 }

@@ -184,7 +184,7 @@ export function getTypeString(
 }
 
 export function jsonToMySQL(obj) {
-  return `${obj.tables
+  return `${obj.tables.map((table) => `DROP TABLE \`${table.name}\`;`).join("\n")}\n\n${obj.tables
     .map(
       (table) =>
         `CREATE TABLE \`${table.name}\` (\n${table.fields
@@ -246,39 +246,42 @@ export function jsonToMySQL(obj) {
 }
 
 export function jsonToPostgreSQL(obj) {
-  return `${obj.types.map((type) => {
-    const typeStatements = type.fields
-      .filter((f) => f.type === "ENUM" || f.type === "SET")
-      .map(
-        (f) =>
-          `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-            .map((v) => `'${v}'`)
-            .join(", ")});`,
-      )
-      .join("\n");
-    if (typeStatements.length > 0) {
-      return (
-        typeStatements.join("") +
-        `${
-          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-        }CREATE TYPE ${type.name} AS (\n${type.fields
+  return `${obj.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n${obj.types.map(
+    (type) => {
+      const typeStatements = type.fields
+        .filter((f) => f.type === "ENUM" || f.type === "SET")
+        .map(
+          (f) =>
+            `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+              .map((v) => `'${v}'`)
+              .join(", ")});`,
+        )
+        .join("\n");
+      if (typeStatements.length > 0) {
+        return (
+          typeStatements.join("") +
+          `${
+            type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+          }CREATE TYPE ${type.name} AS (\n${type.fields
+            .map(
+              (f) =>
+                `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
+            )
+            .join("\n")}\n);`
+        );
+      } else {
+        return `CREATE TYPE ${type.name} AS (\n${type.fields
           .map(
             (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
           )
-          .join("\n")}\n);`
-      );
-    } else {
-      return `CREATE TYPE ${type.name} AS (\n${type.fields
-        .map(
-          (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
-        )
-        .join(",\n")}\n);\n${
-        type.comment && type.comment.trim() != ""
-          ? `\nCOMMENT ON TYPE ${type.name} IS '${escapeQuotes(type.comment)}';\n`
-          : ""
-      }`;
-    }
-  })}\n${obj.tables
+          .join(",\n")}\n);\n${
+          type.comment && type.comment.trim() != ""
+            ? `\nCOMMENT ON TYPE ${type.name} IS '${escapeQuotes(type.comment)}';\n`
+            : ""
+        }`;
+      }
+    },
+  )}\n${obj.tables
     .map(
       (table) =>
         `${
@@ -386,7 +389,7 @@ export function getSQLiteType(field) {
 }
 
 export function jsonToSQLite(obj) {
-  return obj.tables
+  return `${obj.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n\n${obj.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, obj);
       return `${
@@ -423,11 +426,11 @@ export function jsonToSQLite(obj) {
         )
         .join("\n")}`;
     })
-    .join("\n");
+    .join("\n")}`;
 }
 
 export function jsonToMariaDB(obj) {
-  return `${obj.tables
+  return `${obj.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n\n${obj.tables
     .map(
       (table) =>
         `CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
@@ -491,7 +494,7 @@ export function jsonToMariaDB(obj) {
 }
 
 export function jsonToSQLServer(obj) {
-  return `${obj.types
+  return `${obj.tables.map((table) => `DROP TABLE IF EXISTS [${table.name}];`).join("\n")}\n${obj.types
     .map((type) => {
       return `${
         type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
