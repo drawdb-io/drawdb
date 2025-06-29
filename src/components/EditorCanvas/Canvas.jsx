@@ -56,13 +56,14 @@ export default function Canvas() {
     bulkSelectedElements,
     setBulkSelectedElements,
   } = useSelect();
-  const [dragging, setDragging] = useState({
+  const notDragging = {
     element: ObjectType.NONE,
     id: null,
     prevX: 0,
     prevY: 0,
     initialPositions: [],
-  });
+  };
+  const [dragging, setDragging] = useState(notDragging);
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
     startTableId: -1,
@@ -181,7 +182,7 @@ export default function Canvas() {
       case ObjectType.NOTE:
         return notes[element.id];
       default:
-        return { x: 0, y: 0 };
+        return { x: 0, y: 0, locked: false };
     }
   };
 
@@ -195,67 +196,45 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    let locked = false;
-    let prevCoords = { prevX: 0, prevY: 0 };
+    const element = getElement({ id, type });
 
-    if (type === ObjectType.TABLE) {
-      const table = tables.find((t) => t.id === id);
-      locked = table.locked;
+    setSelectedElement((prev) => ({
+      ...prev,
+      element: type,
+      id: id,
+      open: false,
+    }));
 
-      setGrabOffset({
-        x: table.x - pointer.spaces.diagram.x,
-        y: table.y - pointer.spaces.diagram.y,
-      });
-      prevCoords = { prevX: table.x, prevY: table.y };
-    } else if (type === ObjectType.AREA) {
-      const area = areas.find((t) => t.id === id);
-      locked = area.locked;
-
-      setGrabOffset({
-        x: area.x - pointer.spaces.diagram.x,
-        y: area.y - pointer.spaces.diagram.y,
-      });
-      prevCoords = { prevX: area.x, prevY: area.y };
-    } else if (type === ObjectType.NOTE) {
-      const note = notes.find((t) => t.id === id);
-      locked = note.locked;
-
-      setGrabOffset({
-        x: note.x - pointer.spaces.diagram.x,
-        y: note.y - pointer.spaces.diagram.y,
-      });
-      prevCoords = { prevX: note.x, prevY: note.y };
+    if (element.locked) {
+      setBulkSelectedElements([]);
+      return;
     }
 
-    if (!locked) {
-      setDragging((prev) => ({
-        ...prev,
-        id,
-        element: type,
-        ...prevCoords,
-      }));
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: type,
-        id: id,
-        open: false,
-      }));
+    let prevCoords = { prevX: element.x, prevY: element.y };
+    setGrabOffset({
+      x: element.x - pointer.spaces.diagram.x,
+      y: element.y - pointer.spaces.diagram.y,
+    });
+
+    let newBulkSelectedElements;
+    if (bulkSelectedElements.some((el) => el.id === id && el.type === type)) {
+      newBulkSelectedElements = bulkSelectedElements;
+    } else {
+      newBulkSelectedElements = [{ id, type }];
+      setBulkSelectedElements(newBulkSelectedElements);
     }
 
-    if (bulkSelectedElements.length) {
-      setDragging((prev) => ({
-        ...prev,
-        initialPositions: bulkSelectedElements.map((element) => ({
-          ...element,
-          undo: {
-            x: getElement(element).x,
-            y: getElement(element).y,
-          },
-        })),
-      }));
-    }
+    setDragging((prev) => ({
+      ...prev,
+      id,
+      element: type,
+      ...prevCoords,
+      initialPositions: newBulkSelectedElements.map((el) => {
+        const { x, y } = getElement(el);
+        return { ...el, undo: { x, y } };
+      }),
+    }));
   };
-
   /**
    * @param {PointerEvent} e
    */
@@ -302,39 +281,30 @@ export default function Canvas() {
         endX: pointer.spaces.diagram.x,
         endY: pointer.spaces.diagram.y,
       });
-    } else if (
-      dragging.element !== ObjectType.NONE &&
-      dragging.id !== null &&
-      bulkSelectedElements.length &&
-      bulkSelectedElements.some(
-        (element) =>
-          element.id === dragging.id && element.type === dragging.element,
-      )
-    ) {
-      for (const element of bulkSelectedElements) {
-        if (element.type === ObjectType.TABLE) {
-          const table = tables.find((e) => e.id === element.id);
-          if (table.locked) continue;
-          const { x, y } = table;
-          updateTable(element.id, {
+      return;
+    }
+
+    if (isDragging) {
+      for (const el of bulkSelectedElements) {
+        const element = getElement(el);
+        const { type } = el;
+        if (element.locked) continue;
+        const { x, y } = element;
+
+        if (type === ObjectType.TABLE) {
+          updateTable(el.id, {
             x: x + deltaX,
             y: y + deltaY,
           });
         }
-        if (element.type === ObjectType.AREA) {
-          const area = areas[element.id];
-          if (area.locked) continue;
-          const { x, y } = area;
-          updateArea(element.id, {
+        if (type === ObjectType.AREA) {
+          updateArea(el.id, {
             x: x + deltaX,
             y: y + deltaY,
           });
         }
-        if (element.type === ObjectType.NOTE) {
-          const note = notes[element.id];
-          if (note.locked) continue;
-          const { x, y } = note;
-          updateNote(element.id, {
+        if (type === ObjectType.NOTE) {
+          updateNote(el.id, {
             x: x + deltaX,
             y: y + deltaY,
           });
@@ -346,35 +316,10 @@ export default function Canvas() {
         prevX: finalX,
         prevY: finalY,
       }));
-    } else if (dragging.element === ObjectType.TABLE && dragging.id !== null) {
-      const table = tables.find((t) => t.id === dragging.id);
-      if (table.locked) return;
+      return;
+    }
 
-      updateTable(dragging.id, {
-        x: finalX,
-        y: finalY,
-      });
-    } else if (
-      dragging.element === ObjectType.AREA &&
-      dragging.id !== null &&
-      areaResize.id === -1
-    ) {
-      const area = areas.find((t) => t.id === dragging.id);
-      if (area.locked) return;
-
-      updateArea(dragging.id, {
-        x: finalX,
-        y: finalY,
-      });
-    } else if (dragging.element === ObjectType.NOTE && dragging.id !== null) {
-      const note = notes.find((t) => t.id === dragging.id);
-      if (note.locked) return;
-
-      updateNote(dragging.id, {
-        x: finalX,
-        y: finalY,
-      });
-    } else if (areaResize.id !== -1) {
+    if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
       let newDims = { ...initCoords };
       delete newDims.pointerX;
@@ -405,7 +350,10 @@ export default function Canvas() {
       }
 
       updateArea(areaResize.id, { ...newDims });
-    } else if (bulkSelectRectPts.show) {
+      return;
+    }
+
+    if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
         ...prev,
         x2: finalX,
@@ -452,7 +400,8 @@ export default function Canvas() {
     }
   };
 
-  const coordsDidUpdate = (element) => {
+  const coordsDidUpdate = () => {
+    const element = { id: dragging.id, type: dragging.element };
     const elementData = getElement(element);
     const updated = !(
       dragging.prevX === elementData.x && dragging.prevY === elementData.y
@@ -489,60 +438,24 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    let bulkMoved = false;
+    const coordinatesDidUpdate = coordsDidUpdate();
 
-    if (coordsDidUpdate({ id: dragging.id, type: dragging.element })) {
-      if (bulkSelectedElements.length) {
-        setUndoStack((prev) => [
-          ...prev,
-          {
-            action: Action.MOVE,
-            bulk: true,
-            message: t("bulk_update"),
-            elements: dragging.initialPositions.map((element) => ({
-              ...element,
-              redo: {
-                x: getElement(element).x,
-                y: getElement(element).y,
-              },
-            })),
-          },
-        ]);
-        bulkMoved = true;
-      } else {
-        const element = getElement({
-          id: dragging.id,
-          type: dragging.element,
-        });
-        setUndoStack((prev) => [
-          ...prev,
-          {
-            action: Action.MOVE,
-            element: dragging.element,
-            x: dragging.prevX,
-            y: dragging.prevY,
-            toX: element.x,
-            toY: element.y,
-            id: dragging.id,
-            message: t("move_element", {
-              coords: `(${element.x}, ${element.y})`,
-              name: getElement({
-                id: dragging.id,
-                type: dragging.element,
-              }).name,
-            }),
-          },
-        ]);
-      }
+    if (coordinatesDidUpdate) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.MOVE,
+          bulk: true,
+          message: t("bulk_update"),
+          elements: dragging.initialPositions.map((element) => {
+            const { x, y } = getElement(element);
+            return { ...element, redo: { x, y } };
+          }),
+        },
+      ]);
       setRedoStack([]);
     }
-    setDragging({
-      element: ObjectType.NONE,
-      id: null,
-      prevX: 0,
-      prevY: 0,
-      initialPositions: [],
-    });
+    setDragging(notDragging);
 
     if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
@@ -551,7 +464,7 @@ export default function Canvas() {
         y2: pointer.spaces.diagram.y,
         show: false,
       }));
-      if (!bulkMoved) {
+      if (!coordinatesDidUpdate) {
         collectSelectedElements();
       }
     }
@@ -601,13 +514,7 @@ export default function Canvas() {
 
   const handleGripField = () => {
     setPanning((old) => ({ ...old, isPanning: false }));
-    setDragging({
-      element: ObjectType.NONE,
-      id: null,
-      prevX: 0,
-      prevY: 0,
-      initialPositions: [],
-    });
+    setDragging(notDragging);
     setLinking(true);
   };
 

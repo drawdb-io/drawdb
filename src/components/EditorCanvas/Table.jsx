@@ -38,8 +38,12 @@ export default function Table(props) {
   const { deleteTable, deleteField, updateTable } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
-  const { selectedElement, setSelectedElement, bulkSelectedElements } =
-    useSelect();
+  const {
+    selectedElement,
+    setSelectedElement,
+    bulkSelectedElements,
+    setBulkSelectedElements,
+  } = useSelect();
 
   const borderColor = useMemo(
     () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
@@ -58,8 +62,12 @@ export default function Table(props) {
     );
   }, [selectedElement, tableData, bulkSelectedElements]);
 
-  const lockUnlockTable = () =>
+  const lockUnlockTable = () => {
+    setBulkSelectedElements((prev) =>
+      prev.filter((el) => el.id !== tableData.id || el.type !== ObjectType.TABLE),
+    );
     updateTable(tableData.id, { locked: !tableData.locked });
+  };
 
   const openEditor = () => {
     if (!layout.sidebar) {

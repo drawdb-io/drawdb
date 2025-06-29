@@ -26,8 +26,12 @@ export default function Note({ data, onPointerDown }) {
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { selectedElement, setSelectedElement, bulkSelectedElements } =
-    useSelect();
+  const {
+    selectedElement,
+    setSelectedElement,
+    bulkSelectedElements,
+    setBulkSelectedElements,
+  } = useSelect();
   const initialColorRef = useRef(data.color);
 
   const handleColorPick = (color) => {
@@ -97,6 +101,9 @@ export default function Note({ data, onPointerDown }) {
   };
 
   const lockUnlockNote = () => {
+    setBulkSelectedElements((prev) =>
+      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.NOTE),
+    );
     updateNote(data.id, { locked: !data.locked });
   };
 
