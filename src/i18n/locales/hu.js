@@ -49,6 +49,7 @@ const hu = {
     field_details: "Mezők részletei",
     reset_view: "Nézet alaphelyzetbe",
     show_grid: "Rács",
+    snap_to_grid: "Rácshoz igazítás",
     show_datatype: "Adattípus",
     show_cardinality: "Kardinalitás",
     theme: "Téma",
@@ -263,6 +264,8 @@ const hu = {
     bulk_update: "Csoportos frissítés",
     multiselect: "Csoportos kijelölés",
     export_saved_data: "Mentett adatok exportálása",
+    dbml_view: "DBML nézet",
+    tab_view: "Lap nézet",
   },
 };
 
