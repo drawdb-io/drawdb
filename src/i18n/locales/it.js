@@ -194,8 +194,7 @@ const it = {
     duplicate_type_fields:
       "Campi di tipo duplicati con il nome '{{fieldName}}' nel tipo '{{typeName}}'",
     duplicate_reference: "Riferimento duplicato con il nome '{{refName}}'",
-    circular_dependency:
-      "Dipendenza circolare riguardante la tabella '{{refName}}'",
+    circular_dependency: "Dipendenza circolare riguardante la tabella '{{refName}}'",
     timeline: "Cronologia",
     priority: "Priorità",
     none: "Nessuna",
@@ -237,10 +236,24 @@ const it = {
     no_enums: "Nessun enum",
     no_enums_text: "Definisci qui gli enum",
     declare_array: "Dichiara array",
-    empty_index_name:
-      "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
+    empty_index_name: "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
     didnt_find_diagram: "Ops! Impossibile trovare il diagramma.",
     unsigned: "Senza segno",
+    share: "Condividi",
+    unshare: "Annulla condivisione",
+    copy_link: "Copia link",
+    readme: "README",
+    failed_to_load: "Caricamento non riuscito. Assicurati che il link sia corretto",
+    share_info:
+      "* La condivisione di questo link non consentirà di creare una sessione di collaborazione in tempo reale.",
+    show_relationship_labels: "Mostra le etichette di relazione",
+    docs: "Documentazione",
+    supported_types: "Tipi di file supportati:",
+    bulk_update: "Aggiornamento in blocco",
+    multiselect: "Multiselettore",
+    export_saved_data: "Esporta i dati salvati",
+    dbml_view: "Vista DBML",
+    tab_view: "Vista tabella",
   },
 };
 
