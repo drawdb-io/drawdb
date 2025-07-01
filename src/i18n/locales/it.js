@@ -49,12 +49,14 @@ const it = {
     field_details: "Dettagli sul campo",
     reset_view: "Ristabilire vista",
     show_grid: "Mostra griglia",
+    snap_to_grid: "Aggancia alla griglia",
+    show_datatype: "Mostra tipo di dato",
     show_cardinality: "Mostra cardinalità",
     theme: "Tema",
     light: "Chiaro",
     dark: "Scuro",
-    zoom_in: "Rimpicciolire",
-    zoom_out: "Ingrandire",
+    zoom_in: "Ingrandire",
+    zoom_out: "Rimpicciolire",
     fullscreen: "Schermo intero",
     settings: "Opzioni",
     show_timeline: "Cronologia",
@@ -180,13 +182,11 @@ const it = {
       "Campi della tabella duplicati con il nome '{{fieldName}}' nella tabella '{{tableName}}'",
     duplicate_index:
       "Indice duplicato con il nome '{{indexName}}' nella tabella '{{tableName}}'",
-    empty_index:
-      "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
+    empty_index: "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
     no_primary_key: "La tabella '{{tableName}}' non ha una chiave primaria",
     type_with_no_name: "Dichiarato un tipo senza nome",
     duplicate_types: "Tipi duplicati con il nome '{{typeName}}'",
-    type_w_no_fields:
-      "Dichiarato un tipo vuoto '{{typeName}}' senza alcun campo",
+    type_w_no_fields: "Dichiarato un tipo vuoto '{{typeName}}' senza alcun campo",
     empty_type_field_name: "Campo `name` vuoto nel tipo '{{typeName}}'",
     empty_type_field_type: "Campo `type` vuoto nel tipo '{{typeName}}'",
     no_values_for_type_field:
