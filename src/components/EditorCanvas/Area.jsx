@@ -9,7 +9,6 @@ import {
 } from "@douyinfe/semi-icons";
 import { Tab, Action, ObjectType, State } from "../../data/constants";
 import {
-  useCanvas,
   useLayout,
   useSettings,
   useUndoRedo,
@@ -24,15 +23,10 @@ export default function Area({
   data,
   onPointerDown,
   setResize,
-  setInitCoords,
+  setInitDimensions,
 }) {
   const ref = useRef(null);
   const isHovered = useHover(ref);
-  const {
-    pointer: {
-      spaces: { diagram: pointer },
-    },
-  } = useCanvas();
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
@@ -46,13 +40,11 @@ export default function Area({
 
   const handleResize = (e, dir) => {
     setResize({ id: data.id, dir: dir });
-    setInitCoords({
+    setInitDimensions({
       x: data.x,
       y: data.y,
       width: data.width,
       height: data.height,
-      pointerX: pointer.x,
-      pointerY: pointer.y,
     });
   };
 
