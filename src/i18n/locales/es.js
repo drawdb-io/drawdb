@@ -241,7 +241,7 @@ const es = {
     unsigned: "Sin signo",
     share: "Compartir",
     unshare: "Descompartir",
-    copy_link: "Copiar enlace".
+    copy_link: "Copiar enlace",
     readme: "README",
     failed_to_load: "Error al cargar. Asegurate de que el enlace sea correcto.",
     share_info: 
