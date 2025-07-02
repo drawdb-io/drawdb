@@ -6,17 +6,16 @@ import {
   Button,
   Card,
   ColorPicker,
+  Select,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useSaveState, useUndoRedo } from "../../../hooks";
-import { Action, ObjectType, State } from "../../../data/constants";
+import { Action, ObjectType, State, DB } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { SortableList } from "../../SortableList/SortableList";
 import { nanoid } from "nanoid";
-import { Select } from "@douyinfe/semi-ui";
-import { DB } from "../../../data/constants";
 
 export default function TableInfo({ data }) {
   const { tables, database } = useDiagram();
@@ -26,7 +25,7 @@ export default function TableInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
   const [editField, setEditField] = useState({});
-  // Get inherited field names from parent tables
+
   const inheritedFieldNames =
     Array.isArray(data.inherits) && data.inherits.length > 0
       ? data.inherits
@@ -39,23 +38,8 @@ export default function TableInfo({ data }) {
 
   return (
     <div>
-      {database === DB.POSTGRES && (
-        <div className="mb-2">
-          <div className="text-md font-semibold break-keep">Inherits:</div>
-          <Select
-            multiple
-            value={data.inherits || []}
-            optionList={tables
-              .filter((t) => t.id !== data.id)
-              .map((t) => ({ label: t.name, value: t.name }))}
-            onChange={(value) => updateTable(data.id, { inherits: value })}
-            placeholder="Select parent tables"
-            style={{ width: "100%" }}
-          />
-        </div>
-      )}
       <div className="flex items-center mb-2.5">
-        <div className="text-md font-semibold break-keep">{t("name")}: </div>
+        <div className="text-md font-semibold break-keep">{t("name")}:</div>
         <Input
           value={data.name}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
@@ -84,16 +68,17 @@ export default function TableInfo({ data }) {
           }}
         />
       </div>
+
       <SortableList
         items={data.fields}
         keyPrefix={`table-${data.id}`}
-        onChange={(newFields) => {
-          setTables((prev) => {
-            return prev.map((t) =>
-              t.id === data.id ? { ...t, fields: newFields } : t,
-            );
-          });
-        }}
+        onChange={(newFields) =>
+          setTables((prev) =>
+            prev.map((t) =>
+              t.id === data.id ? { ...t, fields: newFields } : t
+            )
+          )
+        }
         afterChange={() => setSaveState(State.SAVING)}
         renderItem={(item, i) => (
           <TableField
@@ -104,6 +89,23 @@ export default function TableInfo({ data }) {
           />
         )}
       />
+
+      {database === DB.POSTGRES && (
+        <div className="mb-2">
+          <div className="text-md font-semibold break-keep">{t("inherits")}:</div>
+          <Select
+            multiple
+            value={data.inherits || []}
+            optionList={tables
+              .filter((t) => t.id !== data.id)
+              .map((t) => ({ label: t.name, value: t.name }))}
+            onChange={(value) => updateTable(data.id, { inherits: value })}
+            placeholder={t("inherits_placeholder")}
+            className="w-full"
+          />
+        </div>
+      )}
+
       {data.indices.length > 0 && (
         <Card
           bodyStyle={{ padding: "4px" }}
@@ -134,6 +136,7 @@ export default function TableInfo({ data }) {
           </Collapse>
         </Card>
       )}
+
       <Card
         bodyStyle={{ padding: "4px" }}
         style={{ marginTop: "12px", marginBottom: "12px" }}
@@ -174,6 +177,7 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
+
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
           onChange={({ hex: color }) => {

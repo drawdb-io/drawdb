@@ -36,6 +36,7 @@ export function getIssues(diagram) {
       if (field.primary) {
         hasPrimaryKey = true;
       }
+
       if (field.name === "") {
         issues.push(i18n.t("empty_field_name", { tableName: table.name }));
       }
@@ -49,7 +50,7 @@ export function getIssues(diagram) {
               tableName: table.name,
               fieldName: field.name,
               type: field.type,
-            }),
+            })
           );
         }
       }
@@ -59,7 +60,7 @@ export function getIssues(diagram) {
           i18n.t("default_doesnt_match_type", {
             tableName: table.name,
             fieldName: field.name,
-          }),
+          })
         );
       }
 
@@ -68,7 +69,7 @@ export function getIssues(diagram) {
           i18n.t("not_null_is_null", {
             tableName: table.name,
             fieldName: field.name,
-          }),
+          })
         );
       }
 
@@ -77,10 +78,19 @@ export function getIssues(diagram) {
           i18n.t("duplicate_fields", {
             tableName: table.name,
             fieldName: field.name,
-          }),
+          })
         );
       } else {
         duplicateFieldNames[field.name] = true;
+      }
+
+      if (field.inherited && field.override && field.name !== "id") {
+        issues.push(
+          i18n.t("inherited_field_override", {
+            tableName: table.name,
+            fieldName: field.name || "(unnamed)",
+          })
+        );
       }
     });
 
@@ -91,7 +101,7 @@ export function getIssues(diagram) {
           i18n.t("duplicate_index", {
             tableName: table.name,
             indexName: index.name,
-          }),
+          })
         );
       } else {
         duplicateIndices[index.name] = true;
@@ -103,14 +113,14 @@ export function getIssues(diagram) {
         issues.push(
           i18n.t("empty_index_name", {
             tableName: table.name,
-          }),
+          })
         );
       }
       if (index.fields.length === 0) {
         issues.push(
           i18n.t("empty_index", {
             tableName: table.name,
-          }),
+          })
         );
       }
     });
@@ -143,7 +153,7 @@ export function getIssues(diagram) {
         issues.push(
           i18n.t("empty_type_field_name", {
             typeName: type.name,
-          }),
+          })
         );
       }
 
@@ -151,7 +161,7 @@ export function getIssues(diagram) {
         issues.push(
           i18n.t("empty_type_field_type", {
             typeName: type.name,
-          }),
+          })
         );
       } else if (field.type === "ENUM" || field.type === "SET") {
         if (!field.values || field.values.length === 0) {
@@ -160,16 +170,18 @@ export function getIssues(diagram) {
               typeName: type.name,
               fieldName: field.name,
               type: field.type,
-            }),
+            })
           );
         }
       }
 
       if (duplicateFieldNames[field.name]) {
-        i18n.t("duplicate_type_fields", {
-          typeName: type.name,
-          fieldName: field.name,
-        });
+        issues.push(
+          i18n.t("duplicate_type_fields", {
+            typeName: type.name,
+            fieldName: field.name,
+          })
+        );
       } else {
         duplicateFieldNames[field.name] = true;
       }
@@ -200,7 +212,7 @@ export function getIssues(diagram) {
       issues.push(
         i18n.t("duplicate_reference", {
           refName: r.name,
-        }),
+        })
       );
     } else {
       duplicateFKName[r.name] = true;
@@ -214,7 +226,7 @@ export function getIssues(diagram) {
       issues.push(
         i18n.t("circular_dependency", {
           refName: diagram.tables.find((t) => t.id === tableId)?.name,
-        }),
+        })
       );
       return;
     }

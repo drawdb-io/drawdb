@@ -58,7 +58,7 @@ export const tableSchema = {
   },
   inherits: {
     type: "array",
-    items: { type: ["string", "integer"] },
+    items: { type: ["string"] },
   },
   required: ["id", "name", "x", "y", "fields", "comment", "indices", "color"],
 };
