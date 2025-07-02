@@ -4,11 +4,8 @@ import { isFunction } from "./utils";
 
 function checkDefault(field, database) {
   if (field.default === "") return true;
-
   if (isFunction(field.default)) return true;
-
   if (!field.notNull && field.default.toLowerCase() === "null") return true;
-
   if (!dbToTypes[database][field.type].checkDefault) return true;
 
   return dbToTypes[database][field.type].checkDefault(field);
@@ -32,10 +29,14 @@ export function getIssues(diagram) {
     const duplicateFieldNames = {};
     let hasPrimaryKey = false;
 
+    const inheritedFields=
+      table.inherits?.map((parentName) => {
+        const parent = diagram.tables.find((t) => t.name === parentName);
+        return parent ? parent.fields.map((f) => f.name) : [];
+      }).flat() || [];
+
     table.fields.forEach((field) => {
-      if (field.primary) {
-        hasPrimaryKey = true;
-      }
+      if (field.primary) hasPrimaryKey = true;
 
       if (field.name === "") {
         issues.push(i18n.t("empty_field_name", { tableName: table.name }));
@@ -84,14 +85,13 @@ export function getIssues(diagram) {
         duplicateFieldNames[field.name] = true;
       }
 
-      if (field.inherited && field.override && field.name !== "id") {
-        issues.push(
-          i18n.t("inherited_field_override", {
-            tableName: table.name,
-            fieldName: field.name || "(unnamed)",
-          })
-        );
-      }
+    if(inheritedFields.includes(field.name)) {
+     issues.push(
+           i18n.t("merging_column_w_inherited_definition", {
+               fieldName: field.name,
+           }),
+     );
+}
     });
 
     const duplicateIndices = {};
@@ -110,18 +110,10 @@ export function getIssues(diagram) {
 
     table.indices.forEach((index) => {
       if (index.name.trim() === "") {
-        issues.push(
-          i18n.t("empty_index_name", {
-            tableName: table.name,
-          })
-        );
+        issues.push(i18n.t("empty_index_name", { tableName: table.name }));
       }
       if (index.fields.length === 0) {
-        issues.push(
-          i18n.t("empty_index", {
-            tableName: table.name,
-          })
-        );
+        issues.push(i18n.t("empty_index", { tableName: table.name }));
       }
     });
 
@@ -150,19 +142,11 @@ export function getIssues(diagram) {
     const duplicateFieldNames = {};
     type.fields.forEach((field) => {
       if (field.name === "") {
-        issues.push(
-          i18n.t("empty_type_field_name", {
-            typeName: type.name,
-          })
-        );
+        issues.push(i18n.t("empty_type_field_name", { typeName: type.name }));
       }
 
       if (field.type === "") {
-        issues.push(
-          i18n.t("empty_type_field_type", {
-            typeName: type.name,
-          })
-        );
+        issues.push(i18n.t("empty_type_field_type", { typeName: type.name }));
       } else if (field.type === "ENUM" || field.type === "SET") {
         if (!field.values || field.values.length === 0) {
           issues.push(
@@ -209,11 +193,7 @@ export function getIssues(diagram) {
   const duplicateFKName = {};
   diagram.relationships.forEach((r) => {
     if (duplicateFKName[r.name]) {
-      issues.push(
-        i18n.t("duplicate_reference", {
-          refName: r.name,
-        })
-      );
+      issues.push(i18n.t("duplicate_reference", { refName: r.name }));
     } else {
       duplicateFKName[r.name] = true;
     }

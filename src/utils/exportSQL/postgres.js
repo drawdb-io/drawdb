@@ -31,19 +31,9 @@ export function toPostgres(diagram) {
           ? `\n)\nINHERITS (${table.inherits.map((parent) => `"${parent}"`).join(", ")})`
           : "\n)";
 
-      const inheritedFieldNames = Array.from(
-        new Set(
-          (Array.isArray(table.inherits) ? table.inherits : [])
-            .map((parentName) => {
-              const parent = diagram.tables.find((t) => t.name === parentName);
-              return parent ? parent.fields.map((f) => f.name) : [];
-            })
-            .flat()
-        )
-      );
 
-      const ownFields = table.fields.filter((f) => !inheritedFieldNames.includes(f.name));
-
+      const ownFields = table.fields;
+      
       const fieldDefinitions = ownFields
         .map(
           (field) =>

@@ -100,7 +100,7 @@ export default function TableInfo({ data }) {
               .filter((t) => t.id !== data.id)
               .map((t) => ({ label: t.name, value: t.name }))}
             onChange={(value) => updateTable(data.id, { inherits: value })}
-            placeholder={t("inherits_placeholder")}
+            placeholder={t("inherits")}
             className="w-full"
           />
         </div>
