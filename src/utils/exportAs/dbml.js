@@ -1,4 +1,5 @@
 import { Cardinality } from "../../data/constants";
+import { dbToTypes } from "../../data/datatypes";
 import i18n from "../../i18n/i18n";
 import { escapeQuotes, parseDefault } from "../exportSQL/shared";
 
@@ -51,6 +52,15 @@ function cardinality(rel) {
   }
 }
 
+function fieldSize(field, database) {
+  const typeMetadata = dbToTypes[database][field.type];
+
+  if ((typeMetadata?.isSized || typeMetadata?.hasPrecision) && field.size)
+    return `(${field.size})`;
+
+  return "";
+}
+
 export function toDBML(diagram) {
   const generateRelString = (rel) => {
     const { fields: startTableFields, name: startTableName } =
@@ -68,21 +78,38 @@ export function toDBML(diagram) {
     return `Ref ${rel.name} {\n\t${startTableName}.${startFieldName} ${cardinality(rel)} ${endTableName}.${endFieldName} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
   };
 
+  let enumDefinitions = "";
+
+  for (const table of diagram.tables) {
+    for (const field of table.fields) {
+      if (
+        (field.type === "ENUM" || field.type === "SET") &&
+        Array.isArray(field.values)
+      ) {
+        enumDefinitions += `enum ${field.name}_${field.values.join("_")}_t {\n\t${field.values.join("\n\t")}\n}\n\n`;
+      }
+    }
+  }
+
   return `${diagram.enums
     .map(
       (en) =>
         `enum ${en.name} {\n${en.values.map((v) => `\t${v}`).join("\n")}\n}\n\n`,
     )
-    .join("\n\n")}${diagram.tables
+    .join("\n\n")}${enumDefinitions}${diagram.tables
     .map(
       (table) =>
         `Table ${table.name} {\n${table.fields
           .map(
             (field) =>
-              `\t${field.name} ${field.type.toLowerCase()}${columnSettings(
+              `\t${field.name} ${
+                field.type === "ENUM" || field.type === "SET"
+                  ? `${field.name}_${field.values.join("_")}_t`
+                  : field.type.toLowerCase()
+              }${fieldSize(
                 field,
                 diagram.database,
-              )}`,
+              )}${columnSettings(field, diagram.database)}`,
           )
           .join("\n")}${
           table.indices.length > 0

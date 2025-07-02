@@ -36,8 +36,6 @@ export default function Relationship({ data }) {
     };
   }, [tables, data]);
 
-  const theme = localStorage.getItem("theme");
-
   const pathRef = useRef();
   const labelRef = useRef();
 
@@ -134,14 +132,14 @@ export default function Relationship({ data }) {
             <rect
               x={labelX - 2}
               y={labelY - labelFontSize}
-              fill={theme === "dark" ? darkBgTheme : "white"}
+              fill={settings.mode === "dark" ? darkBgTheme : "white"}
               width={labelWidth + 4}
               height={labelHeight}
             />
             <text
               x={labelX}
               y={labelY}
-              fill={theme === "dark" ? "lightgrey" : "#333"}
+              fill={settings.mode === "dark" ? "lightgrey" : "#333"}
               fontSize={labelFontSize}
               fontWeight={500}
               ref={labelRef}

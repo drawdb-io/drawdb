@@ -10,7 +10,10 @@ function parseType(field) {
     res += `${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}`;
   }
 
-  if (dbToTypes[DB.MYSQL][field.type].isSized) {
+  if (
+    dbToTypes[DB.MYSQL][field.type].isSized ||
+    dbToTypes[DB.MYSQL][field.type].hasPrecision
+  ) {
     res += `${field.size && field.size !== "" ? "(" + field.size + ")" : ""}`;
   }
 

@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Collapse,
   Input,
   TextArea,
   Button,
   Card,
-  ColorPicker,
   Select,
 } from "@douyinfe/semi-ui";
+import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useSaveState, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType, State, DB } from "../../../data/constants";
@@ -25,6 +25,44 @@ export default function TableInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
   const [editField, setEditField] = useState({});
+  const initialColorRef = useRef(data.color);
+
+  const handleColorPick = (color) => {
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.TABLE &&
+          e.tid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      const newStack = [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.TABLE,
+          component: "self",
+          tid: data.id,
+          undo: { color: undoColor },
+          redo: { color: color },
+          message: t("edit_table", {
+            tableName: data.name,
+            extra: "[color]",
+          }),
+        },
+      ];
+      return newStack;
+    });
+    setRedoStack([]);
+  };
+  undefined;
 
   const inheritedFieldNames =
     Array.isArray(data.inherits) && data.inherits.length > 0
@@ -75,8 +113,8 @@ export default function TableInfo({ data }) {
         onChange={(newFields) =>
           setTables((prev) =>
             prev.map((t) =>
-              t.id === data.id ? { ...t, fields: newFields } : t
-            )
+              t.id === data.id ? { ...t, fields: newFields } : t,
+            ),
           )
         }
         afterChange={() => setSaveState(State.SAVING)}
@@ -92,7 +130,9 @@ export default function TableInfo({ data }) {
 
       {database === DB.POSTGRES && (
         <div className="mb-2">
-          <div className="text-md font-semibold break-keep">{t("inherits")}:</div>
+          <div className="text-md font-semibold break-keep">
+            {t("inherits")}:
+          </div>
           <Select
             multiple
             value={data.inherits || []}
@@ -180,27 +220,10 @@ export default function TableInfo({ data }) {
 
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
-          onChange={({ hex: color }) => {
-            setUndoStack((prev) => [
-              ...prev,
-              {
-                action: Action.EDIT,
-                element: ObjectType.TABLE,
-                component: "self",
-                tid: data.id,
-                undo: { color: data.color },
-                redo: { color },
-                message: t("edit_table", {
-                  tableName: data.name,
-                  extra: "[color]",
-                }),
-              },
-            ]);
-            setRedoStack([]);
-            updateTable(data.id, { color });
-          }}
           usePopover={true}
-          value={ColorPicker.colorStringToValue(data.color)}
+          value={data.color}
+          onChange={(color) => updateTable(data.id, { color })}
+          onColorPick={(color) => handleColorPick(color)}
         />
         <div className="flex gap-1">
           <Button
