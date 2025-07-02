@@ -73,7 +73,6 @@ export default function TableField({ data, tid, index, inherited }) {
             id={`scroll_table_${tid}_input_${index}`}
             validateStatus={data.name.trim() === "" || inherited ? "error" : "default"}
             placeholder={t("name")}
-            readOnly={inherited}
             style={inherited ? { backgroundColor: "#f5f5f5" } : {}}
             onChange={(value) => updateField(tid, data.id, { name: value })}
             onFocus={(e) => setEditField({ name: e.target.value })}
