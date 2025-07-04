@@ -32,6 +32,7 @@ GO
 }
 
 export function toMSSQL(diagram) {
+  const dropTablesSql = `${diagram.tables.map((table) => `DROP TABLE IF EXISTS [${table.name}];`).join("\n")}\n\n`;
   const tablesSql = diagram.tables
     .map((table) => {
       const fieldsSql = table.fields
@@ -88,7 +89,7 @@ export function toMSSQL(diagram) {
         )
         .join("");
 
-      return `${createTableSql}${tableCommentSql}${columnCommentsSql}${indicesSql}`;
+      return `${dropTablesSql}${createTableSql}${tableCommentSql}${columnCommentsSql}${indicesSql}`;
     })
     .join("\n");
 

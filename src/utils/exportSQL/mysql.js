@@ -21,7 +21,7 @@ function parseType(field) {
 }
 
 export function toMySQL(diagram) {
-  return `${diagram.tables
+  return `${diagram.tables.map((table) => `DROP TABLE \`${table.name}\`;`).join("\n")}\n\n${diagram.tables
     .map(
       (table) =>
         `CREATE TABLE \`${table.name}\` (\n${table.fields

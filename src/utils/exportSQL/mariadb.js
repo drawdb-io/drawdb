@@ -18,7 +18,7 @@ function parseType(field) {
 }
 
 export function toMariaDB(diagram) {
-  return `${diagram.tables
+  return `${diagram.tables.map((table) => `DROP TABLE IF EXISTS \`${table.name}\`;`).join("\n")}\n\n${diagram.tables
     .map(
       (table) =>
         `CREATE OR REPLACE TABLE \`${table.name}\` (\n${table.fields
