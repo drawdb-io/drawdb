@@ -8,6 +8,8 @@ const en = {
   translation: {
     report_bug: "Report a bug",
     import: "Import",
+    inherits: "Inherits",
+    merging_column_w_inherited_definition: "Column '{{fieldName}}' in table '{{tableName}}' with inherited definition will be merged",
     import_from: "Import from",
     file: "File",
     new: "New",

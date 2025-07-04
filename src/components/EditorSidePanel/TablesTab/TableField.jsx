@@ -8,7 +8,7 @@ import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
 import FieldDetails from "./FieldDetails";
 
-export default function TableField({ data, tid, index }) {
+export default function TableField({ data, tid, index, inherited }) {
   const { updateField } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
@@ -21,12 +21,15 @@ export default function TableField({ data, tid, index }) {
   return (
     <div className="hover-1 my-2 flex gap-2 items-center">
       <DragHandle id={data.id} />
+
       <div className="min-w-20 flex-1/3">
         <Input
           value={data.name}
           id={`scroll_table_${tid}_input_${index}`}
-          validateStatus={data.name.trim() === "" ? "error" : "default"}
-          placeholder="Name"
+          validateStatus={
+            data.name.trim() === "" || inherited ? "error" : "default"
+          }
+          placeholder={t("name")}
           onChange={(value) => updateField(tid, data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -51,13 +54,14 @@ export default function TableField({ data, tid, index }) {
           }}
         />
       </div>
+
       <div className="min-w-24 flex-1/3">
         <Select
           className="w-full"
           optionList={[
             ...Object.keys(dbToTypes[database]).map((value) => ({
               label: value,
-              value: value,
+              value,
             })),
             ...types.map((type) => ({
               label: type.name.toUpperCase(),
@@ -71,7 +75,7 @@ export default function TableField({ data, tid, index }) {
           filter
           value={data.type}
           validateStatus={data.type === "" ? "error" : "default"}
-          placeholder="Type"
+          placeholder={t("type")}
           onChange={(value) => {
             if (value === data.type) return;
             setUndoStack((prev) => [
@@ -135,6 +139,7 @@ export default function TableField({ data, tid, index }) {
           }}
         />
       </div>
+
       <div>
         <Button
           type={data.notNull ? "tertiary" : "primary"}
@@ -164,11 +169,13 @@ export default function TableField({ data, tid, index }) {
           ?
         </Button>
       </div>
+
       <div>
         <Button
           type={data.primary ? "primary" : "tertiary"}
           title={t("primary")}
           theme={data.primary ? "solid" : "light"}
+          icon={<IconKeyStroked />}
           onClick={() => {
             setUndoStack((prev) => [
               ...prev,
@@ -189,9 +196,9 @@ export default function TableField({ data, tid, index }) {
             setRedoStack([]);
             updateField(tid, data.id, { primary: !data.primary });
           }}
-          icon={<IconKeyStroked />}
         />
       </div>
+
       <div>
         <Popover
           content={

@@ -56,6 +56,10 @@ export const tableSchema = {
     },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
   },
+  inherits: {
+    type: "array",
+    items: { type: ["string"] },
+  },
   required: ["id", "name", "x", "y", "fields", "comment", "indices", "color"],
 };
 

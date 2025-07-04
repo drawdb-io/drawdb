@@ -1,9 +1,16 @@
 import { useState, useRef } from "react";
-import { Collapse, Input, TextArea, Button, Card } from "@douyinfe/semi-ui";
+import {
+  Collapse,
+  Input,
+  TextArea,
+  Button,
+  Card,
+  Select,
+} from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useSaveState, useUndoRedo } from "../../../hooks";
-import { Action, ObjectType, State } from "../../../data/constants";
+import { Action, ObjectType, State, DB } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
@@ -11,6 +18,7 @@ import { SortableList } from "../../SortableList/SortableList";
 import { nanoid } from "nanoid";
 
 export default function TableInfo({ data }) {
+  const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { deleteTable, updateTable, setTables } = useDiagram();
@@ -56,10 +64,20 @@ export default function TableInfo({ data }) {
   };
   undefined;
 
+  const inheritedFieldNames =
+    Array.isArray(data.inherits) && data.inherits.length > 0
+      ? data.inherits
+          .map((parentName) => {
+            const parent = tables.find((t) => t.name === parentName);
+            return parent ? parent.fields.map((f) => f.name) : [];
+          })
+          .flat()
+      : [];
+
   return (
     <div>
       <div className="flex items-center mb-2.5">
-        <div className="text-md font-semibold break-keep">{t("name")}: </div>
+        <div className="text-md font-semibold break-keep">{t("name")}:</div>
         <Input
           value={data.name}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
@@ -88,21 +106,64 @@ export default function TableInfo({ data }) {
           }}
         />
       </div>
+
       <SortableList
         items={data.fields}
         keyPrefix={`table-${data.id}`}
-        onChange={(newFields) => {
-          setTables((prev) => {
-            return prev.map((t) =>
+        onChange={(newFields) =>
+          setTables((prev) =>
+            prev.map((t) =>
               t.id === data.id ? { ...t, fields: newFields } : t,
-            );
-          });
-        }}
+            ),
+          )
+        }
         afterChange={() => setSaveState(State.SAVING)}
         renderItem={(item, i) => (
-          <TableField data={item} tid={data.id} index={i} />
+          <TableField
+            data={item}
+            tid={data.id}
+            index={i}
+            inherited={inheritedFieldNames.includes(item.name)}
+          />
         )}
       />
+
+      {database === DB.POSTGRES && (
+        <div className="mb-2">
+          <div className="text-md font-semibold break-keep">
+            {t("inherits")}:
+          </div>
+          <Select
+            multiple
+            value={data.inherits || []}
+            optionList={tables
+              .filter((t) => t.id !== data.id)
+              .map((t) => ({ label: t.name, value: t.name }))}
+            onChange={(value) => {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "self",
+                  tid: data.id,
+                  undo: { inherits: data.inherits },
+                  redo: { inherits: value },
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[inherits]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, { inherits: value });
+            }}
+            placeholder={t("inherits")}
+            className="w-full"
+          />
+        </div>
+      )}
+
       {data.indices.length > 0 && (
         <Card
           bodyStyle={{ padding: "4px" }}
@@ -133,6 +194,7 @@ export default function TableInfo({ data }) {
           </Collapse>
         </Card>
       )}
+
       <Card
         bodyStyle={{ padding: "4px" }}
         style={{ marginTop: "12px", marginBottom: "12px" }}
@@ -173,6 +235,7 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
+
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
           usePopover={true}
