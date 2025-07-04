@@ -54,7 +54,6 @@ export default function TableInfo({ data }) {
     });
     setRedoStack([]);
   };
-  undefined;
 
   return (
     <div>
