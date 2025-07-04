@@ -139,7 +139,25 @@ export default function TableInfo({ data }) {
             optionList={tables
               .filter((t) => t.id !== data.id)
               .map((t) => ({ label: t.name, value: t.name }))}
-            onChange={(value) => updateTable(data.id, { inherits: value })}
+            onChange={(value) => {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "self",
+                  tid: data.id,
+                  undo: { inherits: data.inherits },
+                  redo: { inherits: value },
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[inherits]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, { inherits: value });
+            }}
             placeholder={t("inherits")}
             className="w-full"
           />

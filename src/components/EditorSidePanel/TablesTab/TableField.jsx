@@ -18,15 +18,11 @@ export default function TableField({ data, tid, index, inherited }) {
   const [editField, setEditField] = useState({});
   const table = useMemo(() => tables.find((t) => t.id === tid), [tables, tid]);
 
-
   return (
     <div className="hover-1 my-2 flex gap-2 items-center">
       <DragHandle id={data.id} />
 
-      <div
-        className="min-w-20 flex-1/3"
-        style={{ opacity: inherited ? 0.6 : 1 }}
-      >
+      <div className="min-w-20 flex-1/3">
         <Input
           value={data.name}
           id={`scroll_table_${tid}_input_${index}`}

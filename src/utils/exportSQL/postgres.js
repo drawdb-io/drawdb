@@ -7,7 +7,7 @@ export function toPostgres(diagram) {
       (e) =>
         `CREATE TYPE "${e.name}" AS ENUM (\n${e.values
           .map((v) => `\t'${v}'`)
-          .join(",\n")}\n);\n`
+          .join(",\n")}\n);\n`,
     )
     .join("\n");
 
@@ -20,7 +20,7 @@ export function toPostgres(diagram) {
           type.comment?.trim()
             ? `COMMENT ON TYPE "${type.name}" IS '${escapeQuotes(type.comment)}';\n`
             : ""
-        }`
+        }`,
     )
     .join("\n");
 
@@ -28,13 +28,10 @@ export function toPostgres(diagram) {
     .map((table) => {
       const inheritsClause =
         Array.isArray(table.inherits) && table.inherits.length > 0
-          ? `\n)\nINHERITS (${table.inherits.map((parent) => `"${parent}"`).join(", ")})`
+          ? `\n) INHERITS (${table.inherits.map((parent) => `"${parent}"`).join(", ")})`
           : "\n)";
 
-
-      const ownFields = table.fields;
-      
-      const fieldDefinitions = ownFields
+      const fieldDefinitions = table.fields
         .map(
           (field) =>
             `${exportFieldComment(field.comment)}\t"${
@@ -48,16 +45,15 @@ export function toPostgres(diagram) {
                 ? ` DEFAULT ${parseDefault(field, diagram.database)}`
                 : ""
             }${
-              field.check &&
-              dbToTypes[diagram.database][field.type]?.hasCheck
+              field.check && dbToTypes[diagram.database][field.type]?.hasCheck
                 ? ` CHECK(${field.check})`
                 : ""
-            }`
+            }`,
         )
         .join(",\n");
 
-      const primaryKeyClause = ownFields.some((f) => f.primary)
-        ? `,\n\tPRIMARY KEY(${ownFields
+      const primaryKeyClause = table.fields.some((f) => f.primary)
+        ? `,\n\tPRIMARY KEY(${table.fields
             .filter((f) => f.primary)
             .map((f) => `"${f.name}"`)
             .join(", ")})`
@@ -67,11 +63,11 @@ export function toPostgres(diagram) {
         table.comment?.trim()
           ? `COMMENT ON TABLE "${table.name}" IS '${escapeQuotes(table.comment)}';`
           : "",
-        ...ownFields
+        ...table.fields
           .map((field) =>
             field.comment?.trim()
               ? `COMMENT ON COLUMN "${table.name}"."${field.name}" IS '${escapeQuotes(field.comment)}';`
-              : ""
+              : "",
           )
           .filter(Boolean),
       ].join("\n");
@@ -81,11 +77,11 @@ export function toPostgres(diagram) {
           (i) =>
             `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name}"\nON "${table.name}" (${i.fields
               .map((f) => `"${f}"`)
-              .join(", ")});`
+              .join(", ")});`,
         )
         .join("\n");
 
-      return `CREATE TABLE "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${inheritsClause};\n${commentStatements}\n${indexStatements}`;
+      return `CREATE TABLE "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
     })
     .join("\n\n");
 
@@ -93,7 +89,9 @@ export function toPostgres(diagram) {
     .map((r) => {
       const startTable = diagram.tables.find((t) => t.id === r.startTableId);
       const endTable = diagram.tables.find((t) => t.id === r.endTableId);
-      const startField = startTable?.fields.find((f) => f.id === r.startFieldId);
+      const startField = startTable?.fields.find(
+        (f) => f.id === r.startFieldId,
+      );
       const endField = endTable?.fields.find((f) => f.id === r.endFieldId);
 
       if (!startTable || !endTable || !startField || !endField) return "";
@@ -105,10 +103,12 @@ export function toPostgres(diagram) {
 
   return [
     enumStatements,
-    enumStatements.trim() && typeStatements ? "\n" + typeStatements : typeStatements,
+    enumStatements.trim() && typeStatements
+      ? "\n" + typeStatements
+      : typeStatements,
     tableStatements,
     foreignKeyStatements,
   ]
     .filter(Boolean)
-    .join("\n\n");
+    .join("\n");
 }

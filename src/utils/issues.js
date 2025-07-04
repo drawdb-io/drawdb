@@ -29,11 +29,13 @@ export function getIssues(diagram) {
     const duplicateFieldNames = {};
     let hasPrimaryKey = false;
 
-    const inheritedFields=
-      table.inherits?.map((parentName) => {
-        const parent = diagram.tables.find((t) => t.name === parentName);
-        return parent ? parent.fields.map((f) => f.name) : [];
-      }).flat() || [];
+    const inheritedFields =
+      table.inherits
+        ?.map((parentName) => {
+          const parent = diagram.tables.find((t) => t.name === parentName);
+          return parent ? parent.fields.map((f) => f.name) : [];
+        })
+        .flat() || [];
 
     table.fields.forEach((field) => {
       if (field.primary) hasPrimaryKey = true;
@@ -51,7 +53,7 @@ export function getIssues(diagram) {
               tableName: table.name,
               fieldName: field.name,
               type: field.type,
-            })
+            }),
           );
         }
       }
@@ -61,7 +63,7 @@ export function getIssues(diagram) {
           i18n.t("default_doesnt_match_type", {
             tableName: table.name,
             fieldName: field.name,
-          })
+          }),
         );
       }
 
@@ -70,7 +72,7 @@ export function getIssues(diagram) {
           i18n.t("not_null_is_null", {
             tableName: table.name,
             fieldName: field.name,
-          })
+          }),
         );
       }
 
@@ -79,19 +81,20 @@ export function getIssues(diagram) {
           i18n.t("duplicate_fields", {
             tableName: table.name,
             fieldName: field.name,
-          })
+          }),
         );
       } else {
         duplicateFieldNames[field.name] = true;
       }
 
-    if(inheritedFields.includes(field.name)) {
-     issues.push(
-           i18n.t("merging_column_w_inherited_definition", {
-               fieldName: field.name,
-           }),
-     );
-}
+      if (inheritedFields.includes(field.name)) {
+        issues.push(
+          i18n.t("merging_column_w_inherited_definition", {
+            fieldName: field.name,
+            tableName: table.name,
+          }),
+        );
+      }
     });
 
     const duplicateIndices = {};
@@ -101,7 +104,7 @@ export function getIssues(diagram) {
           i18n.t("duplicate_index", {
             tableName: table.name,
             indexName: index.name,
-          })
+          }),
         );
       } else {
         duplicateIndices[index.name] = true;
@@ -154,7 +157,7 @@ export function getIssues(diagram) {
               typeName: type.name,
               fieldName: field.name,
               type: field.type,
-            })
+            }),
           );
         }
       }
@@ -164,7 +167,7 @@ export function getIssues(diagram) {
           i18n.t("duplicate_type_fields", {
             typeName: type.name,
             fieldName: field.name,
-          })
+          }),
         );
       } else {
         duplicateFieldNames[field.name] = true;
@@ -206,7 +209,7 @@ export function getIssues(diagram) {
       issues.push(
         i18n.t("circular_dependency", {
           refName: diagram.tables.find((t) => t.id === tableId)?.name,
-        })
+        }),
       );
       return;
     }
