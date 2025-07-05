@@ -26,6 +26,7 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get } from "../api/gists";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const IdContext = createContext({ gistId: "", setGistId: () => {} });
 
 const SIDEPANEL_MIN_WIDTH = 384;
