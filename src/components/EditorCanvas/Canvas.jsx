@@ -57,11 +57,9 @@ export default function Canvas() {
     setBulkSelectedElements,
   } = useSelect();
   const notDragging = {
-    element: ObjectType.NONE,
-    id: null,
-    prevX: 0,
-    prevY: 0,
-    initialPositions: [],
+    id: -1,
+    type: ObjectType.NONE,
+    grabOffset: { x: 0, y: 0 },
   };
   const [dragging, setDragging] = useState(notDragging);
   const [linking, setLinking] = useState(false);
@@ -75,7 +73,6 @@ export default function Canvas() {
     endX: 0,
     endY: 0,
   });
-  const [grabOffset, setGrabOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
     tableId: null,
     fieldId: null,
@@ -86,13 +83,11 @@ export default function Canvas() {
     cursorStart: { x: 0, y: 0 },
   });
   const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
-  const [initCoords, setInitCoords] = useState({
+  const [areaInitDimensions, setAreaInitDimensions] = useState({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
-    pointerX: 0,
-    pointerY: 0,
   });
   const [bulkSelectRectPts, setBulkSelectRectPts] = useState({
     x1: 0,
@@ -124,6 +119,8 @@ export default function Canvas() {
         elements.push({
           id: table.id,
           type: ObjectType.TABLE,
+          currentCoords: { x: table.x, y: table.y },
+          initialCoords: { x: table.x, y: table.y },
         });
       }
     });
@@ -145,6 +142,8 @@ export default function Canvas() {
         elements.push({
           id: area.id,
           type: ObjectType.AREA,
+          currentCoords: { x: area.x, y: area.y },
+          initialCoords: { x: area.x, y: area.y },
         });
       }
     });
@@ -166,6 +165,8 @@ export default function Canvas() {
         elements.push({
           id: note.id,
           type: ObjectType.NOTE,
+          currentCoords: { x: note.x, y: note.y },
+          initialCoords: { x: note.x, y: note.y },
         });
       }
     });
@@ -210,31 +211,41 @@ export default function Canvas() {
       return;
     }
 
-    let prevCoords = { prevX: element.x, prevY: element.y };
-    setGrabOffset({
-      x: element.x - pointer.spaces.diagram.x,
-      y: element.y - pointer.spaces.diagram.y,
-    });
-
     let newBulkSelectedElements;
     if (bulkSelectedElements.some((el) => el.id === id && el.type === type)) {
       newBulkSelectedElements = bulkSelectedElements;
     } else {
-      newBulkSelectedElements = [{ id, type }];
+      newBulkSelectedElements = [
+        {
+          id,
+          type,
+          currentCoords: { x: element.x, y: element.y },
+          initialCoords: { x: element.x, y: element.y },
+        },
+      ];
       setBulkSelectedElements(newBulkSelectedElements);
     }
 
-    setDragging((prev) => ({
-      ...prev,
+    setDragging({
       id,
-      element: type,
-      ...prevCoords,
-      initialPositions: newBulkSelectedElements.map((el) => {
-        const { x, y } = getElement(el);
-        return { ...el, undo: { x, y } };
-      }),
-    }));
+      type,
+      grabOffset: {
+        x: pointer.spaces.diagram.x - element.x,
+        y: pointer.spaces.diagram.y - element.y,
+      },
+    });
   };
+
+  const coordinatesAfterSnappingToGrid = ({ x, y }) => {
+    if (settings.snapToGrid) {
+      return {
+        x: Math.round(x / gridSize) * gridSize,
+        y: Math.round(y / gridSize) * gridSize,
+      };
+    }
+    return { x, y };
+  };
+
   /**
    * @param {PointerEvent} e
    */
@@ -258,23 +269,6 @@ export default function Canvas() {
       return;
     }
 
-    const isDragging =
-      dragging.element !== ObjectType.NONE && dragging.id !== null;
-
-    const currentX = pointer.spaces.diagram.x + (isDragging ? grabOffset.x : 0);
-    const currentY = pointer.spaces.diagram.y + (isDragging ? grabOffset.y : 0);
-
-    let finalX = currentX;
-    let finalY = currentY;
-
-    if (settings.snapToGrid) {
-      finalX = Math.round(currentX / gridSize) * gridSize;
-      finalY = Math.round(currentY / gridSize) * gridSize;
-    }
-
-    const deltaX = finalX - dragging.prevX;
-    const deltaY = finalY - dragging.prevY;
-
     if (linking) {
       setLinkingLine({
         ...linkingLine,
@@ -284,68 +278,73 @@ export default function Canvas() {
       return;
     }
 
-    if (isDragging) {
-      for (const el of bulkSelectedElements) {
-        const element = getElement(el);
-        const { type } = el;
-        if (element.locked) continue;
-        const { x, y } = element;
+    if (isDragging()) {
+      const { x: mainElementFinalX, y: mainElementFinalY } =
+        coordinatesAfterSnappingToGrid({
+          x: pointer.spaces.diagram.x - dragging.grabOffset.x,
+          y: pointer.spaces.diagram.y - dragging.grabOffset.y,
+        });
 
-        if (type === ObjectType.TABLE) {
-          updateTable(el.id, {
-            x: x + deltaX,
-            y: y + deltaY,
-          });
-        }
-        if (type === ObjectType.AREA) {
-          updateArea(el.id, {
-            x: x + deltaX,
-            y: y + deltaY,
-          });
-        }
-        if (type === ObjectType.NOTE) {
-          updateNote(el.id, {
-            x: x + deltaX,
-            y: y + deltaY,
-          });
-        }
-      }
+      const { currentCoords } = bulkSelectedElements.find(
+        (el) => el.id === dragging.id && el.type === dragging.type,
+      );
 
-      setDragging((prev) => ({
-        ...prev,
-        prevX: finalX,
-        prevY: finalY,
-      }));
+      const deltaX = mainElementFinalX - currentCoords.x;
+      const deltaY = mainElementFinalY - currentCoords.y;
+
+      const newBulkSelectedElements = [];
+      bulkSelectedElements.forEach((el) => {
+        const elementFinalCoords = {
+          x: el.currentCoords.x + deltaX,
+          y: el.currentCoords.y + deltaY,
+        };
+        if (el.type === ObjectType.TABLE) {
+          updateTable(el.id, { ...elementFinalCoords });
+        }
+        if (el.type === ObjectType.AREA) {
+          updateArea(el.id, { ...elementFinalCoords });
+        }
+        if (el.type === ObjectType.NOTE) {
+          updateNote(el.id, { ...elementFinalCoords });
+        }
+        newBulkSelectedElements.push({
+          ...el,
+          currentCoords: elementFinalCoords,
+        });
+      });
+
+      setBulkSelectedElements(newBulkSelectedElements);
       return;
     }
 
     if (areaResize.id !== -1) {
       if (areaResize.dir === "none") return;
-      let newDims = { ...initCoords };
-      delete newDims.pointerX;
-      delete newDims.pointerY;
+      let newDims = { ...areaInitDimensions };
       setPanning((old) => ({ ...old, isPanning: false }));
+      const { x, y } = coordinatesAfterSnappingToGrid(pointer.spaces.diagram);
 
       switch (areaResize.dir) {
         case "br":
-          newDims.width = finalX - initCoords.x;
-          newDims.height = finalY - initCoords.y;
+          newDims.width = x - areaInitDimensions.x;
+          newDims.height = y - areaInitDimensions.y;
           break;
         case "tl":
-          newDims.x = finalX;
-          newDims.y = finalY;
-          newDims.width = initCoords.width - (finalX - initCoords.x);
-          newDims.height = initCoords.height - (finalY - initCoords.y);
+          newDims.x = x;
+          newDims.y = y;
+          newDims.width = areaInitDimensions.width - (x - areaInitDimensions.x);
+          newDims.height =
+            areaInitDimensions.height - (y - areaInitDimensions.y);
           break;
         case "tr":
-          newDims.y = finalY;
-          newDims.width = finalX - initCoords.x;
-          newDims.height = initCoords.height - (finalY - initCoords.y);
+          newDims.y = y;
+          newDims.width = x - areaInitDimensions.x;
+          newDims.height =
+            areaInitDimensions.height - (y - areaInitDimensions.y);
           break;
         case "bl":
-          newDims.x = finalX;
-          newDims.width = initCoords.width - (finalX - initCoords.x);
-          newDims.height = finalY - initCoords.y;
+          newDims.x = x;
+          newDims.width = areaInitDimensions.width - (x - areaInitDimensions.x);
+          newDims.height = y - areaInitDimensions.y;
           break;
       }
 
@@ -356,8 +355,8 @@ export default function Canvas() {
     if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
         ...prev,
-        x2: finalX,
-        y2: finalY,
+        x2: pointer.spaces.diagram.x,
+        y2: pointer.spaces.diagram.y,
       }));
     }
   };
@@ -400,27 +399,25 @@ export default function Canvas() {
     }
   };
 
-  const coordsDidUpdate = () => {
-    const element = { id: dragging.id, type: dragging.element };
-    const elementData = getElement(element);
-    const updated = !(
-      dragging.prevX === elementData.x && dragging.prevY === elementData.y
-    );
+  const isDragging = () => {
+    return dragging.type !== ObjectType.NONE && dragging.id !== -1;
+  };
 
+  const didDrag = () => {
+    if (!isDragging()) return false;
+    // checking any element is sufficient
+    const { currentCoords, initialCoords } = bulkSelectedElements[0];
     return (
-      updated ||
-      dragging.initialPositions.some(
-        (el) => !(el.undo.x === elementData.x && el.undo.y === elementData.y),
-      )
+      currentCoords.x !== initialCoords.x || currentCoords.y !== initialCoords.y
     );
   };
 
   const didResize = (id) => {
     return !(
-      areas[id].x === initCoords.x &&
-      areas[id].y === initCoords.y &&
-      areas[id].width === initCoords.width &&
-      areas[id].height === initCoords.height
+      areas[id].x === areaInitDimensions.x &&
+      areas[id].y === areaInitDimensions.y &&
+      areas[id].width === areaInitDimensions.width &&
+      areas[id].height === areaInitDimensions.height
     );
   };
 
@@ -438,24 +435,29 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    const coordinatesDidUpdate = coordsDidUpdate();
-
-    if (coordinatesDidUpdate) {
+    if (didDrag()) {
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.MOVE,
           bulk: true,
           message: t("bulk_update"),
-          elements: dragging.initialPositions.map((element) => {
-            const { x, y } = getElement(element);
-            return { ...element, redo: { x, y } };
-          }),
+          elements: bulkSelectedElements.map((el) => ({
+            id: el.id,
+            type: el.type,
+            undo: el.initialCoords,
+            redo: el.currentCoords,
+          })),
         },
       ]);
       setRedoStack([]);
+      setBulkSelectedElements((prev) =>
+        prev.map((el) => ({
+          ...el,
+          initialCoords: { ...el.currentCoords },
+        })),
+      );
     }
-    setDragging(notDragging);
 
     if (bulkSelectRectPts.show) {
       setBulkSelectRectPts((prev) => ({
@@ -464,10 +466,11 @@ export default function Canvas() {
         y2: pointer.spaces.diagram.y,
         show: false,
       }));
-      if (!coordinatesDidUpdate) {
+      if (!isDragging()) {
         collectSelectedElements();
       }
     }
+    setDragging(notDragging);
 
     if (panning.isPanning && didPan()) {
       setSaveState(State.SAVING);
@@ -487,10 +490,10 @@ export default function Canvas() {
           aid: areaResize.id,
           undo: {
             ...areas[areaResize.id],
-            x: initCoords.x,
-            y: initCoords.y,
-            width: initCoords.width,
-            height: initCoords.height,
+            x: areaInitDimensions.x,
+            y: areaInitDimensions.y,
+            width: areaInitDimensions.width,
+            height: areaInitDimensions.height,
           },
           redo: areas[areaResize.id],
           message: t("edit_area", {
@@ -502,13 +505,11 @@ export default function Canvas() {
       setRedoStack([]);
     }
     setAreaResize({ id: -1, dir: "none" });
-    setInitCoords({
+    setAreaInitDimensions({
       x: 0,
       y: 0,
       width: 0,
       height: 0,
-      pointerX: 0,
-      pointerY: 0,
     });
   };
 
@@ -664,7 +665,7 @@ export default function Canvas() {
                 handlePointerDownOnElement(e, a.id, ObjectType.AREA)
               }
               setResize={setAreaResize}
-              setInitCoords={setInitCoords}
+              setInitDimensions={setAreaInitDimensions}
             />
           ))}
           {relationships.map((e, i) => (

@@ -62,7 +62,6 @@ export default function TableInfo({ data }) {
     });
     setRedoStack([]);
   };
-  undefined;
 
   const inheritedFieldNames =
     Array.isArray(data.inherits) && data.inherits.length > 0
