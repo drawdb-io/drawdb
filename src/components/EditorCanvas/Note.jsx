@@ -18,7 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 
-export default function Note({ data, onPointerDown }) {
+export default function Note({ data }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
@@ -100,11 +100,47 @@ export default function Note({ data, onPointerDown }) {
     setRedoStack([]);
   };
 
-  const lockUnlockNote = () => {
-    setBulkSelectedElements((prev) =>
-      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.NOTE),
-    );
-    updateNote(data.id, { locked: !data.locked });
+  const lockUnlockNote = (e) => {
+    const locking = !data.locked;
+    updateNote(data.id, { locked: locking });
+
+    const lockNote = () => {
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setBulkSelectedElements((prev) =>
+        prev.filter((el) => el.id !== data.id || el.type !== ObjectType.NOTE),
+      );
+    };
+
+    const unlockNote = () => {
+      if (e.ctrlKey) {
+        setBulkSelectedElements((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            type: ObjectType.NOTE,
+            initialCoords: { x: data.x, y: data.y },
+            currentCoords: { x: data.x, y: data.y },
+          },
+        ]);
+      }
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.NOTE,
+        id: data.id,
+        open: false,
+      }));
+    };
+
+    if (locking) {
+      lockNote();
+    } else {
+      unlockNote();
+    }
   };
 
   const edit = () => {
@@ -189,7 +225,6 @@ export default function Note({ data, onPointerDown }) {
         y={data.y}
         width={noteWidth}
         height={data.height}
-        onPointerDown={onPointerDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
           <div className="flex justify-between gap-1 w-full">
