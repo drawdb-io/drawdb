@@ -19,12 +19,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
 
-export default function Area({
-  data,
-  onPointerDown,
-  setResize,
-  setInitDimensions,
-}) {
+export default function Area({ data, setResize, setInitDimensions }) {
   const ref = useRef(null);
   const isHovered = useHover(ref);
   const { layout } = useLayout();
@@ -48,11 +43,47 @@ export default function Area({
     });
   };
 
-  const lockUnlockArea = () => {
-    setBulkSelectedElements((prev) =>
-      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.AREA),
-    );
-    updateArea(data.id, { locked: !data.locked });
+  const lockUnlockArea = (e) => {
+    const locking = !data.locked;
+    updateArea(data.id, { locked: locking });
+
+    const lockArea = () => {
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setBulkSelectedElements((prev) =>
+        prev.filter((el) => el.id !== data.id || el.type !== ObjectType.AREA),
+      );
+    };
+
+    const unlockArea = () => {
+      if (e.ctrlKey) {
+        setBulkSelectedElements((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            type: ObjectType.AREA,
+            initialCoords: { x: data.x, y: data.y },
+            currentCoords: { x: data.x, y: data.y },
+          },
+        ]);
+      }
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.AREA,
+        id: data.id,
+        open: false,
+      }));
+    };
+
+    if (locking) {
+      lockArea();
+    } else {
+      unlockArea();
+    }
   };
 
   const edit = () => {
@@ -116,7 +147,6 @@ export default function Area({
         y={data.y}
         width={data.width > 0 ? data.width : 0}
         height={data.height > 0 ? data.height : 0}
-        onPointerDown={onPointerDown}
       >
         <div
           className={`w-full h-full p-2 rounded cursor-move border-2 ${
