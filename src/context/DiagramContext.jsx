@@ -474,27 +474,55 @@ export default function DiagramContextProvider({ children }) {
     if (!relationshipToDelete) return;
 
     let childTableFieldsBeforeFkDeletion = null; // Save the state of child table fields before FK deletion
-    const childTableId = relationshipToDelete.endTableId;
-    const parentTableIdForFK = relationshipToDelete.startTableId;
-    const childTable = tables.find((table) => table.id === childTableId);
+    
+    // For subtype relationships with multiple children, handle each child
+    if (relationshipToDelete.subtype && relationshipToDelete.endTableIds) {
+      // Handle multiple children
+      relationshipToDelete.endTableIds.forEach(childTableId => {
+        const childTable = tables.find((table) => table.id === childTableId);
+        if (childTable) {
+          childTableFieldsBeforeFkDeletion = JSON.parse(JSON.stringify(childTable.fields));
+          
+          const allFkFieldsForThisParent = childTable.fields.filter(
+            (field) =>
+              field.foreignK === true &&
+              field.foreignKey &&
+              field.foreignKey.tableId === relationshipToDelete.startTableId
+          );
 
-    if (childTable) {
-      // Save the state of child table fields before any modification
-      childTableFieldsBeforeFkDeletion = JSON.parse(JSON.stringify(childTable.fields));
+          if (allFkFieldsForThisParent.length > 0) {
+            const newChildFields = childTable.fields.filter(
+              (field) => !allFkFieldsForThisParent.some(deletedField => deletedField.id === field.id)
+            ).map((f, i) => ({ ...f, id: i }));
 
-      const allFkFieldsForThisParent = childTable.fields.filter(
-        (field) =>
-          field.foreignK === true &&
-          field.foreignKey &&
-          field.foreignKey.tableId === parentTableIdForFK
-      );
+            updateTable(childTableId, { fields: newChildFields });
+          }
+        }
+      });
+    } else {
+      // Handle single child (normal relationship or single-child subtype)
+      const childTableId = relationshipToDelete.endTableId;
+      const parentTableIdForFK = relationshipToDelete.startTableId;
+      const childTable = tables.find((table) => table.id === childTableId);
 
-      if (allFkFieldsForThisParent.length > 0) {
-        const newChildFields = childTable.fields.filter(
-          (field) => !allFkFieldsForThisParent.some(deletedField => deletedField.id === field.id)
-        ).map((f, i) => ({ ...f, id: i }));
+      if (childTable) {
+        // Save the state of child table fields before any modification
+        childTableFieldsBeforeFkDeletion = JSON.parse(JSON.stringify(childTable.fields));
 
-        updateTable(childTableId, { fields: newChildFields });
+        const allFkFieldsForThisParent = childTable.fields.filter(
+          (field) =>
+            field.foreignK === true &&
+            field.foreignKey &&
+            field.foreignKey.tableId === parentTableIdForFK
+        );
+
+        if (allFkFieldsForThisParent.length > 0) {
+          const newChildFields = childTable.fields.filter(
+            (field) => !allFkFieldsForThisParent.some(deletedField => deletedField.id === field.id)
+          ).map((f, i) => ({ ...f, id: i }));
+
+          updateTable(childTableId, { fields: newChildFields });
+        }
       }
     }
 
@@ -508,7 +536,7 @@ export default function DiagramContextProvider({ children }) {
             relationship: JSON.parse(JSON.stringify(relationshipToDelete)),
             // Saving the complete state of child table fields BEFORE FK deletion.
             childTableFieldsBeforeFkDeletion: childTableFieldsBeforeFkDeletion,
-            childTableIdWithPotentiallyModifiedFields: childTableId,
+            childTableIdWithPotentiallyModifiedFields: relationshipToDelete.endTableId || relationshipToDelete.endTableIds?.[0],
           },
           message: t("delete_relationship", {
             refName: relationshipToDelete.name,
@@ -525,8 +553,208 @@ export default function DiagramContextProvider({ children }) {
 
   const updateRelationship = (id, updatedValues) => {
     setRelationships((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t)),
+      prev.map((rel) => {
+        if (rel.id === id) {
+          let finalUpdatedValues = { ...updatedValues };
+          
+          // If subtype is being enabled, set relationshipType to 'subtype'
+          if (updatedValues.subtype === true) {
+            finalUpdatedValues.relationshipType = 'subtype';
+            console.log("DEBUG: Setting relationshipType to 'subtype' for relationship", id);
+          }
+          // If subtype is being disabled, reset relationshipType to a default (e.g., one_to_one)
+          else if (updatedValues.subtype === false) {
+            finalUpdatedValues.relationshipType = 'one_to_one';
+            console.log("DEBUG: Resetting relationshipType to 'one_to_one' for relationship", id);
+          }
+          
+          return { ...rel, ...finalUpdatedValues };
+        }
+        return rel;
+      }),
     );
+  };
+
+  // Subtype relationship management functions
+  const addChildToSubtype = (relationshipId, childTableId, shouldAddToUndoStack = true) => {
+    console.log("DEBUG: addChildToSubtype called", { relationshipId, childTableId, shouldAddToUndoStack });
+    
+    // Critical validation: Prevent infinite loops
+    if (typeof relationshipId !== 'number' || relationshipId < 0) {
+      console.error("CRITICAL ERROR: Invalid relationshipId detected", { relationshipId, type: typeof relationshipId });
+      return;
+    }
+    
+    if (typeof childTableId !== 'number' || childTableId < 0) {
+      console.error("CRITICAL ERROR: Invalid childTableId detected", { childTableId, type: typeof childTableId });
+      return;
+    }
+    
+    const relationshipToUpdate = relationships.find(rel => rel.id === relationshipId && rel.subtype);
+    if (!relationshipToUpdate) {
+      console.error("Relationship not found or not a subtype", relationshipId);
+      return;
+    }
+    
+    console.log("DEBUG: Found relationship", relationshipToUpdate);
+    
+    const endTableIds = relationshipToUpdate.endTableIds || 
+      (relationshipToUpdate.endTableId !== undefined && relationshipToUpdate.endTableId !== null 
+        ? [relationshipToUpdate.endTableId] 
+        : []);
+    const endFieldIds = relationshipToUpdate.endFieldIds || 
+      (relationshipToUpdate.endFieldId !== undefined && relationshipToUpdate.endFieldId !== null 
+        ? [relationshipToUpdate.endFieldId] 
+        : []);
+    
+    console.log("DEBUG: Current children", { endTableIds, endFieldIds });
+    
+    // Verify that the child table is not already included
+    if (endTableIds.includes(childTableId)) {
+      console.warn("Child table already included in subtype relationship", childTableId);
+      return;
+    }
+    
+    // Verify that the child table is not the parent table
+    if (relationshipToUpdate.startTableId === childTableId) {
+      console.warn("Cannot add parent table as child in subtype relationship", {
+        parentTableId: relationshipToUpdate.startTableId,
+        childTableId: childTableId
+      });
+      return;
+    }
+    
+    // Find the child table and get its first valid field
+    const childTable = tables.find(t => t.id === childTableId);
+    if (!childTable || !childTable.fields || childTable.fields.length === 0) {
+      console.error("Child table not found or has no fields", childTableId);
+      return;
+    }
+    
+    const firstFieldId = childTable.fields[0].id;
+    const newEndTableIds = [...endTableIds, childTableId];
+    const newEndFieldIds = [...endFieldIds, firstFieldId];
+    
+    console.log("Adding child to subtype - before update", {
+      relationshipId,
+      childTableId,
+      newEndTableIds,
+      newEndFieldIds,
+      currentEndTableIds: relationshipToUpdate.endTableIds,
+      currentEndTableId: relationshipToUpdate.endTableId
+    });
+    
+    // Register undo/redo action if requested
+    if (shouldAddToUndoStack && typeof setUndoStack === 'function') {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.RELATIONSHIP,
+          rid: relationshipId,
+          undo: {
+            endTableIds: relationshipToUpdate.endTableIds,
+            endFieldIds: relationshipToUpdate.endFieldIds,
+            endTableId: relationshipToUpdate.endTableId,
+            endFieldId: relationshipToUpdate.endFieldId,
+          },
+          redo: {
+            endTableIds: newEndTableIds,
+            endFieldIds: newEndFieldIds,
+            endTableId: undefined,
+            endFieldId: undefined,
+          },
+          message: `Add child table to subtype relationship`,
+        },
+      ]);
+      setRedoStack([]);
+    }
+    
+    setRelationships(prev => 
+      prev.map(rel => {
+        if (rel.id === relationshipId && rel.subtype) {
+          const updatedRel = {
+            ...rel,
+            endTableIds: newEndTableIds,
+            endFieldIds: newEndFieldIds,
+            endTableId: undefined, // Clear single reference when using array
+            endFieldId: undefined,
+            relationshipType: 'subtype', // Set specific type for subtype relationships
+          };
+          console.log("Updated relationship", updatedRel);
+          return updatedRel;
+        }
+        return rel;
+      })
+    );
+  };
+
+  const removeChildFromSubtype = (relationshipId, childTableId, shouldAddToUndoStack = true) => {
+    const relationshipToUpdate = relationships.find(rel => rel.id === relationshipId && rel.subtype);
+    if (!relationshipToUpdate) return;
+    
+    const endTableIds = relationshipToUpdate.endTableIds || [relationshipToUpdate.endTableId];
+    const endFieldIds = relationshipToUpdate.endFieldIds || [relationshipToUpdate.endFieldId];
+    
+    const childIndex = endTableIds.indexOf(childTableId);
+    if (childIndex > -1) {
+      const newEndTableIds = endTableIds.filter((_, i) => i !== childIndex);
+      const newEndFieldIds = endFieldIds.filter((_, i) => i !== childIndex);
+      
+      let newRelationshipState = {};
+      
+      // If only one child remains, convert back to single endTableId format
+      if (newEndTableIds.length === 1) {
+        newRelationshipState = {
+          endTableId: newEndTableIds[0],
+          endFieldId: newEndFieldIds[0],
+          endTableIds: undefined,
+          endFieldIds: undefined,
+          relationshipType: 'subtype', // Still a subtype with single child
+        };
+      } else if (newEndTableIds.length > 1) {
+        newRelationshipState = {
+          endTableIds: newEndTableIds,
+          endFieldIds: newEndFieldIds,
+          endTableId: undefined,
+          endFieldId: undefined,
+          relationshipType: 'subtype', // Still a subtype with multiple children
+        };
+      }
+      
+      // Register undo/redo action if requested
+      if (shouldAddToUndoStack && typeof setUndoStack === 'function') {
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.EDIT,
+            element: ObjectType.RELATIONSHIP,
+            rid: relationshipId,
+            undo: {
+              endTableIds: relationshipToUpdate.endTableIds,
+              endFieldIds: relationshipToUpdate.endFieldIds,
+              endTableId: relationshipToUpdate.endTableId,
+              endFieldId: relationshipToUpdate.endFieldId,
+            },
+            redo: newRelationshipState,
+            message: `Remove child table from subtype relationship`,
+          },
+        ]);
+        setRedoStack([]);
+      }
+      
+      setRelationships(prev => 
+        prev.map(rel => {
+          if (rel.id === relationshipId && rel.subtype) {
+            return {
+              ...rel,
+              ...newRelationshipState,
+            };
+          }
+          return rel;
+        })
+      );
+    }
   };
 
   const restoreFieldsToTable = (tableId, fieldsToRestore) => {
@@ -569,6 +797,8 @@ export default function DiagramContextProvider({ children }) {
         addRelationship,
         deleteRelationship,
         updateRelationship,
+        addChildToSubtype,
+        removeChildFromSubtype,
         restoreFieldsToTable,
         database,
         setDatabase,

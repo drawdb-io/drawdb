@@ -6,6 +6,7 @@ import {
   Popover,
   Table,
   Input,
+  Checkbox,
 } from "@douyinfe/semi-ui";
 import {
   IconDeleteStroked,
@@ -16,15 +17,15 @@ import {
   RelationshipType,
   RelationshipCardinalities,
   Constraint,
+  SubtypeRestriction,
   Action,
   ObjectType,
   Notation,
 } from "../../../data/constants";
-import { useDiagram, useUndoRedo} from "../../../hooks";
+import { useDiagram, useSettings, useUndoRedo} from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useSettings } from "../../../hooks";
 const columns = [
   {
     title: i18n.t("primary"),
@@ -38,13 +39,38 @@ const columns = [
 
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { settings } = useSettings();
   const { tables, setTables, setRelationships, deleteRelationship, updateRelationship } =
     useDiagram();
   const { t } = useTranslation();
   const [editField, setEditField] = useState({});
-  const { settings } = useSettings();
+  // Helper function to get the effective end table ID and field ID
+  const getEffectiveEndTable = () => {
+    if (data.endTableId !== undefined) {
+      return {
+        tableId: data.endTableId,
+        fieldId: data.endFieldId,
+      };
+    } else if (data.endTableIds && data.endTableIds.length > 0) {
+      return {
+        tableId: data.endTableIds[0],
+        fieldId: data.endFieldIds ? data.endFieldIds[0] : 0,
+      };
+    }
+    return { tableId: null, fieldId: null };
+  };
+
+  const effectiveEndTable = getEffectiveEndTable();
 
   const swapKeys = () => {
+    // Disable swap for subtype relationships with multiple children
+    if (data.subtype && data.endTableIds && data.endTableIds.length > 1) {
+      console.warn("Cannot swap keys for subtype relationships with multiple children");
+      return;
+    }
+    
+    const effectiveEndTable = getEffectiveEndTable();
+    
     setUndoStack((prev) => [
       ...prev,
       {
@@ -54,12 +80,12 @@ export default function RelationshipInfo({ data }) {
         undo: {
           startTableId: data.startTableId,
           startFieldId: data.startFieldId,
-          endTableId: data.endTableId,
-          endFieldId: data.endFieldId,
+          endTableId: effectiveEndTable.tableId,
+          endFieldId: effectiveEndTable.fieldId,
         },
         redo: {
-          startTableId: data.endTableId,
-          startFieldId: data.endFieldId,
+          startTableId: effectiveEndTable.tableId,
+          startFieldId: effectiveEndTable.fieldId,
           endTableId: data.startTableId,
           endFieldId: data.startFieldId,
         },
@@ -75,13 +101,16 @@ export default function RelationshipInfo({ data }) {
         idx === data.id
           ? {
               ...e,
-              name: `fk_${tables[e.endTableId].name}_${
-                tables[e.endTableId].fields[e.endFieldId].name
+              name: `fk_${tables[effectiveEndTable.tableId].name}_${
+                tables[effectiveEndTable.tableId].fields[effectiveEndTable.fieldId].name
               }_${tables[e.startTableId].name}`,
-              startTableId: e.endTableId,
-              startFieldId: e.endFieldId,
+              startTableId: effectiveEndTable.tableId,
+              startFieldId: effectiveEndTable.fieldId,
               endTableId: e.startTableId,
               endFieldId: e.startFieldId,
+              // Clear multi-child arrays when swapping back to single format
+              endTableIds: undefined,
+              endFieldIds: undefined,
             }
           : e,
       ),
@@ -147,6 +176,75 @@ export default function RelationshipInfo({ data }) {
     );
   };
 
+  const changeSubtypeRestriction = (value) => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.RELATIONSHIP,
+        rid: data.id,
+        undo: { subtype_restriction: data.subtype_restriction },
+        redo: { subtype_restriction: value },
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[subtype_restriction]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev.map((e, idx) =>
+        idx === data.id ? { ...e, subtype_restriction: value } : e,
+      ),
+    );
+  };
+
+  const toggleSubtype = () => {
+    const prevVal = data.subtype;
+    const newSubtypeValue = !prevVal;
+    
+    // Set default subtype_restriction when enabling subtype
+    const defaultSubtypeRestriction = newSubtypeValue ? SubtypeRestriction.DISJOINT_TOTAL : undefined;
+    
+    // Change relationshipType when toggling subtype
+    const newRelationshipType = newSubtypeValue ? RelationshipType.SUBTYPE : RelationshipType.ONE_TO_ONE;
+    
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.RELATIONSHIP,
+        rid: data.id,
+        undo: { 
+          subtype: data.subtype,
+          subtype_restriction: data.subtype_restriction,
+          relationshipType: data.relationshipType
+        },
+        redo: { 
+          subtype: newSubtypeValue,
+          subtype_restriction: defaultSubtypeRestriction,
+          relationshipType: newRelationshipType
+        },
+        message: t("edit_relationship", {
+          refName: data.name,
+          extra: "[subtype]",
+        }),
+      },
+    ]);
+
+    setRedoStack([]);
+    setRelationships((prev) =>
+      prev.map((e, idx) =>
+        idx === data.id ? { 
+          ...e, 
+          subtype: newSubtypeValue,
+          subtype_restriction: defaultSubtypeRestriction,
+          relationshipType: newRelationshipType
+        } : e,
+      ),
+    );
+  };
+
   const changeConstraint = (key, value) => {
     const undoKey = `${key}Constraint`;
     setUndoStack((prev) => [
@@ -170,12 +268,18 @@ export default function RelationshipInfo({ data }) {
   };
 
   const toggleParentCardinality = () => {
-    const startTable = tables.find((t) => t.id === data.endTableId);
+    // Use effective end table for subtype relationships
+    const endTableId = effectiveEndTable.tableId;
+    if (endTableId === null) return;
+    
+    const startTable = tables.find((t) => t.id === endTableId);
     if (!startTable) return;
 
     const fkFieldIds = Array.isArray(data.endFieldId)
       ? data.endFieldId
-      : [data.endFieldId];
+      : effectiveEndTable.fieldId !== null 
+      ? [effectiveEndTable.fieldId]
+      : [];
 
     const fkFields = startTable.fields.filter((f) => fkFieldIds.includes(f.id));
     if (fkFields.length === 0) return;
@@ -255,11 +359,11 @@ export default function RelationshipInfo({ data }) {
       <div className="flex justify-between items-center mb-3">
         <div className="me-3">
           <span className="font-semibold">{t("primary")}: </span>
-          {tables[data.endTableId].name}
+          {effectiveEndTable.tableId !== null ? tables[effectiveEndTable.tableId]?.name : 'N/A'}
         </div>
         <div className="mx-1">
           <span className="font-semibold">{t("foreign")}: </span>
-          {tables[data.startTableId].name}
+          {tables[data.startTableId]?.name}
         </div>
         <div className="ms-1">
           <Popover
@@ -271,11 +375,12 @@ export default function RelationshipInfo({ data }) {
                     {
                       key: "1",
                       foreign: `${tables[data.startTableId]?.name}(${
-                        tables[data.startTableId].fields[data.startFieldId]
+                        tables[data.startTableId]?.fields[data.startFieldId]
                           ?.name
                       })`,
-                      primary: `${tables[data.endTableId]?.name}(${
-                        tables[data.endTableId].fields[data.endFieldId]?.name
+                      primary: `${effectiveEndTable.tableId !== null ? tables[effectiveEndTable.tableId]?.name : 'N/A'}(${
+                        effectiveEndTable.tableId !== null && effectiveEndTable.fieldId !== null ? 
+                        tables[effectiveEndTable.tableId]?.fields[effectiveEndTable.fieldId]?.name : 'N/A'
                       })`,
                     },
                   ]}
@@ -288,6 +393,7 @@ export default function RelationshipInfo({ data }) {
                     icon={<IconLoopTextStroked />}
                     block
                     onClick={swapKeys}
+                    disabled={data.subtype && data.endTableIds && data.endTableIds.length > 1}
                   >
                     {t("swap")}
                   </Button>
@@ -312,7 +418,35 @@ export default function RelationshipInfo({ data }) {
         className="w-full"
         onChange={changeRelationshipType}
       />
-      {settings.notation !== "default" && (
+      {/* Subtype functionality - only available for non-DEFAULT notations */}
+      {settings.notation !== Notation.DEFAULT && (
+        <Row gutter={6} className="my-3">
+          <Col span={12}>
+            <div className="font-semibold my-1">{t("subtype")}:</div>
+          </Col>
+          <Col span={12}>
+            <Checkbox checked={data.subtype} onChange={toggleSubtype} />
+          </Col>
+        </Row>
+      )}
+
+      {data.subtype && settings.notation !== Notation.DEFAULT && (
+        <Row gutter={6} className="my-3">
+          <div className="font-semibold my-1">
+            {t("subtype_restriction")}:
+          </div>
+          <Select
+            optionList={Object.values(SubtypeRestriction).map((v) => ({
+              label: t(v),
+              value: v,
+            }))}
+            value={data.subtype_restriction}
+            className="w-full"
+            onChange={changeSubtypeRestriction}
+          />
+        </Row>
+      )}
+      {settings.notation !== "default" && !data.subtype && (
         <>
           <div className="font-semibold my-1">{t("cardinality")}:</div>
           <div className="flex items-center w-full gap-2">
