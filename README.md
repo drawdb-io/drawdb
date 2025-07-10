@@ -1,3 +1,31 @@
+<div align="center">
+    <img width="64" alt="drawdb logo" src="./src/assets/icon-dark.png">
+    <h1>drawDB</h1>
+</div>
+
+
+<h3 align="center">免费、简单、直观的数据库模式编辑器和 SQL 生成器。</h3>
+
+
+<div align="center" style="margin-bottom:12px;">
+    <a href="https://drawdb.app/" style="display: flex; align-items: center;">
+        <img src="https://img.shields.io/badge/Start%20building-grey" alt="drawDB"/>
+    </a>
+    <a href="https://discord.gg/BrjZgNrmR6" style="display: flex; align-items: center;">
+        <img src="https://img.shields.io/discord/1196658537208758412.svg?label=Join%20the%20Discord&logo=discord" alt="Discord"/>
+    </a>
+    <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
+        <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
+    </a>
+</div>
+
+> Fork 自： [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb)
+
+<h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="./src/assets/drawdb.png"></h3>
+
+DrawDB 是一个强大且用户友好的数据库实体关系（DBER）编辑器，直接在浏览器中运行。只需几次点击即可构建图表，导出 SQL 脚本，自定义编辑器等，无需创建账户。查看完整功能列表请访问[这里](https://drawdb.app/)。
+
+
 
 ---
 <div align="center">
@@ -12,28 +40,6 @@
 <br/>
 <br/>
 
-<div align="center">
-    <img width="64" alt="drawdb logo" src="./src/assets/icon-dark.png">
-    <h1>drawDB</h1>
-</div>
-
-<h3 align="center">免费、简单、直观的数据库模式编辑器和 SQL 生成器。</h3>
-
-<div align="center" style="margin-bottom:12px;">
-    <a href="https://drawdb.app/" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Start%20building-grey" alt="drawDB"/>
-    </a>
-    <a href="https://discord.gg/BrjZgNrmR6" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/discord/1196658537208758412.svg?label=Join%20the%20Discord&logo=discord" alt="Discord"/>
-    </a>
-    <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
-    </a>
-</div>
-
-<h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="./src/assets/drawdb.png"></h3>
-
-DrawDB 是一个强大且用户友好的数据库实体关系（DBER）编辑器，直接在浏览器中运行。只需几次点击即可构建图表，导出 SQL 脚本，自定义编辑器等，无需创建账户。查看完整功能列表请访问[这里](https://drawdb.app/)。
 
 ## 快速开始
 
