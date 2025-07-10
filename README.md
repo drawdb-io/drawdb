@@ -1,13 +1,14 @@
+
+---
 <div align="center">
-  <sup>Special thanks to:</sup>
+  <sup>特别感谢：</sup>
   <br>
   <a href="https://www.warp.dev/drawdb/" target="_blank">
-    <img alt="Warp sponsorship" width="280" src="https://github.com/user-attachments/assets/c7f141e7-9751-407d-bb0e-d6f2c487b34f">
+    <img alt="Warp sponsorship" width="280" src="./src/assets/warp2.png">
     <br>
-    <b>Next-gen AI-powered intelligent terminal for all platforms</b>
+    <b>新一代 AI 驱动的智能终端，适用于所有平台</b>
   </a>
 </div>
-
 <br/>
 <br/>
 
@@ -16,7 +17,7 @@
     <h1>drawDB</h1>
 </div>
 
-<h3 align="center">Free, simple, and intuitive database schema editor and SQL generator.</h3>
+<h3 align="center">免费、简单、直观的数据库模式编辑器和 SQL 生成器。</h3>
 
 <div align="center" style="margin-bottom:12px;">
     <a href="https://drawdb.app/" style="display: flex; align-items: center;">
@@ -30,35 +31,35 @@
     </a>
 </div>
 
-<h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="drawdb.png"></h3>
+<h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="./src/assets/drawdb.png"></h3>
 
-DrawDB is a robust and user-friendly database entity relationship (DBER) editor right in your browser. Build diagrams with a few clicks, export sql scripts, customize your editor, and more without creating an account. See the full set of features [here](https://drawdb.app/).
+DrawDB 是一个强大且用户友好的数据库实体关系（DBER）编辑器，直接在浏览器中运行。只需几次点击即可构建图表，导出 SQL 脚本，自定义编辑器等，无需创建账户。查看完整功能列表请访问[这里](https://drawdb.app/)。
 
-## Getting Started
+## 快速开始
 
-### Local Development
-
-```bash
-git clone https://github.com/drawdb-io/drawdb
-cd drawdb
-npm install
-npm run dev
-```
-
-### Build
+### 本地开发
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
 cd drawdb
-npm install
-npm run build
+pnpm install
+pnpm run dev
 ```
 
-### Docker Build
+### 构建
+
+```bash
+git clone https://github.com/drawdb-io/drawdb
+cd drawdb
+pnpm install
+pnpm run build
+```
+
+### Docker 构建
 
 ```bash
 docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
-If you wish to work with sharing, set up [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is not required unless you want to share files.
+如果你想使用分享功能，请设置[服务器](https://github.com/drawdb-io/drawdb-server)并根据 `.env.sample` 配置环境变量。除非你想分享文件，否则这不是必需的。
