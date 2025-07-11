@@ -348,8 +348,8 @@ export const template2 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "Human resources schema",
+  title: "人力资源架构",
   description:
-    "A Human Resources (HR) schema designed to manage employee and project related information within an organization.",
+    "专为管理组织内员工和项目相关信息而设计的人力资源架构。",
   custom: 0,
 };

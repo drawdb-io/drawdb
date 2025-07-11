@@ -360,8 +360,8 @@ export const template4 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "Library schema",
+  title: "图书馆架构",
   description:
-    "A library schema designed to manage the books, genres, reservations, and other aspects of a library system",
+    "专为管理图书馆系统的书籍、分类、预约和其他方面而设计的图书馆架构。",
   custom: 0,
 };

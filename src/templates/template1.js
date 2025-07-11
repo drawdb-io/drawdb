@@ -344,8 +344,8 @@ export const template1 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "Blog database schema",
+  title: "博客数据库架构",
   description:
-    "A blog database including tables such as posts, users, comments, and tags to facilitate the storage and retrieval of blog-related information.",
+    "包含文章、用户、评论和标签等表的博客数据库，用于便于存储和检索博客相关信息。",
   custom: 0,
 };

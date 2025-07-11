@@ -455,8 +455,8 @@ export const template6 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "University schema",
+  title: "大学架构",
   description:
-    "A university schema designed to manage information about students, courses, instructors, and other aspects of university-related data.",
+    "专为管理学生、课程、教师和其他大学相关数据方面信息而设计的大学架构。",
   custom: 0,
 };

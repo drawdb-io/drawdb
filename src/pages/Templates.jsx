@@ -32,7 +32,7 @@ export default function Templates() {
   };
 
   useEffect(() => {
-    document.title = "Templates | drawDB";
+    document.title = "模板 | drawDB";
   }, []);
 
   return (
@@ -48,7 +48,7 @@ export default function Templates() {
               />
             </Link>
             <div className="ms-4 sm:text-sm xl:text-xl text-xl font-semibold">
-              Templates
+              模板
             </div>
           </div>
         </div>
@@ -56,16 +56,15 @@ export default function Templates() {
         <div className="xl:px-20 sm:px-6 px-12 py-6">
           <div className="w-full md:w-[75%] xl:w-[50%] mb-2">
             <div className="text-2xl sm:text-lg font-semibold mb-2 text-neutral-800">
-              Database schema templates
+              数据库架构模板
             </div>
             <div className="text-sm text-neutral-700">
-              A compilation of database entity relationship diagrams to give you
-              a quick start or inspire your application&apos;s architecture.
+              数据库实体关系图的集合，为您提供快速开始或启发您的应用程序架构设计。
             </div>
           </div>
           <Tabs>
             <TabPane
-              tab={<span className="mx-2">Default templates</span>}
+              tab={<span className="mx-2">默认模板</span>}
               itemKey="1"
             >
               <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-10 my-6">
@@ -101,7 +100,7 @@ export default function Templates() {
               </div>
             </TabPane>
             <TabPane
-              tab={<span className="mx-2">Your templates</span>}
+              tab={<span className="mx-2">您的模板</span>}
               itemKey="2"
             >
               {customTemplates?.length > 0 ? (
@@ -134,7 +133,7 @@ export default function Templates() {
                             onClick={() => editTemplate(c.id)}
                           >
                             <i className="bi bi-pencil-fill"></i>
-                            <div className="ms-1.5 font-semibold">Edit</div>
+                            <div className="ms-1.5 font-semibold">编辑</div>
                           </button>
                           <div className="border-l border-gray-300 mx-2" />
                           <button
@@ -142,7 +141,7 @@ export default function Templates() {
                             onClick={() => deleteTemplate(c.id)}
                           >
                             <IconDeleteStroked />
-                            <div className="ms-1.5 font-semibold">Delete</div>
+                            <div className="ms-1.5 font-semibold">删除</div>
                           </button>
                         </div>
                       </div>
@@ -157,7 +156,7 @@ export default function Templates() {
                     bordered
                     icon={null}
                     closeIcon={null}
-                    description={<div>You have no custom templates saved.</div>}
+                    description={<div>您还没有保存任何自定义模板。</div>}
                   />
                   <div className="grid grid-cols-5 sm:grid-cols-1 gap-4 place-content-center my-4">
                     <img
@@ -166,20 +165,20 @@ export default function Templates() {
                     />
                     <div className="col-span-2 sm:cols-span-1">
                       <div className="text-xl font-bold my-4">
-                        How to save a template
+                        如何保存模板
                       </div>
                       <Steps direction="vertical" style={{ margin: "12px" }}>
                         <Steps.Step
-                          title="Build a diagram"
-                          description="Build the template in the editor"
+                          title="构建图表"
+                          description="在编辑器中构建模板"
                         />
                         <Steps.Step
-                          title="Save as template"
-                          description="Editor > File > Save as template"
+                          title="保存为模板"
+                          description="编辑器 > 文件 > 保存为模板"
                         />
                         <Steps.Step
-                          title="Load a template"
-                          description="Fork a template to build on"
+                          title="加载模板"
+                          description="分支一个模板来构建"
                         />
                       </Steps>
                     </div>

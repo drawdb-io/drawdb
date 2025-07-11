@@ -631,8 +631,8 @@ export const template5 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "Bank schema",
+  title: "银行架构",
   description:
-    "A financial schema designed to manage financial transactions, accounts, customers, and other aspects of financial data.",
+    "专为管理金融交易、账户、客户和其他金融数据方面而设计的金融架构。",
   custom: 0,
 };

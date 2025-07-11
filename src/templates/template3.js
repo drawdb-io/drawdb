@@ -420,8 +420,8 @@ export const template3 = {
   notes: [],
   subjectAreas: [],
   types: [],
-  title: "E-commerce schema",
+  title: "电商架构",
   description:
-    "An e-commerce schema designed to manage various aspects of an online store, including products, orders, and customers.",
+    "专为管理在线商店各个方面而设计的电商架构，包括产品、订单和客户。",
   custom: 0,
 };
