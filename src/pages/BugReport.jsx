@@ -245,7 +245,7 @@ export default function BugReport() {
         } my-1`}
       />
       <div className="text-center text-sm py-3">
-        &copy; 2024 <strong>drawDB</strong> - All right reserved.
+        &copy; 2025 <strong>嘉诚信息</strong> - All right reserved.
       </div>
     </>
   );
