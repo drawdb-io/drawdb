@@ -9,7 +9,6 @@ import sqlite_icon from "../assets/sqlite.png";
 import mariadb_icon from "../assets/mariadb.png";
 import oraclesql_icon from "../assets/oraclesql.png";
 import sql_server_icon from "../assets/sql-server.png";
-import discord from "../assets/discord.png";
 import github from "../assets/github.png";
 import warp from "../assets/warp.png";
 import screenshot from "../assets/screenshot.png";
@@ -38,7 +37,7 @@ export default function LandingPage() {
 
     document.body.setAttribute("theme-mode", "light");
     document.title =
-      "drawDB | Online database diagram editor and SQL generator";
+      "drawDB | 在线数据库图表编辑器和 SQL 生成器";
 
     fetchStats();
   }, []);
@@ -62,19 +61,18 @@ export default function LandingPage() {
             <FadeIn duration={0.75}>
               <div className="md:px-3">
                 <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
-                  Draw, Copy, and Paste
+                  绘制、复制和粘贴
                 </h1>
                 <div className="text-lg font-medium mt-1 sliding-vertical">
-                  Free and open source, simple, and intuitive database design
-                  editor, data-modeler, and SQL generator.{" "}
+                  免费开源、简单直观的数据库设计编辑器、数据建模器和 SQL 生成器。{" "}
                   <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
-                    No sign up
+                    无需注册
                   </span>
                   <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
-                    Free of charge
+                    完全免费
                   </span>
                   <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
-                    Quick and easy
+                    快速简便
                   </span>
                 </div>
               </div>
@@ -88,13 +86,13 @@ export default function LandingPage() {
                     .scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Learn more
+                了解更多
               </button>
               <Link
                 to="/editor"
                 className="inline-block py-3 text-white transition-all duration-300 rounded-full shadow-lg bg-sky-900 ps-7 pe-6 hover:bg-sky-800"
               >
-                Try it for yourself <i className="bi bi-arrow-right ms-1"></i>
+                立即体验 <i className="bi bi-arrow-right ms-1"></i>
               </Link>
             </div>
           </div>
@@ -107,7 +105,7 @@ export default function LandingPage() {
           {/* Supported by */}
           <div className="text-center mb-16">
             <div className="text-2xl md:text-xl font-bold text-sky-800 mb-8">
-              Supported by
+              赞助支持
             </div>
             <div>
               <a
@@ -122,15 +120,14 @@ export default function LandingPage() {
                   className="m-auto mb-4"
                 />
                 <div className="font-semibold text-lg md:text-base">
-                  Next-gen AI-powered intelligent terminal for all platforms
+                  下一代AI驱动的全平台智能终端
                 </div>
               </a>
             </div>
           </div>
           <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3 mb-12">
             <div className="text-lg font-medium">
-              Build diagrams with a few clicks, see the full picture, export SQL
-              scripts, customize your editor, and more.
+              几次点击即可构建图表，全局视图，导出 SQL 脚本，自定义编辑器等等。
             </div>
             <img src={screenshot} className="mx-auto" />
           </div>
@@ -140,7 +137,7 @@ export default function LandingPage() {
                 {shortenNumber(stats.stars)}
               </div>
               <div className="ms-1 mt-1 font-medium tracking-wide">
-                GitHub stars
+                GitHub 星标
               </div>
             </div>
             <div className="text-center mb-4">
@@ -148,7 +145,7 @@ export default function LandingPage() {
                 {shortenNumber(stats.forks)}
               </div>
               <div className="ms-1 mt-1 font-medium tracking-wide">
-                GitHub forks
+                GitHub 分叉
               </div>
             </div>
             <div className="text-center mb-4">
@@ -156,12 +153,12 @@ export default function LandingPage() {
                 {shortenNumber(languages.length)}
               </div>
               <div className="ms-1 mt-1 font-medium tracking-wide">
-                Languages
+                支持语言
               </div>
             </div>
           </div>
           <div className="text-lg font-medium text-center mt-12 mb-6">
-            Design for your database
+            为您的数据库设计
           </div>
           <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
             {dbs.map((s, i) => (
@@ -192,10 +189,10 @@ export default function LandingPage() {
       <div id="features" className="py-8 px-36 md:px-8">
         <FadeIn duration={1}>
           <div className="text-base font-medium text-center text-sky-900">
-            More than just an editor
+            不仅仅是一个编辑器
           </div>
           <div className="text-2xl mt-1 font-medium text-center">
-            What drawDB has to offer
+            drawDB 能为您提供什么
           </div>
           <div className="grid grid-cols-3 gap-8 mt-10 md:grid-cols-2 sm:grid-cols-1">
             {features.map((f, i) => (
@@ -218,7 +215,7 @@ export default function LandingPage() {
       {/* Tweets */}
       <div className="px-40 mt-6 md:px-8">
         <div className="text-center text-2xl md:text-xl font-medium">
-          What the internet says about us
+          网友们对我们的评价
         </div>
         <div
           data-theme="light"
@@ -246,11 +243,10 @@ export default function LandingPage() {
       </svg>
       <div className="bg-zinc-100 py-8 px-32 md:px-8">
         <div className="mt-4 mb-2 text-2xl font-bold text-center">
-          Reach out to us
+          联系我们
         </div>
         <div className="text-lg text-center mb-4">
-          We love hearing from you. Join our community on Discord, GitHub, and
-          X.
+          我们期待听到您的声音。加入我们在 GitHub 和 X 上的社区。
         </div>
         <div className="px-36 text-center md:px-8">
           <div className="md:block md:space-y-3 flex gap-3 justify-center">
@@ -263,20 +259,7 @@ export default function LandingPage() {
               <div className="bg-zinc-800 hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-14 py-4 rounded-lg">
                 <img src={github} className="h-8" />
                 <div className="text-lg text-white font-bold">
-                  See the source
-                </div>
-              </div>
-            </a>
-            <a
-              className="inline-block"
-              href={socials.discord}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="bg-[#5865f2] hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-8 py-4 rounded-lg">
-                <img src={discord} className="h-8" />
-                <div className="text-lg text-white font-bold">
-                  Join us on Discord
+                  查看源码
                 </div>
               </div>
             </a>
@@ -288,7 +271,7 @@ export default function LandingPage() {
             >
               <div className="text-white bg-zinc-800 hover:opacity-90 transition-all duration-300 flex items-center gap-4 px-12 py-4 rounded-lg">
                 <i className="text-2xl bi bi-twitter-x" />
-                <div className="text-lg  font-bold">Follow us on X</div>
+                <div className="text-lg  font-bold">关注我们的 X</div>
               </div>
             </a>
           </div>
@@ -296,8 +279,7 @@ export default function LandingPage() {
       </div>
 
       <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold px-3">
-        Attention! The diagrams are saved in your browser. Before clearing the
-        browser make sure to back up your data.
+        注意！图表保存在您的浏览器中。在清除浏览器数据之前，请务必备份您的数据。
       </div>
       <hr className="border-zinc-300" />
       <div className="text-center text-sm py-3">
@@ -318,124 +300,114 @@ const dbs = [
 
 const features = [
   {
-    title: "Export",
+    title: "导出",
     content: (
       <div>
-        Export the DDL script to run on your database or export the diagram as a
-        JSON or an image.
+        导出 DDL 脚本在您的数据库中运行，或将图表导出为 JSON 或图像格式。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Reverse engineer",
+    title: "逆向工程",
     content: (
       <div>
-        Already have a schema? Import a DDL script to generate a diagram.
+        已有数据库架构？导入 DDL 脚本即可生成图表。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Customizable workspace",
+    title: "可定制工作区",
     content: (
       <div>
-        Customize the UI to fit your preferences. Select the components you want
-        in your view.
+        自定义 UI 以符合您的偏好。选择您想要在视图中显示的组件。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Keyboard shortcuts",
+    title: "键盘快捷键",
     content: (
       <div>
-        Speed up development with keyboard shortcuts. See all available
-        shortcuts
+        使用键盘快捷键加速开发。查看所有可用的快捷键
         <Link
           to={`${socials.docs}/shortcuts`}
           className="ms-1.5 text-blue-500 hover:underline"
         >
-          here
+          点击这里
         </Link>
-        .
+        。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Templates",
+    title: "模板",
     content: (
       <div>
-        Start off with pre-built templates. Get a quick start or get inspiration
-        for your design.
+        从预构建的模板开始。快速开始或为您的设计获取灵感。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Custom Templates",
+    title: "自定义模板",
     content: (
       <div>
-        Have boilerplate structures? Save time by saving them as templates and
-        load them when needed.
+        有常用的结构？将它们保存为模板以节省时间，需要时即可加载。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Robust editor",
+    title: "强大的编辑器",
     content: (
       <div>
-        Undo, redo, copy, paste, duplicate and more. Add tables, subject areas,
-        and notes.
+        撤销、重做、复制、粘贴、复制等功能。添加表格、主题区域和注释。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Issue detection",
+    title: "问题检测",
     content: (
       <div>
-        Detect and tackle errors in the diagram to make sure the scripts are
-        correct.
+        检测并解决图表中的错误，确保脚本正确无误。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Relational databases",
+    title: "关系数据库",
     content: (
       <div>
-        We support 5 relational databases - MySQL, PostgreSQL, SQLite, MariaDB,
-        SQL Server.
+        我们支持 5 种关系数据库 - MySQL、PostgreSQL、SQLite、MariaDB、SQL Server。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Object-Relational databases",
+    title: "对象关系数据库",
     content: (
       <div>
-        Add custom types for object-relational databases, or create custom JSON
-        schemes.
+        为对象关系数据库添加自定义类型，或创建自定义 JSON 架构。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Presentation mode",
+    title: "演示模式",
     content: (
       <div>
-        Present your diagrams on a big screen during team meetings and
-        discussions.
+        在团队会议和讨论中在大屏幕上展示您的图表。
       </div>
     ),
     footer: "",
   },
   {
-    title: "Track todos",
-    content: <div>Keep track of tasks and mark them done when finished.</div>,
+    title: "任务跟踪",
+    content: <div>跟踪任务并在完成时标记为已完成。</div>,
     footer: "",
   },
 ];

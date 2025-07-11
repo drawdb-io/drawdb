@@ -14,10 +14,6 @@ export default function NotFound() {
         ,{" "}
         <a className="text-blue-600" href="mailto:drawdb@outlook.com">
           shoot us an email
-        </a>{" "}
-        or{" "}
-        <a className="text-blue-600" href={socials.discord}>
-          a message on discord
         </a>
       </p>
       <br />
