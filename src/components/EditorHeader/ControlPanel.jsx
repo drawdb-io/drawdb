@@ -1431,9 +1431,6 @@ export default function ControlPanel({
       shortcuts: {
         function: () => window.open(`${socials.docs}/shortcuts`, "_blank"),
       },
-      ask_on_discord: {
-        function: () => window.open(socials.discord, "_blank"),
-      },
       report_bug: {
         function: () => window.open("/bug-report", "_blank"),
       },

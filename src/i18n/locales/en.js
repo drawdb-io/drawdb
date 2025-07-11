@@ -79,7 +79,6 @@ const en = {
     storage_flushed: "Storage flushed",
     help: "Help",
     shortcuts: "Shortcuts",
-    ask_on_discord: "Ask us on Discord",
     feedback: "Feedback",
     no_changes: "No changes",
     loading: "Loading...",

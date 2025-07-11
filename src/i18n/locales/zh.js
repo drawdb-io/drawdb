@@ -77,7 +77,6 @@ const zh = {
     help: "帮助",
     docs: "文档",
     shortcuts: "快捷键",
-    ask_on_discord: "在 Discord 联系我们",
     feedback: "反馈",
     no_changes: "没有更改",
     loading: "加载中...",
