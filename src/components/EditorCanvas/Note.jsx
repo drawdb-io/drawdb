@@ -18,7 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 
-export default function Note({ data }) {
+export default function Note({ data, onPointerDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
@@ -117,16 +117,19 @@ export default function Note({ data }) {
     };
 
     const unlockNote = () => {
+      const elementInBulk = {
+        id: data.id,
+        type: ObjectType.NOTE,
+        initialCoords: { x: data.x, y: data.y },
+        currentCoords: { x: data.x, y: data.y },
+      };
       if (e.ctrlKey) {
         setBulkSelectedElements((prev) => [
           ...prev,
-          {
-            id: data.id,
-            type: ObjectType.NOTE,
-            initialCoords: { x: data.x, y: data.y },
-            currentCoords: { x: data.x, y: data.y },
-          },
+          elementInBulk,
         ]);
+      } else {
+        setBulkSelectedElements([elementInBulk]);
       }
       setSelectedElement((prev) => ({
         ...prev,
@@ -225,6 +228,7 @@ export default function Note({ data }) {
         y={data.y}
         width={noteWidth}
         height={data.height}
+        onPointerDown={onPointerDown}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
           <div className="flex justify-between gap-1 w-full">

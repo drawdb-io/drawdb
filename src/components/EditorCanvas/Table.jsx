@@ -26,6 +26,7 @@ import { getTableHeight } from "../../utils/utils";
 
 export default function Table({
   tableData,
+  onPointerDown,
   setHoveredTable,
   handleGripField,
   setLinkingLine,
@@ -79,16 +80,19 @@ export default function Table({
     };
 
     const unlockTable = () => {
+      const elementInBulk = {
+        id: tableData.id,
+        type: ObjectType.TABLE,
+        initialCoords: { x: tableData.x, y: tableData.y },
+        currentCoords: { x: tableData.x, y: tableData.y },
+      };
       if (e.ctrlKey) {
         setBulkSelectedElements((prev) => [
           ...prev,
-          {
-            id: tableData.id,
-            type: ObjectType.TABLE,
-            initialCoords: { x: tableData.x, y: tableData.y },
-            currentCoords: { x: tableData.x, y: tableData.y },
-          },
+          elementInBulk,
         ]);
+      } else {
+        setBulkSelectedElements([elementInBulk]);
       }
       setSelectedElement((prev) => ({
         ...prev,
@@ -137,6 +141,7 @@ export default function Table({
         width={settings.tableWidth}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
+        onPointerDown={onPointerDown}
       >
         <div
           onDoubleClick={openEditor}

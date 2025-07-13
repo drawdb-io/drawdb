@@ -104,6 +104,9 @@ export default function Canvas() {
     show: false,
     ctrlKey: false,
   });
+  // this is used to store the element that is clicked on
+  // at the moment, and shouldn't be a part of the state
+  let elementPointerDown = null;
 
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
@@ -172,39 +175,6 @@ export default function Canvas() {
     }
   };
 
-  const getElementFromCoords = (coords) => {
-    for (const table of tables) {
-      if (pointIsInsideRect(coords, tableRect(table, settings))) {
-        return {
-          element: table,
-          type: ObjectType.TABLE,
-        };
-      }
-    }
-    for (const area of areas) {
-      if (pointIsInsideRect(coords, areaRect(area))) {
-        return {
-          element: area,
-          type: ObjectType.AREA,
-        };
-      }
-    }
-    for (const note of notes) {
-      if (pointIsInsideRect(coords, noteRect(note))) {
-        return {
-          element: note,
-          type: ObjectType.NOTE,
-        };
-      }
-    }
-    return null;
-  };
-
-  /**
-   * @param {PointerEvent} e
-   * @param {number} id
-   * @param {ObjectType[keyof ObjectType]} type
-   */
   const handlePointerDownOnElement = (e, { element, type }) => {
     if (selectedElement.open && !layout.sidebar) return;
 
@@ -422,17 +392,16 @@ export default function Canvas() {
     const isMouseMiddleButton = e.button === 1;
 
     if (isMouseLeftButton) {
-      const elementAndType = getElementFromCoords(pointer.spaces.diagram);
       setBulkSelectRectPts({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
-        show: elementAndType === null || !elementAndType.element.locked,
+        show: elementPointerDown === null || !elementPointerDown.element.locked,
         ctrlKey: e.ctrlKey,
       });
-      if (elementAndType !== null) {
-        handlePointerDownOnElement(e, elementAndType);
+      if (elementPointerDown !== null) {
+        handlePointerDownOnElement(e, elementPointerDown);
       }
       pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton) {
@@ -711,6 +680,12 @@ export default function Canvas() {
               data={a}
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: a,
+                  type: ObjectType.AREA,
+                };
+              }}
             />
           ))}
           {relationships.map((e, i) => (
@@ -723,6 +698,12 @@ export default function Canvas() {
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: table,
+                  type: ObjectType.TABLE,
+                };
+              }}
             />
           ))}
           {linking && (
@@ -734,7 +715,16 @@ export default function Canvas() {
             />
           )}
           {notes.map((n) => (
-            <Note key={n.id} data={n} />
+            <Note
+              key={n.id}
+              data={n}
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: n,
+                  type: ObjectType.NOTE,
+                };
+              }}
+            />
           ))}
           {bulkSelectRectPts.show && (
             <rect

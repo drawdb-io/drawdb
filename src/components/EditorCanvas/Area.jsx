@@ -19,7 +19,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
 
-export default function Area({ data, setResize, setInitDimensions }) {
+export default function Area({
+  data,
+  onPointerDown,
+  setResize,
+  setInitDimensions,
+}) {
   const ref = useRef(null);
   const isHovered = useHover(ref);
   const { layout } = useLayout();
@@ -60,16 +65,19 @@ export default function Area({ data, setResize, setInitDimensions }) {
     };
 
     const unlockArea = () => {
+      const elementInBulk = {
+        id: data.id,
+        type: ObjectType.AREA,
+        initialCoords: { x: data.x, y: data.y },
+        currentCoords: { x: data.x, y: data.y },
+      };
       if (e.ctrlKey) {
         setBulkSelectedElements((prev) => [
           ...prev,
-          {
-            id: data.id,
-            type: ObjectType.AREA,
-            initialCoords: { x: data.x, y: data.y },
-            currentCoords: { x: data.x, y: data.y },
-          },
+          elementInBulk,
         ]);
+      } else {
+        setBulkSelectedElements([elementInBulk]);
       }
       setSelectedElement((prev) => ({
         ...prev,
@@ -147,6 +155,7 @@ export default function Area({ data, setResize, setInitDimensions }) {
         y={data.y}
         width={data.width > 0 ? data.width : 0}
         height={data.height > 0 ? data.height : 0}
+        onPointerDown={onPointerDown}
       >
         <div
           className={`w-full h-full p-2 rounded cursor-move border-2 ${
