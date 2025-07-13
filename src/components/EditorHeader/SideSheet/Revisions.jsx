@@ -7,7 +7,7 @@ import {
   IconChevronRight,
   IconChevronLeft,
 } from "@douyinfe/semi-icons";
-import * as gists from "../../../api/gists";
+import { getCommits } from "../../../api/gists";
 import moment from "moment";
 
 export default function Revisions({ open }) {
@@ -20,9 +20,8 @@ export default function Revisions({ open }) {
     const getRevisions = async (gistId) => {
       setIsLoading(true);
       try {
-        const gist = await gists.getCommits(gistId);
-        setRevisions(gist);
-        console.log(gist);
+        const { data } = await getCommits(gistId);
+        setRevisions(data);
       } catch (e) {
         console.log(e);
         Toast.error(t("oops_smth_went_wrong"));

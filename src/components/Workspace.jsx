@@ -287,25 +287,24 @@ export default function WorkSpace() {
 
     const loadFromGist = async (shareId) => {
       try {
-        const gist = await get(shareId);
-        const diagramSrc = gist.files["share.json"].content;
-        const d = JSON.parse(diagramSrc);
-        setGistId(shareId);
+        const { data } = await get(shareId);
+        const parsedDiagram = JSON.parse(data.files["share.json"].content);
         setUndoStack([]);
         setRedoStack([]);
+        setGistId(shareId);
         setLoadedFromGistId(shareId);
-        setDatabase(d.database);
-        setTitle(d.title);
-        setTables(d.tables);
-        setRelationships(d.relationships);
-        setNotes(d.notes);
-        setAreas(d.subjectAreas);
-        setTransform(d.transform);
-        if (databases[d.database].hasTypes) {
-          setTypes(d.types ?? []);
+        setDatabase(parsedDiagram.database);
+        setTitle(parsedDiagram.title);
+        setTables(parsedDiagram.tables);
+        setRelationships(parsedDiagram.relationships);
+        setNotes(parsedDiagram.notes);
+        setAreas(parsedDiagram.subjectAreas);
+        setTransform(parsedDiagram.transform);
+        if (databases[parsedDiagram.database].hasTypes) {
+          setTypes(parsedDiagram.types ?? []);
         }
-        if (databases[d.database].hasEnums) {
-          setEnums(d.enums ?? []);
+        if (databases[parsedDiagram.database].hasEnums) {
+          setEnums(parsedDiagram.enums ?? []);
         }
       } catch (e) {
         console.log(e);
