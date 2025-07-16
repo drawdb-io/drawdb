@@ -35,10 +35,10 @@ import { pl, polish } from "./locales/pl";
 import { no, norwegian } from "./locales/no";
 import { sv, swedish } from "./locales/sv-se";
 import { ur, urdu } from "./locales/ur";
-import { jp, japanese} from "./locales/jp"
-import {ne, nepali} from "./locales/ne"
-import {ug, uyghur} from "./locales/ug";
-import {pa_pk,punjabipk  } from "./locales/pa-pk";
+import { jp, japanese } from "./locales/jp";
+import { ne, nepali } from "./locales/ne";
+import { ug, uyghur } from "./locales/ug";
+import { pa_pk, punjabipk } from "./locales/pa-pk";
 import { cz, czech } from "./locales/cz";
 
 export const languages = [
@@ -80,7 +80,7 @@ export const languages = [
   nepali,
   uyghur,
   punjabipk,
-  czech
+  czech,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -130,8 +130,8 @@ i18n
       jp,
       ne,
       ug,
-      "pa-PK":pa_pk,
-      cz
+      "pa-PK": pa_pk,
+      cz,
     },
   });
 

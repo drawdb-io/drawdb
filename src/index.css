@@ -69,7 +69,7 @@
 
 .semi-steps-item-content,
 .semi-steps-item-title {
-  width: 100%;
+  width: 100% !important;
 }
 
 .semi-spin-wrapper  {

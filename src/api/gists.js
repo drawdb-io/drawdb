@@ -41,7 +41,5 @@ export async function getCommits(gistId, perPage = 20, page = 1) {
     },
   });
 
-  console.log(res)
-
   return res.data;
 }
