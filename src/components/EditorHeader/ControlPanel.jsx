@@ -1603,47 +1603,46 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded-sm flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              disabled={undoStack.length === 0}
               onClick={undo}
             >
-              <IconUndo
-                size="large"
-                style={{ color: undoStack.length === 0 ? "#9598a6" : "" }}
-              />
+              <IconUndo size="large" />
             </button>
           </Tooltip>
           <Tooltip content={t("redo")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded-sm flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              disabled={redoStack.length === 0}
               onClick={redo}
             >
-              <IconRedo
-                size="large"
-                style={{ color: redoStack.length === 0 ? "#9598a6" : "" }}
-              />
+              <IconRedo size="large" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("add_table")} position="bottom">
             <button
-              className="flex items-center py-1 px-2 hover-2 rounded-sm"
+              className="flex items-center py-1 px-2 hover-2 rounded-sm disabled:opacity-50"
               onClick={() => addTable()}
+              disabled={layout.readOnly}
             >
               <IconAddTable />
             </button>
           </Tooltip>
           <Tooltip content={t("add_area")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded-sm flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
               onClick={() => addArea()}
+              disabled={layout.readOnly}
             >
               <IconAddArea />
             </button>
           </Tooltip>
           <Tooltip content={t("add_note")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded-sm flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
               onClick={() => addNote()}
+              disabled={layout.readOnly}
             >
               <IconAddNote />
             </button>
@@ -1651,8 +1650,9 @@ export default function ControlPanel({
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button
-              className="py-1 px-2 hover-2 rounded-sm flex items-center"
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
               onClick={save}
+              disabled={layout.readOnly}
             >
               <IconSaveStroked size="extra-large" />
             </button>
@@ -1887,11 +1887,7 @@ export default function ControlPanel({
                   </Dropdown>
                 ))}
               </div>
-              {layout.readOnly && (
-                <Tag size="small">
-                  {t("read_only")}
-                </Tag>
-              )}
+              {layout.readOnly && <Tag size="small">{t("read_only")}</Tag>}
               {!layout.readOnly && (
                 <Tag
                   size="small"
