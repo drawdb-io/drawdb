@@ -134,6 +134,7 @@ export default function Table(props) {
                   style={{
                     backgroundColor: "#2f68adb3",
                   }}
+                  disabled={layout.readOnly}
                   onClick={lockUnlockTable}
                 />
                 <Button
@@ -197,6 +198,7 @@ export default function Table(props) {
                         block
                         style={{ marginTop: "8px" }}
                         onClick={() => deleteTable(tableData.id)}
+                        disabled={layout.readOnly}
                       >
                         {t("delete")}
                       </Button>

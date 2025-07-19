@@ -1,13 +1,14 @@
 import { Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import Empty from "../Empty";
-import { useAreas } from "../../../hooks";
+import { useAreas, useLayout } from "../../../hooks";
 import SearchBar from "./SearchBar";
 import AreaInfo from "./AreaDetails";
 import { useTranslation } from "react-i18next";
 
 export default function AreasTab() {
   const { areas, addArea } = useAreas();
+  const { layout } = useLayout();
   const { t } = useTranslation();
 
   return (
@@ -15,7 +16,12 @@ export default function AreasTab() {
       <div className="flex gap-2">
         <SearchBar />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addArea()}>
+          <Button
+            icon={<IconPlus />}
+            block
+            onClick={() => addArea()}
+            disabled={layout.readOnly}
+          >
             {t("add_area")}
           </Button>
         </div>
