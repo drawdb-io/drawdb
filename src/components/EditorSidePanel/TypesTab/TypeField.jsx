@@ -11,13 +11,20 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconMore } from "@douyinfe/semi-icons";
-import { useUndoRedo, useTypes, useDiagram, useEnums } from "../../../hooks";
+import {
+  useUndoRedo,
+  useTypes,
+  useDiagram,
+  useEnums,
+  useLayout,
+} from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
   const { enums } = useEnums();
+  const { layout } = useLayout();
   const { database } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -28,6 +35,7 @@ export default function TypeField({ data, tid, fid }) {
       <Col span={10}>
         <Input
           value={data.name}
+          readonly={layout.readOnly}
           validateStatus={data.name === "" ? "error" : "default"}
           placeholder={t("name")}
           onChange={(value) =>
@@ -86,6 +94,7 @@ export default function TypeField({ data, tid, fid }) {
           validateStatus={data.type === "" ? "error" : "default"}
           placeholder={t("type")}
           onChange={(value) => {
+            if (layout.readOnly) return;
             if (value === data.type) return;
             setUndoStack((prev) => [
               ...prev,
@@ -160,13 +169,14 @@ export default function TypeField({ data, tid, fid }) {
                     }
                     className="my-2"
                     placeholder={t("use_for_batch_input")}
-                    onChange={(v) =>
+                    onChange={(v) => {
+                      if (layout.readOnly) return;
                       updateType(tid, {
                         fields: types[tid].fields.map((e, id) =>
                           id === fid ? { ...data, values: v } : e,
                         ),
-                      })
-                    }
+                      });
+                    }}
                     onFocus={() => setEditField({ values: data.values })}
                     onBlur={() => {
                       if (
@@ -202,6 +212,7 @@ export default function TypeField({ data, tid, fid }) {
                     className="my-2 w-full"
                     placeholder={t("size")}
                     value={data.size}
+                    readonly={layout.readOnly}
                     onChange={(value) =>
                       updateType(tid, {
                         fields: types[tid].fields.map((e, id) =>
@@ -239,6 +250,7 @@ export default function TypeField({ data, tid, fid }) {
                   <Input
                     className="my-2 w-full"
                     placeholder={t("set_precision")}
+                    readonly={layout.readOnly}
                     validateStatus={
                       /^\(\d+,\s*\d+\)$|^$/.test(data.size)
                         ? "default"
@@ -277,9 +289,10 @@ export default function TypeField({ data, tid, fid }) {
                 </>
               )}
               <Button
-                icon={<IconDeleteStroked />}
                 block
                 type="danger"
+                disabled={layout.readOnly}
+                icon={<IconDeleteStroked />}
                 onClick={() => {
                   setUndoStack((prev) => [
                     ...prev,

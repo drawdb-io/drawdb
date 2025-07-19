@@ -10,11 +10,12 @@ import {
   Card,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked, IconPlus } from "@douyinfe/semi-icons";
-import { useUndoRedo, useTypes, useDiagram } from "../../../hooks";
+import { useUndoRedo, useTypes, useDiagram, useLayout } from "../../../hooks";
 import TypeField from "./TypeField";
 import { useTranslation } from "react-i18next";
 
 export default function TypeInfo({ index, data }) {
+  const { layout } = useLayout();
   const { deleteType, updateType } = useTypes();
   const { tables, updateField } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -35,6 +36,7 @@ export default function TypeInfo({ index, data }) {
           <div className="text-md font-semibold break-keep">{t("name")}: </div>
           <Input
             value={data.name}
+            readonly={layout.readOnly}
             validateStatus={data.name === "" ? "error" : "default"}
             placeholder={t("name")}
             className="ms-2"
@@ -97,6 +99,7 @@ export default function TypeInfo({ index, data }) {
                 field="comment"
                 value={data.comment}
                 autosize
+                readonly={layout.readOnly}
                 placeholder={t("comment")}
                 rows={1}
                 onChange={(value) =>
@@ -130,6 +133,7 @@ export default function TypeInfo({ index, data }) {
           <Col span={12}>
             <Button
               icon={<IconPlus />}
+              disabled={layout.readOnly}
               onClick={() => {
                 setUndoStack((prev) => [
                   ...prev,
@@ -162,10 +166,11 @@ export default function TypeInfo({ index, data }) {
           </Col>
           <Col span={12}>
             <Button
-              icon={<IconDeleteStroked />}
-              type="danger"
-              onClick={() => deleteType(index)}
               block
+              type="danger"
+              disabled={layout.readOnly}
+              icon={<IconDeleteStroked />}
+              onClick={() => deleteType(index)}
             >
               {t("delete")}
             </Button>

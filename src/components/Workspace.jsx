@@ -19,26 +19,33 @@ import {
   useEnums,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
-import { Modal, Tag } from "@douyinfe/semi-ui";
+import { Button, Modal, Tag } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get } from "../api/gists";
 
-export const IdContext = createContext({ gistId: "", setGistId: () => {} });
+export const IdContext = createContext({
+  gistId: "",
+  setGistId: () => {},
+  version: "",
+  setVersion: () => {},
+});
 
 const SIDEPANEL_MIN_WIDTH = 384;
 
 export default function WorkSpace() {
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
+  const [version, setVersion] = useState("");
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [width, setWidth] = useState(SIDEPANEL_MIN_WIDTH);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedDb, setSelectedDb] = useState("");
   const { layout } = useLayout();
   const { settings } = useSettings();
@@ -67,8 +74,6 @@ export default function WorkSpace() {
   };
 
   const save = useCallback(async () => {
-    if (saveState !== State.SAVING) return;
-
     const name = window.name.split(" ");
     const op = name[0];
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
@@ -163,7 +168,6 @@ export default function WorkSpace() {
     enums,
     gistId,
     loadedFromGistId,
-    saveState,
   ]);
 
   const load = useCallback(async () => {
@@ -397,8 +401,12 @@ export default function WorkSpace() {
   ]);
 
   useEffect(() => {
+    if (layout.readOnly) return;
+
+    if (saveState !== State.SAVING) return;
+
     save();
-  }, [saveState, save]);
+  }, [saveState, layout, save]);
 
   useEffect(() => {
     document.title = "Editor | drawDB";
@@ -408,7 +416,7 @@ export default function WorkSpace() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
-      <IdContext.Provider value={{ gistId, setGistId }}>
+      <IdContext.Provider value={{ gistId, setGistId, version, setVersion }}>
         <ControlPanel
           diagramId={id}
           setDiagramId={setId}
@@ -437,6 +445,18 @@ export default function WorkSpace() {
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
+          {version && (
+            <div
+              className="absolute right-8 top-2"
+              onClick={() => setShowRestoreModal(true)}
+            >
+              <Button
+                icon={<i className="fa-solid fa-rotate-right mt-0.5"></i>}
+              >
+                Restore version
+              </Button>
+            </div>
+          )}
           {!(layout.sidebar || layout.toolbar || layout.header) && (
             <div className="fixed right-5 bottom-4">
               <FloatingControls />
@@ -493,6 +513,12 @@ export default function WorkSpace() {
           ))}
         </div>
       </Modal>
+      <Modal
+        visible={showRestoreModal}
+        centered
+        closable
+        onCancel={() => setShowRestoreModal(false)}
+      ></Modal>
     </div>
   );
 }

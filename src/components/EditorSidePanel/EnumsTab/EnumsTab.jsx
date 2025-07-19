@@ -1,5 +1,5 @@
 import { Button, Collapse } from "@douyinfe/semi-ui";
-import { useEnums } from "../../../hooks";
+import { useEnums, useLayout } from "../../../hooks";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import SearchBar from "./SearchBar";
@@ -8,6 +8,7 @@ import Empty from "../Empty";
 
 export default function EnumsTab() {
   const { enums, addEnum } = useEnums();
+  const { layout } = useLayout();
   const { t } = useTranslation();
 
   return (
@@ -15,7 +16,12 @@ export default function EnumsTab() {
       <div className="flex gap-2">
         <SearchBar />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addEnum()}>
+          <Button
+            block
+            icon={<IconPlus />}
+            onClick={() => addEnum()}
+            disabled={layout.readOnly}
+          >
             {t("add_enum")}
           </Button>
         </div>

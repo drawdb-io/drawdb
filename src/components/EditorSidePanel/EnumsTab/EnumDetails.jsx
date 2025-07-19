@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button, Input, TagInput } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useEnums, useUndoRedo } from "../../../hooks";
+import { useDiagram, useEnums, useLayout, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
 export default function EnumDetails({ data, i }) {
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const { deleteEnum, updateEnum } = useEnums();
   const { tables, updateField } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -18,6 +19,7 @@ export default function EnumDetails({ data, i }) {
         <div className="font-semibold">{t("Name")}: </div>
         <Input
           value={data.name}
+          readonly={layout.readOnly}
           placeholder={t("name")}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           onChange={(value) => {
@@ -71,7 +73,11 @@ export default function EnumDetails({ data, i }) {
         className="my-2"
         placeholder={t("values")}
         validateStatus={data.values.length === 0 ? "error" : "default"}
-        onChange={(v) => updateEnum(i, { values: v })}
+        onChange={(v) => {
+          if (layout.readOnly) return;
+
+          updateEnum(i, { values: v });
+        }}
         onFocus={() => setEditField({ values: data.values })}
         onBlur={() => {
           if (JSON.stringify(editField.values) === JSON.stringify(data.values))
@@ -95,8 +101,9 @@ export default function EnumDetails({ data, i }) {
       />
       <Button
         block
-        icon={<IconDeleteStroked />}
         type="danger"
+        icon={<IconDeleteStroked />}
+        disabled={layout.readOnly}
         onClick={() => deleteEnum(i, true)}
       >
         {t("delete")}

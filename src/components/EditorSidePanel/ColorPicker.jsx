@@ -2,8 +2,9 @@ import { ColorPicker as SemiColorPicker } from "@douyinfe/semi-ui";
 import { useState } from "react";
 
 export default function ColorPicker({
-  children,
   value,
+  readOnly,
+  children,
   onChange,
   onColorPick,
   ...props
@@ -25,6 +26,7 @@ export default function ColorPicker({
         {...props}
         value={SemiColorPicker.colorStringToValue(value)}
         onChange={({ hex: color }) => {
+          if (readOnly) return;
           setPickedColor(color);
           onChange(color);
         }}

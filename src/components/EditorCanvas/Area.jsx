@@ -221,6 +221,7 @@ function EditPopoverContent({ data }) {
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
+  const {layout} = useLayout();
   const initialColorRef = useRef(data.color);
 
   const handleColorPick = (color) => {
@@ -266,6 +267,7 @@ function EditPopoverContent({ data }) {
           value={data.name}
           placeholder={t("name")}
           className="me-2"
+          readOnly={layout.readOnly}
           onChange={(value) => updateArea(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -289,6 +291,7 @@ function EditPopoverContent({ data }) {
         />
         <ColorPicker
           usePopover={true}
+          readOnly={true}
           value={data.color}
           onChange={(color) => updateArea(data.id, { color })}
           onColorPick={(color) => handleColorPick(color)}

@@ -1,6 +1,6 @@
 import { Collapse, Button, Popover } from "@douyinfe/semi-ui";
 import { IconPlus, IconInfoCircle } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram, useTypes } from "../../../hooks";
+import { useSelect, useDiagram, useTypes, useLayout } from "../../../hooks";
 import { DB, ObjectType } from "../../../data/constants";
 import Searchbar from "./SearchBar";
 import Empty from "../Empty";
@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 export default function TypesTab() {
   const { types, addType } = useTypes();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { layout } = useLayout();
   const { database } = useDiagram();
   const { t } = useTranslation();
 
@@ -18,7 +19,12 @@ export default function TypesTab() {
       <div className="flex gap-2">
         <Searchbar />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addType()}>
+          <Button
+            block
+            icon={<IconPlus />}
+            onClick={() => addType()}
+            disabled={layout.readOnly}
+          >
             {t("add_type")}
           </Button>
         </div>

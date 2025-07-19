@@ -43,3 +43,9 @@ export async function getCommits(gistId, perPage = 20, page = 1) {
 
   return res.data;
 }
+
+export async function getVersion(gistId, sha) {
+  const res = await axios.get(`${baseUrl}/gists/${gistId}/${sha}`);
+
+  return res.data;
+}

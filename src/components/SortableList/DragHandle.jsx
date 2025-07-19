@@ -1,12 +1,13 @@
 import { IconHandle } from "@douyinfe/semi-icons";
 import { useSortable } from "@dnd-kit/sortable";
 
-export function DragHandle({ id }) {
+export function DragHandle({ id, readOnly }) {
   const { listeners } = useSortable({ id });
+
   return (
     <div
-      className="flex cursor-move items-center justify-center opacity-50 mt-0.5"
-      {...listeners}
+      className={`opacity-50 mt-0.5 ${readOnly ? "cursor-not-allowed" : "cursor-move"}`}
+      {...(!readOnly && listeners)}
     >
       <IconHandle />
     </div>

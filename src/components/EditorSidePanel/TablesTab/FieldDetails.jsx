@@ -9,13 +9,14 @@ import {
 } from "@douyinfe/semi-ui";
 import { Action, ObjectType } from "../../../data/constants";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useUndoRedo } from "../../../hooks";
+import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { databases } from "../../../data/databases";
 
 export default function FieldDetails({ data, tid }) {
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const { tables, database } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { updateField, deleteField } = useDiagram();
@@ -29,6 +30,7 @@ export default function FieldDetails({ data, tid }) {
         className="my-2"
         placeholder={t("default_value")}
         value={data.default}
+        readonly={layout.readOnly}
         disabled={dbToTypes[database][data.type].noDefault || data.increment}
         onChange={(value) => updateField(tid, data.id, { default: value })}
         onFocus={(e) => setEditField({ default: e.target.value })}
@@ -67,7 +69,10 @@ export default function FieldDetails({ data, tid }) {
             addOnBlur
             className="my-2"
             placeholder={t("use_for_batch_input")}
-            onChange={(v) => updateField(tid, data.id, { values: v })}
+            onChange={(v) => {
+              if (layout.readOnly) return;
+              updateField(tid, data.id, { values: v });
+            }}
             onFocus={() => setEditField({ values: data.values })}
             onBlur={() => {
               if (
@@ -102,6 +107,7 @@ export default function FieldDetails({ data, tid }) {
             className="my-2 w-full"
             placeholder={t("size")}
             value={data.size}
+            readonly={layout.readOnly}
             onChange={(value) => updateField(tid, data.id, { size: value })}
             onFocus={(e) => setEditField({ size: e.target.value })}
             onBlur={(e) => {
@@ -138,6 +144,7 @@ export default function FieldDetails({ data, tid }) {
                 ? "default"
                 : "error"
             }
+            readonly={layout.readOnly}
             value={data.size}
             onChange={(value) => updateField(tid, data.id, { size: value })}
             onFocus={(e) => setEditField({ size: e.target.value })}
@@ -172,6 +179,7 @@ export default function FieldDetails({ data, tid }) {
             placeholder={t("check")}
             value={data.check}
             disabled={data.increment}
+            readonly={layout.readOnly}
             onChange={(value) => updateField(tid, data.id, { check: value })}
             onFocus={(e) => setEditField({ check: e.target.value })}
             onBlur={(e) => {
@@ -203,6 +211,7 @@ export default function FieldDetails({ data, tid }) {
         <Checkbox
           value="unique"
           checked={data.unique}
+          disabled={layout.readOnly}
           onChange={(checkedValues) => {
             setUndoStack((prev) => [
               ...prev,
@@ -233,7 +242,7 @@ export default function FieldDetails({ data, tid }) {
           value="increment"
           checked={data.increment}
           disabled={
-            !dbToTypes[database][data.type].canIncrement || data.isArray
+            !dbToTypes[database][data.type].canIncrement || data.isArray || layout.readOnly
           }
           onChange={(checkedValues) => {
             setUndoStack((prev) => [
@@ -270,6 +279,7 @@ export default function FieldDetails({ data, tid }) {
           <Checkbox
             value="isArray"
             checked={data.isArray}
+            disabled={layout.readOnly}
             onChange={(checkedValues) => {
               setUndoStack((prev) => [
                 ...prev,
@@ -307,6 +317,7 @@ export default function FieldDetails({ data, tid }) {
             <Checkbox
               value="unsigned"
               checked={data.unsigned}
+              disabled={layout.readOnly}
               onChange={(checkedValues) => {
                 setUndoStack((prev) => [
                   ...prev,
@@ -343,6 +354,7 @@ export default function FieldDetails({ data, tid }) {
         className="my-2"
         placeholder={t("comment")}
         value={data.comment}
+        readonly={layout.readOnly}
         autosize
         rows={2}
         onChange={(value) => updateField(tid, data.id, { comment: value })}
@@ -372,6 +384,7 @@ export default function FieldDetails({ data, tid }) {
         icon={<IconDeleteStroked />}
         type="danger"
         block
+        disabled={layout.readOnly}
         onClick={() => deleteField(data, tid)}
       >
         {t("delete")}
