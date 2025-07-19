@@ -2,7 +2,13 @@ import { useMemo, useState } from "react";
 import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
-import { useEnums, useDiagram, useTypes, useUndoRedo } from "../../../hooks";
+import {
+  useEnums,
+  useDiagram,
+  useTypes,
+  useUndoRedo,
+  useLayout,
+} from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
@@ -12,6 +18,7 @@ export default function TableField({ data, tid, index, inherited }) {
   const { updateField } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
+  const { layout } = useLayout();
   const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -20,7 +27,7 @@ export default function TableField({ data, tid, index, inherited }) {
 
   return (
     <div className="hover-1 my-2 flex gap-2 items-center">
-      <DragHandle id={data.id} />
+      <DragHandle readOnly={layout.readOnly} id={data.id} />
 
       <div className="min-w-20 flex-1/3">
         <Input
@@ -29,6 +36,7 @@ export default function TableField({ data, tid, index, inherited }) {
           validateStatus={
             data.name.trim() === "" || inherited ? "error" : "default"
           }
+          readonly={layout.readOnly}
           placeholder={t("name")}
           onChange={(value) => updateField(tid, data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
@@ -77,6 +85,8 @@ export default function TableField({ data, tid, index, inherited }) {
           validateStatus={data.type === "" ? "error" : "default"}
           placeholder={t("type")}
           onChange={(value) => {
+            if (layout.readOnly) return;
+
             if (value === data.type) return;
             setUndoStack((prev) => [
               ...prev,
@@ -142,10 +152,12 @@ export default function TableField({ data, tid, index, inherited }) {
 
       <div>
         <Button
-          type={data.notNull ? "tertiary" : "primary"}
           title={t("nullable")}
+          type={data.notNull ? "tertiary" : "primary"}
           theme={data.notNull ? "light" : "solid"}
           onClick={() => {
+            if (layout.readOnly) return;
+
             setUndoStack((prev) => [
               ...prev,
               {
@@ -172,11 +184,13 @@ export default function TableField({ data, tid, index, inherited }) {
 
       <div>
         <Button
-          type={data.primary ? "primary" : "tertiary"}
           title={t("primary")}
           theme={data.primary ? "solid" : "light"}
+          type={data.primary ? "primary" : "tertiary"}
           icon={<IconKeyStroked />}
           onClick={() => {
+            if (layout.readOnly) return;
+
             setUndoStack((prev) => [
               ...prev,
               {

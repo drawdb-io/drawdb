@@ -126,7 +126,7 @@ export default function ControlPanel({
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
-  const { setGistId } = useContext(IdContext);
+  const { version, setGistId } = useContext(IdContext);
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -1751,7 +1751,7 @@ export default function ControlPanel({
                 />
               )}
               <div
-                className="text-xl  me-1"
+                className="text-xl flex items-center gap-1 me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
                 onPointerLeave={(e) => e.isPrimary && setShowEditName(false)}
                 onPointerDown={(e) => {
@@ -1761,12 +1761,20 @@ export default function ControlPanel({
                 }}
                 onClick={() => setModal(MODAL.RENAME)}
               >
-                {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
-                {title}
+                <span>
+                  {(window.name.split(" ")[0] === "t"
+                    ? "Templates/"
+                    : "Diagrams/") + title}
+                </span>
+                {version && (
+                  <Tag className="mt-1" color="blue" size="small">
+                    {version.substring(0, 7)}
+                  </Tag>
+                )}
               </div>
               {(showEditName || modal === MODAL.RENAME) && <IconEdit />}
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center">
               <div className="flex justify-start text-md select-none me-2">
                 {Object.keys(menu).map((category) => (
                   <Dropdown
@@ -1879,17 +1887,25 @@ export default function ControlPanel({
                   </Dropdown>
                 ))}
               </div>
-              <Button
-                size="small"
-                type="tertiary"
-                icon={
-                  saveState === State.LOADING || saveState === State.SAVING ? (
-                    <Spin size="small" />
-                  ) : null
-                }
-              >
-                {getState()}
-              </Button>
+              {layout.readOnly && (
+                <Tag size="small">
+                  {t("read_only")}
+                </Tag>
+              )}
+              {!layout.readOnly && (
+                <Tag
+                  size="small"
+                  type="light"
+                  prefixIcon={
+                    saveState === State.LOADING ||
+                    saveState === State.SAVING ? (
+                      <Spin size="small" />
+                    ) : null
+                  }
+                >
+                  {getState()}
+                </Tag>
+              )}
             </div>
           </div>
         </div>

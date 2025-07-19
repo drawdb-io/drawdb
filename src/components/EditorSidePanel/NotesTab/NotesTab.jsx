@@ -1,6 +1,6 @@
 import { Button, Collapse } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useNotes, useSelect } from "../../../hooks";
+import { useLayout, useNotes, useSelect } from "../../../hooks";
 import Empty from "../Empty";
 import SearchBar from "./SearchBar";
 import NoteInfo from "./NoteInfo";
@@ -10,6 +10,7 @@ export default function NotesTab() {
   const { notes, addNote } = useNotes();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
+  const { layout } = useLayout();
 
   return (
     <>
@@ -23,7 +24,12 @@ export default function NotesTab() {
           }
         />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addNote()}>
+          <Button
+            block
+            icon={<IconPlus />}
+            onClick={() => addNote()}
+            disabled={layout.readOnly}
+          >
             {t("add_note")}
           </Button>
         </div>

@@ -9,7 +9,12 @@ import {
 } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useSaveState, useUndoRedo } from "../../../hooks";
+import {
+  useDiagram,
+  useLayout,
+  useSaveState,
+  useUndoRedo,
+} from "../../../hooks";
 import { Action, ObjectType, State, DB } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
@@ -21,6 +26,7 @@ export default function TableInfo({ data }) {
   const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
+  const { layout } = useLayout();
   const { deleteTable, updateTable, setTables } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
@@ -82,6 +88,7 @@ export default function TableInfo({ data }) {
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder={t("name")}
           className="ms-2"
+          readonly={layout.readOnly}
           onChange={(value) => updateTable(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -139,6 +146,8 @@ export default function TableInfo({ data }) {
               .filter((t) => t.id !== data.id)
               .map((t) => ({ label: t.name, value: t.name }))}
             onChange={(value) => {
+              if (layout.readOnly) return;
+
               setUndoStack((prev) => [
                 ...prev,
                 {
@@ -204,6 +213,7 @@ export default function TableInfo({ data }) {
             <TextArea
               field="comment"
               value={data.comment}
+              readonly={layout.readOnly}
               autosize
               placeholder={t("comment")}
               rows={1}
@@ -238,6 +248,7 @@ export default function TableInfo({ data }) {
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
           usePopover={true}
+          readOnly={layout.readOnly}
           value={data.color}
           onChange={(color) => updateTable(data.id, { color })}
           onColorPick={(color) => handleColorPick(color)}
@@ -245,6 +256,7 @@ export default function TableInfo({ data }) {
         <div className="flex gap-1">
           <Button
             block
+            disabled={layout.readOnly}
             onClick={() => {
               setIndexActiveKey("1");
               setUndoStack((prev) => [
@@ -277,6 +289,8 @@ export default function TableInfo({ data }) {
             {t("add_index")}
           </Button>
           <Button
+            block
+            disabled={layout.readOnly}
             onClick={() => {
               const id = nanoid();
               setUndoStack((prev) => [
@@ -312,13 +326,13 @@ export default function TableInfo({ data }) {
                 ],
               });
             }}
-            block
           >
             {t("add_field")}
           </Button>
           <Button
-            icon={<IconDeleteStroked />}
             type="danger"
+            disabled={layout.readOnly}
+            icon={<IconDeleteStroked />}
             onClick={() => deleteTable(data.id)}
           />
         </div>

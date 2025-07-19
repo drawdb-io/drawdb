@@ -116,7 +116,7 @@ export default function Share({ title, setModal }) {
       {!error && (
         <>
           <div className="flex gap-3">
-            <Input value={url} size="large" />
+            <Input value={url} size="large" readonly />
           </div>
           <div className="text-xs mt-2">{t("share_info")}</div>
           <div className="flex gap-2 mt-3">

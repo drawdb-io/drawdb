@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { IdContext } from "../../Workspace";
 import { useTranslation } from "react-i18next";
 import { Button, IconButton, Spin, Steps, Tag, Toast } from "@douyinfe/semi-ui";
@@ -7,14 +7,40 @@ import {
   IconChevronRight,
   IconChevronLeft,
 } from "@douyinfe/semi-icons";
-import { getCommits } from "../../../api/gists";
+import { getCommits, getVersion } from "../../../api/gists";
 import { DateTime } from "luxon";
+import { useAreas, useDiagram, useLayout } from "../../../hooks";
 
 export default function Revisions({ open }) {
-  const { gistId } = useContext(IdContext);
+  const { gistId, setVersion } = useContext(IdContext);
+  const { setAreas } = useAreas();
+  const { setLayout } = useLayout();
+  const { setTables, setRelationships } = useDiagram();
   const { t, i18n } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [revisions, setRevisions] = useState([]);
+
+  const loadVersion = useCallback(
+    async (sha) => {
+      try {
+        const version = await getVersion(gistId, sha);
+        setVersion(sha);
+        setLayout((prev) => ({ ...prev, readOnly: true }));
+
+        const content = version.data.files["share.json"].content;
+
+        const parsedDiagram = JSON.parse(content);
+
+        setTables(parsedDiagram.tables);
+        setRelationships(parsedDiagram.relationships);
+        setAreas(parsedDiagram.subjectAreas);
+      } catch (e) {
+        console.log(e);
+        Toast.error("failed_to_load_diagram");
+      }
+    },
+    [gistId, setTables, setRelationships, setAreas, setVersion, setLayout],
+  );
 
   useEffect(() => {
     const getRevisions = async (gistId) => {
@@ -62,9 +88,7 @@ export default function Revisions({ open }) {
             {revisions.map((r, i) => (
               <Steps.Step
                 key={r.version}
-                onClick={() => {
-                  alert(r.version);
-                }}
+                onClick={() => loadVersion(r.version)}
                 title={
                   <div className="flex justify-between items-center w-full">
                     <span>{`${t("version")} ${revisions.length - i}`}</span>

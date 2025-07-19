@@ -9,6 +9,7 @@ export default function LayoutContextProvider({ children }) {
     issues: true,
     toolbar: true,
     dbmlEditor: false,
+    readOnly: false,
   });
 
   return (

@@ -3,10 +3,11 @@ import { Button, Collapse, TextArea, Input } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { Action, ObjectType } from "../../../data/constants";
-import { useNotes, useUndoRedo } from "../../../hooks";
+import { useLayout, useNotes, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function NoteInfo({ data, nid }) {
+  const { layout } = useLayout();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -62,6 +63,7 @@ export default function NoteInfo({ data, nid }) {
         <div className="font-semibold me-2 break-keep">{t("title")}:</div>
         <Input
           value={data.title}
+          readonly={layout.readOnly}
           placeholder={t("title")}
           onChange={(value) => updateNote(data.id, { title: value })}
           onFocus={(e) => setEditField({ title: e.target.value })}
@@ -90,6 +92,7 @@ export default function NoteInfo({ data, nid }) {
           placeholder={t("content")}
           value={data.content}
           autosize
+          readonly={layout.readOnly}
           onChange={(value) => {
             const textarea = document.getElementById(`note_${data.id}`);
             textarea.style.height = "0";
@@ -127,13 +130,15 @@ export default function NoteInfo({ data, nid }) {
         <div className="ms-2 flex flex-col gap-2">
           <ColorPicker
             usePopover={true}
+            readOnly={layout.readOnly}
             value={data.color}
             onChange={(color) => updateNote(data.id, { color })}
             onColorPick={(color) => handleColorPick(color)}
           />
           <Button
-            icon={<IconDeleteStroked />}
             type="danger"
+            disabled={layout.readOnly}
+            icon={<IconDeleteStroked />}
             onClick={() => deleteNote(nid, true)}
           />
         </div>
