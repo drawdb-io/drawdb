@@ -1519,6 +1519,9 @@ export default function ControlPanel({
       table_width: {
         function: () => setModal(MODAL.TABLE_WIDTH),
       },
+      defaults : {
+        function: () => setModal(MODAL.DEFAULTS),
+      },
       language: {
         function: () => setModal(MODAL.LANGUAGE),
       },

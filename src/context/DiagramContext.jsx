@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useSettings } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ export default function DiagramContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { settings } = useSettings();
 
   const addTable = (data, addToHistory = true) => {
     if (data) {
@@ -27,13 +28,13 @@ export default function DiagramContextProvider({ children }) {
         ...prev,
         {
           id: prev.length,
-          name: `table_${prev.length}`,
+          name: settings.upperCaseFields ? `TABLE_${prev.length}` : `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
           fields: [
             {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
+              name: settings.upperCaseFields ? "ID" : "id",
+              type: database === DB.GENERIC ? "INT" : database === DB.ORACLE ? "NUMBER" : "INTEGER",
               default: "",
               check: "",
               primary: true,
@@ -252,7 +253,6 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
-
     const currentTable = tables.find(t => t.id === tid);
     if (!currentTable) return;
 
@@ -263,6 +263,7 @@ export default function DiagramContextProvider({ children }) {
       if (!field.foreignK || !field.foreignKey) return false;
       const fkParentTableId = field.foreignKey.tableId;
       const relatedFKs = currentTable.fields.filter(
+
         f =>
           f.foreignK && f.foreignKey &&
           f.foreignKey.tableId === fkParentTableId
@@ -270,8 +271,10 @@ export default function DiagramContextProvider({ children }) {
       return relatedFKs.length > 1;
     })();
 
+
     // Get relationships directly connected to the field being deleted
     let directlyAffectedRelationships = relationships.filter(
+
       (r) =>
         (r.startTableId === tid && r.startFieldId === field.id) ||
         (r.endTableId === tid && r.endFieldId === field.id)
@@ -292,6 +295,7 @@ export default function DiagramContextProvider({ children }) {
       const relatedFKFieldIds = currentTable.fields
         .filter(f => f.foreignK && f.foreignKey && f.foreignKey.tableId === fkParentTableId)
         .map(f => f.id);
+
       compositeFKAffectedRelationships = relationships.filter(
         (r) => r.endTableId === tid && relatedFKFieldIds.includes(r.endFieldId)
       );
