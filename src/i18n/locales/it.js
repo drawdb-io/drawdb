@@ -7,8 +7,9 @@ const italian = {
 const it = {
   translation: {
     report_bug: "Segnalare un bug",
+    import_from: "Importa",
     import: "Importa",
-    file: "File ",
+    file: "File",
     new: "Nuovo",
     new_window: "Nuova Finestra",
     open: "Apri",
@@ -65,7 +66,7 @@ const it = {
     cursor_coordinates: "Coordinate del cursore",
     coordinate_space: "Spazio",
     coordinate_space_screen: "Schermo",
-    coordinate_space_diagram: "Diagramma",	
+    coordinate_space_diagram: "Diagramma",
     table_width: "Larghezza della tabella",
     language: "Lingua",
     flush_storage: "Pulizia memoria",
@@ -156,8 +157,8 @@ const it = {
     create: "Crea",
     confirm: "Accetta",
     last_modified: "Ultima modifica",
-    drag_and_drop_files: "Trascina e rilascia qui il file o clicca per caricarlo.",
-    support_json_and_ddb: "I file JSON e DDB sono supportati",
+    drag_and_drop_files:
+      "Trascina e rilascia qui il file o clicca per caricarlo.",
     upload_sql_to_generate_diagrams:
       "Carica un file sql per autogenerare le tabelle e le colonne.",
     overwrite_existing_diagram: "Sovrascrivi il diagramma esistente",
@@ -179,11 +180,13 @@ const it = {
       "Campi della tabella duplicati con il nome '{{fieldName}}' nella tabella '{{tableName}}'",
     duplicate_index:
       "Indice duplicato con il nome '{{indexName}}' nella tabella '{{tableName}}'",
-    empty_index: "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
+    empty_index:
+      "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
     no_primary_key: "La tabella '{{tableName}}' non ha una chiave primaria",
     type_with_no_name: "Dichiarato un tipo senza nome",
     duplicate_types: "Tipi duplicati con il nome '{{typeName}}'",
-    type_w_no_fields: "Dichiarato un tipo vuoto '{{typeName}}' senza alcun campo",
+    type_w_no_fields:
+      "Dichiarato un tipo vuoto '{{typeName}}' senza alcun campo",
     empty_type_field_name: "Campo `name` vuoto nel tipo '{{typeName}}'",
     empty_type_field_type: "Campo `type` vuoto nel tipo '{{typeName}}'",
     no_values_for_type_field:
@@ -191,7 +194,8 @@ const it = {
     duplicate_type_fields:
       "Campi di tipo duplicati con il nome '{{fieldName}}' nel tipo '{{typeName}}'",
     duplicate_reference: "Riferimento duplicato con il nome '{{refName}}'",
-    circular_dependency: "Dipendenza circolare riguardante la tabella '{{refName}}'",
+    circular_dependency:
+      "Dipendenza circolare riguardante la tabella '{{refName}}'",
     timeline: "Cronologia",
     priority: "Priorità",
     none: "Nessuna",
@@ -219,7 +223,7 @@ const it = {
     edit_relationship: "{{extra}} Modifica relazione {{refName}}",
     delete_relationship: "Elimina relazione {{refName}}",
     not_found: "Nessun risultato",
-	pick_db: "Scegli il database",
+    pick_db: "Scegli il database",
     generic: "Generico",
     generic_description:
       "I diagrammi generici possono essere esportati in qualsiasi formato SQL, ma supportano un numero limitato di tipi di dati.",
@@ -233,9 +237,10 @@ const it = {
     no_enums: "Nessun enum",
     no_enums_text: "Definisci qui gli enum",
     declare_array: "Dichiara array",
-    empty_index_name: "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
+    empty_index_name:
+      "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
     didnt_find_diagram: "Ops! Impossibile trovare il diagramma.",
-	unsigned: "Senza segno",
+    unsigned: "Senza segno",
   },
 };
 

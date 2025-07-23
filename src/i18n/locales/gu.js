@@ -7,6 +7,7 @@ const gujarati = {
 const gu = {
   translation: {
     report_bug: "બગ રિપોર્ટ કરો",
+    import_from: "આયાત",
     import: "આયાત",
     file: "ફાઇલ",
     new: "નવું",
@@ -149,8 +150,8 @@ const gu = {
     create: "બનાવો",
     confirm: "પુષ્ટિ કરો",
     last_modified: "છેલ્લે સુધારેલા",
-    drag_and_drop_files: "ફાઇલને અહીં ખેંચો અને છોડો અથવા અપલોડ કરવા માટે ક્લિક કરો.",
-    support_json_and_ddb: "JSON અને DDB ફાઇલો સપોર્ટેડ છે",
+    drag_and_drop_files:
+      "ફાઇલને અહીં ખેંચો અને છોડો અથવા અપલોડ કરવા માટે ક્લિક કરો.",
     upload_sql_to_generate_diagrams:
       "તમારી ટેબલ અને કોલમને આપમેળે જનરેટ કરવા માટે SQL ફાઇલ અપલોડ કરો.",
     overwrite_existing_diagram: "મોજુદા ડાયાગ્રામને ઓવરરાઈટ કરો",
@@ -163,26 +164,28 @@ const gu = {
     empty_field_name: "ટેબલ '{{tableName}}' માં ખાલી ફિલ્ડ `નામ`",
     empty_field_type: "ટેબલ '{{tableName}}' માં ખાલી ફીલ્ડ `પ્રકાર`",
     no_values_for_field:
-        "ટેબલ '{{tableName}}' ના ફીલ્ડ '{{fieldName}}' નો પ્રકાર `{{type}}` છે પરંતુ કોઈ મૂલ્ય નિર્દિષ્ટ નથી",
+      "ટેબલ '{{tableName}}' ના ફીલ્ડ '{{fieldName}}' નો પ્રકાર `{{type}}` છે પરંતુ કોઈ મૂલ્ય નિર્દિષ્ટ નથી",
     default_doesnt_match_type:
-        "ટેબલ '{{tableName}}' માં ફીલ્ડ '{{fieldName}}' નું ડિફોલ્ટ મૂલ્ય તેના પ્રકાર સાથે મેળ ખાતું નથી",
+      "ટેબલ '{{tableName}}' માં ફીલ્ડ '{{fieldName}}' નું ડિફોલ્ટ મૂલ્ય તેના પ્રકાર સાથે મેળ ખાતું નથી",
     not_null_is_null:
-        "ટેબલ '{{tableName}}' ના ફીલ્ડ '{{fieldName}}' નું મૂલ્ય NOT NULL છે પરંતુ ડિફોલ્ટ NULL છે",
+      "ટેબલ '{{tableName}}' ના ફીલ્ડ '{{fieldName}}' નું મૂલ્ય NOT NULL છે પરંતુ ડિફોલ્ટ NULL છે",
     duplicate_fields:
-        "ટેબલ '{{tableName}}' માં નામ '{{fieldName}}' વાળા ડુપ્લિકેટ ટેબલ ફીલ્ડ્સ",
+      "ટેબલ '{{tableName}}' માં નામ '{{fieldName}}' વાળા ડુપ્લિકેટ ટેબલ ફીલ્ડ્સ",
     duplicate_index:
-        "ટેબલ '{{tableName}}' માં નામ '{{indexName}}' વાળો ડુપ્લિકેટ ઈન્ડેક્સ",
-    empty_index: "ટેબલ '{{tableName}}' માં ઈન્ડેક્સ કોઈ કૉલમ ઈન્ડેક્સ કરતું નથી",
+      "ટેબલ '{{tableName}}' માં નામ '{{indexName}}' વાળો ડુપ્લિકેટ ઈન્ડેક્સ",
+    empty_index:
+      "ટેબલ '{{tableName}}' માં ઈન્ડેક્સ કોઈ કૉલમ ઈન્ડેક્સ કરતું નથી",
     no_primary_key: "ટેબલ '{{tableName}}' માં કોઈ પ્રાથમિક કી નથી",
     type_with_no_name: "કોઈ નામ ન હોય તેવા પ્રકારને ઘોષિત કર્યું",
     duplicate_types: "નામ '{{typeName}}' વાળા ડુપ્લિકેટ પ્રકાર",
-    type_w_no_fields: "કોઈ ફીલ્ડ્સ ન હોય તેવા પ્રકાર '{{typeName}}' ને ઘોષિત કર્યું",
+    type_w_no_fields:
+      "કોઈ ફીલ્ડ્સ ન હોય તેવા પ્રકાર '{{typeName}}' ને ઘોષિત કર્યું",
     empty_type_field_name: "પ્રકાર '{{typeName}}' માં ખાલી ફીલ્ડ `નામ`",
     empty_type_field_type: "પ્રકાર '{{typeName}}' માં ખાલી ફીલ્ડ `પ્રકાર`",
     no_values_for_type_field:
-        "પ્રકાર '{{typeName}}' ના ફીલ્ડ '{{fieldName}}' નો પ્રકાર `{{type}}` છે પરંતુ કોઈ મૂલ્ય નિર્દિષ્ટ નથી",
+      "પ્રકાર '{{typeName}}' ના ફીલ્ડ '{{fieldName}}' નો પ્રકાર `{{type}}` છે પરંતુ કોઈ મૂલ્ય નિર્દિષ્ટ નથી",
     duplicate_type_fields:
-        "પ્રકાર '{{typeName}}' માં નામ '{{fieldName}}' વાળા ડુપ્લિકેટ પ્રકાર ફીલ્ડ્સ",
+      "પ્રકાર '{{typeName}}' માં નામ '{{fieldName}}' વાળા ડુપ્લિકેટ પ્રકાર ફીલ્ડ્સ",
     duplicate_reference: "નામ '{{refName}}' વાળો ડુપ્લિકેટ સંદર્ભ",
     circular_dependency: "ટેબલ '{{refName}}' માં પરિપત્ર નિર્ભરતા",
     timeline: "સમયરેખા",
