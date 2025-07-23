@@ -38,14 +38,17 @@ export function isFunction(str) {
 export function areFieldsCompatible( parentfields, tarjetTable) {
 
   for (let i = 0; i < parentfields.length; i++) {
-    const field1 = parentfields[i];
+    const parentField = parentfields[i];
 
-    if (!field1 || !field1.type) return false;
+    if(!parentField || !parentField.type) return false;
 
-    const field2 = tarjetTable.fields.find((f) => f.name === field1.name);
-
-    if (!field2) return true;
-
+    const existingFieldInTarjet = tarjetTable.fields.find(
+      (field) =>
+        field.name.toUpperCase() === parentField.name.toUpperCase()
+    );
+    if (existingFieldInTarjet) {
+      return false;
+    }
   }
-  return false;
+  return true;
 }
