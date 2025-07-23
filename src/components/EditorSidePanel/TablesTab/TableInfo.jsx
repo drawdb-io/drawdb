@@ -35,7 +35,7 @@ export default function TableInfo({ data }) {
           e.element === ObjectType.TABLE &&
           e.tid === data.id &&
           e.action === Action.EDIT &&
-          e.redo.color,
+          e.redo?.color,
       );
       if (lastColorChange) {
         undoColor = lastColorChange.redo.color;

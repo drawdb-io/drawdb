@@ -21,7 +21,7 @@ export default function AreaInfo({ data, i }) {
           e.element === ObjectType.AREA &&
           e.aid === data.id &&
           e.action === Action.EDIT &&
-          e.redo.color,
+          e.redo?.color,
       );
       if (lastColorChange) {
         undoColor = lastColorChange.redo.color;
