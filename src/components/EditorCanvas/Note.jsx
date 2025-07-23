@@ -42,7 +42,7 @@ export default function Note({ data, onPointerDown }) {
           e.element === ObjectType.NOTE &&
           e.nid === data.id &&
           e.action === Action.EDIT &&
-          e.redo.color,
+          e.redo?.color,
       );
       if (lastColorChange) {
         undoColor = lastColorChange.redo.color;
