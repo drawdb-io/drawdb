@@ -1,4 +1,4 @@
-import { Cardinality } from "../../data/constants";
+import { RelationshipType } from "../../data/constants";
 import { parseDefault } from "../exportSQL/shared";
 
 function hasColumnSettings(field) {
@@ -40,15 +40,14 @@ function columnSettings(field, database) {
   }${columnDefault(field, database)}${columnComment(field, database)}]`;
 }
 
-function cardinality(rel) {
-  switch (rel.cardinality) {
-    case Cardinality.ONE_TO_ONE:
-      return "-";
-    case Cardinality.ONE_TO_MANY:
-      return "<";
-    case Cardinality.MANY_TO_ONE:
-      return ">";
+function relationshipCardinality(rel) {
+  if (rel.relationshipType === RelationshipType.ONE_TO_ONE) {
+    return "-";
   }
+  if (rel.relationshipType === RelationshipType.ONE_TO_MANY) {
+    return "<";
+  }
+  return "-";
 }
 
 export function toDBML(diagram) {
@@ -92,7 +91,7 @@ export function toDBML(diagram) {
       (rel) =>
         `Ref ${rel.name} {\n\t${
           diagram.tables[rel.startTableId].name
-        }.${diagram.tables[rel.startTableId].fields[rel.startFieldId].name} ${cardinality(
+        }.${diagram.tables[rel.startTableId].fields[rel.startFieldId].name} ${relationshipCardinality(
           rel,
         )} ${diagram.tables[rel.endTableId].name}.${
           diagram.tables[rel.endTableId].fields[rel.endFieldId].name

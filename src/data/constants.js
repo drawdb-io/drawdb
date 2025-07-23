@@ -29,11 +29,27 @@ export const tableWidth = 220;
 export const tableFieldHeight = 36;
 export const tableColorStripHeight = 7;
 
-export const Cardinality = {
+export const RelationshipType = {
   ONE_TO_ONE: "one_to_one",
   ONE_TO_MANY: "one_to_many",
-  ZERO_TO_MANY: "zero_to_many",
 };
+
+export const RelationshipCardinalities = {
+  [RelationshipType.ONE_TO_ONE]: [
+    {value: "0,1", label: "(0,1)"},
+    {value: "1,1", label: "(1,1)"},
+  ],
+  [RelationshipType.ONE_TO_MANY]: [
+    {value: "0,*", label: "(0,*)"},
+    {value: "1,*", label: "(1,*)"},
+  ],
+};
+
+export const ParentCardinality = {
+  DEFAULT: {value: "1,1", label: "(1,1)"},
+  NULLEABLE: {value: "0,1", label: "(0,1)"},
+}
+
 export const Notation = {
   DEFAULT: "default",
   CROWS_FOOT: "crows_foot",

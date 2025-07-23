@@ -1,6 +1,6 @@
 import { Parser } from "@dbml/core";
 import { arrangeTables } from "../arrangeTables";
-import { Cardinality, Constraint } from "../../data/constants";
+import { RelationshipType, RelationshipCardinalities, Constraint } from "../../data/constants";
 
 const parser = new Parser();
 
@@ -95,18 +95,17 @@ export function fromDBML(src) {
       const startRelation = ref.endpoints[0].relation;
       const endRelation = ref.endpoints[1].relation;
 
-      if (startRelation === "*" && endRelation === "1") {
-        relationship.cardinality = Cardinality.MANY_TO_ONE;
-      }
+      relationship.relationshipType = RelationshipType.ONE_TO_ONE;
+      relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label;
 
-      if (startRelation === "1" && endRelation === "*") {
-        relationship.cardinality = Cardinality.ONE_TO_MANY;
+      if ((startRelation === "1" && endRelation === "*") || (startRelation === "*" && endRelation === "1")) {
+        relationship.relationshipType = RelationshipType.ONE_TO_MANY;
+        relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label;
       }
-
       if (startRelation === "1" && endRelation === "1") {
-        relationship.cardinality = Cardinality.ONE_TO_ONE;
+        relationship.relationshipType = RelationshipType.ONE_TO_ONE;
+        relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label;
       }
-
       relationships.push(relationship);
     }
 
