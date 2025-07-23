@@ -220,9 +220,10 @@ export function CrowsFootChild(
     }
   };
 
-  // Base distances from table edge
-  const crowsFootOffset = 18;              // Distance of crow's foot from table
-  const elementOffset = 12;                // Distance for bars/circles from table 
+  // Base distances from table edge - CORRECTED ORDER
+  // Note: cardinalityEndX/Y are already offset by 35px from table edge in Relationship.jsx
+  const crowsFootOffset = 6;               // Crow's foot closer to table (reduced due to existing 35px offset)
+  const elementOffset = 12;                // Bars/circles further from table (reduced due to existing 35px offset)
   const lineLength = 8;                    // Half length of bars
 
   // Calculate positions along the line direction
@@ -250,14 +251,14 @@ export function CrowsFootChild(
           </>
         )}
         
-        {/* Para (1,*): Barra justo antes de la pata de gallo */}
+        {/* Para (1,*): Barra al inicio de la pata de gallo */}
         {isMandatory && isMany && (
           <>
             <line
-              x1={elementX - (perpX * lineLength)} 
-              y1={elementY - (perpY * lineLength)}
-              x2={elementX + (perpX * lineLength)} 
-              y2={elementY + (perpY * lineLength)}
+              x1={crowsFootX - (perpX * lineLength)} 
+              y1={crowsFootY - (perpY * lineLength)}
+              x2={crowsFootX + (perpX * lineLength)} 
+              y2={crowsFootY + (perpY * lineLength)}
               stroke="gray" 
               strokeWidth="2" 
               className="group-hover:stroke-sky-700"
@@ -265,12 +266,12 @@ export function CrowsFootChild(
           </>
         )}
 
-        {/* Para (0,1): Círculo antes de la barra */}
+        {/* Para (0,1): Círculo antes de la barra - CÍRCULO MÁS CERCA DE LA LÍNEA */}
         {isOptional && isOne && (
           <>
             <circle
-              cx={elementX}
-              cy={elementY}
+              cx={cardinalityEndX - (dx * 8)} 
+              cy={cardinalityEndY - (dy * 8)}
               r="4" 
               stroke="gray" 
               strokeWidth="2" 
@@ -279,10 +280,10 @@ export function CrowsFootChild(
             />
             {/* Barra cerca de la tabla */}
             <line
-              x1={cardinalityEndX - (dx * 6) - (perpX * lineLength)} 
-              y1={cardinalityEndY - (dy * 6) - (perpY * lineLength)}
-              x2={cardinalityEndX - (dx * 6) + (perpX * lineLength)} 
-              y2={cardinalityEndY - (dy * 6) + (perpY * lineLength)}
+              x1={cardinalityEndX - (dx * 3) - (perpX * lineLength)} 
+              y1={cardinalityEndY - (dy * 3) - (perpY * lineLength)}
+              x2={cardinalityEndX - (dx * 3) + (perpX * lineLength)} 
+              y2={cardinalityEndY - (dy * 3) + (perpY * lineLength)}
               stroke="gray" 
               strokeWidth="2" 
               className="group-hover:stroke-sky-700"
@@ -290,15 +291,15 @@ export function CrowsFootChild(
           </>
         )}
 
-        {/* Para (1,1): Dos barras perpendiculares a la línea */}
+        {/* Para (1,1): Dos barras perpendiculares a la línea - COMO CrowParentLines */}
         {isMandatory && isOne && (
           <>
             {/* Primera barra más alejada */}
             <line
-              x1={elementX - (perpX * lineLength)} 
-              y1={elementY - (perpY * lineLength)}
-              x2={elementX + (perpX * lineLength)} 
-              y2={elementY + (perpY * lineLength)}
+              x1={cardinalityEndX - (dx * 10) - (perpX * lineLength)} 
+              y1={cardinalityEndY - (dy * 10) - (perpY * lineLength)}
+              x2={cardinalityEndX - (dx * 10) + (perpX * lineLength)} 
+              y2={cardinalityEndY - (dy * 10) + (perpY * lineLength)}
               stroke="gray" 
               strokeWidth="2" 
               className="group-hover:stroke-sky-700"

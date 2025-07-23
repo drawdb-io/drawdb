@@ -533,30 +533,33 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
   let labelWidth = labelRef.current?.getBBox().width ?? 0;
   let labelHeight = labelRef.current?.getBBox().height ?? 0;
 
-  const cardinalityOffset = 28;
+  const cardinalityStartOffset = 30; // Distance from start (parent) table
+  const cardinalityEndOffset = 37;   // Distance from end (child) table - balanced for visibility
 
 
   if (pathRef.current) {
-    const pathLength = pathRef.current.getTotalLength() - cardinalityOffset;
+    const totalPathLength = pathRef.current.getTotalLength();
+    const effectivePathLength = totalPathLength - cardinalityStartOffset - cardinalityEndOffset;
 
-    const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
+    const labelPoint = pathRef.current.getPointAtLength(totalPathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
     labelY = labelPoint.y + (labelHeight ?? 0) / 2;
 
-    const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
+    const point1 = pathRef.current.getPointAtLength(cardinalityStartOffset);
     cardinalityStartX = point1.x;
     cardinalityStartY = point1.y;
 
     const point2 = pathRef.current.getPointAtLength(
-      pathLength,
+      totalPathLength - cardinalityEndOffset,
     );
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
 
     // Calculate vector direction at the end point for proper notation orientation
     const vectorSampleDistance = 20; // Distance to sample back from end point
+    const endPointPosition = totalPathLength - cardinalityEndOffset;
     const vectorStartPoint = pathRef.current.getPointAtLength(
-      Math.max(0, pathLength - vectorSampleDistance)
+      Math.max(0, endPointPosition - vectorSampleDistance)
     );
     vectorInfo = {
       dx: cardinalityEndX - vectorStartPoint.x,
@@ -602,11 +605,11 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
     ...data,
     startTable: {
       x: startTable ? startTable.x : 0,
-      y: startTable ? startTable.y + startFieldYOffset : 0, // Add field offset for proper connection
+      y: startTable ? startTable.y : 0, // Use basic table position - calcPath will handle connection points
     },
     endTable: {
       x: endTable ? endTable.x : 0,
-      y: endTable ? endTable.y + endFieldYOffset : 0, // Add field offset for proper connection
+      y: endTable ? endTable.y : 0, // Use basic table position - calcPath will handle connection points
     },
   };
 
