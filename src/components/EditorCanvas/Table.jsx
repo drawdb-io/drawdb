@@ -5,7 +5,6 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
-  Notation,
 } from "../../data/constants";
 import {
   IconEdit,
@@ -16,7 +15,7 @@ import {
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
-import { useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
@@ -95,37 +94,6 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
-  const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
-
-  const sortedFields = [...tableData.fields].sort((a, b) => {
-    const aIsPK = a.primary;
-    const bIsPK = b.primary;
-    const aIsFK = a.foreignK === true;
-    const bIsFK = b.foreignK === true;
-
-    let groupA;
-    if (aIsPK) {
-      groupA = 1;
-    } else if (!aIsFK) {
-      groupA = 2;
-    } else {
-      groupA = 3;
-    }
-
-    let groupB;
-    if (bIsPK) {
-      groupB = 1;
-    } else if (!bIsFK) {
-      groupB = 2;
-    } else {
-      groupB = 3;
-    }
-
-    if (groupA !== groupB) {
-      return groupA - groupB;
-    }
-    return 0;
-  });
 
   return (
     <>
@@ -135,49 +103,36 @@ export default function Table(props) {
         y={tableData.y}
         width={settings.tableWidth}
         height={height}
-        className="group drop-shadow-lg  cursor-move"
+        className="group drop-shadow-lg rounded-md cursor-move"
         onPointerDown={onPointerDown}
       >
         <div
           onDoubleClick={openEditor}
-          className={`select-none w-full ${
-            (selectedElement.element === ObjectType.TABLE && selectedElement.id === tableData.id)
-              ? `border-2 border-solid border-blue-500 ${settings.notation === Notation.DEFAULT ? "rounded-lg" : ""}`
-              : (moving ||
-                  (selectedElement.element === ObjectType.TABLE &&
-                    (Array.isArray(selectedElement.id)
-                      ? selectedElement.id.includes(tableData.id)
-                      : selectedElement.id === tableData.id)))
-                ? `border-2 border-dashed border-blue-500 ${settings.notation === Notation.DEFAULT ? "rounded-lg" : ""}`
-                : settings.notation !== Notation.DEFAULT
-                  ? "border-none"
-                  : "border-2 border-zinc-500 rounded-lg hover:border-dashed hover:border-blue-500"
-            }`}
+          className={`border-2 select-none rounded-lg w-full ${
+            settings.mode === "light"
+              ? "bg-zinc-100 text-zinc-800"
+              : "bg-zinc-800 text-zinc-200"
+          } ${
+            (moving ||
+              (selectedElement.element === ObjectType.TABLE &&
+                (Array.isArray(selectedElement.id)
+                  ? selectedElement.id.includes(tableData.id)
+                  : selectedElement.id === tableData.id)))
+              ? "border-dashed border-blue-500"
+              : "border-zinc-500 hover:border-dashed hover:border-blue-500"
+          }`}
           style={{ direction: "ltr" }}
         >
           <div
-            className={`h-[10px] w-full ${
-               settings.notation !== Notation.DEFAULT
-                 ? ""
-                 : "rounded-t-md"
-            }`}
-            style={{ backgroundColor: tableData.color, height: settings.notation !== Notation.DEFAULT ? 0 : "10px" }}
+            className="h-[10px] w-full rounded-t-md"
+            style={{ backgroundColor: tableData.color }}
           />
           <div
             className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
-              settings.notation !== Notation.DEFAULT
-              ? "bg-transparent"
-              : settings.mode === "light"
-              ? "bg-zinc-200"
-              : "bg-zinc-900"
+              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
             }`}
           >
-            <div className={` px-3 overflow-hidden text-ellipsis whitespace-nowrap ${
-               settings.notation !== Notation.DEFAULT
-                 ? ""
-                 : ""
-            }`}
-            >
+            <div className=" px-3 overflow-hidden text-ellipsis whitespace-nowrap">
               {tableData.name}
             </div>
             <div className="hidden group-hover:block">
@@ -267,7 +222,7 @@ export default function Table(props) {
               </div>
             </div>
           </div>
-          {sortedFields.map((e, i) => {
+          {tableData.fields.map((e, i) => {
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
@@ -362,53 +317,10 @@ export default function Table(props) {
   function field(fieldData, index) {
     return (
       <div
-        className={`
-          ${(tableData.fields.length === 1 && settings.notation === Notation.DEFAULT)
-            ? "rounded-b-md"
-            : ""
-          } ${(settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
-              ? (
-                  primaryKeyCount === tableData.fields.length
-                    ? "border-l border-r border-b border-gray-400"
-                    : "border-b border-gray-400"
-                )
-              : ""
-          } ${
-          (fieldData.primary && settings.notation !== Notation.DEFAULT && primaryKeyCount === 1)
-            ? "border-b border-gray-400"
-            : ""
-          } ${
-            (fieldData.primary && settings.notation !== Notation.DEFAULT && index ===primaryKeyCount - 1)
-              ? "border-b border-gray-400"
-              : ""
-          } ${
-          (!fieldData.primary && settings.notation !== Notation.DEFAULT )
-            ? "border-l border-r"
-            : ""
-          } ${
-          settings.mode === "light"
-            ? "bg-zinc-100 text-zinc-800"
-            : "bg-zinc-800 text-zinc-200"
-          } ${
-          (settings.notation !== Notation.DEFAULT && index !== tableData.fields.length - 1)
-            ? "border-l border-r border-gray-400"
-            : ""
-          } ${
-          (settings.notation !== Notation.DEFAULT && index === tableData.fields.length - 1)
-            ? "border-b border-gray-400"
-            : ""
-          } ${
-            (fieldData.primary && settings.notation === Notation.DEFAULT)
-              ? "border-b border-gray-400"
-              : ""
-          } ${
-            (settings.notation === Notation.DEFAULT && index !== tableData.fields.length - 1 && fieldData.primary === false)
-              ? "border-b border-gray-400"
-              : ""
-          } ${
-          (settings.notation === Notation.DEFAULT && index === tableData.fields.length - 1)
-            ? "rounded-b-md"
-            : ""
+        className={`${
+          index === tableData.fields.length - 1
+            ? ""
+            : "border-b border-gray-400"
         } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
@@ -436,28 +348,29 @@ export default function Table(props) {
           } flex items-center gap-2 overflow-hidden`}
         >
           <button
-            className={`flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full ${
-              (fieldData.primary && settings.notation !== Notation.DEFAULT)
-                ? "bg-[#ff2222cc]"
-                : "bg-[#2f68adcc]"
-            }`}
+            className="flex-shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
-              handleGripField(fieldData,tableData.id);
-
-              const effectiveColorStripHeight = settings.notation === Notation.DEFAULT ? tableColorStripHeight : 0;
-              const gripYOffset = tableHeaderHeight + effectiveColorStripHeight + (index * tableFieldHeight) + (tableFieldHeight / 2);
-              const gripXOffset = settings.tableWidth / 2; // Or a fixed small offset from table edge
-
+              handleGripField(fieldData);
               setLinkingLine((prev) => ({
                 ...prev,
-                // startTableId and startFieldId will be set by handleGripField in Canvas.jsx
-                // This setLinkingLine is primarily for the visual startX/startY of the temporary line.
-                startX: tableData.x + gripXOffset,
-                startY: tableData.y + gripYOffset,
-                endX: tableData.x + gripXOffset,   // Initialize end to start
-                endY: tableData.y + gripYOffset,
+                startFieldId: fieldData.id,
+                startTableId: tableData.id,
+                startX: tableData.x + 15,
+                startY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
+                endX: tableData.x + 15,
+                endY:
+                  tableData.y +
+                  index * tableFieldHeight +
+                  tableHeaderHeight +
+                  tableColorStripHeight +
+                  12,
               }));
             }}
           />
@@ -512,34 +425,16 @@ export default function Table(props) {
                     .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"/>
                   <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
                 </svg>}
-              {settings.notation !== Notation.DEFAULT ? (
-                <>
-                <span>
-                  {fieldData.type +
-                    ((dbToTypes[database][fieldData.type].isSized ||
-                      dbToTypes[database][fieldData.type].hasPrecision) &&
-                    fieldData.size &&
-                    fieldData.size !== ""
-                      ? "(" + fieldData.size + ")"
-                      : "")}
-                </span>
-                {!fieldData.notNull && <span>NULL</span>}
-                {fieldData.notNull && <span>NOT NULL</span>}
-                </>
-              ) : (
-                <>
-                  {!fieldData.notNull && <span>?</span>}
-                  <span>
-                  {fieldData.type +
-                    ((dbToTypes[database][fieldData.type].isSized ||
-                      dbToTypes[database][fieldData.type].hasPrecision) &&
-                    fieldData.size &&
-                    fieldData.size !== ""
-                      ? "(" + fieldData.size + ")"
-                      : "")}
-                </span>
-                </>
-              )}
+              {!fieldData.notNull && <span>?</span>}
+              <span>
+                {fieldData.type +
+                  ((dbToTypes[database][fieldData.type].isSized ||
+                    dbToTypes[database][fieldData.type].hasPrecision) &&
+                  fieldData.size &&
+                  fieldData.size !== ""
+                    ? "(" + fieldData.size + ")"
+                    : "")}
+              </span>
             </div>
           )}
         </div>

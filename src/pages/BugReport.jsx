@@ -16,7 +16,6 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { socials } from "../data/socials";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -248,7 +247,10 @@ export default function BugReport() {
               icon={<IconGithubLogo />}
               style={{ backgroundColor: "#239144", color: "white" }}
               onClick={() => {
-                window.open(`${socials.github}/issues`, "_self");
+                window.open(
+                  "https://github.com/drawdb-io/drawdb/issues",
+                  "_self",
+                );
               }}
             >
               Add an issue

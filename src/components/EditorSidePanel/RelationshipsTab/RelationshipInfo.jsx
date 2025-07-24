@@ -18,7 +18,7 @@ import {
   Action,
   ObjectType,
 } from "../../../data/constants";
-import { useDiagram, useUndoRedo} from "../../../hooks";
+import { useDiagram, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -248,7 +248,6 @@ export default function RelationshipInfo({ data }) {
           />
         </Col>
       </Row>
-      <div className="my-2"></div>
       <Button
         icon={<IconDeleteStroked />}
         block

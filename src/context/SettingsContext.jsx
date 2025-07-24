@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { tableWidth, Notation } from "../data/constants";
+import { tableWidth } from "../data/constants";
+
 const defaultSettings = {
   strictMode: false,
   showFieldSummary: true,
@@ -9,7 +10,6 @@ const defaultSettings = {
   panning: true,
   showCardinality: true,
   showRelationshipLabels: true,
-  notation: Notation.DEFAULT,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
   defaultFieldType: 'INTEGER',

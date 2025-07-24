@@ -8,7 +8,6 @@ const en = {
   translation: {
     report_bug: "Report a bug",
     import: "Import",
-    import_from: "Import from",
     file: "File",
     new: "New",
     new_window: "New window",
@@ -50,10 +49,6 @@ const en = {
     reset_view: "Reset view",
     show_grid: "Show grid",
     show_cardinality: "Show cardinality",
-    default_notation: "Default",
-    crows_foot_notation: "Crow's foot",
-    idef1x_notation: "IDEF1X",
-    notation: "Notation",
     theme: "Theme",
     light: "Light",
     dark: "Dark",
@@ -151,7 +146,7 @@ const en = {
     swap: "Swap",
     one_to_one: "One to one",
     one_to_many: "One to many",
-    zero_to_many: "Cero to many",
+    many_to_one: "Many to one",
     content: "Content",
     types_info:
       "This feature is meant for object-relational DBMSs like PostgreSQL.\nIf used for MySQL or MariaDB a JSON type will be generated with the corresponding json validation check.\nIf used for SQLite it will be translated to a BLOB.\nIf used for MSSQL a type alias to the first field will be generated.",
@@ -176,6 +171,7 @@ const en = {
     confirm: "Confirm",
     last_modified: "Last modified",
     drag_and_drop_files: "Drag and drop the file here or click to upload.",
+    support_json_and_ddb: "JSON and DDB files are supported",
     upload_sql_to_generate_diagrams:
       "Upload an sql file to autogenerate your tables and columns.",
     overwrite_existing_diagram: "Overwrite existing diagram",
@@ -263,8 +259,6 @@ const en = {
       "* Sharing this link will not create a live real-time collaboration session.",
     show_relationship_labels: "Show relationship labels",
     defaults: "Defaults",
-    docs: "Docs",
-    supported_types: "Supported file types:",
   },
 };
 

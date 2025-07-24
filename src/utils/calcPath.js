@@ -1,84 +1,72 @@
+import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
+
 export function calcPath(r, tableWidth = 200, zoom = 1) {
   const width = tableWidth * zoom;
   let x1 = r.startTable.x;
-  let y1 = r.startTable.y;
+  let y1 =
+    r.startTable.y +
+    r.startFieldId * tableFieldHeight +
+    tableHeaderHeight +
+    tableFieldHeight / 2;
   let x2 = r.endTable.x;
-  let y2 = r.endTable.y;
+  let y2 =
+    r.endTable.y +
+    r.endFieldId * tableFieldHeight +
+    tableHeaderHeight +
+    tableFieldHeight / 2;
 
   let radius = 10 * zoom;
-
-
-  const isRecursiveLike = Math.abs(x1 - x2) < 1;
-
-  if (isRecursiveLike) {
-    const loopOutwardDistance = Math.max(40 * zoom, width / 4);
-    const verticalMidpoint = (y1 + y2) / 2;
-    const path = `M ${x1 + width} ${y1} ` +
-                 `Q ${x1 + width + loopOutwardDistance} ${y1}, ${x1 + width + loopOutwardDistance} ${verticalMidpoint} ` +
-                 `T ${x1 + width} ${y2}`;
-    return path;
-  }
+  const midX = (x2 + x1 + width) / 2;
+  const endX = x2 + width < x1 ? x2 + width : x2;
 
   if (Math.abs(y1 - y2) <= 36 * zoom) {
     radius = Math.abs(y2 - y1) / 3;
     if (radius <= 2) {
-      if (x1 + width <= x2) {
-        const path = `M ${x1 + width} ${y1} L ${x2} ${y2 + 0.1}`;
-        return path;
-      } else if (x2 + width < x1) {
-        const path = `M ${x1} ${y1} L ${x2 + width} ${y2 + 0.1}`;
-        return path;
-      }
+      if (x1 + width <= x2) return `M ${x1 + width} ${y1} L ${x2} ${y2 + 0.1}`;
+      else if (x2 + width < x1)
+        return `M ${x1} ${y1} L ${x2 + width} ${y2 + 0.1}`;
     }
-    if (radius > 2) radius = 10 * zoom;
   }
-
-  const midX = (x1 + x2 + width) / 2;
 
   if (y1 <= y2) {
     if (x1 + width <= x2) {
-      const path = `M ${x1 + width} ${y1} L ${
+      return `M ${x1 + width} ${y1} L ${
         midX - radius
       } ${y1} A ${radius} ${radius} 0 0 1 ${midX} ${y1 + radius} L ${midX} ${
         y2 - radius
-      } A ${radius} ${radius} 0 0 0 ${midX + radius} ${y2} L ${x2} ${y2}`;
-      return path;
+      } A ${radius} ${radius} 0 0 0 ${midX + radius} ${y2} L ${endX} ${y2}`;
     } else if (x2 <= x1 + width && x1 <= x2) {
-      const path = `M ${x1 + width} ${y1} L ${
-        x1 + width + radius
-      } ${y1} A ${radius} ${radius} 0 0 1 ${x1 + width + radius + radius} ${
+      return `M ${x1 + width} ${y1} L ${
+        x2 + width
+      } ${y1} A ${radius} ${radius} 0 0 1 ${x2 + width + radius} ${
         y1 + radius
-      } L ${x1 + width + radius + radius} ${y2 - radius} A ${radius} ${radius} 0 0 1 ${
-        x1 + width + radius
-      } ${y2} L ${x2} ${y2}`;
-      return path;
-    } else if (x2 + width >= x1 && x2 + width <= x1 + width) {
-      const path = `M ${x1} ${y1} L ${
-        x1 - radius
-      } ${y1} A ${radius} ${radius} 0 0 0 ${x1 - radius - radius} ${
-        y1 + radius
-      } L ${x1 - radius - radius} ${y2 - radius} A ${radius} ${radius} 0 0 0 ${
-        x1 - radius
+      } L ${x2 + width + radius} ${y2 - radius} A ${radius} ${radius} 0 0 1 ${
+        x2 + width
       } ${y2} L ${x2 + width} ${y2}`;
-      return path;
+    } else if (x2 + width >= x1 && x2 + width <= x1 + width) {
+      return `M ${x1} ${y1} L ${
+        x2 - radius
+      } ${y1} A ${radius} ${radius} 0 0 0 ${x2 - radius - radius} ${
+        y1 + radius
+      } L ${x2 - radius - radius} ${y2 - radius} A ${radius} ${radius} 0 0 0 ${
+        x2 - radius
+      } ${y2} L ${x2} ${y2}`;
     } else {
-      const path = `M ${x1} ${y1} L ${
+      return `M ${x1} ${y1} L ${
         midX + radius
       } ${y1} A ${radius} ${radius} 0 0 0 ${midX} ${y1 + radius} L ${midX} ${
         y2 - radius
-      } A ${radius} ${radius} 0 0 1 ${midX - radius} ${y2} L ${x2 + width} ${y2}`;
-      return path;
+      } A ${radius} ${radius} 0 0 1 ${midX - radius} ${y2} L ${endX} ${y2}`;
     }
   } else {
     if (x1 + width <= x2) {
-      const path = `M ${x1 + width} ${y1} L ${
+      return `M ${x1 + width} ${y1} L ${
         midX - radius
       } ${y1} A ${radius} ${radius} 0 0 0 ${midX} ${y1 - radius} L ${midX} ${
         y2 + radius
-      } A ${radius} ${radius} 0 0 1 ${midX + radius} ${y2} L ${x2} ${y2}`;
-      return path;
+      } A ${radius} ${radius} 0 0 1 ${midX + radius} ${y2} L ${endX} ${y2}`;
     } else if (x1 + width >= x2 && x1 + width <= x2 + width) {
-       const path = `M ${x1} ${y1} L ${
+      return `M ${x1} ${y1} L ${
         x1 - radius - radius
       } ${y1} A ${radius} ${radius} 0 0 1 ${x1 - radius - radius - radius} ${
         y1 - radius
@@ -86,26 +74,23 @@ export function calcPath(r, tableWidth = 200, zoom = 1) {
         y2 + radius
       } A ${radius} ${radius} 0 0 1 ${
         x1 - radius - radius
-      } ${y2} L ${x2 + width} ${y2}`;
-      return path;
+      } ${y2} L ${endX} ${y2}`;
     } else if (x1 >= x2 && x1 <= x2 + width) {
-      const path = `M ${x1 + width} ${y1} L ${
+      return `M ${x1 + width} ${y1} L ${
         x1 + width + radius
       } ${y1} A ${radius} ${radius} 0 0 0 ${x1 + width + radius + radius} ${
         y1 - radius
       } L ${x1 + width + radius + radius} ${
         y2 + radius
       } A ${radius} ${radius} 0 0 0 ${x1 + width + radius} ${y2} L ${
-        x2
+        x2 + width
       } ${y2}`;
-      return path;
     } else {
-      const path = `M ${x1} ${y1} L ${
+      return `M ${x1} ${y1} L ${
         midX + radius
       } ${y1} A ${radius} ${radius} 0 0 1 ${midX} ${y1 - radius} L ${midX} ${
         y2 + radius
-      } A ${radius} ${radius} 0 0 0 ${midX - radius} ${y2} L ${x2 + width} ${y2}`;
-      return path;
+      } A ${radius} ${radius} 0 0 0 ${midX - radius} ${y2} L ${endX} ${y2}`;
     }
   }
 }

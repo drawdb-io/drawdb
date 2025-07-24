@@ -49,7 +49,6 @@ export default function Modal({
   exportData,
   setExportData,
   importDb,
-  importFrom,
 }) {
   const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database, setDatabase } = useDiagram();
@@ -77,8 +76,8 @@ export default function Modal({
   const overwriteDiagram = () => {
     setTables(importData.tables);
     setRelationships(importData.relationships);
-    setAreas(importData.subjectAreas ?? []);
-    setNotes(importData.notes ?? []);
+    setAreas(importData.subjectAreas);
+    setNotes(importData.notes);
     if (importData.title) {
       setTitle(importData.title);
     }
@@ -249,7 +248,6 @@ export default function Modal({
             setImportData={setImportData}
             error={error}
             setError={setError}
-            importFrom={importFrom}
           />
         );
       case MODAL.IMPORT_SRC:

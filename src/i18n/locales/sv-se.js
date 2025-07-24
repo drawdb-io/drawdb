@@ -7,7 +7,6 @@ const swedish = {
 const sv = {
   translation: {
     report_bug: "Rapportera ett fel",
-    import_from: "Importera",
     import: "Importera",
     file: "Fil",
     new: "Ny",
@@ -160,6 +159,7 @@ const sv = {
     last_modified: "Senast ändrad",
     drag_and_drop_files:
       "Dra och släpp filen här eller klicka för att ladda upp.",
+    support_json_and_ddb: "JSON- och DDB-filer stöds",
     upload_sql_to_generate_diagrams:
       "Ladda upp en SQL-fil för att auto-generera dina tabeller och kolumner.",
     overwrite_existing_diagram: "Skriv över befintligt diagram",

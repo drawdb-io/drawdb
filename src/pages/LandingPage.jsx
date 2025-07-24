@@ -16,7 +16,6 @@ import FadeIn from "../animations/FadeIn";
 import axios from "axios";
 import { languages } from "../i18n/i18n";
 import { Tweet } from "react-tweet";
-import { socials } from "../data/socials";
 
 function shortenNumber(number) {
   if (number < 1000) return number;
@@ -139,6 +138,19 @@ export default function LandingPage() {
                 Languages
               </div>
             </div>
+            <div className="w-96 md:w-full h-full md:text-center">
+              <div>
+                Join our community, become one of us. Help us become bigger and
+                better, support us by donating.
+              </div>
+              <a
+                href="https://buymeacoffee.com/drawdb"
+                className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-9 py-2.5 shadow mt-2"
+              >
+                Support us{" "}
+                <i className="ms-2 text-rose-600 fa-regular fa-heart"></i>
+              </a>
+            </div>
           </div>
           <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-sm rounded-2xl border p-6 bg-white space-y-3">
             <div className="text-lg font-medium">
@@ -243,7 +255,7 @@ export default function LandingPage() {
           <div className="md:block md:space-y-3 flex gap-3 justify-center">
             <a
               className="inline-block"
-              href={socials.github}
+              href="https://github.com/drawdb-io/drawdb"
               target="_blank"
               rel="noreferrer"
             >
@@ -256,7 +268,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href={socials.discord}
+              href="https://discord.gg/BrjZgNrmR6"
               target="_blank"
               rel="noreferrer"
             >
@@ -269,7 +281,7 @@ export default function LandingPage() {
             </a>
             <a
               className="inline-block"
-              href={socials.twitter}
+              href="https://x.com/drawdb_"
               target="_blank"
               rel="noreferrer"
             >
@@ -277,6 +289,20 @@ export default function LandingPage() {
                 <i className="text-2xl bi bi-twitter-x" />
                 <div className="text-lg  font-bold">Follow us on X</div>
               </div>
+            </a>
+          </div>
+          <div className="my-8">
+            <div>
+              If you&apos;re finding drawDB useful and would like to help us in
+              improving and adding new features, consider making a donation.
+            </div>
+            <div>Your support means a lot to us!</div>
+            <a
+              href="https://buymeacoffee.com/drawdb"
+              className="inline-block bg-white hover:bg-zinc-50 transition-all duration-300 rounded-full px-16 py-2.5 shadow mt-2"
+            >
+              Support us{" "}
+              <i className="ms-2 text-rose-600 fa-regular fa-heart"></i>
             </a>
           </div>
         </div>
@@ -337,10 +363,7 @@ const features = [
     content: (
       <div>
         Speed up development with keyboard shortuts. See all available shortcuts
-        <Link
-          to={`${socials.docs}/shortcuts`}
-          className="ms-1.5 text-blue-500 hover:underline"
-        >
+        <Link to="/shortcuts" className="ms-1.5 text-blue-500 hover:underline">
           here
         </Link>
         .

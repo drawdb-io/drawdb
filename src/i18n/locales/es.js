@@ -7,9 +7,8 @@ const spanish = {
 const es = {
   translation: {
     report_bug: "Reportar Error",
-    import_from: "Importar",
     import: "Importar",
-    file: "Archivo",
+    file: "Archivo ",
     new: "Nuevo",
     new_window: "Nueva Ventana",
     open: "Abrir",
@@ -50,10 +49,6 @@ const es = {
     reset_view: "Restablecer vista",
     show_grid: "Mostrar cuadrícula",
     show_cardinality: "Mostrar cardinalidad",
-    notation: "Notación",
-    default_notation: "Notación predeterminada",
-    crows_foot_notation: "Notación Crow's Foot",
-    idef1x_notation: "Notación IDEF1X",
     theme: "Tema",
     light: "Claro",
     dark: "Oscuro",
@@ -144,7 +139,7 @@ const es = {
     swap: "Intercambiar",
     one_to_one: "Uno a uno",
     one_to_many: "Uno a muchos",
-    Zero_to_much: "Zero a Muchos",
+    many_to_one: "Muchos a uno",
     content: "Contenido",
     types_info:
       "Esta característica está destinada a DBMSs objeto-relacionales como PostgreSQL.\nSi se usa para MySQL o MariaDB, se generará un tipo JSON con la verificación de validación json correspondiente.\nSi se usa para SQLite, se traducirá a un BLOB.\nSi se usa para MSSQL, se generará un alias de tipo al primer campo.",
@@ -153,8 +148,7 @@ const es = {
     note_deleted: "Nota eliminada",
     relationship_deleted: "Relación eliminada",
     type_deleted: "Tipo eliminado",
-    cannot_connect:
-      "No se puede conectar, las columnas tienen diferentes tipos",
+    cannot_connect: "No se puede conectar, las columnas tienen diferentes tipos",
     copied_to_clipboard: "Copiado al portapapeles",
     create_new_diagram: "Crear nuevo diagrama",
     cancel: "Cancelar",
@@ -165,8 +159,8 @@ const es = {
     create: "Crear",
     confirm: "Confirmar",
     last_modified: "Última modificación",
-    drag_and_drop_files:
-      "Arrastra y suelta el archivo aquí o haz clic para subir.",
+    drag_and_drop_files: "Arrastra y suelta el archivo aquí o haz clic para subir.",
+    support_json_and_ddb: "Se admiten archivos JSON y DDB",
     upload_sql_to_generate_diagrams:
       "Sube un archivo sql para autogenerar tus tablas y columnas.",
     overwrite_existing_diagram: "Sobrescribir diagrama existente",
@@ -200,8 +194,7 @@ const es = {
     duplicate_type_fields:
       "Campos de tipo duplicados por nombre '{{fieldName}}' en el tipo '{{typeName}}'",
     duplicate_reference: "Referencia duplicada con el nombre '{{refName}}'",
-    circular_dependency:
-      "Dependencia circular involucrando la tabla '{{refName}}'",
+    circular_dependency: "Dependencia circular involucrando la tabla '{{refName}}'",
     timeline: "Linea del tiempo",
     priority: "Prioridad",
     none: "Ninguno",
