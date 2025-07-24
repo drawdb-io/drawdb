@@ -264,6 +264,10 @@ const en = {
     version: "Version",
     record_version: "Record version",
     commited_at: "Commited at",
+    read_only: "Read only",
+    continue: "Continue",
+    restore_version: "Restore version",
+    restore_warning: "Loading another version will overwrite the current changes."
   },
 };
 
