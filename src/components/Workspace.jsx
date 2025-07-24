@@ -20,6 +20,7 @@ import {
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
+import { IconAlertTriangle } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
@@ -47,7 +48,7 @@ export default function WorkSpace() {
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedDb, setSelectedDb] = useState("");
-  const { layout } = useLayout();
+  const { layout, setLayout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
   const { areas, setAreas } = useAreas();
@@ -453,7 +454,7 @@ export default function WorkSpace() {
               <Button
                 icon={<i className="fa-solid fa-rotate-right mt-0.5"></i>}
               >
-                Restore version
+                {t("restore_version")}
               </Button>
             </div>
           )}
@@ -518,7 +519,21 @@ export default function WorkSpace() {
         centered
         closable
         onCancel={() => setShowRestoreModal(false)}
-      ></Modal>
+        title={
+          <span className="flex items-center gap-2">
+            <IconAlertTriangle className="text-amber-400" size="extra-large" /> {t("restore_version")}
+          </span>
+        }
+        okText={t("continue")}
+        cancelText={t("cancel")}
+        onOk={() => {
+          setLayout((prev) => ({ ...prev, readOnly: false }));
+          setShowRestoreModal(false);
+          setVersion(null);
+        }}
+      >
+        {t("restore_warning")}
+      </Modal>
     </div>
   );
 }
