@@ -27,16 +27,9 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
-import { areFieldsCompatible } from "../../utils/utils";
-import {
-  getRectFromEndpoints,
-  isInsideRect,
-  areaRect,
-  noteRect,
-  tableRect,
-  pointIsInsideRect,
-} from "../../utils/rect";
-import { State } from "../../data/constants";
+import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
+import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
+import { State, noteWidth } from "../../data/constants";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -96,13 +89,14 @@ export default function Canvas() {
     width: 0,
     height: 0,
   });
-  const [bulkSelectRectPts, setBulkSelectRectPts] = useState({
+  const [bulkSelectRect, setBulkSelectRect] = useState({
     x1: 0,
     y1: 0,
     x2: 0,
     y2: 0,
     show: false,
     ctrlKey: false,
+    metaKey: false,
   });
   // this is used to store the element that is clicked on
   // at the moment, and shouldn't be a part of the state
@@ -113,7 +107,7 @@ export default function Canvas() {
   };
 
   const collectSelectedElements = () => {
-    const rect = getRectFromEndpoints(bulkSelectRectPts);
+    const rect = getRectFromEndpoints(bulkSelectRect);
     const elements = [];
     const shouldAddElement = (elementRect, element) => {
       // if ctrl key is pressed, only add the elements that are not already selected
@@ -121,7 +115,7 @@ export default function Canvas() {
       // a map from id to element (after the ids are made unique)
       return (
         isInsideRect(elementRect, rect) &&
-        (!bulkSelectRectPts.ctrlKey ||
+        ((!bulkSelectRect.ctrlKey && !bulkSelectRect.metaKey) ||
           !bulkSelectedElements.some((el) => isSameElement(el, element)))
       );
     };
@@ -135,7 +129,13 @@ export default function Canvas() {
         currentCoords: { x: table.x, y: table.y },
         initialCoords: { x: table.x, y: table.y },
       };
-      if (shouldAddElement(tableRect(table, settings), element)) {
+      const tableRect = {
+        x: table.x,
+        y: table.y,
+        width: settings.tableWidth,
+        height: getTableHeight(table),
+      };
+      if (shouldAddElement(tableRect, element)) {
         elements.push(element);
       }
     });
@@ -149,7 +149,13 @@ export default function Canvas() {
         currentCoords: { x: area.x, y: area.y },
         initialCoords: { x: area.x, y: area.y },
       };
-      if (shouldAddElement(areaRect(area), element)) {
+      const areaRect = {
+        x: area.x,
+        y: area.y,
+        width: area.width,
+        height: area.height,
+      };
+      if (shouldAddElement(areaRect, element)) {
         elements.push(element);
       }
     });
@@ -163,12 +169,18 @@ export default function Canvas() {
         currentCoords: { x: note.x, y: note.y },
         initialCoords: { x: note.x, y: note.y },
       };
-      if (shouldAddElement(noteRect(note), element)) {
+      const noteRect = {
+        x: note.x,
+        y: note.y,
+        width: noteWidth,
+        height: note.height,
+      };
+      if (shouldAddElement(noteRect, element)) {
         elements.push(element);
       }
     });
 
-    if (bulkSelectRectPts.ctrlKey) {
+    if (bulkSelectRect.ctrlKey || bulkSelectRect.metaKey) {
       setBulkSelectedElements([...bulkSelectedElements, ...elements]);
     } else {
       setBulkSelectedElements(elements);
@@ -180,7 +192,7 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    if (!element.locked || !e.ctrlKey) {
+    if (!element.locked || !(e.ctrlKey || e.metaKey)) {
       setSelectedElement((prev) => ({
         ...prev,
         element: type,
@@ -190,13 +202,13 @@ export default function Canvas() {
     }
 
     if (element.locked) {
-      if (!e.ctrlKey) {
+      if (!(e.ctrlKey || e.metaKey)) {
         setBulkSelectedElements([]);
       }
       return;
     }
 
-    setBulkSelectRectPts((prev) => ({
+    setBulkSelectRect((prev) => ({
       ...prev,
       show: false,
     }));
@@ -214,7 +226,7 @@ export default function Canvas() {
       isSameElement(el, elementInBulk),
     );
 
-    if (e.ctrlKey) {
+    if (e.ctrlKey || e.metaKey) {
       if (isSelected) {
         if (bulkSelectedElements.length > 1) {
           setBulkSelectedElements(
@@ -365,8 +377,8 @@ export default function Canvas() {
       return;
     }
 
-    if (bulkSelectRectPts.show) {
-      setBulkSelectRectPts((prev) => ({
+    if (bulkSelectRect.show) {
+      setBulkSelectRect((prev) => ({
         ...prev,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
@@ -392,13 +404,14 @@ export default function Canvas() {
     const isMouseMiddleButton = e.button === 1;
 
     if (isMouseLeftButton) {
-      setBulkSelectRectPts({
+      setBulkSelectRect({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
         show: elementPointerDown === null || !elementPointerDown.element.locked,
         ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
       });
       if (elementPointerDown !== null) {
         handlePointerDownOnElement(e, elementPointerDown);
@@ -476,8 +489,8 @@ export default function Canvas() {
       );
     }
 
-    if (bulkSelectRectPts.show) {
-      setBulkSelectRectPts((prev) => ({
+    if (bulkSelectRect.show) {
+      setBulkSelectRect((prev) => ({
         ...prev,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
@@ -726,9 +739,9 @@ export default function Canvas() {
               }}
             />
           ))}
-          {bulkSelectRectPts.show && (
+          {bulkSelectRect.show && (
             <rect
-              {...getRectFromEndpoints(bulkSelectRectPts)}
+              {...getRectFromEndpoints(bulkSelectRect)}
               stroke="grey"
               fill="grey"
               fillOpacity={0.15}
