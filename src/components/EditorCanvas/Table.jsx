@@ -86,11 +86,8 @@ export default function Table({
         initialCoords: { x: tableData.x, y: tableData.y },
         currentCoords: { x: tableData.x, y: tableData.y },
       };
-      if (e.ctrlKey) {
-        setBulkSelectedElements((prev) => [
-          ...prev,
-          elementInBulk,
-        ]);
+      if (e.ctrlKey || e.metaKey) {
+        setBulkSelectedElements((prev) => [...prev, elementInBulk]);
       } else {
         setBulkSelectedElements([elementInBulk]);
       }

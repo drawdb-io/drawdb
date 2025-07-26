@@ -123,11 +123,8 @@ export default function Note({ data, onPointerDown }) {
         initialCoords: { x: data.x, y: data.y },
         currentCoords: { x: data.x, y: data.y },
       };
-      if (e.ctrlKey) {
-        setBulkSelectedElements((prev) => [
-          ...prev,
-          elementInBulk,
-        ]);
+      if (e.ctrlKey || e.metaKey) {
+        setBulkSelectedElements((prev) => [...prev, elementInBulk]);
       } else {
         setBulkSelectedElements([elementInBulk]);
       }
