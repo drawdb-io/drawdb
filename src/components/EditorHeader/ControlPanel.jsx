@@ -1513,6 +1513,8 @@ export default function ControlPanel({
       />
       <Sidesheet
         type={sidesheet}
+        title={title}
+        setTitle={setTitle}
         onClose={() => setSidesheet(SIDESHEET.NONE)}
       />
     </>

@@ -267,7 +267,8 @@ const en = {
     read_only: "Read only",
     continue: "Continue",
     restore_version: "Restore version",
-    restore_warning: "Loading another version will overwrite the current changes."
+    restore_warning: "Loading another version will overwrite the current changes.",
+    return_to_current: "Return to diagram"
   },
 };
 

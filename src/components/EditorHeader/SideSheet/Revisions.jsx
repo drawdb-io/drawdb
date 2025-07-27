@@ -7,18 +7,62 @@ import {
   IconChevronRight,
   IconChevronLeft,
 } from "@douyinfe/semi-icons";
-import { getCommits, getVersion } from "../../../api/gists";
+import {
+  create,
+  getCommitsWithFile,
+  getVersion,
+  patch,
+  VERSION_FILENAME,
+} from "../../../api/gists";
 import { DateTime } from "luxon";
-import { useAreas, useDiagram, useLayout } from "../../../hooks";
+import {
+  useAreas,
+  useDiagram,
+  useEnums,
+  useLayout,
+  useNotes,
+  useTransform,
+  useTypes,
+} from "../../../hooks";
+import { databases } from "../../../data/databases";
 
-export default function Revisions({ open }) {
+export default function Revisions({ open, title, setTitle }) {
   const { gistId, setVersion } = useContext(IdContext);
-  const { setAreas } = useAreas();
+  const { areas, setAreas } = useAreas();
   const { setLayout } = useLayout();
-  const { setTables, setRelationships } = useDiagram();
+  const { database, tables, relationships, setTables, setRelationships } =
+    useDiagram();
+  const { notes, setNotes } = useNotes();
+  const { types, setTypes } = useTypes();
+  const { enums, setEnums } = useEnums();
+  const { transform } = useTransform();
   const { t, i18n } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [revisions, setRevisions] = useState([]);
+
+  const diagramToString = useCallback(() => {
+    return JSON.stringify({
+      title,
+      tables,
+      relationships: relationships,
+      notes: notes,
+      subjectAreas: areas,
+      database: database,
+      ...(databases[database].hasTypes && { types: types }),
+      ...(databases[database].hasEnums && { enums: enums }),
+      transform: transform,
+    });
+  }, [
+    areas,
+    notes,
+    tables,
+    relationships,
+    database,
+    title,
+    enums,
+    types,
+    transform,
+  ]);
 
   const loadVersion = useCallback(
     async (sha) => {
@@ -27,26 +71,49 @@ export default function Revisions({ open }) {
         setVersion(sha);
         setLayout((prev) => ({ ...prev, readOnly: true }));
 
-        const content = version.data.files["share.json"].content;
+        const content = version.data.files[VERSION_FILENAME].content;
 
         const parsedDiagram = JSON.parse(content);
 
         setTables(parsedDiagram.tables);
         setRelationships(parsedDiagram.relationships);
         setAreas(parsedDiagram.subjectAreas);
+        setNotes(parsedDiagram.notes);
+        setTitle(parsedDiagram.title);
+
+        if (databases[database].hasTypes) {
+          setTypes(parsedDiagram.types);
+        }
+
+        if (databases[database].hasEnums) {
+          setEnums(parsedDiagram.enums);
+        }
       } catch (e) {
         console.log(e);
         Toast.error("failed_to_load_diagram");
       }
     },
-    [gistId, setTables, setRelationships, setAreas, setVersion, setLayout],
+    [
+      gistId,
+      setTables,
+      setRelationships,
+      setAreas,
+      setVersion,
+      setLayout,
+      database,
+      setNotes,
+      setTypes,
+      setEnums,
+      setTitle,
+    ],
   );
 
-  useEffect(() => {
-    const getRevisions = async (gistId) => {
+  const getRevisions = useCallback(
+    async (gistId) => {
       try {
         setIsLoading(true);
-        const { data } = await getCommits(gistId);
+        const { data } = await getCommitsWithFile(gistId, VERSION_FILENAME);
+
         setRevisions(
           data.filter((version) => version.change_status.total !== 0),
         );
@@ -56,55 +123,72 @@ export default function Revisions({ open }) {
       } finally {
         setIsLoading(false);
       }
-    };
+    },
+    [t],
+  );
 
+  const recordVersion = async () => {
+    try {
+      if (gistId) {
+        console.log(gistId)
+        await patch(gistId, VERSION_FILENAME, diagramToString());
+      } else {
+        await create(VERSION_FILENAME, diagramToString());
+      }
+      await getRevisions(gistId);
+    } catch (e) {
+      Toast.error("failed_to_record_version");
+    }
+  };
+
+  useEffect(() => {
     if (gistId && open) {
       getRevisions(gistId);
     }
-  }, [gistId, t, open]);
-
-  if (gistId && isLoading) {
-    return (
-      <div className="text-blue-500 text-center">
-        <Spin size="middle" />
-        <div>{t("loading")}</div>
-      </div>
-    );
-  }
+  }, [gistId, getRevisions, open]);
 
   return (
     <div className="mx-5 relative h-full">
       <div className="sticky top-0 z-10 sidesheet-theme pb-2 flex gap-2">
         <IconButton icon={<IconChevronLeft />} title="Previous" />
-        <Button icon={<IconPlus />} block onClick={() => {}}>
+        <Button icon={<IconPlus />} block onClick={recordVersion}>
           {t("record_version")}
         </Button>
         <IconButton icon={<IconChevronRight />} title="Next" />
       </div>
-      {!gistId && <div className="my-3">{t("no_saved_revisions")}</div>}
-      {gistId && (
-        <div className="my-3 overflow-y-auto">
-          <Steps direction="vertical" type="basic">
-            {revisions.map((r, i) => (
-              <Steps.Step
-                key={r.version}
-                onClick={() => loadVersion(r.version)}
-                title={
-                  <div className="flex justify-between items-center w-full">
-                    <span>{`${t("version")} ${revisions.length - i}`}</span>
-                    <Tag>{r.version.substring(0, 7)}</Tag>
-                  </div>
-                }
-                description={`${t("commited_at")} ${DateTime.fromISO(
-                  r.committed_at,
-                )
-                  .setLocale(i18n.language)
-                  .toLocaleString(DateTime.DATETIME_MED)}`}
-                icon={<i className="text-sm fa-solid fa-asterisk" />}
-              />
-            ))}
-          </Steps>
+      {isLoading ? (
+        <div className="text-blue-500 text-center mt-3">
+          <Spin size="middle" />
+          <div>{t("loading")}</div>
         </div>
+      ) : (
+        <>
+          {!gistId && <div className="my-3">{t("no_saved_revisions")}</div>}
+          {gistId && (
+            <div className="my-3 overflow-y-auto">
+              <Steps direction="vertical" type="basic">
+                {revisions.map((r, i) => (
+                  <Steps.Step
+                    key={r.version}
+                    onClick={() => loadVersion(r.version)}
+                    title={
+                      <div className="flex justify-between items-center w-full">
+                        <span>{`${t("version")} ${revisions.length - i}`}</span>
+                        <Tag>{r.version.substring(0, 7)}</Tag>
+                      </div>
+                    }
+                    description={`${t("commited_at")} ${DateTime.fromISO(
+                      r.committed_at,
+                    )
+                      .setLocale(i18n.language)
+                      .toLocaleString(DateTime.DATETIME_MED)}`}
+                    icon={<i className="text-sm fa-solid fa-asterisk" />}
+                  />
+                ))}
+              </Steps>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

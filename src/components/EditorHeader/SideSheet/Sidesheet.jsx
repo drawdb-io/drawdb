@@ -5,7 +5,7 @@ import Todo from "./Todo";
 import Revisions from "./Revisions";
 import { useTranslation } from "react-i18next";
 
-export default function Sidesheet({ type, onClose }) {
+export default function Sidesheet({ type, title, setTitle, onClose }) {
   const { t } = useTranslation();
 
   function getTitle(type) {
@@ -28,7 +28,13 @@ export default function Sidesheet({ type, onClose }) {
       case SIDESHEET.TODO:
         return <Todo />;
       case SIDESHEET.REVISIONS:
-        return <Revisions open={type !== SIDESHEET.NONE} />;
+        return (
+          <Revisions
+            open={type !== SIDESHEET.NONE}
+            title={title}
+            setTitle={setTitle}
+          />
+        );
       default:
         break;
     }
