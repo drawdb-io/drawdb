@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next";
 import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
-import { get } from "../api/gists";
+import { get, SHARE_FILENAME } from "../api/gists";
 
 export const IdContext = createContext({
   gistId: "",
@@ -293,7 +293,7 @@ export default function WorkSpace() {
     const loadFromGist = async (shareId) => {
       try {
         const { data } = await get(shareId);
-        const parsedDiagram = JSON.parse(data.files["share.json"].content);
+        const parsedDiagram = JSON.parse(data.files[SHARE_FILENAME].content);
         setUndoStack([]);
         setRedoStack([]);
         setGistId(shareId);
@@ -372,6 +372,12 @@ export default function WorkSpace() {
     searchParams,
   ]);
 
+  const returnToCurrentDiagram = async () => {
+    await load();
+    setLayout((prev) => ({ ...prev, readOnly: false }));
+    setVersion(null);
+  };
+
   useEffect(() => {
     if (
       tables?.length === 0 &&
@@ -447,14 +453,19 @@ export default function WorkSpace() {
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
           {version && (
-            <div
-              className="absolute right-8 top-2"
-              onClick={() => setShowRestoreModal(true)}
-            >
+            <div className="absolute right-8 top-2 space-x-2">
               <Button
                 icon={<i className="fa-solid fa-rotate-right mt-0.5"></i>}
+                onClick={() => setShowRestoreModal(true)}
               >
                 {t("restore_version")}
+              </Button>
+              <Button
+                type="tertiary"
+                onClick={returnToCurrentDiagram}
+                icon={<i className="bi bi-arrow-return-right mt-1"></i>}
+              >
+                {t("return_to_current")}
               </Button>
             </div>
           )}
@@ -521,7 +532,8 @@ export default function WorkSpace() {
         onCancel={() => setShowRestoreModal(false)}
         title={
           <span className="flex items-center gap-2">
-            <IconAlertTriangle className="text-amber-400" size="extra-large" /> {t("restore_version")}
+            <IconAlertTriangle className="text-amber-400" size="extra-large" />{" "}
+            {t("restore_version")}
           </span>
         }
         okText={t("continue")}
