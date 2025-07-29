@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 const parser = new Parser();
 
 export function fromDBML(src) {
-  const ast = parser.parse(src, "dbml");
+  const ast = parser.parse(src, "dbmlv2");
 
   const tables = [];
   const enums = [];
