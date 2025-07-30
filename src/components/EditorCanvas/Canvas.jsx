@@ -1,7 +1,8 @@
 import { useRef, useState,useEffect } from "react";
 import {
   Action,
-  Cardinality,
+  RelationshipType,
+  RelationshipCardinalities,
   Constraint,
   darkBgTheme,
   ObjectType,
@@ -81,6 +82,12 @@ export default function Canvas() {
     prevX: 0,
     prevY: 0,
   });
+  const [resizing, setResizing] = useState({
+    element: ObjectType.NONE,
+    id: -1,
+    prevX: 0,
+    prevY: 0,
+  });
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
     startTableId: -1,
@@ -129,7 +136,29 @@ export default function Canvas() {
 
         let elementData;
     if (type === ObjectType.TABLE) {
-      elementData = tables.find((t) => t.id === id);
+      const table = tables.find((t) => t.id === id);
+
+      setGrabOffset({
+        x: table.x - pointer.spaces.diagram.x,
+        y: table.y - pointer.spaces.diagram.y,
+      });
+
+      let width = table.width || settings.tableWidth;
+      if (table.x - pointer.spaces.diagram.x < - width + 15) {
+        setResizing({
+          element: type,
+          id: id,
+          prevX: table.x,
+          prevY: table.y,
+        });
+      } else {
+        setDragging({
+          element: type,
+          id: id,
+          prevX: table.x,
+          prevY: table.y,
+        });
+      }
     } else if (type === ObjectType.AREA) {
       elementData = areas.find((a) => a.id === id);
     } else if (type === ObjectType.NOTE) {
@@ -208,6 +237,12 @@ export default function Canvas() {
         ...linkingLine,
         endX: pointer.spaces.diagram.x,
         endY: pointer.spaces.diagram.y,
+      });
+    } else if (resizing.element === ObjectType.TABLE && resizing.id >= 0) {
+      const table = tables.find((t) => t.id === resizing.id);
+      const newWidth = Math.max(-(table.x - pointer.spaces.diagram.x), 180)
+      updateTable(resizing.id, {
+        width: newWidth
       });
     } else if (
       panning.isPanning &&
@@ -591,6 +626,7 @@ export default function Canvas() {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setResizing({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     if (panning.isPanning && didPan()) {
       setUndoStack((prev) => [
         ...prev,
@@ -650,7 +686,7 @@ export default function Canvas() {
     });
   };
 
-  const handleGripField = (field) => {
+  const handleGripField = (field, fieldTableid) => {
       // A field can be a foreign key only if it's a primary key or both NOT NULL and UNIQUE.
       // If it can't be selected, show an error message and exit.
       if (!field.primary && !(field.notNull && field.unique)) {
@@ -661,10 +697,14 @@ export default function Canvas() {
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setLinkingLine({
       ...linkingLine,
-      startTableId: field.tableId,
+      startTableId: fieldTableid,
       startFieldId: field.id,
       startX: pointer.spaces.diagram.x,
       startY: pointer.spaces.diagram.y,
+      endX: pointer.spaces.diagram.x,
+      endY: pointer.spaces.diagram.y,
+      endTableId: -1,
+      endFieldId: -1,
     });
     setLinking(true);
   };
@@ -674,10 +714,22 @@ export default function Canvas() {
     // Get the childTable and parentTable
     const childTable = tables.find((t) => t.id === hoveredTable.tableId);
     const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
+
+    if (!parentTable) {
+      console.error("Parent table not found for linking.");
+      setLinking(false);
+      return;
+    }
+    if (!childTable) {
+      console.error("Child table not found for linking.");
+      setLinking(false);
+      return;
+    }
     const parentFields = parentTable.fields.filter((field) => field.primary);
-  
+
     if (parentFields.length === 0) {
       Toast.info(t("no_primary_key"));
+      setLinking(false);
       return;
     }
     // If the relationship is recursive
@@ -685,6 +737,7 @@ export default function Canvas() {
     if (!recursiveRelation) {
       if (!areFieldsCompatible(parentFields, childTable)) {
         Toast.info(t("duplicate_field_name"));
+        setLinking(false);
         return;
       }
     }
@@ -692,13 +745,21 @@ export default function Canvas() {
     const alreadyLinked = relationships.some(
       (rel) =>
         rel.startTableId === linkingLine.startTableId &&
-        rel.endTableId === hoveredTable.tableId
+        rel.endTableId === hoveredTable.tableId &&
+        rel.startFieldId === linkingLine.startFieldId &&
+        rel.endFieldId === (parentFields.map(
+          (field, index) =>
+            childTable.fields.reduce(
+              (maxId, f) =>
+                Math.max(maxId, typeof f.id === 'number' ? f.id : -1), -1) + 1 + index)[0])
     );
     if (alreadyLinked) {
       Toast.info(t("duplicate_relationship"));
+      setLinking(false);
       return;
     }
-  
+    // Save the ID of the child table before modifying its fields
+    const childTableIdForFks = childTable.id;
     // Generate new fields for the childTable
     const newFields = parentFields.map((field, index) => ({
       name: recursiveRelation ? "" : field.name,
@@ -716,31 +777,28 @@ export default function Canvas() {
         tableId: parentTable.id,
         fieldId: field.id,
       },
-      id: childTable.fields.length + index, // Ensure IDs are unique
+      id: childTable.fields.reduce((maxId, f) => Math.max(maxId, typeof f.id === 'number' ? f.id : -1), -1) + 1 + index,
     }));
-  
     // Concatenate the existing fields with the new fields
     const updatedChildFields = [...childTable.fields, ...newFields];
-  
     // Update the childTable with the new fields
-    updateTable(childTable.id, {
+    updateTable(childTableIdForFks, {
       fields: updatedChildFields,
     });
-  
+    const actualStartFieldId = parentTable.fields.find(
+      (f) => f.id === linkingLine.startFieldId);
+    const relationshipName = `${parentTable.name}_${actualStartFieldId ? actualStartFieldId.name : 'table'}`;
     // Use the updated childTable fields to create the new relationship
     const newRelationship = {
-      ...linkingLine,
-      endTableId: childTable.id,
-      // The new fields are added at the end of the childTable fields
-      endFieldId: updatedChildFields.length - 1,
-      startTableId: parentTable.id,
-      startFieldId: parentFields[0].id,
-      Cardinality: Cardinality.ONE_TO_ONE,
+      startTableId: linkingLine.startTableId,
+      startFieldId: linkingLine.startFieldId,
+      endTableId: hoveredTable.tableId,
+      endFieldId: newFields.length > 0 ? newFields[0].id : undefined,
+      relationshipType: RelationshipType.ONE_TO_ONE, // Default, can be changed by editing the relationship
+      cardinality: RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${parentTable.name}_${parentFields[0].name}`,
-      id: relationships.length,
-      endField: newFields,
+      name: relationshipName,
     };
 
     delete newRelationship.startX;
@@ -748,7 +806,7 @@ export default function Canvas() {
     delete newRelationship.endX;
     delete newRelationship.endY;
     // Add the new relationship to the relationships array
-    addRelationship(newRelationship);
+    addRelationship(newRelationship, newFields, childTableIdForFks, true);
     setLinking(false);
   };
 
@@ -758,7 +816,7 @@ export default function Canvas() {
     (e) => {
       e.preventDefault();
 
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         // How "eager" the viewport is to
         // center the cursor's coordinates
         const eagernessFactor = 0.05;

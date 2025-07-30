@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import {
-  Cardinality,
+  RelationshipType,
   tableColorStripHeight,
   tableFieldHeight,
   tableHeaderHeight,
@@ -84,21 +84,12 @@ function Relationship({ relationship, tables }) {
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
 
-  switch (relationship.cardinality) {
-    case Cardinality.MANY_TO_ONE:
-      cardinalityStart = "n";
-      cardinalityEnd = "1";
-      break;
-    case Cardinality.ONE_TO_MANY:
-      cardinalityStart = "1";
-      cardinalityEnd = "n";
-      break;
-    case Cardinality.ONE_TO_ONE:
-      cardinalityStart = "1";
-      cardinalityEnd = "1";
-      break;
-    default:
-      break;
+  if (relationship.relationshipType === RelationshipType.ONE_TO_MANY) {
+    cardinalityStart = "1";
+    cardinalityEnd = relationship.cardinality || "(1,*)";
+  } else if (relationship.relationshipType === RelationshipType.ONE_TO_ONE) {
+    cardinalityStart = "1";
+    cardinalityEnd = relationship.cardinality || "(1,1)";
   }
 
   const length = 32;
@@ -130,7 +121,10 @@ function Relationship({ relationship, tables }) {
             x: tables[relationship.endTableId].x,
             y: tables[relationship.endTableId].y,
           },
-        })}
+        },
+        tables[relationship.startTableId].width || 200,
+        tables[relationship.endTableId].width || 200
+        )}
         stroke="gray"
         fill="none"
         strokeWidth={2}

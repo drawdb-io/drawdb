@@ -7,6 +7,7 @@ const turkish = {
 const tr = {
   translation: {
     report_bug: "Hata bildir",
+    import_from: "İçe aktar",
     import: "İçe aktar",
     file: "Dosya",
     new: "Yeni",
@@ -97,7 +98,8 @@ const tr = {
     no_tables: "Tablo yok",
     no_tables_text: "Diagram oluşturmaya başlayın",
     no_relationships: "İlişki yok",
-    no_relationships_text: "Alanları bağlamak ve ilişkiler oluşturmak için sürükleyin",
+    no_relationships_text:
+      "Alanları bağlamak ve ilişkiler oluşturmak için sürükleyin",
     no_subject_areas: "Konu alanı yok",
     no_subject_areas_text: "Grup tablolarına konu alanları ekleyin!",
     no_notes: "Not yok",
@@ -105,8 +107,7 @@ const tr = {
     no_types: "Tip yok",
     no_types_text: "Kendi özel veri türlerinizi tanımlayın",
     no_issues: "Hiçbir sorun bulunamadı",
-    strict_mode_is_on_no_issues:
-      "Sabit mod açık iken hatalar görüntülenmez",
+    strict_mode_is_on_no_issues: "Sabit mod açık iken hatalar görüntülenmez",
     name: "",
     type: "Tip",
     null: "Boş",
@@ -138,7 +139,8 @@ const tr = {
     one_to_many: "Bire çok",
     many_to_one: "Çoktan bire",
     content: "İçerik",
-    types_info:"Bu özellik PostgreSQL gibi nesne-ilişkisel DBMS'ler içindir.\nMySQL veya MariaDB için kullanılırsa, ilgili json doğrulama kontrolüyle birlikte bir JSON türü oluşturulacaktır.\nSQLite için kullanılırsa, bir BLOB'a çevrilecektir.\nMSQL için kullanılırsa, ilk alana bir tür takma adı oluşturulacaktır.",
+    types_info:
+      "Bu özellik PostgreSQL gibi nesne-ilişkisel DBMS'ler içindir.\nMySQL veya MariaDB için kullanılırsa, ilgili json doğrulama kontrolüyle birlikte bir JSON türü oluşturulacaktır.\nSQLite için kullanılırsa, bir BLOB'a çevrilecektir.\nMSQL için kullanılırsa, ilk alana bir tür takma adı oluşturulacaktır.",
     table_deleted: "Tablo silindi",
     area_deleted: "Alan silindi",
     note_deleted: "Not silindi",
@@ -155,8 +157,8 @@ const tr = {
     create: "Oluştur",
     confirm: "Onayla",
     last_modified: "Son değişiklik",
-    drag_and_drop_files: "Dosyayı buraya sürükleyip bırakın veya yüklemek için tıklayın.",
-    support_json_and_ddb: "JSON ve DDB dosya türleri desteklenir",
+    drag_and_drop_files:
+      "Dosyayı buraya sürükleyip bırakın veya yüklemek için tıklayın.",
     upload_sql_to_generate_diagrams:
       "Tablolarınızı ve sütunlarınızı otomatik olarak oluşturmak için bir sql dosyası yükleyin.",
     overwrite_existing_diagram: "Mevcut diyagramı üzerine yaz",
@@ -168,20 +170,28 @@ const tr = {
     duplicate_table_by_name: "Tekrar eden tablo adı '{{tableName}}'",
     empty_field_name: "'{{tableName}} tablosunda boş alan `name`",
     empty_field_type: "'{{tableName}} tablosunda boş tip `type`",
-    no_values_for_field:"'{{tableName}}' tablosunun '{{fieldName}}' alanı `{{type}}` türündedir ancak hiçbir değer belirtilmemiştir",
-    default_doesnt_match_type:"{{tableName}} tablosundaki '{{fieldName}}' alanı için varsayılan değer türüyle eşleşmiyor",
-    not_null_is_null:"'{{tableName}}' tablosunun '{{fieldName}}' alanı NULL DEĞİL ancak varsayılan olarak NULL",
-    duplicate_fields:"Tablo '{{tableName}}' içinde '{{fieldName}}' adıyla yinelenen tablo alanları",
-    duplicate_index: "'{{tableName}}' tablosunda '{{indexName}}' adına göre yinelenen dizin",
-    empty_index: "'{{tableName}}' tablosundaki dizin hiçbir sütunu indexlemiyor",
+    no_values_for_field:
+      "'{{tableName}}' tablosunun '{{fieldName}}' alanı `{{type}}` türündedir ancak hiçbir değer belirtilmemiştir",
+    default_doesnt_match_type:
+      "{{tableName}} tablosundaki '{{fieldName}}' alanı için varsayılan değer türüyle eşleşmiyor",
+    not_null_is_null:
+      "'{{tableName}}' tablosunun '{{fieldName}}' alanı NULL DEĞİL ancak varsayılan olarak NULL",
+    duplicate_fields:
+      "Tablo '{{tableName}}' içinde '{{fieldName}}' adıyla yinelenen tablo alanları",
+    duplicate_index:
+      "'{{tableName}}' tablosunda '{{indexName}}' adına göre yinelenen dizin",
+    empty_index:
+      "'{{tableName}}' tablosundaki dizin hiçbir sütunu indexlemiyor",
     no_primary_key: "'{{tableName}} tablosunun birincil anahtarı yok",
     type_with_no_name: "Adı olmayan bir tür bildirilmiş",
     duplicate_types: "'{{typeName}}' adına göre yinelenen türler",
     type_w_no_fields: "Alanı olmayan boş bir '{{typeName}}' türü bildirilmiş",
     empty_type_field_name: "Boş alan `name` in type '{{typeName}}'",
     empty_type_field_type: "Boş alan `type` '{{typeName}}' türünde",
-    no_values_for_type_field:"'{{typeName}}' türündeki '{{fieldName}}' alanı `{{type}}` türündedir ancak hiçbir değer belirtilmemiştir",
-    duplicate_type_fields:"'{{typeName}}' türünde '{{fieldName}}' adına göre yinelenen tür alanları",
+    no_values_for_type_field:
+      "'{{typeName}}' türündeki '{{fieldName}}' alanı `{{type}}` türündedir ancak hiçbir değer belirtilmemiştir",
+    duplicate_type_fields:
+      "'{{typeName}}' türünde '{{fieldName}}' adına göre yinelenen tür alanları",
     duplicate_reference: "'{{refName}}' adıyla yinelenen referans",
     circular_dependency: "Tablo '{{refName}}' içeren döngüsel bağımlılık",
     timeline: "Zaman çizelgesi",
@@ -213,7 +223,8 @@ const tr = {
     not_found: "Bulunamadı",
     pick_db: "Veritabanı seç",
     generic: "Genel",
-    generic_description: "Genel diyagramlar herhangi bir SQL türüne dışa aktarılabilir ancak az sayıda veri türünü destekler.",
+    generic_description:
+      "Genel diyagramlar herhangi bir SQL türüne dışa aktarılabilir ancak az sayıda veri türünü destekler.",
     enums: "Enums",
     add_enum: "Enum ekle",
     edit_enum: "{{extra}} Enum'u düzenle {{enumName}}",
@@ -225,7 +236,7 @@ const tr = {
     no_enums_text: "Burada enum tanımlayın",
     declare_array: "Dizi bildir",
     empty_index_name: "'{{tableName}}' tablosunda isimsiz bir dizin bildirildi",
-    didnt_find_diagram: "Oops! Diyagram bulunamadı."
+    didnt_find_diagram: "Oops! Diyagram bulunamadı.",
   },
 };
 

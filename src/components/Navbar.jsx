@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo_light_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
+import { socials } from "../data/socials";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
@@ -37,12 +38,18 @@ export default function Navbar() {
             >
               Templates
             </Link>
+            <Link
+              to={socials.docs}
+              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+            >
+              Docs
+            </Link>
           </div>
           <div className="md:hidden block space-x-3 ms-12">
             <a
               title="Jump to Github"
               className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-              href="https://github.com/drawdb-io/drawdb"
+              href={socials.github}
               target="_blank"
               rel="noreferrer"
             >
@@ -51,7 +58,7 @@ export default function Navbar() {
             <a
               title="Follow us on X"
               className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-              href="https://x.com/drawDB_"
+              href={socials.twitter}
               target="_blank"
               rel="noreferrer"
             >
@@ -60,7 +67,7 @@ export default function Navbar() {
             <a
               title="Join the community on Discord"
               className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
-              href="https://discord.gg/BrjZgNrmR6"
+              href={socials.discord}
               target="_blank"
               rel="noreferrer"
             >
@@ -110,6 +117,12 @@ export default function Navbar() {
           Templates
         </Link>
         <hr />
+        <Link
+          to={socials.docs}
+          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+        >
+          Docs
+        </Link>
       </SideSheet>
     </>
   );

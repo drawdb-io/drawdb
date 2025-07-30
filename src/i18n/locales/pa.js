@@ -7,6 +7,7 @@ const punjabi = {
 const pa = {
   translation: {
     report_bug: "ਬੱਗ ਰਿਪੋਰਟ ਕਰੋ",
+    import_from: "ਇੰਪੋਰਟ ਕਰੋ",
     import: "ਇੰਪੋਰਟ ਕਰੋ",
     file: "ਫਾਈਲ",
     new: "ਨਵਾਂ",
@@ -152,7 +153,6 @@ const pa = {
     last_modified: "ਆਖਰੀ ਵਾਰ ਬਦਲਿਆ ਗਿਆ",
     drag_and_drop_files:
       "ਫਾਈਲ ਨੂੰ ਇੱਥੇ ਖਿੱਚੋ ਅਤੇ ਛੱਡੋ ਜਾਂ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ।",
-    support_json_and_ddb: "JSON ਅਤੇ DDB ਫਾਈਲਾਂ ਸਮਰਥਿਤ ਹਨ",
     upload_sql_to_generate_diagrams:
       "ਆਪਣੇ ਟੇਬਲਾਂ ਅਤੇ ਕਾਲਮਾਂ ਨੂੰ ਆਪਣੇ ਆਪ ਜਨਰੇਟ ਕਰਨ ਲਈ ਇੱਕ SQL ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ।",
     overwrite_existing_diagram: "ਮੌਜੂਦਾ ਡਾਯਾਗ੍ਰਾਮ ਨੂੰ ਓਵਰਰਾਈਟ ਕਰੋ",
