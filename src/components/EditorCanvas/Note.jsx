@@ -100,11 +100,47 @@ export default function Note({ data, onPointerDown }) {
     setRedoStack([]);
   };
 
-  const lockUnlockNote = () => {
-    setBulkSelectedElements((prev) =>
-      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.NOTE),
-    );
-    updateNote(data.id, { locked: !data.locked });
+  const lockUnlockNote = (e) => {
+    const locking = !data.locked;
+    updateNote(data.id, { locked: locking });
+
+    const lockNote = () => {
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setBulkSelectedElements((prev) =>
+        prev.filter((el) => el.id !== data.id || el.type !== ObjectType.NOTE),
+      );
+    };
+
+    const unlockNote = () => {
+      const elementInBulk = {
+        id: data.id,
+        type: ObjectType.NOTE,
+        initialCoords: { x: data.x, y: data.y },
+        currentCoords: { x: data.x, y: data.y },
+      };
+      if (e.ctrlKey || e.metaKey) {
+        setBulkSelectedElements((prev) => [...prev, elementInBulk]);
+      } else {
+        setBulkSelectedElements([elementInBulk]);
+      }
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.NOTE,
+        id: data.id,
+        open: false,
+      }));
+    };
+
+    if (locking) {
+      lockNote();
+    } else {
+      unlockNote();
+    }
   };
 
   const edit = () => {
