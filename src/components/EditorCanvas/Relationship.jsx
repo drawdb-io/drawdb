@@ -293,18 +293,7 @@ export default function Relationship({ data }) {
         <path
           ref={pathRef}
           d={calcPath(
-            {
-              ...data,
-              startTable: {
-                x: tables[data.startTableId].x,
-                y: tables[data.startTableId].y,
-              },
-              endTable: {
-                x: tables[data.endTableId].x,
-                y: tables[data.endTableId].y,
-              },
-            },
-            // settings.tableWidth,
+            pathData, // Use pathData which includes the field offsets
             tables[data.startTableId].width,
             tables[data.endTableId].width
           )}
