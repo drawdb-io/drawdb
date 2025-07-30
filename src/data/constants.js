@@ -29,12 +29,32 @@ export const tableWidth = 220;
 export const tableFieldHeight = 36;
 export const tableColorStripHeight = 7;
 
-export const Cardinality = {
+export const RelationshipType = {
   ONE_TO_ONE: "one_to_one",
   ONE_TO_MANY: "one_to_many",
-  MANY_TO_ONE: "many_to_one",
 };
 
+export const RelationshipCardinalities = {
+  [RelationshipType.ONE_TO_ONE]: [
+    {value: "0,1", label: "(0,1)"},
+    {value: "1,1", label: "(1,1)"},
+  ],
+  [RelationshipType.ONE_TO_MANY]: [
+    {value: "0,*", label: "(0,*)"},
+    {value: "1,*", label: "(1,*)"},
+  ],
+};
+
+export const ParentCardinality = {
+  DEFAULT: {value: "1,1", label: "(1,1)"},
+  NULLEABLE: {value: "0,1", label: "(0,1)"},
+}
+
+export const Notation = {
+  DEFAULT: "default",
+  CROWS_FOOT: "crows_foot",
+  IDEF1X: "idef1x",
+}
 export const Constraint = {
   NONE: "No action",
   RESTRICT: "Restrict",
@@ -115,4 +135,9 @@ export const DB = {
   MARIADB: "mariadb",
   ORACLE: "oracledb",
   GENERIC: "generic",
+};
+
+export const IMPORT_FROM = {
+  JSON: 0,
+  DBML: 1,
 };

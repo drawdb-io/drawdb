@@ -1,4 +1,4 @@
-import { Cardinality, DB } from "../../data/constants";
+import { RelationshipType, RelationshipCardinalities, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
@@ -164,9 +164,11 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
               relationship.deleteConstraint = deleteConstraint;
 
               if (table.fields[startFieldId].unique) {
-                relationship.cardinality = Cardinality.ONE_TO_ONE;
+                relationship.relationshipType = RelationshipType.ONE_TO_ONE;
+                relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label;
               } else {
-                relationship.cardinality = Cardinality.MANY_TO_ONE;
+                relationship.relationshipType = RelationshipType.ONE_TO_MANY;
+                relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label;
               }
 
               relationships.push(relationship);
@@ -254,9 +256,11 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
           relationship.deleteConstraint = deleteConstraint;
 
           if (tables[startTableId].fields[startFieldId].unique) {
-            relationship.cardinality = Cardinality.ONE_TO_ONE;
+            relationship.relationshipType = RelationshipType.ONE_TO_ONE;
+            relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label;
           } else {
-            relationship.cardinality = Cardinality.MANY_TO_ONE;
+            relationship.relationshipType = RelationshipType.ONE_TO_MANY;
+            relationship.cardinality = RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label;
           }
 
           relationships.push(relationship);

@@ -1,4 +1,4 @@
-import { Cardinality, DB } from "../../data/constants";
+import { RelationshipType, RelationshipCardinalities, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
 
@@ -153,11 +153,13 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
 
               relationship.updateConstraint = updateConstraint;
               relationship.deleteConstraint = deleteConstraint;
-              if (table.fields[startFieldId].unique) {
-                relationship.cardinality = Cardinality.ONE_TO_ONE;
-              } else {
-                relationship.cardinality = Cardinality.MANY_TO_ONE;
-              }
+              relationship.relationshipType = tables[startTableId].fields[startFieldId].unique
+                ? RelationshipType.ONE_TO_ONE
+                : RelationshipType.ONE_TO_MANY;
+
+              relationship.cardinality = tables[startTableId].fields[startFieldId].unique
+                ? RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label // "(0,1)" o "(1,1)"
+                : RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label; // "(1,*)"
               relationships.push(relationship);
             }
           }
@@ -208,12 +210,13 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             relationship.endFieldId = endFieldId;
             relationship.updateConstraint = updateConstraint;
             relationship.deleteConstraint = deleteConstraint;
+            relationship.relationshipType = tables[startTableId].fields[startFieldId].unique
+              ? RelationshipType.ONE_TO_ONE
+              : RelationshipType.ONE_TO_MANY;
 
-            if (table.fields[startFieldId].unique) {
-              relationship.cardinality = Cardinality.ONE_TO_ONE;
-            } else {
-              relationship.cardinality = Cardinality.MANY_TO_ONE;
-            }
+            relationship.cardinality = tables[startTableId].fields[startFieldId].unique
+              ? RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label
+              : RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label;
 
             relationships.push(relationship);
 
@@ -336,13 +339,13 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           relationship.endFieldId = endFieldId;
           relationship.updateConstraint = updateConstraint;
           relationship.deleteConstraint = deleteConstraint;
-          relationship.cardinality = Cardinality.ONE_TO_ONE;
+          relationship.relationshipType = tables[startTableId].fields[startFieldId].unique
+            ? RelationshipType.ONE_TO_ONE
+            : RelationshipType.ONE_TO_MANY;
 
-          if (tables[startTableId].fields[startFieldId].unique) {
-            relationship.cardinality = Cardinality.ONE_TO_ONE;
-          } else {
-            relationship.cardinality = Cardinality.MANY_TO_ONE;
-          }
+          relationship.cardinality = tables[startTableId].fields[startFieldId].unique
+            ? RelationshipCardinalities[RelationshipType.ONE_TO_ONE][0].label
+            : RelationshipCardinalities[RelationshipType.ONE_TO_MANY][0].label;
 
           relationships.push(relationship);
 
