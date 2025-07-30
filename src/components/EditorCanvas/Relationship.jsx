@@ -280,7 +280,8 @@ export default function Relationship({ data }) {
         <path
           d={calcPath(
             pathData,
-            settings.tableWidth,
+            tables[data.startTableId].width,
+            tables[data.endTableId].width
           )}
           stroke="transparent"
           fill="none"
@@ -292,8 +293,20 @@ export default function Relationship({ data }) {
         <path
           ref={pathRef}
           d={calcPath(
-            pathData,
-            settings.tableWidth,
+            {
+              ...data,
+              startTable: {
+                x: tables[data.startTableId].x,
+                y: tables[data.startTableId].y,
+              },
+              endTable: {
+                x: tables[data.endTableId].x,
+                y: tables[data.endTableId].y,
+              },
+            },
+            // settings.tableWidth,
+            tables[data.startTableId].width,
+            tables[data.endTableId].width
           )}
           stroke="gray"
           className="group-hover:stroke-sky-700"

@@ -31,6 +31,7 @@ export default function DiagramContextProvider({ children }) {
           name: settings.upperCaseFields ? `TABLE_${prev.length}` : `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
+          width: settings.tableWidth,
           fields: [
             {
               name: settings.upperCaseFields ? "ID" : "id",

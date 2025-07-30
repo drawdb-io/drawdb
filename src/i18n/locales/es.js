@@ -64,7 +64,7 @@ const es = {
     show_timeline: "Mostrar línea de tiempo",
     autosave: "Guardado automático",
     panning: "Desplazamiento",
-    table_width: "Ancho de la tabla",
+    table_width: "Ancho de la tabla Predeterminado",
     language: "Idioma",
     flush_storage: "Vaciar almacenamiento",
     are_you_sure_flush_storage:

@@ -121,7 +121,10 @@ function Relationship({ relationship, tables }) {
             x: tables[relationship.endTableId].x,
             y: tables[relationship.endTableId].y,
           },
-        })}
+        },
+        tables[relationship.startTableId].width || 200,
+        tables[relationship.endTableId].width || 200
+        )}
         stroke="gray"
         fill="none"
         strokeWidth={2}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Tab,
   ObjectType,
@@ -20,6 +20,15 @@ import { useTranslation} from "react-i18next";
 import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
+
+//Helper function to calculate text width
+const getTextWidth = (text, font) => {
+  const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+  const context = canvas.getContext("2d");
+  context.font = font;
+  const metrics = context.measureText(text);
+  return metrics.width;
+};
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
@@ -70,6 +79,73 @@ export default function Table(props) {
     tableData.name,
     updateTable
   ]);
+  const calculatedContentWidth = useMemo(() => {
+    if(!tableData) return settings.tableWidth;
+
+    let maxCalculatedWidth = 0;
+    const baseFontSize = 14;
+    const headerFontSize = baseFontSize + 2; // Slightly larger for header
+
+    // Calculate the width of the table name header
+    const headerFont = `700 ${headerFontSize}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif`;
+    const tableNameWidth = getTextWidth(tableData.name || " ", headerFont);
+    const headerHorizontalPadding = 24;
+    const headerIconsWidth = 70;
+    maxCalculatedWidth = Math.max(
+      maxCalculatedWidth,
+      tableNameWidth + headerHorizontalPadding + headerIconsWidth
+    );
+
+    // Calculate the width of each field
+    const fieldFont = `${baseFontSize}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif`;
+
+    const fieldRowHorizontalPadding = 16;
+    const gripButtonWidth = 18;
+    const spaceBetweenNameAndType = 10;
+    const spaceForHoverDeleteIcon = 30;
+
+    tableData.fields.forEach((field) => {
+      let currentFieldContentWidth = 0;
+      currentFieldContentWidth += getTextWidth(field.name || " ", fieldFont);
+
+      let typeString = field.type || "";
+      const fieldTypeInfo = dbToTypes[database]?.[field.type];
+      if ((fieldTypeInfo?.isSized || fieldTypeInfo?.hasPrecision) && field.size && String(field.size).trim() !== "") {
+        typeString += `(${field.size})`;
+      }
+      currentFieldContentWidth += getTextWidth(typeString, fieldFont);
+
+      let indicatorsWidth = spaceBetweenNameAndType; // Initial space before indicators
+      if (settings.notation === 'default') {
+        if (field.primary) indicatorsWidth += 16 + 4; // IconKeyStroked approx 16px + margin
+        if (!field.notNull) indicatorsWidth += getTextWidth("?", fieldFont) + 4; // '?' char + margin
+      } else {
+        indicatorsWidth += getTextWidth(field.notNull ? "NOT NULL" : "NULL", fieldFont) + 4; // text + margin
+      }
+      currentFieldContentWidth += indicatorsWidth;
+
+      const totalFieldRowWidth = fieldRowHorizontalPadding + gripButtonWidth + currentFieldContentWidth + spaceForHoverDeleteIcon;
+      maxCalculatedWidth = Math.max(maxCalculatedWidth, totalFieldRowWidth);
+    });
+
+    const minTableWidth = 180;
+    const safetyBuffer = 25; // Extra buffer for aesthetics and measurement inaccuracies
+    return Math.max(minTableWidth, Math.ceil(maxCalculatedWidth + safetyBuffer));
+
+  }, [tableData.name, tableData.fields, settings.notation, database, dbToTypes, settings.tableWidth]);
+
+  useEffect(() => {
+    const currentWidth = tableData.width || settings.tableWidth;
+    // Expand if calculated width is greater than current width.
+    // This ensures the table grows to fit its content.
+    // It respects manual widening, as it won't shrink if currentWidth is already larger.
+    if (calculatedContentWidth > currentWidth) {
+      // Only update if the difference is somewhat significant to prevent rapid, tiny adjustments
+      if (Math.abs(currentWidth - calculatedContentWidth) > 2) {
+        updateTable(tableData.id, { width: calculatedContentWidth });
+      }
+    }
+  }, [tableData.id, tableData.width, calculatedContentWidth, updateTable, settings.tableWidth]);
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
@@ -95,6 +171,7 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
+
   const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
 
   const sortedFields = [...tableData.fields].sort((a, b) => {
@@ -133,7 +210,8 @@ export default function Table(props) {
         key={tableData.id}
         x={tableData.x}
         y={tableData.y}
-        width={settings.tableWidth}
+        // width={settings.tableWidth}
+        width={tableData.width || settings.tableWidth}
         height={height}
         className="group drop-shadow-lg  cursor-move"
         onPointerDown={onPointerDown}

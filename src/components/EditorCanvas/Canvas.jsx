@@ -82,6 +82,12 @@ export default function Canvas() {
     prevX: 0,
     prevY: 0,
   });
+  const [resizing, setResizing] = useState({
+    element: ObjectType.NONE,
+    id: -1,
+    prevX: 0,
+    prevY: 0,
+  });
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
     startTableId: -1,
@@ -130,7 +136,29 @@ export default function Canvas() {
 
         let elementData;
     if (type === ObjectType.TABLE) {
-      elementData = tables.find((t) => t.id === id);
+      const table = tables.find((t) => t.id === id);
+
+      setGrabOffset({
+        x: table.x - pointer.spaces.diagram.x,
+        y: table.y - pointer.spaces.diagram.y,
+      });
+
+      let width = table.width || settings.tableWidth;
+      if (table.x - pointer.spaces.diagram.x < - width + 15) {
+        setResizing({
+          element: type,
+          id: id,
+          prevX: table.x,
+          prevY: table.y,
+        });
+      } else {
+        setDragging({
+          element: type,
+          id: id,
+          prevX: table.x,
+          prevY: table.y,
+        });
+      }
     } else if (type === ObjectType.AREA) {
       elementData = areas.find((a) => a.id === id);
     } else if (type === ObjectType.NOTE) {
@@ -209,6 +237,12 @@ export default function Canvas() {
         ...linkingLine,
         endX: pointer.spaces.diagram.x,
         endY: pointer.spaces.diagram.y,
+      });
+    } else if (resizing.element === ObjectType.TABLE && resizing.id >= 0) {
+      const table = tables.find((t) => t.id === resizing.id);
+      const newWidth = Math.max(-(table.x - pointer.spaces.diagram.x), 180)
+      updateTable(resizing.id, {
+        width: newWidth
       });
     } else if (
       panning.isPanning &&
@@ -592,6 +626,7 @@ export default function Canvas() {
       setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    setResizing({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     if (panning.isPanning && didPan()) {
       setUndoStack((prev) => [
         ...prev,
