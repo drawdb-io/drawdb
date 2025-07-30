@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useSettings } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ export default function DiagramContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { settings } = useSettings();
 
   const addTable = (data, addToHistory = true) => {
     if (data) {
@@ -27,13 +28,13 @@ export default function DiagramContextProvider({ children }) {
         ...prev,
         {
           id: prev.length,
-          name: `table_${prev.length}`,
+          name: settings.upperCaseFields ? `TABLE_${prev.length}` : `table_${prev.length}`,
           x: transform.pan.x,
           y: transform.pan.y,
           fields: [
             {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
+              name: settings.upperCaseFields ? "ID" : "id",
+              type: database === DB.GENERIC ? "INT" : database === DB.ORACLE ? "NUMBER" : "INTEGER",
               default: "",
               check: "",
               primary: true,
@@ -114,15 +115,39 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const updateTable = (id, updatedValues) => {
-    setTables((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t)),
-    );
+    setTables((prev) => {
+      const updated = prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t));
+      return updated;
+    });
+  };
+
+  const addFieldToTable = (tableId, newFieldData, fieldUpdates = {}) => {
+
+    setTables((prev) => {
+      return prev.map((table) => {
+        if (table.id === tableId) {
+          const newFieldId = table.fields.length;
+          const newField = { ...newFieldData, id: newFieldId };
+          const updatedFields = [...table.fields, newField];
+          // If there are field updates to apply, apply them to the new field
+          if (Object.keys(fieldUpdates).length > 0) {
+            const finalFields = updatedFields.map((field) =>
+              field.id === newFieldId ? { ...field, ...fieldUpdates } : field
+            );
+            return { ...table, fields: finalFields };
+          }
+          return { ...table, fields: updatedFields };
+        }
+        return table;
+      });
+    });
   };
 
   const updateField = (tid, fid, updatedValues, addToHistory = true) => {
     const tableBeforeUpdate = tables.find(t => t.id === tid);
-    if (!tableBeforeUpdate) return;
-
+    if (!tableBeforeUpdate) {
+      return;
+    }
     // Capture the previous state of the fields in the table before any modifications.
     const previousFieldsState = JSON.parse(JSON.stringify(tableBeforeUpdate.fields));
     const originalFieldForMessage = previousFieldsState.find(f => f.id === fid);
@@ -252,7 +277,6 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
-
     const currentTable = tables.find(t => t.id === tid);
     if (!currentTable) return;
 
@@ -561,6 +585,7 @@ export default function DiagramContextProvider({ children }) {
         setTables,
         addTable,
         updateTable,
+        addFieldToTable,
         updateField,
         deleteField,
         deleteTable,

@@ -1,7 +1,7 @@
 import { Action, ObjectType } from "../../../data/constants";
 import { Row, Col, Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
-import { useEnums, useDiagram, useTypes, useUndoRedo } from "../../../hooks";
+import { useEnums, useDiagram, useTypes, useUndoRedo, useSettings } from "../../../hooks";
 import { useState } from "react";
 import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,7 @@ export default function TableField({ data, tid, index }) {
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const { settings } = useSettings()
 
   return (
     <Row gutter={6} className="hover-1 my-2">
@@ -25,10 +26,15 @@ export default function TableField({ data, tid, index }) {
           value={data.name}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder="Name"
-          onChange={(value) => updateField(tid, index, { name: value })}
+          onChange={(value) => updateField(tid, index, {
+              name: settings.upperCaseFields ? value.toUpperCase() : value.toLowerCase()
+          })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
+            const transformedValue = settings.upperCaseFields
+            ? e.target.value.toUpperCase()
+            : e.target.value.toLowerCase();
             setUndoStack((prev) => [
               ...prev,
               {
@@ -38,7 +44,7 @@ export default function TableField({ data, tid, index }) {
                 tid: tid,
                 fid: index,
                 undo: editField,
-                redo: { name: e.target.value },
+                redo: { name: transformedValue },
                 message: t("edit_table", {
                   tableName: tables[tid].name,
                   extra: "[field]",
@@ -176,10 +182,10 @@ export default function TableField({ data, tid, index }) {
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
             const changes = { primary: !data.primary };
-            
+
             const undo= { primary: data.primary , notNull : data.notNull };
             const redo= { primary: newStatePK , notNull:stateNull };
-            
+
             if (mustSetNotNull) {
               undo.notNull = data.notNull;
               redo.notNull = true;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Tab,
   ObjectType,
@@ -23,7 +23,7 @@ import i18n from "../../i18n/i18n";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
-  const { database } = useDiagram();
+  const { database, updateTable } = useDiagram();
   const {
     tableData,
     onPointerDown,
@@ -37,6 +37,39 @@ export default function Table(props) {
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
+
+  useEffect(() => {
+    // Check if we need to update the table name
+    const desiredTableCase = settings.upperCaseFields ? tableData.name.toUpperCase() : tableData.name.toLowerCase();
+    const tableNameNeedsUpdate = tableData.name !== desiredTableCase;
+
+    // Check if any field names need to be updated
+    const fieldsNeedUpdate = tableData.fields.some(field => {
+      const desiredFieldCase = settings.upperCaseFields ? field.name.toUpperCase() : field.name.toLowerCase();
+      return field.name !== desiredFieldCase;
+    });
+
+    // Only update if there are actual changes needed
+    if (tableNameNeedsUpdate || fieldsNeedUpdate) {
+      // Create updated fields with correct case
+      const updatedFields = tableData.fields.map(field => ({
+        ...field,
+        name: settings.upperCaseFields ? field.name.toUpperCase() : field.name.toLowerCase()
+      }));
+
+      // Update both table name and fields
+      updateTable(tableData.id, {
+        name: settings.upperCaseFields ? tableData.name.toUpperCase() : tableData.name.toLowerCase(),
+        fields: updatedFields
+      });
+    }
+  }, [
+    settings.upperCaseFields,
+    tableData.fields,
+    tableData.id,
+    tableData.name,
+    updateTable
+  ]);
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;

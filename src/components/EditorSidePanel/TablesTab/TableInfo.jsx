@@ -8,7 +8,7 @@ import {
   Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useDiagram, useUndoRedo } from "../../../hooks";
+import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
 import { Action, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
@@ -22,10 +22,11 @@ export default function TableInfo({ data }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
-  const { deleteTable, updateTable, updateField, setRelationships, database } =
+  const { deleteTable, updateTable, addFieldToTable, updateField, setRelationships, database } =
     useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+  const { settings } = useSettings();
   const [drag, setDrag] = useState({
     draggingElementIndex: null,
     draggingOverIndexList: [],
@@ -40,10 +41,15 @@ export default function TableInfo({ data }) {
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder={t("name")}
           className="ms-2"
-          onChange={(value) => updateTable(data.id, { name: value })}
+          onChange={(value) => updateTable(data.id, {
+              name: settings.upperCaseFields ? value.toUpperCase() : value.toLowerCase()
+          })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
+            const transformedValue = settings.upperCaseFields
+              ? e.target.value.toUpperCase()
+              : e.target.value.toLowerCase();
             setUndoStack((prev) => [
               ...prev,
               {
@@ -52,9 +58,9 @@ export default function TableInfo({ data }) {
                 component: "self",
                 tid: data.id,
                 undo: editField,
-                redo: { name: e.target.value },
+                redo: { name: transformedValue },
                 message: t("edit_table", {
-                  tableName: e.target.value,
+                  tableName: transformedValue,
                   extra: "[name]",
                 }),
               },
@@ -333,24 +339,90 @@ export default function TableInfo({ data }) {
                 },
               ]);
               setRedoStack([]);
-              updateTable(data.id, {
-                fields: [
-                  ...data.fields,
-                  {
-                    name: "",
-                    type: "",
-                    default: "",
-                    check: "",
-                    primary: false,
-                    unique: false,
-                    notNull: false,
-                    increment: false,
-                    comment: "",
-                    foreignK: false,
-                    id: data.fields.length,
-                  },
-                ],
-              });
+
+              const incr = data.increment && !!dbToTypes[database][settings.defaultFieldType].canIncrement;
+              // Function to get the default size configured by the user
+              const getUserDefaultSize = (typeName) => {
+                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
+                const userSize = dbSettings[typeName];
+                if (typeof userSize === 'number') {
+                  return userSize;
+                }
+                return dbToTypes[database][typeName]?.defaultSize || '';
+              };
+              // Function to get the combined size for types with precision and scale
+              const getUserDefaultPrecisionScale = (typeName) => {
+                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
+                const userSettings = dbSettings[typeName];
+                if (typeof userSettings === 'object') {
+                  const precision = userSettings?.precision || 10;
+                  const scale = userSettings?.scale;
+                  // If it has a defined scale, combine as "precision,scale"
+                  if (scale !== undefined && scale !== null) {
+                    return `${precision},${scale}`;
+                  }
+                  // If it only has precision, return just the precision
+                  return precision.toString();
+                }
+                // Default value for types with precision
+                return "10";
+              };
+
+              // Base field data
+              const newFieldData = {
+                name: "",
+                type: settings.defaultFieldType,
+                default: "",
+                check: "",
+                primary: false,
+                unique: false,
+                notNull: settings.defaultNotNull,
+                increment: false,
+                comment: "",
+                foreignK: false,
+              };
+
+              // Field updates based on type
+              let fieldUpdates = {
+                increment: incr,
+              };
+
+              if (settings.defaultFieldType === "ENUM" || settings.defaultFieldType === "SET") {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  values: data.values ? [...data.values] : [],
+                };
+              } else if (dbToTypes[database][settings.defaultFieldType].hasPrecision) {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  size: getUserDefaultPrecisionScale(settings.defaultFieldType),
+                };
+              } else if (dbToTypes[database][settings.defaultFieldType].isSized) {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  size: getUserDefaultSize(settings.defaultFieldType),
+                };
+              } else if (!dbToTypes[database][settings.defaultFieldType].hasDefault || incr) {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  default: "",
+                  size: "",
+                  values: [],
+                };
+              } else if (dbToTypes[database][settings.defaultFieldType].hasCheck) {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  check: "",
+                };
+              } else {
+                fieldUpdates = {
+                  ...fieldUpdates,
+                  size: "",
+                  values: [],
+                };
+              }
+              // Use the new atomic function
+              addFieldToTable(data.id, newFieldData, fieldUpdates);
             }}
             block
           >
