@@ -99,7 +99,7 @@ export function toDBML(diagram) {
     .join("\n\n")}${enumDefinitions}${diagram.tables
     .map(
       (table) =>
-        `Table ${table.name} {\n${table.fields
+        `Table ${table.name} [headercolor: ${table.color}] {\n${table.fields
           .map(
             (field) =>
               `\t${field.name} ${
@@ -119,7 +119,7 @@ export function toDBML(diagram) {
                   (index) =>
                     `\t\t(${index.fields.join(", ")}) [ name: '${
                       index.name
-                    }'${index.unique ? " unique" : ""} ]`,
+                    }'${index.unique ? ", unique" : ""} ]`,
                 )
                 .join("\n") +
               "\n\t}"

@@ -4,8 +4,11 @@ import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 
 export function parseDefault(field, database = DB.GENERIC) {
+  if (isFunction(field.default)) {
+    return `\`${field.default}\``;
+  }
+
   if (
-    isFunction(field.default) ||
     isKeyword(field.default) ||
     !dbToTypes[database][field.type].hasQuotes
   ) {

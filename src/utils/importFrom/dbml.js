@@ -15,10 +15,10 @@ export function fromDBML(src) {
   for (const schema of ast.schemas) {
     for (const table of schema.tables) {
       let parsedTable = {};
-      parsedTable.id = nanoid();
+      parsedTable.id = table.id;
       parsedTable.name = table.name;
       parsedTable.comment = table.note ?? "";
-      parsedTable.color = "#175e7a";
+      parsedTable.color = table.headerColor ?? "#175e7a";
       parsedTable.fields = [];
       parsedTable.indices = [];
 
