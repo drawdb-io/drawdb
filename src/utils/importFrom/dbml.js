@@ -15,7 +15,7 @@ export function fromDBML(src) {
   for (const schema of ast.schemas) {
     for (const table of schema.tables) {
       let parsedTable = {};
-      parsedTable.id = table.id;
+      parsedTable.id = nanoid();
       parsedTable.name = table.name;
       parsedTable.comment = table.note ?? "";
       parsedTable.color = table.headerColor ?? "#175e7a";
