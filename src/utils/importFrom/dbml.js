@@ -18,7 +18,7 @@ export function fromDBML(src) {
       parsedTable.id = nanoid();
       parsedTable.name = table.name;
       parsedTable.comment = table.note ?? "";
-      parsedTable.color = "#175e7a";
+      parsedTable.color = table.headerColor ?? "#175e7a";
       parsedTable.fields = [];
       parsedTable.indices = [];
 

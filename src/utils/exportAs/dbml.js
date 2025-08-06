@@ -1,14 +1,27 @@
 import { Cardinality } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import i18n from "../../i18n/i18n";
-import { escapeQuotes, parseDefault } from "../exportSQL/shared";
+import { escapeQuotes } from "../exportSQL/shared";
+import { isFunction, isKeyword } from "../utils";
+
+function parseDefaultDbml(field, database) {
+  if (isFunction(field.default)) {
+    return `\`${field.default}\``;
+  }
+
+  if (isKeyword(field.default) || !dbToTypes[database][field.type].hasQuotes) {
+    return field.default;
+  }
+
+  return `'${escapeQuotes(field.default)}'`;
+}
 
 function columnDefault(field, database) {
   if (!field.default || field.default.trim() === "") {
     return "";
   }
 
-  return `default: ${parseDefault(field, database)}`;
+  return `default: ${parseDefaultDbml(field, database)}`;
 }
 
 function columnComment(field) {
@@ -27,7 +40,7 @@ function columnSettings(field, database) {
   field.notNull && constraints.push("not null");
   field.unique && constraints.push("unique");
   constraints.push(columnDefault(field, database));
-  constraints.push(columnComment(field, database));
+  constraints.push(columnComment(field));
 
   constraints = constraints.filter((x) => Boolean(x));
 
@@ -99,7 +112,7 @@ export function toDBML(diagram) {
     .join("\n\n")}${enumDefinitions}${diagram.tables
     .map(
       (table) =>
-        `Table ${table.name} {\n${table.fields
+        `Table ${table.name} [headercolor: ${table.color}] {\n${table.fields
           .map(
             (field) =>
               `\t${field.name} ${
@@ -119,7 +132,7 @@ export function toDBML(diagram) {
                   (index) =>
                     `\t\t(${index.fields.join(", ")}) [ name: '${
                       index.name
-                    }'${index.unique ? " unique" : ""} ]`,
+                    }'${index.unique ? ", unique" : ""} ]`,
                 )
                 .join("\n") +
               "\n\t}"
