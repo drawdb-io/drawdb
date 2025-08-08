@@ -13,7 +13,7 @@ const affinity = {
       INTEGER: "INT",
       MEDIUMINT: "INTEGER",
       BIT: "BOOLEAN",
-      "CHATACTER VARYING": "VARCHAR",
+      "CHARACTER VARYING": "VARCHAR",
     },
     { get: (target, prop) => (prop in target ? target[prop] : "BLOB") },
   ),

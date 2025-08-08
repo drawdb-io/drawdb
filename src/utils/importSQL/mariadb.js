@@ -121,7 +121,7 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
               const endField = endTable.fields.find(
                 (f) => f.name === endFieldName,
               );
-              if (endField) return;
+              if (!endField) return;
 
               const startField = table.fields.find(
                 (f) => f.name === startFieldName,
