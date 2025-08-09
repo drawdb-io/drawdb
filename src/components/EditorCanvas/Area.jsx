@@ -48,11 +48,47 @@ export default function Area({
     });
   };
 
-  const lockUnlockArea = () => {
-    setBulkSelectedElements((prev) =>
-      prev.filter((el) => el.id !== data.id || el.type !== ObjectType.AREA),
-    );
-    updateArea(data.id, { locked: !data.locked });
+  const lockUnlockArea = (e) => {
+    const locking = !data.locked;
+    updateArea(data.id, { locked: locking });
+
+    const lockArea = () => {
+      setSelectedElement({
+        ...selectedElement,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      });
+      setBulkSelectedElements((prev) =>
+        prev.filter((el) => el.id !== data.id || el.type !== ObjectType.AREA),
+      );
+    };
+
+    const unlockArea = () => {
+      const elementInBulk = {
+        id: data.id,
+        type: ObjectType.AREA,
+        initialCoords: { x: data.x, y: data.y },
+        currentCoords: { x: data.x, y: data.y },
+      };
+      if (e.ctrlKey || e.metaKey) {
+        setBulkSelectedElements((prev) => [...prev, elementInBulk]);
+      } else {
+        setBulkSelectedElements([elementInBulk]);
+      }
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.AREA,
+        id: data.id,
+        open: false,
+      }));
+    };
+
+    if (locking) {
+      lockArea();
+    } else {
+      unlockArea();
+    }
   };
 
   const edit = () => {

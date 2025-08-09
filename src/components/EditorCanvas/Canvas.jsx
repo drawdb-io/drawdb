@@ -29,7 +29,7 @@ import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
-import { noteWidth, State } from "../../data/constants";
+import { State, noteWidth } from "../../data/constants";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -89,145 +89,170 @@ export default function Canvas() {
     width: 0,
     height: 0,
   });
-  const [bulkSelectRectPts, setBulkSelectRectPts] = useState({
+  const [bulkSelectRect, setBulkSelectRect] = useState({
     x1: 0,
     y1: 0,
     x2: 0,
     y2: 0,
     show: false,
+    ctrlKey: false,
+    metaKey: false,
   });
+  // this is used to store the element that is clicked on
+  // at the moment, and shouldn't be a part of the state
+  let elementPointerDown = null;
+
+  const isSameElement = (el1, el2) => {
+    return el1.id === el2.id && el1.type === el2.type;
+  };
 
   const collectSelectedElements = () => {
-    const rect = getRectFromEndpoints(bulkSelectRectPts);
-
+    const rect = getRectFromEndpoints(bulkSelectRect);
     const elements = [];
+    const shouldAddElement = (elementRect, element) => {
+      // if ctrl key is pressed, only add the elements that are not already selected
+      // can theoretically be optimized later if the selected elements is
+      // a map from id to element (after the ids are made unique)
+      return (
+        isInsideRect(elementRect, rect) &&
+        ((!bulkSelectRect.ctrlKey && !bulkSelectRect.metaKey) ||
+          !bulkSelectedElements.some((el) => isSameElement(el, element)))
+      );
+    };
 
     tables.forEach((table) => {
       if (table.locked) return;
 
-      if (
-        isInsideRect(
-          {
-            x: table.x,
-            y: table.y,
-            width: settings.tableWidth,
-            height: getTableHeight(table),
-          },
-          rect,
-        )
-      ) {
-        elements.push({
-          id: table.id,
-          type: ObjectType.TABLE,
-          currentCoords: { x: table.x, y: table.y },
-          initialCoords: { x: table.x, y: table.y },
-        });
+      const element = {
+        id: table.id,
+        type: ObjectType.TABLE,
+        currentCoords: { x: table.x, y: table.y },
+        initialCoords: { x: table.x, y: table.y },
+      };
+      const tableRect = {
+        x: table.x,
+        y: table.y,
+        width: settings.tableWidth,
+        height: getTableHeight(table),
+      };
+      if (shouldAddElement(tableRect, element)) {
+        elements.push(element);
       }
     });
 
     areas.forEach((area) => {
       if (area.locked) return;
 
-      if (
-        isInsideRect(
-          {
-            x: area.x,
-            y: area.y,
-            width: area.width,
-            height: area.height,
-          },
-          rect,
-        )
-      ) {
-        elements.push({
-          id: area.id,
-          type: ObjectType.AREA,
-          currentCoords: { x: area.x, y: area.y },
-          initialCoords: { x: area.x, y: area.y },
-        });
+      const element = {
+        id: area.id,
+        type: ObjectType.AREA,
+        currentCoords: { x: area.x, y: area.y },
+        initialCoords: { x: area.x, y: area.y },
+      };
+      const areaRect = {
+        x: area.x,
+        y: area.y,
+        width: area.width,
+        height: area.height,
+      };
+      if (shouldAddElement(areaRect, element)) {
+        elements.push(element);
       }
     });
 
     notes.forEach((note) => {
       if (note.locked) return;
 
-      if (
-        isInsideRect(
-          {
-            x: note.x,
-            y: note.y,
-            width: noteWidth,
-            height: note.height,
-          },
-          rect,
-        )
-      ) {
-        elements.push({
-          id: note.id,
-          type: ObjectType.NOTE,
-          currentCoords: { x: note.x, y: note.y },
-          initialCoords: { x: note.x, y: note.y },
-        });
+      const element = {
+        id: note.id,
+        type: ObjectType.NOTE,
+        currentCoords: { x: note.x, y: note.y },
+        initialCoords: { x: note.x, y: note.y },
+      };
+      const noteRect = {
+        x: note.x,
+        y: note.y,
+        width: noteWidth,
+        height: note.height,
+      };
+      if (shouldAddElement(noteRect, element)) {
+        elements.push(element);
       }
     });
 
-    setBulkSelectedElements(elements);
-  };
-
-  const getElement = (element) => {
-    switch (element.type) {
-      case ObjectType.TABLE:
-        return tables.find((t) => t.id === element.id);
-      case ObjectType.AREA:
-        return areas[element.id];
-      case ObjectType.NOTE:
-        return notes[element.id];
-      default:
-        return { x: 0, y: 0, locked: false };
+    if (bulkSelectRect.ctrlKey || bulkSelectRect.metaKey) {
+      setBulkSelectedElements([...bulkSelectedElements, ...elements]);
+    } else {
+      setBulkSelectedElements(elements);
     }
   };
 
-  /**
-   * @param {PointerEvent} e
-   * @param {number} id
-   * @param {ObjectType[keyof ObjectType]} type
-   */
-  const handlePointerDownOnElement = (e, id, type) => {
+  const handlePointerDownOnElement = (e, { element, type }) => {
     if (selectedElement.open && !layout.sidebar) return;
 
     if (!e.isPrimary) return;
 
-    const element = getElement({ id, type });
-
-    setSelectedElement((prev) => ({
-      ...prev,
-      element: type,
-      id: id,
-      open: false,
-    }));
+    if (!element.locked || !(e.ctrlKey || e.metaKey)) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: type,
+        id: element.id,
+        open: false,
+      }));
+    }
 
     if (element.locked) {
-      setBulkSelectedElements([]);
+      if (!(e.ctrlKey || e.metaKey)) {
+        setBulkSelectedElements([]);
+      }
       return;
     }
 
-    let newBulkSelectedElements;
-    if (bulkSelectedElements.some((el) => el.id === id && el.type === type)) {
-      newBulkSelectedElements = bulkSelectedElements;
-    } else {
-      newBulkSelectedElements = [
-        {
-          id,
-          type,
-          currentCoords: { x: element.x, y: element.y },
-          initialCoords: { x: element.x, y: element.y },
-        },
-      ];
-      setBulkSelectedElements(newBulkSelectedElements);
+    setBulkSelectRect((prev) => ({
+      ...prev,
+      show: false,
+    }));
+
+    // this is the object that will be added to the bulk selected elements
+    // if necessary
+    const elementInBulk = {
+      id: element.id,
+      type,
+      currentCoords: { x: element.x, y: element.y },
+      initialCoords: { x: element.x, y: element.y },
+    };
+
+    const isSelected = bulkSelectedElements.some((el) =>
+      isSameElement(el, elementInBulk),
+    );
+
+    if (e.ctrlKey || e.metaKey) {
+      if (isSelected) {
+        if (bulkSelectedElements.length > 1) {
+          setBulkSelectedElements(
+            bulkSelectedElements.filter(
+              (el) => !isSameElement(el, elementInBulk),
+            ),
+          );
+          setSelectedElement({
+            ...selectedElement,
+            element: ObjectType.NONE,
+            id: -1,
+            open: false,
+          });
+        }
+      } else {
+        setBulkSelectedElements([...bulkSelectedElements, elementInBulk]);
+      }
+      setDragging(notDragging);
+      return;
     }
 
+    if (!isSelected) {
+      setBulkSelectedElements([elementInBulk]);
+    }
     setDragging({
-      id,
+      id: element.id,
       type,
       grabOffset: {
         x: pointer.spaces.diagram.x - element.x,
@@ -285,8 +310,8 @@ export default function Canvas() {
           y: pointer.spaces.diagram.y - dragging.grabOffset.y,
         });
 
-      const { currentCoords } = bulkSelectedElements.find(
-        (el) => el.id === dragging.id && el.type === dragging.type,
+      const { currentCoords } = bulkSelectedElements.find((el) =>
+        isSameElement(el, dragging),
       );
 
       const deltaX = mainElementFinalX - currentCoords.x;
@@ -352,8 +377,8 @@ export default function Canvas() {
       return;
     }
 
-    if (bulkSelectRectPts.show) {
-      setBulkSelectRectPts((prev) => ({
+    if (bulkSelectRect.show) {
+      setBulkSelectRect((prev) => ({
         ...prev,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
@@ -379,13 +404,18 @@ export default function Canvas() {
     const isMouseMiddleButton = e.button === 1;
 
     if (isMouseLeftButton) {
-      setBulkSelectRectPts({
+      setBulkSelectRect({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
-        show: true,
+        show: elementPointerDown === null || !elementPointerDown.element.locked,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
       });
+      if (elementPointerDown !== null) {
+        handlePointerDownOnElement(e, elementPointerDown);
+      }
       pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton) {
       setPanning({
@@ -459,8 +489,8 @@ export default function Canvas() {
       );
     }
 
-    if (bulkSelectRectPts.show) {
-      setBulkSelectRectPts((prev) => ({
+    if (bulkSelectRect.show) {
+      setBulkSelectRect((prev) => ({
         ...prev,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
@@ -661,11 +691,14 @@ export default function Canvas() {
             <Area
               key={a.id}
               data={a}
-              onPointerDown={(e) =>
-                handlePointerDownOnElement(e, a.id, ObjectType.AREA)
-              }
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: a,
+                  type: ObjectType.AREA,
+                };
+              }}
             />
           ))}
           {relationships.map((e, i) => (
@@ -678,9 +711,12 @@ export default function Canvas() {
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
-              onPointerDown={(e) =>
-                handlePointerDownOnElement(e, table.id, ObjectType.TABLE)
-              }
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: table,
+                  type: ObjectType.TABLE,
+                };
+              }}
             />
           ))}
           {linking && (
@@ -695,14 +731,17 @@ export default function Canvas() {
             <Note
               key={n.id}
               data={n}
-              onPointerDown={(e) =>
-                handlePointerDownOnElement(e, n.id, ObjectType.NOTE)
-              }
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: n,
+                  type: ObjectType.NOTE,
+                };
+              }}
             />
           ))}
-          {bulkSelectRectPts.show && (
+          {bulkSelectRect.show && (
             <rect
-              {...getRectFromEndpoints(bulkSelectRectPts)}
+              {...getRectFromEndpoints(bulkSelectRect)}
               stroke="grey"
               fill="grey"
               fillOpacity={0.15}
