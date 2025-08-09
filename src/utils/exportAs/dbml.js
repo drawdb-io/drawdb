@@ -74,6 +74,14 @@ function fieldSize(field, database) {
   return "";
 }
 
+function processComment(comment) {
+  if (comment.includes("\n")) {
+    return `'''${comment}'''`;
+  }
+
+  return `'${escapeQuotes(comment)}'`;
+}
+
 export function toDBML(diagram) {
   const generateRelString = (rel) => {
     const { fields: startTableFields, name: startTableName } =
@@ -139,7 +147,7 @@ export function toDBML(diagram) {
             : ""
         }${
           table.comment && table.comment.trim() !== ""
-            ? `\n\n\tNote: '${escapeQuotes(table.comment)}'`
+            ? `\n\n\tNote: ${processComment(table.comment)}`
             : ""
         }\n}`,
     )
