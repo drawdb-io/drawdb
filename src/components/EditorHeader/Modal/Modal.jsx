@@ -173,13 +173,11 @@ export default function Modal({
       if (importSource.overwrite) {
         setTables(diagramData.tables);
         setRelationships(diagramData.relationships);
+        if (databases[database].hasTypes) setTypes(diagramData.types ?? []);
+        if (databases[database].hasEnums) setEnums(diagramData.enums ?? []);
         setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
         setNotes([]);
         setAreas([]);
-        if (databases[database].hasTypes) setTypes(diagramData.types ?? []);
-        if (databases[database].hasEnums) setEnums(diagramData.enums ?? []);
-        setUndoStack([]);
-        setRedoStack([]);
       } else {
         setTables((prev) => [...prev, ...diagramData.tables]);
         setRelationships((prev) =>
@@ -188,11 +186,17 @@ export default function Modal({
             id: i,
           })),
         );
+        if (databases[database].hasTypes && diagramData.types.length)
+          setTypes((prev) => [...prev, ...diagramData.types]);
+        if (databases[database].hasEnums && diagramData.enums.length)
+          setEnums((prev) => [...prev, ...diagramData.enums]);
       }
+
+      setUndoStack([]);
+      setRedoStack([]);
 
       setModal(MODAL.NONE);
     } catch (e) {
-      console.log(e)
       setError({
         type: STATUS.ERROR,
         message: `Please check for syntax errors or let us know about the error.`,
