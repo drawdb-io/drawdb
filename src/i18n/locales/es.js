@@ -153,6 +153,9 @@ const es = {
     type_deleted: "Tipo eliminado",
     cannot_connect:
       "No se puede conectar, las columnas tienen diferentes tipos",
+    inconsistency_of_data: "Una vez hecha la relación, no se puede cambiar la clave primaria",
+    pk_has_not_be_null: "No se puede establecer la clave primaria como nula",
+    subtype_fk_must_be_pk: "Las claves foráneas en relaciones de subtipo deben ser claves primarias",
     copied_to_clipboard: "Copiado al portapapeles",
     create_new_diagram: "Crear nuevo diagrama",
     cancel: "Cancelar",

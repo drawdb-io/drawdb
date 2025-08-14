@@ -9,13 +9,37 @@ import { dbToTypes } from "../../../data/datatypes";
 import { Toast } from "@douyinfe/semi-ui";
 
 export default function TableField({ data, tid, index }) {
-  const { updateField } = useDiagram();
+  const { updateField, relationships } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
   const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
+
+  // Function to check if the FK field belongs to a subtype relationship
+  const isSubtypeForeignKey = () => {
+    if (!data.foreignK || !data.foreignKey) return false;
+    // Search for subtype relationships where this table is a child table
+    return relationships.some(rel => {
+      // Check if it is a subtype relationship
+      if (!rel.subtype) return false;
+      // Check if this table is a child table in the subtype relationship
+      const isChildTable = rel.endTableId === tid ||
+        (rel.endTableIds && rel.endTableIds.includes(tid));
+      // Check if the FK points to the parent table of the subtype relationship
+      const pointsToParent = rel.startTableId === data.foreignKey.tableId;
+      return isChildTable && pointsToParent;
+    });
+  };
+
+  const inconsistencyOfData = () => {
+    if(!data.primary) return false;
+    return relationships.some(rel => {
+      const parentTable = rel.startTableId === tid;
+      return parentTable;
+    });
+  };
 
   return (
     <Row gutter={6} className="hover-1 my-2">
@@ -172,6 +196,15 @@ export default function TableField({ data, tid, index }) {
           title={t("primary")}
           theme={data.primary ? "solid" : "light"}
           onClick={() => {
+            if(data.primary && inconsistencyOfData()){
+              Toast.info(t("inconsistency_of_data"));
+              return;
+            }
+            // Check if it is a subtype relationship FK that cannot stop being PK
+            if(data.primary && isSubtypeForeignKey()){
+              Toast.info(t("subtype_fk_must_be_pk"));
+              return;
+            }
             const newStatePK=!data.primary;
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;
