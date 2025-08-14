@@ -227,15 +227,49 @@ export default function ControlPanel({
         // --- Undo the deletion of a relationship ---
         const {
           relationship: relationshipToRestore,
-          childTableFieldsBeforeFkDeletion, // Use the full state of the fields
-          childTableIdWithPotentiallyModifiedFields
+          childTableFieldsBeforeFkDeletion, // Use the full state of the fields (legacy format)
+          childTableIdWithPotentiallyModifiedFields, // legacy format
+          allChildTablesFieldsBeforeFkDeletion, // NEW: All child tables' fields before FK deletion
+          removedFkFields, // New format for subtype relationships
+          childTableId // New format for subtype relationships
         } = a.data;
 
         if (relationshipToRestore) {
-          // 1. Restore the full state of the child table's fields.
-          if (childTableFieldsBeforeFkDeletion && typeof childTableIdWithPotentiallyModifiedFields !== 'undefined') {
+          // Handle NEW format for subtype relationships with multiple children
+          if (allChildTablesFieldsBeforeFkDeletion && Object.keys(allChildTablesFieldsBeforeFkDeletion).length > 0) {
+            console.log("DEBUG: Restoring FK fields for ALL child tables in subtype relationship", {
+              relationshipId: relationshipToRestore.id,
+              childTables: Object.keys(allChildTablesFieldsBeforeFkDeletion)
+            });
+            // Restore fields for all child tables
+            Object.entries(allChildTablesFieldsBeforeFkDeletion).forEach(([childTableId, fieldsSnapshot]) => {
+              const numericChildTableId = parseInt(childTableId, 10);
+              if (!isNaN(numericChildTableId)) {
+                console.log(`DEBUG: Restoring fields for child table ${numericChildTableId}`, fieldsSnapshot);
+                updateTable(numericChildTableId, { fields: JSON.parse(JSON.stringify(fieldsSnapshot)) });
+              }
+            });
+          }
+          // Handle legacy format (normal relationships and old subtype format)
+          else if (childTableFieldsBeforeFkDeletion && typeof childTableIdWithPotentiallyModifiedFields !== 'undefined') {
+            console.log("DEBUG: Restoring FK fields using legacy format", {
+              relationshipId: relationshipToRestore.id,
+              childTableId: childTableIdWithPotentiallyModifiedFields
+            });
             // Directly update the table with its previous fields.
             updateTable(childTableIdWithPotentiallyModifiedFields, { fields: JSON.parse(JSON.stringify(childTableFieldsBeforeFkDeletion)) });
+          }
+          // Handle new format for subtype relationships (can coexist with legacy format)
+          if (removedFkFields && typeof childTableId !== 'undefined') {
+            console.log("DEBUG: Restoring FK fields for deleted subtype relationship", {
+              relationshipId: relationshipToRestore.id,
+              childTableId: childTableId,
+              fieldsToRestore: removedFkFields
+            });
+            // Restore the FK fields to the child table
+            if (typeof restoreFieldsToTable === 'function') {
+              restoreFieldsToTable(childTableId, removedFkFields);
+            }
           }
           // 2. Re-add the relationship object to the relationships array.
           addRelationship(relationshipToRestore, null, null, false);
@@ -337,6 +371,11 @@ export default function ControlPanel({
                 updateRelationship(originalRel.id, JSON.parse(JSON.stringify(originalRel)), false);
               });
             }
+            // Restore the subtype relationship that was modified.
+            if (a.data.modifiedSubtypeRelationship) {
+              console.log("DEBUG: Restoring modified subtype relationship", a.data.modifiedSubtypeRelationship);
+              updateRelationship(a.data.modifiedSubtypeRelationship.id, JSON.parse(JSON.stringify(a.data.modifiedSubtypeRelationship)), false);
+            }
           }
         } else if (a.component === "field_add") {
           if (currentTable) {
@@ -382,6 +421,18 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         const currentRel = relationships.find(r => r.id === a.rid);
         if (currentRel) redoStateProperties = { redo: { ...currentRel, ...a.redo } };
+        // Handle FK field restoration for subtype relationships
+        if (a.undo && a.undo.removedFkFields && a.undo.childTableId !== undefined) {
+          console.log("DEBUG: Restoring FK fields for subtype relationship undo", {
+            relationshipId: a.rid,
+            childTableId: a.undo.childTableId,
+            fieldsToRestore: a.undo.removedFkFields
+          });
+          // Restore the FK fields to the child table
+          if (typeof restoreFieldsToTable === 'function') {
+            restoreFieldsToTable(a.undo.childTableId, a.undo.removedFkFields);
+          }
+        }
         updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         const currentType = types.find(ty => ty.id === a.tid);
@@ -599,6 +650,22 @@ export default function ControlPanel({
         const relBeforeRedo = relationships.find(r => r.id === a.rid);
         if (relBeforeRedo) undoStateProperties = { undo: { ...relBeforeRedo } };
         else if (a.undo) undoStateProperties = { undo: a.undo };
+        // Handle FK field removal for subtype relationships on redo
+        if (a.redo && a.redo.removedFkFields && a.redo.childTableId !== undefined) {
+          console.log("DEBUG: Removing FK fields for subtype relationship redo", {
+            relationshipId: a.rid,
+            childTableId: a.redo.childTableId,
+            fieldsToRemove: a.redo.removedFkFields
+          });
+          // Remove the FK fields from the child table
+          const childTable = tables.find(t => t.id === a.redo.childTableId);
+          if (childTable) {
+            const fieldsToRemoveIds = a.redo.removedFkFields.map(f => f.id);
+            const updatedFields = childTable.fields.filter(f => !fieldsToRemoveIds.includes(f.id))
+              .map((f, i) => ({ ...f, id: i }));
+            updateTable(a.redo.childTableId, { fields: updatedFields }, false);
+          }
+        }
         updateRelationship(a.rid, a.redo, false);
       } else if (a.element === ObjectType.TYPE) {
         const typeBeforeRedo = types.find(ty => ty.id === a.tid);

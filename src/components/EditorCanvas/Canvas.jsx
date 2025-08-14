@@ -792,21 +792,17 @@ export default function Canvas() {
   const handleSubtypePointClick = (e, x, y, relationshipId) => {
     console.log("handleSubtypePointClick called", { x, y, relationshipId });
     console.log("Current hoveredTable state:", hoveredTable);
-    
     // Don't allow subtype connections when notation is DEFAULT
     if (settings.notation === Notation.DEFAULT) {
       console.log("Subtype connections are not available with DEFAULT notation");
       return;
     }
-    
     e.stopPropagation();
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    
     // El círculo azul está en y+20 respecto al centro del subtipo
     // Las líneas horizontales están en el centro del subtipo (y-20 respecto al círculo)
     const hierarchyLineStartPoint = { x: x, y: y - 20 };
-    
     setHierarchyLinkingLine({
       relationshipId: relationshipId,
       subtypePoint: hierarchyLineStartPoint, // Usar el punto de las líneas horizontales
@@ -822,19 +818,16 @@ export default function Canvas() {
 
   const handleHierarchyLinking = () => {
     console.log("handleHierarchyLinking called", { hoveredTableId: hoveredTable.tableId });
-    
     // If no hovered table, try to find the table at the current mouse position
     let targetTableId = hoveredTable.tableId;
-    
     if (targetTableId < 0) {
       // Find table under cursor by checking coordinates
       const mouseX = hierarchyLinkingLine.endX;
       const mouseY = hierarchyLinkingLine.endY;
-      
       for (let table of tables) {
-        if (mouseX >= table.x && 
+        if (mouseX >= table.x &&
             mouseX <= table.x + settings.tableWidth &&
-            mouseY >= table.y && 
+            mouseY >= table.y &&
             mouseY <= table.y + (tableHeaderHeight + table.fields.length * tableFieldHeight + tableColorStripHeight)) {
           targetTableId = table.id;
           console.log("Found target table by coordinates:", targetTableId);
@@ -842,12 +835,10 @@ export default function Canvas() {
         }
       }
     }
-    
     if (targetTableId < 0) {
       console.log("No target table found, returning");
       return;
     }
-    
     // Encontrar la relación original
     const originalRelationship = relationships.find(r => r.id === hierarchyLinkingLine.relationshipId);
     if (!originalRelationship) {
@@ -864,12 +855,11 @@ export default function Canvas() {
     }
 
     // Verificar que la tabla no esté ya incluida (ni como padre ni como hijo)
-    const existingChildren = originalRelationship.endTableIds || 
-      (originalRelationship.endTableId !== undefined && originalRelationship.endTableId !== null 
-        ? [originalRelationship.endTableId] 
+    const existingChildren = originalRelationship.endTableIds ||
+      (originalRelationship.endTableId !== undefined && originalRelationship.endTableId !== null
+        ? [originalRelationship.endTableId]
         : []);
     const allRelatedTables = [originalRelationship.startTableId, ...existingChildren].filter(id => id !== undefined && id !== null);
-    
     console.log("DEBUG: Validation check", {
       targetTableId: targetTableId,
       originalRelationship: originalRelationship,
@@ -879,7 +869,6 @@ export default function Canvas() {
       existingChildren: existingChildren,
       allRelatedTables: allRelatedTables
     });
-    
     if (allRelatedTables.includes(targetTableId)) {
       console.log("Table already part of this subtype hierarchy (as parent or child)", {
         tableId: targetTableId,
@@ -897,11 +886,9 @@ export default function Canvas() {
       childTableId: targetTableId,
       existingChildren: existingChildren
     });
-    
     addChildToSubtype(hierarchyLinkingLine.relationshipId, targetTableId);
     setHierarchyLinking(false);
     console.log("Child added to subtype relationship successfully");
-    
     // Force a re-render to ensure UI updates properly
     setTimeout(() => {
       console.log("Post-update check: relationships state");
@@ -1044,9 +1031,9 @@ export default function Canvas() {
               return true;
             })
             .map((e, i) => (
-            <Relationship 
-              key={e.id || i} 
-              data={e} 
+            <Relationship
+              key={e.id || i}
+              data={e}
               onConnectSubtypePoint={handleSubtypePointClick}
             />
           ))}

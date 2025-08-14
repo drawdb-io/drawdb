@@ -43,36 +43,60 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
   const pathRef = useRef();
   const labelRef = useRef();
 
-  console.log("Relationship render start", { 
-    id: data.id, 
-    subtype: data.subtype, 
-    relationshipType: data.relationshipType,
-    endTableId: data.endTableId,
-    endTableIds: data.endTableIds,
-    hasMultipleChildren: data.endTableIds && data.endTableIds.length > 1
-  });
+  // Define edit function early so it can be used in event handlers
+  const edit = () => {
+    if (!layout.sidebar) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.RELATIONSHIP,
+        id: data.id,
+        open: true,
+      }));
+    } else {
+      setSelectedElement((prev) => ({
+        ...prev,
+        currentTab: Tab.RELATIONSHIPS,
+        element: ObjectType.RELATIONSHIP,
+        id: data.id,
+        open: true,
+      }));
+      if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
+      document
+        .getElementById(`scroll_ref_${data.id}`)
+        .scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Define table references early for use throughout the component
+  const startTable = tables[data.startTableId];
+  
+  // Helper function to get the effective end table for both single and multi-child relationships
+  const getEffectiveEndTable = () => {
+    if (data.endTableId !== undefined) {
+      return tables[data.endTableId];
+    } else if (data.endTableIds && data.endTableIds.length > 0) {
+      return tables[data.endTableIds[0]];
+    }
+    return null;
+  };
+  const endTable = getEffectiveEndTable();
 
   try {
-
   // Don't render subtype relationships when notation is DEFAULT
   if (data.subtype && settings.notation === Notation.DEFAULT) {
-    console.log("Skipping subtype render - DEFAULT notation doesn't support subtypes");
     return null;
   }
-
   // Memoize expensive calculations for multi-child subtypes (must be outside conditional)
   const subtypeGeometry = useMemo(() => {
     // Only calculate if this is a multi-child subtype
     if (!data.subtype || !data.endTableIds || data.endTableIds.length <= 1) {
       return null;
     }
-
     const startTable = tables[data.startTableId];
     if (!startTable) {
       console.error("Start table not found for multi-child subtype", { startTableId: data.startTableId, availableTables: Object.keys(tables) });
       return null;
     }
-    
     // Get all child tables
     const childTables = data.endTableIds.map(id => {
       const table = tables[id];
@@ -81,51 +105,42 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
       }
       return table;
     }).filter(Boolean);
-    
     if (childTables.length === 0) {
-      console.error("No valid child tables found for multi-child subtype", { 
-        endTableIds: data.endTableIds, 
-        availableTables: Object.keys(tables) 
+      console.error("No valid child tables found for multi-child subtype", {
+        endTableIds: data.endTableIds,
+        availableTables: Object.keys(tables)
       });
       return null;
     }
-    
     // Validate table coordinates with default fallbacks
     const validateTable = (table, tableName) => {
       const x = typeof table.x === 'number' ? table.x : 0;
       const y = typeof table.y === 'number' ? table.y : 0;
       const width = typeof table.width === 'number' ? table.width : 200;
       const height = typeof table.height === 'number' ? table.height : 100;
-      
       if (table.x === undefined || table.y === undefined) {
         console.warn(`${tableName} has undefined coordinates, using defaults`, table);
       }
-      
       return { ...table, x, y, width, height };
     };
-    
     const validStartTable = validateTable(startTable, 'Start table');
-    const validChildTables = childTables.map((table, index) => 
+    const validChildTables = childTables.map((table, index) =>
       validateTable(table, `Child table ${index}`)
     );
-    
     // Calculate center point for subtype notation
     const parentCenter = {
       x: validStartTable.x + validStartTable.width / 2,
       y: validStartTable.y + validStartTable.height / 2
     };
-    
     const childrenCenter = {
       x: validChildTables.reduce((sum, table) => sum + table.x + table.width / 2, 0) / validChildTables.length,
       y: validChildTables.reduce((sum, table) => sum + table.y + table.height / 2, 0) / validChildTables.length
     };
-    
     // Subtype notation point (midway between parent and children center)
     const subtypePoint = {
       x: (parentCenter.x + childrenCenter.x) / 2,
       y: (parentCenter.y + childrenCenter.y) / 2
     };
-    
     // Final validation
     if (isNaN(subtypePoint.x) || isNaN(subtypePoint.y)) {
       console.error("Calculated subtype point is NaN", {
@@ -142,22 +157,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
     const deltaX = Math.abs(childrenCenter.x - parentCenter.x);
     const deltaY = Math.abs(childrenCenter.y - parentCenter.y);
     const isHorizontal = deltaX > deltaY;
-    
-    console.log("Relationship orientation", {
-      deltaX,
-      deltaY,
-      isHorizontal,
-      direction: isHorizontal ? 'horizontal' : 'vertical'
-    });
-
-    console.log("Subtype geometry calculated successfully", {
-      parentCenter,
-      childrenCenter,
-      subtypePoint,
-      childCount: validChildTables.length,
-      isHorizontal
-    });
-    
     return {
       startTable: validStartTable,
       childTables: validChildTables,
@@ -170,14 +169,10 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
 
   // For subtype relationships with multiple children, render centralized subtype
   if (data.subtype && data.endTableIds && data.endTableIds.length > 1) {
-    console.log("Rendering multi-child subtype with centralized notation");
-    
     if (!subtypeGeometry) {
       return null;
     }
-    
     const { startTable, childTables, parentCenter, subtypePoint, isHorizontal } = subtypeGeometry;
-    
     return (
       <g>
         {/* Single line from parent to subtype point */}
@@ -188,8 +183,21 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
           y2={subtypePoint.y}
           stroke={theme === darkBgTheme ? "#e5e7eb" : "#374151"}
           strokeWidth="1.5"
+          onDoubleClick={edit}
+          cursor="pointer"
+          className="hover:stroke-sky-700"
         />
-        
+        {/* Invisible line for larger hit area */}
+        <line
+          x1={parentCenter.x}
+          y1={parentCenter.y}
+          x2={subtypePoint.x}
+          y2={subtypePoint.y}
+          stroke="transparent"
+          strokeWidth="10"
+          onDoubleClick={edit}
+          cursor="pointer"
+        />
         {/* Subtype notation at the central point */}
         {data.subtype_restriction === SubtypeRestriction.DISJOINT_TOTAL && subDT(
           subtypePoint,
@@ -235,7 +243,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
           onConnectSubtypePoint,
           data.id
         )}
-        
         {/* Debug: Show subtype point for reference */}
         <circle
           cx={subtypePoint.x}
@@ -252,17 +259,14 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
         >
           center
         </text>
-        
         {/* Lines from subtype horizontal line to each child */}
         {childTables.map((childTable, index) => {
           const childCenter = {
             x: childTable.x + childTable.width / 2,
             y: childTable.y + childTable.height / 2
           };
-          
           // Calculate the connection point based on relationship orientation
           let connectionPointX, connectionPointY;
-          
           if (isHorizontal) {
             // For horizontal relationships: connect from the right side of the notation
             if (data.subtype_restriction === SubtypeRestriction.DISJOINT_TOTAL) {
@@ -278,26 +282,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
             connectionPointX = subtypePoint.x; // Same X as center
             connectionPointY = subtypePoint.y + 20; // Bottom of notation
           }
-          
-          console.log(`Child ${index} connection (orientation-aware):`, {
-            subtypePoint,
-            childCenter,
-            connectionPointX,
-            connectionPointY,
-            isHorizontal,
-            restriction: data.subtype_restriction,
-            note: `All lines from ${isHorizontal ? 'right side' : 'bottom'} of notation`
-          });
-          
-          console.log(`Child ${index} connection (corrected X for rotation):`, {
-            subtypePoint,
-            childCenter,
-            connectionPointX,
-            connectionPointY,
-            restriction: data.subtype_restriction,
-            note: "X adjusted for 180° rotation: original x-10 becomes x+10"
-          });
-          
           return (
             <g key={`child-group-${data.id}-${index}`}>
               <line
@@ -307,6 +291,20 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
                 y2={childCenter.y}
                 stroke={theme === darkBgTheme ? "#e5e7eb" : "#374151"}
                 strokeWidth="1.5"
+                onDoubleClick={edit}
+                cursor="pointer"
+                className="hover:stroke-sky-700"
+              />
+              {/* Invisible line for larger hit area */}
+              <line
+                x1={connectionPointX}
+                y1={connectionPointY}
+                x2={childCenter.x}
+                y2={childCenter.y}
+                stroke="transparent"
+                strokeWidth="10"
+                onDoubleClick={edit}
+                cursor="pointer"
               />
               {/* Debug: Show connection point */}
               <circle
@@ -321,6 +319,20 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
         })}
       </g>
     );
+  }
+
+  // For regular subtype relationships (single child), add validation
+  if (data.subtype) {
+    // Validate that we have proper table references
+    if (!startTable || !endTable) {
+      console.warn("Missing table data for subtype relationship", {
+        startTableId: data.startTableId,
+        endTableId: data.endTableId,
+        startTable: !!startTable,
+        endTable: !!endTable
+      });
+      return null;
+    }
   }
 
   // Helper function to sort fields (same logic as in Table.jsx)
@@ -346,16 +358,7 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
       return 0;
     });
   };
-  const startTable = tables[data.startTableId];
-  // Helper function to get the effective end table for both single and multi-child relationships
-  const getEffectiveEndTable = () => {
-    if (data.endTableId !== undefined) {
-      return tables[data.endTableId];
-    } else if (data.endTableIds && data.endTableIds.length > 0) {
-      return tables[data.endTableIds[0]];
-    }
-    return null;
-  };
+  
   // Helper function to get the effective end field ID
   const getEffectiveEndFieldId = () => {
     if (data.endFieldId !== undefined) {
@@ -365,7 +368,7 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
     }
     return undefined;
   };
-  const endTable = getEffectiveEndTable();
+  
   const effectiveEndFieldId = getEffectiveEndFieldId();
 
   let startFieldYOffset = 0;
@@ -567,29 +570,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
       angle: Math.atan2(cardinalityEndY - vectorStartPoint.y, cardinalityEndX - vectorStartPoint.x) * 180 / Math.PI
     };
   }
-
-  const edit = () => {
-    if (!layout.sidebar) {
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
-    } else {
-      setSelectedElement((prev) => ({
-        ...prev,
-        currentTab: Tab.RELATIONSHIPS,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
-      if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
-      document
-        .getElementById(`scroll_ref_${data.id}`)
-        .scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   if ((settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X) && cardinalityEndX < cardinalityStartX){
     direction = -1;
