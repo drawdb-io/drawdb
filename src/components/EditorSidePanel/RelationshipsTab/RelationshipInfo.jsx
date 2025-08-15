@@ -63,11 +63,6 @@ export default function RelationshipInfo({ data }) {
   const handleDeleteRelationship = () => {
     // For the main Delete button, always delete the entire relationship
     // This will handle all FK deletions automatically via deleteRelationship function
-    console.log("DEBUG: Deleting entire relationship", {
-      relationshipId: data.id,
-      subtype: data.subtype,
-      endTableIds: data.endTableIds
-    });
     deleteRelationship(data.id);
   };
 
@@ -181,8 +176,6 @@ export default function RelationshipInfo({ data }) {
           );
 
           if (fkFieldsToPromote.length > 0) {
-            console.log("DEBUG: Promoting FK fields to PK for subtype relationship", fkFieldsToPromote);
-
             // Update each FK field to be a primary key
             const updatedFields = childTable.fields.map(field => {
               if (fkFieldsToPromote.some(fk => fk.id === field.id)) {
@@ -355,12 +348,6 @@ export default function RelationshipInfo({ data }) {
 
     // Get the child table ID to remove
     const childTableToRemove = data.endTableIds[indexToRemove];
-    console.log("DEBUG: Removing child from subtype hierarchy", {
-      relationshipId: data.id,
-      childTableToRemove,
-      indexToRemove
-    });
-
     // Use removeChildFromSubtype which handles both relationship update AND FK deletion
     removeChildFromSubtype(data.id, childTableToRemove);
   };

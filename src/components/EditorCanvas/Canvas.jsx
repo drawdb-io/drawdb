@@ -626,7 +626,6 @@ export default function Canvas() {
     if (linking) handleLinking();
     setLinking(false);
     if (hierarchyLinking) {
-      console.log("Hierarchy linking active, attempting to link table:", hoveredTable.tableId);
       handleHierarchyLinking();
     }
     setHierarchyLinking(false);
@@ -694,12 +693,10 @@ export default function Canvas() {
     const parentTable = tables.find((t) => t.id === linkingLine.startTableId);
 
     if (!parentTable) {
-      console.error("Parent table not found for linking.");
       setLinking(false);
       return;
     }
     if (!childTable) {
-      console.error("Child table not found for linking.");
       setLinking(false);
       return;
     }
@@ -788,24 +785,19 @@ export default function Canvas() {
     setLinking(false);
   };
 
-  // Funciones para manejar conexiones de jerarquía
+  // Function to handle clicks on the subtype point
   const handleSubtypePointClick = (e, x, y, relationshipId) => {
-    console.log("handleSubtypePointClick called", { x, y, relationshipId });
-    console.log("Current hoveredTable state:", hoveredTable);
     // Don't allow subtype connections when notation is DEFAULT
     if (settings.notation === Notation.DEFAULT) {
-      console.log("Subtype connections are not available with DEFAULT notation");
       return;
     }
     e.stopPropagation();
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
-    // El círculo azul está en y+20 respecto al centro del subtipo
-    // Las líneas horizontales están en el centro del subtipo (y-20 respecto al círculo)
     const hierarchyLineStartPoint = { x: x, y: y - 20 };
     setHierarchyLinkingLine({
       relationshipId: relationshipId,
-      subtypePoint: hierarchyLineStartPoint, // Usar el punto de las líneas horizontales
+      subtypePoint: hierarchyLineStartPoint,
       endTableId: -1,
       startX: hierarchyLineStartPoint.x,
       startY: hierarchyLineStartPoint.y,
@@ -813,11 +805,9 @@ export default function Canvas() {
       endY: hierarchyLineStartPoint.y,
     });
     setHierarchyLinking(true);
-    console.log("Hierarchy linking activated from horizontal lines", hierarchyLineStartPoint);
   };
 
   const handleHierarchyLinking = () => {
-    console.log("handleHierarchyLinking called", { hoveredTableId: hoveredTable.tableId });
     // If no hovered table, try to find the table at the current mouse position
     let targetTableId = hoveredTable.tableId;
     if (targetTableId < 0) {
@@ -830,68 +820,41 @@ export default function Canvas() {
             mouseY >= table.y &&
             mouseY <= table.y + (tableHeaderHeight + table.fields.length * tableFieldHeight + tableColorStripHeight)) {
           targetTableId = table.id;
-          console.log("Found target table by coordinates:", targetTableId);
           break;
         }
       }
     }
     if (targetTableId < 0) {
-      console.log("No target table found, returning");
       return;
     }
-    // Encontrar la relación original
+    // Find the original relationship
     const originalRelationship = relationships.find(r => r.id === hierarchyLinkingLine.relationshipId);
     if (!originalRelationship) {
-      console.error("Original relationship not found", hierarchyLinkingLine.relationshipId);
       setHierarchyLinking(false);
       return;
     }
 
     // Check if this relationship is actually a subtype
     if (!originalRelationship.subtype) {
-      console.error("Relationship is not a subtype", originalRelationship);
       setHierarchyLinking(false);
       return;
     }
 
-    // Verificar que la tabla no esté ya incluida (ni como padre ni como hijo)
+    // Verify that the table is not already included (as parent or child)
     const existingChildren = originalRelationship.endTableIds ||
       (originalRelationship.endTableId !== undefined && originalRelationship.endTableId !== null
         ? [originalRelationship.endTableId]
         : []);
     const allRelatedTables = [originalRelationship.startTableId, ...existingChildren].filter(id => id !== undefined && id !== null);
-    console.log("DEBUG: Validation check", {
-      targetTableId: targetTableId,
-      originalRelationship: originalRelationship,
-      startTableId: originalRelationship.startTableId,
-      endTableId: originalRelationship.endTableId,
-      endTableIds: originalRelationship.endTableIds,
-      existingChildren: existingChildren,
-      allRelatedTables: allRelatedTables
-    });
     if (allRelatedTables.includes(targetTableId)) {
-      console.log("Table already part of this subtype hierarchy (as parent or child)", {
-        tableId: targetTableId,
-        parentId: originalRelationship.startTableId,
-        childrenIds: existingChildren,
-        allRelatedTables: allRelatedTables
-      });
       setHierarchyLinking(false);
       return;
     }
-
-    // Agregar la nueva tabla hija a la relación de subtipo existente
-    console.log("Adding child to subtype relationship", {
-      relationshipId: hierarchyLinkingLine.relationshipId,
-      childTableId: targetTableId,
-      existingChildren: existingChildren
-    });
+    // Add the new child table to the existing subtype relationship
     addChildToSubtype(hierarchyLinkingLine.relationshipId, targetTableId);
     setHierarchyLinking(false);
-    console.log("Child added to subtype relationship successfully");
     // Force a re-render to ensure UI updates properly
     setTimeout(() => {
-      console.log("Post-update check: relationships state");
     }, 100);
   };
 

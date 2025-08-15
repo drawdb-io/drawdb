@@ -6,6 +6,32 @@ function getNotationRotation(isVertical) {
   };
 }
 
+// Helper function to calculate angle for subtype notation based on parent-child relationship
+function calculateSubtypeAngle(parentTable, childTable, subtypePoint, tableWidth = 200) {
+  if (!parentTable || !childTable || !subtypePoint) {
+    return 0;
+  }
+
+  // Calculate parent center using the actual table width
+  const parentCenter = {
+    x: parentTable.x + tableWidth / 2,
+    y: parentTable.y + 30 // Approximate table height center
+  };
+
+  // Calculate the vector from subtype point to parent center
+  const dx = parentCenter.x - subtypePoint.x;
+  const dy = parentCenter.y - subtypePoint.y;
+
+  // Calculate angle in degrees (Math.atan2 returns radians)
+  let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  // The notation is designed so that:
+  // - The lines/bars extend to the right (positive X direction)
+  // - The connection point for new subtypes is below (positive Y direction)
+  // We want the circle to face toward the parent, so we rotate to point the
+  // right-side elements (lines/bars) toward the parent
+  return angle;
+}
+
 export function CrowParentLines(
   cardinalityStartX,
   cardinalityStartY,
@@ -14,12 +40,10 @@ export function CrowParentLines(
   vectorInfo = null,
   cardinalityText = ""
 ) {
-  // Calcular desplazamiento perpendicular a la línea - más cerca de la tabla
-  const offsetDistance = 6;  // Aumentado para notaciones más grandes
-  const lineOffset = 10;      // Aumentado para líneas más largas
+  const offsetDistance = 6;
+  const lineOffset = 10;
 
   if (isVertical) {
-    // Para líneas verticales, las líneas se dibujan horizontalmente
     return (
       <>
         <line
@@ -33,14 +57,13 @@ export function CrowParentLines(
         />
         <line
           x1={cardinalityStartX - lineOffset}
-          y1={cardinalityStartY - (2 * direction)}  // Aumentado para separación mayor
+          y1={cardinalityStartY - (2 * direction)}
           x2={cardinalityStartX + lineOffset}
           y2={cardinalityStartY - (2 * direction)}
           stroke="gray"
           strokeWidth="2"
           className="group-hover:stroke-sky-700"
         />
-        {/* Cardinalidad al lado izquierdo para relaciones verticales */}
         {cardinalityText && (
           <text
             x={cardinalityStartX - 25}
@@ -56,7 +79,6 @@ export function CrowParentLines(
       </>
     );
   } else {
-    // Para líneas horizontales, las líneas se dibujan verticalmente
     return (
       <>
         <line
@@ -69,7 +91,7 @@ export function CrowParentLines(
           className="group-hover:stroke-sky-700"
         />
         <line
-          x1={cardinalityStartX - (2 * direction)}  // Aumentado para separación mayor
+          x1={cardinalityStartX - (2 * direction)}
           y1={cardinalityStartY + lineOffset}
           x2={cardinalityStartX - (2 * direction)}
           y2={cardinalityStartY - lineOffset}
@@ -77,7 +99,6 @@ export function CrowParentLines(
           strokeWidth="2"
           className="group-hover:stroke-sky-700"
         />
-        {/* Cardinalidad arriba para relaciones horizontales */}
         {cardinalityText && (
           <text
             x={cardinalityStartX - 8}
@@ -103,12 +124,11 @@ export function CrowParentDiamond(
   vectorInfo = null,
   cardinalityText = ""
 ) {
-  const offsetDistance = 12;   // Aumentado para notaciones más grandes
-  const diamondSize = 6;       // Aumentado para diamante más grande
-  const offset = 8;          // Aumentado para mayor separación del diamante
+  const offsetDistance = 12;
+  const diamondSize = 6;
+  const offset = 8;
 
   if (isVertical) {
-    // Para líneas verticales, el diamante se orienta horizontalmente
     return (
       <>
         <polygon
@@ -123,7 +143,6 @@ export function CrowParentDiamond(
           fill="white"
           className="group-hover:stroke-sky-700"
         />
-        {/* Cardinalidad al lado izquierdo para relaciones verticales */}
         {cardinalityText && (
           <text
             x={cardinalityStartX - 25}
@@ -139,7 +158,6 @@ export function CrowParentDiamond(
       </>
     );
   } else {
-    // Para líneas horizontales, el diamante se orienta verticalmente
     return (
       <>
         <polygon
@@ -154,7 +172,6 @@ export function CrowParentDiamond(
           fill="white"
           className="group-hover:stroke-sky-700"
         />
-        {/* Cardinalidad arriba para relaciones horizontales */}
         {cardinalityText && (
           <text
             x={cardinalityStartX - 8}
@@ -214,7 +231,7 @@ export function CrowsFootChild(
       };
     } else {
       return {
-        x: isStart ? x - 8 : x + 15, // Child side (end) further away from table for clarity
+        x: isStart ? x - 8 : x + 15,
         y: y - 20 // Above the line for horizontal relationships
       };
     }
@@ -229,127 +246,119 @@ export function CrowsFootChild(
   // Calculate positions along the line direction
   const crowsFootX = cardinalityEndX - (dx * crowsFootOffset);
   const crowsFootY = cardinalityEndY - (dy * crowsFootOffset);
-  
   const elementX = cardinalityEndX - (dx * elementOffset);
   const elementY = cardinalityEndY - (dy * elementOffset);
 
   return (
     pathRef && (
       <g>
-        {/* Para (0,*): Círculo justo antes de la pata de gallo */}
+        {/* To (0,*)*/}
         {isOptional && isMany && (
           <>
             <circle
               cx={elementX}
               cy={elementY}
-              r="4" 
-              stroke="gray" 
-              strokeWidth="2" 
+              r="4"
+              stroke="gray"
+              strokeWidth="2"
               fill="white"
               className="group-hover:stroke-sky-700"
             />
           </>
         )}
-        
-        {/* Para (1,*): Barra al inicio de la pata de gallo */}
+        {/* To (1,*)*/}
         {isMandatory && isMany && (
           <>
             <line
-              x1={crowsFootX - (perpX * lineLength)} 
+              x1={crowsFootX - (perpX * lineLength)}
               y1={crowsFootY - (perpY * lineLength)}
-              x2={crowsFootX + (perpX * lineLength)} 
+              x2={crowsFootX + (perpX * lineLength)}
               y2={crowsFootY + (perpY * lineLength)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
           </>
         )}
 
-        {/* Para (0,1): Círculo antes de la barra - CÍRCULO MÁS CERCA DE LA LÍNEA */}
+        {/* To (0,1)*/}
         {isOptional && isOne && (
           <>
             <circle
-              cx={cardinalityEndX - (dx * 8)} 
+              cx={cardinalityEndX - (dx * 8)}
               cy={cardinalityEndY - (dy * 8)}
-              r="4" 
-              stroke="gray" 
-              strokeWidth="2" 
+              r="4"
+              stroke="gray"
+              strokeWidth="2"
               fill="white"
               className="group-hover:stroke-sky-700"
             />
-            {/* Barra cerca de la tabla */}
             <line
-              x1={cardinalityEndX - (dx * 3) - (perpX * lineLength)} 
+              x1={cardinalityEndX - (dx * 3) - (perpX * lineLength)}
               y1={cardinalityEndY - (dy * 3) - (perpY * lineLength)}
-              x2={cardinalityEndX - (dx * 3) + (perpX * lineLength)} 
+              x2={cardinalityEndX - (dx * 3) + (perpX * lineLength)}
               y2={cardinalityEndY - (dy * 3) + (perpY * lineLength)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
           </>
         )}
 
-        {/* Para (1,1): Dos barras perpendiculares a la línea - COMO CrowParentLines */}
+        {/* To (1,1)*/}
         {isMandatory && isOne && (
           <>
-            {/* Primera barra más alejada */}
             <line
-              x1={cardinalityEndX - (dx * 10) - (perpX * lineLength)} 
+              x1={cardinalityEndX - (dx * 10) - (perpX * lineLength)}
               y1={cardinalityEndY - (dy * 10) - (perpY * lineLength)}
-              x2={cardinalityEndX - (dx * 10) + (perpX * lineLength)} 
+              x2={cardinalityEndX - (dx * 10) + (perpX * lineLength)}
               y2={cardinalityEndY - (dy * 10) + (perpY * lineLength)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
-            {/* Segunda barra cerca de la tabla */}
             <line
-              x1={cardinalityEndX - (dx * 6) - (perpX * lineLength)} 
+              x1={cardinalityEndX - (dx * 6) - (perpX * lineLength)}
               y1={cardinalityEndY - (dy * 6) - (perpY * lineLength)}
-              x2={cardinalityEndX - (dx * 6) + (perpX * lineLength)} 
+              x2={cardinalityEndX - (dx * 6) + (perpX * lineLength)}
               y2={cardinalityEndY - (dy * 6) + (perpY * lineLength)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
           </>
         )}
-
-        {/* Crow's foot que apunta hacia la tabla siguiendo la línea */}
         {isMany && (
           <>
             <line
-              x1={crowsFootX} 
+              x1={crowsFootX}
               y1={crowsFootY}
-              x2={crowsFootX + (dx * 12) - (perpX * 10)} 
+              x2={crowsFootX + (dx * 12) - (perpX * 10)}
               y2={crowsFootY + (dy * 12) - (perpY * 10)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
             <line
-              x1={crowsFootX} 
+              x1={crowsFootX}
               y1={crowsFootY}
-              x2={crowsFootX + (dx * 12) + (perpX * 10)} 
+              x2={crowsFootX + (dx * 12) + (perpX * 10)}
               y2={crowsFootY + (dy * 12) + (perpY * 10)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
             <line
-              x1={crowsFootX} 
+              x1={crowsFootX}
               y1={crowsFootY}
-              x2={crowsFootX + (dx * 14)} 
+              x2={crowsFootX + (dx * 14)}
               y2={crowsFootY + (dy * 14)}
-              stroke="gray" 
-              strokeWidth="2" 
+              stroke="gray"
+              strokeWidth="2"
               className="group-hover:stroke-sky-700"
             />
           </>
         )}
-        
         {/* Cardinality text with better positioning for vertical relationships */}
         {showCardinality && (
           <>
@@ -361,7 +370,7 @@ export function CrowsFootChild(
                   <text
                     x={startPos.x}
                     y={startPos.y}
-                    fill="gray" 
+                    fill="gray"
                     strokeWidth="0.5"
                     textAnchor="middle"
                     alignmentBaseline="middle"
@@ -472,8 +481,7 @@ export function IDEFZM(
       break;
   }
 
-  // Calculate the actual direction vector if we have vector information
-  let dx = 1, dy = 0; // Default to right-pointing
+  let dx = 1, dy = 0;
   if (vectorInfo) {
     const magnitude = Math.sqrt(vectorInfo.dx * vectorInfo.dx + vectorInfo.dy * vectorInfo.dy);
     if (magnitude > 0) {
@@ -547,10 +555,16 @@ export function IDEFZM(
   );
 }
 
-export function subDT(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId) {
+export function subDT(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId, parentTable = null, childTable = null, tableWidth = 200) {
+  // Calculate proper angle if parent and child table information is provided
+  let rotationAngle = angle;
+  if (parentTable && childTable && point) {
+    rotationAngle = calculateSubtypeAngle(parentTable, childTable, point, tableWidth);
+  }
+
   return (
     point && subtypevar === "disjoint_total" && (
-      <g transform={`rotate(${angle + 180}, ${point.x}, ${point.y})`}>
+      <g transform={`rotate(${rotationAngle}, ${point.x}, ${point.y})`}>
         <circle cx={point.x} cy={point.y} r="8" stroke="gray" strokeWidth="2" fill="white" className="group-hover:fill-sky-700" />
         <text x={point.x} y={point.y + 2} fill="gray" strokeWidth="0.5" textAnchor="middle" alignmentBaseline="middle">D</text>
         <line x1={point.x - 10} y1={point.y - 20} x2={point.x - 10} y2={point.y + 20} stroke="gray" strokeWidth="2" className="group-hover:stroke-sky-700" />
@@ -570,10 +584,16 @@ export function subDT(point, angle, notation, subtypevar, direction, cardinality
   );
 }
 
-export function subDP(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId) {
+export function subDP(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId, parentTable = null, childTable = null, tableWidth = 200) {
+  // Calculate proper angle if parent and child table information is provided
+  let rotationAngle = angle;
+  if (parentTable && childTable && point) {
+    rotationAngle = calculateSubtypeAngle(parentTable, childTable, point, tableWidth);
+  }
+
   return (
     point && subtypevar === "disjoint_partial" && (
-      <g transform={`rotate(${angle + 180}, ${point.x}, ${point.y})`}>
+      <g transform={`rotate(${rotationAngle}, ${point.x}, ${point.y})`}>
         <circle cx={point.x} cy={point.y} r="8" stroke="gray" strokeWidth='2' fill="white" className="group-hover:fill-sky-700" />
         <text x={point.x} y={point.y + 2} fill="grey" strokeWidth="0.5" textAnchor="middle" alignmentBaseline="middle">D</text>
         <line x1={point.x - 10} y1={point.y + 20} x2={point.x - 10} y2={point.y - 20} stroke="gray" strokeWidth='2' className="group-hover:fill-sky-700" />
@@ -593,10 +613,16 @@ export function subDP(point, angle, notation, subtypevar, direction, cardinality
   );
 }
 
-export function subOT(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId) {
+export function subOT(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId, parentTable = null, childTable = null, tableWidth = 200) {
+  // Calculate proper angle if parent and child table information is provided
+  let rotationAngle = angle;
+  if (parentTable && childTable && point) {
+    rotationAngle = calculateSubtypeAngle(parentTable, childTable, point, tableWidth);
+  }
+
   return (
     point && subtypevar === "overlapping_total" && (
-      <g transform={`rotate(${angle + 180}, ${point.x}, ${point.y})`}>
+      <g transform={`rotate(${rotationAngle}, ${point.x}, ${point.y})`}>
         <circle cx={point.x} cy={point.y} r="8" stroke="gray" strokeWidth='2' fill="white" className="group-hover:fill-sky-700" />
         <text x={point.x} y={point.y + 2} fill="grey" strokeWidth="0.5" textAnchor="middle" alignmentBaseline="middle">O</text>
         <line x1={point.x - 10} y1={point.y + 20} x2={point.x - 10} y2={point.y - 20} stroke="gray" strokeWidth='2' className="group-hover:fill-sky-700" />
@@ -617,10 +643,16 @@ export function subOT(point, angle, notation, subtypevar, direction, cardinality
   );
 }
 
-export function subOP(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId) {
+export function subOP(point, angle, notation, subtypevar, direction, cardinalityStart, cardinalityEnd, onConnectSubtypePoint, relationshipId, parentTable = null, childTable = null, tableWidth = 200) {
+  // Calculate proper angle if parent and child table information is provided
+  let rotationAngle = angle;
+  if (parentTable && childTable && point) {
+    rotationAngle = calculateSubtypeAngle(parentTable, childTable, point, tableWidth);
+  }
+
   return (
     point && subtypevar === "overlapping_partial" && (
-      <g transform={`rotate(${angle + 180}, ${point.x}, ${point.y})`}>
+      <g transform={`rotate(${rotationAngle}, ${point.x}, ${point.y})`}>
         <circle cx={point.x} cy={point.y} r="8" stroke="gray" strokeWidth='2' fill="white" className="group-hover:fill-sky-700" />
         <text x={point.x} y={point.y + 2} fill="grey" strokeWidth="0.5" textAnchor="middle" alignmentBaseline="middle">O</text>
         <line x1={point.x - 10} y1={point.y + 20} x2={point.x - 10} y2={point.y - 20} stroke="gray" strokeWidth='2' className="group-hover:fill-sky-700" />

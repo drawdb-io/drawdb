@@ -69,7 +69,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
 
   // Define table references early for use throughout the component
   const startTable = tables[data.startTableId];
-  
   // Helper function to get the effective end table for both single and multi-child relationships
   const getEffectiveEndTable = () => {
     if (data.endTableId !== undefined) {
@@ -82,7 +81,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
   const endTable = getEffectiveEndTable();
 
   try {
-  // Don't render subtype relationships when notation is DEFAULT
   if (data.subtype && settings.notation === Notation.DEFAULT) {
     return null;
   }
@@ -205,60 +203,56 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
           settings.notation,
           SubtypeRestriction.DISJOINT_TOTAL,
           1, // direction
-          "", // cardinalityStart (not used for subtype)
-          "", // cardinalityEnd (not used for subtype)
+          "", // cardinalityStart
+          "", // cardinalityEnd
           onConnectSubtypePoint,
-          data.id
+          data.id,
+          startTable, // parentTable
+          childTables[0], // Use first child table as reference for direction
+          settings.tableWidth
         )}
         {data.subtype_restriction === SubtypeRestriction.DISJOINT_PARTIAL && subDP(
           subtypePoint,
-          0, // angle
+          0,
           settings.notation,
           SubtypeRestriction.DISJOINT_PARTIAL,
-          1, // direction
-          "", // cardinalityStart (not used for subtype)
-          "", // cardinalityEnd (not used for subtype)
+          1,
+          "",
+          "",
           onConnectSubtypePoint,
-          data.id
+          data.id,
+          startTable,
+          childTables[0],
+          settings.tableWidth
         )}
         {data.subtype_restriction === SubtypeRestriction.OVERLAPPING_TOTAL && subOT(
           subtypePoint,
-          0, // angle
+          0,
           settings.notation,
           SubtypeRestriction.OVERLAPPING_TOTAL,
-          1, // direction
-          "", // cardinalityStart (not used for subtype)
-          "", // cardinalityEnd (not used for subtype)
+          1,
+          "",
+          "",
           onConnectSubtypePoint,
-          data.id
+          data.id,
+          startTable,
+          childTables[0],
+          settings.tableWidth
         )}
         {data.subtype_restriction === SubtypeRestriction.OVERLAPPING_PARTIAL && subOP(
           subtypePoint,
-          0, // angle
+          0,
           settings.notation,
           SubtypeRestriction.OVERLAPPING_PARTIAL,
-          1, // direction
-          "", // cardinalityStart (not used for subtype)
-          "", // cardinalityEnd (not used for subtype)
+          1,
+          "",
+          "",
           onConnectSubtypePoint,
-          data.id
+          data.id,
+          startTable,
+          childTables[0],
+          settings.tableWidth
         )}
-        {/* Debug: Show subtype point for reference */}
-        <circle
-          cx={subtypePoint.x}
-          cy={subtypePoint.y}
-          r="2"
-          fill="red"
-          opacity="0.7"
-        />
-        <text
-          x={subtypePoint.x + 15}
-          y={subtypePoint.y}
-          fill="red"
-          fontSize="10"
-        >
-          center
-        </text>
         {/* Lines from subtype horizontal line to each child */}
         {childTables.map((childTable, index) => {
           const childCenter = {
@@ -270,17 +264,15 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
           if (isHorizontal) {
             // For horizontal relationships: connect from the right side of the notation
             if (data.subtype_restriction === SubtypeRestriction.DISJOINT_TOTAL) {
-              // Disjoint total has double lines - alternate between them
               connectionPointX = subtypePoint.x + (index % 2 === 0 ? 20 : 25);
             } else {
-              // Other types have single line
               connectionPointX = subtypePoint.x + 20;
             }
-            connectionPointY = subtypePoint.y; // Same Y as center
+            connectionPointY = subtypePoint.y;
           } else {
             // For vertical relationships: connect from the bottom of the notation
-            connectionPointX = subtypePoint.x; // Same X as center
-            connectionPointY = subtypePoint.y + 20; // Bottom of notation
+            connectionPointX = subtypePoint.x;
+            connectionPointY = subtypePoint.y + 20;
           }
           return (
             <g key={`child-group-${data.id}-${index}`}>
@@ -305,14 +297,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
                 strokeWidth="10"
                 onDoubleClick={edit}
                 cursor="pointer"
-              />
-              {/* Debug: Show connection point */}
-              <circle
-                cx={connectionPointX}
-                cy={connectionPointY}
-                r="2"
-                fill="blue"
-                opacity="0.7"
               />
             </g>
           );
@@ -358,7 +342,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
       return 0;
     });
   };
-  
   // Helper function to get the effective end field ID
   const getEffectiveEndFieldId = () => {
     if (data.endFieldId !== undefined) {
@@ -368,7 +351,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
     }
     return undefined;
   };
-  
   const effectiveEndFieldId = getEffectiveEndFieldId();
 
   let startFieldYOffset = 0;
@@ -406,7 +388,7 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
       if (foreignKeyField.primary === true) {
         determinedRelationshipType = "0";
       } else {
-        determinedRelationshipType = "5.5"; // Assuming "5.5" is a valid dasharray string like "5,5"
+        determinedRelationshipType = "5.5";
       }
     }
   }
@@ -476,7 +458,7 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
 
   // For subtype relationships, force specific notation regardless of global setting
   const effectiveNotationKey = data.subtype ?
-    'default' : // Force subtype format for subtype relationships
+    'default' :
     (settings.notation &&
     Object.prototype.hasOwnProperty.call(
       formats.notation,
@@ -536,8 +518,8 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
   let labelWidth = labelRef.current?.getBBox().width ?? 0;
   let labelHeight = labelRef.current?.getBBox().height ?? 0;
 
-  const cardinalityStartOffset = 30; // Distance from start (parent) table
-  const cardinalityEndOffset = 37;   // Distance from end (child) table - balanced for visibility
+  const cardinalityStartOffset = 30;
+  const cardinalityEndOffset = 37;
 
 
   if (pathRef.current) {
@@ -669,7 +651,10 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
               cardinalityStart,
               cardinalityEnd,
               onConnectSubtypePoint,
-              data.id
+              data.id,
+              startTable, // parentTable
+              endTable, // childTable
+              settings.tableWidth // tableWidth
             )}
             {data.subtype_restriction === SubtypeRestriction.DISJOINT_PARTIAL && subDP(
               pathRef.current ? pathRef.current.getPointAtLength(pathRef.current.getTotalLength() / 2) : null,
@@ -680,7 +665,10 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
               cardinalityStart,
               cardinalityEnd,
               onConnectSubtypePoint,
-              data.id
+              data.id,
+              startTable, // parentTable
+              endTable, // childTable
+              settings.tableWidth // tableWidth
             )}
             {data.subtype_restriction === SubtypeRestriction.OVERLAPPING_TOTAL && subOT(
               pathRef.current ? pathRef.current.getPointAtLength(pathRef.current.getTotalLength() / 2) : null,
@@ -691,7 +679,10 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
               cardinalityStart,
               cardinalityEnd,
               onConnectSubtypePoint,
-              data.id
+              data.id,
+              startTable, // parentTable
+              endTable, // childTable
+              settings.tableWidth // tableWidth
             )}
             {data.subtype_restriction === SubtypeRestriction.OVERLAPPING_PARTIAL && subOP(
               pathRef.current ? pathRef.current.getPointAtLength(pathRef.current.getTotalLength() / 2) : null,
@@ -702,7 +693,10 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
               cardinalityStart,
               cardinalityEnd,
               onConnectSubtypePoint,
-              data.id
+              data.id,
+              startTable, // parentTable
+              endTable, // childTable
+              settings.tableWidth // tableWidth
             )}
           </>
         )}
