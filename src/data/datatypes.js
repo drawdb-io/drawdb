@@ -1023,6 +1023,9 @@ const postgresTypesBase = {
         "today",
         "tomorrow",
         "yesterday",
+        "current_date",
+        "current_timestamp",
+        "current_time",
       ];
       return (
         /^\d{4}-\d{2}-\d{2}$/.test(field.default) ||
