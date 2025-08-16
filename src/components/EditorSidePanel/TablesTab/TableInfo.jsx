@@ -231,64 +231,7 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
-      <div className="flex justify-between items-center gap-1 mb-2">
-        <div>
-          <Popover
-            content={
-              <div className="popover-theme">
-                <ColorPalette
-                  currentColor={data.color}
-                  onClearColor={() => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: defaultBlue },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: defaultBlue });
-                  }}
-                  onPickColor={(c) => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: c },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: c });
-                  }}
-                />
-              </div>
-            }
-            trigger="click"
-            position="bottomLeft"
-            showArrow
-          >
-            <div
-              className="h-[32px] w-[32px] rounded"
-              style={{ backgroundColor: data.color }}
-            />
-          </Popover>
-        </div>
+      <div className="flex flex-col gap-1">
         <div className="flex gap-1">
           <Button
             block
@@ -320,9 +263,11 @@ export default function TableInfo({ data }) {
                 ],
               });
             }}
+            className="flex-grow"
           >
             {t("add_index")}
           </Button>
+          
           <Button
             onClick={() => {
               setUndoStack((prev) => [
@@ -425,25 +370,39 @@ export default function TableInfo({ data }) {
               addFieldToTable(data.id, newFieldData, fieldUpdates);
             }}
             block
+            className="flex-grow"
           >
             {t("add_field")}
           </Button>
+          </div>
+
+          <div className="flex items-center gap-5 mt-1">
             <Button
-              title="Go to Board"
+              block
               onClick={() => {
                 if (data.x != null && data.y != null) {
                   navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
                 }
               }}
-            >{t("Board")}
+              className="flex-grow"
+            >{t("board")}
             </Button>
-          <Button
-            icon={<IconDeleteStroked />}
-            type="danger"
-            onClick={() => deleteTable(data.id)}
-          />
+          </div>
+
+          <span className="font-semibold text-gray-700">
+            {t("delete_table_")}  
+          </span>
+
+            <div className="flex items-center gap-5 mt-1">
+              <Button
+                icon={<IconDeleteStroked />}
+                type="danger"
+                onClick={() => deleteTable(data.id)}
+                className="flex-grow"       
+              />
+
+            </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -10,6 +10,8 @@ const es = {
     import_from: "Importar",
     import: "Importar",
     file: "Archivo",
+    board:"Centrar tabla",
+    delete_table_: " Eliminar tabla",
     new: "Nuevo",
     new_window: "Nueva Ventana",
     open: "Abrir",
