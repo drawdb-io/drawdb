@@ -374,11 +374,10 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
-          </div>
-
-          <div className="flex items-center gap-5 mt-1">
+           </div>
+            <div className="flex items-center gap-5 mt-1">
             <Button
-              block
+            block
               onClick={() => {
                 if (data.x != null && data.y != null) {
                   navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
@@ -387,22 +386,22 @@ export default function TableInfo({ data }) {
               className="flex-grow"
             >{t("board")}
             </Button>
-          </div>
 
-          <span className="font-semibold text-gray-700">
-            {t("delete_table_")}  
-          </span>
+            </div>
+           <span className="font-semibold text-gray-700" >
+            {t("delete_table_")}
+            </span> 
 
-            <div className="flex items-center gap-5 mt-1">
-              <Button
+          <div className="flex items-center gap-5 mt-1">  
+            <Button
                 icon={<IconDeleteStroked />}
                 type="danger"
                 onClick={() => deleteTable(data.id)}
-                className="flex-grow"       
-              />
-
-            </div>
+            className="flex-grow"
+            />
+          
         </div>
+      </div>
     </div>
   );
 }
