@@ -33,7 +33,16 @@ export function strHasQuotes(str) {
   );
 }
 
-const keywords = ["CURRENT_TIMESTAMP", "NULL"];
+const keywords = [
+  "NULL",
+  "TRUE",
+  "FALSE",
+  "CURRENT_DATE",
+  "CURRENT_TIME",
+  "CURRENT_TIMESTAMP",
+  "LOCALTIME",
+  "LOCALTIMESTAMP"
+];
 
 export function isKeyword(str) {
   return keywords.includes(str.toUpperCase());
