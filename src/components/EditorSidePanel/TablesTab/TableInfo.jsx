@@ -5,12 +5,10 @@ import {
   TextArea,
   Button,
   Card,
-  Popover,
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
-import ColorPalette from "../../ColorPicker";
+import { Action, ObjectType} from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
