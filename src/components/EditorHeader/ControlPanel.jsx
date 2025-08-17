@@ -1659,10 +1659,10 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
-          <Tooltip content={t("revisions")} position="bottom">
+          <Tooltip content={t("versions")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
-              onClick={() => setSidesheet(SIDESHEET.REVISIONS)}
+              onClick={() => setSidesheet(SIDESHEET.VERSIONS)}
             >
               <i className="fa-solid fa-code-branch" />{" "}
             </button>

@@ -12,8 +12,10 @@ import {
   getCommitsWithFile,
   getVersion,
   patch,
+  get,
   VERSION_FILENAME,
 } from "../../../api/gists";
+import _ from "lodash";
 import { DateTime } from "luxon";
 import {
   useAreas,
@@ -27,7 +29,7 @@ import {
 import { databases } from "../../../data/databases";
 
 export default function Versions({ open, title, setTitle }) {
-  const { gistId, setVersion } = useContext(IdContext);
+  const { gistId, setGistId, setVersion } = useContext(IdContext);
   const { areas, setAreas } = useAreas();
   const { setLayout } = useLayout();
   const { database, tables, relationships, setTables, setRelationships } =
@@ -126,12 +128,38 @@ export default function Versions({ open, title, setTitle }) {
     [t],
   );
 
+  const hasDiagramChanged = async () => {
+    const previousVersion = await get(gistId);
+    const previousDiagram = JSON.parse(
+      previousVersion.data.files[VERSION_FILENAME]?.content,
+    );
+    const currentDiagram = {
+      title,
+      tables,
+      relationships: relationships,
+      notes: notes,
+      subjectAreas: areas,
+      database: database,
+      ...(databases[database].hasTypes && { types: types }),
+      ...(databases[database].hasEnums && { enums: enums }),
+      transform: transform,
+    };
+
+    return !_.isEqual(previousDiagram, currentDiagram);
+  };
+
   const recordVersion = async () => {
     try {
+      const hasChanges = await hasDiagramChanged();
+      if (!hasChanges) {
+        Toast.info(t("no_changes_to_record"));
+        return;
+      }
       if (gistId) {
         await patch(gistId, VERSION_FILENAME, diagramToString());
       } else {
-        await create(VERSION_FILENAME, diagramToString());
+        const id = await create(VERSION_FILENAME, diagramToString());
+        setGistId(id);
       }
       await getRevisions(gistId);
     } catch (e) {

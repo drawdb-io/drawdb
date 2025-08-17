@@ -55,13 +55,16 @@ export default function Share({ title, setModal }) {
 
   const unshare = useCallback(async () => {
     try {
-      await patch(gistId, SHARE_FILENAME, undefined);
+      const deleted = await patch(gistId, SHARE_FILENAME, undefined);
+      if (deleted) {
+        setGistId("");
+      }
       setModal(MODAL.NONE);
     } catch (e) {
       console.error(e);
       setError(e);
     }
-  }, [gistId, setModal]);
+  }, [gistId, setModal, setGistId]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {

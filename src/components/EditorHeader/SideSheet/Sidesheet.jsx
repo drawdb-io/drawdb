@@ -2,7 +2,7 @@ import { SideSheet as SemiUISideSheet } from "@douyinfe/semi-ui";
 import { SIDESHEET } from "../../../data/constants";
 import Timeline from "./Timeline";
 import Todo from "./Todo";
-import Revisions from "./Revisions";
+import Versions from "./Versions";
 import { useTranslation } from "react-i18next";
 
 export default function Sidesheet({ type, title, setTitle, onClose }) {
@@ -14,8 +14,8 @@ export default function Sidesheet({ type, title, setTitle, onClose }) {
         return t("timeline");
       case SIDESHEET.TODO:
         return t("to_do");
-      case SIDESHEET.REVISIONS:
-        return t("revisions");
+      case SIDESHEET.VERSIONS:
+        return t("versions");
       default:
         break;
     }
@@ -27,9 +27,9 @@ export default function Sidesheet({ type, title, setTitle, onClose }) {
         return <Timeline />;
       case SIDESHEET.TODO:
         return <Todo />;
-      case SIDESHEET.REVISIONS:
+      case SIDESHEET.VERSIONS:
         return (
-          <Revisions
+          <Versions
             open={type !== SIDESHEET.NONE}
             title={title}
             setTitle={setTitle}

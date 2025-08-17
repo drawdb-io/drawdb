@@ -18,10 +18,12 @@ export async function create(filename, content) {
 }
 
 export async function patch(gistId, filename, content) {
-  await axios.patch(`${baseUrl}/gists/${gistId}`, {
+  const { deleted } = await axios.patch(`${baseUrl}/gists/${gistId}`, {
     filename,
     content,
   });
+
+  return deleted;
 }
 
 export async function del(gistId) {
@@ -52,12 +54,15 @@ export async function getVersion(gistId, sha) {
 }
 
 export async function getCommitsWithFile(gistId, file, perPage = 20, page = 1) {
-   const res = await axios.get(`${baseUrl}/gists/${gistId}/file-versions/${file}`, {
-    params: {
-      per_page: perPage,
-      page,
+  const res = await axios.get(
+    `${baseUrl}/gists/${gistId}/file-versions/${file}`,
+    {
+      params: {
+        per_page: perPage,
+        page,
+      },
     },
-  });
+  );
 
   return res.data;
 }

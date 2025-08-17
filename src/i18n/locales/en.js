@@ -259,16 +259,17 @@ const en = {
     tab_view: "Tab view",
     label: "Label",
     many_side_label: "Many(n) side label",
-    revisions: "Revisions",
-    no_saved_revisions: "No saved revisions",
     version: "Version",
+    versions: "Versions",
+    no_saved_versions: "No saved versions",
     record_version: "Record version",
     commited_at: "Commited at",
     read_only: "Read only",
     continue: "Continue",
     restore_version: "Restore version",
     restore_warning: "Loading another version will overwrite the current changes.",
-    return_to_current: "Return to diagram"
+    return_to_current: "Return to diagram",
+    no_changes_to_record: "No changes to record",
   },
 };
 
