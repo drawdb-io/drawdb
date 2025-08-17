@@ -10,26 +10,24 @@ export default function Issues() {
   const { t } = useTranslation();
   const { settings } = useSettings();
   const { enums } = useEnums();
-  const { tables, relationships, database } = useDiagram();
+  const { tables, relationships, database, externalIssues } = useDiagram();
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-    const findIssues = async () => {
-      const newIssues = getIssues({
-        tables: tables,
-        relationships: relationships,
-        types: types,
-        database: database,
-        enums: enums,
-      });
+    const newIssues = getIssues({
+      tables: tables,
+      relationships: relationships,
+      types: types,
+      database: database,
+      enums: enums,
+    });
 
-      if (!arrayIsEqual(newIssues, issues)) {
-        setIssues(newIssues);
-      }
-    };
+    const combined = [...externalIssues, ...newIssues];
 
-    findIssues();
-  }, [tables, relationships, issues, types, database, enums]);
+    if (!arrayIsEqual(combined, issues)) {
+      setIssues(combined);
+    }
+  }, [tables, relationships, issues, types, database, enums, externalIssues]);
 
   return (
     <Collapse lazyRender keepDOM={false} style={{ width: "100%" }}>
@@ -54,11 +52,25 @@ export default function Issues() {
             <div className="mb-1">{t("strict_mode_is_on_no_issues")}</div>
           ) : issues.length > 0 ? (
             <>
-              {issues.map((e, i) => (
-                <div key={i} className="py-2">
-                  {e}
-                </div>
-              ))}
+              {issues.map((e, i) => {
+                const text =
+                  typeof e === "string"
+                    ? e
+                    : typeof e?.message === "string"
+                    ? e.message
+                    : (() => {
+                        try {
+                          return JSON.stringify(e);
+                        } catch {
+                          return String(e);
+                        }
+                      })();
+                return (
+                  <div key={i} className="py-2">
+                    {text}
+                  </div>
+                );
+              })}
             </>
           ) : (
             <div>{t("no_issues")}</div>

@@ -12,6 +12,7 @@ export default function DiagramContextProvider({ children }) {
   const [database, setDatabase] = useState(DB.GENERIC);
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
+  const [externalIssues, setExternalIssues] = useState([]);
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -244,6 +245,8 @@ export default function DiagramContextProvider({ children }) {
         setDatabase,
         tablesCount: tables.length,
         relationshipsCount: relationships.length,
+          externalIssues,
+          setExternalIssues,
       }}
     >
       {children}
