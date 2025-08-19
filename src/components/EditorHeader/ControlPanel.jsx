@@ -43,6 +43,7 @@ import {
   DB,
   IMPORT_FROM,
   noteWidth,
+  pngExportPixelRatio,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -493,7 +494,9 @@ export default function ControlPanel({
     }));
   };
   const copyAsImage = () => {
-    toPng(document.getElementById("canvas")).then(function (dataUrl) {
+    toPng(document.getElementById("canvas"), {
+      pixelRatio: pngExportPixelRatio,
+    }).then(function (dataUrl) {
       const blob = dataURItoBlob(dataUrl);
       navigator.clipboard
         .write([new ClipboardItem({ "image/png": blob })])
@@ -996,7 +999,9 @@ export default function ControlPanel({
           {
             name: "PNG",
             function: () => {
-              toPng(document.getElementById("canvas")).then(function (dataUrl) {
+              toPng(document.getElementById("canvas"), {
+                pixelRatio: pngExportPixelRatio,
+              }).then(function (dataUrl) {
                 setExportData((prev) => ({
                   ...prev,
                   data: dataUrl,
