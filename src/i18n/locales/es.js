@@ -12,6 +12,7 @@ const es = {
     file: "Archivo",
     board:"Centrar tabla",
     delete_table_: " Eliminar tabla",
+    color_not_available: "Color no disponible para esta notación",
     new: "Nuevo",
     new_window: "Nueva Ventana",
     open: "Abrir",
