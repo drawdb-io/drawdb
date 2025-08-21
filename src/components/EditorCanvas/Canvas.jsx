@@ -6,6 +6,8 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
+  tableFieldHeight,
+  tableHeaderHeight,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -544,13 +546,34 @@ export default function Canvas() {
 
     if (isAreaSelecting) {
       const areaBBox = selectionArea;
+      // Select tables that intersect the selection area (any part of table)
       const selectedTables = tables.filter((table) => {
-        return (
-          table.x >= areaBBox.x &&
-          table.x <= areaBBox.x + areaBBox.width &&
-          table.y >= areaBBox.y &&
-          table.y <= areaBBox.y + areaBBox.height
+        const tableX = table.x;
+        const tableY = table.y;
+        const tableWidth = table.width || settings.tableWidth;
+        const tableHeight = (table.fields?.length || 0) * tableFieldHeight + tableHeaderHeight + 7;
+
+        const tableRect = {
+          x: tableX,
+          y: tableY,
+          width: tableWidth,
+          height: tableHeight,
+        };
+
+        const areaRect = {
+          x: areaBBox.x,
+          y: areaBBox.y,
+          width: areaBBox.width,
+          height: areaBBox.height,
+        };
+
+        const intersects = !(
+          tableRect.x + tableRect.width < areaRect.x ||
+          tableRect.x > areaRect.x + areaRect.width ||
+          tableRect.y + tableRect.height < areaRect.y ||
+          tableRect.y > areaRect.y + areaRect.height
         );
+        return intersects;
       });
 
       if (selectedTables.length > 0) {
