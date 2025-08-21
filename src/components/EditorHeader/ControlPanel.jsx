@@ -179,9 +179,10 @@ export default function ControlPanel({
       actionForRedoStack = { ...a }; // For ADD, the redo is the same action.
       setRedoStack((prev) => [...prev, actionForRedoStack]);
     } else if (a.action === Action.MOVE) {
-      let originalPositions = {};
+      let currentPositionsMap = {};
       if (Array.isArray(a.id)) { // Multiple moves
-        originalPositions = a.id.reduce((acc, id) => {
+        // Build a map of current positions keyed by id
+        currentPositionsMap = a.id.reduce((acc, id) => {
           let elementArr;
           if (a.element === ObjectType.TABLE) elementArr = tables;
           else if (a.element === ObjectType.AREA) elementArr = areas;
@@ -194,13 +195,20 @@ export default function ControlPanel({
           }
           return acc;
         }, {});
-        // Undo the movement by restoring original positions
+
+        // Undo the movement by restoring original positions (a.originalPositions is expected to be an array)
         a.originalPositions.forEach(op => {
           if (a.element === ObjectType.TABLE) updateTable(op.id, { x: op.x, y: op.y });
           else if (a.element === ObjectType.AREA) updateArea(op.id, { x: op.x, y: op.y });
           else if (a.element === ObjectType.NOTE) updateNote(op.id, { x: op.x, y: op.y });
         });
-        actionForRedoStack = { ...a, newPositions: originalPositions }; // For redo, we need the positions to which it was moved
+
+        // Convert currentPositionsMap to an array matching the shape expected by redo
+        // Preserve the original id ordering by iterating over a.id
+        const newPositionsArray = Array.isArray(a.id)
+          ? a.id.map(id => ({ id, ...currentPositionsMap[id] }))
+          : Object.keys(currentPositionsMap).map((key) => ({ id: parseInt(key, 10), ...currentPositionsMap[key] }));
+        actionForRedoStack = { ...a, newPositions: newPositionsArray }; // For redo, we need the positions to which it was moved
       } else { // Individual move
         let currentItem;
         if (a.element === ObjectType.TABLE) currentItem = tables.find(t => t.id === a.id);
@@ -492,7 +500,10 @@ export default function ControlPanel({
           if (item) acc[id] = { x: item.x, y: item.y };
           return acc;
         }, {});
-        actionForUndoStack.originalPositions = Object.values(currentPositions).map((pos, index) => ({ id: a.id[index], ...pos }));
+        // Preserve ordering by mapping over a.id so ids and positions align
+        actionForUndoStack.originalPositions = Array.isArray(a.id)
+          ? a.id.map(id => ({ id, ...currentPositions[id] }))
+          : Object.values(currentPositions).map((pos, index) => ({ id: a.id[index], ...pos }));
 
         a.newPositions.forEach(np => { // a.newPositions has target positions for redo
            if (a.element === ObjectType.TABLE) updateTable(np.id, { x: np.x, y: np.y });
