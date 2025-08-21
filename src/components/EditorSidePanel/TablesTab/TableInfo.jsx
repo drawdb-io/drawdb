@@ -9,7 +9,7 @@ import {
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
+import { Action, Notation, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
@@ -232,7 +232,66 @@ export default function TableInfo({ data }) {
         </Collapse>
       </Card>
       <div className="flex flex-col gap-1">
-        <div className="flex gap-1">
+      <div className="flex gap-1 w-full">  
+        {!(settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X)? (
+          <Popover
+            content={
+              <div className="popover-theme">
+                <ColorPalette
+                  currentColor={data.color}
+                  onClearColor={() => {
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "self",
+                        tid: data.id,
+                        undo: { color: data.color },
+                        redo: { color: defaultBlue },
+                        message: t("edit_table", {
+                          tableName: data.name,
+                          extra: "[color]",
+                        }),
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateTable(data.id, { color: defaultBlue });
+                  }}
+                  onPickColor={(c) => {
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "self",
+                        tid: data.id,
+                        undo: { color: data.color },
+                        redo: { color: c },
+                        message: t("edit_table", {
+                          tableName: data.name,
+                          extra: "[color]",
+                        }),
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateTable(data.id, { color: c });
+                  }}
+                />
+              </div>
+            }
+            trigger="click"
+            position="bottomLeft"
+            showArrow
+          >
+            <div
+              className={"h-[32px] w-[1100px] rounded"}
+              style={{ backgroundColor: data.color }}
+            />
+          </Popover >
+        ):null}
+      
+        <div className="flex gap-1 flex grow">
           <Button
             block
             onClick={() => {
@@ -374,7 +433,8 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
-           </div>
+        </div>
+      </div>
             <div className="flex items-center gap-5 mt-1">
             <Button
             block
@@ -388,19 +448,18 @@ export default function TableInfo({ data }) {
             </Button>
 
             </div>
-           <span className="font-semibold text-gray-700" >
-            {t("delete_table_")}
-            </span> 
+              <span className="font-semibold text-gray-700" >
+              {t("delete_table_")}
+              </span> 
 
-          <div className="flex items-center gap-5 mt-1">  
+            <div className="flex items-center gap-5 mt-1">  
             <Button
                 icon={<IconDeleteStroked />}
                 type="danger"
                 onClick={() => deleteTable(data.id)}
-            className="flex-grow"
+                className="flex-grow"
             />
-          
-        </div>
+          </div>
       </div>
     </div>
   );
