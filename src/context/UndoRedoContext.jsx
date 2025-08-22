@@ -41,9 +41,6 @@ export default function UndoRedoContextProvider({ children }) {
       // If stringify fails, skip duplicate check
     }
 
-  // No-op: intentionally do not log in production; tracing was used for debugging
-  // during development and has been removed to keep console clean.
-
     setUndoStack((prev) => [...prev, action]);
     // pushing a new undo clears redo
     setRedoStack([]);
@@ -56,7 +53,9 @@ export default function UndoRedoContextProvider({ children }) {
       const sLast = JSON.stringify(last);
       const sAction = JSON.stringify(action);
       if (sLast === sAction) return;
-    } catch (e) {}
+    } catch (e) {
+      // ignore JSON stringify errors for non-serializable actions
+    }
     setRedoStack((prev) => [...prev, action]);
   }, [redoStack]);
 

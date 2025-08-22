@@ -75,7 +75,7 @@ export default function Canvas() {
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
   const { settings } = useSettings();
-  const { setUndoStack, setRedoStack, pushUndo } = useUndoRedo();
+  const { setRedoStack, pushUndo } = useUndoRedo();
 
   const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
@@ -597,13 +597,7 @@ export default function Canvas() {
     const info = getMovedElementDetails();
     // Use pushUndo to ensure centralized filtering/deduplication
     pushUndo((() => {
-      if (Array.isArray(dragging.id)) {
-        const arraysEqual = (a1, a2) => {
-          if (!Array.isArray(a1) || !Array.isArray(a2)) return false;
-          if (a1.length !== a2.length) return false;
-          for (let i = 0; i < a1.length; i++) if (a1[i] !== a2[i]) return false;
-          return true;
-        };
+  if (Array.isArray(dragging.id)) {
 
         // Build arrays matching ControlPanel's expected shape: originalPositions/newPositions
         const originalPositionsArray = (dragging.initialPositions && typeof dragging.initialPositions === 'object')
