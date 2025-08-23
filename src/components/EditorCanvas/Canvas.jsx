@@ -549,6 +549,25 @@ export default function Canvas() {
     setLinking(true);
   };
 
+  const getCardinality = (startField, endField) => {
+    const startIsUnique = startField.unique || startField.primary;
+    const endIsUnique = endField.unique || endField.primary;
+
+    if (startIsUnique && endIsUnique) {
+      return Cardinality.ONE_TO_ONE;
+    }
+
+    if (startIsUnique && !endIsUnique) {
+      return Cardinality.ONE_TO_MANY;
+    }
+
+    if (!startIsUnique && endIsUnique) {
+      return Cardinality.MANY_TO_ONE;
+    }
+
+    return Cardinality.ONE_TO_ONE;
+  };
+
   const handleLinking = () => {
     if (hoveredTable.tableId === null) return;
     if (hoveredTable.fieldId === null) return;
@@ -556,17 +575,15 @@ export default function Canvas() {
     const { fields: startTableFields, name: startTableName } = tables.find(
       (t) => t.id === linkingLine.startTableId,
     );
-    const { type: startType, name: startFieldName } = startTableFields.find(
+    const startField = startTableFields.find(
       (f) => f.id === linkingLine.startFieldId,
     );
     const { fields: endTableFields, name: endTableName } = tables.find(
       (t) => t.id === hoveredTable.tableId,
     );
-    const { type: endType } = endTableFields.find(
-      (f) => f.id === hoveredTable.fieldId,
-    );
+    const endField = endTableFields.find((f) => f.id === hoveredTable.fieldId);
 
-    if (!areFieldsCompatible(database, startType, endType)) {
+    if (!areFieldsCompatible(database, startField.type, endField.type)) {
       Toast.info(t("cannot_connect"));
       return;
     }
@@ -576,14 +593,16 @@ export default function Canvas() {
     )
       return;
 
+    const cardinality = getCardinality(startField, endField);
+
     const newRelationship = {
       ...linkingLine,
+      cardinality,
       endTableId: hoveredTable.tableId,
       endFieldId: hoveredTable.fieldId,
-      cardinality: Cardinality.ONE_TO_ONE,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${startTableName}_${startFieldName}_${endTableName}`,
+      name: `fk_${startTableName}_${startField.name}_${endTableName}`,
       id: relationships.length,
     };
     delete newRelationship.startX;
