@@ -448,17 +448,17 @@ export default function TableInfo({ data }) {
             </Button>
 
             </div>
-              <span className="font-semibold text-gray-700" >
-              {t("delete_table_")}
-              </span> 
-
+              
             <div className="flex items-center gap-5 mt-1">  
             <Button
                 icon={<IconDeleteStroked />}
+                iconPosition="Right"
                 type="danger"
                 onClick={() => deleteTable(data.id)}
                 className="flex-grow"
-            />
+            >
+                {t("delete_table_")}
+              </Button>
           </div>
       </div>
     </div>
