@@ -256,6 +256,8 @@ const en = {
     export_saved_data: "Export saved data",
     dbml_view: "DBML view",
     tab_view: "Tab view",
+    label: "Label",
+    many_side_label: "Many(n) side label",
   },
 };
 

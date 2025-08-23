@@ -223,6 +223,41 @@ export default function RelationshipInfo({ data }) {
         className="w-full"
         onChange={changeCardinality}
       />
+
+      {data.cardinality !== Cardinality.ONE_TO_ONE && (
+        <>
+          <div className="text-md font-semibold break-keep mt-2">
+            {t("many_side_label")}:
+          </div>
+          <Input
+            value={data.manyLabel}
+            placeholder={t("label")}
+            onChange={(value) => updateRelationship(data.id, { manyLabel: value })}
+            onFocus={(e) => setEditField({ manyLabel: e.target.value })}
+            defaultValue="n"
+            onBlur={(e) => {
+              if (e.target.value === editField.manyLabel) return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.RELATIONSHIP,
+                  component: "self",
+                  rid: data.id,
+                  undo: editField,
+                  redo: { manyLabel: e.target.value },
+                  message: t("edit_relationship", {
+                    refName: e.target.value,
+                    extra: "[manyLabel]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }}
+          />
+        </>
+      )}
+
       <Row gutter={6} className="my-3">
         <Col span={12}>
           <div className="font-semibold">{t("on_update")}: </div>

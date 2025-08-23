@@ -1,10 +1,5 @@
-import { useMemo, useRef } from "react";
-import {
-  Cardinality,
-  darkBgTheme,
-  ObjectType,
-  Tab,
-} from "../../data/constants";
+import { useMemo, useRef, useState, useEffect } from "react";
+import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
@@ -46,13 +41,13 @@ export default function Relationship({ data }) {
     // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
-      cardinalityStart = "n";
+      cardinalityStart = data.manyLabel || "n";
       cardinalityEnd = "1";
       break;
     case t(Cardinality.ONE_TO_MANY):
     case Cardinality.ONE_TO_MANY:
       cardinalityStart = "1";
-      cardinalityEnd = "n";
+      cardinalityEnd = data.manyLabel || "n";
       break;
     case t(Cardinality.ONE_TO_ONE):
     case Cardinality.ONE_TO_ONE:
@@ -128,63 +123,30 @@ export default function Relationship({ data }) {
           cursor="pointer"
         />
         {settings.showRelationshipLabels && (
-          <>
-            <rect
-              x={labelX - 2}
-              y={labelY - labelFontSize}
-              fill={settings.mode === "dark" ? darkBgTheme : "white"}
-              width={labelWidth + 4}
-              height={labelHeight}
-            />
-            <text
-              x={labelX}
-              y={labelY}
-              fill={settings.mode === "dark" ? "lightgrey" : "#333"}
-              fontSize={labelFontSize}
-              fontWeight={500}
-              ref={labelRef}
-              className="group-hover:fill-sky-700"
-            >
-              {data.name}
-            </text>
-          </>
+          <text
+            x={labelX}
+            y={labelY}
+            fill={settings.mode === "dark" ? "lightgrey" : "#333"}
+            fontSize={labelFontSize}
+            fontWeight={500}
+            ref={labelRef}
+            className="group-hover:fill-sky-700"
+          >
+            {data.name}
+          </text>
         )}
         {pathRef.current && settings.showCardinality && (
           <>
-            <circle
-              cx={cardinalityStartX}
-              cy={cardinalityStartY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
-            />
-            <text
+            <CardinalityLabel
               x={cardinalityStartX}
               y={cardinalityStartY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityStart}
-            </text>
-            <circle
-              cx={cardinalityEndX}
-              cy={cardinalityEndY}
-              r="12"
-              fill="grey"
-              className="group-hover:fill-sky-700"
+              text={cardinalityStart}
             />
-            <text
+            <CardinalityLabel
               x={cardinalityEndX}
               y={cardinalityEndY}
-              fill="white"
-              strokeWidth="0.5"
-              textAnchor="middle"
-              alignmentBaseline="middle"
-            >
-              {cardinalityEnd}
-            </text>
+              text={cardinalityEnd}
+            />
           </>
         )}
       </g>
@@ -210,5 +172,43 @@ export default function Relationship({ data }) {
         </div>
       </SideSheet>
     </>
+  );
+}
+
+function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
+  const [textWidth, setTextWidth] = useState(0);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const bbox = textRef.current.getBBox();
+      setTextWidth(bbox.width);
+    }
+  }, [text]);
+
+  return (
+    <g>
+      <rect
+        x={x - textWidth / 2 - padding / 2}
+        y={y - r}
+        rx={r}
+        ry={r}
+        width={textWidth + padding}
+        height={r * 2}
+        fill="grey"
+        className="group-hover:fill-sky-700"
+      />
+      <text
+        ref={textRef}
+        x={x}
+        y={y}
+        fill="white"
+        strokeWidth="0.5"
+        textAnchor="middle"
+        alignmentBaseline="middle"
+      >
+        {text}
+      </text>
+    </g>
   );
 }
