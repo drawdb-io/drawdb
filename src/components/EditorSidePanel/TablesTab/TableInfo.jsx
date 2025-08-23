@@ -9,7 +9,7 @@ import {
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
+import { Action, Notation, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
@@ -231,8 +231,9 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
-      <div className="flex justify-between items-center gap-1 mb-2">
-        <div>
+      <div className="flex flex-col gap-1">
+      <div className="flex gap-1 w-full">  
+        {!(settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X)? (
           <Popover
             content={
               <div className="popover-theme">
@@ -284,12 +285,13 @@ export default function TableInfo({ data }) {
             showArrow
           >
             <div
-              className="h-[32px] w-[32px] rounded"
+              className={"h-[32px] w-[1100px] rounded"}
               style={{ backgroundColor: data.color }}
             />
-          </Popover>
-        </div>
-        <div className="flex gap-1">
+          </Popover >
+        ):null}
+      
+        <div className="flex gap-1 flex grow">
           <Button
             block
             onClick={() => {
@@ -320,9 +322,11 @@ export default function TableInfo({ data }) {
                 ],
               });
             }}
+            className="flex-grow"
           >
             {t("add_index")}
           </Button>
+          
           <Button
             onClick={() => {
               setUndoStack((prev) => [
@@ -425,24 +429,37 @@ export default function TableInfo({ data }) {
               addFieldToTable(data.id, newFieldData, fieldUpdates);
             }}
             block
+            className="flex-grow"
           >
             {t("add_field")}
           </Button>
+        </div>
+      </div>
+            <div className="flex items-center gap-5 mt-1">
             <Button
-              title="Go to Board"
+            block
               onClick={() => {
                 if (data.x != null && data.y != null) {
                   navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
                 }
               }}
-            >{t("Board")}
+              className="flex-grow"
+            >{t("board")}
             </Button>
-          <Button
-            icon={<IconDeleteStroked />}
-            type="danger"
-            onClick={() => deleteTable(data.id)}
-          />
-        </div>
+
+            </div>
+              
+            <div className="flex items-center gap-5 mt-1">  
+            <Button
+                icon={<IconDeleteStroked />}
+                iconPosition="Right"
+                type="danger"
+                onClick={() => deleteTable(data.id)}
+                className="flex-grow"
+            >
+                {t("delete_table_")}
+              </Button>
+          </div>
       </div>
     </div>
   );
