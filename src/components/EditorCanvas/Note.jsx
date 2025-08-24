@@ -249,6 +249,7 @@ export default function Note({ data, onPointerDown }) {
                     backgroundColor: "#2F68ADB3",
                   }}
                   onClick={lockUnlockNote}
+                  disabled={layout.readOnly}
                 />
                 <Popover
                   visible={
@@ -280,6 +281,7 @@ export default function Note({ data, onPointerDown }) {
                           value={data.title}
                           placeholder={t("title")}
                           className="me-2"
+                          readonly={layout.readOnly}
                           onChange={(value) =>
                             updateNote(data.id, { title: value })
                           }
@@ -307,6 +309,7 @@ export default function Note({ data, onPointerDown }) {
                         />
                         <ColorPicker
                           usePopover={true}
+                          readOnly={layout.readOnly}
                           value={data.color}
                           onChange={(color) => updateNote(data.id, { color })}
                           onColorPick={(color) => handleColorPick(color)}
@@ -314,9 +317,10 @@ export default function Note({ data, onPointerDown }) {
                       </div>
                       <div className="flex">
                         <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
                           block
+                          type="danger"
+                          disabled={layout.readOnly}
+                          icon={<IconDeleteStroked />}
                           onClick={() => deleteNote(data.id, true)}
                         >
                           {t("delete")}
@@ -343,6 +347,7 @@ export default function Note({ data, onPointerDown }) {
           </div>
           <textarea
             id={`note_${data.id}`}
+            readOnly={layout.readOnly}
             value={data.content}
             onChange={handleChange}
             onFocus={(e) =>

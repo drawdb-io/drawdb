@@ -18,7 +18,7 @@ import {
   Action,
   ObjectType,
 } from "../../../data/constants";
-import { useDiagram, useUndoRedo } from "../../../hooks";
+import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
@@ -38,6 +38,7 @@ export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { tables, deleteRelationship, updateRelationship } = useDiagram();
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const [editField, setEditField] = useState({});
 
   const relValues = useMemo(() => {
@@ -98,6 +99,8 @@ export default function RelationshipInfo({ data }) {
   };
 
   const changeCardinality = (value) => {
+    if (layout.readOnly) return;
+
     setUndoStack((prev) => [
       ...prev,
       {
@@ -117,6 +120,8 @@ export default function RelationshipInfo({ data }) {
   };
 
   const changeConstraint = (key, value) => {
+    if (layout.readOnly) return;
+
     const undoKey = `${key}Constraint`;
     setUndoStack((prev) => [
       ...prev,
@@ -145,6 +150,7 @@ export default function RelationshipInfo({ data }) {
           validateStatus={data.name.trim() === "" ? "error" : "default"}
           placeholder={t("name")}
           className="ms-2"
+          readonly={layout.readOnly}
           onChange={(value) => updateRelationship(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -196,9 +202,10 @@ export default function RelationshipInfo({ data }) {
                 />
                 <div className="mt-2">
                   <Button
-                    icon={<IconLoopTextStroked />}
                     block
+                    icon={<IconLoopTextStroked />}
                     onClick={swapKeys}
+                    disabled={layout.readOnly}
                   >
                     {t("swap")}
                   </Button>
@@ -234,7 +241,7 @@ export default function RelationshipInfo({ data }) {
             placeholder={t("label")}
             onChange={(value) => updateRelationship(data.id, { manyLabel: value })}
             onFocus={(e) => setEditField({ manyLabel: e.target.value })}
-            defaultValue="n"
+            readonly={layout.readOnly}
             onBlur={(e) => {
               if (e.target.value === editField.manyLabel) return;
               setUndoStack((prev) => [
@@ -285,9 +292,10 @@ export default function RelationshipInfo({ data }) {
         </Col>
       </Row>
       <Button
-        icon={<IconDeleteStroked />}
         block
         type="danger"
+        disabled={layout.readOnly}
+        icon={<IconDeleteStroked />}
         onClick={() => deleteRelationship(data.id)}
       >
         {t("delete")}

@@ -279,20 +279,23 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
+    
     if (panning.isPanning) {
       setTransform((prev) => ({
         ...prev,
         pan: {
           x:
-            panning.panStart.x +
-            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
+          panning.panStart.x +
+          (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
           y:
-            panning.panStart.y +
-            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
+          panning.panStart.y +
+          (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
       return;
     }
+
+    if(layout.readOnly) return;
 
     if (linking) {
       setLinkingLine({

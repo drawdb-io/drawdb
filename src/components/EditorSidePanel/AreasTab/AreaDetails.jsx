@@ -2,12 +2,13 @@ import { useState, useRef } from "react";
 import { Button, Input } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useAreas, useUndoRedo } from "../../../hooks";
+import { useAreas, useLayout, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
 export default function AreaInfo({ data, i }) {
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const { deleteArea, updateArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -53,6 +54,7 @@ export default function AreaInfo({ data, i }) {
       <Input
         value={data.name}
         placeholder={t("name")}
+        readonly={layout.readOnly}
         onChange={(value) => updateArea(data.id, { name: value })}
         onFocus={(e) => setEditField({ name: e.target.value })}
         onBlur={(e) => {
@@ -77,12 +79,14 @@ export default function AreaInfo({ data, i }) {
       <ColorPicker
         usePopover={true}
         value={data.color}
+        readOnly={layout.readOnly}
         onChange={(color) => updateArea(i, { color })}
         onColorPick={(color) => handleColorPick(color)}
       />
       <Button
-        icon={<IconDeleteStroked />}
         type="danger"
+        disabled={layout.readOnly}
+        icon={<IconDeleteStroked />}
         onClick={() => deleteArea(i, true)}
       />
     </div>

@@ -1,37 +1,21 @@
 import { SideSheet as SemiUISideSheet } from "@douyinfe/semi-ui";
 import { SIDESHEET } from "../../../data/constants";
-import { useSettings } from "../../../hooks";
-import timeLine from "../../../assets/process.png";
-import timeLineDark from "../../../assets/process_dark.png";
-import todo from "../../../assets/calendar.png";
 import Timeline from "./Timeline";
 import Todo from "./Todo";
+import Versions from "./Versions";
 import { useTranslation } from "react-i18next";
 
-export default function Sidesheet({ type, onClose }) {
+export default function Sidesheet({ type, title, setTitle, onClose }) {
   const { t } = useTranslation();
-  const { settings } = useSettings();
 
   function getTitle(type) {
     switch (type) {
       case SIDESHEET.TIMELINE:
-        return (
-          <div className="flex items-center">
-            <img
-              src={settings.mode === "light" ? timeLine : timeLineDark}
-              className="w-7"
-              alt="chat icon"
-            />
-            <div className="ms-3 text-lg">{t("timeline")}</div>
-          </div>
-        );
+        return t("timeline");
       case SIDESHEET.TODO:
-        return (
-          <div className="flex items-center">
-            <img src={todo} className="w-7" alt="todo icon" />
-            <div className="ms-3 text-lg">{t("to_do")}</div>
-          </div>
-        );
+        return t("to_do");
+      case SIDESHEET.VERSIONS:
+        return t("versions");
       default:
         break;
     }
@@ -43,6 +27,14 @@ export default function Sidesheet({ type, onClose }) {
         return <Timeline />;
       case SIDESHEET.TODO:
         return <Todo />;
+      case SIDESHEET.VERSIONS:
+        return (
+          <Versions
+            open={type !== SIDESHEET.NONE}
+            title={title}
+            setTitle={setTitle}
+          />
+        );
       default:
         break;
     }
@@ -52,12 +44,12 @@ export default function Sidesheet({ type, onClose }) {
     <SemiUISideSheet
       visible={type !== SIDESHEET.NONE}
       onCancel={onClose}
-      width={340}
-      title={getTitle(type)}
+      width={420}
+      title={<div className="text-lg">{getTitle(type)}</div>}
       style={{ paddingBottom: "16px" }}
       bodyStyle={{ padding: "0px" }}
     >
-      {getContent(type)}
+      <div className="sidesheet-theme">{getContent(type)}</div>
     </SemiUISideSheet>
   );
 }

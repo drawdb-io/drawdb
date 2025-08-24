@@ -13,7 +13,7 @@ import {
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { MODAL } from "../../../data/constants";
-import { create, del, patch } from "../../../api/gists";
+import { create, patch, SHARE_FILENAME } from "../../../api/gists";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -55,24 +55,26 @@ export default function Share({ title, setModal }) {
 
   const unshare = useCallback(async () => {
     try {
-      await del(gistId);
-      setGistId("");
+      const deleted = await patch(gistId, SHARE_FILENAME, undefined);
+      if (deleted) {
+        setGistId("");
+      }
       setModal(MODAL.NONE);
     } catch (e) {
       console.error(e);
       setError(e);
     }
-  }, [gistId, setGistId, setModal]);
+  }, [gistId, setModal, setGistId]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
       try {
         setLoading(true);
         if (!gistId || gistId === "") {
-          const id = await create(diagramToString());
+          const id = await create(SHARE_FILENAME, diagramToString());
           setGistId(id);
         } else {
-          await patch(gistId, diagramToString());
+          await patch(gistId, SHARE_FILENAME, diagramToString());
         }
       } catch (e) {
         console.error(e);
@@ -116,7 +118,7 @@ export default function Share({ title, setModal }) {
       {!error && (
         <>
           <div className="flex gap-3">
-            <Input value={url} size="large" />
+            <Input value={url} size="large" readonly />
           </div>
           <div className="text-xs mt-2">{t("share_info")}</div>
           <div className="flex gap-2 mt-3">

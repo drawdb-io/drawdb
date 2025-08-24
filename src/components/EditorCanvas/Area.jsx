@@ -179,6 +179,7 @@ export default function Area({
                     backgroundColor: "#2F68ADB3",
                   }}
                   onClick={lockUnlockArea}
+                  disabled={layout.readOnly}
                 />
                 <Popover
                   visible={areaIsOpen() && !layout.sidebar}
@@ -257,6 +258,7 @@ function EditPopoverContent({ data }) {
   const { updateArea, deleteArea } = useAreas();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const initialColorRef = useRef(data.color);
 
   const handleColorPick = (color) => {
@@ -302,6 +304,7 @@ function EditPopoverContent({ data }) {
           value={data.name}
           placeholder={t("name")}
           className="me-2"
+          readonly={layout.readOnly}
           onChange={(value) => updateArea(data.id, { name: value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
@@ -325,6 +328,7 @@ function EditPopoverContent({ data }) {
         />
         <ColorPicker
           usePopover={true}
+          readOnly={layout.readOnly}
           value={data.color}
           onChange={(color) => updateArea(data.id, { color })}
           onColorPick={(color) => handleColorPick(color)}
@@ -336,6 +340,7 @@ function EditPopoverContent({ data }) {
           type="danger"
           block
           onClick={() => deleteArea(data.id, true)}
+          disabled={layout.readOnly}
         >
           {t("delete")}
         </Button>

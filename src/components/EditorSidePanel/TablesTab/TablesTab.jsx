@@ -1,6 +1,6 @@
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram, useSaveState } from "../../../hooks";
+import { useSelect, useDiagram, useSaveState, useLayout } from "../../../hooks";
 import { ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 import { DragHandle } from "../../SortableList/DragHandle";
@@ -13,6 +13,7 @@ export default function TablesTab() {
   const { tables, addTable, setTables } = useDiagram();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
+  const { layout } = useLayout();
   const { setSaveState } = useSaveState();
 
   return (
@@ -20,7 +21,12 @@ export default function TablesTab() {
       <div className="flex gap-2">
         <SearchBar tables={tables} />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addTable()}>
+          <Button
+            block
+            icon={<IconPlus />}
+            onClick={() => addTable()}
+            disabled={layout.readOnly}
+          >
             {t("add_table")}
           </Button>
         </div>
@@ -60,6 +66,8 @@ export default function TablesTab() {
 }
 
 function TableListItem({ table }) {
+  const { layout } = useLayout();
+
   return (
     <div id={`scroll_table_${table.id}`}>
       <Collapse.Panel
@@ -67,7 +75,7 @@ function TableListItem({ table }) {
         header={
           <>
             <div className="flex items-center gap-2">
-              <DragHandle id={table.id} />
+              <DragHandle readOnly={layout.readOnly} id={table.id} />
               <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {table.name}
               </div>

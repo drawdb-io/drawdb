@@ -67,7 +67,12 @@
   background-color: rgba(var(--semi-blue-6), 1);
 }
 
-.semi-spin-wrapper {
+.semi-steps-item-content,
+.semi-steps-item-title {
+  width: 100% !important;
+}
+
+.semi-spin-wrapper  {
   color: inherit;
 }
 
