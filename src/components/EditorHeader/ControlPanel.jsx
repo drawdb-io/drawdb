@@ -615,6 +615,9 @@ export default function ControlPanel({
     }
   };
   const del = () => {
+    if (layout.readonly) {
+      return;
+    }
     switch (selectedElement.element) {
       case ObjectType.TABLE:
         deleteTable(selectedElement.id);
@@ -630,6 +633,9 @@ export default function ControlPanel({
     }
   };
   const duplicate = () => {
+    if (layout.readonly) {
+      return;
+    }
     switch (selectedElement.element) {
       case ObjectType.TABLE: {
         const copiedTable = tables.find((t) => t.id === selectedElement.id);
@@ -685,6 +691,9 @@ export default function ControlPanel({
     }
   };
   const paste = () => {
+    if (layout.readonly) {
+      return;
+    }
     navigator.clipboard.readText().then((text) => {
       let obj = null;
       try {
@@ -718,6 +727,9 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
+    if (layout.readonly) {
+      return;
+    }
     copy();
     del();
   };
@@ -747,10 +759,12 @@ export default function ControlPanel({
       save: {
         function: save,
         shortcut: "Ctrl+S",
+        disabled: layout.readOnly,
       },
       save_as: {
         function: saveDiagramAs,
         shortcut: "Ctrl+Shift+S",
+        disabled: layout.readOnly,
       },
       save_as_template: {
         function: () => {
@@ -775,6 +789,7 @@ export default function ControlPanel({
         function: () => {
           setModal(MODAL.RENAME);
         },
+        disabled: layout.readOnly,
       },
       delete_diagram: {
         warning: {
@@ -805,6 +820,7 @@ export default function ControlPanel({
           {
             function: fileImport,
             name: "JSON",
+            disabled: layout.readOnly,
           },
           {
             function: () => {
@@ -812,6 +828,7 @@ export default function ControlPanel({
               setImportFrom(IMPORT_FROM.DBML);
             },
             name: "DBML",
+            disabled: layout.readOnly,
           },
         ],
       },
@@ -824,6 +841,7 @@ export default function ControlPanel({
                 setImportDb(DB.MYSQL);
               },
               name: "MySQL",
+              disabled: layout.readOnly,
             },
             {
               function: () => {
@@ -831,6 +849,7 @@ export default function ControlPanel({
                 setImportDb(DB.POSTGRES);
               },
               name: "PostgreSQL",
+              disabled: layout.readOnly,
             },
             {
               function: () => {
@@ -838,6 +857,7 @@ export default function ControlPanel({
                 setImportDb(DB.SQLITE);
               },
               name: "SQLite",
+              disabled: layout.readOnly,
             },
             {
               function: () => {
@@ -845,6 +865,7 @@ export default function ControlPanel({
                 setImportDb(DB.MARIADB);
               },
               name: "MariaDB",
+              disabled: layout.readOnly,
             },
             {
               function: () => {
@@ -852,6 +873,7 @@ export default function ControlPanel({
                 setImportDb(DB.MSSQL);
               },
               name: "MSSQL",
+              disabled: layout.readOnly,
             },
             {
               function: () => {
@@ -860,6 +882,7 @@ export default function ControlPanel({
               },
               name: "Oracle",
               label: "Beta",
+              disabled: layout.readOnly,
             },
           ],
         }),
@@ -868,6 +891,7 @@ export default function ControlPanel({
 
           setModal(MODAL.IMPORT_SRC);
         },
+        disabled: layout.readOnly,
       },
       export_source: {
         ...(database === DB.GENERIC && {
@@ -1159,10 +1183,12 @@ export default function ControlPanel({
       undo: {
         function: undo,
         shortcut: "Ctrl+Z",
+        disabled: layout.readOnly || undoStack.length === 0,
       },
       redo: {
         function: redo,
         shortcut: "Ctrl+Y",
+        disabled: layout.readOnly || redoStack.length === 0,
       },
       clear: {
         warning: {
@@ -1194,14 +1220,17 @@ export default function ControlPanel({
               );
             });
         },
+        disabled: layout.readOnly,
       },
       edit: {
         function: edit,
         shortcut: "Ctrl+E",
+        disabled: layout.readOnly,
       },
       cut: {
         function: cut,
         shortcut: "Ctrl+X",
+        disabled: layout.readOnly,
       },
       copy: {
         function: copy,
@@ -1210,14 +1239,17 @@ export default function ControlPanel({
       paste: {
         function: paste,
         shortcut: "Ctrl+V",
+        disabled: layout.readOnly,
       },
       duplicate: {
         function: duplicate,
         shortcut: "Ctrl+D",
+        disabled: layout.readOnly,
       },
       delete: {
         function: del,
         shortcut: "Del",
+        disabled: layout.readOnly,
       },
       copy_as_image: {
         function: copyAsImage,
@@ -1762,7 +1794,7 @@ export default function ControlPanel({
                   // https://stackoverflow.com/a/70976017/1137077
                   e.target.releasePointerCapture(e.pointerId);
                 }}
-                onClick={() => setModal(MODAL.RENAME)}
+                onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
                 <span>
                   {(window.name.split(" ")[0] === "t"
@@ -1775,7 +1807,7 @@ export default function ControlPanel({
                   </Tag>
                 )}
               </div>
-              {(showEditName || modal === MODAL.RENAME) && <IconEdit />}
+              {(showEditName || modal === MODAL.RENAME) && !layout.readOnly && <IconEdit />}
             </div>
             <div className="flex items-center">
               <div className="flex justify-start text-md select-none me-2">
@@ -1804,6 +1836,7 @@ export default function ControlPanel({
                                           key={i}
                                           onClick={e.function}
                                           className="flex justify-between"
+                                          disabled={e.disabled}
                                         >
                                           <span>{e.name}</span>
                                           {e.label && (
@@ -1857,6 +1890,7 @@ export default function ControlPanel({
                           return (
                             <Dropdown.Item
                               key={index}
+                              disabled={menu[category][item].disabled}
                               onClick={menu[category][item].function}
                               style={
                                 menu[category][item].shortcut && {

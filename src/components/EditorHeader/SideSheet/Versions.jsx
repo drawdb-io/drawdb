@@ -95,6 +95,10 @@ export default function Versions({ open, title, setTitle }) {
         setVersion(sha);
         setLayout((prev) => ({ ...prev, readOnly: true }));
 
+        if (!version.data.files[VERSION_FILENAME]) {
+          return;
+        }
+
         const content = version.data.files[VERSION_FILENAME].content;
         const parsedDiagram = JSON.parse(content);
 
@@ -112,10 +116,11 @@ export default function Versions({ open, title, setTitle }) {
           setEnums(parsedDiagram.enums);
         }
       } catch (e) {
-        Toast.error("failed_to_load_diagram");
+        Toast.error(t("failed_to_load_diagram"));
       }
     },
     [
+      t,
       gistId,
       setTables,
       setRelationships,
@@ -178,6 +183,11 @@ export default function Versions({ open, title, setTitle }) {
     if (!gistId) return true;
 
     const previousVersion = await get(gistId);
+
+    if (!previousVersion.data.files[VERSION_FILENAME]) {
+      return true;
+    }
+
     const previousDiagram = JSON.parse(
       previousVersion.data.files[VERSION_FILENAME]?.content,
     );
@@ -209,7 +219,6 @@ export default function Versions({ open, title, setTitle }) {
       } else {
         const id = await create(VERSION_FILENAME, diagramToString());
         setGistId(id);
-        console.log("new gist created", id);
       }
 
       delete cacheRef[gistId];
@@ -217,7 +226,7 @@ export default function Versions({ open, title, setTitle }) {
 
       await getRevisions();
     } catch (e) {
-      Toast.error("failed_to_record_version");
+      Toast.error(t("failed_to_record_version"));
     } finally {
       setIsRecording(false);
     }

@@ -274,7 +274,8 @@ const en = {
     load_more: "Load more",
     clear_cache: "Clear cache",
     cache_cleared: "Cache cleared",
-    failed_to_record_version: "Failed to record version"
+    failed_to_record_version: "Failed to record version",
+    failed_to_load_diagram: "Failed to load diagram",
   },
 };
 
