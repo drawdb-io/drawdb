@@ -241,7 +241,7 @@ export default function RelationshipInfo({ data }) {
             placeholder={t("label")}
             onChange={(value) => updateRelationship(data.id, { manyLabel: value })}
             onFocus={(e) => setEditField({ manyLabel: e.target.value })}
-            defaultValue="n"
+            readonly={layout.readOnly}
             onBlur={(e) => {
               if (e.target.value === editField.manyLabel) return;
               setUndoStack((prev) => [

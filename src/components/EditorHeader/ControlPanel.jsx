@@ -1436,6 +1436,7 @@ export default function ControlPanel({
       },
       table_width: {
         function: () => setModal(MODAL.TABLE_WIDTH),
+        disabled: layout.readOnly,
       },
       language: {
         function: () => setModal(MODAL.LANGUAGE),
@@ -1639,7 +1640,7 @@ export default function ControlPanel({
           <Tooltip content={t("undo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
-              disabled={undoStack.length === 0}
+              disabled={undoStack.length === 0 || layout.readOnly}
               onClick={undo}
             >
               <IconUndo size="large" />
@@ -1648,7 +1649,7 @@ export default function ControlPanel({
           <Tooltip content={t("redo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
-              disabled={redoStack.length === 0}
+              disabled={redoStack.length === 0 || layout.readOnly}
               onClick={redo}
             >
               <IconRedo size="large" />
@@ -1807,7 +1808,9 @@ export default function ControlPanel({
                   </Tag>
                 )}
               </div>
-              {(showEditName || modal === MODAL.RENAME) && !layout.readOnly && <IconEdit />}
+              {(showEditName || modal === MODAL.RENAME) && !layout.readOnly && (
+                <IconEdit />
+              )}
             </div>
             <div className="flex items-center">
               <div className="flex justify-start text-md select-none me-2">
