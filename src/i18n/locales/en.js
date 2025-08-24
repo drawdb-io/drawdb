@@ -267,9 +267,13 @@ const en = {
     read_only: "Read only",
     continue: "Continue",
     restore_version: "Restore version",
-    restore_warning: "Loading another version will overwrite the current changes.",
+    restore_warning: "Loading another version will overwrite any changes.",
     return_to_current: "Return to diagram",
     no_changes_to_record: "No changes to record",
+    click_to_view: "Click to view",
+    load_more: "Load more",
+    clear_cache: "Clear cache",
+    cache_cleared: "Cache cleared",
   },
 };
 
