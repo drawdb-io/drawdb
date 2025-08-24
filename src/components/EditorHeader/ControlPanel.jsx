@@ -1417,6 +1417,7 @@ export default function ControlPanel({
           message: t("are_you_sure_flush_storage"),
         },
         function: async () => {
+          localStorage.removeItem("versions_cache");
           db.delete()
             .then(() => {
               Toast.success(t("storage_flushed"));
