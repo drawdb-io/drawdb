@@ -56,6 +56,7 @@ export default function Versions({ open, title, setTitle }) {
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [loadingVersion, setLoadingVersion] = useState(null);
 
   const cacheRef = useMemo(() => loadCache(), []);
 
@@ -91,6 +92,7 @@ export default function Versions({ open, title, setTitle }) {
   const loadVersion = useCallback(
     async (sha) => {
       try {
+        setLoadingVersion(sha);
         const version = await getVersion(gistId, sha);
         setVersion(sha);
         setLayout((prev) => ({ ...prev, readOnly: true }));
@@ -117,6 +119,8 @@ export default function Versions({ open, title, setTitle }) {
         }
       } catch (e) {
         Toast.error(t("failed_to_load_diagram"));
+      } finally {
+        setLoadingVersion(null);
       }
     },
     [
@@ -288,7 +292,13 @@ export default function Versions({ open, title, setTitle }) {
                 )
                   .setLocale(i18n.language)
                   .toLocaleString(DateTime.DATETIME_MED)}`}
-                icon={<i className="text-sm fa-solid fa-asterisk" />}
+                icon={
+                  r.version === loadingVersion ? (
+                    <Spin size="small" />
+                  ) : (
+                    <i className="text-sm fa-solid fa-asterisk ms-1" />
+                  )
+                }
               />
             ))}
           </Steps>
