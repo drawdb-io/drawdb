@@ -25,7 +25,7 @@
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.18.0",
-    "html-to-image": "^1.11.11",
+    "html-to-image": "1.11.11",
     "i18next": "^23.11.4",
     "i18next-browser-languagedetector": "^8.0.0",
     "jsonschema": "^1.4.1",
