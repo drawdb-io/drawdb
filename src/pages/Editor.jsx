@@ -10,6 +10,7 @@ import TasksContextProvider from "../context/TasksContext";
 import SaveStateContextProvider from "../context/SaveStateContext";
 import EnumsContextProvider from "../context/EnumsContext";
 import WorkSpace from "../components/Workspace";
+import ChatPanel from "../components/Chat/ChatPanel";
 import { useThemedPage } from "../hooks";
 
 export default function Editor() {
@@ -28,6 +29,7 @@ export default function Editor() {
                       <TablesContextProvider>
                         <SaveStateContextProvider>
                           <WorkSpace />
+                          <ChatPanel />
                         </SaveStateContextProvider>
                       </TablesContextProvider>
                     </EnumsContextProvider>
