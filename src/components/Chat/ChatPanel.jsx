@@ -108,22 +108,17 @@ const ChatPanel = () => {
       
       // Create tables in the diagram
       for (const table of selectedData.tables) {
-        await addTable({
-          name: table.name,
-          fields: table.fields.map(field => ({
-            ...field,
-            // Ensure all required field properties
-            notNull: field.notNull !== false,
-            primary: field.primary || false,
-            unique: field.unique || false,
-            increment: field.increment || false,
-            comment: field.comment || '',
-            default: field.default || '',
-          })),
-          x: Math.random() * 400 + 100, // Random position
-          y: Math.random() * 300 + 100,
-          color: '#3B82F6', // Default blue
-        });
+        try {
+          addTable({
+            name: table.name,
+            fields: table.fields || [],
+            x: Math.random() * 400 + 100, // Random position
+            y: Math.random() * 300 + 100,
+            color: '#3B82F6', // Default blue
+          });
+        } catch (tableError) {
+          console.error('Error creating individual table:', tableError);
+        }
       }
       
       // TODO: Create relationships
@@ -138,10 +133,7 @@ const ChatPanel = () => {
         sender: 'ai',
       };
       
-      clearMessages();
-      setTimeout(() => {
-        setMessages([successMessage]);
-      }, 100);
+      addMessage(successMessage);
       
       setShowPreview(false);
       setPreviewData(null);
@@ -155,9 +147,7 @@ const ChatPanel = () => {
         error: true,
       };
       
-      setTimeout(() => {
-        setMessages(prev => [...prev, errorMessage]);
-      }, 100);
+      addMessage(errorMessage);
     } finally {
       setCreatingTables(false);
     }
@@ -173,9 +163,7 @@ const ChatPanel = () => {
       sender: 'ai',
     };
     
-    setTimeout(() => {
-      setMessages(prev => [...prev, rejectMessage]);
-    }, 100);
+    addMessage(rejectMessage);
   };
 
   const formatMessage = (message) => {

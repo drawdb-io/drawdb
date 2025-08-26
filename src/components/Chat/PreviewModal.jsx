@@ -10,7 +10,7 @@ import {
   Collapse,
   List,
 } from '@douyinfe/semi-ui';
-import { IconKeyStroked, IconTable, IconLink } from '@douyinfe/semi-icons';
+import { IconKeyStroked, IconGridView, IconLink } from '@douyinfe/semi-icons';
 import { responsibilityColors, responsibilityLabels } from '../../data/constants';
 
 const { Title, Text, Paragraph } = Typography;
@@ -94,7 +94,7 @@ const PreviewModal = ({
               onChange={() => handleTableToggle(table.id)}
               className="mr-2"
             />
-            <IconTable />
+            <IconGridView />
             <Text strong>{table.name}</Text>
           </div>
           <Tag color="blue">{table.fields?.length || 0} campos</Tag>
