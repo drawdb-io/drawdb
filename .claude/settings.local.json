@@ -13,7 +13,15 @@
       "mcp__browsermcp__browser_click",
       "Bash(npm install:*)",
       "mcp__browsermcp__browser_get_console_logs",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "Bash(node:*)",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_wait_for"
     ]
   },
   "enableAllProjectMcpServers": true,

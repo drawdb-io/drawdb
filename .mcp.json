@@ -11,9 +11,11 @@
       "SUPABASE_ACCESS_TOKEN": "sbp_f8525bbfd6e99302cd0fdb201869c3d8709d2568"
     }
   },
-    "browsermcp": {
-    "command": "npx",
-    "args": ["@browsermcp/mcp@latest"]
-  }
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    }
   }
 }

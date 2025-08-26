@@ -12,9 +12,11 @@ import EnumsContextProvider from "../context/EnumsContext";
 import WorkSpace from "../components/Workspace";
 import ChatPanel from "../components/Chat/ChatPanel";
 import { useThemedPage } from "../hooks";
+import { useAutoSave } from "../hooks/useAutoSave";
 
 export default function Editor() {
   useThemedPage();
+  useAutoSave(); // Enable auto-save functionality
 
   return (
     <LayoutContextProvider>

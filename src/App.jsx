@@ -4,6 +4,8 @@ import Editor from "./pages/Editor";
 import BugReport from "./pages/BugReport";
 import Templates from "./pages/Templates";
 import LandingPage from "./pages/LandingPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import SettingsContextProvider from "./context/SettingsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ProjectsProvider } from "./context/ProjectsContext";
@@ -20,6 +22,8 @@ export default function App() {
               <RestoreScroll />
               <Routes>
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/editor" element={<Editor />} />
                 <Route path="/bug-report" element={<BugReport />} />
                 <Route path="/templates" element={<Templates />} />

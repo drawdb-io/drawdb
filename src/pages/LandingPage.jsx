@@ -91,6 +91,12 @@ export default function LandingPage() {
                 Learn more
               </button>
               <Link
+                to="/login"
+                className="inline-block py-3 mr-4 mb-4 xl:mb-0 text-sky-900 transition-all duration-300 rounded-full shadow-lg bg-white border-2 border-sky-900 ps-7 pe-6 hover:bg-sky-50"
+              >
+                🚀 Login
+              </Link>
+              <Link
                 to="/editor"
                 className="inline-block py-3 text-white transition-all duration-300 rounded-full shadow-lg bg-sky-900 ps-7 pe-6 hover:bg-sky-800"
               >
