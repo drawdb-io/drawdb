@@ -10,8 +10,11 @@ import {
   IconRedo,
   IconEdit,
   IconShareStroked,
+  IconArrowLeft,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useProjects } from "../../context/ProjectsContext";
 import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
@@ -100,6 +103,9 @@ export default function ControlPanel({
     extension: "",
   });
   const [importFrom, setImportFrom] = useState(IMPORT_FROM.JSON);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { currentProject } = useProjects();
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();
@@ -127,7 +133,6 @@ export default function ControlPanel({
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
   const { version, setGistId } = useContext(IdContext);
-  const navigate = useNavigate();
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
@@ -1810,6 +1815,17 @@ export default function ControlPanel({
               </div>
               {(showEditName || modal === MODAL.RENAME) && !layout.readOnly && (
                 <IconEdit />
+              )}
+              {isAuthenticated && (
+                <Tooltip content="Voltar ao Dashboard">
+                  <Button
+                    icon={<IconArrowLeft />}
+                    size="small"
+                    theme="borderless"
+                    onClick={() => navigate('/dashboard')}
+                    style={{ marginLeft: '8px' }}
+                  />
+                </Tooltip>
               )}
             </div>
             <div className="flex items-center">

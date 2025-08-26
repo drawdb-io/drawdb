@@ -1,20 +1,37 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
 import { useTransform, useUndoRedo, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
+import { useProjects } from "./ProjectsContext";
 
 export const DiagramContext = createContext(null);
 
 export default function DiagramContextProvider({ children }) {
   const { t } = useTranslation();
+  const { currentProject } = useProjects();
   const [database, setDatabase] = useState(DB.GENERIC);
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+
+  // Carregar dados do projeto atual
+  useEffect(() => {
+    if (currentProject && currentProject.dados_diagrama) {
+      const data = currentProject.dados_diagrama;
+      setTables(data.tables || []);
+      setRelationships(data.relationships || []);
+      setDatabase(data.database || DB.GENERIC);
+    } else {
+      // Se não há projeto atual, limpar o diagrama
+      setTables([]);
+      setRelationships([]);
+      setDatabase(DB.GENERIC);
+    }
+  }, [currentProject]);
 
   const addTable = (data, addToHistory = true) => {
     const id = nanoid();

@@ -23,7 +23,7 @@ export const useAutoSave = () => {
   const { currentProject, saveProjectData, createProject } = useProjects();
   const { isAuthenticated, user } = useAuth();
   const diagramData = useDiagram();
-  const { tables, relationships } = diagramData || { tables: [], relationships: [] };
+  const { tables, relationships, database } = diagramData || { tables: [], relationships: [], database: 'GENERIC' };
 
   // Auto-save with debounce
   const debouncedSave = useCallback(
@@ -36,9 +36,10 @@ export const useAutoSave = () => {
       try {
         setSaveState(State.SAVING);
         
-        const diagramData = {
+        const diagramDataToSave = {
           tables: tables || [],
           relationships: relationships || [],
+          database: database || 'GENERIC',
           areas: [],
           notes: [],
           types: [],
@@ -61,7 +62,7 @@ export const useAutoSave = () => {
         }
 
         // Save diagram data
-        const { error } = await saveProjectData(projectId, diagramData);
+        const { error } = await saveProjectData(projectId, diagramDataToSave);
         if (error) throw error;
 
         setSaveState(State.SAVED);
@@ -76,7 +77,7 @@ export const useAutoSave = () => {
         setTimeout(() => setSaveState(State.NONE), 3000);
       }
     }, 2000),
-    [isAuthenticated, user, currentProject, tables, relationships, saveProjectData, createProject, setSaveState]
+    [isAuthenticated, user, currentProject, tables, relationships, database, saveProjectData, createProject, setSaveState]
   );
 
   // Trigger auto-save when diagram data changes
@@ -85,7 +86,7 @@ export const useAutoSave = () => {
       console.log('Diagram changed, triggering auto-save...');
       debouncedSave();
     }
-  }, [tables, relationships, isAuthenticated, debouncedSave]);
+  }, [tables, relationships, database, isAuthenticated, debouncedSave]);
 
   return { debouncedSave };
 };

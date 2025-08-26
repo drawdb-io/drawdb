@@ -33,14 +33,8 @@ export const ProjectsProvider = ({ children }) => {
       setLoading(true);
       const { data, error } = await supabase
         .from('projetos')
-        .select(`
-          *,
-          colaboradores_projeto!inner(
-            papel,
-            usuario_id
-          )
-        `)
-        .or(`usuario_id.eq.${user.id},colaboradores_projeto.usuario_id.eq.${user.id}`)
+        .select('*')
+        .eq('usuario_id', user.id)
         .order('atualizado_em', { ascending: false });
 
       if (error) throw error;
