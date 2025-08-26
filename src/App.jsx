@@ -3,7 +3,8 @@ import { useLayoutEffect } from "react";
 import Editor from "./pages/Editor";
 import BugReport from "./pages/BugReport";
 import Templates from "./pages/Templates";
-import LandingPage from "./pages/LandingPage";
+import SchemaFlowLanding from "./pages/SchemaFlowLanding";
+import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SettingsContextProvider from "./context/SettingsContext";
@@ -21,7 +22,8 @@ export default function App() {
             <BrowserRouter>
               <RestoreScroll />
               <Routes>
-                <Route path="/" element={<LandingPage />} />
+                <Route path="/" element={<SchemaFlowLanding />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/editor" element={<Editor />} />

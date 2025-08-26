@@ -40,7 +40,7 @@ export const ProjectsProvider = ({ children }) => {
             usuario_id
           )
         `)
-        .or(`dono_id.eq.${user.id},colaboradores_projeto.usuario_id.eq.${user.id}`)
+        .or(`usuario_id.eq.${user.id},colaboradores_projeto.usuario_id.eq.${user.id}`)
         .order('atualizado_em', { ascending: false });
 
       if (error) throw error;
@@ -62,7 +62,7 @@ export const ProjectsProvider = ({ children }) => {
         .insert({
           nome,
           descricao,
-          dono_id: user.id,
+          usuario_id: user.id,
           dados_diagrama: {
             tables: [],
             relationships: [],

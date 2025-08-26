@@ -24,7 +24,7 @@ export default function Login() {
       }
       
       Toast.success('Login realizado com sucesso!');
-      navigate('/editor');
+      navigate('/dashboard');
     } catch (error) {
       Toast.error('Erro inesperado. Tente novamente.');
       console.error('Login error:', error);
