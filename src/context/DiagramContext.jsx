@@ -574,9 +574,13 @@ export default function DiagramContextProvider({ children }) {
     } else {
       setRelationships((prevRels) => {
         let tempRels = [...prevRels];
-        if (!tempRels.some(r => r.id === relationshipData.id)) {
-          tempRels.push(relationshipData);
+        const idCollision = tempRels.some(r => r.id === relationshipData.id);
+        const relationshipToInsert = { ...relationshipData };
+        if (idCollision) {
+          const maxId = tempRels.reduce((max, r) => Math.max(max, typeof r.id === 'number' ? r.id : -1), -1);
+          relationshipToInsert.id = maxId + 1;
         }
+        tempRels.push(relationshipToInsert);
         return tempRels.sort((a,b) => a.id - b.id).map((r, i) => ({ ...r, id: i }));
       });
     }
@@ -629,10 +633,10 @@ export default function DiagramContextProvider({ children }) {
       if (childTable) {
         // Save the state of child table fields before any modification
         childTableFieldsBeforeFkDeletion = JSON.parse(JSON.stringify(childTable.fields));
+        allChildTablesFieldsBeforeFkDeletion[childTableId] = JSON.parse(JSON.stringify(childTable.fields));
         primaryChildTableId = childTableId; // For undo stack reference
-        // For single child subtype relationships, also save in the all child tables format
         if (relationshipToDelete.subtype) {
-          allChildTablesFieldsBeforeFkDeletion[childTableId] = JSON.parse(JSON.stringify(childTable.fields));
+          // already saved above
         }
 
         const allFkFieldsForThisParent = childTable.fields.filter(
