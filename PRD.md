@@ -111,7 +111,7 @@ Facilitar o desenvolvimento colaborativo através de uma ferramenta intuitiva qu
 - **Frontend:** React 18 + Vite (mantido)
 - **UI:** @douyinfe/semi-ui + TailwindCSS (mantido)
 - **Backend:** Supabase (PostgreSQL + Auth + Realtime)
-- **IA:** OpenAI GPT-4 via API
+- **IA:** OpenAI GPT-4o-mini via API
 - **MCP:** Supabase MCP Server
 - **Estado:** React Context (expandido)
 

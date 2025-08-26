@@ -6,7 +6,13 @@
       "mcp__supabase__get_project_url",
       "mcp__supabase__list_migrations",
       "mcp__supabase__execute_sql",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install)",
+      "mcp__browsermcp__browser_navigate",
+      "mcp__browsermcp__browser_click",
+      "Bash(npm install:*)",
+      "mcp__browsermcp__browser_get_console_logs"
     ]
   },
   "enableAllProjectMcpServers": true,
