@@ -23,17 +23,19 @@ export function calcPath(r, tableWidth = 200, zoom = 1) {
   const tableWidthPadding = 30 * zoom;
 
   let x1 = r.startTable.x;
+  const fieldHeight = tableFieldHeight * zoom;
+  const headerHeight = tableHeaderHeight * zoom;
   let y1 =
     r.startTable.y +
-    r.startFieldIndex * tableFieldHeight +
-    tableHeaderHeight +
-    tableFieldHeight / 2;
+    r.startFieldIndex * fieldHeight +
+    headerHeight +
+    fieldHeight / 2;
   let x2 = r.endTable.x;
   let y2 =
     r.endTable.y +
-    r.endFieldIndex * tableFieldHeight +
-    tableHeaderHeight +
-    tableFieldHeight / 2;
+    r.endFieldIndex * fieldHeight +
+    headerHeight +
+    fieldHeight / 2;
 
   let radius = 10 * zoom;
   const midX = (x2 + x1 + width) / 2;
@@ -86,25 +88,25 @@ export function calcPath(r, tableWidth = 200, zoom = 1) {
         y2 + radius
       } A ${radius} ${radius} 0 0 1 ${midX + radius} ${y2} L ${endX} ${y2}`;
     } else if (x1 + width >= x2 - tableWidthSafetyMargin && x1 + width <= x2 + width) {
-      return `M ${x1} ${y1} L ${
-        x1 - radius - radius - tableWidthPadding
-      } ${y1} A ${radius} ${radius} 0 0 1 ${x1 - radius - radius - tableWidthPadding - radius} ${
-        y1 - radius
-      } L ${x1 - radius - radius - tableWidthPadding - radius} ${
-        y2 + radius
-      } A ${radius} ${radius} 0 0 1 ${
-        x1 - radius - radius - tableWidthPadding
-      } ${y2} L ${endX} ${y2}`;
-    } else if (x1 >= x2 - tableWidthSafetyMargin && x1 <= x2 + width) {
       return `M ${x1 + width} ${y1} L ${
-        x1 + width + tableWidthPadding
-      } ${y1} A ${radius} ${radius} 0 0 0 ${x1 + width + tableWidthPadding + radius} ${
+        x2 + width + tableWidthPadding
+      } ${y1} A ${radius} ${radius} 0 0 0 ${x2 + width + tableWidthPadding + radius} ${
         y1 - radius
-      } L ${x1 + width + tableWidthPadding + radius} ${
+      } L ${x2 + width + tableWidthPadding + radius} ${
         y2 + radius
-      } A ${radius} ${radius} 0 0 0 ${x1 + width + tableWidthPadding} ${y2} L ${
+      } A ${radius} ${radius} 0 0 0 ${x2 + width + tableWidthPadding} ${y2} L ${
         x2 + width
       } ${y2}`;
+    } else if (x2 + width >= x1 - tableWidthSafetyMargin && x2 + width <= x1 + width) {
+      return `M ${x1} ${y1} L ${
+        x2 - tableWidthPadding
+      } ${y1} A ${radius} ${radius} 0 0 1 ${x2 - tableWidthPadding - radius} ${
+        y1 - radius
+      } L ${x2 - tableWidthPadding - radius} ${
+        y2 + radius
+      } A ${radius} ${radius} 0 0 1 ${
+        x2 - tableWidthPadding
+      } ${y2} L ${x2} ${y2}`;
     } else {
       return `M ${x1} ${y1} L ${
         midX + radius
