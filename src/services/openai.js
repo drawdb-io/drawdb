@@ -94,13 +94,19 @@ class OpenAIService {
     }
 
     const prompt = `
-Baseado na descrição fornecida, gere uma estrutura de banco de dados com tabelas, campos e relacionamentos.
+ANÁLISE DA MENSAGEM:
+Primeiro, analise se a mensagem do usuário indica intenção de criar/gerar tabelas de banco de dados.
 
-DESCRIÇÃO: ${description}
+MENSAGEM: ${description}
+
+Se a mensagem NÃO for sobre criação de tabelas (como perguntas gerais, pedidos de ajuda, conversas), responda apenas com:
+{ "intent": "chat" }
+
+Se a mensagem FOR sobre criação de tabelas (palavras como: criar, gerar, fazer, preciso de, monte, construa, desenhe, etc + tabela/banco/estrutura), gere uma estrutura de banco de dados.
 
 DIAGRAMA ATUAL: ${JSON.stringify(currentDiagram, null, 2)}
 
-Responda APENAS com um JSON válido no seguinte formato:
+Para criação de tabelas, responda APENAS com um JSON válido no seguinte formato:
 {
   "tables": [
     {
@@ -154,7 +160,12 @@ REGRAS:
 
       const parsed = JSON.parse(cleanResponse);
       
-      // Validate structure
+      // Check if this is just a chat intent (not table creation)
+      if (parsed.intent === 'chat') {
+        return null; // This will make generateTables return null, triggering regular chat
+      }
+      
+      // Validate structure for table creation
       if (!parsed.tables || !Array.isArray(parsed.tables)) {
         throw new Error('Invalid response format: missing tables array');
       }

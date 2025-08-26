@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { nanoid } from 'nanoid';
 import { 
   Button, 
   Input, 
@@ -11,7 +12,7 @@ import {
 } from '@douyinfe/semi-ui';
 import { 
   IconSend, 
-  IconSettings, 
+  IconConfigStroked, 
   IconClose, 
   IconClear,
   IconChevronRight,
@@ -33,6 +34,7 @@ const ChatPanel = () => {
     isConfigured,
     isOpen,
     sendMessage,
+    addMessage,
     clearMessages,
     configureApiKey,
     generateTables,
@@ -61,23 +63,17 @@ const ChatPanel = () => {
     const message = inputValue.trim();
     setInputValue('');
     
-    // Check if message is a table generation command
-    const isTableCommand = message.toLowerCase().includes('criar') && 
-                          (message.toLowerCase().includes('tabela') || 
-                           message.toLowerCase().includes('banco') ||
-                           message.toLowerCase().includes('estrutura'));
-    
-    if (isTableCommand) {
-      try {
-        const result = await generateTables(message);
-        if (result && result.tables && result.tables.length > 0) {
-          setPreviewData(result);
-          setShowPreview(true);
-          return;
-        }
-      } catch (error) {
-        console.error('Error generating tables:', error);
+    // Use AI to detect table creation intent
+    try {
+      const result = await generateTables(message);
+      if (result && result.tables && result.tables.length > 0) {
+        setPreviewData(result);
+        setShowPreview(true);
+        return;
       }
+    } catch (error) {
+      console.error('Error generating tables:', error);
+      // If table generation fails, continue with regular chat
     }
     
     // Send regular message
@@ -106,25 +102,76 @@ const ChatPanel = () => {
     try {
       setCreatingTables(true);
       
-      // Create tables in the diagram
+      // Create tables in the diagram and keep track of them
+      const createdTables = [];
       for (const table of selectedData.tables) {
         try {
-          addTable({
+          const newTable = {
+            id: nanoid(),
             name: table.name,
-            fields: table.fields || [],
             x: Math.random() * 400 + 100, // Random position
             y: Math.random() * 300 + 100,
+            locked: false,
+            fields: table.fields?.map(field => ({
+              id: nanoid(),
+              name: field.name || "",
+              type: field.type || "VARCHAR",
+              default: field.default || "",
+              check: field.check || "",
+              primary: field.primary || false,
+              unique: field.unique || false,
+              notNull: field.notNull !== false, // Default to true unless explicitly false
+              increment: field.increment || false,
+              comment: field.comment || ""
+            })) || [],
+            comment: table.comment || "",
+            indices: table.indices || [],
             color: '#3B82F6', // Default blue
-          });
+          };
+          
+          addTable(newTable);
+          createdTables.push(newTable);
         } catch (tableError) {
           console.error('Error creating individual table:', tableError);
         }
       }
       
-      // TODO: Create relationships
-      // for (const rel of selectedData.relationships) {
-      //   await addRelationship(rel);
-      // }
+      // Create relationships if any exist
+      if (selectedData.relationships && selectedData.relationships.length > 0) {
+        // Use a timeout to allow tables to be added to state first
+        setTimeout(() => {
+          for (const rel of selectedData.relationships) {
+            try {
+              // Find the tables and fields by name in created tables
+              const startTable = createdTables.find(t => t.name === rel.startTableName);
+              const endTable = createdTables.find(t => t.name === rel.endTableName);
+              
+              if (startTable && endTable) {
+                const startField = startTable.fields.find(f => f.name === rel.startFieldName);
+                const endField = endTable.fields.find(f => f.name === rel.endFieldName);
+                
+                if (startField && endField) {
+                  const relationshipData = {
+                    id: nanoid(),
+                    name: `${rel.startTableName}_${rel.endTableName}`,
+                    startTableId: startTable.id,
+                    endTableId: endTable.id,
+                    startFieldId: startField.id,
+                    endFieldId: endField.id,
+                    cardinality: rel.cardinality || 'one_to_many',
+                    updateConstraint: 'No action',
+                    deleteConstraint: 'No action',
+                  };
+                  
+                  addRelationship(relationshipData);
+                }
+              }
+            } catch (relationshipError) {
+              console.error('Error creating individual relationship:', relationshipError);
+            }
+          }
+        }, 100); // Small delay to ensure tables are in state
+      }
       
       // Add success message
       const successMessage = {
@@ -218,7 +265,7 @@ const ChatPanel = () => {
             </div>
             <Space>
               <Button
-                icon={<IconSettings />}
+                icon={<IconConfigStroked />}
                 size="small"
                 type="tertiary"
                 onClick={handleConfigureApi}
@@ -354,13 +401,13 @@ const ChatPanel = () => {
           <Text>
             Insira sua OpenAI API Key para habilitar o chat AI:
           </Text>
-          <Input.Password
+          <Input
+            type="password"
             placeholder="sk-..."
             value={tempApiKey}
             onChange={setTempApiKey}
-            showClear
           />
-          <Text size="small" type="tertiary">
+          <Text type="tertiary" style={{ fontSize: '12px' }}>
             Sua API key é armazenada localmente no navegador e não é compartilhada.
             <br />
             Obtenha sua key em: <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">platform.openai.com/api-keys</a>
