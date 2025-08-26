@@ -12,7 +12,8 @@
       "mcp__browsermcp__browser_navigate",
       "mcp__browsermcp__browser_click",
       "Bash(npm install:*)",
-      "mcp__browsermcp__browser_get_console_logs"
+      "mcp__browsermcp__browser_get_console_logs",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

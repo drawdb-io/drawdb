@@ -22,28 +22,35 @@ export const ChatProvider = ({ children }) => {
 
   // Load API key from localStorage on mount
   useEffect(() => {
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      setIsConfigured(true);
+    try {
+      const savedApiKey = localStorage.getItem('openai_api_key');
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+      }
+    } catch (error) {
+      console.error('Error loading API key from localStorage:', error);
     }
   }, []);
 
   // Save API key to localStorage and configure OpenAI service when it changes
   useEffect(() => {
-    if (apiKey) {
+    const configureOpenAI = async () => {
       try {
-        openAIService.configure(apiKey);
-        localStorage.setItem('openai_api_key', apiKey);
-        setIsConfigured(true);
+        if (apiKey && apiKey.trim()) {
+          await openAIService.configure(apiKey);
+          localStorage.setItem('openai_api_key', apiKey);
+          setIsConfigured(true);
+        } else {
+          localStorage.removeItem('openai_api_key');
+          setIsConfigured(false);
+        }
       } catch (error) {
         console.error('Error configuring OpenAI:', error);
         setIsConfigured(false);
       }
-    } else {
-      localStorage.removeItem('openai_api_key');
-      setIsConfigured(false);
-    }
+    };
+    
+    configureOpenAI();
   }, [apiKey]);
 
   const addMessage = (message) => {

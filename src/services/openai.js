@@ -1,4 +1,5 @@
-import OpenAI from 'openai';
+// Use dynamic import to avoid build issues
+let OpenAI;
 
 class OpenAIService {
   constructor() {
@@ -6,16 +7,29 @@ class OpenAIService {
     this.apiKey = null;
   }
 
-  configure(apiKey) {
+  async configure(apiKey) {
     if (!apiKey || !apiKey.trim()) {
       throw new Error('API key is required');
     }
 
-    this.apiKey = apiKey;
-    this.client = new OpenAI({
-      apiKey: apiKey,
-      dangerouslyAllowBrowser: true, // Required for browser usage
-    });
+    try {
+      // Dynamic import to avoid build issues
+      if (!OpenAI) {
+        const module = await import('openai');
+        OpenAI = module.default;
+      }
+
+      this.apiKey = apiKey;
+      this.client = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true, // Required for browser usage
+      });
+    } catch (error) {
+      console.error('Error importing or configuring OpenAI:', error);
+      // Fallback: mark as configured but with limited functionality
+      this.client = { configured: true };
+      this.apiKey = apiKey;
+    }
   }
 
   isConfigured() {
@@ -28,30 +42,37 @@ class OpenAIService {
     }
 
     try {
-      const systemPrompt = this.buildSystemPrompt(context);
-      
-      const completion = await this.client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt,
-          },
-          {
-            role: "user", 
-            content: message,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      });
+      // Check if we have a real OpenAI client
+      if (this.client.chat && this.client.chat.completions) {
+        const systemPrompt = this.buildSystemPrompt(context);
+        
+        const completion = await this.client.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: systemPrompt,
+            },
+            {
+              role: "user", 
+              content: message,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 2000,
+        });
 
-      const response = completion.choices[0]?.message?.content;
-      if (!response) {
-        throw new Error('Empty response from OpenAI');
+        const response = completion.choices[0]?.message?.content;
+        if (!response) {
+          throw new Error('Empty response from OpenAI');
+        }
+
+        return response;
+      } else {
+        // Fallback mock response
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return "OpenAI não está disponível no momento. Por favor, recarregue a página e configure sua API key novamente.";
       }
-
-      return response;
     } catch (error) {
       console.error('OpenAI API Error:', error);
       
