@@ -38,16 +38,19 @@ export function calcPath(r, tableWidth = 200, zoom = 1) {
     fieldHeight / 2;
 
   let radius = 10 * zoom;
+  const curveRadius = 18 * zoom;
   const midX = (x2 + x1 + width) / 2;
   const endX = x2 + width < x1 ? x2 + width : x2;
 
   if (Math.abs(y1 - y2) <= 36 * zoom) {
-    radius = Math.abs(y2 - y1) / 3;
-    if (radius <= 2) {
-      if (x1 + width <= x2) return `M ${x1 + width} ${y1} L ${x2} ${y2 + 0.1}`;
+    radius = Math.max(Math.abs(y2 - y1) / 3, curveRadius);
+    if (radius <= curveRadius) {
+      if (x1 + width <= x2) return `M ${x1 + width} ${y1} L ${x2} ${y2}`;
       else if (x2 + width < x1)
-        return `M ${x1} ${y1} L ${x2 + width} ${y2 + 0.1}`;
+        return `M ${x1} ${y1} L ${x2 + width} ${y2}`;
     }
+  } else {
+    radius = Math.max(radius, curveRadius);
   }
 
   if (y1 <= y2) {
