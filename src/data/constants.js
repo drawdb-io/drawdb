@@ -116,3 +116,25 @@ export const IMPORT_FROM = {
   JSON: 0,
   DBML: 1,
 };
+
+// Responsibility system colors and constants
+export const responsibilityColors = {
+  F: "#3B82F6", // Frontend - Azul
+  B: "#10B981", // Backend - Verde  
+  N: "#F59E0B", // n8n - Amarelo
+  S: "#8B5CF6", // Supabase - Roxo
+};
+
+export const responsibilityLabels = {
+  F: "Frontend",
+  B: "Backend", 
+  N: "n8n",
+  S: "Supabase",
+};
+
+export const responsibilityOptions = [
+  { value: "F", label: "Frontend", color: "#3B82F6" },
+  { value: "B", label: "Backend", color: "#10B981" },
+  { value: "N", label: "n8n", color: "#F59E0B" },
+  { value: "S", label: "Supabase", color: "#8B5CF6" },
+];

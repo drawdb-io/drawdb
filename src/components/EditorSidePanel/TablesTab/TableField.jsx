@@ -9,6 +9,7 @@ import {
   useUndoRedo,
   useLayout,
 } from "../../../hooks";
+import ResponsibilityDropdown from "../../ResponsibilityDropdown";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
@@ -147,6 +148,35 @@ export default function TableField({ data, tid, index, inherited }) {
               });
             }
           }}
+        />
+      </div>
+
+      <div className="min-w-16">
+        <ResponsibilityDropdown
+          value={data.responsibility}
+          onChange={(value) => {
+            if (layout.readOnly) return;
+
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.TABLE,
+                component: "field",
+                tid: tid,
+                fid: data.id,
+                undo: { responsibility: data.responsibility },
+                redo: { responsibility: value },
+                message: t("edit_table", {
+                  tableName: table.name,
+                  extra: "[field]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            updateField(tid, data.id, { responsibility: value });
+          }}
+          disabled={layout.readOnly}
         />
       </div>
 

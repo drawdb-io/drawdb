@@ -5,6 +5,7 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
+  responsibilityColors,
 } from "../../data/constants";
 import {
   IconEdit,
@@ -422,6 +423,15 @@ export default function Table({
           <span className="overflow-hidden text-ellipsis whitespace-nowrap">
             {fieldData.name}
           </span>
+          {fieldData.responsibility && (
+            <span 
+              className="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white rounded-full ml-1 flex-shrink-0"
+              style={{ backgroundColor: responsibilityColors[fieldData.responsibility] }}
+              title={`Responsibilidade: ${fieldData.responsibility === 'F' ? 'Frontend' : fieldData.responsibility === 'B' ? 'Backend' : fieldData.responsibility === 'N' ? 'n8n' : 'Supabase'}`}
+            >
+              {fieldData.responsibility}
+            </span>
+          )}
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (
