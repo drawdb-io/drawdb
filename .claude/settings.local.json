@@ -22,7 +22,9 @@
       "Bash(node:*)",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
-      "mcp__playwright__browser_fill_form"
+      "mcp__playwright__browser_fill_form",
+      "Bash(git log:*)",
+      "Bash(npm run lint)"
     ]
   },
   "enableAllProjectMcpServers": true,

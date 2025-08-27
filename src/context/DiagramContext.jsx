@@ -22,59 +22,57 @@ export default function DiagramContextProvider({ children }) {
   useEffect(() => {
     if (currentProject && currentProject.dados_diagrama) {
       const data = currentProject.dados_diagrama;
+      console.log('📂 Loading project:', currentProject.nome, 'with', data.tables?.length || 0, 'tables');
       setTables(data.tables || []);
       setRelationships(data.relationships || []);
       setDatabase(data.database || DB.GENERIC);
     } else {
-      // Se não há projeto atual, limpar o diagrama
-      setTables([]);
-      setRelationships([]);
-      setDatabase(DB.GENERIC);
+      // Se não há projeto atual, inicializar com estado limpo
+      console.log('📂 No project - initializing clean state');
+      if (tables.length > 0 || relationships.length > 0) {
+        setTables([]);
+        setRelationships([]);
+        setDatabase(DB.GENERIC);
+      }
     }
   }, [currentProject]);
 
   const addTable = (data, addToHistory = true) => {
-    console.log('DiagramContext addTable called:', { data, currentTablesLength: tables.length });
     const id = nanoid();
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
         temp.splice(data.index, 0, data);
-        console.log('DiagramContext addTable - new tables length (with data):', temp.length);
         return temp;
       });
     } else {
-      setTables((prev) => {
-        const newTables = [
-          ...prev,
-          {
-            id,
-            name: `table_${prev.length}`,
-            x: transform.pan.x,
-            y: transform.pan.y,
-            locked: false,
-            fields: [
-              {
-                name: "id",
-                type: database === DB.GENERIC ? "INT" : "INTEGER",
-                default: "",
-                check: "",
-                primary: true,
-                unique: true,
-                notNull: true,
-                increment: true,
-                comment: "",
-                id: nanoid(),
-              },
-            ],
-            comment: "",
-            indices: [],
-            color: defaultBlue,
-          },
-        ];
-        console.log('DiagramContext addTable - new tables length (default):', newTables.length);
-        return newTables;
-      });
+      setTables((prev) => [
+        ...prev,
+        {
+          id,
+          name: `table_${prev.length}`,
+          x: transform.pan.x,
+          y: transform.pan.y,
+          locked: false,
+          fields: [
+            {
+              name: "id",
+              type: database === DB.GENERIC ? "INT" : "INTEGER",
+              default: "",
+              check: "",
+              primary: true,
+              unique: true,
+              notNull: true,
+              increment: true,
+              comment: "",
+              id: nanoid(),
+            },
+          ],
+          comment: "",
+          indices: [],
+          color: defaultBlue,
+        },
+      ]);
     }
     if (addToHistory) {
       setUndoStack((prev) => [

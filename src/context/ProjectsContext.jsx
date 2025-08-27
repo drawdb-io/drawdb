@@ -18,16 +18,6 @@ export const ProjectsProvider = ({ children }) => {
   const [currentProject, setCurrentProject] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Load projects when user is authenticated
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      loadProjects();
-    } else {
-      setProjects([]);
-      setCurrentProject(null);
-    }
-  }, [isAuthenticated, user]);
-
   const loadProjects = async () => {
     try {
       setLoading(true);
@@ -191,6 +181,16 @@ export const ProjectsProvider = ({ children }) => {
       return { data: null, error };
     }
   };
+
+  // Load projects when user is authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadProjects();
+    } else {
+      setProjects([]);
+      setCurrentProject(null);
+    }
+  }, [isAuthenticated, user]);
 
   const value = {
     projects,

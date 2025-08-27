@@ -19,6 +19,7 @@ import {
   useEnums,
 } from "../hooks";
 import { useProjects } from "../context/ProjectsContext";
+import { useAutoSave } from "../hooks/useAutoSave";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
 import { IconAlertTriangle } from "@douyinfe/semi-icons";
@@ -39,6 +40,7 @@ const SIDEPANEL_MIN_WIDTH = 384;
 
 export default function WorkSpace() {
   const { currentProject } = useProjects();
+  useAutoSave(); // Enable auto-save functionality
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
   const [version, setVersion] = useState("");
