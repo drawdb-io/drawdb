@@ -18,7 +18,7 @@ import {
   IconDelete,
   IconMail,
   IconUser,
-  IconEye,
+  IconEyeOpened,
   IconEdit,
   IconSetting
 } from '@douyinfe/semi-icons';
@@ -28,7 +28,7 @@ import { useAuth } from '../context/AuthContext';
 const { Title, Text } = Typography;
 
 const PAPEL_OPTIONS = [
-  { value: 'visualizador', label: 'Visualizador', icon: <IconEye />, color: 'blue' },
+  { value: 'visualizador', label: 'Visualizador', icon: <IconEyeOpened />, color: 'blue' },
   { value: 'editor', label: 'Editor', icon: <IconEdit />, color: 'green' },
   { value: 'administrador', label: 'Administrador', icon: <IconSetting />, color: 'red' }
 ];

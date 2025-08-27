@@ -16,13 +16,13 @@ import {
   Form
 } from '@douyinfe/semi-ui';
 import {
-  IconHistoryStroked,
-  IconRestore,
-  IconEye,
+  IconHistory,
+  IconRefresh,
+  IconEyeOpened,
   IconPlus,
   IconClock,
   IconUser,
-  IconCompare,
+  IconShield,
   IconSave
 } from '@douyinfe/semi-icons';
 import { useVersions } from '../hooks/useVersions';
@@ -177,7 +177,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
               <Space>
                 <Button
                   size="small"
-                  icon={<IconEye />}
+                  icon={<IconEyeOpened />}
                   theme="borderless"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -197,7 +197,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
                 >
                   <Button
                     size="small"
-                    icon={<IconRestore />}
+                    icon={<IconRefresh />}
                     type="primary"
                     theme="outline"
                     loading={restoring}
@@ -231,7 +231,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
     <Modal
       title={
         <Space>
-          <IconHistoryStroked />
+          <IconHistory />
           <span>Histórico de Versões - {project?.nome}</span>
         </Space>
       }
@@ -274,7 +274,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
                 </Button>
                 <Button
                   type="primary"
-                  icon={<IconCompare />}
+                  icon={<IconShield />}
                   disabled={selectedVersions.length !== 2}
                   onClick={handleCompareVersions}
                 >
@@ -285,7 +285,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
               <>
                 <Button
                   theme="outline"
-                  icon={<IconCompare />}
+                  icon={<IconShield />}
                   onClick={() => setCompareMode(true)}
                   disabled={versions.length < 2}
                 >
@@ -359,7 +359,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
             </div>
           ) : versions.length === 0 ? (
             <Empty
-              image={<IconHistoryStroked size="extra-large" style={{ color: '#d1d5db' }} />}
+              image={<IconHistory size="extra-large" style={{ color: '#d1d5db' }} />}
               title="Nenhuma versão encontrada"
               description="Crie sua primeira versão para começar o controle de histórico"
             />

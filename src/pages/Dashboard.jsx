@@ -24,7 +24,7 @@ import {
   IconServer,
   IconExit,
   IconUserGroup,
-  IconHistoryStroked
+  IconHistory
 } from '@douyinfe/semi-icons';
 import { useProjects } from '../context/ProjectsContext';
 import { useAuth } from '../context/AuthContext';
@@ -246,7 +246,7 @@ export default function Dashboard() {
         }}
         onClick={() => openVersionHistoryModal(project)}
       >
-        <IconHistoryStroked />
+        <IconHistory />
         <span>Histórico de Versões</span>
       </div>
       <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '4px 0' }} />
