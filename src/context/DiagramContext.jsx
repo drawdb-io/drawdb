@@ -34,41 +34,47 @@ export default function DiagramContextProvider({ children }) {
   }, [currentProject]);
 
   const addTable = (data, addToHistory = true) => {
+    console.log('DiagramContext addTable called:', { data, currentTablesLength: tables.length });
     const id = nanoid();
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
         temp.splice(data.index, 0, data);
+        console.log('DiagramContext addTable - new tables length (with data):', temp.length);
         return temp;
       });
     } else {
-      setTables((prev) => [
-        ...prev,
-        {
-          id,
-          name: `table_${prev.length}`,
-          x: transform.pan.x,
-          y: transform.pan.y,
-          locked: false,
-          fields: [
-            {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
-              default: "",
-              check: "",
-              primary: true,
-              unique: true,
-              notNull: true,
-              increment: true,
-              comment: "",
-              id: nanoid(),
-            },
-          ],
-          comment: "",
-          indices: [],
-          color: defaultBlue,
-        },
-      ]);
+      setTables((prev) => {
+        const newTables = [
+          ...prev,
+          {
+            id,
+            name: `table_${prev.length}`,
+            x: transform.pan.x,
+            y: transform.pan.y,
+            locked: false,
+            fields: [
+              {
+                name: "id",
+                type: database === DB.GENERIC ? "INT" : "INTEGER",
+                default: "",
+                check: "",
+                primary: true,
+                unique: true,
+                notNull: true,
+                increment: true,
+                comment: "",
+                id: nanoid(),
+              },
+            ],
+            comment: "",
+            indices: [],
+            color: defaultBlue,
+          },
+        ];
+        console.log('DiagramContext addTable - new tables length (default):', newTables.length);
+        return newTables;
+      });
     }
     if (addToHistory) {
       setUndoStack((prev) => [
