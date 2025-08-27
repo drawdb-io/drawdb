@@ -27,22 +27,17 @@ export const useAutoSave = () => {
   // Auto-save with debounce - capture data at trigger time
   const debouncedSave = useCallback(
     debounce(async (capturedData) => {
-      console.log('🚀 Auto-save started for project:', currentProject?.id || 'local');
-
       if (!isAuthenticated || !user) {
-        console.log('User not authenticated, skipping auto-save');
         return;
       }
 
       try {
         setSaveState(State.SAVING);
-        console.log('📊 Saving:', capturedData.tables.length, 'tables');
 
         let projectId = currentProject?.id;
 
         // If no current project, create one
         if (!projectId) {
-          console.log('No current project, creating new one...');
           const { data, error } = await createProject(
             `Diagrama ${new Date().toLocaleDateString()}`,
             'Projeto criado automaticamente'
@@ -50,16 +45,13 @@ export const useAutoSave = () => {
           
           if (error) throw error;
           projectId = data.id;
-          console.log('New project created:', projectId);
         }
 
         // Save diagram data
         const { error } = await saveProjectData(projectId, capturedData);
         if (error) throw error;
 
-        console.log('✅ Auto-save successful');
         setSaveState(State.SAVED);
-        console.log('Auto-save successful');
 
         // Reset to NONE after 2 seconds
         setTimeout(() => setSaveState(State.NONE), 2000);
@@ -76,7 +68,6 @@ export const useAutoSave = () => {
   // Trigger auto-save when diagram data changes
   useEffect(() => {
     if (isAuthenticated && (diagramData?.tables?.length > 0 || diagramData?.relationships?.length > 0)) {
-      console.log('Auto-save triggered: tables:', diagramData?.tables?.length, 'relationships:', diagramData?.relationships?.length);
       
       // Capture data at trigger time to avoid stale closures during HMR
       const capturedData = {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -21,15 +21,11 @@ export const ProjectsProvider = ({ children }) => {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Loading projects for user:', user?.id, user?.email);
-      
       const { data, error } = await supabase
         .from('projetos')
         .select('*')
         .eq('usuario_id', user.id)
         .order('atualizado_em', { ascending: false });
-
-      console.log('🔍 Projects query result:', { data: data?.length || 0, error: error?.message });
       
       if (error) throw error;
       setProjects(data || []);

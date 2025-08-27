@@ -22,13 +22,11 @@ export default function DiagramContextProvider({ children }) {
   useEffect(() => {
     if (currentProject && currentProject.dados_diagrama) {
       const data = currentProject.dados_diagrama;
-      console.log('📂 Loading project:', currentProject.nome, 'with', data.tables?.length || 0, 'tables');
       setTables(data.tables || []);
       setRelationships(data.relationships || []);
       setDatabase(data.database || DB.GENERIC);
     } else {
       // Se não há projeto atual, inicializar com estado limpo
-      console.log('📂 No project - initializing clean state');
       if (tables.length > 0 || relationships.length > 0) {
         setTables([]);
         setRelationships([]);

@@ -20,10 +20,13 @@ const PreviewModal = ({
   onCancel, 
   onApprove, 
   onReject, 
+  onCreateInSupabase,
+  isMcpConfigured = false,
   previewData,
   loading = false 
 }) => {
   const [selectedTables, setSelectedTables] = useState(new Set());
+  const [createLocation, setCreateLocation] = useState('canvas'); // 'canvas' or 'supabase' or 'both'
 
   const handleTableToggle = (tableId) => {
     const newSelected = new Set(selectedTables);
@@ -169,13 +172,35 @@ const PreviewModal = ({
               Rejeitar
             </Button>
             <Button
-              type="primary"
+              type="secondary"
               onClick={handleApprove}
               disabled={selectedTables.size === 0 || loading}
-              loading={loading}
+              loading={loading && createLocation === 'canvas'}
             >
-              Criar Tabelas Selecionadas
+              Criar no Canvas
             </Button>
+            {isMcpConfigured && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  const selectedTablesList = previewData?.tables?.filter(t => selectedTables.has(t.id)) || [];
+                  const selectedRelationships = previewData?.relationships?.filter(r => {
+                    const startTable = selectedTablesList.find(t => t.name === r.startTableName);
+                    const endTable = selectedTablesList.find(t => t.name === r.endTableName);
+                    return startTable && endTable;
+                  }) || [];
+                  
+                  onCreateInSupabase({
+                    tables: selectedTablesList,
+                    relationships: selectedRelationships,
+                  });
+                }}
+                disabled={selectedTables.size === 0 || loading}
+                loading={loading && createLocation === 'supabase'}
+              >
+                Criar no Supabase
+              </Button>
+            )}
           </Space>
         </div>
       }

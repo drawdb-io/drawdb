@@ -16,7 +16,8 @@ import {
   IconClose, 
   IconClear,
   IconChevronRight,
-  IconChevronLeft 
+  IconChevronLeft,
+  IconServer
 } from '@douyinfe/semi-icons';
 import { useChat } from '../../context/ChatContext';
 import { useDiagram } from '../../hooks';
@@ -31,12 +32,17 @@ const ChatPanel = () => {
     messages,
     isTyping,
     apiKey,
+    supabaseProjectId,
+    supabaseApiKey,
     isConfigured,
+    isMcpConfigured,
     isOpen,
     sendMessage,
     addMessage,
     clearMessages,
     configureApiKey,
+    configureMcp,
+    createTablesInSupabase,
     generateTables,
     toggleChat,
     setIsOpen,
@@ -47,6 +53,9 @@ const ChatPanel = () => {
   const [inputValue, setInputValue] = useState('');
   const [showApiModal, setShowApiModal] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
+  const [showMcpModal, setShowMcpModal] = useState(false);
+  const [tempSupabaseProjectId, setTempSupabaseProjectId] = useState('');
+  const [tempSupabaseApiKey, setTempSupabaseApiKey] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [creatingTables, setCreatingTables] = useState(false);
@@ -96,6 +105,19 @@ const ChatPanel = () => {
     configureApiKey(tempApiKey);
     setShowApiModal(false);
     setTempApiKey('');
+  };
+
+  const handleConfigureMcp = () => {
+    setTempSupabaseProjectId(supabaseProjectId);
+    setTempSupabaseApiKey(supabaseApiKey);
+    setShowMcpModal(true);
+  };
+
+  const handleSaveMcpConfig = () => {
+    configureMcp(tempSupabaseProjectId, tempSupabaseApiKey);
+    setShowMcpModal(false);
+    setTempSupabaseProjectId('');
+    setTempSupabaseApiKey('');
   };
 
   const handleApprovePreview = async (selectedData) => {
@@ -213,6 +235,49 @@ const ChatPanel = () => {
     addMessage(rejectMessage);
   };
 
+  const handleCreateInSupabase = async (selectedData) => {
+    try {
+      setCreatingTables(true);
+      
+      if (!isMcpConfigured) {
+        const errorMessage = {
+          role: 'assistant',
+          content: '❌ MCP Supabase não configurado. Configure primeiro nas opções do chat.',
+          sender: 'ai',
+          error: true,
+        };
+        addMessage(errorMessage);
+        return;
+      }
+      
+      const results = await createTablesInSupabase(selectedData.tables);
+      
+      // Simular criação das migrations (no futuro será MCP real)
+      const successMessage = {
+        role: 'assistant', 
+        content: `✅ Preparadas ${results.length} migration(s) para Supabase!\n\nTabelas prontas para criação:\n${results.map(r => `• ${r.tableName} (${r.migrationName})`).join('\n')}\n\n📝 Verifique os logs para ver o SQL gerado.`,
+        sender: 'ai',
+      };
+      
+      addMessage(successMessage);
+      
+      setShowPreview(false);
+      setPreviewData(null);
+      
+    } catch (error) {
+      console.error('Error creating in Supabase:', error);
+      const errorMessage = {
+        role: 'assistant',
+        content: `❌ Erro ao criar no Supabase: ${error.message}`,
+        sender: 'ai',
+        error: true,
+      };
+      addMessage(errorMessage);
+    } finally {
+      setCreatingTables(false);
+    }
+  };
+
   const formatMessage = (message) => {
     return message.content.split('\n').map((line, index) => (
       <div key={index}>
@@ -262,6 +327,9 @@ const ChatPanel = () => {
               {!isConfigured && (
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
               )}
+              {!isMcpConfigured && (
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+              )}
             </div>
             <Space>
               <Button
@@ -269,7 +337,14 @@ const ChatPanel = () => {
                 size="small"
                 type="tertiary"
                 onClick={handleConfigureApi}
-                title="Configurar API Key"
+                title="Configurar OpenAI API Key"
+              />
+              <Button
+                icon={<IconServer />}
+                size="small"
+                type="tertiary"
+                onClick={handleConfigureMcp}
+                title="Configurar MCP Supabase"
               />
               <Button
                 icon={<IconClear />}
@@ -288,7 +363,7 @@ const ChatPanel = () => {
             </Space>
           </div>
 
-          {/* Configuration Warning */}
+          {/* Configuration Warnings */}
           {!isConfigured && (
             <Card
               className="m-4"
@@ -303,7 +378,26 @@ const ChatPanel = () => {
                 className="mt-2"
                 onClick={handleConfigureApi}
               >
-                Configurar
+                Configurar OpenAI
+              </Button>
+            </Card>
+          )}
+          
+          {isConfigured && !isMcpConfigured && (
+            <Card
+              className="m-4"
+              style={{ backgroundColor: 'var(--semi-color-primary-light-default)' }}
+            >
+              <Text size="small">
+                🔧 Configure MCP Supabase para criar tabelas direto no banco de dados.
+              </Text>
+              <Button
+                size="small"
+                type="primary"
+                className="mt-2"
+                onClick={handleConfigureMcp}
+              >
+                Configurar MCP
               </Button>
             </Card>
           )}
@@ -415,12 +509,61 @@ const ChatPanel = () => {
         </div>
       </Modal>
 
+      {/* MCP Supabase Configuration Modal */}
+      <Modal
+        title="Configurar MCP Supabase"
+        visible={showMcpModal}
+        onOk={handleSaveMcpConfig}
+        onCancel={() => setShowMcpModal(false)}
+        okText="Salvar"
+        cancelText="Cancelar"
+        okButtonProps={{ disabled: !tempSupabaseProjectId.trim() || !tempSupabaseApiKey.trim() }}
+        width={500}
+      >
+        <div className="space-y-4">
+          <Text>
+            Configure sua conexão Supabase para permitir que a IA crie tabelas direto no seu banco de dados:
+          </Text>
+          
+          <div>
+            <Text strong>Project ID do Supabase:</Text>
+            <Input
+              placeholder="abcdefghijklmnop"
+              value={tempSupabaseProjectId}
+              onChange={setTempSupabaseProjectId}
+              style={{ marginTop: '4px' }}
+            />
+          </div>
+          
+          <div>
+            <Text strong>Service Role Key:</Text>
+            <Input
+              type="password"
+              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+              value={tempSupabaseApiKey}
+              onChange={setTempSupabaseApiKey}
+              style={{ marginTop: '4px' }}
+            />
+          </div>
+          
+          <Text type="tertiary" style={{ fontSize: '12px' }}>
+            ⚠️ Use apenas em projetos de desenvolvimento. Nunca use service role key em produção.
+            <br />
+            🔒 As credenciais são armazenadas localmente e usadas apenas para este projeto.
+            <br />
+            📍 Obtenha no painel do Supabase: Settings → API → Project ID e Service Role
+          </Text>
+        </div>
+      </Modal>
+
       {/* Preview Modal for Table Generation */}
       <PreviewModal
         visible={showPreview}
         onCancel={() => setShowPreview(false)}
         onApprove={handleApprovePreview}
         onReject={handleRejectPreview}
+        onCreateInSupabase={handleCreateInSupabase}
+        isMcpConfigured={isMcpConfigured}
         previewData={previewData}
         loading={creatingTables}
       />

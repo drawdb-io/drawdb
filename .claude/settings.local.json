@@ -24,7 +24,8 @@
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_fill_form",
       "Bash(git log:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

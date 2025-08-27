@@ -17,7 +17,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Test connection function
 export const testConnection = async () => {
   try {
-    const { data, error } = await supabase.from('projetos').select('count').limit(1);
+    const { error } = await supabase.from('projetos').select('count').limit(1);
     if (error) {
       console.error('Supabase connection error:', error);
       return false;

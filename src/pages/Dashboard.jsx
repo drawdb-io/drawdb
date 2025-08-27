@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Button, 
   Card, 
@@ -9,10 +9,8 @@ import {
   Spin, 
   Modal, 
   Form, 
-  Input, 
   Toast,
   Dropdown,
-  Avatar,
   Badge
 } from '@douyinfe/semi-ui';
 import { 
@@ -24,10 +22,12 @@ import {
   IconUser,
   IconMore,
   IconServer,
-  IconExit
+  IconExit,
+  IconUserGroup
 } from '@douyinfe/semi-icons';
 import { useProjects } from '../context/ProjectsContext';
 import { useAuth } from '../context/AuthContext';
+import CollaborationModal from '../components/CollaborationModal';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -46,6 +46,11 @@ export default function Dashboard() {
   
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
+  const [collaborationModalVisible, setCollaborationModalVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
   
   const handleCreateProject = async (values) => {
     try {
@@ -69,6 +74,67 @@ export default function Dashboard() {
     }
   };
 
+  const handleEditProject = async (values) => {
+    try {
+      setEditLoading(true);
+      const { error } = await updateProject(editingProject.id, {
+        nome: values.nome,
+        descricao: values.descricao
+      });
+      
+      if (error) {
+        Toast.error('Erro ao atualizar projeto: ' + error.message);
+        return;
+      }
+      
+      Toast.success('Projeto atualizado com sucesso!');
+      setEditModalVisible(false);
+      setEditingProject(null);
+    } catch (error) {
+      Toast.error('Erro inesperado ao atualizar projeto');
+      console.error('Update project error:', error);
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const openEditModal = (project) => {
+    setEditingProject(project);
+    setEditModalVisible(true);
+  };
+
+  const openCollaborationModal = (project) => {
+    setSelectedProject(project);
+    setCollaborationModalVisible(true);
+  };
+
+  const handleShareProject = (project) => {
+    const shareUrl = `${window.location.origin}/editor?project=${project.id}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `Projeto: ${project.nome}`,
+        text: project.descricao || 'Diagrama de banco de dados',
+        url: shareUrl
+      }).catch(() => {
+        // Se falhar, copia para clipboard
+        copyToClipboard(shareUrl, project.nome);
+      });
+    } else {
+      copyToClipboard(shareUrl, project.nome);
+    }
+  };
+
+  const copyToClipboard = async (url, projectName) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      Toast.success(`Link do projeto "${projectName}" copiado para a área de transferência!`);
+    } catch (error) {
+      // Fallback para navegadores que não suportam clipboard
+      Toast.info(`Link para compartilhar: ${url}`);
+    }
+  };
+
   const handleDeleteProject = async (projectId, projectName) => {
     Modal.confirm({
       title: 'Confirmar exclusão',
@@ -89,7 +155,7 @@ export default function Dashboard() {
 
   const handleOpenProject = async (project) => {
     try {
-      const { data, error } = await loadProject(project.id);
+      const { error } = await loadProject(project.id);
       if (error) {
         Toast.error('Erro ao carregar projeto: ' + error.message);
         return;
@@ -120,39 +186,64 @@ export default function Dashboard() {
     });
   };
 
-  const getProjectActions = (project) => [
-    {
-      node: 'item',
-      name: 'edit',
-      text: 'Editar projeto',
-      icon: <IconEdit />,
-      onClick: () => {
-        // TODO: Implement edit project modal
-        Toast.info('Funcionalidade em desenvolvimento');
-      }
-    },
-    {
-      node: 'item',
-      name: 'share',
-      text: 'Compartilhar',
-      icon: <IconSend />,
-      onClick: () => {
-        // TODO: Implement share project
-        Toast.info('Funcionalidade em desenvolvimento');
-      }
-    },
-    {
-      node: 'divider'
-    },
-    {
-      node: 'item',
-      name: 'delete',
-      text: 'Excluir projeto',
-      icon: <IconDelete />,
-      type: 'danger',
-      onClick: () => handleDeleteProject(project.id, project.nome)
-    }
-  ];
+  const getProjectActions = (project) => (
+    <div style={{ padding: '8px 0' }}>
+      <div 
+        style={{ 
+          padding: '8px 16px', 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+        onClick={() => openEditModal(project)}
+      >
+        <IconEdit />
+        <span>Editar projeto</span>
+      </div>
+      <div 
+        style={{ 
+          padding: '8px 16px', 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+        onClick={() => handleShareProject(project)}
+      >
+        <IconSend />
+        <span>Compartilhar</span>
+      </div>
+      <div 
+        style={{ 
+          padding: '8px 16px', 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+        onClick={() => openCollaborationModal(project)}
+      >
+        <IconUserGroup />
+        <span>Colaboradores</span>
+      </div>
+      <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '4px 0' }} />
+      <div 
+        style={{ 
+          padding: '8px 16px', 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          color: '#dc2626'
+        }}
+        onClick={() => handleDeleteProject(project.id, project.nome)}
+      >
+        <IconDelete />
+        <span>Excluir projeto</span>
+      </div>
+    </div>
+  );
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
@@ -266,7 +357,6 @@ export default function Dashboard() {
                 }}
                 bodyStyle={{ padding: '24px' }}
                 hoverable
-                onClick={() => handleOpenProject(project)}
                 headerExtraContent={
                   <Dropdown
                     trigger="click"
@@ -315,12 +405,31 @@ export default function Dashboard() {
                       </Text>
                     </Space>
 
-                    <Badge 
-                      count={project.dados_diagrama?.tables?.length || 0}
-                      type="primary"
-                    >
-                      <IconServer style={{ color: '#6b7280' }} />
-                    </Badge>
+                    <Space>
+                      <Button
+                        size="small"
+                        icon={<IconEdit />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(project);
+                        }}
+                      />
+                      <Button
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenProject(project);
+                        }}
+                      >
+                        Abrir
+                      </Button>
+                      <Badge 
+                        count={project.dados_diagrama?.tables?.length || 0}
+                        type="primary"
+                      >
+                        <IconServer style={{ color: '#6b7280' }} />
+                      </Badge>
+                    </Space>
                   </div>
                 </Space>
               </Card>
@@ -379,6 +488,79 @@ export default function Dashboard() {
           </div>
         </Form>
       </Modal>
+
+      {/* Edit Project Modal */}
+      <Modal
+        title="Editar Projeto"
+        visible={editModalVisible}
+        onCancel={() => {
+          setEditModalVisible(false);
+          setEditingProject(null);
+        }}
+        footer={null}
+        width={500}
+      >
+        {editingProject && (
+          <Form
+            onSubmit={handleEditProject}
+            labelPosition="left"
+            labelWidth="100px"
+            initValues={{
+              nome: editingProject.nome,
+              descricao: editingProject.descricao || ''
+            }}
+          >
+            <Form.Input
+              field="nome"
+              label="Nome"
+              placeholder="Nome do projeto"
+              rules={[
+                { required: true, message: 'Nome é obrigatório' },
+                { min: 2, message: 'Nome deve ter pelo menos 2 caracteres' }
+              ]}
+              style={{ marginBottom: '16px' }}
+            />
+            
+            <Form.TextArea
+              field="descricao"
+              label="Descrição"
+              placeholder="Descrição opcional do projeto"
+              rows={3}
+              style={{ marginBottom: '24px' }}
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <Button 
+                onClick={() => {
+                  setEditModalVisible(false);
+                  setEditingProject(null);
+                }}
+                disabled={editLoading}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                theme="solid"
+                type="primary"
+                htmlType="submit"
+                loading={editLoading}
+              >
+                Salvar Alterações
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Modal>
+
+      {/* Collaboration Modal */}
+      <CollaborationModal
+        visible={collaborationModalVisible}
+        onCancel={() => {
+          setCollaborationModalVisible(false);
+          setSelectedProject(null);
+        }}
+        project={selectedProject}
+      />
     </div>
   );
 }
