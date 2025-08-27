@@ -18,6 +18,7 @@ import {
   useSaveState,
   useEnums,
 } from "../hooks";
+import { useProjects } from "../context/ProjectsContext";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
 import { IconAlertTriangle } from "@douyinfe/semi-icons";
@@ -37,6 +38,7 @@ export const IdContext = createContext({
 const SIDEPANEL_MIN_WIDTH = 384;
 
 export default function WorkSpace() {
+  const { currentProject } = useProjects();
   const [id, setId] = useState(0);
   const [gistId, setGistId] = useState("");
   const [version, setVersion] = useState("");
@@ -75,6 +77,12 @@ export default function WorkSpace() {
   };
 
   const save = useCallback(async () => {
+    // Se há um projeto ativo, não salvar localmente - deixar o auto-save do Supabase cuidar
+    if (currentProject) {
+      console.log('Project-based save - handled by auto-save');
+      return;
+    }
+    
     const name = window.name.split(" ");
     const op = name[0];
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
@@ -153,6 +161,7 @@ export default function WorkSpace() {
         });
     }
   }, [
+    currentProject,
     searchParams,
     setSearchParams,
     tables,
@@ -172,6 +181,13 @@ export default function WorkSpace() {
   ]);
 
   const load = useCallback(async () => {
+    // Se há um projeto ativo, não carregar dados locais - usar dados do projeto
+    if (currentProject) {
+      console.log('Project-based load - data handled by DiagramContext');
+      setTitle(currentProject.nome || "Untitled Diagram");
+      return;
+    }
+    
     const loadLatestDiagram = async () => {
       await db.diagrams
         .orderBy("lastModified")
@@ -370,6 +386,7 @@ export default function WorkSpace() {
     selectedDb,
     setSaveState,
     searchParams,
+    currentProject,
   ]);
 
   const returnToCurrentDiagram = async () => {
