@@ -23,11 +23,13 @@ import {
   IconMore,
   IconServer,
   IconExit,
-  IconUserGroup
+  IconUserGroup,
+  IconHistoryStroked
 } from '@douyinfe/semi-icons';
 import { useProjects } from '../context/ProjectsContext';
 import { useAuth } from '../context/AuthContext';
 import CollaborationModal from '../components/CollaborationModal';
+import VersionHistoryModal from '../components/VersionHistoryModal';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -51,6 +53,8 @@ export default function Dashboard() {
   const [editLoading, setEditLoading] = useState(false);
   const [collaborationModalVisible, setCollaborationModalVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [versionHistoryModalVisible, setVersionHistoryModalVisible] = useState(false);
+  const [selectedProjectForVersions, setSelectedProjectForVersions] = useState(null);
   
   const handleCreateProject = async (values) => {
     try {
@@ -106,6 +110,11 @@ export default function Dashboard() {
   const openCollaborationModal = (project) => {
     setSelectedProject(project);
     setCollaborationModalVisible(true);
+  };
+
+  const openVersionHistoryModal = (project) => {
+    setSelectedProjectForVersions(project);
+    setVersionHistoryModalVisible(true);
   };
 
   const handleShareProject = (project) => {
@@ -226,6 +235,19 @@ export default function Dashboard() {
       >
         <IconUserGroup />
         <span>Colaboradores</span>
+      </div>
+      <div 
+        style={{ 
+          padding: '8px 16px', 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+        onClick={() => openVersionHistoryModal(project)}
+      >
+        <IconHistoryStroked />
+        <span>Histórico de Versões</span>
       </div>
       <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '4px 0' }} />
       <div 
@@ -560,6 +582,16 @@ export default function Dashboard() {
           setSelectedProject(null);
         }}
         project={selectedProject}
+      />
+
+      {/* Version History Modal */}
+      <VersionHistoryModal
+        visible={versionHistoryModalVisible}
+        onCancel={() => {
+          setVersionHistoryModalVisible(false);
+          setSelectedProjectForVersions(null);
+        }}
+        project={selectedProjectForVersions}
       />
     </div>
   );
