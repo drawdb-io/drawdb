@@ -40,7 +40,8 @@ export default function Dashboard() {
     createProject, 
     deleteProject, 
     updateProject,
-    setCurrentProject 
+    setCurrentProject,
+    loadProject
   } = useProjects();
   
   const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -86,9 +87,18 @@ export default function Dashboard() {
     });
   };
 
-  const handleOpenProject = (project) => {
-    setCurrentProject(project);
-    navigate('/editor');
+  const handleOpenProject = async (project) => {
+    try {
+      const { data, error } = await loadProject(project.id);
+      if (error) {
+        Toast.error('Erro ao carregar projeto: ' + error.message);
+        return;
+      }
+      navigate('/editor');
+    } catch (error) {
+      Toast.error('Erro inesperado ao carregar projeto');
+      console.error('Load project error:', error);
+    }
   };
 
   const handleSignOut = async () => {

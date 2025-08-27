@@ -21,12 +21,16 @@ export const ProjectsProvider = ({ children }) => {
   const loadProjects = async () => {
     try {
       setLoading(true);
+      console.log('🔍 Loading projects for user:', user?.id, user?.email);
+      
       const { data, error } = await supabase
         .from('projetos')
         .select('*')
         .eq('usuario_id', user.id)
         .order('atualizado_em', { ascending: false });
 
+      console.log('🔍 Projects query result:', { data: data?.length || 0, error: error?.message });
+      
       if (error) throw error;
       setProjects(data || []);
       return { data, error: null };
@@ -170,11 +174,9 @@ export const ProjectsProvider = ({ children }) => {
 
       if (error) throw error;
 
-      // Update current project
-      if (currentProject?.id === projectId) {
-        setCurrentProject(prev => ({ ...prev, ...data }));
-      }
-
+      // NÃO atualizar currentProject aqui para evitar loops
+      // O auto-save não deve recarregar os dados que acabou de salvar
+      
       return { data, error: null };
     } catch (error) {
       console.error('Error saving project data:', error);

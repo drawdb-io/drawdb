@@ -24,9 +24,9 @@ export const useAutoSave = () => {
   const { isAuthenticated, user } = useAuth();
   const diagramData = useDiagram();
 
-  // Auto-save with debounce
+  // Auto-save with debounce - capture data at trigger time
   const debouncedSave = useCallback(
-    debounce(async () => {
+    debounce(async (capturedData) => {
       console.log('🚀 Auto-save started for project:', currentProject?.id || 'local');
 
       if (!isAuthenticated || !user) {
@@ -36,17 +36,7 @@ export const useAutoSave = () => {
 
       try {
         setSaveState(State.SAVING);
-        
-        const diagramDataToSave = {
-          tables: diagramData?.tables || [],
-          relationships: diagramData?.relationships || [],
-          database: diagramData?.database || 'GENERIC',
-          areas: [],
-          notes: [],
-          types: [],
-          enums: []
-        };
-        console.log('📊 Saving:', diagramDataToSave.tables.length, 'tables');
+        console.log('📊 Saving:', capturedData.tables.length, 'tables');
 
         let projectId = currentProject?.id;
 
@@ -64,7 +54,7 @@ export const useAutoSave = () => {
         }
 
         // Save diagram data
-        const { error } = await saveProjectData(projectId, diagramDataToSave);
+        const { error } = await saveProjectData(projectId, capturedData);
         if (error) throw error;
 
         console.log('✅ Auto-save successful');
@@ -87,7 +77,19 @@ export const useAutoSave = () => {
   useEffect(() => {
     if (isAuthenticated && (diagramData?.tables?.length > 0 || diagramData?.relationships?.length > 0)) {
       console.log('Auto-save triggered: tables:', diagramData?.tables?.length, 'relationships:', diagramData?.relationships?.length);
-      debouncedSave();
+      
+      // Capture data at trigger time to avoid stale closures during HMR
+      const capturedData = {
+        tables: diagramData?.tables || [],
+        relationships: diagramData?.relationships || [],
+        database: diagramData?.database || 'GENERIC',
+        areas: [],
+        notes: [],
+        types: [],
+        enums: []
+      };
+      
+      debouncedSave(capturedData);
     }
   }, [diagramData?.tables, diagramData?.relationships, diagramData?.database, isAuthenticated, currentProject, user?.email, debouncedSave]);
 
