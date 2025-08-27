@@ -337,11 +337,6 @@ export default function TableInfo({ data }) {
                     t,
                     tid: data.id,
                 });
-                // Focus the new field input, using setTimeout to ensure its rendered
-                setTimeout(() => {
-                    const input = document.getElementById(`scroll_table_${data.id}_input_${1}`);
-                    if (input) input.focus();
-                }, 0);
             }}
             block
           >
