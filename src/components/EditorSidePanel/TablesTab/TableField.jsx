@@ -7,12 +7,13 @@ import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { Toast } from "@douyinfe/semi-ui";
+import { createNewField } from "./createNewField";
 
 export default function TableField({ data, tid, index }) {
   const { updateField } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
-  const { tables, database } = useDiagram();
+  const { tables, database, addFieldToTable } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
@@ -29,6 +30,30 @@ export default function TableField({ data, tid, index }) {
           onChange={(value) => updateField(tid, index, {
               name: settings.upperCaseFields ? value.toUpperCase() : value.toLowerCase()
           })}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+                //When pressing enter, focus the next input, if there is no next input, create a new field and focus it
+                const input = document.getElementById(`scroll_table_${tid}_input_${index+1}`);
+                if (input) input.focus();
+                else {
+                    createNewField({
+                        data,
+                        settings,
+                        database,
+                        dbToTypes,
+                        addFieldToTable,
+                        setUndoStack,
+                        setRedoStack,
+                        t,
+                        tid,
+                    });
+                    setTimeout(() => {
+                        const newInput = document.getElementById(`scroll_table_${tid}_input_${index+1}`);
+                        if (newInput) newInput.focus();
+                    }, 0);
+                }
+            }
+          }}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
