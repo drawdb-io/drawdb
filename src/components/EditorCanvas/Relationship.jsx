@@ -23,11 +23,13 @@ import {
   CrowsFootChild,
   IDEFZM,
   DefaultNotation,
-  subDT,
+} from "./RelationshipFormat";
+import {
+    subDT,
   subDP,
   subOT,
   subOP
-} from "./RelationshipFormat";
+} from "./subtypeFormats";
 
 const labelFontSize = 16;
 
@@ -524,7 +526,6 @@ export default function Relationship({ data, onConnectSubtypePoint }) {
 
   if (pathRef.current) {
     const totalPathLength = pathRef.current.getTotalLength();
-    const effectivePathLength = totalPathLength - cardinalityStartOffset - cardinalityEndOffset;
 
     const labelPoint = pathRef.current.getPointAtLength(totalPathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;

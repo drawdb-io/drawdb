@@ -324,7 +324,7 @@ export default function DiagramContextProvider({ children }) {
     let subtypeChildTablesSnapshot = {}; // NEW: Capture ALL child tables from subtype relationships
 
     // Helper function to capture child table fields for subtype relationships
-    const captureSubtypeChildFields = (subtypeRel, reason = "unknown") => {
+    const captureSubtypeChildFields = (subtypeRel) => {
       if (subtypeRel.endTableIds && subtypeRel.endTableIds.length > 0) {
         subtypeRel.endTableIds.forEach(childTableId => {
           const childTable = tables.find(t => t.id === childTableId);

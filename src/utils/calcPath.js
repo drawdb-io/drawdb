@@ -58,9 +58,9 @@ export function calcPath(r, startWidth = 200, endWidth = 200, zoom = 1) {
   const sameTable = r.startTable === r.endTable || (r.startTable.id !== undefined && r.startTable.id === r.endTable.id);
   const veryCloseX = Math.abs(r.startTable.x - r.endTable.x) < 1;
   if (sameTable || veryCloseX) {
-    const loopOut = Math.max(40 * zoom, width / 3);
+  const loopOut = Math.max(40 * zoom, startTableWidth / 3);
     const yMid = (r.startTable.y + r.endTable.y) / 2;
-    const startX = r.startTable.x + width;
+  const startX = r.startTable.x + startTableWidth;
     const startY = r.startTable.y + startHeight / 2;
     // simple loop using quadratic curve
     return `M ${startX} ${startY} Q ${startX + loopOut} ${startY} ${startX + loopOut} ${yMid} T ${startX} ${r.endTable.y + endHeight/2}`;

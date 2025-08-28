@@ -71,7 +71,7 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship, addChildToSubtype, removeChildFromSubtype } =
+  const { tables, updateTable, relationships, addRelationship, addChildToSubtype} =
     useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();

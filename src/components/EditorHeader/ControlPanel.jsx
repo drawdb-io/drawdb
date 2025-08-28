@@ -646,6 +646,7 @@ export default function ControlPanel({
             updateTable(a.redo.childTableId, { fields: updatedFields }, false);
           }
         } else if (a.component === "field") {
+          const typeBeforeRedo = types.find(ty => ty.id === a.tid);
           if (typeBeforeRedo) {
             const fieldBeforeRedo = typeBeforeRedo.fields.find(f => f.id === a.fid);
             if (fieldBeforeRedo) undoStateProperties = { undo: { ...fieldBeforeRedo } };
@@ -658,6 +659,7 @@ export default function ControlPanel({
             }, false);
           }
         } else if (a.component === "field_delete") {
+          const typeBeforeRedo = types.find(ty => ty.id === a.tid);
           // Redoing a field_delete for a type field
           // a.data is the field object that was deleted.
           if (typeBeforeRedo && a.data && typeof a.data.id !== 'undefined') {
@@ -666,6 +668,7 @@ export default function ControlPanel({
             updateType(a.tid, { fields: newFields }, false);
           }
         } else if (a.component === "self") {
+          const typeBeforeRedo = types.find(ty => ty.id === a.tid);
           if (typeBeforeRedo) undoStateProperties = { undo: { ...typeBeforeRedo, ...a.undo } };
           updateType(a.tid, a.redo, false);
         }
