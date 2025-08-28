@@ -6,8 +6,10 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
-  tableFieldHeight,
   tableHeaderHeight,
+  tableFieldHeight,
+  tableColorStripHeight,
+  Notation,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -69,7 +71,7 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship } =
+  const { tables, updateTable, relationships, addRelationship, addChildToSubtype, removeChildFromSubtype } =
     useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -101,6 +103,19 @@ export default function Canvas() {
     endX: 0,
     endY: 0,
   });
+
+  // Estado para conexiones de jerarquía
+  const [hierarchyLinking, setHierarchyLinking] = useState(false);
+  const [hierarchyLinkingLine, setHierarchyLinkingLine] = useState({
+    relationshipId: -1,
+    subtypePoint: { x: 0, y: 0 },
+    endTableId: -1,
+    startX: 0,
+    startY: 0,
+    endX: 0,
+    endY: 0,
+  });
+
   const [grabOffset, setGrabOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
     tableId: -1,
@@ -249,6 +264,12 @@ export default function Canvas() {
       const newWidth = Math.max(-(table.x - pointer.spaces.diagram.x), 180)
       updateTable(resizing.id, {
         width: newWidth
+      });
+    } else if (hierarchyLinking) {
+      setHierarchyLinkingLine({
+        ...hierarchyLinkingLine,
+        endX: pointer.spaces.diagram.x,
+        endY: pointer.spaces.diagram.y,
       });
     } else if (
       panning.isPanning &&
@@ -670,6 +691,10 @@ export default function Canvas() {
     pointer.setStyle("default");
     if (linking) handleLinking();
     setLinking(false);
+    if (hierarchyLinking) {
+      handleHierarchyLinking();
+    }
+    setHierarchyLinking(false);
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
       pushUndo({
         action: Action.EDIT,
@@ -825,6 +850,79 @@ export default function Canvas() {
     setLinking(false);
   };
 
+  // Function to handle clicks on the subtype point
+  const handleSubtypePointClick = (e, x, y, relationshipId) => {
+    // Don't allow subtype connections when notation is DEFAULT
+    if (settings.notation === Notation.DEFAULT) {
+      return;
+    }
+    e.stopPropagation();
+    setPanning((old) => ({ ...old, isPanning: false }));
+    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    const hierarchyLineStartPoint = { x: x, y: y - 20 };
+    setHierarchyLinkingLine({
+      relationshipId: relationshipId,
+      subtypePoint: hierarchyLineStartPoint,
+      endTableId: -1,
+      startX: hierarchyLineStartPoint.x,
+      startY: hierarchyLineStartPoint.y,
+      endX: hierarchyLineStartPoint.x,
+      endY: hierarchyLineStartPoint.y,
+    });
+    setHierarchyLinking(true);
+  };
+
+  const handleHierarchyLinking = () => {
+    // If no hovered table, try to find the table at the current mouse position
+    let targetTableId = hoveredTable.tableId;
+    if (targetTableId < 0) {
+      // Find table under cursor by checking coordinates
+      const mouseX = hierarchyLinkingLine.endX;
+      const mouseY = hierarchyLinkingLine.endY;
+      for (let table of tables) {
+        if (mouseX >= table.x &&
+            mouseX <= table.x + settings.tableWidth &&
+            mouseY >= table.y &&
+            mouseY <= table.y + (tableHeaderHeight + table.fields.length * tableFieldHeight + tableColorStripHeight)) {
+          targetTableId = table.id;
+          break;
+        }
+      }
+    }
+    if (targetTableId < 0) {
+      return;
+    }
+    // Find the original relationship
+    const originalRelationship = relationships.find(r => r.id === hierarchyLinkingLine.relationshipId);
+    if (!originalRelationship) {
+      setHierarchyLinking(false);
+      return;
+    }
+
+    // Check if this relationship is actually a subtype
+    if (!originalRelationship.subtype) {
+      setHierarchyLinking(false);
+      return;
+    }
+
+    // Verify that the table is not already included (as parent or child)
+    const existingChildren = originalRelationship.endTableIds ||
+      (originalRelationship.endTableId !== undefined && originalRelationship.endTableId !== null
+        ? [originalRelationship.endTableId]
+        : []);
+    const allRelatedTables = [originalRelationship.startTableId, ...existingChildren].filter(id => id !== undefined && id !== null);
+    if (allRelatedTables.includes(targetTableId)) {
+      setHierarchyLinking(false);
+      return;
+    }
+    // Add the new child table to the existing subtype relationship
+    addChildToSubtype(hierarchyLinkingLine.relationshipId, targetTableId);
+    setHierarchyLinking(false);
+    // Force a re-render to ensure UI updates properly
+    setTimeout(() => {
+    }, 100);
+  };
+
   // Handle mouse wheel scrolling
   useEventListener(
     "wheel",
@@ -939,8 +1037,33 @@ export default function Canvas() {
               setInitCoords={setInitCoords}
             />
           ))}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
+          {relationships
+            .filter((rel) => {
+              // For subtype relationships with single child, render normally
+              if (rel.subtype && rel.endTableId !== undefined && !rel.endTableIds) {
+                return true;
+              }
+              // For subtype relationships with multiple children, only render the parent relationship
+              // (it will handle rendering individual lines internally)
+              if (rel.subtype && rel.endTableIds && rel.endTableIds.length > 1) {
+                return true;
+              }
+              // For non-subtype relationships, render normally
+              if (!rel.subtype) {
+                return true;
+              }
+              // For subtype relationships with single child in array format, render normally
+              if (rel.subtype && rel.endTableIds && rel.endTableIds.length === 1) {
+                return true;
+              }
+              return true;
+            })
+            .map((e, i) => (
+            <Relationship
+              key={e.id || i}
+              data={e}
+              onConnectSubtypePoint={handleSubtypePointClick}
+            />
           ))}
           {tables.map((table) => {
             const isMoving =
@@ -979,6 +1102,15 @@ export default function Canvas() {
               d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
               stroke="red"
               strokeDasharray="8,8"
+              className="pointer-events-none touch-none"
+            />
+          )}
+          {hierarchyLinking && (
+            <path
+              d={`M ${hierarchyLinkingLine.startX} ${hierarchyLinkingLine.startY} L ${hierarchyLinkingLine.endX} ${hierarchyLinkingLine.endY}`}
+              stroke="skyblue"
+              strokeDasharray="8,8"
+              strokeWidth="3"
               className="pointer-events-none touch-none"
             />
           )}
