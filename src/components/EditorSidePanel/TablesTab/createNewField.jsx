@@ -1,4 +1,4 @@
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
+import { Action, ObjectType } from "../../../data/constants";
 
 export function createNewField({
   data,
@@ -16,13 +16,11 @@ export function createNewField({
       {
         action: Action.EDIT,
         element: ObjectType.TABLE,
-        component: "self",
+        component: "field_add",
         tid: tid,
-        undo: { color: data.color },
-        redo: { color: defaultBlue },
         message: t("edit_table", {
           tableName: data.name,
-          extra: "[color]",
+          extra: "[add field]",
         }),
       },
     ]);
