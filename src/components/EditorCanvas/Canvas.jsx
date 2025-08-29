@@ -7,6 +7,7 @@ import {
   ObjectType,
   gridSize,
   gridCircleRadius,
+  minAreaSize,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -375,6 +376,8 @@ export default function Canvas() {
           newDims.height = y - areaInitDimensions.y;
           break;
       }
+
+      if(newDims.width < minAreaSize || newDims.height < minAreaSize) return;
 
       updateArea(areaResize.id, { ...newDims });
       return;
