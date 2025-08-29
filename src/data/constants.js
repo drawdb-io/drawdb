@@ -23,6 +23,7 @@ export const gridCircleRadius = 0.85;
 export const tableFieldHeight = 36;
 export const tableColorStripHeight = 7;
 export const pngExportPixelRatio = 4;
+export const minAreaSize = 120;
 
 export const Cardinality = {
   ONE_TO_ONE: "one_to_one",
