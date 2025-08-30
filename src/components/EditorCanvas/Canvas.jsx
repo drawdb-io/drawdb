@@ -280,23 +280,22 @@ export default function Canvas() {
 
     if (!e.isPrimary) return;
 
-    
     if (panning.isPanning) {
       setTransform((prev) => ({
         ...prev,
         pan: {
           x:
-          panning.panStart.x +
-          (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
+            panning.panStart.x +
+            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
           y:
-          panning.panStart.y +
-          (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
+            panning.panStart.y +
+            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
       return;
     }
 
-    if(layout.readOnly) return;
+    if (layout.readOnly) return;
 
     if (linking) {
       setLinkingLine({
@@ -377,7 +376,21 @@ export default function Canvas() {
           break;
       }
 
-      if(newDims.width < minAreaSize || newDims.height < minAreaSize) return;
+      if (newDims.width <= minAreaSize) {
+        newDims.width = minAreaSize;
+        if (areaResize.dir === "tl" || areaResize.dir === "bl") {
+          newDims.x =
+            areaInitDimensions.x + areaInitDimensions.width - minAreaSize;
+        }
+      }
+
+      if (newDims.height <= minAreaSize) {
+        newDims.height = minAreaSize;
+        if (areaResize.dir === "tl" || areaResize.dir === "tr") {
+          newDims.y =
+            areaInitDimensions.y + areaInitDimensions.height - minAreaSize;
+        }
+      }
 
       updateArea(areaResize.id, { ...newDims });
       return;
