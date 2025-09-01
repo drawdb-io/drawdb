@@ -171,7 +171,6 @@ export default function Table(props) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
-
   const primaryKeyCount = tableData.fields.filter(field => field.primary).length;
 
   const sortedFields = [...tableData.fields].sort((a, b) => {
@@ -215,6 +214,20 @@ export default function Table(props) {
         height={height}
         className="group drop-shadow-lg  cursor-move"
         onPointerDown={onPointerDown}
+        onPointerEnter={(e) => {
+          if (!e.isPrimary) return;
+          setHoveredTable({
+            tableId: tableData.id,
+            field: -2,
+          });
+        }}
+        onPointerLeave={(e) => {
+          if (!e.isPrimary) return;
+          setHoveredTable({
+            tableId: -1,
+            field: -2,
+          });
+        }}
       >
         <div
           onDoubleClick={openEditor}

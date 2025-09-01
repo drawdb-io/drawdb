@@ -135,11 +135,34 @@ export const jsonSchema = {
           startFieldId: { type: "integer" },
           endTableId: { type: "integer" },
           endFieldId: { type: "integer" },
+          // For subtype relationships, support multiple child tables
+          endTableIds: { 
+            type: "array", 
+            items: { type: "integer" },
+            description: "Array of child table IDs for subtype relationships"
+          },
+          endFieldIds: { 
+            type: "array", 
+            items: { type: "integer" },
+            description: "Array of child field IDs corresponding to endTableIds"
+          },
           name: { type: "string" },
           cardinality: { type: "string" },
           updateConstraint: { type: "string" },
           deleteConstraint: { type: "string" },
           id: { type: "integer" },
+          isHierarchy: { type: "boolean" },
+          parentHierarchyId: { type: "integer" },
+          hierarchyStartPoint: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            }
+          },
+          subtype: { type: "boolean" },
+          subtype_restriction: { type: "integer" },
+          relationshipType: { type: "integer" },
         },
         required: [
           "startTableId",

@@ -326,7 +326,6 @@ export default function TableInfo({ data }) {
           >
             {t("add_index")}
           </Button>
-          
           <Button
             onClick={() => {
               setUndoStack((prev) => [
@@ -448,8 +447,7 @@ export default function TableInfo({ data }) {
             </Button>
 
             </div>
-              
-            <div className="flex items-center gap-5 mt-1">  
+            <div className="flex items-center gap-5 mt-1">
             <Button
                 icon={<IconDeleteStroked />}
                 iconPosition="Right"
