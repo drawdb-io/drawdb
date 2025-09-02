@@ -7,6 +7,7 @@ import {
   Table,
   Input,
 } from "@douyinfe/semi-ui";
+import { Toast } from '@douyinfe/semi-ui';
 import {
   IconDeleteStroked,
   IconLoopTextStroked,
@@ -294,10 +295,15 @@ export default function RelationshipInfo({ data }) {
       field.foreignKey &&
       field.foreignKey.tableId === data.startTableId
     );
-
     if (fkFields.length === 0) {
       console.warn("No FK fields found in child table", childTable.id, "referencing parent table", data.startTableId);
       return;
+    }
+
+    const fkIsToPk=fkFields[0].primary;
+    if(fkIsToPk){
+        Toast.info(t("Null_not_allowed"));
+        return;
     }
 
     const fkFieldIds = fkFields.map(field => field.id);

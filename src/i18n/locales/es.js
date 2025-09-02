@@ -244,6 +244,7 @@ const es = {
     delete_relationship: "Eliminar relación {{refName}}",
     not_found: "No encontrado",
     readme: "README",
+    Null_not_allowed:"No se permite una fk nula para relaciones identificativas"
   },
 };
 

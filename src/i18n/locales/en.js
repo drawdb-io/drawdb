@@ -279,6 +279,7 @@ const en = {
     docs: "Docs",
     supported_types: "Supported file types:",
     defaults: "Defaults",
+    Null_not_allowed:"Null value for fk is not allowed in identifying relations"
   },
 };
 
