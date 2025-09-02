@@ -140,10 +140,10 @@ export default function DefaultTypeSizes() {
           <div className="space-y-4">
             {precisionTypes.map(typeName => (
               <div key={`precision-${typeName}`} className="border-b pb-4 last:border-b-0">
-                <div className="mb-3 font-medium text-gray-700">{typeName}</div>
+                <div className="mb-3 font-medium ">{typeName}</div>
                 <Row gutter={16}>
                   <Col span={12}>
-                    <div className="mb-2 text-sm text-gray-600">{t("precision")}</div>
+                    <div className="mb-2 text-sm ">{t("precision")}</div>
                     <InputNumber
                       value={getDefaultPrecision(typeName)}
                       onChange={(value) => handlePrecisionChange(typeName, 'precision', value)}
@@ -154,7 +154,7 @@ export default function DefaultTypeSizes() {
                     />
                   </Col>
                   <Col span={12}>
-                    <div className="mb-2 text-sm text-gray-600">{t("default_scale")}</div>
+                    <div className="mb-2 text-sm ">{t("default_scale")}</div>
                     <InputNumber
                       value={getDefaultScale(typeName)}
                       onChange={(value) => handlePrecisionChange(typeName, 'scale', value)}
