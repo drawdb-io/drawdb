@@ -7,16 +7,41 @@ import FieldDetails from "./FieldDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { Toast } from "@douyinfe/semi-ui";
+import { createNewField } from "./createNewField";
 
 export default function TableField({ data, tid, index }) {
-  const { updateField } = useDiagram();
+  const { updateField, relationships } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
-  const { tables, database } = useDiagram();
+  const { tables, database, addFieldToTable } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const { settings } = useSettings()
+
+  // Function to check if the FK field belongs to a subtype relationship
+  const isSubtypeForeignKey = () => {
+    if (!data.foreignK || !data.foreignKey) return false;
+    // Search for subtype relationships where this table is a child table
+    return relationships.some(rel => {
+      // Check if it is a subtype relationship
+      if (!rel.subtype) return false;
+      // Check if this table is a child table in the subtype relationship
+      const isChildTable = rel.endTableId === tid ||
+        (rel.endTableIds && rel.endTableIds.includes(tid));
+      // Check if the FK points to the parent table of the subtype relationship
+      const pointsToParent = rel.startTableId === data.foreignKey.tableId;
+      return isChildTable && pointsToParent;
+    });
+  };
+
+  const inconsistencyOfData = () => {
+    if(!data.primary) return false;
+    return relationships.some(rel => {
+      const parentTable = rel.startTableId === tid;
+      return parentTable;
+    });
+  };
 
   return (
     <Row gutter={6} className="hover-1 my-2">
@@ -29,6 +54,30 @@ export default function TableField({ data, tid, index }) {
           onChange={(value) => updateField(tid, index, {
               name: settings.upperCaseFields ? value.toUpperCase() : value.toLowerCase()
           })}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+                //When pressing enter, focus the next input, if there is no next input, create a new field and focus it
+                const input = document.getElementById(`scroll_table_${tid}_input_${index+1}`);
+                if (input) input.focus();
+                else {
+                    createNewField({
+                        data,
+                        settings,
+                        database,
+                        dbToTypes,
+                        addFieldToTable,
+                        setUndoStack,
+                        setRedoStack,
+                        t,
+                        tid,
+                    });
+                    setTimeout(() => {
+                        const newInput = document.getElementById(`scroll_table_${tid}_input_${index+1}`);
+                        if (newInput) newInput.focus();
+                    }, 0);
+                }
+            }
+          }}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
@@ -178,6 +227,15 @@ export default function TableField({ data, tid, index }) {
           title={t("primary")}
           theme={data.primary ? "solid" : "light"}
           onClick={() => {
+            if(data.primary && inconsistencyOfData()){
+              Toast.info(t("inconsistency_of_data"));
+              return;
+            }
+            // Check if it is a subtype relationship FK that cannot stop being PK
+            if(data.primary && isSubtypeForeignKey()){
+              Toast.info(t("subtype_fk_must_be_pk"));
+              return;
+            }
             const newStatePK=!data.primary;
             const stateNull=newStatePK?true: !data.notNull;
             const mustSetNotNull = !data.primary && !data.notNull;

@@ -9,12 +9,13 @@ import {
 } from "@douyinfe/semi-ui";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useUndoRedo, useSettings } from "../../../hooks";
-import { Action, ObjectType, defaultBlue } from "../../../data/constants";
+import { Action, Notation, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { createNewField } from "./createNewField";
 
 import { useNavigate } from "react-router-dom";
 
@@ -231,8 +232,9 @@ export default function TableInfo({ data }) {
           </Collapse.Panel>
         </Collapse>
       </Card>
-      <div className="flex justify-between items-center gap-1 mb-2">
-        <div>
+      <div className="flex flex-col gap-1">
+      <div className="flex gap-1 w-full">  
+        {!(settings.notation === Notation.CROWS_FOOT || settings.notation === Notation.IDEF1X)? (
           <Popover
             content={
               <div className="popover-theme">
@@ -284,12 +286,13 @@ export default function TableInfo({ data }) {
             showArrow
           >
             <div
-              className="h-[32px] w-[32px] rounded"
+              className={"h-[32px] w-[1100px] rounded"}
               style={{ backgroundColor: data.color }}
             />
-          </Popover>
-        </div>
-        <div className="flex gap-1">
+          </Popover >
+        ):null}
+      
+        <div className="flex gap-1 flex grow">
           <Button
             block
             onClick={() => {
@@ -320,129 +323,55 @@ export default function TableInfo({ data }) {
                 ],
               });
             }}
+            className="flex-grow"
           >
             {t("add_index")}
           </Button>
           <Button
             onClick={() => {
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.EDIT,
-                  element: ObjectType.TABLE,
-                  component: "field_add",
-                  tid: data.id,
-                  message: t("edit_table", {
-                    tableName: data.name,
-                    extra: "[add field]",
-                  }),
-                },
-              ]);
-              setRedoStack([]);
-
-              const incr = data.increment && !!dbToTypes[database][settings.defaultFieldType].canIncrement;
-              // Function to get the default size configured by the user
-              const getUserDefaultSize = (typeName) => {
-                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
-                const userSize = dbSettings[typeName];
-                if (typeof userSize === 'number') {
-                  return userSize;
-                }
-                return dbToTypes[database][typeName]?.defaultSize || '';
-              };
-              // Function to get the combined size for types with precision and scale
-              const getUserDefaultPrecisionScale = (typeName) => {
-                const dbSettings = settings?.defaultTypeSizes?.[database] || {};
-                const userSettings = dbSettings[typeName];
-                if (typeof userSettings === 'object') {
-                  const precision = userSettings?.precision || 10;
-                  const scale = userSettings?.scale;
-                  // If it has a defined scale, combine as "precision,scale"
-                  if (scale !== undefined && scale !== null) {
-                    return `${precision},${scale}`;
-                  }
-                  // If it only has precision, return just the precision
-                  return precision.toString();
-                }
-                // Default value for types with precision
-                return "10";
-              };
-
-              // Base field data
-              const newFieldData = {
-                name: "",
-                type: settings.defaultFieldType,
-                default: "",
-                check: "",
-                primary: false,
-                unique: false,
-                notNull: settings.defaultNotNull,
-                increment: false,
-                comment: "",
-                foreignK: false,
-              };
-
-              // Field updates based on type
-              let fieldUpdates = {
-                increment: incr,
-              };
-
-              if (settings.defaultFieldType === "ENUM" || settings.defaultFieldType === "SET") {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  values: data.values ? [...data.values] : [],
-                };
-              } else if (dbToTypes[database][settings.defaultFieldType].hasPrecision) {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  size: getUserDefaultPrecisionScale(settings.defaultFieldType),
-                };
-              } else if (dbToTypes[database][settings.defaultFieldType].isSized) {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  size: getUserDefaultSize(settings.defaultFieldType),
-                };
-              } else if (!dbToTypes[database][settings.defaultFieldType].hasDefault || incr) {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  default: "",
-                  size: "",
-                  values: [],
-                };
-              } else if (dbToTypes[database][settings.defaultFieldType].hasCheck) {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  check: "",
-                };
-              } else {
-                fieldUpdates = {
-                  ...fieldUpdates,
-                  size: "",
-                  values: [],
-                };
-              }
-              // Use the new atomic function
-              addFieldToTable(data.id, newFieldData, fieldUpdates);
+                createNewField({
+                    data,
+                    settings,
+                    database,
+                    dbToTypes,
+                    addFieldToTable,
+                    setUndoStack,
+                    setRedoStack,
+                    t,
+                    tid: data.id,
+                });
             }}
             block
+            className="flex-grow"
           >
             {t("add_field")}
           </Button>
+        </div>
+      </div>
+            <div className="flex items-center gap-5 mt-1">
             <Button
-              title="Go to Board"
+            block
               onClick={() => {
                 if (data.x != null && data.y != null) {
                   navigate('/editor', { state: { focusPosition: { x: data.x, y: data.y } } });
                 }
               }}
-            >{t("Board")}
+              className="flex-grow"
+            >{t("board")}
             </Button>
-          <Button
-            icon={<IconDeleteStroked />}
-            type="danger"
-            onClick={() => deleteTable(data.id)}
-          />
-        </div>
+
+            </div>
+            <div className="flex items-center gap-5 mt-1">
+            <Button
+                icon={<IconDeleteStroked />}
+                iconPosition="Right"
+                type="danger"
+                onClick={() => deleteTable(data.id)}
+                className="flex-grow"
+            >
+                {t("delete_table_")}
+              </Button>
+          </div>
       </div>
     </div>
   );

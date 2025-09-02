@@ -6,6 +6,10 @@ import {
   Constraint,
   darkBgTheme,
   ObjectType,
+  tableHeaderHeight,
+  tableFieldHeight,
+  tableColorStripHeight,
+  Notation,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -67,13 +71,13 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship } =
+  const { tables, updateTable, relationships, addRelationship, addChildToSubtype} =
     useDiagram();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
   const { settings } = useSettings();
-  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { setRedoStack, pushUndo } = useUndoRedo();
 
   const { selectedElement, setSelectedElement } = useSelect();
   const [dragging, setDragging] = useState({
@@ -99,6 +103,19 @@ export default function Canvas() {
     endX: 0,
     endY: 0,
   });
+
+  // Estado para conexiones de jerarquía
+  const [hierarchyLinking, setHierarchyLinking] = useState(false);
+  const [hierarchyLinkingLine, setHierarchyLinkingLine] = useState({
+    relationshipId: -1,
+    subtypePoint: { x: 0, y: 0 },
+    endTableId: -1,
+    startX: 0,
+    startY: 0,
+    endX: 0,
+    endY: 0,
+  });
+
   const [grabOffset, setGrabOffset] = useState({ x: 0, y: 0 });
   const [hoveredTable, setHoveredTable] = useState({
     tableId: -1,
@@ -142,6 +159,10 @@ export default function Canvas() {
         x: table.x - pointer.spaces.diagram.x,
         y: table.y - pointer.spaces.diagram.y,
       });
+
+  // expose table as elementData so common logic below (multi-select handling)
+  // can use it the same way as AREA/NOTE branches do
+  elementData = table;
 
       let width = table.width || settings.tableWidth;
       if (table.x - pointer.spaces.diagram.x < - width + 15) {
@@ -243,6 +264,12 @@ export default function Canvas() {
       const newWidth = Math.max(-(table.x - pointer.spaces.diagram.x), 180)
       updateTable(resizing.id, {
         width: newWidth
+      });
+    } else if (hierarchyLinking) {
+      setHierarchyLinkingLine({
+        ...hierarchyLinkingLine,
+        endX: pointer.spaces.diagram.x,
+        endY: pointer.spaces.diagram.y,
       });
     } else if (
       panning.isPanning &&
@@ -381,14 +408,22 @@ export default function Canvas() {
     )
       return;
 
-    setPanning({
-      isPanning: true,
-      panStart: transform.pan,
-      // Diagram space depends on the current panning.
-      // Use screen space to avoid circular dependencies and undefined behavior.
-      cursorStart: pointer.spaces.screen,
-    });
-    pointer.setStyle("grabbing");
+    // Start panning only when the pointerdown happened on the diagram background
+    // (element with id="diagram"). This avoids starting a pan when clicking UI
+    // elements or tables and thus prevents recording spurious PAN undo entries.
+    if (e.target && e.target.id === "diagram") {
+      setPanning({
+        isPanning: true,
+        panStart: transform.pan,
+        // Diagram space depends on the current panning.
+        // Use screen space to avoid circular dependencies and undefined behavior.
+        cursorStart: pointer.spaces.screen,
+      });
+      pointer.setStyle("grabbing");
+    } else {
+      // Ensure panning flag is not set when clicking other elements
+      setPanning((prev) => ({ ...prev, isPanning: false }));
+    }
   };
 
   const coordsDidUpdate = (element) => {
@@ -532,13 +567,34 @@ export default function Canvas() {
 
     if (isAreaSelecting) {
       const areaBBox = selectionArea;
+      // Select tables that intersect the selection area (any part of table)
       const selectedTables = tables.filter((table) => {
-        return (
-          table.x >= areaBBox.x &&
-          table.x <= areaBBox.x + areaBBox.width &&
-          table.y >= areaBBox.y &&
-          table.y <= areaBBox.y + areaBBox.height
+        const tableX = table.x;
+        const tableY = table.y;
+        const tableWidth = table.width || settings.tableWidth;
+        const tableHeight = (table.fields?.length || 0) * tableFieldHeight + tableHeaderHeight + 7;
+
+        const tableRect = {
+          x: tableX,
+          y: tableY,
+          width: tableWidth,
+          height: tableHeight,
+        };
+
+        const areaRect = {
+          x: areaBBox.x,
+          y: areaBBox.y,
+          width: areaBBox.width,
+          height: areaBBox.height,
+        };
+
+        const intersects = !(
+          tableRect.x + tableRect.width < areaRect.x ||
+          tableRect.x > areaRect.x + areaRect.width ||
+          tableRect.y + tableRect.height < areaRect.y ||
+          tableRect.y > areaRect.y + areaRect.height
         );
+        return intersects;
       });
 
       if (selectedTables.length > 0) {
@@ -559,87 +615,70 @@ export default function Canvas() {
     }
 
     if (coordsDidUpdate(dragging.element)) {
-        const info = getMovedElementDetails();
-        setUndoStack((prev) => {
-          if (Array.isArray(dragging.id)) {
-              const existingIndex = prev.findIndex(
-                  (action) =>
-                      action.action === Action.MOVE &&
-                      action.element === dragging.element &&
-                      Array.isArray(action.id) &&
-                      action.id.length === dragging.id.length
-              );
-              const newAction = {
-                  action: Action.MOVE,
-                  element: dragging.element,
-                  // Start position of each object (captured when the drag starts)
-                  initialPositions: dragging.initialPositions,
-                  // Final positions of each object (captured when the drag ends)
-                  finalPositions: dragging.id.reduce((acc, id) => {
-                      const table = tables.find((t) => t.id === id);
-                      if (table) {
-                          acc[id] = { x: table.x, y: table.y };
-                      }
-                      return acc;
-                  }, {}),
-                  id: dragging.id,
-                  message: t("move_element", {
-                      coords: `(${info.x}, ${info.y})`,
-                      name: info.name,
-                  }),
-              };
-              if (existingIndex !== -1) {
-                  return [
-                      ...prev.slice(0, existingIndex),
-                      newAction,
-                      ...prev.slice(existingIndex + 1),
-                  ];
-              }
-              return [...prev, newAction];
-          }
-          const existingIndex = prev.findIndex(
-              (action) =>
-                  action.action === Action.MOVE &&
-                  action.element === dragging.element &&
-                  action.id === dragging.id
-          );
-          const newAction = {
-              action: Action.MOVE,
-              element: dragging.element,
-              from: { x: dragging.prevX, y: dragging.prevY },
-              to: { x: info.x, y: info.y },
-              id: dragging.id,
-              message: t("move_element", {
-                  coords: `(${info.x}, ${info.y})`,
-                  name: info.name,
-              }),
-          };
-          if (existingIndex !== -1) {
-              return [
-                  ...prev.slice(0, existingIndex),
-                  newAction,
-                  ...prev.slice(existingIndex + 1),
-              ];
-          }
-          return [...prev, newAction];
-      });
-      setRedoStack([]);
+    const info = getMovedElementDetails();
+    // Use pushUndo to ensure centralized filtering/deduplication
+    pushUndo((() => {
+  if (Array.isArray(dragging.id)) {
+
+        // Build arrays matching ControlPanel's expected shape: originalPositions/newPositions
+        const originalPositionsArray = (dragging.initialPositions && typeof dragging.initialPositions === 'object')
+        // Preserve the dragging.id ordering to match finalPositionsArray and ControlPanel expectations
+        ? dragging.id.map((id) => {
+          const pos = dragging.initialPositions[id];
+          return pos ? { id, x: pos.x, y: pos.y } : { id, x: 0, y: 0 };
+          })
+        : dragging.id.map((id) => {
+          const t = tables.find(tt => tt.id === id);
+          return t ? { id, x: t.x, y: t.y } : { id, x: 0, y: 0 };
+          });
+
+        const finalPositionsArray = dragging.id.map((id) => {
+          const table = tables.find((t) => t.id === id);
+          return table ? { id, x: table.x, y: table.y } : null;
+        }).filter(Boolean);
+
+        const newAction = {
+          action: Action.MOVE,
+          element: dragging.element,
+          // originalPositions = positions before the move
+          originalPositions: originalPositionsArray,
+          // newPositions = positions after the move
+          newPositions: finalPositionsArray,
+          id: dragging.id,
+          message: t("move_element", {
+            coords: `(${info.x}, ${info.y})`,
+            name: info.name,
+          }),
+        };
+        return newAction;
+      }
+      const newAction = {
+        action: Action.MOVE,
+        element: dragging.element,
+        from: { x: dragging.prevX, y: dragging.prevY },
+        to: { x: info.x, y: info.y },
+        id: dragging.id,
+        message: t("move_element", {
+          coords: `(${info.x}, ${info.y})`,
+          name: info.name,
+        }),
+      };
+      return newAction;
+    })());
+    setRedoStack([]);
     }
     setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     setResizing({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
     if (panning.isPanning && didPan()) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.PAN,
-          undo: { x: panning.x, y: panning.y },
-          redo: transform.pan,
-          message: t("move_element", {
-            coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
-            name: "diagram",
-          }),
-        },
-      ]);
+      pushUndo({
+        action: Action.PAN,
+        undo: { x: panning.x, y: panning.y },
+        redo: transform.pan,
+        message: t("move_element", {
+          coords: `(${transform?.pan.x}, ${transform?.pan.y})`,
+          name: "diagram",
+        }),
+      });
       setRedoStack([]);
       setSelectedElement((prev) => ({
         ...prev,
@@ -652,27 +691,28 @@ export default function Canvas() {
     pointer.setStyle("default");
     if (linking) handleLinking();
     setLinking(false);
+    if (hierarchyLinking) {
+      handleHierarchyLinking();
+    }
+    setHierarchyLinking(false);
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.EDIT,
-          element: ObjectType.AREA,
-          aid: areaResize.id,
-          undo: {
-            ...areas[areaResize.id],
-            x: initCoords.x,
-            y: initCoords.y,
-            width: initCoords.width,
-            height: initCoords.height,
-          },
-          redo: areas[areaResize.id],
-          message: t("edit_area", {
-            areaName: areas[areaResize.id].name,
-            extra: "[resize]",
-          }),
+      pushUndo({
+        action: Action.EDIT,
+        element: ObjectType.AREA,
+        aid: areaResize.id,
+        undo: {
+          ...areas[areaResize.id],
+          x: initCoords.x,
+          y: initCoords.y,
+          width: initCoords.width,
+          height: initCoords.height,
         },
-      ]);
+        redo: areas[areaResize.id],
+        message: t("edit_area", {
+          areaName: areas[areaResize.id].name,
+          extra: "[resize]",
+        }),
+      });
       setRedoStack([]);
     }
     setAreaResize({ id: -1, dir: "none" });
@@ -810,6 +850,79 @@ export default function Canvas() {
     setLinking(false);
   };
 
+  // Function to handle clicks on the subtype point
+  const handleSubtypePointClick = (e, x, y, relationshipId) => {
+    // Don't allow subtype connections when notation is DEFAULT
+    if (settings.notation === Notation.DEFAULT) {
+      return;
+    }
+    e.stopPropagation();
+    setPanning((old) => ({ ...old, isPanning: false }));
+    setDragging({ element: ObjectType.NONE, id: -1, prevX: 0, prevY: 0 });
+    const hierarchyLineStartPoint = { x: x, y: y - 20 };
+    setHierarchyLinkingLine({
+      relationshipId: relationshipId,
+      subtypePoint: hierarchyLineStartPoint,
+      endTableId: -1,
+      startX: hierarchyLineStartPoint.x,
+      startY: hierarchyLineStartPoint.y,
+      endX: hierarchyLineStartPoint.x,
+      endY: hierarchyLineStartPoint.y,
+    });
+    setHierarchyLinking(true);
+  };
+
+  const handleHierarchyLinking = () => {
+    // If no hovered table, try to find the table at the current mouse position
+    let targetTableId = hoveredTable.tableId;
+    if (targetTableId < 0) {
+      // Find table under cursor by checking coordinates
+      const mouseX = hierarchyLinkingLine.endX;
+      const mouseY = hierarchyLinkingLine.endY;
+      for (let table of tables) {
+        if (mouseX >= table.x &&
+            mouseX <= table.x + settings.tableWidth &&
+            mouseY >= table.y &&
+            mouseY <= table.y + (tableHeaderHeight + table.fields.length * tableFieldHeight + tableColorStripHeight)) {
+          targetTableId = table.id;
+          break;
+        }
+      }
+    }
+    if (targetTableId < 0) {
+      return;
+    }
+    // Find the original relationship
+    const originalRelationship = relationships.find(r => r.id === hierarchyLinkingLine.relationshipId);
+    if (!originalRelationship) {
+      setHierarchyLinking(false);
+      return;
+    }
+
+    // Check if this relationship is actually a subtype
+    if (!originalRelationship.subtype) {
+      setHierarchyLinking(false);
+      return;
+    }
+
+    // Verify that the table is not already included (as parent or child)
+    const existingChildren = originalRelationship.endTableIds ||
+      (originalRelationship.endTableId !== undefined && originalRelationship.endTableId !== null
+        ? [originalRelationship.endTableId]
+        : []);
+    const allRelatedTables = [originalRelationship.startTableId, ...existingChildren].filter(id => id !== undefined && id !== null);
+    if (allRelatedTables.includes(targetTableId)) {
+      setHierarchyLinking(false);
+      return;
+    }
+    // Add the new child table to the existing subtype relationship
+    addChildToSubtype(hierarchyLinkingLine.relationshipId, targetTableId);
+    setHierarchyLinking(false);
+    // Force a re-render to ensure UI updates properly
+    setTimeout(() => {
+    }, 100);
+  };
+
   // Handle mouse wheel scrolling
   useEventListener(
     "wheel",
@@ -924,8 +1037,33 @@ export default function Canvas() {
               setInitCoords={setInitCoords}
             />
           ))}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
+          {relationships
+            .filter((rel) => {
+              // For subtype relationships with single child, render normally
+              if (rel.subtype && rel.endTableId !== undefined && !rel.endTableIds) {
+                return true;
+              }
+              // For subtype relationships with multiple children, only render the parent relationship
+              // (it will handle rendering individual lines internally)
+              if (rel.subtype && rel.endTableIds && rel.endTableIds.length > 1) {
+                return true;
+              }
+              // For non-subtype relationships, render normally
+              if (!rel.subtype) {
+                return true;
+              }
+              // For subtype relationships with single child in array format, render normally
+              if (rel.subtype && rel.endTableIds && rel.endTableIds.length === 1) {
+                return true;
+              }
+              return true;
+            })
+            .map((e, i) => (
+            <Relationship
+              key={e.id || i}
+              data={e}
+              onConnectSubtypePoint={handleSubtypePointClick}
+            />
           ))}
           {tables.map((table) => {
             const isMoving =
@@ -964,6 +1102,15 @@ export default function Canvas() {
               d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
               stroke="red"
               strokeDasharray="8,8"
+              className="pointer-events-none touch-none"
+            />
+          )}
+          {hierarchyLinking && (
+            <path
+              d={`M ${hierarchyLinkingLine.startX} ${hierarchyLinkingLine.startY} L ${hierarchyLinkingLine.endX} ${hierarchyLinkingLine.endY}`}
+              stroke="skyblue"
+              strokeDasharray="8,8"
+              strokeWidth="3"
               className="pointer-events-none touch-none"
             />
           )}

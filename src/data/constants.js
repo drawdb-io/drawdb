@@ -32,6 +32,7 @@ export const tableColorStripHeight = 7;
 export const RelationshipType = {
   ONE_TO_ONE: "one_to_one",
   ONE_TO_MANY: "one_to_many",
+  SUBTYPE: "subtype",
 };
 
 export const RelationshipCardinalities = {
@@ -61,6 +62,13 @@ export const Constraint = {
   CASCADE: "Cascade",
   SET_NULL: "Set null",
   SET_DEFAULT: "Set default",
+};
+
+export const SubtypeRestriction = {
+  DISJOINT_TOTAL: "disjoint_total",
+  DISJOINT_PARTIAL: "disjoint_partial",
+  OVERLAPPING_TOTAL: "overlapping_total",
+  OVERLAPPING_PARTIAL: "overlapping_partial",
 };
 
 export const Tab = {
