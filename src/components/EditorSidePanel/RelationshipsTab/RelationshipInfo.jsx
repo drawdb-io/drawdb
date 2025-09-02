@@ -505,7 +505,7 @@ export default function RelationshipInfo({ data }) {
           <div className="font-semibold my-1">{t("subtype")} {t("tables")}:</div>
           <div className="space-y-2">
             {data.endTableIds.map((endTableId, index) => (
-              <div key={`${endTableId}-${index}`} className="flex items-center justify-between p-2 border rounded bg-gray-50">
+              <div key={`${endTableId}-${index}`} className="flex items-center justify-between p-2 border rounded ">
                 <span className="text-sm">
                   {tables[data.startTableId]?.name} → {tables[endTableId]?.name}
                 </span>
