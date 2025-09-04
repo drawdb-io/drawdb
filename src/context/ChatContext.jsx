@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+import { createContext, useContext, useState, useEffect } from 'react';
 import openAIService from '../services/openai';
 
 const ChatContext = createContext({});
@@ -13,7 +12,7 @@ export const useChat = () => {
 };
 
 export const ChatProvider = ({ children }) => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [apiKey, setApiKey] = useState('');

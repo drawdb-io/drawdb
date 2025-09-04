@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Modal,
   Typography,
@@ -7,7 +7,6 @@ import {
   Tag,
   Space,
   Divider,
-  Collapse,
   List,
 } from '@douyinfe/semi-ui';
 import { IconKeyStroked, IconGridView, IconLink } from '@douyinfe/semi-icons';
@@ -26,7 +25,7 @@ const PreviewModal = ({
   loading = false 
 }) => {
   const [selectedTables, setSelectedTables] = useState(new Set());
-  const [createLocation, setCreateLocation] = useState('canvas'); // 'canvas' or 'supabase' or 'both'
+  const [createLocation] = useState('canvas'); // 'canvas' or 'supabase' or 'both'
 
   const handleTableToggle = (tableId) => {
     const newSelected = new Set(selectedTables);

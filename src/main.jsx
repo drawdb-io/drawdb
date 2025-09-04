@@ -6,10 +6,10 @@ import App from "./App.jsx";
 import en_US from "@douyinfe/semi-ui/lib/es/locale/source/en_US";
 import "./index.css";
 import "./i18n/i18n.js";
-import { testConnection } from "./lib/supabase.js";
+// import { testConnection } from "./lib/supabase.js";
 
 // Test Supabase connection
-testConnection();
+// testConnection();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

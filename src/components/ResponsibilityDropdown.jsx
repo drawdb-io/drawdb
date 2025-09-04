@@ -1,4 +1,3 @@
-import React from 'react';
 import { Select } from '@douyinfe/semi-ui';
 import { responsibilityOptions } from '../data/constants';
 

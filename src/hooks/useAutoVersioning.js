@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useVersions } from './useVersions';
 import { useProjects } from '../context/ProjectsContext';
-import { useAuth } from '../context/AuthContext';
 
 // Configurações do versionamento automático
 const AUTO_VERSION_CONFIG = {
@@ -23,7 +22,7 @@ const AUTO_VERSION_CONFIG = {
 };
 
 export const useAutoVersioning = (projectId) => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const { currentProject } = useProjects();
   const { createVersion } = useVersions(projectId);
   

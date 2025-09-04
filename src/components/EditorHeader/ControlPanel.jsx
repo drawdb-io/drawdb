@@ -14,7 +14,6 @@ import {
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useProjects } from "../../context/ProjectsContext";
 import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
@@ -105,7 +104,7 @@ export default function ControlPanel({
   const [importFrom, setImportFrom] = useState(IMPORT_FROM.JSON);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { currentProject } = useProjects();
+  // const { currentProject } = useProjects();
   const { saveState, setSaveState } = useSaveState();
   const { layout, setLayout } = useLayout();
   const { settings, setSettings } = useSettings();

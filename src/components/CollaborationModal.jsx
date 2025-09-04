@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Modal,
   Typography,
@@ -171,9 +171,9 @@ const CollaborationModal = ({ visible, onCancel, project }) => {
     }
   };
 
-  const getRoleConfig = (papel) => {
-    return PAPEL_OPTIONS.find(opt => opt.value === papel) || PAPEL_OPTIONS[0];
-  };
+  // const getRoleConfig = (papel) => {
+  //   return PAPEL_OPTIONS.find(opt => opt.value === papel) || PAPEL_OPTIONS[0];
+  // };
 
   const getUserDisplayName = (usuario) => {
     return usuario?.user_metadata?.full_name || usuario?.email || 'Usuário';
@@ -248,7 +248,7 @@ const CollaborationModal = ({ visible, onCancel, project }) => {
           <List
             dataSource={colaboradores}
             renderItem={(colaborador) => {
-              const roleConfig = getRoleConfig(colaborador.papel);
+              // const roleConfig = getRoleConfig(colaborador.papel);
               const isOwner = colaborador.usuario?.id === user?.id;
               
               return (

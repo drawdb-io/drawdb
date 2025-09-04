@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { 
   Button, 
@@ -8,7 +8,7 @@ import {
   Spin, 
   Card,
   Space,
-  Divider 
+ 
 } from '@douyinfe/semi-ui';
 import { 
   IconSend, 
@@ -22,12 +22,10 @@ import {
 import { useChat } from '../../context/ChatContext';
 import { useDiagram } from '../../hooks';
 import PreviewModal from './PreviewModal';
-import { useTranslation } from 'react-i18next';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 const ChatPanel = () => {
-  const { t } = useTranslation();
   const {
     messages,
     isTyping,

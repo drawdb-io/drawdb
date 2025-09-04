@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Modal,
   Typography,
@@ -11,8 +11,6 @@ import {
   Toast,
   Popconfirm,
   Card,
-  Divider,
-  Input,
   Form
 } from '@douyinfe/semi-ui';
 import {
@@ -73,7 +71,7 @@ const VersionHistoryModal = ({ visible, onCancel, project }) => {
     try {
       setRestoring(true);
       
-      const result = await restoreVersion(versionId);
+      await restoreVersion(versionId);
       
       Toast.success(`Projeto restaurado para versão ${versionNumber}`);
       

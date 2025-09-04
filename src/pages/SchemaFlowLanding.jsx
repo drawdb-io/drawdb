@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Typography, Card, Avatar, Space, Collapse, Progress } from '@douyinfe/semi-ui';
-import { IconChevronDown, IconCheck } from '@douyinfe/semi-icons';
+import { Button, Typography, Card, Avatar, Space, Collapse } from '@douyinfe/semi-ui';
 
 const { Title, Paragraph } = Typography;
 
@@ -457,7 +456,7 @@ export default function SchemaFlowLanding() {
                     </div>
                   </Space>
                   <Paragraph style={{ color: '#374151', fontStyle: 'italic' }}>
-                    "{testimonial.text}"
+                    &ldquo;{testimonial.text}&rdquo;
                   </Paragraph>
                 </Space>
               </Card>
@@ -688,31 +687,7 @@ export default function SchemaFlowLanding() {
         </div>
       </div>
 
-      {/* CSS Animations */}
-      <style jsx>{`
-        @keyframes float {
-          0% { transform: rotate(15deg) translateX(0px) translateY(0px); }
-          25% { transform: rotate(15deg) translateX(20px) translateY(-10px); }
-          50% { transform: rotate(15deg) translateX(0px) translateY(-20px); }
-          75% { transform: rotate(15deg) translateX(-20px) translateY(-10px); }
-          100% { transform: rotate(15deg) translateX(0px) translateY(0px); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 2.5rem !important;
-          }
-          
-          .hero-subtitle {
-            font-size: 1.2rem !important;
-          }
-        }
-      `}</style>
+      {/* CSS Animations moved to index.css */}
     </div>
   );
 }

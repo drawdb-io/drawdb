@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Input, Form, Toast, Card, Typography } from '@douyinfe/semi-ui';
+import { Button, Form, Toast, Card, Typography } from '@douyinfe/semi-ui';
 import { IconMail, IconLock, IconUser } from '@douyinfe/semi-icons';
 import { useAuth } from '../context/AuthContext';
 
