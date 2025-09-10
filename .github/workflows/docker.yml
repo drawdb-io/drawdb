@@ -3,11 +3,12 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - '**'
+      - main
 
+# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: "docker-image"
-  cancel-in-progress: false
+  group: '${{ github.workflow }} @ ${{ github.event.issue.number || github.sha || github.head_ref || github.ref }}-${{ github.event.schedule || github.event.comment.id || github.event.sender.login }}'
+  cancel-in-progress: true
 
 jobs:
   docker:
