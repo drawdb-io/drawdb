@@ -94,6 +94,10 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 defaultValue = "NULL";
               } else if (d.default_val.value.type === "cast") {
                 defaultValue = d.default_val.value.expr.value;
+              } else if (d.default_val.value.type === "array") {
+                defaultValue = `ARRAY[${d.default_val.value.expr_list.value
+                  .map((v) => v.value ?? v.expr.value)
+                  .join(", ")}]`;
               } else {
                 defaultValue = d.default_val.value.value.toString();
               }
