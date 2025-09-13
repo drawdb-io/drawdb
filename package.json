@@ -19,7 +19,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.2.0",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "classnames": "^2.5.1",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
