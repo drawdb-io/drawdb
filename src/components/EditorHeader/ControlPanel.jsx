@@ -82,6 +82,7 @@ import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
+import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 
 export default function ControlPanel({
   diagramId,
@@ -126,7 +127,7 @@ export default function ControlPanel({
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
-  const { version, setGistId } = useContext(IdContext);
+  const { version, gistId, setGistId } = useContext(IdContext);
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -1444,13 +1445,19 @@ export default function ControlPanel({
       export_saved_data: {
         function: exportSavedData,
       },
+      clear_cache: {
+        function: () => {
+          deleteFromCache(gistId);
+          Toast.success(t("cache_cleared"));
+        },
+      },
       flush_storage: {
         warning: {
           title: t("flush_storage"),
           message: t("are_you_sure_flush_storage"),
         },
         function: async () => {
-          localStorage.removeItem("versions_cache");
+          localStorage.removeItem(STORAGE_KEY);
           db.delete()
             .then(() => {
               Toast.success(t("storage_flushed"));

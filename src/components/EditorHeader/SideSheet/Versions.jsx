@@ -23,22 +23,9 @@ import {
   useTypes,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
+import { loadCache, saveCache } from "../../../utils/cache";
 
 const LIMIT = 10;
-const STORAGE_KEY = "versions_cache";
-
-function loadCache() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveCache(cache) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
-}
 
 export default function Versions({ open, title, setTitle }) {
   const { gistId, setGistId, version, setVersion } = useContext(IdContext);
@@ -236,12 +223,6 @@ export default function Versions({ open, title, setTitle }) {
     }
   };
 
-  const onClearCache = () => {
-    delete cacheRef[gistId];
-    saveCache(cacheRef);
-    Toast.success(t("cache_cleared"));
-  };
-
   useEffect(() => {
     if (gistId && open) {
       getRevisions();
@@ -250,9 +231,8 @@ export default function Versions({ open, title, setTitle }) {
 
   return (
     <div className="mx-5 relative h-full">
-      <div className="sticky top-0 z-10 sidesheet-theme pb-2 grid grid-cols-3 gap-2">
+      <div className="sticky top-0 z-10 sidesheet-theme pb-2">
         <Button
-          className={cacheRef[gistId] ? "col-span-2" : "col-span-3"}
           block
           icon={isRecording ? <Spin /> : <IconPlus />}
           disabled={isLoading || isRecording}
@@ -260,12 +240,6 @@ export default function Versions({ open, title, setTitle }) {
         >
           {t("record_version")}
         </Button>
-
-        {cacheRef[gistId] && (
-          <Button block type="danger" onClick={onClearCache}>
-            {t("clear_cache")}
-          </Button>
-        )}
       </div>
 
       {(!gistId || !versions.length) && !isLoading && (
