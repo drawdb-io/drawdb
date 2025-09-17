@@ -9,7 +9,7 @@ function parseDefaultDbml(field, database) {
     return `\`${field.default}\``;
   }
 
-  if (isKeyword(field.default) || !dbToTypes[database][field.type].hasQuotes) {
+  if (isKeyword(field.default) || !dbToTypes[database][field.type]?.hasQuotes) {
     return field.default;
   }
 
