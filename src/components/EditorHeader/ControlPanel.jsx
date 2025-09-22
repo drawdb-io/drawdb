@@ -813,6 +813,7 @@ export default function ControlPanel({
               type: diagram.database,
               function: () => {
                 loadDiagram(diagram.id);
+                save();
               },
             })) || []),
         ],
