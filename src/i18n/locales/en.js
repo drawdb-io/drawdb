@@ -15,7 +15,7 @@ const en = {
     file: "File",
     new: "New",
     new_window: "New window",
-    open: "Open",
+    open: "Open Recent",
     save: "Save",
     save_as: "Save as",
     save_as_template: "Save as template",
