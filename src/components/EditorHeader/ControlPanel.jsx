@@ -1904,7 +1904,18 @@ export default function ControlPanel({
                                 key={item}
                                 position="rightTop"
                                 render={
-                                  <Dropdown.Menu>
+                                  <Dropdown.Menu
+                                    style={{
+                                      maxHeight:
+                                        item === "open" && diagrams?.length > 11
+                                          ? "400px"
+                                          : "auto",
+                                      overflowY:
+                                        item === "open" && diagrams?.length > 11
+                                          ? "auto"
+                                          : "visible",
+                                    }}
+                                  >
                                     {menu[category][item].children.map(
                                       (e, i) => {
                                         return (
