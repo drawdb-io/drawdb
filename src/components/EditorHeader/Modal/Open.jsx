@@ -28,7 +28,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
           bordered
           icon={null}
           closeIcon={null}
-          description={<div>You have no saved diagrams.</div>}
+          description={<div>{t("no_saved_diagrams")}</div>}
         />
       ) : (
         <div className="max-h-[360px]">
@@ -47,9 +47,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
                   <tr
                     key={d.id}
                     className={`${
-                      selectedDiagramId === d.id
-                        ? "bg-blue-300/30"
-                        : "hover-1"
+                      selectedDiagramId === d.id ? "bg-blue-300/30" : "hover-1"
                     }`}
                     onClick={() => {
                       setSelectedDiagramId(d.id);

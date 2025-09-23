@@ -15,6 +15,7 @@ const en = {
     file: "File",
     new: "New",
     new_window: "New window",
+    no_saved_diagrams: "You have no saved diagrams",
     open: "Open Recent",
     save: "Save",
     save_as: "Save as",

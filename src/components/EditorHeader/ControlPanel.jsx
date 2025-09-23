@@ -786,7 +786,19 @@ export default function ControlPanel({
         Toast.error(t("didnt_find_diagram"));
       });
   };
+  function formatRecentLabel(lastModified) {
+    const d = new Date(lastModified);
+    const today = new Date();
 
+    const isToday =
+      d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear();
+
+    return isToday
+      ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleDateString([], { month: "short", day: "numeric" });
+  }
   const menu = {
     file: {
       new: {
@@ -807,10 +819,7 @@ export default function ControlPanel({
                 )
                 .map((diagram) => ({
                   name: diagram.name,
-                  label: new Date(diagram.lastModified).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }),
+                  label: formatRecentLabel(diagram.lastModified),
                   type: diagram.database,
                   function: async () => {
                     await loadDiagram(diagram.id);
@@ -819,7 +828,7 @@ export default function ControlPanel({
                 }))
             : [
                 {
-                  name: "You have no saved diagrams.",
+                  name: t("no_saved_diagrams"),
                   disabled: true,
                 },
               ]),
