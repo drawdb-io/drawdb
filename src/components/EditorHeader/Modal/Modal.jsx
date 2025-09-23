@@ -5,7 +5,7 @@ import {
   Toast,
   Modal as SemiUIModal,
 } from "@douyinfe/semi-ui";
-import { DB, MODAL, STATUS } from "../../../data/constants";
+import { DB, MODAL, STATUS, State } from "../../../data/constants";
 import { useState } from "react";
 import { db } from "../../../data/db";
 import {
@@ -17,6 +17,7 @@ import {
   useTypes,
   useUndoRedo,
   useTasks,
+  useSaveState,
 } from "../../../hooks";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
@@ -67,6 +68,7 @@ export default function Modal({
   const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { saveState, setSaveState } = useSaveState();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [importSource, setImportSource] = useState({
     src: "",
@@ -127,6 +129,7 @@ export default function Modal({
             setEnums(diagram.enums ?? []);
           }
           window.name = `d ${diagram.id}`;
+          setSaveState(State.SAVING);
         } else {
           window.name = "";
           Toast.error(t("didnt_find_diagram"));
