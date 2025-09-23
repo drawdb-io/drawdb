@@ -800,23 +800,31 @@ export default function ControlPanel({
       },
       open: {
         children: [
-          ...(diagrams
-            ?.sort(
-              (a, b) => new Date(b.lastModified) - new Date(a.lastModified),
-            )
-            .map((diagram) => ({
-              name: diagram.name,
-              label: new Date(diagram.lastModified).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-              type: diagram.database,
-              function: () => {
-                loadDiagram(diagram.id);
-                save();
-              },
-            })) || []),
+          ...(diagrams && diagrams.length > 0
+            ? diagrams
+                .sort(
+                  (a, b) => new Date(b.lastModified) - new Date(a.lastModified),
+                )
+                .map((diagram) => ({
+                  name: diagram.name,
+                  label: new Date(diagram.lastModified).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                  type: diagram.database,
+                  function: async () => {
+                    await loadDiagram(diagram.id);
+                    save();
+                  },
+                }))
+            : [
+                {
+                  name: "You have no saved diagrams.",
+                  disabled: true,
+                },
+              ]),
         ],
+
         function: () => {},
         shortcut: "Ctrl+O",
       },
