@@ -85,7 +85,7 @@ import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
-
+import { DateTime } from "luxon";
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -741,7 +741,10 @@ export default function ControlPanel({
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = () => setSaveState(State.SAVING);
-  const diagrams = useLiveQuery(() => db.diagrams.toArray());
+  const diagrams = useLiveQuery(() =>
+    db.diagrams.orderBy("lastModified").reverse().limit(10).toArray(),
+  );
+
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
@@ -786,19 +789,6 @@ export default function ControlPanel({
         Toast.error(t("didnt_find_diagram"));
       });
   };
-  function formatRecentLabel(lastModified) {
-    const d = new Date(lastModified);
-    const today = new Date();
-
-    const isToday =
-      d.getDate() === today.getDate() &&
-      d.getMonth() === today.getMonth() &&
-      d.getFullYear() === today.getFullYear();
-
-    return isToday
-      ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      : d.toLocaleDateString([], { month: "short", day: "numeric" });
-  }
   const menu = {
     file: {
       new: {
@@ -811,21 +801,30 @@ export default function ControlPanel({
         },
       },
       open: {
+        function: open,
+        shortcut: "Ctrl+O",
+      },
+      open_recent: {
         children: [
           ...(diagrams && diagrams.length > 0
-            ? diagrams
-                .sort(
-                  (a, b) => new Date(b.lastModified) - new Date(a.lastModified),
-                )
-                .map((diagram) => ({
+            ? [
+                ...diagrams.map((diagram) => ({
                   name: diagram.name,
-                  label: formatRecentLabel(diagram.lastModified),
+                  label: DateTime.fromJSDate(
+                    new Date(diagram.lastModified),
+                  ).toRelative(),
                   type: diagram.database,
                   function: async () => {
                     await loadDiagram(diagram.id);
                     save();
                   },
-                }))
+                })),
+                { divider: true },
+                {
+                  name: "See all",
+                  function: () => open(),
+                },
+              ]
             : [
                 {
                   name: t("no_saved_diagrams"),
@@ -835,7 +834,6 @@ export default function ControlPanel({
         ],
 
         function: () => {},
-        shortcut: "Ctrl+O",
       },
       save: {
         function: save,
@@ -1916,25 +1914,22 @@ export default function ControlPanel({
                             return (
                               <Dropdown
                                 style={{
-                                  width: item === "open" ? "250px" : "150px",
+                                  width:
+                                    item === "open_recent" ? "250px" : "150px",
                                 }}
                                 key={item}
                                 position="rightTop"
                                 render={
-                                  <Dropdown.Menu
-                                    style={{
-                                      maxHeight:
-                                        item === "open" && diagrams?.length > 11
-                                          ? "400px"
-                                          : "auto",
-                                      overflowY:
-                                        item === "open" && diagrams?.length > 11
-                                          ? "auto"
-                                          : "visible",
-                                    }}
-                                  >
+                                  <Dropdown.Menu>
                                     {menu[category][item].children.map(
                                       (e, i) => {
+                                        if (e.divider) {
+                                          return (
+                                            <Dropdown.Divider
+                                              key={`divider-${i}`}
+                                            />
+                                          );
+                                        }
                                         return (
                                           <Dropdown.Item
                                             key={i}

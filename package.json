@@ -33,7 +33,7 @@
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
     "lodash": "^4.17.21",
-    "luxon": "^3.7.1",
+    "luxon": "^3.7.2",
     "nanoid": "^5.1.5",
     "node-sql-parser": "^5.3.12",
     "oracle-sql-parser": "^0.1.0",
