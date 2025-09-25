@@ -72,7 +72,7 @@
   width: 100% !important;
 }
 
-.semi-spin-wrapper  {
+.semi-spin-wrapper {
   color: inherit;
 }
 
@@ -208,4 +208,26 @@
   100% {
     opacity: 0;
   }
+}
+
+@keyframes dash-right {
+  100% {
+    stroke-dashoffset: -20;
+  }
+}
+
+.relationship-path {
+  stroke: grey;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: butt;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+  pointer-events: stroke;
+}
+
+.group:hover .relationship-path {
+  stroke: #0084d1;
+  stroke-width: 2;
+  stroke-dasharray: 12 8;
+  animation: dash-right 1s linear infinite;
 }
