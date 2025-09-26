@@ -741,7 +741,7 @@ export default function ControlPanel({
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = () => setSaveState(State.SAVING);
-  const diagrams = useLiveQuery(() =>
+  const recentlyOpenedDiagrams = useLiveQuery(() =>
     db.diagrams.orderBy("lastModified").reverse().limit(10).toArray(),
   );
 
@@ -806,14 +806,13 @@ export default function ControlPanel({
       },
       open_recent: {
         children: [
-          ...(diagrams && diagrams.length > 0
+          ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
             ? [
-                ...diagrams.map((diagram) => ({
+                ...recentlyOpenedDiagrams.map((diagram) => ({
                   name: diagram.name,
                   label: DateTime.fromJSDate(
                     new Date(diagram.lastModified),
                   ).toRelative(),
-                  type: diagram.database,
                   function: async () => {
                     await loadDiagram(diagram.id);
                     save();
@@ -821,7 +820,7 @@ export default function ControlPanel({
                 })),
                 { divider: true },
                 {
-                  name: "See all",
+                  name: t("see_all"),
                   function: () => open(),
                 },
               ]
