@@ -1935,7 +1935,7 @@ export default function ControlPanel({
                                           <Dropdown.Item
                                             key={i}
                                             onClick={e.function}
-                                            className="flex justify-between"
+                                            className="flex w-full items-center justify-between gap-1"
                                             disabled={e.disabled}
                                           >
                                             <span>{e.name}</span>
