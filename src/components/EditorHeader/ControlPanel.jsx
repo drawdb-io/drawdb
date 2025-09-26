@@ -1945,7 +1945,8 @@ export default function ControlPanel({
                                               <Tag
                                                 size="small"
                                                 className="flex-shrink-0"
-                                              >
+className="flex-shrink-0"
+>
                                                 {e.label}
                                               </Tag>
                                             )}
