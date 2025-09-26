@@ -810,7 +810,9 @@ export default function ControlPanel({
             ? [
                 ...recentlyOpenedDiagrams.map((diagram) => ({
                   name: diagram.name,
-                  label: DateTime.fromJSDate(
+                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                    .setLocale(i18n.language)
+                    .toRelative(),
                     new Date(diagram.lastModified),
                   ).toRelative(),
                   function: async () => {
