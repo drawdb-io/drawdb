@@ -813,8 +813,6 @@ export default function ControlPanel({
                   label: DateTime.fromJSDate(new Date(diagram.lastModified))
                     .setLocale(i18n.language)
                     .toRelative(),
-                    new Date(diagram.lastModified),
-                  ).toRelative(),
                   function: async () => {
                     await loadDiagram(diagram.id);
                     save();
@@ -1914,10 +1912,7 @@ export default function ControlPanel({
                           if (menu[category][item].children) {
                             return (
                               <Dropdown
-                                style={{
                                 className="min-w-36 max-w-72"
-                                    item === "open_recent" ? "250px" : "150px",
-                                }}
                                 key={item}
                                 position="rightTop"
                                 render={
@@ -1945,8 +1940,7 @@ export default function ControlPanel({
                                               <Tag
                                                 size="small"
                                                 className="flex-shrink-0"
-className="flex-shrink-0"
->
+                                              >
                                                 {e.label}
                                               </Tag>
                                             )}
