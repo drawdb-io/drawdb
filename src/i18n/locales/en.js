@@ -15,7 +15,9 @@ const en = {
     file: "File",
     new: "New",
     new_window: "New window",
+    no_saved_diagrams: "You have no saved diagrams",
     open: "Open",
+    open_recent: "Open Recent",
     save: "Save",
     save_as: "Save as",
     save_as_template: "Save as template",
@@ -276,6 +278,7 @@ const en = {
     cache_cleared: "Cache cleared",
     failed_to_record_version: "Failed to record version",
     failed_to_load_diagram: "Failed to load diagram",
+    see_all: "See all",
   },
 };
 

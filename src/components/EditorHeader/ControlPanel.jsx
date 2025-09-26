@@ -63,6 +63,7 @@ import {
   useAreas,
   useEnums,
   useFullscreen,
+  useTasks,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -83,7 +84,8 @@ import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
-
+import { useLiveQuery } from "dexie-react-hooks";
+import { DateTime } from "luxon";
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -118,6 +120,7 @@ export default function ControlPanel({
     deleteRelationship,
     updateRelationship,
     database,
+    setDatabase,
   } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
@@ -738,10 +741,54 @@ export default function ControlPanel({
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = () => setSaveState(State.SAVING);
+  const recentlyOpenedDiagrams = useLiveQuery(() =>
+    db.diagrams.orderBy("lastModified").reverse().limit(10).toArray(),
+  );
+
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-
+  const { setTasks } = useTasks();
+  const loadDiagram = async (id) => {
+    await db.diagrams
+      .get(id)
+      .then((diagram) => {
+        if (diagram) {
+          if (diagram.database) {
+            setDatabase(diagram.database);
+          } else {
+            setDatabase(DB.GENERIC);
+          }
+          setDiagramId(diagram.id);
+          setTitle(diagram.name);
+          setTables(diagram.tables);
+          setRelationships(diagram.references);
+          setAreas(diagram.areas);
+          setNotes(diagram.notes);
+          setTasks(diagram.todos ?? []);
+          setTransform({
+            pan: diagram.pan,
+            zoom: diagram.zoom,
+          });
+          setUndoStack([]);
+          setRedoStack([]);
+          if (databases[database].hasTypes) {
+            setTypes(diagram.types ?? []);
+          }
+          if (databases[database].hasEnums) {
+            setEnums(diagram.enums ?? []);
+          }
+          window.name = `d ${diagram.id}`;
+        } else {
+          window.name = "";
+          Toast.error(t("didnt_find_diagram"));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        Toast.error(t("didnt_find_diagram"));
+      });
+  };
   const menu = {
     file: {
       new: {
@@ -756,6 +803,36 @@ export default function ControlPanel({
       open: {
         function: open,
         shortcut: "Ctrl+O",
+      },
+      open_recent: {
+        children: [
+          ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
+            ? [
+                ...recentlyOpenedDiagrams.map((diagram) => ({
+                  name: diagram.name,
+                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                    .setLocale(i18n.language)
+                    .toRelative(),
+                  function: async () => {
+                    await loadDiagram(diagram.id);
+                    save();
+                  },
+                })),
+                { divider: true },
+                {
+                  name: t("see_all"),
+                  function: () => open(),
+                },
+              ]
+            : [
+                {
+                  name: t("no_saved_diagrams"),
+                  disabled: true,
+                },
+              ]),
+        ],
+
+        function: () => {},
       },
       save: {
         function: save,
@@ -1835,30 +1912,41 @@ export default function ControlPanel({
                           if (menu[category][item].children) {
                             return (
                               <Dropdown
-                                style={{ width: "150px" }}
+                                className="min-w-36 max-w-72"
                                 key={item}
                                 position="rightTop"
                                 render={
                                   <Dropdown.Menu>
                                     {menu[category][item].children.map(
-                                      (e, i) => (
-                                        <Dropdown.Item
-                                          key={i}
-                                          onClick={e.function}
-                                          className="flex justify-between"
-                                          disabled={e.disabled}
-                                        >
-                                          <span>{e.name}</span>
-                                          {e.label && (
-                                            <Tag
-                                              size="small"
-                                              color="light-blue"
-                                            >
-                                              {e.label}
-                                            </Tag>
-                                          )}
-                                        </Dropdown.Item>
-                                      ),
+                                      (e, i) => {
+                                        if (e.divider) {
+                                          return (
+                                            <Dropdown.Divider
+                                              key={`divider-${i}`}
+                                            />
+                                          );
+                                        }
+                                        return (
+                                          <Dropdown.Item
+                                            key={i}
+                                            onClick={e.function}
+                                            className="flex w-full items-center justify-between gap-1"
+                                            disabled={e.disabled}
+                                          >
+                                            <span className="truncate flex-1 min-w-0">
+                                              {e.name}
+                                            </span>
+                                            {e.label && (
+                                              <Tag
+                                                size="small"
+                                                className="flex-shrink-0"
+                                              >
+                                                {e.label}
+                                              </Tag>
+                                            )}
+                                          </Dropdown.Item>
+                                        );
+                                      },
                                     )}
                                   </Dropdown.Menu>
                                 }
