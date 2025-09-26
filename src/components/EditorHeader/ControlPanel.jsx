@@ -1938,7 +1938,9 @@ export default function ControlPanel({
                                             className="flex w-full items-center justify-between gap-1"
                                             disabled={e.disabled}
                                           >
-                                            <span>{e.name}</span>
+                                            <span className="truncate flex-1 min-w-0">
+                                              {e.name}
+                                            </span>
                                             {e.label && (
                                               <Tag
                                                 size="small"
