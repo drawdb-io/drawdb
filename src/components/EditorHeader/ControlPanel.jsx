@@ -1915,7 +1915,7 @@ export default function ControlPanel({
                             return (
                               <Dropdown
                                 style={{
-                                  width:
+                                className="min-w-36 max-w-72"
                                     item === "open_recent" ? "250px" : "150px",
                                 }}
                                 key={item}
