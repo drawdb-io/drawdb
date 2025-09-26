@@ -1959,21 +1959,13 @@ export default function ControlPanel({
                                   }}
                                   onClick={menu[category][item].function}
                                 >
-                                  <div className="flex items-center justify-between w-full">
-                                    <span>{t(item)}</span>
-                                    <div className="flex items-center gap-1">
-                                      {menu[category][item].shortcut && (
-                                        <span className="text-gray-400 text-xs">
-                                          {menu[category][item].shortcut}
-                                        </span>
-                                      )}
-                                      {isRtl(i18n.language) ? (
-                                        <IconChevronLeft />
-                                      ) : (
-                                        <IconChevronRight />
-                                      )}
-                                    </div>
-                                  </div>
+                                  {t(item)}
+
+                                  {isRtl(i18n.language) ? (
+                                    <IconChevronLeft />
+                                  ) : (
+                                    <IconChevronRight />
+                                  )}
                                 </Dropdown.Item>
                               </Dropdown>
                             );
