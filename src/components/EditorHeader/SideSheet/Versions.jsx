@@ -24,6 +24,7 @@ import {
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { loadCache, saveCache } from "../../../utils/cache";
+import Migration from "./Migration";
 
 const LIMIT = 10;
 
@@ -44,6 +45,7 @@ export default function Versions({ open, title, setTitle }) {
   const [cursor, setCursor] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [loadingVersion, setLoadingVersion] = useState(null);
+  const [selectedVersion, setSelectedVersion] = useState(null);
 
   const cacheRef = useMemo(() => loadCache(), []);
 
@@ -223,6 +225,16 @@ export default function Versions({ open, title, setTitle }) {
     }
   };
 
+  const getVersionToCompareTo = useCallback(() => {
+    if (!selectedVersion) return null;
+    const currentIndex = versions.findIndex(
+      (v) => v.version === selectedVersion,
+    );
+    if (currentIndex === -1 || currentIndex === versions.length - 1)
+      return null;
+    return versions[currentIndex + 1].version;
+  }, [selectedVersion, versions]);
+
   useEffect(() => {
     if (gistId && open) {
       getRevisions();
@@ -246,19 +258,28 @@ export default function Versions({ open, title, setTitle }) {
         <div className="my-3">{t("no_saved_versions")}</div>
       )}
       {gistId && (
-        <div className="my-3 overflow-y-auto">
+        <div className="my-2 overflow-y-auto">
           <Steps direction="vertical" type="basic" current={currentStep}>
             {versions.map((r) => (
               <Steps.Step
                 key={r.version}
                 onClick={() => loadVersion(r.version)}
-                className="group"
+                className="group hover-1 first:!pt-2"
                 title={
                   <div className="flex justify-between items-center w-full">
                     <Tag>{r.version.substring(0, 7)}</Tag>
-                    <span className="text-xs hidden group-hover:inline-block">
-                      {t("click_to_view")}
-                    </span>
+
+                    <Button
+                      size="small"
+                      theme="borderless"
+                      className="!text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedVersion(r.version);
+                      }}
+                    >
+                      {t("generate_migration")}
+                    </Button>
                   </div>
                 }
                 description={`${t("commited_at")} ${DateTime.fromISO(
@@ -289,6 +310,13 @@ export default function Versions({ open, title, setTitle }) {
           <Button onClick={() => getRevisions(cursor)}>{t("load_more")}</Button>
         </div>
       )}
+
+      <Migration
+        gistId={gistId}
+        selectedVersion={selectedVersion}
+        versionToCompareTo={getVersionToCompareTo()}
+        setSelectedVersion={setSelectedVersion}
+      />
     </div>
   );
 }
