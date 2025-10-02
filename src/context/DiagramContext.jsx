@@ -25,43 +25,33 @@ export default function DiagramContextProvider({ children }) {
         return temp;
       });
     } else {
-      setTables((prev) => {
-        // Find a unique name for the new table
-        let index = prev.length;
-        let newName = `table_${index}`;
-        const existingNames = prev.map((table) => table.name);
-        while (existingNames.includes(newName)) {
-          index++;
-          newName = `table_${index}`;
-        }
-        return [
-          ...prev,
-          {
-            id,
-            name: newName,
-            x: transform.pan.x,
-            y: transform.pan.y,
-            locked: false,
-            fields: [
-              {
-                name: "id",
-                type: database === DB.GENERIC ? "INT" : "INTEGER",
-                default: "",
-                check: "",
-                primary: true,
-                unique: true,
-                notNull: true,
-                increment: true,
-                comment: "",
-                id: nanoid(),
-              },
-            ],
-            comment: "",
-            indices: [],
-            color: defaultBlue,
-          },
-        ];
-      });
+      setTables((prev) => [
+        ...prev,
+        {
+          id,
+          name: `table_${id}`,
+          x: transform.pan.x,
+          y: transform.pan.y,
+          locked: false,
+          fields: [
+            {
+              name: "id",
+              type: database === DB.GENERIC ? "INT" : "INTEGER",
+              default: "",
+              check: "",
+              primary: true,
+              unique: true,
+              notNull: true,
+              increment: true,
+              comment: "",
+              id: nanoid(),
+            },
+          ],
+          comment: "",
+          indices: [],
+          color: defaultBlue,
+        },
+      ]);
     }
     if (addToHistory) {
       setUndoStack((prev) => [
