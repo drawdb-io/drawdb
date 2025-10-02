@@ -25,13 +25,20 @@ export default function DiagramContextProvider({ children }) {
         return temp;
       });
     } else {
+      let newPosition = { x: transform.pan.x , y: transform.pan.y  };
+      if (tables.length > 0) {
+        const lastTable = tables[tables.length - 1];
+        if (lastTable) {
+        newPosition = { x: lastTable.x + 20, y: lastTable.y + 20 };
+        }
+      }
       setTables((prev) => [
         ...prev,
         {
           id,
           name: `table_${prev.length}`,
-          x: transform.pan.x,
-          y: transform.pan.y,
+          x: newPosition.x,
+          y: newPosition.y,
           locked: false,
           fields: [
             {
