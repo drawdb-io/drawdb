@@ -40,6 +40,7 @@ import { ne, nepali } from "./locales/ne";
 import { ug, uyghur } from "./locales/ug";
 import { pa_pk, punjabipk } from "./locales/pa-pk";
 import { cz, czech } from "./locales/cz";
+import { nl, dutch } from './locales/nl';
 
 export const languages = [
   english,
@@ -81,6 +82,7 @@ export const languages = [
   uyghur,
   punjabipk,
   czech,
+  dutch
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -132,6 +134,7 @@ i18n
       ug,
       "pa-PK": pa_pk,
       cz,
+      nl,
     },
   });
 
