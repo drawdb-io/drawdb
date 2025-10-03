@@ -40,6 +40,10 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
+import { 
+  preprocessPostgreSQLForQuotedTypes, 
+  postProcessPostgreSQLTypes 
+} from "../../../utils/importSQL/postgresqlPreprocessor";
 
 const extensionToLanguage = {
   md: "markdown",
@@ -145,15 +149,25 @@ export default function Modal({
     const targetDatabase = database === DB.GENERIC ? importDb : database;
 
     let ast = null;
+    let typeReplacements = null;
+    let preprocessedSql = importSource.src;
+    
+    // Preprocess PostgreSQL to handle quoted custom types
+    if (targetDatabase === DB.POSTGRES) {
+      const result = preprocessPostgreSQLForQuotedTypes(importSource.src);
+      preprocessedSql = result.sql;
+      typeReplacements = result.typeReplacements;
+    }
+
     try {
       if (targetDatabase === DB.ORACLESQL) {
         const oracleParser = new OracleParser();
 
-        ast = oracleParser.parse(importSource.src);
+        ast = oracleParser.parse(preprocessedSql);
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        ast = parser.astify(preprocessedSql, {
           database: targetDatabase,
         });
       }
@@ -167,11 +181,16 @@ export default function Modal({
     }
 
     try {
-      const diagramData = importSQL(
+      let diagramData = importSQL(
         ast,
         database === DB.GENERIC ? importDb : database,
         database,
       );
+
+      // Post-process PostgreSQL to restore original type names
+      if (targetDatabase === DB.POSTGRES && typeReplacements) {
+        diagramData = postProcessPostgreSQLTypes(diagramData, typeReplacements);
+      }
 
       if (importSource.overwrite) {
         setTables(diagramData.tables);

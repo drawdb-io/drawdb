@@ -1,0 +1,11 @@
+{
+  "name": "drawdb-tests",
+  "version": "1.0.0",
+  "description": "Test suite for DrawDB PostgreSQL quoted types fix",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run-all-tests.js",
+    "test:postgresql": "node tests/importSQL/postgresqlPreprocessor.test.js"
+  },
+  "keywords": ["test", "postgresql", "sql", "import"]
+}
