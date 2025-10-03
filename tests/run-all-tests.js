@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-env node */
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 
 /**
  * DrawDB Test Suite Runner
@@ -15,7 +17,7 @@
  *   1 - Some tests failed
  */
 
-import { readFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -166,8 +168,8 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.log(`${colors.red}${colors.bright}💥 UNHANDLED REJECTION: ${reason}${colors.reset}`);
+process.on('unhandledRejection', (_reason, _promise) => {
+  console.log(`${colors.red}${colors.bright}💥 UNHANDLED REJECTION: ${_reason}${colors.reset}`);
   process.exit(1);
 });
 

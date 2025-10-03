@@ -102,15 +102,12 @@ function runTests() {
     { name: 'Post-processor functionality', fn: testPostProcessor }
   ];
   
-  let passed = 0;
   let failed = 0;
   
   tests.forEach(test => {
     try {
       const result = test.fn();
-      if (result) {
-        passed++;
-      } else {
+      if (!result) {
         failed++;
       }
     } catch (error) {
