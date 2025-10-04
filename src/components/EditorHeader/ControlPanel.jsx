@@ -81,6 +81,7 @@ import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
+import { optimizeSvg } from "../../utils/optimizeSvg";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -1131,12 +1132,31 @@ export default function ControlPanel({
           {
             name: "SVG",
             function: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+              const filter = (node) => {
+                // Filter out icon elements and other unnecessary nodes
+                if (node.tagName === "i") return false;
+                if (node.classList && node.classList.contains("semi-icon")) return false;
+                return true;
+              };
+              
+              const options = {
+                filter: filter,
+                backgroundColor: settings.mode === "dark" ? "#16161A" : "#ffffff",
+                // Optimize for smaller file size and better compatibility
+                skipFonts: true,
+                preferredFontFormat: "woff2",
+                // Ensure proper dimensions
+                width: document.getElementById("canvas").scrollWidth,
+                height: document.getElementById("canvas").scrollHeight,
+              };
+              
+              toSvg(document.getElementById("canvas"), options).then(
                 function (dataUrl) {
+                  // Optimize SVG for better compatibility and smaller size
+                  const optimizedSvg = optimizeSvg(dataUrl);
                   setExportData((prev) => ({
                     ...prev,
-                    data: dataUrl,
+                    data: optimizedSvg,
                     extension: "svg",
                   }));
                 },
