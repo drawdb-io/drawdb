@@ -42,6 +42,7 @@ import { pa_pk, punjabipk } from "./locales/pa-pk";
 import { cz, czech } from "./locales/cz";
 import { ml, malayalam } from "./locales/ml";
 import { nl, dutch } from './locales/nl';
+import { sd, sindhi } from './locales/sd';
 
 export const languages = [
   english,
@@ -84,7 +85,8 @@ export const languages = [
   punjabipk,
   czech,
   malayalam,
-  dutch
+  dutch,
+  sindhi,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -138,6 +140,7 @@ i18n
       cz,
       ml,
       nl,
+      sd,
     },
   });
 
