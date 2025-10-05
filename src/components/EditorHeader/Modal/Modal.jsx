@@ -40,6 +40,7 @@ import { useTranslation } from "react-i18next";
 import { importSQL } from "../../../utils/importSQL";
 import { databases } from "../../../data/databases";
 import { isRtl } from "../../../i18n/utils/rtl";
+import { parseSQL } from "../../../utils/ddlParser";
 
 const extensionToLanguage = {
   md: "markdown",
@@ -143,13 +144,16 @@ export default function Modal({
 
   const parseSQLAndLoadDiagram = () => {
     const targetDatabase = database === DB.GENERIC ? importDb : database;
-
+    console.log(targetDatabase);
+    
     let ast = null;
     try {
       if (targetDatabase === DB.ORACLESQL) {
         const oracleParser = new OracleParser();
 
         ast = oracleParser.parse(importSource.src);
+      }else if(targetDatabase === DB.POSTGRES){
+        ast = parseSQL(importSource.src).toAst(targetDatabase);
       } else {
         const parser = new Parser();
 
@@ -172,7 +176,8 @@ export default function Modal({
         database === DB.GENERIC ? importDb : database,
         database,
       );
-
+      console.log(diagramData);
+      
       if (importSource.overwrite) {
         setTables(diagramData.tables);
         setRelationships(diagramData.relationships);
