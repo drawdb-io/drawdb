@@ -132,11 +132,11 @@ class Parser {
         if (what === 'TABLE') rest = this.createTableTail(name);
         else if (what === 'TYPE') rest = this.createTypeTail(name);
         else if (what === 'INDEX') rest = this.createIndexTail(name);
-        else if (what === 'VIEW') rest = this.createViewTail(name, { materialized: false });
+        else if (what === 'VIEW') rest = this.createViewTail({ materialized: false });
         else if (what === 'MATERIALIZED') {
             // CREATE MATERIALIZED VIEW name AS ...
             this.consume('VIEW');
-            rest = this.createViewTail(name, { materialized: true });
+            rest = this.createViewTail({ materialized: true });
         } else if (what === 'SEQUENCE') rest = this.createSequenceTail(name);
         else if (what === 'SCHEMA') rest = {}; // create schema name
         else if (what === 'DOMAIN') rest = this.createDomainTail(name);
@@ -149,7 +149,7 @@ class Parser {
         return { type: 'CREATE', what, name, ifNot, ...rest };
     }
 
-    createTableTail(name) {
+    createTableTail() {
         // expects ( ... ) for columns and table constraints
         this.consume('(');
         const columns = [], constraints = [];
@@ -161,7 +161,7 @@ class Parser {
         return { columns, constraints };
     }
 
-    createTypeTail(name) {
+    createTypeTail() {
         // supports: AS ENUM ('a','b', ...)
         if (this.optional('AS')) {
             if (this.optional('ENUM')) {
@@ -182,7 +182,7 @@ class Parser {
         return { body: this.skipToTerminator() };
     }
 
-    createIndexTail(name) {
+    createIndexTail() {
         // optionally UNIQUE
         let unique = false;
         // name already consumed, we expect maybe UNIQUE before ON in some dialects
@@ -201,7 +201,7 @@ class Parser {
         return { body: this.skipToTerminator() };
     }
 
-    createViewTail(name, opts = {}) {
+    createViewTail(opts = {}) {
         // CREATE [MATERIALIZED] VIEW name AS <select>
         if (this.optional('AS')) {
             const body = this.skipToTerminator();
@@ -210,7 +210,7 @@ class Parser {
         return { body: null, materialized: !!opts.materialized };
     }
 
-    createSequenceTail(name) {
+    createSequenceTail() {
         // consume optional sequence options until terminator or comma
         const options = {};
         while (this.peek() && this.peek().type !== ';') {
@@ -226,7 +226,7 @@ class Parser {
         return { kind: 'SEQUENCE', options };
     }
 
-    createDomainTail(name) {
+    createDomainTail() {
         // CREATE DOMAIN name AS dataType [constraints...]
         const dataType = this.dataType();
         const constraints = [];
@@ -556,8 +556,6 @@ function rawParse(sql) {
 
 // dispatcher exposed via toAst()
 export function toAst(database = 'PostgreSQL') {
-    const udpTables = this.tables;
-    const udpRels = this.relationships;
     database = (database || 'PostgreSQL').toLowerCase();
     if (database === 'oraclesql') database = 'oracle';
     if (database === 'mariadb') database = 'mysql';
@@ -778,7 +776,6 @@ function toPostgreSQLAst() {
 /* ---------- Oracle AST generator ---------- */
 function toOracleAst() {
     const udpTables = this.tables;
-    const udpRels = this.relationships;
 
     const tableList = [];
     const columnList = [];
@@ -986,24 +983,6 @@ function toMySQLAst() {
 function toMssqlAst() {
 }
 
-/* ---------- utility: parse type strings to small type nodes ---------- */
-function parsePostgreSQLType(str) {
-    const m = String(str || '').match(/^([A-Z]+)(?:\((\d+)(?:,(\d+))?\))?/i);
-    const base = (m?.[1] || '').toUpperCase();
-    const p = m?.[2] ? parseInt(m[2]) : null;
-    const s = m?.[3] ? parseInt(m[3]) : null;
-
-    switch (base) {
-        case 'INTEGER': return { type: 'integer' };
-        case 'INT': return { type: 'integer' };
-        case 'VARCHAR': return { type: 'varchar', size: p || 255 };
-        case 'CHARACTER': return { type: 'char', size: p || null };
-        case 'DATE': return { type: 'date' };
-        case 'NUMERIC': return { type: 'numeric', precision: p || 15, scale: s || 2 };
-        case 'TIMESTAMP': return { type: 'timestamp', fractional_seconds_precision: null, with_tz: null };
-        default: return { type: base ? base.toLowerCase() : 'text' };
-    }
-}
 function dataTypeToString(dt) {
     if (!dt) return '';
     if (typeof dt === 'string') return dt;
