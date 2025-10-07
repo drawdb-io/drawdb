@@ -42,7 +42,6 @@ import {
   SIDESHEET,
   DB,
   IMPORT_FROM,
-  noteWidth,
   pngExportPixelRatio,
 } from "../../data/constants";
 import jsPDF from "jspdf";
@@ -132,6 +131,8 @@ export default function ControlPanel({
   const { t, i18n } = useTranslation();
   const { version, gistId, setGistId } = useContext(IdContext);
   const navigate = useNavigate();
+
+  const noteWidth = settings.noteWidth;
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
@@ -1514,6 +1515,10 @@ export default function ControlPanel({
       },
       table_width: {
         function: () => setModal(MODAL.TABLE_WIDTH),
+        disabled: layout.readOnly,
+      },
+      notes_width: {
+        function: () => setModal(MODAL.NOTE_WIDTH),
         disabled: layout.readOnly,
       },
       language: {

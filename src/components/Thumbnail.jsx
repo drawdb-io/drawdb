@@ -1,7 +1,7 @@
 import {
   tableFieldHeight,
   tableHeaderHeight,
-  noteWidth,
+  defaultNoteWidth as noteWidth,
   noteRadius,
   noteFold,
   gridSize,

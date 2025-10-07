@@ -1,6 +1,6 @@
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
-export const noteWidth = 180;
+export const defaultNoteWidth = 180;
 export const noteRadius = 3;
 export const noteFold = 24;
 export const darkBgTheme = "#16161A";
@@ -87,6 +87,7 @@ export const MODAL = {
   TABLE_WIDTH: 9,
   LANGUAGE: 10,
   SHARE: 11,
+  NOTE_WIDTH: 12,
 };
 
 export const STATUS = {

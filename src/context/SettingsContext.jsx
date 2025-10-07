@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { tableWidth } from "../data/constants";
+import { tableWidth, defaultNoteWidth } from "../data/constants";
 
 const defaultSettings = {
   strictMode: false,
@@ -13,6 +13,7 @@ const defaultSettings = {
   showRelationshipLabels: true,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
+  noteWidth: defaultNoteWidth,
 };
 
 export const SettingsContext = createContext(defaultSettings);

@@ -33,6 +33,7 @@ import New from "./New";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import SetTableWidth from "./SetTableWidth";
+import SetNotesWidth from "./SetNotesWidth";
 import Language from "./Language";
 import Share from "./Share";
 import CodeEditor from "../../CodeEditor";
@@ -346,6 +347,8 @@ export default function Modal({
         }
       case MODAL.TABLE_WIDTH:
         return <SetTableWidth />;
+      case MODAL.NOTE_WIDTH:
+        return <SetNotesWidth />;
       case MODAL.LANGUAGE:
         return <Language />;
       case MODAL.SHARE:
