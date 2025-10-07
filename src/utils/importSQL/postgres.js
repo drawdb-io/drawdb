@@ -360,6 +360,23 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           }
         });
       }
+    } else if (e.type === "comment") {
+      if (e.target.type === "table") {
+        const table = tables.find((t) => t.name === e.target?.name?.table);
+        if (table) {
+          table.comment = e.expr.expr.value;
+        }
+      } else if (e.target.type === "column") {
+        const table = tables.find((t) => t.name === e.target?.name?.table);
+        if (table) {
+          const field = table.fields.find(
+            (f) => f.name === e.target?.name?.column?.expr?.value,
+          );
+          if (field) {
+            field.comment = e.expr.expr.value;
+          }
+        }
+      }
     }
   };
 
