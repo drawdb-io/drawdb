@@ -24,7 +24,7 @@ export function toMySQL(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
-        `CREATE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE TABLE IF NOT EXISTS \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
               `\t\`${field.name}\` ${parseType(field)}${
