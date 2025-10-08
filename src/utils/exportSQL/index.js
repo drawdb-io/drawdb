@@ -3,8 +3,8 @@ import { toMariaDB } from "./mariadb";
 import { toMSSQL } from "./mssql";
 import { toMySQL } from "./mysql";
 import { toOracleSQL } from "./oraclesql";
-import { toPostgres } from "./postgres";
 import { toSqlite } from "./sqlite";
+import { jsonToPostgreSQL } from "./generic";
 
 export function exportSQL(diagram) {
   switch (diagram.database) {
@@ -13,7 +13,7 @@ export function exportSQL(diagram) {
     case DB.MYSQL:
       return toMySQL(diagram);
     case DB.POSTGRES:
-      return toPostgres(diagram);
+      return jsonToPostgreSQL(diagram);
     case DB.MARIADB:
       return toMariaDB(diagram);
     case DB.MSSQL:

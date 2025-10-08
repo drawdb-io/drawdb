@@ -95,77 +95,77 @@ function processComment(comment) {
 }
 
 export function toDBML(diagram) {
-  const generateRelString = (rel) => {
-    const { fields: startTableFields, name: startTableName } =
-      diagram.tables.find((t) => t.id === rel.startTableId);
-    const { name: startFieldName } = startTableFields.find(
-      (f) => f.id === rel.startFieldId,
-    );
-    const { fields: endTableFields, name: endTableName } = diagram.tables.find(
-      (t) => t.id === rel.endTableId,
-    );
-    const { name: endFieldName } = endTableFields.find(
-      (f) => f.id === rel.endFieldId,
-    );
+	const generateRelString = (rel) => {
+		const { fields: startTableFields, name: startTableName } =
+			diagram.tables.find((t) => t.id === rel.startTableId);
+		const { name: startFieldName } = startTableFields.find(
+			(f) => f.id === rel.startFieldId,
+		);
+		const { fields: endTableFields, name: endTableName } = diagram.tables.find(
+			(t) => t.id === rel.endTableId,
+		);
+		const { name: endFieldName } = endTableFields.find(
+			(f) => f.id === rel.endFieldId,
+		);
 
-    return `Ref ${quoteIdentifier(rel.name)} {\n\t${quoteIdentifier(startTableName)}.${quoteIdentifier(startFieldName)} ${cardinality(rel)} ${quoteIdentifier(endTableName)}.${quoteIdentifier(endFieldName)} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
-  };
+		return `Ref ${quoteIdentifier(rel.name)} {\n\t${quoteIdentifier(startTableName)}.${quoteIdentifier(startFieldName)} ${cardinality(rel)} ${quoteIdentifier(endTableName)}.${quoteIdentifier(endFieldName)} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
+	};
 
-  let enumDefinitions = "";
+	let enumDefinitions = "";
 
-  for (const table of diagram.tables) {
-    for (const field of table.fields) {
-      if (
-        (field.type === "ENUM" || field.type === "SET") &&
-        Array.isArray(field.values)
-      ) {
-        enumDefinitions += `enum ${quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)} {\n\t${field.values.map((v) => quoteIdentifier(v)).join("\n\t")}\n}\n\n`;
-      }
-    }
-  }
+	for (const table of diagram.tables) {
+		for (const field of table.fields) {
+			if (
+				(field.type === "ENUM" || field.type === "SET") &&
+				Array.isArray(field.values)
+			) {
+				enumDefinitions += `enum ${quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)} {\n\t${field.values.map((v) => quoteIdentifier(v)).join("\n\t")}\n}\n\n`;
+			}
+		}
+	}
 
-  return `${diagram.enums
-    .map(
-      (en) =>
-        `enum ${quoteIdentifier(en.name)} {\n${en.values.map((v) => `\t${quoteIdentifier(v)}`).join("\n")}\n}\n\n`,
-    )
-    .join("\n\n")}${enumDefinitions}${diagram.tables
-    .map(
-      (table) =>
-        `Table ${quoteIdentifier(table.name)} [headercolor: ${table.color}] {\n${table.fields
-          .map(
-            (field) =>
-              `\t${quoteIdentifier(field.name)} ${
-                field.type === "ENUM" || field.type === "SET"
-                  ? quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)
-                  : field.type.toLowerCase()
-              }${fieldSize(
-                field,
-                diagram.database,
-              )}${columnSettings(field, diagram.database)}`,
-          )
-          .join("\n")}${
-          table.indices.length > 0
-            ? "\n\n\tindexes {\n" +
-              table.indices
-                .map(
-                  (index) =>
-                    `\t\t(${index.fields
-                      .map((f) => quoteIdentifier(f))
-                      .join(", ")}) [ name: '${
-                      index.name
-                    }'${index.unique ? ", unique" : ""} ]`,
-                )
-                .join("\n") +
-              "\n\t}"
-            : ""
-        }${
-          table.comment && table.comment.trim() !== ""
-            ? `\n\n\tNote: ${processComment(table.comment)}`
-            : ""
-        }\n}`,
-    )
-    .join("\n\n")}\n\n${diagram.relationships
-    .map((rel) => generateRelString(rel))
-    .join("\n\n")}`;
+	return `${diagram.enums
+			.map(
+				(en) =>
+				`enum ${quoteIdentifier(en.name)} {\n${en.values.map((v) => `\t${quoteIdentifier(v)}`).join("\n")}\n}\n\n`,
+			)
+			.join("\n\n")}${enumDefinitions}${diagram.tables
+					.map(
+						(table) =>
+						`Table ${quoteIdentifier(table.name)} [headercolor: ${table.color}] {\n${table.fields
+								.map(
+									(field) =>
+									`\t${quoteIdentifier(field.name)} ${
+										field.type === "ENUM" || field.type === "SET"
+											? quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)
+											: field.type.toLowerCase()
+									}${fieldSize(
+										field,
+										diagram.database,
+									)}${columnSettings(field, diagram.database)}`,
+								)
+								.join("\n")}${
+									table.indices.length > 0
+										? "\n\n\tindexes {\n" +
+										table.indices
+										.map(
+											(index) =>
+											`\t\t(${index.fields
+													.map((f) => quoteIdentifier(f))
+													.join(", ")}) [ name: '${
+														index.name
+													}'${index.unique ? ", unique" : ""} ]`,
+										)
+										.join("\n") +
+										"\n\t}"
+										: ""
+								}${
+									table.comment && table.comment.trim() !== ""
+										? `\n\n\tNote: ${processComment(table.comment)}`
+										: ""
+								}\n}`,
+					)
+					.join("\n\n")}\n\n${diagram.relationships
+							.map((rel) => generateRelString(rel))
+							.join("\n\n")}`;
 }
