@@ -132,6 +132,8 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
               relationship.endTableId = endTable.id;
               relationship.endFieldId = endField.id;
               relationship.startFieldId = startField.id;
+              relationship.id = nanoid();
+
               let updateConstraint = "No action";
               let deleteConstraint = "No action";
               d.reference_definition.on_action.forEach((c) => {
@@ -238,6 +240,7 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           relationship.endFieldId = endField.id;
           relationship.updateConstraint = updateConstraint;
           relationship.deleteConstraint = deleteConstraint;
+          relationship.id = nanoid();
 
           if (startField.unique) {
             relationship.cardinality = Cardinality.ONE_TO_ONE;
@@ -246,8 +249,6 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
           }
 
           relationships.push(relationship);
-
-          relationships.forEach((r, i) => (r.id = i));
         }
       });
     }
@@ -258,8 +259,6 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
   } else {
     parseSingleStatement(ast);
   }
-
-  relationships.forEach((r, i) => (r.id = i));
 
   return { tables, relationships };
 }
