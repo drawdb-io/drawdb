@@ -14,15 +14,18 @@ import {
   useSelect,
   useNotes,
   useSaveState,
+  useSettings,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
-import { noteWidth, noteRadius, noteFold } from "../../data/constants";
+import { noteRadius, noteFold } from "../../data/constants";
 
 export default function Note({ data, onPointerDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const { layout } = useLayout();
   const { t } = useTranslation();
+  const { settings } = useSettings();
+  const noteWidth = settings.noteWidth;
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
