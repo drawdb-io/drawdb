@@ -41,10 +41,12 @@ const keywords = [
   "CURRENT_TIME",
   "CURRENT_TIMESTAMP",
   "LOCALTIME",
-  "LOCALTIMESTAMP"
+  "LOCALTIMESTAMP",
 ];
 
 export function isKeyword(str) {
+  if (typeof str !== "string") return false;
+
   return keywords.includes(str.toUpperCase());
 }
 
