@@ -78,7 +78,7 @@ export default function TypeField({ data, tid, fid }) {
             })),
             ...types
               .filter(
-                (type) => type.name.toLowerCase() !== data.name.toLowerCase(),
+                (type) => type.name.toLowerCase() !== types[tid].name.toLowerCase(),
               )
               .map((type) => ({
                 label: type.name.toUpperCase(),
