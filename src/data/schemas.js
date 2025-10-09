@@ -148,7 +148,7 @@ export const jsonSchema = {
           cardinality: { type: "string" },
           updateConstraint: { type: "string" },
           deleteConstraint: { type: "string" },
-          id: { type: "integer" },
+          id: { type: ["integer", "string"] },
         },
         required: [
           "startTableId",
