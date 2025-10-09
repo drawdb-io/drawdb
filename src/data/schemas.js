@@ -13,7 +13,7 @@ export const tableSchema = {
           id: { type: ["integer", "string"] },
           name: { type: "string" },
           type: { type: "string" },
-          default: { type: "string" },
+          default: { type: ["string", "number", "boolean"] },
           check: { type: "string" },
           primary: { type: "boolean" },
           unique: { type: "boolean" },
@@ -55,10 +55,10 @@ export const tableSchema = {
       },
     },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
-  },
-  inherits: {
-    type: "array",
-    items: { type: ["string"] },
+    inherits: {
+      type: "array",
+      items: { type: ["string"] },
+    },
   },
   required: ["id", "name", "x", "y", "fields", "comment", "indices", "color"],
 };
@@ -148,7 +148,7 @@ export const jsonSchema = {
           cardinality: { type: "string" },
           updateConstraint: { type: "string" },
           deleteConstraint: { type: "string" },
-          id: { type: "integer" },
+          id: { type: ["integer", "string"] },
         },
         required: [
           "startTableId",
