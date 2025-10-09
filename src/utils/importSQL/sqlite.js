@@ -65,6 +65,8 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     relationship.endTableId = endTable.id;
     relationship.endFieldId = endField.id;
     relationship.startFieldId = startField.id;
+    relationship.id = nanoid();
+
     let updateConstraint = "No action";
     let deleteConstraint = "No action";
     referenceDefinition.on_action.forEach((c) => {
@@ -214,8 +216,6 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
   } else {
     parseSingleStatement(ast);
   }
-
-  relationships.forEach((r, i) => (r.id = i));
 
   return { tables, relationships };
 }
