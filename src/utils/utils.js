@@ -55,7 +55,7 @@ export function isFunction(str) {
 export function areFieldsCompatible(db, field1Type, field2Type) {
   const same = field1Type === field2Type;
   const isCompatible =
-    dbToTypes[db][field1Type].compatibleWith &&
+    Boolean(dbToTypes[db][field1Type].compatibleWith) &&
     dbToTypes[db][field1Type].compatibleWith.includes(field2Type);
   return same || isCompatible;
 }
