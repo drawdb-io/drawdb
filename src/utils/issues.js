@@ -5,7 +5,12 @@ import { isFunction } from "./utils";
 function checkDefault(field, database) {
   if (field.default === "") return true;
   if (isFunction(field.default)) return true;
-  if (!field.notNull && field.default.toLowerCase() === "null") return true;
+  if (
+    !field.notNull &&
+    typeof field === "string" &&
+    field.default.toLowerCase() === "null"
+  )
+    return true;
   if (!dbToTypes[database][field.type].checkDefault) return true;
 
   return dbToTypes[database][field.type].checkDefault(field);
@@ -67,7 +72,11 @@ export function getIssues(diagram) {
         );
       }
 
-      if (field.notNull && field.default.toLowerCase() === "null") {
+      if (
+        field.notNull &&
+        typeof field.default === "string" &&
+        field.default.toLowerCase() === "null"
+      ) {
         issues.push(
           i18n.t("not_null_is_null", {
             tableName: table.name,
