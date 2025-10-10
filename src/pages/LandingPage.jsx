@@ -301,7 +301,7 @@ export default function LandingPage() {
       </div>
       <hr className="border-zinc-300" />
       <div className="text-center text-sm py-3">
-        &copy; 2024 <strong>drawDB</strong> - All right reserved.
+        &copy; {new Date().getFullYear()} <strong>drawDB</strong> - All rights reserved.
       </div>
     </div>
   );

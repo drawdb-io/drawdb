@@ -81,7 +81,7 @@ export function toPostgres(diagram) {
         )
         .join("\n");
 
-      return `CREATE TABLE "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
+      return `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
     })
     .join("\n\n");
 

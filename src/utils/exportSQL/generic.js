@@ -187,7 +187,7 @@ export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
-        `CREATE TABLE \`${table.name}\` (\n${table.fields
+        `CREATE TABLE IF NOT EXISTS \`${table.name}\` (\n${table.fields
           .map(
             (field) =>
               `\t\`${
@@ -294,7 +294,7 @@ export function jsonToPostgreSQL(obj) {
                 )
                 .join("\n")}\n`
             : ""
-        }CREATE TABLE "${table.name}" (\n${table.fields
+        }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
           .map(
             (field) =>
               `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
