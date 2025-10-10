@@ -88,6 +88,7 @@ export const languages = [
   malayalam,
   dutch,
   sindhi,
+  thai,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
