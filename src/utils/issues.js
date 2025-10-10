@@ -16,6 +16,7 @@ export function getIssues(diagram) {
   const duplicateTableNames = {};
 
   diagram.tables.forEach((table) => {
+    // ... (table issue checks)
     if (table.name === "") {
       issues.push(i18n.t("table_w_no_name"));
     }
@@ -127,6 +128,7 @@ export function getIssues(diagram) {
 
   const duplicateTypeNames = {};
   diagram.types.forEach((type) => {
+    // ... (Existing type issue checks)
     if (type.name === "") {
       issues.push(i18n.t("type_with_no_name"));
     }
@@ -173,14 +175,73 @@ export function getIssues(diagram) {
         duplicateFieldNames[field.name] = true;
       }
     });
-  });
+  }); // =========================================================================
+  // START: Logic to check for Circular Type References (DFS)
+  // =========================================================================
+  // MODIFIED: Normalize the type name to UPPERCASE when creating the map keys
 
-  const duplicateEnumNames = {};
+  const typeMap = new Map(diagram.types.map((t) => [t.name.toUpperCase(), t]));
+  const visitedTypes = new Set();
+  let cycleFound = false;
+
+  function checkCircularTypeReferences(
+    currentTypeName, // This name will now be UPPERCASE
+    recursionStack = new Set(),
+  ) {
+    if (cycleFound) return; // 1. Cycle Detected
+
+    if (recursionStack.has(currentTypeName)) {
+      // Use the original (potentially lowercase) type name for the message
+      issues.push(
+        i18n.t("circular_type_dependency", {
+          typeName: typeMap.get(currentTypeName)?.name || currentTypeName,
+        }),
+      );
+      cycleFound = true;
+      return;
+    } // 2. Already Fully Visited
+
+    if (visitedTypes.has(currentTypeName)) {
+      return;
+    }
+
+    const currentType = typeMap.get(currentTypeName);
+    if (!currentType) return;
+
+    recursionStack.add(currentTypeName);
+    visitedTypes.add(currentTypeName); // 3. Traverse neighbors (fields that reference other types)
+
+    for (const field of currentType.fields) {
+      // MODIFIED: Normalize the referenced type name to UPPERCASE
+      const referencedTypeName = field.type.toUpperCase().trim(); // Check if the normalized name exists in our normalized map
+
+      if (typeMap.has(referencedTypeName)) {
+        // Pass the normalized (UPPERCASE) name for the recursive call
+        checkCircularTypeReferences(
+          referencedTypeName,
+          new Set(recursionStack),
+        );
+
+        if (cycleFound) return;
+      }
+    }
+  } // Check every custom type as a starting point.
+
+  diagram.types.forEach((type) => {
+    // Call the DFS with the normalized (UPPERCASE) name.
+    const normalizedName = type.name.toUpperCase();
+    if (!visitedTypes.has(normalizedName) && !cycleFound) {
+      checkCircularTypeReferences(normalizedName);
+    }
+  }); // =========================================================================
+  // END: Logic to check for Circular Type References
+  // =========================================================================
+  const duplicateEnumNames = {}; // ... (Rest of the file)
   diagram.enums.forEach((e) => {
     if (e.name === "") {
       issues.push(i18n.t("enum_w_no_name"));
     }
-
+    //... (Rest of the getIssues function)
     if (duplicateEnumNames[e.name]) {
       issues.push(i18n.t("duplicate_enums", { enumName: e.name }));
     } else {

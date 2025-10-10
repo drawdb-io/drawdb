@@ -200,6 +200,8 @@ const en = {
       "Duplicate type fields by name '{{fieldName}}' in type '{{typeName}}'",
     duplicate_reference: "Duplicate reference by the name '{{refName}}'",
     circular_dependency: "Circular dependency involving table '{{refName}}'",
+    circular_type_dependency:
+      "Circular type dependency detected in: {{typeName}}",
     timeline: "Timeline",
     priority: "Priority",
     none: "None",
