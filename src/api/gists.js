@@ -18,12 +18,12 @@ export async function create(filename, content) {
 }
 
 export async function patch(gistId, filename, content) {
-  const { deleted } = await axios.patch(`${baseUrl}/gists/${gistId}`, {
+  const { data } = await axios.patch(`${baseUrl}/gists/${gistId}`, {
     filename,
     content,
   });
 
-  return deleted;
+  return data.deleted;
 }
 
 export async function del(gistId) {
