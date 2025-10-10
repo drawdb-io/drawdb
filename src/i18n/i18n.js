@@ -40,6 +40,7 @@ import { ne, nepali } from "./locales/ne";
 import { ug, uyghur } from "./locales/ug";
 import { pa_pk, punjabipk } from "./locales/pa-pk";
 import { cz, czech } from "./locales/cz";
+import { th, thai } from "./locales/th";
 
 export const languages = [
   english,
@@ -132,6 +133,7 @@ i18n
       ug,
       "pa-PK": pa_pk,
       cz,
+      th,
     },
   });
 
