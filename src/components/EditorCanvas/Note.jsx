@@ -228,6 +228,30 @@ export default function Note({ data, onPointerDown }) {
         strokeLinejoin="round"
         strokeWidth="2"
       />
+
+      {/* Side-edge visual indicators for resize handles */}
+      {!layout.readOnly && !data.locked && (hovered || isSelected) && (
+        <g style={{ pointerEvents: "none" }}>
+          <circle
+            cx={data.x}
+            cy={data.y + data.height / 2}
+            r={3.5}
+            fill="rgb(59 130 246)"
+            stroke="white"
+            strokeWidth={0.8}
+            opacity={0.9}
+          />
+          <circle
+            cx={data.x + width}
+            cy={data.y + data.height / 2}
+            r={3.5}
+            fill="rgb(59 130 246)"
+            stroke="white"
+            strokeWidth={0.8}
+            opacity={0.9}
+          />
+        </g>
+      )}
       {/* Left-edge resize handle */}
       {!layout.readOnly && !data.locked && (
         <rect
