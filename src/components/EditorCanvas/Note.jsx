@@ -15,6 +15,7 @@ import {
   useNotes,
   useSaveState,
   useTransform,
+  useSettings,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { noteWidth, noteRadius, noteFold } from "../../data/constants";
@@ -31,6 +32,7 @@ export default function Note({ data, onPointerDown }) {
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { transform } = useTransform();
+  const { settings } = useSettings();
   const {
     selectedElement,
     setSelectedElement,
@@ -229,26 +231,26 @@ export default function Note({ data, onPointerDown }) {
         strokeWidth="2"
       />
 
-      {/* Side-edge visual indicators for resize handles */}
-      {!layout.readOnly && !data.locked && (hovered || isSelected) && (
+      {/* Side-edge visual indicators for resize handles (match subject area style) */}
+      {!layout.readOnly && !data.locked && hovered && (
         <g style={{ pointerEvents: "none" }}>
           <circle
             cx={data.x}
             cy={data.y + data.height / 2}
-            r={3.5}
-            fill="rgb(59 130 246)"
-            stroke="white"
-            strokeWidth={0.8}
-            opacity={0.9}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            opacity={1}
           />
           <circle
             cx={data.x + width}
             cy={data.y + data.height / 2}
-            r={3.5}
-            fill="rgb(59 130 246)"
-            stroke="white"
-            strokeWidth={0.8}
-            opacity={0.9}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            opacity={1}
           />
         </g>
       )}
