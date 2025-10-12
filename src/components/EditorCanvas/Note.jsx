@@ -231,7 +231,6 @@ export default function Note({ data, onPointerDown }) {
         strokeWidth="2"
       />
 
-      {/* Side-edge visual indicators for resize handles (match subject area style) */}
       {!layout.readOnly && !data.locked && hovered && (
         <g style={{ pointerEvents: "none" }}>
           <circle
@@ -254,7 +253,6 @@ export default function Note({ data, onPointerDown }) {
           />
         </g>
       )}
-      {/* Left-edge resize handle */}
       {!layout.readOnly && !data.locked && (
         <rect
           x={data.x - 4}
@@ -274,7 +272,6 @@ export default function Note({ data, onPointerDown }) {
           onPointerMove={(e) => {
             if (!resizing) return;
             const delta = e.movementX / (transform?.zoom || 1);
-            // Adjust x and width inversely so right edge stays in place
             const currentWidth = data.width ?? noteWidth;
             let proposedWidth = currentWidth - delta;
             let proposedX = data.x + delta;
@@ -316,7 +313,6 @@ export default function Note({ data, onPointerDown }) {
         />
       )}
 
-      {/* Right-edge resize handle */}
       {!layout.readOnly && !data.locked && (
         <rect
           x={data.x + width - 4}
@@ -328,7 +324,6 @@ export default function Note({ data, onPointerDown }) {
           style={{ cursor: "ew-resize" }}
           onPointerDown={(e) => {
             e.stopPropagation();
-            // capture starting width
             initialWidthRef.current = data.width ?? noteWidth;
             setResizing(true);
             e.currentTarget.setPointerCapture?.(e.pointerId);
