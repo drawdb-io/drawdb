@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
 import { Input, Button, Popover } from "@douyinfe/semi-ui";
 import ColorPicker from "../EditorSidePanel/ColorPicker";
@@ -169,6 +169,14 @@ export default function Note({ data, onPointerDown }) {
     );
   }, [selectedElement, data, bulkSelectedElements]);
 
+  useEffect(() => {
+    const textarea = document.getElementById(`note_${data.id}`);
+    textarea.style.height = "0";
+    textarea.style.height = textarea.scrollHeight + "px";
+    const newHeight = textarea.scrollHeight + 42;
+    updateNote(data.id, { height: newHeight });
+  }, []);
+  
   return (
     <g
       onPointerEnter={(e) => e.isPrimary && setHovered(true)}
