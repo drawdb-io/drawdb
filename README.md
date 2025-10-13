@@ -28,6 +28,9 @@
     <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
         <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
     </a>
+    <a href="https://getmanta.ai/drawdb">
+        <img src="https://getmanta.ai/api/badges?text=Manta%20Graph&link=drawdb" alt="DrawDB graph on Manta">
+    </a> 
 </div>
 
 <h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="drawdb.png"></h3>
