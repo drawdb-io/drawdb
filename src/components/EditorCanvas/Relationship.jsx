@@ -148,11 +148,13 @@ export default function Relationship({ data }) {
               x={cardinalityStartX}
               y={cardinalityStartY}
               text={cardinalityStart}
+              color={data.color}
             />
             <CardinalityLabel
               x={cardinalityEndX}
               y={cardinalityEndY}
               text={cardinalityEnd}
+              color={data.color}
             />
           </>
         )}
@@ -182,7 +184,7 @@ export default function Relationship({ data }) {
   );
 }
 
-function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
+function CardinalityLabel({ x, y, text, r = 12, padding = 14 , color = "grey"}) {
   const [textWidth, setTextWidth] = useState(0);
   const textRef = useRef(null);
 
@@ -202,7 +204,7 @@ function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
         ry={r}
         width={textWidth + padding}
         height={r * 2}
-        fill="grey"
+        fill={color}
         className="group-hover:fill-sky-600"
       />
       <text
