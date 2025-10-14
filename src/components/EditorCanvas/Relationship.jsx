@@ -127,6 +127,7 @@ export default function Relationship({ data }) {
           className="relationship-path"
           fill="none"
           cursor="pointer"
+          style={{ stroke: data.color }}
         />
         {settings.showRelationshipLabels && (
           <text
