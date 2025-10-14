@@ -14,6 +14,8 @@ import {
   useSelect,
   useNotes,
   useSaveState,
+  useTransform,
+  useSettings,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { noteWidth, noteRadius, noteFold } from "../../data/constants";
@@ -21,11 +23,16 @@ import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 export default function Note({ data, onPointerDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
+  const [resizing, setResizing] = useState(false);
+  const initialWidthRef = useRef(data.width ?? noteWidth);
+  const initialXRef = useRef(data.x);
   const { layout } = useLayout();
   const { t } = useTranslation();
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { transform } = useTransform();
+  const { settings } = useSettings();
   const {
     selectedElement,
     setSelectedElement,
@@ -169,6 +176,9 @@ export default function Note({ data, onPointerDown }) {
     );
   }, [selectedElement, data, bulkSelectedElements]);
 
+  const width = data.width ?? noteWidth;
+  const MIN_NOTE_WIDTH = 120;
+
   return (
     <g
       onPointerEnter={(e) => e.isPrimary && setHovered(true)}
@@ -181,11 +191,11 @@ export default function Note({ data, onPointerDown }) {
       onDoubleClick={edit}
     >
       <path
-        d={`M${data.x + noteFold} ${data.y} L${data.x + noteWidth - noteRadius} ${
+        d={`M${data.x + noteFold} ${data.y} L${data.x + width - noteRadius} ${
           data.y
-        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + noteWidth} ${data.y + noteRadius} L${data.x + noteWidth} ${
+        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + width} ${data.y + noteRadius} L${data.x + width} ${
           data.y + data.height - noteRadius
-        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + noteWidth - noteRadius} ${data.y + data.height} L${
+        } A${noteRadius} ${noteRadius} 0 0 1 ${data.x + width - noteRadius} ${data.y + data.height} L${
           data.x + noteRadius
         } ${data.y + data.height} A${noteRadius} ${noteRadius} 0 0 1 ${data.x} ${
           data.y + data.height - noteRadius
@@ -220,10 +230,142 @@ export default function Note({ data, onPointerDown }) {
         strokeLinejoin="round"
         strokeWidth="2"
       />
+
+      {!layout.readOnly && !data.locked && hovered && (
+        <g style={{ pointerEvents: "none" }}>
+          <circle
+            cx={data.x}
+            cy={data.y + data.height / 2}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            opacity={1}
+          />
+          <circle
+            cx={data.x + width}
+            cy={data.y + data.height / 2}
+            r={6}
+            fill={settings.mode === "light" ? "white" : "rgb(28, 31, 35)"}
+            stroke="#5891db"
+            strokeWidth={2}
+            opacity={1}
+          />
+        </g>
+      )}
+      {!layout.readOnly && !data.locked && (
+        <rect
+          x={data.x - 4}
+          y={data.y + 8}
+          width={8}
+          height={Math.max(0, data.height - 16)}
+          fill="transparent"
+          stroke="transparent"
+          style={{ cursor: "ew-resize" }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            initialWidthRef.current = data.width ?? noteWidth;
+            initialXRef.current = data.x;
+            setResizing(true);
+            e.currentTarget.setPointerCapture?.(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            if (!resizing) return;
+            const delta = e.movementX / (transform?.zoom || 1);
+            const currentWidth = data.width ?? noteWidth;
+            let proposedWidth = currentWidth - delta;
+            let proposedX = data.x + delta;
+            if (proposedWidth < MIN_NOTE_WIDTH) {
+              const clampDelta = currentWidth - MIN_NOTE_WIDTH;
+              proposedWidth = MIN_NOTE_WIDTH;
+              proposedX = data.x + clampDelta;
+            }
+            if (proposedWidth !== data.width || proposedX !== data.x) {
+              updateNote(data.id, { width: proposedWidth, x: proposedX });
+            }
+          }}
+          onPointerUp={(e) => {
+            if (!resizing) return;
+            setResizing(false);
+            e.stopPropagation();
+            const finalWidth = data.width ?? noteWidth;
+            const finalX = data.x;
+            const startWidth = initialWidthRef.current;
+            const startX = initialXRef.current;
+            if (finalWidth !== startWidth || finalX !== startX) {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.NOTE,
+                  nid: data.id,
+                  undo: { width: startWidth, x: startX },
+                  redo: { width: finalWidth, x: finalX },
+                  message: t("edit_note", {
+                    noteTitle: data.title,
+                    extra: "[width/x]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }
+          }}
+        />
+      )}
+
+      {!layout.readOnly && !data.locked && (
+        <rect
+          x={data.x + width - 4}
+          y={data.y + 8}
+          width={8}
+          height={Math.max(0, data.height - 16)}
+          fill="transparent"
+          stroke="transparent"
+          style={{ cursor: "ew-resize" }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            initialWidthRef.current = data.width ?? noteWidth;
+            setResizing(true);
+            e.currentTarget.setPointerCapture?.(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            if (!resizing) return;
+            const delta = e.movementX / (transform?.zoom || 1);
+            const next = Math.max(MIN_NOTE_WIDTH, (data.width ?? noteWidth) + delta);
+            if (next !== data.width) {
+              updateNote(data.id, { width: next });
+            }
+          }}
+          onPointerUp={(e) => {
+            if (!resizing) return;
+            setResizing(false);
+            e.stopPropagation();
+            const finalWidth = data.width ?? noteWidth;
+            const startWidth = initialWidthRef.current;
+            if (finalWidth !== startWidth) {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.NOTE,
+                  nid: data.id,
+                  undo: { width: startWidth },
+                  redo: { width: finalWidth },
+                  message: t("edit_note", {
+                    noteTitle: data.title,
+                    extra: "[width]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }
+          }}
+        />
+      )}
       <foreignObject
         x={data.x}
         y={data.y}
-        width={noteWidth}
+        width={width}
         height={data.height}
         onPointerDown={onPointerDown}
       >

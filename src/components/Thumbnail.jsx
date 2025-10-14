@@ -120,13 +120,14 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
           const x = n.x;
           const y = n.y;
           const h = n.height;
+          const w = n.width ?? noteWidth;
           return (
             <g key={n.id}>
               <path
-                d={`M${x + noteFold} ${y} L${x + noteWidth - noteRadius} ${y} A${noteRadius} ${noteRadius} 0 0 1 ${
-                  x + noteWidth
-                } ${y + noteRadius} L${x + noteWidth} ${y + h - noteRadius} A${noteRadius} ${noteRadius} 0 0 1 ${
-                  x + noteWidth - noteRadius
+                d={`M${x + noteFold} ${y} L${x + w - noteRadius} ${y} A${noteRadius} ${noteRadius} 0 0 1 ${
+                  x + w
+                } ${y + noteRadius} L${x + w} ${y + h - noteRadius} A${noteRadius} ${noteRadius} 0 0 1 ${
+                  x + w - noteRadius
                 } ${y + h} L${x + noteRadius} ${y + h} A${noteRadius} ${noteRadius} 0 0 1 ${x} ${
                   y + h - noteRadius
                 } L${x} ${y + noteFold}`}
@@ -146,7 +147,7 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
                 strokeLinejoin="round"
                 strokeWidth="0.5"
               />
-              <foreignObject x={x} y={y} width={noteWidth} height={h}>
+              <foreignObject x={x} y={y} width={w} height={h}>
                 <div className="text-gray-900 w-full h-full px-4 py-2">
                   <label htmlFor={`note_${n.id}`} className="ms-4">
                     {n.title}

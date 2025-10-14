@@ -174,7 +174,7 @@ export default function Canvas() {
       const noteRect = {
         x: note.x,
         y: note.y,
-        width: noteWidth,
+        width: note.width ?? noteWidth,
         height: note.height,
       };
       if (shouldAddElement(noteRect, element)) {
