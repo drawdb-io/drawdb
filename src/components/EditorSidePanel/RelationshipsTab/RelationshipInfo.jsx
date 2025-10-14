@@ -17,6 +17,7 @@ import {
   Constraint,
   Action,
   ObjectType,
+  defaultBlue,
 } from "../../../data/constants";
 import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
@@ -41,7 +42,7 @@ export default function RelationshipInfo({ data }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const [editField, setEditField] = useState({});
-  const initialColorRef = useRef(data.color);
+  const initialColorRef = useRef(data.color ?? defaultBlue);
 
 
   const relValues = useMemo(() => {
@@ -215,7 +216,7 @@ export default function RelationshipInfo({ data }) {
           <ColorPicker
           usePopover={true}
           readOnly={layout.readOnly}
-          value={data.color}
+          value={data.color ?? defaultBlue}
           onChange={(color) => updateRelationship(data.id, { color })}
           onColorPick={(color) => handleColorPick(color)}
           />

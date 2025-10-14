@@ -1,5 +1,10 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import {
+  Cardinality,
+  defaultBlue,
+  ObjectType,
+  Tab,
+} from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
@@ -127,7 +132,7 @@ export default function Relationship({ data }) {
           className="relationship-path"
           fill="none"
           cursor="pointer"
-          style={{ stroke: data.color }}
+          style={{ stroke: data.color ?? defaultBlue }}
         />
         {settings.showRelationshipLabels && (
           <text
