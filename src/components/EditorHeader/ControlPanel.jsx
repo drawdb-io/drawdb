@@ -164,7 +164,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         deleteNote(notes[notes.length - 1].id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        deleteRelationship(a.data.id, false);
+        deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.TYPE) {
         deleteType(types.length - 1, false);
       } else if (a.element === ObjectType.ENUM) {
@@ -362,7 +362,7 @@ export default function ControlPanel({
       if (a.element === ObjectType.TABLE) {
         deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
-        deleteRelationship(a.data.id, false);
+        deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.NOTE) {
         deleteNote(a.data.id, false);
       } else if (a.element === ObjectType.AREA) {
@@ -542,7 +542,10 @@ export default function ControlPanel({
     notes.forEach((note) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, note.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, note.y);
-      minMaxXY.maxX = Math.max(minMaxXY.maxX, note.x + noteWidth);
+      minMaxXY.maxX = Math.max(
+        minMaxXY.maxX,
+        note.x + (note.width ?? noteWidth),
+      );
       minMaxXY.maxY = Math.max(minMaxXY.maxY, note.y + note.height);
     });
 

@@ -29,7 +29,11 @@ function parseDefaultDbml(field, database) {
 }
 
 function columnDefault(field, database) {
-  if (!field.default || field.default.trim() === "") {
+  if (!field.default) {
+    return "";
+  }
+
+  if (typeof field.default === "string" && !field.default.trim()) {
     return "";
   }
 

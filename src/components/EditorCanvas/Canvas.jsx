@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
+import { nanoid } from "nanoid";
 import { State } from "../../data/constants";
 
 export default function Canvas() {
@@ -622,7 +623,7 @@ export default function Canvas() {
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
       name: `fk_${startTableName}_${startField.name}_${endTableName}`,
-      id: relationships.length,
+      id: nanoid(),
     };
     delete newRelationship.startX;
     delete newRelationship.startY;

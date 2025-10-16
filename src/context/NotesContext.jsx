@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { Action, ObjectType, defaultNoteTheme } from "../data/constants";
+import { Action, ObjectType, defaultNoteTheme, noteWidth } from "../data/constants";
 import { useUndoRedo, useTransform, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
@@ -33,6 +33,7 @@ export default function NotesContextProvider({ children }) {
           locked: false,
           color: defaultNoteTheme,
           height,
+          width: noteWidth,
         },
       ]);
     }
