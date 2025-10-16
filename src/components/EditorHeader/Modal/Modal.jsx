@@ -40,7 +40,6 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import SetNotesWidth from "./SetNotesWidth";
-import Language from "./Language";
 import Share from "./Share";
 
 const extensionToLanguage = {

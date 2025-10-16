@@ -28,7 +28,6 @@ export default function Note({ data, onPointerDown }) {
   const initialXRef = useRef(data.x);
   const { layout } = useLayout();
   const { t } = useTranslation();
-  const { settings } = useSettings();
   const noteWidth = settings.noteWidth;
   const { setSaveState } = useSaveState();
   const { updateNote, deleteNote } = useNotes();
