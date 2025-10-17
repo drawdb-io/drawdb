@@ -185,7 +185,7 @@ export default function Note({ data, onPointerDown }) {
     textarea.style.height = textarea.scrollHeight + "px";
     const newHeight = textarea.scrollHeight + 42;
     updateNote(data.id, { height: newHeight });
-  }, [data, updateNote]);
+  }, [data.id, updateNote]);
 
   return (
     <g
