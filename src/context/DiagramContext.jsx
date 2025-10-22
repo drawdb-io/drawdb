@@ -25,33 +25,44 @@ export default function DiagramContextProvider({ children }) {
         return temp;
       });
     } else {
-      setTables((prev) => [
-        ...prev,
-        {
-          id,
-          name: `table_${id}`,
-          x: transform.pan.x,
-          y: transform.pan.y,
-          locked: false,
-          fields: [
-            {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
-              default: "",
-              check: "",
-              primary: true,
-              unique: true,
-              notNull: true,
-              increment: true,
-              comment: "",
-              id: nanoid(),
-            },
-          ],
-          comment: "",
-          indices: [],
-          color: defaultBlue,
-        },
-      ]);
+      setTables((prev) => {
+        // find existing table_<number> or table <number> names and pick the next integer
+        const nums = prev
+          .map((t) => {
+            if (!t.name) return null;
+            const m = t.name.match(/^table[_ ](\d+)$/);
+            return m ? parseInt(m[1], 10) : null;
+          })
+          .filter((n) => n !== null);
+        const next = nums.length ? Math.max(...nums) + 1 : 1;
+        return [
+          ...prev,
+          {
+            id,
+            name: `table ${next}`,
+            x: transform.pan.x,
+            y: transform.pan.y,
+            locked: false,
+            fields: [
+              {
+                name: "id",
+                type: database === DB.GENERIC ? "INT" : "INTEGER",
+                default: "",
+                check: "",
+                primary: true,
+                unique: true,
+                notNull: true,
+                increment: true,
+                comment: "",
+                id: nanoid(),
+              },
+            ],
+            comment: "",
+            indices: [],
+            color: defaultBlue,
+          },
+        ];
+      });
     }
     if (addToHistory) {
       setUndoStack((prev) => [
