@@ -1400,6 +1400,17 @@ const postgresTypesBase = {
     hasQuotes: true,
     noDefault: true,
   },
+  ENUM: {
+    type: "ENUM",
+    color: enumSetColor,
+    checkDefault: (field) => {
+      return field.values.includes(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
 };
 
 export const postgresTypes = new Proxy(postgresTypesBase, {
@@ -1543,6 +1554,17 @@ const sqliteTypesBase = {
       const c = field.default.split(" ");
       const d = c[0].split("-");
       return Number.parseInt(d[0]) >= 1000 && Number.parseInt(d[0]) <= 9999;
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
+  ENUM: {
+    type: "ENUM",
+    color: enumSetColor,
+    checkDefault: (field) => {
+      return field.values.includes(field.default);
     },
     hasCheck: false,
     isSized: false,
@@ -1970,6 +1992,17 @@ const mssqlTypesBase = {
     hasQuotes: true,
     noDefault: true,
   },
+  ENUM: {
+    type: "ENUM",
+    color: enumSetColor,
+    checkDefault: (field) => {
+      return field.values.includes(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
+  },
 };
 
 export const mssqlTypes = new Proxy(mssqlTypesBase, {
@@ -2200,6 +2233,17 @@ const oraclesqlTypesBase = {
     hasPrecision: false,
     defaultSize: 255,
     hasQuotes: false,
+  },
+  ENUM: {
+    type: "ENUM",
+    color: enumSetColor,
+    checkDefault: (field) => {
+      return field.values.includes(field.default);
+    },
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    hasQuotes: true,
   },
 };
 
