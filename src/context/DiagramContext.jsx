@@ -16,8 +16,8 @@ export default function DiagramContextProvider({ children }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
 
-  const addTable = (data, addToHistory = true) => {
-    const id = nanoid();
+  const addTable = (data, addToHistory = true, idToUse = null) => {
+    const id = idToUse || nanoid();
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
