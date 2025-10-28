@@ -767,6 +767,7 @@ export default function ControlPanel({
           setTables(diagram.tables);
           setRelationships(diagram.references);
           setAreas(diagram.areas);
+          setGistId(diagram.gistId ?? "");
           setNotes(diagram.notes);
           setTasks(diagram.todos ?? []);
           setTransform({
