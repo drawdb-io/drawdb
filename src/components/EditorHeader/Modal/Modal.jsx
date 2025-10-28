@@ -8,7 +8,7 @@ import {
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
 import { Parser as OracleParser } from "oracle-sql-parser";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DB, MODAL, STATUS, State } from "../../../data/constants";
 import { databases } from "../../../data/databases";
@@ -40,6 +40,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
+import { IdContext } from "../../Workspace";
 
 const extensionToLanguage = {
   md: "markdown",
@@ -60,6 +61,7 @@ export default function Modal({
   importFrom,
 }) {
   const { t, i18n } = useTranslation();
+  const { setGistId } = useContext(IdContext);
   const { setTables, setRelationships, database, setDatabase } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
@@ -119,6 +121,7 @@ export default function Modal({
           setAreas(diagram.areas);
           setNotes(diagram.notes);
           setTasks(diagram.todos ?? []);
+          setGistId(diagram.gistId ?? "");
           setTransform({
             pan: diagram.pan,
             zoom: diagram.zoom,
