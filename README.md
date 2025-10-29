@@ -57,6 +57,16 @@ npm install
 npm run build
 ```
 
+#### Serving from a sub-path
+
+If you need the app to live under a path prefix (for example `/drawdb`), set `VITE_BASE_PATH` before building or previewing:
+
+```bash
+VITE_BASE_PATH=/drawdb npm run build
+```
+
+All generated asset links and client-side routes will then resolve relative to `/drawdb`. Make sure your web server rewrites unknown paths back to the built `index.html` so the SPA router can handle them.
+
 ### Docker Build
 
 ```bash
