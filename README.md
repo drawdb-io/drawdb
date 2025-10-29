@@ -74,4 +74,11 @@ docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
+To serve the app from a sub-path in Docker, pass the base path during build:
+
+```bash
+docker build --build-arg VITE_BASE_PATH=/drawdb -t drawdb .
+docker run -p 3000:80 drawdb
+```
+
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files..

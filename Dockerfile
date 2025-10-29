@@ -5,6 +5,8 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
 RUN npm run build
 
 # Stage 2: Setup the Nginx Server to serve the app
