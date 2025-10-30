@@ -78,10 +78,15 @@ export default function Note({ data, onPointerDown }) {
 
   const handleChange = (e) => {
     const textarea = document.getElementById(`note_${data.id}`);
+    if (!textarea) return;
     textarea.style.height = "0";
     textarea.style.height = textarea.scrollHeight + "px";
     const newHeight = textarea.scrollHeight + 42;
-    updateNote(data.id, { content: e.target.value, height: newHeight });
+    const updates = { content: e.target.value };
+    if (newHeight !== data.height) {
+      updates.height = newHeight;
+    }
+    updateNote(data.id, updates);
   };
 
   const handleBlur = (e) => {
@@ -181,11 +186,17 @@ export default function Note({ data, onPointerDown }) {
 
   useEffect(() => {
     const textarea = document.getElementById(`note_${data.id}`);
+    if (!textarea) return;
+
     textarea.style.height = "0";
-    textarea.style.height = textarea.scrollHeight + "px";
-    const newHeight = textarea.scrollHeight + 42;
+    const scrollHeight = textarea.scrollHeight;
+    textarea.style.height = scrollHeight + "px";
+    const newHeight = scrollHeight + 42;
+
+    if (newHeight === data.height) return;
+
     updateNote(data.id, { height: newHeight });
-  }, [data.id, updateNote]);
+  }, [data.id, data.height, updateNote]);
 
   return (
     <g
@@ -339,7 +350,10 @@ export default function Note({ data, onPointerDown }) {
           onPointerMove={(e) => {
             if (!resizing) return;
             const delta = e.movementX / (transform?.zoom || 1);
-            const next = Math.max(MIN_NOTE_WIDTH, (data.width ?? noteWidth) + delta);
+            const next = Math.max(
+              MIN_NOTE_WIDTH,
+              (data.width ?? noteWidth) + delta,
+            );
             if (next !== data.width) {
               updateNote(data.id, { width: next });
             }
