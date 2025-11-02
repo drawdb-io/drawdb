@@ -39,6 +39,7 @@ export const tableSchema = {
     },
     comment: { type: "string" },
     locked: { type: "boolean" },
+    hidden: { type: "boolean" },
     indices: {
       type: "array",
       items: {

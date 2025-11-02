@@ -6,7 +6,7 @@ export function DragHandle({ id, readOnly }) {
 
   return (
     <div
-      className={`opacity-50 mt-0.5 ${readOnly ? "cursor-not-allowed" : "cursor-move"}`}
+      className={`opacity-50 mt-1.5 ${readOnly ? "cursor-not-allowed" : "cursor-move"}`}
       {...(!readOnly && listeners)}
     >
       <IconHandle />
