@@ -5,12 +5,9 @@ import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 import { socials } from "../data/socials";
 import ThemeToggle from "./ThemeToggle";
-import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
-  const { theme } = useTheme();
-
   return (
     <>
       <div className="py-4 px-12 sm:px-4 flex justify-between items-center dark:bg-gray-800">
