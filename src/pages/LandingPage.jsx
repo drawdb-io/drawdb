@@ -18,6 +18,7 @@ import axios from "axios";
 import { languages } from "../i18n/i18n";
 import { Tweet } from "react-tweet";
 import { socials } from "../data/socials";
+import { useTheme } from "../context/ThemeContext";
 
 function shortenNumber(number) {
   if (number < 1000) return number;
@@ -29,6 +30,8 @@ function shortenNumber(number) {
 export default function LandingPage() {
   const [stats, setStats] = useState({ stars: 18000, forks: 1200 });
 
+  const { theme } = useTheme();
+
   useEffect(() => {
     const fetchStats = async () => {
       await axios
@@ -36,7 +39,6 @@ export default function LandingPage() {
         .then((res) => setStats(res.data));
     };
 
-    document.body.setAttribute("theme-mode", "light");
     document.title =
       "drawDB | Online database diagram editor and SQL generator";
 
@@ -44,36 +46,36 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col h-screen bg-zinc-100">
-        <div className="text-white font-semibold py-1 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]" />
+    <div className="dark:text-white">
+      <div className="flex flex-col h-screen bg-zinc-100 dark:bg-gray-900">
+        <div className="text-white font-semibold py-1 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e] dark:from-sky-900 dark:via-slate-700 dark:to-sky-900" />
 
         <FadeIn duration={0.6}>
           <Navbar />
         </FadeIn>
 
         {/* Hero section */}
-        <div className="flex-1 flex-col relative mx-4 md:mx-0 mb-4 rounded-3xl bg-white">
+        <div className="flex-1 flex-col relative mx-4 md:mx-0 mb-4 rounded-3xl bg-white dark:bg-gray-800">
           <div className="h-full md:hidden">
             <SimpleCanvas diagram={diagram} zoom={0.85} />
           </div>
-          <div className="hidden md:block h-full bg-dots" />
-          <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800">
+          <div className="hidden md:block h-full bg-dots dark:opacity-30" />
+          <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 dark:text-gray-100">
             <FadeIn duration={0.75}>
               <div className="md:px-3">
-                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
+                <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] dark:from-sky-400 dark:via-blue-300 dark:to-sky-200 inline-block text-transparent bg-clip-text">
                   Draw, Copy, and Paste
                 </h1>
                 <div className="text-lg font-medium mt-1 sliding-vertical">
                   Free and open source, simple, and intuitive database design
                   editor, data-modeler, and SQL generator.{" "}
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-300 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     No sign up
                   </span>
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-300 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     Free of charge
                   </span>
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-300 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     Quick and easy
                   </span>
                 </div>
@@ -81,7 +83,7 @@ export default function LandingPage() {
             </FadeIn>
             <div className="mt-4 font-semibold md:mt-12">
               <button
-                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white border rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100"
+                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white dark:bg-gray-700 border rounded-full shadow-lg px-9 border-zinc-200 dark:border-gray-600 hover:bg-zinc-100 dark:hover:bg-gray-600 dark:text-white"
                 onClick={() =>
                   document
                     .getElementById("learn-more")
@@ -92,7 +94,7 @@ export default function LandingPage() {
               </button>
               <Link
                 to="/editor"
-                className="inline-block py-3 text-white transition-all duration-300 rounded-full shadow-lg bg-sky-900 ps-7 pe-6 hover:bg-sky-800"
+                className="inline-block py-3 text-white transition-all duration-300 rounded-full shadow-lg bg-sky-900 dark:bg-sky-700 ps-7 pe-6 hover:bg-sky-800 dark:hover:bg-sky-600"
               >
                 Try it for yourself <i className="bi bi-arrow-right ms-1"></i>
               </Link>
@@ -103,10 +105,10 @@ export default function LandingPage() {
 
       {/* Learn more */}
       <div id="learn-more">
-        <div className="bg-zinc-100 py-10 px-28 md:px-8">
+        <div className="bg-zinc-100 dark:bg-gray-900 py-10 px-28 md:px-8">
           {/* Supported by */}
           <div className="text-center mb-16">
-            <div className="text-2xl md:text-xl font-bold text-sky-800 mb-8">
+            <div className="text-2xl md:text-xl font-bold text-sky-800 dark:text-sky-400 mb-8">
               Supported by
             </div>
             <div>
@@ -121,13 +123,13 @@ export default function LandingPage() {
                   width={260}
                   className="m-auto mb-4"
                 />
-                <div className="font-semibold text-lg md:text-base">
+                <div className="font-semibold text-lg md:text-base dark:text-gray-200">
                   Next-gen AI-powered intelligent terminal for all platforms
                 </div>
               </a>
             </div>
           </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3 mb-12">
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white dark:bg-gray-800 dark:border-gray-700 space-y-3 mb-12">
             <div className="text-lg font-medium">
               Build diagrams with a few clicks, see the full picture, export SQL
               scripts, customize your editor, and more.
@@ -160,7 +162,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="text-lg font-medium text-center mt-12 mb-6">
+          <div className="text-lg font-medium text-center mt-12 mb-6 dark:text-gray-200">
             Design for your database
           </div>
           <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
@@ -183,31 +185,30 @@ export default function LandingPage() {
         >
           <path
             d="M0 54C0 54 320 0 720 0C1080 0 1440 54 1440 54V0H0V100Z"
-            fill="#f4f4f5"
+            fill="#f4f4f5" className="dark:fill-gray-900"
           />
         </svg>
       </div>
 
       {/* Features */}
-      <div id="features" className="py-8 px-36 md:px-8">
+      <div id="features" className="py-8 px-36 md:px-8 dark:bg-gray-800">
         <FadeIn duration={1}>
-          <div className="text-base font-medium text-center text-sky-900">
+          <div className="text-base font-medium text-center text-sky-900 dark:text-sky-400">
             More than just an editor
           </div>
-          <div className="text-2xl mt-1 font-medium text-center">
+          <div className="text-2xl mt-1 font-medium text-center dark:text-white">
             What drawDB has to offer
           </div>
           <div className="grid grid-cols-3 gap-8 mt-10 md:grid-cols-2 sm:grid-cols-1">
             {features.map((f, i) => (
               <div
                 key={"feature" + i}
-                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-xs hover:-translate-y-2 transition-all duration-300"
-              >
-                <div className="bg-sky-700 px-0.5 rounded-l-xl" />
+                className="flex rounded-xl hover:bg-zinc-100 dark:hover:bg-gray-700 border border-zinc-100 dark:border-gray-700 shadow-xs hover:-translate-y-2 transition-all duration-300 dark:bg-gray-800">
+                <div className="bg-sky-700 dark:bg-sky-500 px-0.5 rounded-l-xl" />
                 <div className="px-8 py-4 ">
-                  <div className="text-lg font-semibold mb-3">{f.title}</div>
+                  <div className="text-lg font-semibold mb-3 dark:text-white">{f.title}</div>
                   {f.content}
-                  <div className="mt-2 text-xs opacity-60">{f.footer}</div>
+                  <div className="mt-2 text-xs opacity-60 dark:text-gray-300">{f.footer}</div>
                 </div>
               </div>
             ))}
@@ -216,12 +217,12 @@ export default function LandingPage() {
       </div>
 
       {/* Tweets */}
-      <div className="px-40 mt-6 md:px-8">
-        <div className="text-center text-2xl md:text-xl font-medium">
+      <div className="px-40 mt-6 md:px-8 dark:bg-gray-800">
+        <div className="text-center text-2xl md:text-xl font-medium dark:text-white">
           What the internet says about us
         </div>
         <div
-          data-theme="light"
+          data-theme={theme}
           className="grid grid-cols-2 place-items-center md:grid-cols-1"
         >
           <Tweet id="1816111365125218343" />
@@ -244,11 +245,11 @@ export default function LandingPage() {
           fill="#f4f4f5"
         />
       </svg>
-      <div className="bg-zinc-100 py-8 px-32 md:px-8">
-        <div className="mt-4 mb-2 text-2xl font-bold text-center">
+      <div className="bg-zinc-100 dark:bg-gray-900 py-8 px-32 md:px-8">
+        <div className="mt-4 mb-2 text-2xl font-bold text-center dark:text-white">
           Reach out to us
         </div>
-        <div className="text-lg text-center mb-4">
+        <div className="text-lg text-center mb-4 dark:text-gray-300">
           We love hearing from you. Join our community on Discord, GitHub, and
           X.
         </div>
@@ -295,12 +296,12 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <div className="bg-red-700 py-1 text-center text-white text-xs font-semibold px-3">
+      <div className="bg-red-700 dark:bg-red-800 py-1 text-center text-white text-xs font-semibold px-3">
         Attention! The diagrams are saved in your browser. Before clearing the
         browser make sure to back up your data.
       </div>
-      <hr className="border-zinc-300" />
-      <div className="text-center text-sm py-3">
+      <hr className="border-zinc-300 dark:border-gray-700" />
+      <div className="text-center text-sm py-3 dark:bg-gray-800 dark:text-white">
         &copy; {new Date().getFullYear()} <strong>drawDB</strong> - All rights reserved.
       </div>
     </div>
