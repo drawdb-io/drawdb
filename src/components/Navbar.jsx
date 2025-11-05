@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo_light_160.png";
+import logo_light from "../assets/logo_light_160.png";
+import logo_dark from "../assets/logo_dark_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 import { socials } from "../data/socials";
+import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <>
-      <div className="py-4 px-12 sm:px-4 flex justify-between items-center">
+      <div className="py-4 px-12 sm:px-4 flex justify-between items-center dark:bg-gray-900 dark:text-white">
         <div className="flex items-center justify-between w-full">
           <Link to="/">
-            <img src={logo} alt="logo" className="h-[48px] sm:h-[32px]" />
+            <img src={theme === "dark" ? logo_dark : logo_light} alt="logo" className="h-[48px] sm:h-[32px]" />
           </Link>
           <div className="md:hidden flex gap-12">
             <Link
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
               onClick={() =>
                 document
                   .getElementById("features")
@@ -28,24 +32,25 @@ export default function Navbar() {
             </Link>
             <Link
               to="/editor"
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Editor
             </Link>
             <Link
               to="/templates"
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Templates
             </Link>
             <Link
               to={socials.docs}
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Docs
             </Link>
           </div>
-          <div className="md:hidden block space-x-3 ms-12">
+          <div className="md:hidden flex items-center space-x-3 ms-12">
+            <ThemeToggle />
             <a
               title="Jump to Github"
               className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
@@ -85,14 +90,19 @@ export default function Navbar() {
       <hr />
       <SideSheet
         title={
-          <img src={logo} alt="logo" className="sm:h-[32px] md:h-[42px]" />
+          <img src={theme === "dark" ? logo_dark : logo_light} alt="logo" className="sm:h-[32px] md:h-[42px]" />
         }
         visible={openMenu}
         onCancel={() => setOpenMenu(false)}
         width={window.innerWidth}
       >
+        <div className="flex justify-between items-center p-3">
+          <span className="text-base font-semibold">Theme</span>
+          <ThemeToggle />
+        </div>
+        <hr />
         <Link
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-gray-800 block p-3 text-base font-semibold"
           onClick={() => {
             document
               .getElementById("features")
@@ -105,21 +115,21 @@ export default function Navbar() {
         <hr />
         <Link
           to="/editor"
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-gray-800 block p-3 text-base font-semibold"
         >
           Editor
         </Link>
         <hr />
         <Link
           to="/templates"
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-gray-800 block p-3 text-base font-semibold"
         >
           Templates
         </Link>
         <hr />
         <Link
           to={socials.docs}
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-gray-800 block p-3 text-base font-semibold"
         >
           Docs
         </Link>

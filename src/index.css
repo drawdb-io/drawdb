@@ -162,6 +162,11 @@
   background-size: 20px 20px;
 }
 
+.dark .bg-dots {
+  background-color: rgb(31, 41, 55);
+  background-image: radial-gradient(rgb(118, 118, 209) 1px, rgb(31, 41, 55) 1px);
+}
+
 .sliding-vertical span {
   animation: top-to-bottom 9s linear infinite 0s;
   -ms-animation: top-to-bottom 9s linear infinite 0s;
