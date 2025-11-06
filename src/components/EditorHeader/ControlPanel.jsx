@@ -647,10 +647,12 @@ export default function ControlPanel({
       case ObjectType.TABLE: {
         const copiedTable = tables.find((t) => t.id === selectedElement.id);
         addTable({
-          ...copiedTable,
-          x: copiedTable.x + 20,
-          y: copiedTable.y + 20,
-          id: nanoid(),
+          table: {
+            ...copiedTable,
+            x: copiedTable.x + 20,
+            y: copiedTable.y + 20,
+            id: nanoid(),
+          },
         });
         break;
       }
