@@ -45,7 +45,7 @@ export default function DiagramContextProvider({ children }) {
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
-        temp.splice(data.index, 0, data.table);
+        temp.splice(data.index || tables.length, 0, data.table);
         return temp;
       });
     } else {
