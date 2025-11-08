@@ -47,6 +47,7 @@ const extensionToLanguage = {
   sql: "sql",
   dbml: "dbml",
   json: "json",
+  prisma: "prisma",
 };
 
 export default function Modal({
@@ -93,6 +94,9 @@ export default function Modal({
     setRelationships(importData.relationships);
     setAreas(importData.subjectAreas ?? []);
     setNotes(importData.notes ?? []);
+    if (importData.database) {
+      setDatabase(importData.database);
+    }
     if (importData.title) {
       setTitle(importData.title);
     }

@@ -917,6 +917,15 @@ export default function ControlPanel({
             name: "DBML",
             disabled: layout.readOnly,
           },
+          {
+            function: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.PRISMA);
+            },
+            name: "Prisma schema",
+            label: "Beta",
+            disabled: layout.readOnly,
+          },
         ],
       },
       import_from_source: {
