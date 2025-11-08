@@ -157,7 +157,7 @@ export default function ControlPanel({
 
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        deleteTable(a.id, false);
+        deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.AREA) {
         deleteArea(areas[areas.length - 1].id, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -191,7 +191,7 @@ export default function ControlPanel({
     } else if (a.action === Action.DELETE) {
       if (a.element === ObjectType.TABLE) {
         a.data.relationship.forEach((x) => addRelationship(x, false));
-        addTable(a.data.table, false);
+        addTable(a.data, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -326,7 +326,7 @@ export default function ControlPanel({
 
     if (a.action === Action.ADD) {
       if (a.element === ObjectType.TABLE) {
-        addTable(null, false);
+        addTable(a.data, false);
       } else if (a.element === ObjectType.AREA) {
         addArea(null, false);
       } else if (a.element === ObjectType.NOTE) {
@@ -647,10 +647,12 @@ export default function ControlPanel({
       case ObjectType.TABLE: {
         const copiedTable = tables.find((t) => t.id === selectedElement.id);
         addTable({
-          ...copiedTable,
-          x: copiedTable.x + 20,
-          y: copiedTable.y + 20,
-          id: nanoid(),
+          table: {
+            ...copiedTable,
+            x: copiedTable.x + 20,
+            y: copiedTable.y + 20,
+            id: nanoid(),
+          },
         });
         break;
       }
@@ -709,12 +711,15 @@ export default function ControlPanel({
         return;
       }
       const v = new Validator();
+      console.log(obj);
       if (v.validate(obj, tableSchema).valid) {
         addTable({
-          ...obj,
-          x: obj.x + 20,
-          y: obj.y + 20,
-          id: nanoid(),
+          table: {
+            ...obj,
+            x: obj.x + 20,
+            y: obj.y + 20,
+            id: nanoid(),
+          },
         });
       } else if (v.validate(obj, areaSchema).valid) {
         addArea({
@@ -767,6 +772,7 @@ export default function ControlPanel({
           setTables(diagram.tables);
           setRelationships(diagram.references);
           setAreas(diagram.areas);
+          setGistId(diagram.gistId ?? "");
           setNotes(diagram.notes);
           setTasks(diagram.todos ?? []);
           setTransform({

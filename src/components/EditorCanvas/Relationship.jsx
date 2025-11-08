@@ -19,7 +19,8 @@ export default function Relationship({ data }) {
     const startTable = tables.find((t) => t.id === data.startTableId);
     const endTable = tables.find((t) => t.id === data.endTableId);
 
-    if (!startTable || !endTable) return null;
+    if (!startTable || !endTable || startTable.hidden || endTable.hidden)
+      return null;
 
     return {
       startFieldIndex: startTable.fields.findIndex(
@@ -109,6 +110,8 @@ export default function Relationship({ data }) {
         .scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  if (!pathValues) return null;
 
   return (
     <>

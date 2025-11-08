@@ -129,6 +129,8 @@ export default function Table({
     }
   };
 
+  if (tableData.hidden) return null;
+
   return (
     <>
       <foreignObject

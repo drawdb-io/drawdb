@@ -1,7 +1,14 @@
 import { Collapse, Button } from "@douyinfe/semi-ui";
+import { IconEyeOpened, IconEyeClosed } from "@douyinfe/semi-icons";
 import { IconPlus } from "@douyinfe/semi-icons";
-import { useSelect, useDiagram, useSaveState, useLayout } from "../../../hooks";
-import { ObjectType, State } from "../../../data/constants";
+import {
+  useSelect,
+  useDiagram,
+  useSaveState,
+  useLayout,
+  useUndoRedo,
+} from "../../../hooks";
+import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 import { DragHandle } from "../../SortableList/DragHandle";
 import { SortableList } from "../../SortableList/SortableList";
@@ -67,24 +74,56 @@ export default function TablesTab() {
 
 function TableListItem({ table }) {
   const { layout } = useLayout();
+  const { updateTable } = useDiagram();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { t } = useTranslation();
+
+  const toggleTableVisibility = (e) => {
+    e.stopPropagation();
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "self",
+        tid: table.id,
+        undo: { hidden: table.hidden },
+        redo: { hidden: !table.hidden },
+        message: t("edit_table", {
+          tableName: table.name,
+          extra: "[hidden]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    updateTable(table.id, { hidden: !table.hidden });
+  };
 
   return (
     <div id={`scroll_table_${table.id}`}>
       <Collapse.Panel
         className="relative"
         header={
-          <>
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2 flex-1">
               <DragHandle readOnly={layout.readOnly} id={table.id} />
               <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {table.name}
               </div>
             </div>
+            <Button
+              size="small"
+              theme="borderless"
+              type="tertiary"
+              onClick={toggleTableVisibility}
+              icon={table.hidden ? <IconEyeClosed /> : <IconEyeOpened />}
+              className="me-2"
+            />
             <div
               className="w-1 h-full absolute top-0 left-0 bottom-0"
               style={{ backgroundColor: table.color }}
             />
-          </>
+          </div>
         }
         itemKey={`${table.id}`}
       >

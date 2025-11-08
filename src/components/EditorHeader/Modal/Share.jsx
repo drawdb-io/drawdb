@@ -77,14 +77,14 @@ export default function Share({ title, setModal }) {
           await patch(gistId, SHARE_FILENAME, diagramToString());
         }
       } catch (e) {
-        console.error(e);
         setError(e);
       } finally {
         setLoading(false);
       }
     };
     updateOrGenerateLink();
-  }, [gistId, diagramToString, setGistId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const copyLink = () => {
     navigator.clipboard

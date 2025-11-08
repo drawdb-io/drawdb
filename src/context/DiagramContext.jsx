@@ -18,46 +18,44 @@ export default function DiagramContextProvider({ children }) {
 
   const addTable = (data, addToHistory = true) => {
     const id = nanoid();
+    const newTable = {
+      id,
+      name: `table_${id}`,
+      x: transform.pan.x,
+      y: transform.pan.y,
+      locked: false,
+      fields: [
+        {
+          name: "id",
+          type: database === DB.GENERIC ? "INT" : "INTEGER",
+          default: "",
+          check: "",
+          primary: true,
+          unique: true,
+          notNull: true,
+          increment: true,
+          comment: "",
+          id: nanoid(),
+        },
+      ],
+      comment: "",
+      indices: [],
+      color: defaultBlue,
+    };
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
-        temp.splice(data.index, 0, data);
+        temp.splice(data.index || tables.length, 0, data.table);
         return temp;
       });
     } else {
-      setTables((prev) => [
-        ...prev,
-        {
-          id,
-          name: `table_${id}`,
-          x: transform.pan.x,
-          y: transform.pan.y,
-          locked: false,
-          fields: [
-            {
-              name: "id",
-              type: database === DB.GENERIC ? "INT" : "INTEGER",
-              default: "",
-              check: "",
-              primary: true,
-              unique: true,
-              notNull: true,
-              increment: true,
-              comment: "",
-              id: nanoid(),
-            },
-          ],
-          comment: "",
-          indices: [],
-          color: defaultBlue,
-        },
-      ]);
+      setTables((prev) => [...prev, newTable]);
     }
     if (addToHistory) {
       setUndoStack((prev) => [
         ...prev,
         {
-          id: data ? data.id : id,
+          data: data || { table: newTable, index: tables.length - 1 },
           action: Action.ADD,
           element: ObjectType.TABLE,
           message: t("add_table"),
@@ -185,7 +183,7 @@ export default function DiagramContextProvider({ children }) {
             element: ObjectType.RELATIONSHIP,
             data: {
               relationship: data,
-              index: prevUndo.length
+              index: prevUndo.length,
             },
             message: t("add_relationship"),
           },
