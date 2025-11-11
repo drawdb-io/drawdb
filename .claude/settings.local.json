@@ -26,7 +26,8 @@
       "Bash(git log:*)",
       "Bash(npm run lint)",
       "Bash(npm run build:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(timeout:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
