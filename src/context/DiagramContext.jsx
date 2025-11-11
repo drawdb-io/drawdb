@@ -18,11 +18,24 @@ export default function DiagramContextProvider({ children }) {
 
   const addTable = (data, addToHistory = true) => {
     const id = nanoid();
+
+    // Calculate position for new table with offset to avoid overlap
+    let newPosition = { x: transform.pan.x, y: transform.pan.y };
+
+    if (!data && tables.length > 0) {
+      const lastTable = tables[tables.length - 1];
+      // Offset by 50px diagonally from the last table
+      newPosition = {
+        x: lastTable.x + 50,
+        y: lastTable.y + 50,
+      };
+    }
+
     const newTable = {
       id,
       name: `table_${id}`,
-      x: transform.pan.x,
-      y: transform.pan.y,
+      x: newPosition.x,
+      y: newPosition.y,
       locked: false,
       fields: [
         {
