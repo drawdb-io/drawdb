@@ -195,6 +195,16 @@ export default function Dashboard() {
     });
   };
 
+  const handleManageCollaborators = (project) => {
+    setSelectedProject(project);
+    setCollaborationModalVisible(true);
+  };
+
+  const handleVersionHistory = (project) => {
+    setSelectedProjectForVersions(project);
+    setVersionHistoryModalVisible(true);
+  };
+
   const getProjectActions = (project) => (
     <div style={{ padding: '8px 0' }}>
       <div 
@@ -231,7 +241,7 @@ export default function Dashboard() {
           alignItems: 'center',
           gap: '8px'
         }}
-        onClick={() => openCollaborationModal(project)}
+        onClick={() => handleManageCollaborators(project)}
       >
         <IconUserGroup />
         <span>Colaboradores</span>
@@ -244,7 +254,7 @@ export default function Dashboard() {
           alignItems: 'center',
           gap: '8px'
         }}
-        onClick={() => openVersionHistoryModal(project)}
+        onClick={() => handleVersionHistory(project)}
       >
         <IconHistory />
         <span>Histórico de Versões</span>

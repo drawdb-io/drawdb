@@ -29,7 +29,8 @@ import { useDiagram } from '../hooks';
 const { Title, Text, Paragraph } = Typography;
 
 const VersionHistoryModal = ({ visible, onCancel, project }) => {
-  const { tables, relationships } = useDiagram();
+  const diagramContext = useDiagram();
+  const { tables, relationships } = diagramContext || { tables: [], relationships: [] };
   const {
     versions,
     loading,
