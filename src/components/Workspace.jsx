@@ -80,8 +80,10 @@ export default function WorkSpace() {
     const saveAsDiagram = window.name === "" || op === "d" || op === "lt";
 
     if (saveAsDiagram) {
-      searchParams.delete("shareId");
-      setSearchParams(searchParams);
+      if (searchParams.has("shareId")) {
+        searchParams.delete("shareId");
+        setSearchParams(searchParams, { replace: true });
+      }
       if ((id === 0 && window.name === "") || op === "lt") {
         await db.diagrams
           .add({
