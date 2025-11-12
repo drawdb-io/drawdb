@@ -211,6 +211,7 @@ export function getIssues(diagram) {
     }
   });
 
+  // Check for circular table relationships
   const visitedTables = new Set();
 
   function checkCircularRelationships(tableId, visited = []) {
@@ -236,6 +237,39 @@ export function getIssues(diagram) {
   diagram.tables.forEach((table) => {
     if (!visitedTables.has(table.id)) {
       checkCircularRelationships(table.id);
+    }
+  });
+
+  // Check for circular type dependencies
+  function checkCircularTypes(typeName, visited = []) {
+    if (visited.includes(typeName)) {
+      issues.push(
+        i18n.t("circular_type_dependency", {
+          typeName: typeName,
+        }),
+      );
+      return;
+    }
+
+    const currentType = diagram.types.find((t) => t.name === typeName);
+    if (!currentType) return;
+
+    visited.push(typeName);
+
+    currentType.fields.forEach((field) => {
+      // Check if this field references another custom type
+      const referencedType = diagram.types.find((t) => t.name === field.type);
+      if (referencedType && field.type !== typeName) {
+        checkCircularTypes(field.type, [...visited]);
+      }
+    });
+  }
+
+  const visitedTypes = new Set();
+  diagram.types.forEach((type) => {
+    if (!visitedTypes.has(type.name)) {
+      visitedTypes.add(type.name);
+      checkCircularTypes(type.name);
     }
   });
 
