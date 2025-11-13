@@ -13,6 +13,7 @@ import {
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { fromDBML } from "../../../utils/importFrom/dbml";
+import { fromPrisma } from "../../../utils/importFrom/prisma";
 
 export default function ImportDiagram({
   setImportData,
@@ -137,12 +138,33 @@ export default function ImportDiagram({
     }
   };
 
+  const loadPrismaData = (e) => {
+    try {
+      const result = fromPrisma(e.target.result);
+      setImportData(result);
+      if (diagramIsEmpty()) {
+        setError({ type: STATUS.OK, message: "Everything looks good. You can now import." });
+      } else {
+        setError({
+          type: STATUS.WARNING,
+          message:
+            "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+        });
+      }
+    } catch (error) {
+      const message = error?.message || "Failed to parse Prisma schema.";
+      setError({ type: STATUS.ERROR, message });
+    }
+  };
+
   const getAcceptableFileTypes = () => {
     switch (importFrom) {
       case IMPORT_FROM.JSON:
         return "application/json,.ddb";
       case IMPORT_FROM.DBML:
         return ".dbml";
+      case IMPORT_FROM.PRISMA:
+        return ".prisma";
       default:
         return "";
     }
@@ -154,6 +176,8 @@ export default function ImportDiagram({
         return `${t("supported_types")} JSON, DDB`;
       case IMPORT_FROM.DBML:
         return `${t("supported_types")} DBML`;
+      case IMPORT_FROM.PRISMA:
+        return `${t("supported_types")} Prisma (.prisma)`;
       default:
         return "";
     }
@@ -172,6 +196,7 @@ export default function ImportDiagram({
           reader.onload = async (e) => {
             if (importFrom == IMPORT_FROM.JSON) loadJsonData(f, e);
             if (importFrom == IMPORT_FROM.DBML) loadDBMLData(e);
+            if (importFrom == IMPORT_FROM.PRISMA) loadPrismaData(e);
           };
           reader.readAsText(f);
 
