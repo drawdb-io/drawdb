@@ -3,6 +3,7 @@ export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: "class",
   theme: {
     screens: {
       '3xl': {'max': '2047px'},
