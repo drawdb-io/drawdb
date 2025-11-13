@@ -64,4 +64,15 @@ docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
+To serve the app from a sub-path, set the deployment context at runtime. Replace `/drawdb` with your desired base path.
+
+```bash
+docker run -p 3000:80 -e DRAWDB_BASE_PATH=/drawdb drawdb
+```
+
+### Deployment Context
+
+- `VITE_BASE_PATH` (build-time) controls the base URL when building outside of Docker. Set it before running `npm run build`, for example `VITE_BASE_PATH=/drawdb npm run build`. The default `/` serves the app at the domain root. The Docker image sets a placeholder during build so you can usually leave this unset.
+- `DRAWDB_BASE_PATH` (runtime, Docker only) updates the pre-built assets and Nginx routing when the container starts. It must match the path used at build time (default `/`). Provide a relative path such as `/drawdb`.
+
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files..
