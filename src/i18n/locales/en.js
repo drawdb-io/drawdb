@@ -279,6 +279,8 @@ const en = {
     failed_to_record_version: "Failed to record version",
     failed_to_load_diagram: "Failed to load diagram",
     see_all: "See all",
+    insert_sql: "Insert SQL",
+    upload_file: "Upload file",
   },
 };
 
