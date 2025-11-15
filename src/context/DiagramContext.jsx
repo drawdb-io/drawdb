@@ -1,9 +1,19 @@
 import { createContext, useState } from "react";
-import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
+import {
+  Action,
+  DB,
+  ObjectType,
+  defaultBlue,
+  tableWidth,
+  tableFieldHeight,
+  tableHeaderHeight,
+  tableColorStripHeight,
+} from "../data/constants";
 import { useTransform, useUndoRedo, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
+import dagre from "dagre";
 
 export const DiagramContext = createContext(null);
 
@@ -228,6 +238,72 @@ export default function DiagramContextProvider({ children }) {
     );
   };
 
+  const autoArrangeTables = () => {
+    if (tables.length === 0) return;
+
+    const newGraph = new dagre.graphlib.Graph();
+
+    newGraph.setGraph({
+      rankdir: "TB",
+      nodesep: 100,
+      ranksep: 120,
+      marginx: 50,
+      marginy: 50,
+    });
+
+    newGraph.setDefaultEdgeLabel(() => ({}));
+
+    tables.forEach((table) => {
+      const height =
+        table.fields.length * tableFieldHeight +
+        tableHeaderHeight +
+        tableColorStripHeight;
+      newGraph.setNode(table.id, {
+        label: table.name,
+        width: tableWidth,
+        height: height,
+      });
+    });
+
+    relationships.forEach((rel) => {
+      newGraph.setEdge(rel.startTableId, rel.endTableId);
+    });
+
+    dagre.layout(newGraph);
+
+    const arrangedTables = tables.map((table) => {
+      const node = newGraph.node(table.id);
+      return {
+        ...table,
+        x: Math.round(node.x - tableWidth / 2),
+        y: Math.round(node.y - node.height / 2),
+      };
+    });
+
+    setTables(arrangedTables);
+
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "auto_arrange",
+        data: {
+          oldTables: tables.map((t) => ({ id: t.id, x: t.x, y: t.y })),
+          newTables: arrangedTables.map((t) => ({
+            id: t.id,
+            x: t.x,
+            y: t.y,
+          })),
+        },
+        message: t("auto_arrange_tables") || "Auto-arrange tables",
+      },
+    ]);
+    setRedoStack([]);
+
+    Toast.success(t("tables_arranged") || "Tables arranged successfully!");
+  };
+
   return (
     <DiagramContext.Provider
       value={{
@@ -243,6 +319,7 @@ export default function DiagramContextProvider({ children }) {
         addRelationship,
         deleteRelationship,
         updateRelationship,
+        autoArrangeTables,
         database,
         setDatabase,
         tablesCount: tables.length,
