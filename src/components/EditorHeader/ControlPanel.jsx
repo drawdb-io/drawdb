@@ -47,8 +47,6 @@ import {
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Validator } from "jsonschema";
-import { areaSchema, noteSchema, tableSchema } from "../../data/schemas";
 import { db } from "../../data/db";
 import {
   useLayout,
@@ -67,6 +65,7 @@ import {
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
+import { classifyClipboardPayload } from "../../utils/clipboard";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
@@ -710,29 +709,35 @@ export default function ControlPanel({
       } catch (error) {
         return;
       }
-      const v = new Validator();
-      console.log(obj);
-      if (v.validate(obj, tableSchema).valid) {
+
+      const clipboardEntity = classifyClipboardPayload(obj);
+      if (!clipboardEntity) {
+        return;
+      }
+
+      const { payload } = clipboardEntity;
+
+      if (clipboardEntity.type === "table") {
         addTable({
           table: {
-            ...obj,
-            x: obj.x + 20,
-            y: obj.y + 20,
+            ...payload,
+            x: payload.x + 20,
+            y: payload.y + 20,
             id: nanoid(),
           },
         });
-      } else if (v.validate(obj, areaSchema).valid) {
+      } else if (clipboardEntity.type === "area") {
         addArea({
-          ...obj,
-          x: obj.x + 20,
-          y: obj.y + 20,
+          ...payload,
+          x: payload.x + 20,
+          y: payload.y + 20,
           id: areas.length,
         });
-      } else if (v.validate(obj, noteSchema)) {
+      } else if (clipboardEntity.type === "note") {
         addNote({
-          ...obj,
-          x: obj.x + 20,
-          y: obj.y + 20,
+          ...payload,
+          x: payload.x + 20,
+          y: payload.y + 20,
           id: notes.length,
         });
       }
