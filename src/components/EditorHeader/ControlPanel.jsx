@@ -66,6 +66,7 @@ import {
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
 import { classifyClipboardPayload } from "../../utils/clipboard";
+import { canMutateDiagram } from "../../utils/permissions";
 import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
@@ -621,7 +622,7 @@ export default function ControlPanel({
     }
   };
   const del = () => {
-    if (layout.readonly) {
+    if (!canMutateDiagram(layout)) {
       return;
     }
     switch (selectedElement.element) {
@@ -639,7 +640,7 @@ export default function ControlPanel({
     }
   };
   const duplicate = () => {
-    if (layout.readonly) {
+    if (!canMutateDiagram(layout)) {
       return;
     }
     switch (selectedElement.element) {
@@ -699,7 +700,7 @@ export default function ControlPanel({
     }
   };
   const paste = () => {
-    if (layout.readonly) {
+    if (!canMutateDiagram(layout)) {
       return;
     }
     navigator.clipboard.readText().then((text) => {
@@ -744,7 +745,7 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
-    if (layout.readonly) {
+    if (!canMutateDiagram(layout)) {
       return;
     }
     copy();

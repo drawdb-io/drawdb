@@ -1,5 +1,5 @@
 import { Validator } from "jsonschema";
-import { tableSchema, areaSchema, noteSchema } from "../data/schemas";
+import { tableSchema, areaSchema, noteSchema } from "../data/schemas.js";
 
 const validator = new Validator();
 
