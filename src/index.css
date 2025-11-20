@@ -36,6 +36,76 @@
   }
 }
 
+/* Theme variables --------------------------------------------------------- */
+:root {
+  /* default (light) values — may be overridden by .theme-dark */
+  --bg: 255 255 255;
+  --text: 17 24 39; /* slate-900 */
+  --muted: 107 114 128; /* slate-500 */
+  --accent: 14 165 233; /* sky-400 */
+  --semi-grey-0: 255,255,255;
+  --semi-grey-1: 249,250,251;
+  --semi-grey-2: 241,245,249;
+  --semi-grey-3: 226,232,240;
+  --semi-grey-4: 203,213,225;
+  --semi-grey-9: 30,41,59;
+  --semi-blue-5: 14,165,233;
+  --semi-blue-6: 2,132,199;
+  --semi-color-text-1: rgb(var(--text));
+  --semi-color-bg-0: rgb(var(--bg));
+  --semi-color-bg-2: rgb(var(--bg));
+  --semi-color-bg-3: rgb(var(--bg));
+}
+
+/* Dark theme overrides */
+.theme-dark,
+html.theme-dark {
+  --bg: 17 24 39; /* slate-900 */
+  --text: 243 244 246; /* slate-50 */
+  --muted: 148 163 184; /* slate-400 */
+  --accent: 56 189 248; /* sky-400 bright */
+  --semi-grey-0: 17,24,39;
+  --semi-grey-1: 20,23,29;
+  --semi-grey-2: 30,41,59;
+  --semi-grey-3: 39,47,61;
+  --semi-grey-4: 55,65,81;
+  --semi-grey-9: 243,244,246;
+  --semi-blue-5: 56,189,248;
+  --semi-blue-6: 14,165,233;
+  --semi-color-text-1: rgb(var(--text));
+  --semi-color-bg-0: rgb(var(--bg));
+  --semi-color-bg-2: rgb(var(--bg));
+  --semi-color-bg-3: rgb(var(--bg));
+}
+
+/* Light theme explicit class (optional; root defaults to light) */
+.theme-light,
+html.theme-light {
+  /* no-op; variables already set in :root for light */
+}
+
+/* apply variables to body for layout */
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+/* Reduced motion: disable transitions */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Subtle color transition when toggling theme */
+@media (prefers-reduced-motion: no-preference) {
+  :root,
+  html {
+    transition: color 220ms ease, background-color 220ms ease;
+  }
+}
+
 .semi-form-vertical .semi-form-field {
   margin: 0;
   padding-top: 8px !important;
