@@ -165,7 +165,6 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.TYPE) {
-        console.log(a);
         deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
         deleteEnum(enums.length - 1, false);
