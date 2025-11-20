@@ -165,7 +165,8 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.TYPE) {
-        deleteType(types.length - 1, false);
+        console.log(a);
+        deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
         deleteEnum(enums.length - 1, false);
       }
@@ -199,7 +200,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.AREA) {
         addArea(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType({ id: a.id, ...a.data }, false);
+        addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
         addEnum({ id: a.id, ...a.data }, false);
       }
@@ -334,7 +335,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType(null, false);
+        addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
         addEnum(null, false);
       }
@@ -367,7 +368,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.AREA) {
         deleteArea(a.data.id, false);
       } else if (a.element === ObjectType.TYPE) {
-        deleteType(a.id, false);
+        deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
         deleteEnum(a.id, false);
       }
