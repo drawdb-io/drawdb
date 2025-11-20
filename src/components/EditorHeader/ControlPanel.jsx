@@ -258,9 +258,12 @@ export default function ControlPanel({
         updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
+          const type = types.find((t, i) =>
+            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
+          );
           updateType(a.tid, {
-            fields: types[a.tid].fields.filter(
-              (_, i) => i !== types[a.tid].fields.length - 1,
+            fields: type.fields.filter((f, i) =>
+              f.id ? f.id !== a.data.field.id : i !== type.fields.length - 1,
             ),
           });
         }
@@ -436,14 +439,11 @@ export default function ControlPanel({
         updateRelationship(a.rid, a.redo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
+          const type = types.find((t, i) =>
+            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
+          );
           updateType(a.tid, {
-            fields: [
-              ...types[a.tid].fields,
-              {
-                name: "",
-                type: "",
-              },
-            ],
+            fields: [...type.fields, a.data.field],
           });
         } else if (a.component === "field") {
           updateType(a.tid, {

@@ -79,7 +79,11 @@ export default function TypesContextProvider({ children }) {
 
   const updateType = (id, values) => {
     setTypes((prev) =>
-      prev.map((e, i) => (i === id ? { ...e, ...values } : e)),
+      prev.map((item, index) => {
+        const isMatch = typeof id === "number" ? index === id : item.id === id;
+
+        return isMatch ? { ...item, ...values } : item;
+      }),
     );
   };
 

@@ -199,7 +199,17 @@ export default function WorkSpace() {
             if (databases[database].hasTypes) {
               if (d.types) {
                 setTypes(
-                  d.types.map((t) => (t.id ? t : { ...t, id: nanoid() })),
+                  d.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
                 );
               } else {
                 setTypes([]);
@@ -247,7 +257,17 @@ export default function WorkSpace() {
             if (databases[database].hasTypes) {
               if (diagram.types) {
                 setTypes(
-                  diagram.types.map((t) => (t.id ? t : { ...t, id: nanoid() })),
+                  diagram.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
                 );
               } else {
                 setTypes([]);
@@ -292,7 +312,17 @@ export default function WorkSpace() {
             if (databases[database].hasTypes) {
               if (diagram.types) {
                 setTypes(
-                  diagram.types.map((t) => (t.id ? t : { ...t, id: nanoid() })),
+                  diagram.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
                 );
               } else {
                 setTypes([]);
@@ -330,7 +360,15 @@ export default function WorkSpace() {
           if (parsedDiagram.types) {
             setTypes(
               parsedDiagram.types.map((t) =>
-                t.id ? t : { ...t, id: nanoid() },
+                t.id
+                  ? t
+                  : {
+                      ...t,
+                      id: nanoid(),
+                      fields: t.fields.map((f) =>
+                        f.id ? f : { ...f, id: nanoid() },
+                      ),
+                    },
               ),
             );
           } else {
