@@ -165,7 +165,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         deleteRelationship(a.data.relationship.id, false);
       } else if (a.element === ObjectType.TYPE) {
-        deleteType(types.length - 1, false);
+        deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
         deleteEnum(enums.length - 1, false);
       }
@@ -199,7 +199,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.AREA) {
         addArea(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType({ id: a.id, ...a.data }, false);
+        addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
         addEnum({ id: a.id, ...a.data }, false);
       }
@@ -258,9 +258,12 @@ export default function ControlPanel({
         updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
+          const type = types.find((t, i) =>
+            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
+          );
           updateType(a.tid, {
-            fields: types[a.tid].fields.filter(
-              (_, i) => i !== types[a.tid].fields.length - 1,
+            fields: type.fields.filter((f, i) =>
+              f.id ? f.id !== a.data.field.id : i !== type.fields.length - 1,
             ),
           });
         }
@@ -334,7 +337,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.RELATIONSHIP) {
         addRelationship(a.data, false);
       } else if (a.element === ObjectType.TYPE) {
-        addType(null, false);
+        addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
         addEnum(null, false);
       }
@@ -367,7 +370,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.AREA) {
         deleteArea(a.data.id, false);
       } else if (a.element === ObjectType.TYPE) {
-        deleteType(a.id, false);
+        deleteType(a.data.type.id, false);
       } else if (a.element === ObjectType.ENUM) {
         deleteEnum(a.id, false);
       }
@@ -436,14 +439,11 @@ export default function ControlPanel({
         updateRelationship(a.rid, a.redo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
+          const type = types.find((t, i) =>
+            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
+          );
           updateType(a.tid, {
-            fields: [
-              ...types[a.tid].fields,
-              {
-                name: "",
-                type: "",
-              },
-            ],
+            fields: [...type.fields, a.data.field],
           });
         } else if (a.component === "field") {
           updateType(a.tid, {
