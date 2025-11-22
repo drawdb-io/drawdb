@@ -238,6 +238,7 @@ const en = {
     enum_w_no_name: "Found enum with no name",
     enum_w_no_values: "Found enum '{{enumName}}' with no values",
     duplicate_enums: "Duplicate enums with the name '{{enumName}}'",
+    enum_deleted: "Enum deleted",
     no_enums: "No enums",
     no_enums_text: "Define enums here",
     declare_array: "Declare array",
