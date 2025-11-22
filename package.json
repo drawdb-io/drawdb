@@ -21,6 +21,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.12.0",
     "classnames": "^2.5.1",
+    "dagre": "^0.8.5",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
