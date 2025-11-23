@@ -17,6 +17,7 @@ import {
   useTasks,
   useSaveState,
   useEnums,
+  useBaseTables,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
@@ -58,6 +59,7 @@ export default function WorkSpace() {
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
   const { enums, setEnums } = useEnums();
+  const { baseTables, setBaseTables } = useBaseTables();
   const {
     tables,
     relationships,
@@ -102,6 +104,7 @@ export default function WorkSpace() {
             loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
+            baseTables: baseTables,
           })
           .then((id) => {
             setId(id);
@@ -126,6 +129,7 @@ export default function WorkSpace() {
             loadedFromGistId: loadedFromGistId,
             ...(databases[database].hasEnums && { enums: enums }),
             ...(databases[database].hasTypes && { types: types }),
+            baseTables: baseTables,
           })
           .then(() => {
             setSaveState(State.SAVED);
@@ -146,6 +150,7 @@ export default function WorkSpace() {
           zoom: transform.zoom,
           ...(databases[database].hasEnums && { enums: enums }),
           ...(databases[database].hasTypes && { types: types }),
+          baseTables: baseTables,
         })
         .then(() => {
           setSaveState(State.SAVED);
@@ -170,6 +175,7 @@ export default function WorkSpace() {
     setSaveState,
     database,
     enums,
+    baseTables,
     gistId,
     loadedFromGistId,
   ]);
@@ -281,6 +287,26 @@ export default function WorkSpace() {
                   !e.id ? { ...e, id: nanoid() } : e,
                 ) ?? [],
               );
+            }
+            if (diagram.baseTables) {
+              setBaseTables(
+                diagram.baseTables.map((bt) =>
+                  bt.id
+                    ? {
+                        ...bt,
+                        fields: bt.fields.map((f) =>
+                          f.id ? f : { ...f, id: nanoid() },
+                        ),
+                      }
+                    : {
+                        ...bt,
+                        id: nanoid(),
+                        fields: bt.fields.map((f) => ({ ...f, id: nanoid() })),
+                      },
+                ) ?? [],
+              );
+            } else {
+              setBaseTables([]);
             }
             window.name = `d ${diagram.id}`;
           } else {
@@ -448,6 +474,7 @@ export default function WorkSpace() {
     setDatabase,
     database,
     setEnums,
+    setBaseTables,
     selectedDb,
     setSaveState,
     searchParams,

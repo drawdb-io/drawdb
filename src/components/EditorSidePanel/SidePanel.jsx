@@ -10,6 +10,7 @@ import {
   useNotes,
   useEnums,
   useTypes,
+  useBaseTables,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
@@ -20,6 +21,7 @@ import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
 import { databases } from "../../data/databases";
 import EnumsTab from "./EnumsTab/EnumsTab";
+import BaseTablesTab from "./BaseTablesTab/BaseTablesTab";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 import DBMLEditor from "./DBMLEditor";
@@ -32,6 +34,7 @@ export default function SidePanel({ width, resize, setResize }) {
   const { notesCount } = useNotes();
   const { typesCount } = useTypes();
   const { enumsCount } = useEnums();
+  const { baseTablesCount } = useBaseTables();
   const { t } = useTranslation();
 
   const toggleDBMLEditor = () => {
@@ -78,6 +81,12 @@ export default function SidePanel({ width, resize, setResize }) {
       });
     }
 
+    tabs.push({
+      tab: `${t("base_tables")} (${baseTablesCount})`,
+      itemKey: Tab.BASETABLES,
+      component: <BaseTablesTab />,
+    });
+
     return isRtl(i18n.language) ? tabs.reverse() : tabs;
   }, [
     t,
@@ -88,6 +97,7 @@ export default function SidePanel({ width, resize, setResize }) {
     typesCount,
     enumsCount,
     notesCount,
+    baseTablesCount,
   ]);
 
   return (

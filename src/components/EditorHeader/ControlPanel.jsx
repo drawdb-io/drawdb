@@ -64,6 +64,7 @@ import {
   useEnums,
   useFullscreen,
   useTasks,
+  useBaseTables,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -126,6 +127,7 @@ export default function ControlPanel({
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
   const { notes, setNotes, updateNote, addNote, deleteNote } = useNotes();
   const { areas, setAreas, updateArea, addArea, deleteArea } = useAreas();
+  const { setBaseTables } = useBaseTables();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
@@ -799,6 +801,26 @@ export default function ControlPanel({
             diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
               [],
           );
+          if (diagram.baseTables) {
+            setBaseTables(
+              diagram.baseTables.map((bt) =>
+                bt.id
+                  ? {
+                      ...bt,
+                      fields: bt.fields.map((f) =>
+                        f.id ? f : { ...f, id: nanoid() },
+                      ),
+                    }
+                  : {
+                      ...bt,
+                      id: nanoid(),
+                      fields: bt.fields.map((f) => ({ ...f, id: nanoid() })),
+                    },
+              ) ?? [],
+            );
+          } else {
+            setBaseTables([]);
+          }
           window.name = `d ${diagram.id}`;
         } else {
           window.name = "";
