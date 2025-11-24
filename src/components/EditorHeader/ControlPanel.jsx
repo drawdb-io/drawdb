@@ -641,7 +641,14 @@ export default function ControlPanel({
       default:
         break;
     }
-  });
+  }, [
+    layout.readOnly,
+    selectedElement.element,
+    selectedElement.id,
+    deleteTable,
+    deleteNote,
+    deleteArea,
+]);
   const duplicate = () => {
     if (layout.readonly) {
       return;
