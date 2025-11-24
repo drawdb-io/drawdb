@@ -21,9 +21,7 @@
     "@lexical/utils": "^0.12.6",
     "@monaco-editor/react": "^4.7.0",
     "@vercel/analytics": "^1.2.2",
-    "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.12.0",
-    "classnames": "^2.5.1",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
@@ -46,7 +44,6 @@
     "react-i18next": "^14.1.1",
     "react-router-dom": "^6.21.0",
     "react-tweet": "^3.2.1",
-    "url": "^0.11.1",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
@@ -63,8 +60,5 @@
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
     "vite": "^6.4.1"
-  },
-  "overrides": {
-    "follow-redirects": "^1.15.4"
   }
 }

@@ -26,6 +26,7 @@ import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
+import { nanoid } from "nanoid";
 
 export const IdContext = createContext({
   gistId: "",
@@ -196,10 +197,28 @@ export default function WorkSpace() {
             setTasks(d.todos ?? []);
             setTransform({ pan: d.pan, zoom: d.zoom });
             if (databases[database].hasTypes) {
-              setTypes(d.types ?? []);
+              if (d.types) {
+                setTypes(
+                  d.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
+                );
+              } else {
+                setTypes([]);
+              }
             }
             if (databases[database].hasEnums) {
-              setEnums(d.enums ?? []);
+              setEnums(
+                d.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ?? [],
+              );
             }
             window.name = `d ${d.id}`;
           } else {
@@ -238,10 +257,30 @@ export default function WorkSpace() {
             setUndoStack([]);
             setRedoStack([]);
             if (databases[database].hasTypes) {
-              setTypes(diagram.types ?? []);
+              if (diagram.types) {
+                setTypes(
+                  diagram.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
+                );
+              } else {
+                setTypes([]);
+              }
             }
             if (databases[database].hasEnums) {
-              setEnums(diagram.enums ?? []);
+              setEnums(
+                diagram.enums.map((e) =>
+                  !e.id ? { ...e, id: nanoid() } : e,
+                ) ?? [],
+              );
             }
             window.name = `d ${diagram.id}`;
           } else {
@@ -277,10 +316,30 @@ export default function WorkSpace() {
             setUndoStack([]);
             setRedoStack([]);
             if (databases[database].hasTypes) {
-              setTypes(diagram.types ?? []);
+              if (diagram.types) {
+                setTypes(
+                  diagram.types.map((t) =>
+                    t.id
+                      ? t
+                      : {
+                          ...t,
+                          id: nanoid(),
+                          fields: t.fields.map((f) =>
+                            f.id ? f : { ...f, id: nanoid() },
+                          ),
+                        },
+                  ),
+                );
+              } else {
+                setTypes([]);
+              }
             }
             if (databases[database].hasEnums) {
-              setEnums(diagram.enums ?? []);
+              setEnums(
+                diagram.enums.map((e) =>
+                  !e.id ? { ...e, id: nanoid() } : e,
+                ) ?? [],
+              );
             }
           } else {
             if (selectedDb === "") setShowSelectDbModal(true);
@@ -308,10 +367,30 @@ export default function WorkSpace() {
         setAreas(parsedDiagram.subjectAreas);
         setTransform(parsedDiagram.transform);
         if (databases[parsedDiagram.database].hasTypes) {
-          setTypes(parsedDiagram.types ?? []);
+          if (parsedDiagram.types) {
+            setTypes(
+              parsedDiagram.types.map((t) =>
+                t.id
+                  ? t
+                  : {
+                      ...t,
+                      id: nanoid(),
+                      fields: t.fields.map((f) =>
+                        f.id ? f : { ...f, id: nanoid() },
+                      ),
+                    },
+              ),
+            );
+          } else {
+            setTypes([]);
+          }
         }
         if (databases[parsedDiagram.database].hasEnums) {
-          setEnums(parsedDiagram.enums ?? []);
+          setEnums(
+            parsedDiagram.enums.map((e) =>
+              !e.id ? { ...e, id: nanoid() } : e,
+            ) ?? [],
+          );
         }
       } catch (e) {
         console.log(e);
