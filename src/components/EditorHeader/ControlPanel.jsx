@@ -1629,7 +1629,7 @@ export default function ControlPanel({
     
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedElement, layout.readOnly]);
+  }, [selectedElement, layout.readOnly, del]);
 
   return (
     <>
