@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect} from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -622,7 +622,10 @@ export default function ControlPanel({
     }
   };
   const del = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
+      return;
+    }
+    if (selectedElement.element === ObjectType.NONE || selectedElement.id === -1 || selectedElement.id === null) {
       return;
     }
     switch (selectedElement.element) {
@@ -1614,6 +1617,19 @@ export default function ControlPanel({
   });
   useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
   useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (!layout.readOnly && selectedElement.element !== ObjectType.NONE && selectedElement.id !== -1 && selectedElement.id !== null) {
+          e.preventDefault();
+          del();
+        }
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedElement, layout.readOnly]);
 
   return (
     <>
