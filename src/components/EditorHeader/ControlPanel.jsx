@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect} from "react";
+import { useContext, useState, useEffect, useCallback} from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -621,7 +621,7 @@ export default function ControlPanel({
       }
     }
   };
-  const del = () => {
+  const del = useCallback(() => {
     if (layout.readOnly) {
       return;
     }
@@ -641,7 +641,7 @@ export default function ControlPanel({
       default:
         break;
     }
-  };
+  });
   const duplicate = () => {
     if (layout.readonly) {
       return;
