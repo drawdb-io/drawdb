@@ -45,6 +45,7 @@ import { ml, malayalam } from "./locales/ml";
 import { nl, dutch } from "./locales/nl";
 import { sd, sindhi } from "./locales/sd";
 import { th, thai } from "./locales/th";
+import { ms, malay } from "./locales/ms";
 
 export const languages = [
   english,
@@ -91,6 +92,7 @@ export const languages = [
   dutch,
   sindhi,
   thai,
+  malay,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -147,6 +149,7 @@ i18n
       nl,
       sd,
       th,
+      ms,
     },
   });
 
