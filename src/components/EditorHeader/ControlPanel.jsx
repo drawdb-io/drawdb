@@ -24,7 +24,7 @@ import {
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg, toSvg } from "html-to-image";
+import { toPng, toJpeg } from "html-to-image";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
