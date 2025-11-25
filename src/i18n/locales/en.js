@@ -238,6 +238,7 @@ const en = {
     enum_w_no_name: "Found enum with no name",
     enum_w_no_values: "Found enum '{{enumName}}' with no values",
     duplicate_enums: "Duplicate enums with the name '{{enumName}}'",
+    enum_deleted: "Enum deleted",
     no_enums: "No enums",
     no_enums_text: "Define enums here",
     declare_array: "Declare array",
@@ -279,6 +280,8 @@ const en = {
     failed_to_record_version: "Failed to record version",
     failed_to_load_diagram: "Failed to load diagram",
     see_all: "See all",
+    insert_sql: "Insert SQL",
+    upload_file: "Upload file",
   },
 };
 

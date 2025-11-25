@@ -40,14 +40,6 @@ function columnDefault(field, database) {
   return `default: ${parseDefaultDbml(field, database)}`;
 }
 
-function columnComment(field) {
-  if (!field.comment || field.comment.trim() === "") {
-    return "";
-  }
-
-  return `note: '${escapeQuotes(field.comment)}'`;
-}
-
 function columnSettings(field, database) {
   let constraints = [];
 
@@ -98,6 +90,23 @@ function processComment(comment) {
   return `'${escapeQuotes(comment)}'`;
 }
 
+function columnComment(field) {
+  if (!field.comment || field.comment.trim() === "") {
+    return "";
+  }
+
+  return `note: ${processComment(field.comment)}`;
+}
+
+function processType(type) {
+  // TODO: remove after a while
+  if (type.toUpperCase() === "TIMESTAMP WITH TIME ZONE") {
+    return "timestamptz";
+  }
+
+  return type.toLowerCase();
+}
+
 export function toDBML(diagram) {
   const generateRelString = (rel) => {
     const { fields: startTableFields, name: startTableName } =
@@ -142,7 +151,7 @@ export function toDBML(diagram) {
               `\t${quoteIdentifier(field.name)} ${
                 field.type === "ENUM" || field.type === "SET"
                   ? quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)
-                  : field.type.toLowerCase()
+                  : processType(field.type)
               }${fieldSize(
                 field,
                 diagram.database,

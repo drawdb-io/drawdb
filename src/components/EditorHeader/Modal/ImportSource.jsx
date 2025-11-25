@@ -1,6 +1,7 @@
-import { Upload, Checkbox, Banner } from "@douyinfe/semi-ui";
+import { Upload, Checkbox, Banner, Tabs, TabPane } from "@douyinfe/semi-ui";
 import { STATUS } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
+import CodeEditor from "../../CodeEditor";
 
 export default function ImportSource({
   importData,
@@ -12,45 +13,63 @@ export default function ImportSource({
 
   return (
     <div>
-      <Upload
-        action="#"
-        beforeUpload={({ file, fileList }) => {
-          const f = fileList[0].fileInstance;
-          if (!f) {
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            setImportData((prev) => ({ ...prev, src: e.target.result }));
-          };
-          reader.readAsText(f);
+      <Tabs>
+        <TabPane tab={t("insert_sql")} itemKey="text-import">
+          <CodeEditor
+            className="h-56"
+            language="sql"
+            onChange={(value) => {
+              setImportData((prev) => ({ ...prev, src: value }));
+              setError({
+                type: STATUS.NONE,
+                message: "",
+              });
+            }}
+          />
+        </TabPane>
+        <TabPane tab={t("upload_file")} itemKey="file-import">
+          <Upload
+            action="#"
+            beforeUpload={({ file, fileList }) => {
+              const f = fileList[0].fileInstance;
+              if (!f) {
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = async (e) => {
+                setImportData((prev) => ({ ...prev, src: e.target.result }));
+              };
+              reader.readAsText(f);
 
-          return {
-            autoRemove: false,
-            fileInstance: file.fileInstance,
-            status: "success",
-            shouldUpload: false,
-          };
-        }}
-        draggable={true}
-        dragMainText={t("drag_and_drop_files")}
-        dragSubText={t("upload_sql_to_generate_diagrams")}
-        accept=".sql"
-        onRemove={() => {
-          setError({
-            type: STATUS.NONE,
-            message: "",
-          });
-          setImportData((prev) => ({ ...prev, src: "" }));
-        }}
-        onFileChange={() =>
-          setError({
-            type: STATUS.NONE,
-            message: "",
-          })
-        }
-        limit={1}
-      />
+              return {
+                autoRemove: false,
+                fileInstance: file.fileInstance,
+                status: "success",
+                shouldUpload: false,
+              };
+            }}
+            draggable={true}
+            dragMainText={t("drag_and_drop_files")}
+            dragSubText={t("upload_sql_to_generate_diagrams")}
+            accept=".sql"
+            onRemove={() => {
+              setError({
+                type: STATUS.NONE,
+                message: "",
+              });
+              setImportData((prev) => ({ ...prev, src: "" }));
+            }}
+            onFileChange={() =>
+              setError({
+                type: STATUS.NONE,
+                message: "",
+              })
+            }
+            limit={1}
+          />
+        </TabPane>
+      </Tabs>
+
       <div className="mt-2">
         <Checkbox
           aria-label="overwrite checkbox"

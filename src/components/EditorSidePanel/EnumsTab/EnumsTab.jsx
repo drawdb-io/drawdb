@@ -30,18 +30,18 @@ export default function EnumsTab() {
         <Empty title={t("no_enums")} text={t("no_enums_text")} />
       ) : (
         <Collapse accordion>
-          {enums.map((e, i) => (
+          {enums.map((e) => (
             <Collapse.Panel
-              key={`enum_${i}`}
-              id={`scroll_enum_${i}`}
+              key={`enum_${e.id}`}
+              id={`scroll_enum_${e.id}`}
               header={
                 <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {e.name}
                 </div>
               }
-              itemKey={`${i}`}
+              itemKey={e.id}
             >
-              <EnumDetails data={e} i={i} />
+              <EnumDetails data={e} />
             </Collapse.Panel>
           ))}
         </Collapse>

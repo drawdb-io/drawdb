@@ -97,12 +97,14 @@ export const noteSchema = {
 export const typeSchema = {
   type: "object",
   properties: {
+    id: { type: ["string"] },
     name: { type: "string" },
     fields: {
       type: "array",
       items: {
         type: "object",
         properties: {
+          id: { type: ["string"] },
           name: { type: "string" },
           type: { type: "string" },
           values: {
