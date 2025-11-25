@@ -12,6 +12,7 @@ import { fa, persian } from "./locales/fa";
 import { hi, hindi } from "./locales/hi";
 import { uk, ukrainian } from "./locales/uk";
 import { ru, russian } from "./locales/ru";
+import { el, greek } from "./locales/el";
 import { ro, romanian } from "./locales/ro";
 import { tr, turkish } from "./locales/tr";
 import { mr, marathi } from "./locales/mr";
@@ -41,9 +42,9 @@ import { ug, uyghur } from "./locales/ug";
 import { pa_pk, punjabipk } from "./locales/pa-pk";
 import { cz, czech } from "./locales/cz";
 import { ml, malayalam } from "./locales/ml";
-import { nl, dutch } from './locales/nl';
-import { sd, sindhi } from './locales/sd';
-import { th, thai } from './locales/th';
+import { nl, dutch } from "./locales/nl";
+import { sd, sindhi } from "./locales/sd";
+import { th, thai } from "./locales/th";
 
 export const languages = [
   english,
@@ -56,6 +57,7 @@ export const languages = [
   persian,
   hindi,
   marathi,
+  greek,
   ukrainian,
   russian,
   romanian,
@@ -113,6 +115,7 @@ i18n
       mr,
       uk,
       ru,
+      el,
       ro,
       tr,
       fr,
