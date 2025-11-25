@@ -45,6 +45,8 @@ import { ml, malayalam } from "./locales/ml";
 import { nl, dutch } from "./locales/nl";
 import { sd, sindhi } from "./locales/sd";
 import { th, thai } from "./locales/th";
+import { as, assamese } from "./locales/as";
+
 import { ms, malay } from "./locales/ms";
 
 export const languages = [
@@ -57,6 +59,7 @@ export const languages = [
   portuguese,
   persian,
   hindi,
+  assamese,
   marathi,
   greek,
   ukrainian,
@@ -149,6 +152,7 @@ i18n
       nl,
       sd,
       th,
+      as,
       ms,
     },
   });
