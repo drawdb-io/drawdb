@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useMemo } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
 import { useTransform, useUndoRedo, useSelect } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
@@ -150,7 +150,7 @@ export default function DiagramContextProvider({ children }) {
             field: field,
             index: fields.findIndex((f) => f.id === field.id),
             relationship: rels,
-          },
+            },
           message: t("edit_table", {
             tableName: name,
             extra: "[delete field]",
@@ -175,22 +175,20 @@ export default function DiagramContextProvider({ children }) {
 
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
-      setRelationships((prev) => {
-        setUndoStack((prevUndo) => [
-          ...prevUndo,
-          {
-            action: Action.ADD,
-            element: ObjectType.RELATIONSHIP,
-            data: {
-              relationship: data,
-              index: prevUndo.length,
-            },
-            message: t("add_relationship"),
+      setUndoStack((prevUndo) => [
+        ...prevUndo,
+        {
+          action: Action.ADD,
+          element: ObjectType.RELATIONSHIP,
+          data: {
+            relationship: data,
+            index: relationships.length, // Use current length as index
           },
-        ]);
-        setRedoStack([]);
-        return [...prev, data];
-      });
+          message: t("add_relationship"),
+        },
+      ]);
+      setRedoStack([]);
+      setRelationships((prev) => [...prev, data]);
     } else {
       setRelationships((prev) => {
         const temp = prev.slice();
@@ -228,28 +226,35 @@ export default function DiagramContextProvider({ children }) {
     );
   };
 
+  const value = useMemo(
+    () => ({
+      tables,
+      setTables,
+      addTable,
+      updateTable,
+      updateField,
+      deleteField,
+      deleteTable,
+      relationships,
+      setRelationships,
+      addRelationship,
+      deleteRelationship,
+      updateRelationship,
+      database,
+      setDatabase,
+      tablesCount: tables.length,
+      relationshipsCount: relationships.length,
+    }),
+    [
+      tables,
+      relationships,
+      database,
+      transform.pan, // Dependencies for addTable
+      selectedElement.id, // Dependency for deleteTable
+    ],
+  );
+
   return (
-    <DiagramContext.Provider
-      value={{
-        tables,
-        setTables,
-        addTable,
-        updateTable,
-        updateField,
-        deleteField,
-        deleteTable,
-        relationships,
-        setRelationships,
-        addRelationship,
-        deleteRelationship,
-        updateRelationship,
-        database,
-        setDatabase,
-        tablesCount: tables.length,
-        relationshipsCount: relationships.length,
-      }}
-    >
-      {children}
-    </DiagramContext.Provider>
+    <DiagramContext.Provider value={value}>{children}</DiagramContext.Provider>
   );
 }
