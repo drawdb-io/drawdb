@@ -10,6 +10,7 @@ const hi = {
     import_from: "इम्पोर्ट",
     import: "इम्पोर्ट",
     file: "फ़ाइल",
+
     new: "नया",
     new_window: "नई विंडो",
     open: "खोलें",
@@ -20,44 +21,52 @@ const hi = {
     template_saved: "टेम्पलेट सेव हो गया!",
     rename: "नाम बदलें",
     delete_diagram: "डायग्राम हटाएं",
+
     are_you_sure_delete_diagram:
       "क्या आप वाकई इस डायग्राम को हटाना चाहते हैं? यह क्रिया अपरिवर्तनीय है।",
+
     oops_smth_went_wrong: "उफ़! कुछ गलत हो गया।",
     import_diagram: "डायग्राम इम्पोर्ट करें",
     import_from_source: "SQL से इम्पोर्ट करें",
     export_as: "के रूप में एक्सपोर्ट करें",
     export_source: "SQL एक्सपोर्ट करें",
+
     models: "मॉडल्स",
     exit: "बाहर निकलें",
-    edit: "एडिट",
+    edit: "एडिट करें",
     undo: "पूर्ववत करें",
     redo: "फिर से करें",
     clear: "साफ़ करें",
+
     are_you_sure_clear:
       "क्या आप वाकई डायग्राम साफ़ करना चाहते हैं? यह क्रिया अपरिवर्तनीय है।",
+
     cut: "काटें",
     copy: "कॉपी करें",
     paste: "पेस्ट करें",
-    duplicate: "डुप्लिकेट बनाएं",
+    duplicate: "प्रतिलिपि बनाएं",
     delete: "हटाएं",
     copy_as_image: "इमेज के रूप में कॉपी करें",
-    view: "व्यू",
+
+    view: "दृश्य",
     header: "मेनूबार",
     sidebar: "साइडबार",
     issues: "समस्याएं",
     presentation_mode: "प्रस्तुति मोड",
     strict_mode: "स्ट्रिक्ट मोड",
     field_details: "फ़ील्ड डिटेल्स",
-    reset_view: "व्यू रीसेट करें",
+    reset_view: "दृश्य रीसेट करें",
+
     show_grid: "ग्रिड दिखाएं",
     snap_to_grid: "ग्रिड से स्नैप करें",
     show_datatype: "डेटा प्रकार दिखाएं",
     show_cardinality: "कार्डिनैलिटी दिखाएं",
     show_relationship_labels: "रिलेशनशिप लेबल दिखाएं",
     show_debug_coordinates: "डिबग कोऑर्डिनेट दिखाएं",
+
     theme: "थीम",
-    light: "लाइट",
-    dark: "डार्क",
+    light: "प्रकाश",
+    dark: "अंधकार",
 
     zoom_in: "ज़ूम इन",
     zoom_out: "ज़ूम आउट",
@@ -68,6 +77,7 @@ const hi = {
     autosave: "ऑटोसेव",
     panning: "पैनिंग",
 
+    timeline: "समयरेखा",
     transform: "ट्रांसफॉर्म",
     viewbox: "व्यू-बॉक्स",
     cursor_coordinates: "कर्सर निर्देशांक",
@@ -75,13 +85,15 @@ const hi = {
     coordinate_space_screen: "स्क्रीन",
     coordinate_space_diagram: "डायग्राम",
 
-    table_width: "टेबल चौड़ाई",
+    table_width: "टेबल की चौड़ाई",
     language: "भाषा",
 
     export_saved_data: "सेव किया हुआ डेटा एक्सपोर्ट करें",
     flush_storage: "स्टोरेज साफ़ करें",
+
     are_you_sure_flush_storage:
       "क्या आप वाकई स्टोरेज साफ़ करना चाहते हैं? यह आपके सभी डायग्राम और टेम्पलेट्स हटाएगा।",
+
     storage_flushed: "स्टोरेज साफ़ किया गया",
 
     help: "मदद",
@@ -106,7 +118,7 @@ const hi = {
     to_do: "टू-डू",
 
     tables: "टेबल्स",
-    relationships: "रिलेशनशिप",
+    relationships: "संबंध",
     subject_areas: "सब्जेक्ट एरिया",
     notes: "नोट्स",
     types: "टाइप्स",
@@ -121,19 +133,20 @@ const hi = {
     no_subject_areas_text: "टेबल ग्रुप करने के लिए एरिया जोड़ें!",
     no_notes: "कोई नोट्स नहीं",
     no_notes_text: "नोट्स का उपयोग अतिरिक्त जानकारी रखने के लिए करें",
-    no_types: "कोई टाइप नहीं",
+    no_types: "कोई प्रकार नहीं",
     no_types_text: "कस्टम डेटा टाइप बनाएँ",
     no_issues: "कोई समस्या नहीं मिली",
+
     strict_mode_is_on_no_issues:
       "स्ट्रिक्ट मोड बंद होने के कारण कोई समस्या नहीं दिखेगी।",
 
     name: "नाम",
     type: "प्रकार",
-    null: "नल",
-    not_null: "नॉट नल",
-    primary: "प्राइमरी",
+    null: "व्यर्थ",
+    not_null: "नॉट व्यर्थ",
+    primary: "प्राथमिक",
     unique: "यूनिक",
-    autoincrement: "ऑटो-इन्क्रीमेंट",
+    autoincrement: "स्वतः वाढ",
     default_value: "डिफ़ॉल्ट मान",
     check: "चेक एक्सप्रेशन",
     comment: "टिप्पणी",
@@ -141,16 +154,16 @@ const hi = {
     add_field: "फील्ड जोड़ें",
     values: "वैल्यू",
     size: "साइज़",
-    precision: "प्रिसिशन",
-    set_precision: "प्रिसिशन सेट करें: (साइज, डिजिट्स)",
+    precision: "सटीकता",
+    set_precision: "सटीकता सेट करें: (साइज, डिजिट्स)",
     use_for_batch_input: "बैच इनपुट के लिए उपयोग करें",
 
-    indices: "इंडेक्स",
+    indices: "इंडायसेस",
     add_index: "इंडेक्स जोड़ें",
     select_fields: "फील्ड चुनें",
 
     title: "शीर्षक",
-    not_set: "सेट नहीं",
+    not_set: "सेट नहीं किया गया",
     foreign: "फॉरेन",
     cardinality: "कार्डिनैलिटी",
 
@@ -228,10 +241,9 @@ const hi = {
     type_with_no_name: "नाम के बिना प्रकार घोषित किया गया",
     duplicate_types: "'{{typeName}}' प्रकार डुप्लिकेट है",
     type_w_no_fields: "'{{typeName}}' प्रकार में कोई फील्ड नहीं है",
-    empty_type_field_name:
-      "'{{typeName}}' में एक फील्ड का नाम खाली है",
-    empty_type_field_type:
-      "'{{typeName}}' में एक फील्ड का प्रकार खाली है",
+
+    empty_type_field_name: "'{{typeName}}' में एक फील्ड का नाम खाली है",
+    empty_type_field_type: "'{{typeName}}' में एक फील्ड का प्रकार खाली है",
 
     no_values_for_type_field:
       "'{{fieldName}}' का प्रकार '{{type}}' है लेकिन कोई वैल्यू नहीं दी गई",
@@ -241,10 +253,8 @@ const hi = {
 
     duplicate_reference: "'{{refName}}' संदर्भ डुप्लिकेट है",
 
-    circular_dependency:
-      "'{{refName}}' के साथ सर्कुलर निर्भरता पाई गई",
+    circular_dependency: "'{{refName}}' के साथ सर्कुलर निर्भरता पाई गई",
 
-    // ENUM
     enum_w_no_name: "नाम के बिना एनम घोषित किया गया",
     enum_w_no_values: "एनम '{{enumName}}' में कोई वैल्यू नहीं है",
     duplicate_enums: "एनम '{{enumName}}' डुप्लिकेट है",
@@ -252,58 +262,55 @@ const hi = {
     no_enums: "कोई एनम नहीं",
     no_enums_text: "अपने एनम यहाँ जोड़ें",
 
-    // DB PICKER
     pick_db: "डेटाबेस चुनें",
     generic: "जेनेरिक",
     generic_description:
       "जेनेरिक डायग्राम किसी भी SQL फ्लेवर में एक्सपोर्ट किए जा सकते हैं।",
 
     declare_array: "एरे घोषित करें",
-
-    empty_index_name: "खाली नाम वाला इंडेक्स घोषित किया गया '{{tableName}}'",
+    empty_index_name:
+      "खाली नाम वाला इंडेक्स घोषित किया गया '{{tableName}}'",
 
     didnt_find_diagram: "अरे! डायग्राम नहीं मिला।",
-
     unsigned: "अनसाइन्ड",
 
     share: "शेयर करें",
     unshare: "अनशेयर करें",
     copy_link: "लिंक कॉपी करें",
-
     readme: "README",
-    failed_to_load: "लोड करने में विफल। लिंक जाँचें।",
 
+    failed_to_load: "लोड करने में विफल। लिंक जाँचें।",
     share_info: "* यह लिंक रियल-टाइम सहयोग नहीं बनाएगी।",
 
     supported_types: "समर्थित फ़ाइल प्रकार:",
-
-    // BULK
     bulk_update: "बल्क अपडेट",
     multiselect: "मल्टी-सेलेक्ट",
-
-    // VIEWS
     dbml_view: "DBML व्यू",
     tab_view: "टैब व्यू",
 
     label: "लेबल",
     many_side_label: "कई (n) साइड लेबल",
 
-    // VERSIONS
     version: "संस्करण",
     versions: "संस्करण सूची",
     no_saved_versions: "कोई सेव की गई संस्करण नहीं",
+
     record_version: "संस्करण रिकॉर्ड करें",
     commited_at: "कमिट समय",
     read_only: "रीड-ओनली",
     continue: "जारी रखें",
+
     restore_version: "संस्करण रिस्टोर करें",
     restore_warning: "रिस्टोर करने से सभी बदलाव हट जाएंगे।",
     return_to_current: "वर्तमान डायग्राम पर लौटें",
+
     no_changes_to_record: "कोई बदलाव रिकॉर्ड करने के लिए नहीं",
     click_to_view: "देखने के लिए क्लिक करें",
     load_more: "और लोड करें",
+
     clear_cache: "केश साफ़ करें",
     cache_cleared: "केश साफ़ हुआ",
+
     failed_to_record_version: "संस्करण रिकॉर्ड नहीं हो सका",
     failed_to_load_diagram: "डायग्राम लोड करने में विफल",
 
