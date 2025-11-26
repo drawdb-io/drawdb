@@ -6,9 +6,6 @@
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -36,13 +33,34 @@
   }
 }
 
-/* Theme variables --------------------------------------------------------- */
 :root {
-  /* default (light) values — may be overridden by .theme-dark */
-  --bg: 255 255 255;
-  --text: 17 24 39; /* slate-900 */
-  --muted: 107 114 128; /* slate-500 */
-  --accent: 14 165 233; /* sky-400 */
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --accent: #0ea5e9;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+
+  --accent-rgb: 14 165 233;
+  --section-bg: 244 244 245;
+  --surface-bg: 248 250 252;
+  --card-bg: 255 255 255;
+  --card-muted: 248 250 252;
+  --border-soft: 226 232 240;
+  --border-strong: 203 213 225;
+  --chip-bg: 203 213 225;
+  --chip-text: 30 41 59;
+  --button-primary-bg: 12 74 110;
+  --button-primary-hover: 8 47 73;
+  --button-primary-text: 255 255 255;
+  --button-secondary-bg: 255 255 255;
+  --button-secondary-text: 17 24 39;
+  --button-secondary-border: 226 232 240;
+  --shadow-rgb: 15,23,42;
+  --landing-strip-from: #12495e;
+  --landing-strip-via: #4b5563;
+  --landing-strip-to: #12495e;
   --semi-grey-0: 255,255,255;
   --semi-grey-1: 249,250,251;
   --semi-grey-2: 241,245,249;
@@ -51,43 +69,159 @@
   --semi-grey-9: 30,41,59;
   --semi-blue-5: 14,165,233;
   --semi-blue-6: 2,132,199;
-  --semi-color-text-1: rgb(var(--text));
-  --semi-color-bg-0: rgb(var(--bg));
-  --semi-color-bg-2: rgb(var(--bg));
-  --semi-color-bg-3: rgb(var(--bg));
+  --semi-color-text-1: var(--text);
+  --semi-color-bg-0: var(--bg);
+  --semi-color-bg-2: var(--bg);
+  --semi-color-bg-3: var(--bg);
 }
 
-/* Dark theme overrides */
-.theme-dark,
-html.theme-dark {
-  --bg: 17 24 39; /* slate-900 */
-  --text: 243 244 246; /* slate-50 */
-  --muted: 148 163 184; /* slate-400 */
-  --accent: 56 189 248; /* sky-400 bright */
-  --semi-grey-0: 17,24,39;
-  --semi-grey-1: 20,23,29;
-  --semi-grey-2: 30,41,59;
-  --semi-grey-3: 39,47,61;
-  --semi-grey-4: 55,65,81;
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0c1018;
+  --text: #e4eaf5;
+  --muted: #94a3b8;
+  --accent: #7dd3fc;
+  --surface: #121a26;
+  --border: #3b4252;
+
+  --accent-rgb: 125 211 252;
+  --section-bg: 8 12 20;
+  --surface-bg: 14 19 27;
+  --card-bg: 18 26 38;
+  --card-muted: 22 30 44;
+  --border-soft: 51 65 85;
+  --border-strong: 71 85 105;
+  --chip-bg: 56 189 248;
+  --chip-text: 8 47 73;
+  --button-primary-bg: 56 189 248;
+  --button-primary-hover: 14 165 233;
+  --button-primary-text: 8 25 37;
+  --button-secondary-bg: 18 26 38;
+  --button-secondary-text: 229 233 240;
+  --button-secondary-border: 71 85 105;
+  --shadow-rgb: 0,0,0;
+  --landing-strip-from: #0f172a;
+  --landing-strip-via: #082f49;
+  --landing-strip-to: #0ea5e9;
+  --semi-grey-0: 30,30,30;
+  --semi-grey-1: 35,35,35;
+  --semi-grey-2: 45,45,45;
+  --semi-grey-3: 50,50,50;
+  --semi-grey-4: 70,70,70;
   --semi-grey-9: 243,244,246;
   --semi-blue-5: 56,189,248;
   --semi-blue-6: 14,165,233;
-  --semi-color-text-1: rgb(var(--text));
-  --semi-color-bg-0: rgb(var(--bg));
-  --semi-color-bg-2: rgb(var(--bg));
-  --semi-color-bg-3: rgb(var(--bg));
-}
-
-/* Light theme explicit class (optional; root defaults to light) */
-.theme-light,
-html.theme-light {
-  /* no-op; variables already set in :root for light */
+  --semi-color-text-1: var(--text);
+  --semi-color-bg-0: var(--bg);
+  --semi-color-bg-2: var(--bg);
+  --semi-color-bg-3: var(--bg);
 }
 
 /* apply variables to body for layout */
 body {
-  background-color: rgb(var(--bg));
-  color: rgb(var(--text));
+  /* This ensures the entire body uses the variable set above */
+  background-color: var(--bg) !important;
+  color: var(--text);
+}
+
+.landing-page {
+  background-color: var(--section-bg);
+  color: var(--text);
+}
+
+.landing-surface {
+  background-color: rgb(var(--surface-bg));
+}
+
+.landing-section {
+  background-color: var(--section-bg);
+  color: inherit;
+}
+
+.landing-card {
+  background-color: rgb(var(--card-bg));
+  border: 1px solid rgb(var(--border-soft) / 0.45);
+  box-shadow: 0 25px 60px rgba(var(--shadow-rgb), 0.08);
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+
+.landing-feature-card {
+  background-color: rgb(var(--card-bg));
+  border: 1px solid rgb(var(--border-soft) / 0.4);
+  box-shadow: 0 18px 50px rgba(var(--shadow-rgb), 0.08);
+}
+
+.landing-top-strip {
+  background-image: linear-gradient(90deg, var(--landing-strip-from), var(--landing-strip-via), var(--landing-strip-to));
+}
+
+.landing-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: rgb(var(--chip-bg) / 0.35);
+  color: rgb(var(--chip-text));
+}
+
+.landing-button {
+  font-weight: 600;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.landing-button-primary {
+  background-color: rgb(var(--button-primary-bg));
+  color: rgb(var(--button-primary-text));
+  border: 1px solid transparent;
+}
+
+.landing-button-primary:hover {
+  background-color: rgb(var(--button-primary-hover));
+}
+
+.landing-button-secondary {
+  background-color: rgb(var(--button-secondary-bg));
+  color: rgb(var(--button-secondary-text));
+  border: 1px solid rgb(var(--button-secondary-border));
+  box-shadow: 0 12px 28px rgba(var(--shadow-rgb), 0.09);
+}
+
+.landing-button-secondary:hover {
+  background-color: rgb(var(--button-secondary-bg) / 0.95);
+}
+
+.landing-accent-text {
+  color: var(--accent);
+}
+
+.landing-tweets {
+  border-radius: 1.25rem;
+  border: 1px solid rgb(var(--border-soft) / 0.5);
+  background-color: rgb(var(--card-muted));
+  padding: 2rem;
+}
+
+.hero-panel {
+  overflow: hidden;
+  background: radial-gradient(circle at top right, rgb(var(--accent-rgb) / 0.12), transparent 55%);
+}
+
+.landing-divider {
+  border-color: rgb(var(--border-soft) / 0.35);
+}
+
+.theme-toggle {
+  background-color: rgb(var(--card-bg) / 0.9);
+  color: var(--text);
+  border-color: rgb(var(--border-soft) / 0.5);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background-color: rgb(var(--card-bg));
+  color: var(--text);
+  border-color: rgb(var(--border-soft) / 0.8);
 }
 
 /* Reduced motion: disable transitions */
@@ -225,12 +359,22 @@ body {
   border-color: rgba(var(--semi-grey-2), 1);
 }
 
+/* FIX: Ensure bg-dots changes to dark background */
 .bg-dots {
-  background-color: white;
+  /* Set default (light mode) */
+  background-color: var(--bg);
   opacity: 0.8;
-  background-image: radial-gradient(rgb(118, 118, 209) 1px, white 1px);
+  background-image: radial-gradient(rgb(118, 118, 209) 1px, var(--bg) 1px);
   background-size: 20px 20px;
 }
+
+[data-theme="dark"] .bg-dots {
+  background-color: var(--bg); /* Inherits dark background */
+  opacity: 0.5; /* Slightly less opaque in dark mode */
+  /* Change the white dots to a dark blue/cyan dot color */
+  background-image: radial-gradient(rgb(14, 165, 233) 1px, var(--bg) 1px);
+}
+
 
 .sliding-vertical span {
   animation: top-to-bottom 9s linear infinite 0s;
