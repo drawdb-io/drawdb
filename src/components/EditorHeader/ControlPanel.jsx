@@ -1808,8 +1808,8 @@ export default function ControlPanel({
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => {
                 const body = document.body;
-                if (body.hasAttribute("theme-mode")) {
-                  if (body.getAttribute("theme-mode") === "light") {
+                if (body.hasAttribute("data-theme")) {
+                  if (body.getAttribute("data-theme") === "light") {
                     menu["view"]["theme"].children[1].function();
                   } else {
                     menu["view"]["theme"].children[0].function();

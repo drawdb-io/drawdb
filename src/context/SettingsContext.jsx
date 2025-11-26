@@ -1,5 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { tableWidth } from "../data/constants";
+import { getTheme, setTheme } from "../themeManager";
 
 const defaultSettings = {
   strictMode: false,
@@ -15,20 +16,39 @@ const defaultSettings = {
   showDebugCoordinates: false,
 };
 
+function getInitialMode() {
+  try {
+    const storedSettings = localStorage.getItem("settings");
+    if (storedSettings) {
+      const parsed = JSON.parse(storedSettings);
+      if (parsed.mode) {
+        return parsed.mode;
+      }
+    }
+  } catch (e) {
+    /* ignore and fall through */
+  }
+
+  return getTheme();
+}
+
 export const SettingsContext = createContext(defaultSettings);
 
 export default function SettingsContextProvider({ children }) {
-  const [settings, setSettings] = useState(defaultSettings);
+  const [settings, setSettings] = useState(() => {
+    const initialMode = getInitialMode();
+    return { ...defaultSettings, mode: initialMode };
+  });
 
   useEffect(() => {
-    const settings = localStorage.getItem("settings");
-    if (settings) {
-      setSettings(JSON.parse(settings));
+    const storedSettings = localStorage.getItem("settings");
+    if (storedSettings) {
+      setSettings(JSON.parse(storedSettings));
     }
   }, []);
 
   useEffect(() => {
-    document.body.setAttribute("theme-mode", settings.mode);
+    setTheme(settings.mode);
   }, [settings.mode]);
 
   useEffect(() => {
@@ -40,4 +60,8 @@ export default function SettingsContextProvider({ children }) {
       {children}
     </SettingsContext.Provider>
   );
+}
+
+export function useSettingsContext() {
+  return useContext(SettingsContext);
 }

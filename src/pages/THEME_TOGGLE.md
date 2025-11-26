@@ -1,9 +1,11 @@
 Theme toggle (light / dark)
 --------------------------------
 
-The landing page includes a theme toggle in the top-right header. It persists the user's choice in localStorage using the key `drawdb:theme` and falls back to the system preference; if neither is available the default is dark.
+The landing page header exposes a sun/moon toggle that persists the user choice in `localStorage` (`drawdb:theme`). We default to dark unless a stored preference or system preference (via `prefers-color-scheme`) is available. To avoid flashes of incorrect colors, an inline script in `index.html` applies the resolved theme before React renders.
 
 Files:
-- `src/theme.js` — theme helper (init, toggle, storage, system listener)
-- `src/components/Navbar.jsx` — toggle button UI and ARIA attributes
-- `src/index.css` — CSS variables and `.theme-dark` / `.theme-light` classes
+- `index.html` — inline guard script that bootstraps the `data-theme` attribute prior to hydration.
+- `src/themeManager.js` — theme helper (init, toggle, storage, matchMedia listener, subscribers).
+- `src/components/ThemeToggle.jsx` — accessible switch UI (role="switch", keyboard support).
+- `src/components/Navbar.jsx` — renders the toggle in the landing header.
+- `src/index.css` — CSS variables (`:root` / `[data-theme='dark']`), landing-page specific surfaces, and animated transitions that respect `prefers-reduced-motion`.
