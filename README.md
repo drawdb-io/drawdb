@@ -65,3 +65,43 @@ docker run -p 3000:80 drawdb
 ```
 
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files..
+
+---
+
+## Troubleshooting — PostCSS / lightningcss native binary
+
+If you see errors in the browser or terminal after running `npm run dev` that look like:
+
+```
+Failed to load PostCSS config: Loading PostCSS Plugin failed: Cannot find module '../lightningcss.darwin-arm64.node'
+```
+
+or repeated Vite errors related to PostCSS / Tailwind, this usually means the native `lightningcss` binary (used by Tailwind v4 / PostCSS) failed to install for your platform. npm may have completed without an obvious error because `lightningcss` is an optional/native dependency.
+
+**Recommended fixes (try in order):**
+
+1) Rebuild the lightningcss binary:
+
+```bash
+npm rebuild lightningcss --update-binary
+```
+
+2) If that does not help, remove `node_modules` and the lockfile, then reinstall:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+3) On macOS Apple Silicon (M1/M2/M3): if the binary still fails to load, try running the terminal under Rosetta (x86) and then re-run the rebuild command above. Alternatively, you can try forcing a build from source (this may require additional toolchain):
+
+```bash
+npm install lightningcss --build-from-source
+```
+
+Notes:
+- Tailwind v4 uses a native binary (`lightningcss`) for performance. 
+- When the binary is missing, PostCSS will throw at runtime and Vite will fail to transform CSS.
+
+If none of the above steps help, please open an issue and include: your OS, Node & npm versions, and the full error stack you see in your browser/terminal.
+
