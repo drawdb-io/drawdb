@@ -100,8 +100,7 @@ export default function Canvas() {
     ctrlKey: false,
     metaKey: false,
   });
-  // this is used to store the element that is clicked on
-  // at the moment, and shouldn't be a part of the state
+
   let elementPointerDown = null;
 
   const isSameElement = (el1, el2) => {
@@ -112,9 +111,7 @@ export default function Canvas() {
     const rect = getRectFromEndpoints(bulkSelectRect);
     const elements = [];
     const shouldAddElement = (elementRect, element) => {
-      // if ctrl key is pressed, only add the elements that are not already selected
-      // can theoretically be optimized later if the selected elements is
-      // a map from id to element (after the ids are made unique)
+
       return (
         isInsideRect(elementRect, rect) &&
         ((!bulkSelectRect.ctrlKey && !bulkSelectRect.metaKey) ||
@@ -215,8 +212,7 @@ export default function Canvas() {
       show: false,
     }));
 
-    // this is the object that will be added to the bulk selected elements
-    // if necessary
+
     const elementInBulk = {
       id: element.id,
       type,
@@ -273,9 +269,7 @@ export default function Canvas() {
     return { x, y };
   };
 
-  /**
-   * @param {PointerEvent} e
-   */
+
   const handlePointerMove = (e) => {
     if (selectedElement.open && !layout.sidebar) return;
 
@@ -293,6 +287,11 @@ export default function Canvas() {
             (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
         },
       }));
+      return;
+    }
+
+    const isDragMode = settings.canvasMode === "drag";
+    if (isDragMode) {
       return;
     }
 
@@ -406,13 +405,9 @@ export default function Canvas() {
     }
   };
 
-  /**
-   * @param {PointerEvent} e
-   */
   const handlePointerDown = (e) => {
     if (!e.isPrimary) return;
 
-    // don't pan if the sidesheet for editing a table is open
     if (
       selectedElement.element === ObjectType.TABLE &&
       selectedElement.open &&
@@ -422,8 +417,20 @@ export default function Canvas() {
 
     const isMouseLeftButton = e.button === 0;
     const isMouseMiddleButton = e.button === 1;
+    const isDragMode = settings.canvasMode === "drag";
 
-    if (isMouseLeftButton) {
+    if (isMouseLeftButton && isDragMode) {
+      setPanning({
+        isPanning: true,
+        panStart: transform.pan,
+
+        cursorStart: pointer.spaces.screen,
+      });
+      pointer.setStyle("grabbing");
+      return;
+    }
+
+    if (isMouseLeftButton && !isDragMode) {
       setBulkSelectRect({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
@@ -441,8 +448,6 @@ export default function Canvas() {
       setPanning({
         isPanning: true,
         panStart: transform.pan,
-        // Diagram space depends on the current panning.
-        // Use screen space to avoid circular dependencies and undefined behavior.
         cursorStart: pointer.spaces.screen,
       });
       pointer.setStyle("grabbing");
@@ -455,7 +460,6 @@ export default function Canvas() {
 
   const didDrag = () => {
     if (!isDragging()) return false;
-    // checking any element is sufficient
     const { currentCoords, initialCoords } = bulkSelectedElements[0];
     return (
       currentCoords.x !== initialCoords.x || currentCoords.y !== initialCoords.y
@@ -476,10 +480,6 @@ export default function Canvas() {
       transform.pan.x === panning.panStart.x &&
       transform.pan.y === panning.panStart.y
     );
-
-  /**
-   * @param {PointerEvent} e
-   */
   const handlePointerUp = (e) => {
     if (selectedElement.open && !layout.sidebar) return;
 
@@ -526,7 +526,7 @@ export default function Canvas() {
       setSaveState(State.SAVING);
     }
     setPanning((old) => ({ ...old, isPanning: false }));
-    pointer.setStyle("default");
+    pointer.setStyle(settings.canvasMode === "drag" ? "grab" : "default");
 
     if (linking) handleLinking();
     setLinking(false);
@@ -638,8 +638,7 @@ export default function Canvas() {
       e.preventDefault();
 
       if (e.ctrlKey || e.metaKey) {
-        // How "eager" the viewport is to
-        // center the cursor's coordinates
+
         const eagernessFactor = 0.05;
         setTransform((prev) => ({
           pan: {
@@ -683,7 +682,12 @@ export default function Canvas() {
       <div
         className="w-full h-full"
         style={{
-          cursor: pointer.style,
+          cursor:
+            panning.isPanning
+              ? "grabbing"
+              : settings.canvasMode === "drag"
+                ? "grab"
+                : pointer.style,
           backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
         }}
       >

@@ -554,7 +554,6 @@ export default function ControlPanel({
 
     const scaleX = canvas.width / width;
     const scaleY = canvas.height / height;
-    // Making sure the scale is a multiple of 0.05
     const scale = Math.floor(Math.min(scaleX, scaleY) * 20) / 20;
 
     const centerX = (minMaxXY.minX + minMaxXY.maxX) / 2;
@@ -1742,6 +1741,34 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
+          <Tooltip
+            content={settings.canvasMode === "drag" ? "Drag Mode" : "Select Mode"}
+            position="bottom"
+          >
+            <button
+              className={`py-1 px-2 hover-2 rounded-sm flex items-center ${
+                settings.canvasMode === "drag" ? "bg-blue-500/20" : ""
+              }`}
+              onClick={() =>
+                setSettings((prev) => ({
+                  ...prev,
+                  canvasMode: prev.canvasMode === "drag" ? "select" : "drag",
+                }))
+              }
+              title={
+                settings.canvasMode === "drag"
+                  ? "Switch to Select Mode"
+                  : "Switch to Drag Mode"
+              }
+            >
+              {settings.canvasMode === "drag" ? (
+                <i className="fa-solid fa-hand" style={{ color: "#3b82f6" }} />
+              ) : (
+                <i className="fa-solid fa-mouse-pointer" />
+              )}
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
@@ -1896,8 +1923,7 @@ export default function ControlPanel({
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
                 onPointerLeave={(e) => e.isPrimary && setShowEditName(false)}
                 onPointerDown={(e) => {
-                  // Required for onPointerLeave to trigger when a touch pointer leaves
-                  // https://stackoverflow.com/a/70976017/1137077
+
                   e.target.releasePointerCapture(e.pointerId);
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
