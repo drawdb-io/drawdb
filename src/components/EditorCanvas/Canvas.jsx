@@ -102,7 +102,9 @@ export default function Canvas() {
   });
   // this is used to store the element that is clicked on
   // at the moment, and shouldn't be a part of the state
-  let elementPointerDown = null;
+  // this is used to store the element that is clicked on
+  // at the moment, and shouldn't be a part of the state
+  const elementPointerDown = useRef(null);
 
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
@@ -429,12 +431,12 @@ export default function Canvas() {
         y1: pointer.spaces.diagram.y,
         x2: pointer.spaces.diagram.x,
         y2: pointer.spaces.diagram.y,
-        show: elementPointerDown === null || !elementPointerDown.element.locked,
+        show: elementPointerDown.current === null || !elementPointerDown.current.element.locked,
         ctrlKey: e.ctrlKey,
         metaKey: e.metaKey,
       });
-      if (elementPointerDown !== null) {
-        handlePointerDownOnElement(e, elementPointerDown);
+      if (elementPointerDown.current !== null) {
+        handlePointerDownOnElement(e, elementPointerDown.current);
       }
       pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton) {
@@ -733,7 +735,7 @@ export default function Canvas() {
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
               onPointerDown={() => {
-                elementPointerDown = {
+                elementPointerDown.current = {
                   element: a,
                   type: ObjectType.AREA,
                 };
@@ -751,7 +753,7 @@ export default function Canvas() {
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
               onPointerDown={() => {
-                elementPointerDown = {
+                elementPointerDown.current = {
                   element: table,
                   type: ObjectType.TABLE,
                 };
@@ -771,7 +773,7 @@ export default function Canvas() {
               key={n.id}
               data={n}
               onPointerDown={() => {
-                elementPointerDown = {
+                elementPointerDown.current = {
                   element: n,
                   type: ObjectType.NOTE,
                 };
