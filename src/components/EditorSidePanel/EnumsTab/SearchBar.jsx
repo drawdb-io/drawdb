@@ -30,9 +30,9 @@ export default function SearchBar() {
       emptyContent={<div className="p-3 popover-theme">{t("not_found")}</div>}
       onChange={(v) => setValue(v)}
       onSelect={(v) => {
-        const i = enums.findIndex((t) => t.name === v);
+        const e = enums.find((t) => t.name === v);
         document
-          .getElementById(`scroll_enum_${i}`)
+          .getElementById(`scroll_enum_${e.id}`)
           .scrollIntoView({ behavior: "smooth" });
       }}
       className="w-full"

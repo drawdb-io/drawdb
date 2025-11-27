@@ -13,11 +13,13 @@ const ne = {
     new: "नयाँ",
     new_window: "नयाँ विन्डो",
     open: "खोल्नुहोस्",
+    open_recent: "हालै खोलिएका",
     save: "सेभ गर्नुहोस्",
     save_as: "यो रूपमा सेभ गर्नुहोस्",
     save_as_template: "टेम्पलेट रूपमा सेभ गर्नुहोस्",
     template_saved: "टेम्पलेट सेभ गरियो!",
     rename: "नाम परिवर्तन गर्नुहोस्",
+    no_saved_diagrams: "तपाईंका सेभ गरिएका डायग्राम छैनन्।",
     delete_diagram: "डायग्राम मेटाउनुहोस्",
     are_you_sure_delete_diagram:
       "के तपाईं पक्का यो डायग्राम मेटाउन चाहनुहुन्छ? यो कार्य पुनः प्राप्त गर्न सकिँदैन।",
@@ -214,7 +216,10 @@ const ne = {
     add_relationship: "संबन्ध थप्नुहोस्",
     edit_relationship: "{{extra}} सम्बन्ध सम्पादन गर्नुहोस् {{refName}}",
     delete_relationship: "संबन्ध मेटाउनुहोस् {{refName}}",
+    didnt_find_diagram: "उफ! डायग्राम फेला परेन।",
     not_found: "फेला परेन",
+    see_all: "सबै देखाउनुहोस्",
+    versions: "संस्करणहरू",
   },
 };
 

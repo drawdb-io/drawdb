@@ -13,7 +13,7 @@ const hi = {
     new: "नया",
     new_window: "नई विंडो",
     open: "खोलें",
-    open_recent: "हाल ही वाला खोलें",
+    open_recent: "हाल में खोले गए",
     save: "सेव",
     save_as: "के रूप में सेव करें",
     save_as_template: "टेम्पलेट के रूप में सेव करें",
@@ -217,6 +217,10 @@ const hi = {
     edit_relationship: "{{extra}} संबंध एडिट करें {{refName}}",
     delete_relationship: "संबंध हटाएं {{refName}}",
     not_found: "नहीं मिला",
+    no_saved_diagrams: "आपके पास कोई सेव किया गया डायग्राम नहीं है",
+    see_all: "सभी देखें",
+    versions: "संस्करण",
+    didnt_find_diagram: "उफ़! डायग्राम नहीं मिला।",
   },
 };
 
