@@ -51,8 +51,39 @@
     />
 
     <title>drawDB | Online database diagram editor and SQL generator</title>
+
+    <script>
+      (function () {
+        const storageKey = "drawdb:theme";
+        const darkQuery = "(prefers-color-scheme: dark)";
+
+        function applyTheme(theme) {
+          const root = document.documentElement;
+          if (!root) return;
+          root.setAttribute("data-theme", theme);
+          root.style.setProperty("color-scheme", theme === "dark" ? "dark" : "light");
+        }
+
+        function readStoredTheme() {
+          try {
+            const stored = localStorage.getItem(storageKey);
+            return stored === "light" || stored === "dark" ? stored : null;
+          } catch {
+            return null;
+          }
+        }
+
+        function readSystemPreference() {
+          if (typeof window.matchMedia !== "function") return null;
+          return window.matchMedia(darkQuery).matches ? "dark" : "light";
+        }
+
+        const theme = readStoredTheme() ?? readSystemPreference() ?? "dark";
+        applyTheme(theme);
+      })();
+    </script>
   </head>
-  <body theme-mode="light">
+  <body data-theme="dark">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

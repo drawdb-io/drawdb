@@ -4,6 +4,7 @@ import logo from "../assets/logo_light_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 import { socials } from "../data/socials";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
@@ -75,12 +76,16 @@ export default function Navbar() {
             </a>
           </div>
         </div>
-        <button
-          onClick={() => setOpenMenu((prev) => !prev)}
-          className="hidden md:inline-block h-[24px]"
-        >
-          <IconMenu size="extra-large" />
-        </button>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpenMenu((prev) => !prev)}
+            className="hidden md:inline-block h-[24px]"
+            aria-label="Open menu"
+          >
+            <IconMenu size="extra-large" />
+          </button>
+        </div>
       </div>
       <hr />
       <SideSheet
