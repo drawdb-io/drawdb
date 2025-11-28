@@ -13,6 +13,7 @@ const defaultSettings = {
   showRelationshipLabels: true,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
+  canvasMode: "select", 
 };
 
 export const SettingsContext = createContext(defaultSettings);
