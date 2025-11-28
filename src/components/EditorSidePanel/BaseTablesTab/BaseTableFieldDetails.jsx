@@ -1,0 +1,433 @@
+import { useMemo, useState } from "react";
+import {
+  Input,
+  TextArea,
+  Button,
+  TagInput,
+  InputNumber,
+  Checkbox,
+} from "@douyinfe/semi-ui";
+import { Action, ObjectType } from "../../../data/constants";
+import { IconDeleteStroked } from "@douyinfe/semi-icons";
+import { useBaseTables, useLayout, useUndoRedo, useDiagram } from "../../../hooks";
+import { useTranslation } from "react-i18next";
+import { dbToTypes } from "../../../data/datatypes";
+import { databases } from "../../../data/databases";
+
+export default function BaseTableFieldDetails({ data, bid }) {
+  const { t } = useTranslation();
+  const { layout } = useLayout();
+  const { database } = useDiagram();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { updateBaseTable, baseTables: baseTablesList } = useBaseTables();
+  const [editField, setEditField] = useState({});
+  const baseTable = useMemo(
+    () => baseTablesList.find((bt) => bt.id === bid),
+    [baseTablesList, bid],
+  );
+
+  const updateField = (bid, fid, updatedValues) => {
+    updateBaseTable(bid, {
+      fields: baseTable.fields.map((field) =>
+        fid === field.id ? { ...field, ...updatedValues } : field,
+      ),
+    });
+  };
+
+  const deleteField = (field, bid) => {
+    const { fields } = baseTablesList.find((bt) => bt.id === bid);
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.BASETABLE,
+        component: "field_delete",
+        bid: bid,
+        data: {
+          field: field,
+          index: fields.findIndex((f) => f.id === field.id),
+        },
+        message: t("edit_base_table", {
+          baseTableName: baseTable.name,
+          extra: "[delete field]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    updateBaseTable(bid, {
+      fields: fields.filter((e) => e.id !== field.id),
+    });
+  };
+
+  return (
+    <div>
+      <div className="font-semibold">{t("default_value")}</div>
+      <Input
+        className="my-2"
+        placeholder={t("default_value")}
+        value={data.default}
+        readonly={layout.readOnly}
+        disabled={dbToTypes[database][data.type]?.noDefault || data.increment}
+        onChange={(value) => updateField(bid, data.id, { default: value })}
+        onFocus={(e) => setEditField({ default: e.target.value })}
+        onBlur={(e) => {
+          if (e.target.value === editField.default) return;
+          setUndoStack((prev) => [
+            ...prev,
+            {
+              action: Action.EDIT,
+              element: ObjectType.BASETABLE,
+              component: "field",
+              bid: bid,
+              fid: data.id,
+              undo: editField,
+              redo: { default: e.target.value },
+              message: t("edit_base_table", {
+                baseTableName: baseTable.name,
+                extra: "[field]",
+              }),
+            },
+          ]);
+          setRedoStack([]);
+        }}
+      />
+      {(data.type === "ENUM" || data.type === "SET") && (
+        <>
+          <div className="font-semibold mb-1">
+            {data.type} {t("values")}
+          </div>
+          <TagInput
+            separator={[",", ", ", " ,"]}
+            value={data.values}
+            validateStatus={
+              !data.values || data.values.length === 0 ? "error" : "default"
+            }
+            addOnBlur
+            className="my-2"
+            placeholder={t("use_for_batch_input")}
+            onChange={(v) => {
+              if (layout.readOnly) return;
+              updateField(bid, data.id, { values: v });
+            }}
+            onFocus={() => setEditField({ values: data.values })}
+            onBlur={() => {
+              if (
+                JSON.stringify(editField.values) === JSON.stringify(data.values)
+              )
+                return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.BASETABLE,
+                  component: "field",
+                  bid: bid,
+                  fid: data.id,
+                  undo: editField,
+                  redo: { values: data.values },
+                  message: t("edit_base_table", {
+                    baseTableName: baseTable.name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }}
+          />
+        </>
+      )}
+      {dbToTypes[database][data.type]?.isSized && (
+        <>
+          <div className="font-semibold">{t("size")}</div>
+          <InputNumber
+            className="my-2 w-full"
+            placeholder={t("size")}
+            value={data.size}
+            readonly={layout.readOnly}
+            onChange={(value) => updateField(bid, data.id, { size: value })}
+            onFocus={(e) => setEditField({ size: e.target.value })}
+            onBlur={(e) => {
+              if (e.target.value === editField.size) return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.BASETABLE,
+                  component: "field",
+                  bid: bid,
+                  fid: data.id,
+                  undo: editField,
+                  redo: { size: e.target.value },
+                  message: t("edit_base_table", {
+                    baseTableName: baseTable.name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }}
+          />
+        </>
+      )}
+      {dbToTypes[database][data.type]?.hasPrecision && (
+        <>
+          <div className="font-semibold">{t("precision")}</div>
+          <Input
+            className="my-2 w-full"
+            placeholder={t("set_precision")}
+            validateStatus={
+              !data.size || /^\d+,\s*\d+$|^$/.test(data.size)
+                ? "default"
+                : "error"
+            }
+            readonly={layout.readOnly}
+            value={data.size}
+            onChange={(value) => updateField(bid, data.id, { size: value })}
+            onFocus={(e) => setEditField({ size: e.target.value })}
+            onBlur={(e) => {
+              if (e.target.value === editField.size) return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.BASETABLE,
+                  component: "field",
+                  bid: bid,
+                  fid: data.id,
+                  undo: editField,
+                  redo: { size: e.target.value },
+                  message: t("edit_base_table", {
+                    baseTableName: baseTable.name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }}
+          />
+        </>
+      )}
+      {dbToTypes[database][data.type]?.hasCheck && (
+        <>
+          <div className="font-semibold">{t("check")}</div>
+          <Input
+            className="mt-2"
+            placeholder={t("check")}
+            value={data.check}
+            disabled={data.increment}
+            readonly={layout.readOnly}
+            onChange={(value) => updateField(bid, data.id, { check: value })}
+            onFocus={(e) => setEditField({ check: e.target.value })}
+            onBlur={(e) => {
+              if (e.target.value === editField.check) return;
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.BASETABLE,
+                  component: "field",
+                  bid: bid,
+                  fid: data.id,
+                  undo: editField,
+                  redo: { check: e.target.value },
+                  message: t("edit_base_table", {
+                    baseTableName: baseTable.name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+            }}
+          />
+          <div className="text-xs mt-1">{t("this_will_appear_as_is")}</div>
+        </>
+      )}
+      <div className="flex justify-between items-center my-3">
+        <div className="font-medium">{t("unique")}</div>
+        <Checkbox
+          value="unique"
+          checked={data.unique}
+          disabled={layout.readOnly}
+          onChange={(checkedValues) => {
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.BASETABLE,
+                component: "field",
+                bid: bid,
+                fid: data.id,
+                undo: {
+                  [checkedValues.target.value]: !checkedValues.target.checked,
+                },
+                redo: {
+                  [checkedValues.target.value]: checkedValues.target.checked,
+                },
+              },
+            ]);
+            setRedoStack([]);
+            updateField(bid, data.id, {
+              [checkedValues.target.value]: checkedValues.target.checked,
+            });
+          }}
+        />
+      </div>
+      <div className="flex justify-between items-center my-3">
+        <div className="font-medium">{t("autoincrement")}</div>
+        <Checkbox
+          value="increment"
+          checked={data.increment}
+          disabled={
+            !dbToTypes[database][data.type]?.canIncrement ||
+            data.isArray ||
+            layout.readOnly
+          }
+          onChange={(checkedValues) => {
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.BASETABLE,
+                component: "field",
+                bid: bid,
+                fid: data.id,
+                undo: {
+                  [checkedValues.target.value]: !checkedValues.target.checked,
+                },
+                redo: {
+                  [checkedValues.target.value]: checkedValues.target.checked,
+                },
+                message: t("edit_base_table", {
+                  baseTableName: baseTable.name,
+                  extra: "[field]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+            updateField(bid, data.id, {
+              increment: !data.increment,
+              check: data.increment ? data.check : "",
+            });
+          }}
+        />
+      </div>
+      {databases[database].hasArrays && (
+        <div className="flex justify-between items-center my-3">
+          <div className="font-medium">{t("declare_array")}</div>
+          <Checkbox
+            value="isArray"
+            checked={data.isArray}
+            disabled={layout.readOnly}
+            onChange={(checkedValues) => {
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.BASETABLE,
+                  component: "field",
+                  bid: bid,
+                  fid: data.id,
+                  undo: {
+                    [checkedValues.target.value]: !checkedValues.target.checked,
+                  },
+                  redo: {
+                    [checkedValues.target.value]: checkedValues.target.checked,
+                  },
+                  message: t("edit_base_table", {
+                    baseTableName: baseTable.name,
+                    extra: "[field]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateField(bid, data.id, {
+                isArray: checkedValues.target.checked,
+                increment: data.isArray ? data.increment : false,
+              });
+            }}
+          />
+        </div>
+      )}
+      {databases[database].hasUnsignedTypes &&
+        dbToTypes[database][data.type]?.signed && (
+          <div className="flex justify-between items-center my-3">
+            <div className="font-medium">{t("Unsigned")}</div>
+            <Checkbox
+              value="unsigned"
+              checked={data.unsigned}
+              disabled={layout.readOnly}
+              onChange={(checkedValues) => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.BASETABLE,
+                    component: "field",
+                    bid: bid,
+                    fid: data.id,
+                    undo: {
+                      [checkedValues.target.value]:
+                        !checkedValues.target.checked,
+                    },
+                    redo: {
+                      [checkedValues.target.value]:
+                        checkedValues.target.checked,
+                    },
+                    message: t("edit_base_table", {
+                      baseTableName: baseTable.name,
+                      extra: "[field]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+                updateField(bid, data.id, {
+                  unsigned: checkedValues.target.checked,
+                });
+              }}
+            />
+          </div>
+        )}
+      <div className="font-semibold">{t("comment")}</div>
+      <TextArea
+        className="my-2"
+        placeholder={t("comment")}
+        value={data.comment}
+        readonly={layout.readOnly}
+        autosize
+        rows={2}
+        onChange={(value) => updateField(bid, data.id, { comment: value })}
+        onFocus={(e) => setEditField({ comment: e.target.value })}
+        onBlur={(e) => {
+          if (e.target.value === editField.comment) return;
+          setUndoStack((prev) => [
+            ...prev,
+            {
+              action: Action.EDIT,
+              element: ObjectType.BASETABLE,
+              component: "field",
+              bid: bid,
+              fid: data.id,
+              undo: editField,
+              redo: { comment: e.target.value },
+              message: t("edit_base_table", {
+                baseTableName: baseTable.name,
+                extra: "[field]",
+              }),
+            },
+          ]);
+          setRedoStack([]);
+        }}
+      />
+      <Button
+        icon={<IconDeleteStroked />}
+        type="danger"
+        block
+        disabled={layout.readOnly}
+        onClick={() => deleteField(data, bid)}
+      >
+        {t("delete")}
+      </Button>
+    </div>
+  );
+}
+

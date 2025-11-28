@@ -60,6 +60,7 @@ export const tableSchema = {
       type: "array",
       items: { type: ["string"] },
     },
+    baseTableId: { type: ["string", "null"] },
   },
   required: ["id", "name", "x", "y", "fields", "comment", "indices", "color"],
 };
@@ -131,6 +132,47 @@ export const enumSchema = {
   },
 };
 
+export const baseTableSchema = {
+  type: "object",
+  properties: {
+    id: { type: ["integer", "string"] },
+    name: { type: "string" },
+    fields: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: { type: ["integer", "string"] },
+          name: { type: "string" },
+          type: { type: "string" },
+          default: { type: ["string", "number", "boolean"] },
+          check: { type: "string" },
+          primary: { type: "boolean" },
+          unique: { type: "boolean" },
+          notNull: { type: "boolean" },
+          increment: { type: "boolean" },
+          comment: { type: "string" },
+          size: { type: ["string", "number"] },
+          values: { type: "array", items: { type: "string" } },
+        },
+        required: [
+          "id",
+          "name",
+          "type",
+          "default",
+          "check",
+          "primary",
+          "unique",
+          "notNull",
+          "increment",
+          "comment",
+        ],
+      },
+    },
+  },
+  required: ["id", "name", "fields"],
+};
+
 export const jsonSchema = {
   type: "object",
   properties: {
@@ -181,6 +223,10 @@ export const jsonSchema = {
     enums: {
       type: "array",
       items: { ...enumSchema },
+    },
+    baseTables: {
+      type: "array",
+      items: { ...baseTableSchema },
     },
     title: { type: "string" },
     database: { type: "string" },
