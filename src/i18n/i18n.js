@@ -98,8 +98,8 @@ export const languages = [
   sindhi,
   thai,
   malay,
-  sinhala,
   mongolian,
+  sinhala,
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -158,8 +158,8 @@ i18n
       th,
       as,
       ms,
-      si,
       mn,
+      si,
     },
   });
 
