@@ -18,14 +18,10 @@ const defaultSettings = {
 export const SettingsContext = createContext(defaultSettings);
 
 export default function SettingsContextProvider({ children }) {
-  const [settings, setSettings] = useState(defaultSettings);
-
-  useEffect(() => {
-    const settings = localStorage.getItem("settings");
-    if (settings) {
-      setSettings(JSON.parse(settings));
-    }
-  }, []);
+  const [settings, setSettings] = useState(() => {
+    const savedSettings = localStorage.getItem("settings");
+    return savedSettings ? JSON.parse(savedSettings) : defaultSettings;
+  });
 
   useEffect(() => {
     document.body.setAttribute("theme-mode", settings.mode);
