@@ -135,18 +135,18 @@ export default function Modal({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           setEnums(
             diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
+            [],
           );
           window.name = `d ${diagram.id}`;
           setSaveState(State.SAVING);
@@ -156,7 +156,7 @@ export default function Modal({
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         Toast.error(t("didnt_find_diagram"));
       });
   };

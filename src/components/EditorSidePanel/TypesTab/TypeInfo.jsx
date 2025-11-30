@@ -15,7 +15,7 @@ import TypeField from "./TypeField";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
 
-export default function TypeInfo({ index, data }) {
+export default function TypeInfo({ data }) {
   const { layout } = useLayout();
   const { deleteType, updateType } = useTypes();
   const { tables, updateField } = useDiagram();
@@ -23,8 +23,7 @@ export default function TypeInfo({ index, data }) {
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();
 
-  // TODO: remove indexes, not a valid case after adding id to types
-  const typeId = data.id ?? index;
+  const typeId = data.id;
 
   return (
     <div id={`scroll_type_${typeId}`}>
@@ -34,7 +33,7 @@ export default function TypeInfo({ index, data }) {
             {data.name}
           </div>
         }
-        itemKey={`${index}`}
+        itemKey={`${typeId}`}
       >
         <div className="flex items-center mb-2.5">
           <div className="text-md font-semibold break-keep">{t("name")}: </div>
@@ -90,7 +89,7 @@ export default function TypeInfo({ index, data }) {
           />
         </div>
         {data.fields.map((f, j) => (
-          <TypeField key={j} data={f} fid={j} tid={index} />
+          <TypeField key={j} data={f} fid={j} tid={typeId} />
         ))}
         <Card
           bodyStyle={{ padding: "4px" }}

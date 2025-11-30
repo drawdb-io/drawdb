@@ -9,5 +9,5 @@ db.version(6).stores({
 });
 
 db.on("populate", (transaction) => {
-  transaction.templates.bulkAdd(templateSeeds).catch((e) => console.log(e));
+  transaction.templates.bulkAdd(templateSeeds).catch((e) => console.error(e));
 });

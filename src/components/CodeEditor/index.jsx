@@ -20,7 +20,7 @@ export default function CodeEditor({
       .writeText(props.value)
       .then(() => Toast.success(t("copied_to_clipboard")))
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   };
 
