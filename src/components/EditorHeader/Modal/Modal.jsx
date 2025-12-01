@@ -40,7 +40,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
-import { IdContext } from "../../Workspace";
+import { IdContext } from "../../../context/IdContext";
 import { nanoid } from "nanoid";
 
 const extensionToLanguage = {

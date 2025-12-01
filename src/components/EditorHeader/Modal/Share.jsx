@@ -1,7 +1,7 @@
 import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IdContext } from "../../Workspace";
+import { IdContext } from "../../../context/IdContext";
 import { IconLink } from "@douyinfe/semi-icons";
 import {
   useAreas,

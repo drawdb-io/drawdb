@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, createContext } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { IdContext } from "../context/IdContext";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -28,12 +29,6 @@ import { useSearchParams } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
 import { nanoid } from "nanoid";
 
-export const IdContext = createContext({
-  gistId: "",
-  setGistId: () => {},
-  version: "",
-  setVersion: () => {},
-});
 
 const SIDEPANEL_MIN_WIDTH = 384;
 

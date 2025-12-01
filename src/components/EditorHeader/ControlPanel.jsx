@@ -77,7 +77,7 @@ import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
-import { IdContext } from "../Workspace";
+import { IdContext } from "../../context/IdContext";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
