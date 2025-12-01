@@ -49,7 +49,8 @@ import { as, assamese } from "./locales/as";
 
 import { ms, malay } from "./locales/ms";
 import { mn, mongolian } from "./locales/mn";
-
+ 
+import { my,myanmar } from "./locales/my";
 export const languages = [
   english,
   chinese,
@@ -98,6 +99,7 @@ export const languages = [
   thai,
   malay,
   mongolian,
+  myanmar
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -157,6 +159,7 @@ i18n
       as,
       ms,
       mn,
+      my
     },
   });
 
