@@ -229,8 +229,8 @@ const es = {
     not_found: "No encontrado",
     pick_db: "Elegir base de datos",
     generic: "Genérico",
-    generic_description: 
-      "Los diagramas genéricos se pueden exportar a cualquier formato SQL, pero soportan un número limitado de tipos de datos.", 
+    generic_description:
+      "Los diagramas genéricos se pueden exportar a cualquier formato SQL, pero soportan un número limitado de tipos de datos.",
     enums: "Enumeraciones",
     add_enum: "Añadir enumeración",
     edit_enum: "{{extra}} Editar enumeración {{enumName}}",
@@ -249,7 +249,7 @@ const es = {
     copy_link: "Copiar enlace",
     readme: "README",
     failed_to_load: "Error al cargar. Asegurate de que el enlace sea correcto.",
-    share_info: 
+    share_info:
       "* Compartir este enlace no creará una sesión de colaboración en tiempo real.",
     show_relationship_labels: "Mostrar etiquetas de relación",
     docs: "Documentación",
@@ -279,6 +279,8 @@ const es = {
     failed_to_record_version: "Error al grabar versión",
     failed_to_load_diagram: "Error al cargar diagrama",
     see_all: "Ver todo",
+    insert_sql: "Insertar SQL",
+    upload_file: "Subir archivo",
   },
 };
 
