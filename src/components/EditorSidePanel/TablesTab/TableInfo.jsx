@@ -190,7 +190,7 @@ export default function TableInfo({ data }) {
                 <IndexDetails
                   key={"index_" + k}
                   data={idx}
-                  iid={k}
+                  iid={idx.id}
                   tid={data.id}
                   fields={data.fields.map((e) => ({
                     value: e.name,
