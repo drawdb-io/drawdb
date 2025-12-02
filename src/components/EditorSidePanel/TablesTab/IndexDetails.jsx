@@ -48,7 +48,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
           setRedoStack([]);
           updateTable(tid, {
             indices: table.indices.map((index) =>
-              index.id === iid
+              index.id === data.id
                 ? {
                     ...index,
                     fields: [...value],
@@ -75,7 +75,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
               onChange={(value) =>
                 updateTable(tid, {
                   indices: table.indices.map((index) =>
-                    index.id === iid
+                    index.id === data.id
                       ? {
                           ...index,
                           name: value,
@@ -137,7 +137,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                   setRedoStack([]);
                   updateTable(tid, {
                     indices: table.indices.map((index) =>
-                      index.id === iid
+                      index.id === data.id
                         ? {
                             ...index,
                             [checkedValues.target.value]:
@@ -171,7 +171,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
                 ]);
                 setRedoStack([]);
                 updateTable(tid, {
-                  indices: table.indices.filter((e) => e.id !== iid),
+                  indices: table.indices.filter((e) => e.id !== data.id),
                 });
               }}
             >

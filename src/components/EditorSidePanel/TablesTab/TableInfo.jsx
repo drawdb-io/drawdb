@@ -277,7 +277,7 @@ export default function TableInfo({ data }) {
                 indices: [
                   ...data.indices,
                   {
-                    id: data.indices.length,
+                    id: nanoid(),
                     name: `${data.name}_index_${data.indices.length}`,
                     unique: false,
                     fields: [],

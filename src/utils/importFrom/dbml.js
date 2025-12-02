@@ -42,7 +42,7 @@ export function fromDBML(src) {
       for (const idx of table.indexes) {
         const parsedIndex = {};
 
-        parsedIndex.id = idx.id - 1;
+        parsedIndex.id = nanoid();
         parsedIndex.fields = idx.columns.map((x) => x.value);
         parsedIndex.name =
           idx.name ?? `${parsedTable.name}_index_${parsedIndex.id}`;
