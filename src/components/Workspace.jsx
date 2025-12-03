@@ -529,7 +529,12 @@ export default function WorkSpace() {
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />
         )}
-        <div className="relative w-full h-full overflow-hidden">
+        <main
+          id="main-content"
+          className="relative w-full h-full overflow-hidden"
+          role="main"
+          aria-label={t("edit")}
+        >
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
@@ -555,7 +560,7 @@ export default function WorkSpace() {
               <FloatingControls />
             </div>
           )}
-        </div>
+        </main>
       </div>
       <Modal
         centered

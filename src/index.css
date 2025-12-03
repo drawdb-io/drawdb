@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./accessibility.css";
 
 @config '../tailwind.config.js';
 
@@ -221,7 +222,9 @@
   stroke-width: 2.5;
   fill: none;
   stroke-linecap: butt;
-  transition: stroke 0.2s ease, stroke-width 0.2s ease;
+  transition:
+    stroke 0.2s ease,
+    stroke-width 0.2s ease;
   pointer-events: stroke;
 }
 

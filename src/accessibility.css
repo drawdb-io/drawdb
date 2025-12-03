@@ -1,0 +1,185 @@
+/* Accessibility Styles for DrawDB */
+
+/* Skip to main content link - visible on focus */
+.skip-to-main:focus {
+  position: fixed !important;
+  left: 10px !important;
+  top: 10px !important;
+  z-index: 9999 !important;
+  padding: 1em !important;
+  background-color: var(--semi-color-bg-2) !important;
+  color: var(--semi-color-text-0) !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+  border: 2px solid var(--semi-color-primary) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Enhanced focus indicators for better keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--semi-color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Button focus styles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--semi-color-primary);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Ensure interactive elements are keyboard accessible */
+[role="button"]:not([tabindex]) {
+  cursor: pointer;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor !important;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Ensure sufficient color contrast for text */
+.theme {
+  --a11y-text-color: var(--semi-color-text-0);
+  --a11y-bg-color: var(--semi-color-bg-0);
+}
+
+/* Focus trap for modals */
+.modal-focus-trap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+/* Keyboard navigation indicators */
+.keyboard-user button:focus,
+.keyboard-user a:focus,
+.keyboard-user [role="button"]:focus {
+  box-shadow: 0 0 0 3px var(--semi-color-primary-light-default);
+}
+
+/* Improve readability for long text content */
+.accessible-text {
+  line-height: 1.5;
+  word-spacing: 0.16em;
+}
+
+/* Touch target size - ensure minimum 44x44px for mobile */
+@media (pointer: coarse) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  [role="button"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Improved table accessibility */
+table {
+  border-collapse: collapse;
+}
+
+table th {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Loading state accessibility */
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+/* Disabled state clarity */
+[disabled],
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Error message accessibility */
+[role="alert"],
+.error-message {
+  color: var(--semi-color-danger);
+  font-weight: 500;
+}
+
+/* Success message accessibility */
+[role="status"].success {
+  color: var(--semi-color-success);
+}
+
+/* Focus management for dialogs */
+dialog:focus,
+[role="dialog"]:focus,
+[role="alertdialog"]:focus {
+  outline: none;
+}
+
+dialog::backdrop,
+.dialog-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Ensure icons don't interfere with screen readers */
+i[aria-hidden="true"],
+svg[aria-hidden="true"] {
+  pointer-events: none;
+}

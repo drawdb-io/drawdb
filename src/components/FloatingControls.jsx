@@ -10,7 +10,11 @@ export default function FloatingControls() {
 
   return (
     <div className="flex gap-2">
-      <div className="popover-theme flex rounded-lg items-center">
+      <div
+        className="popover-theme flex rounded-lg items-center"
+        role="group"
+        aria-label={t("zoom")}
+      >
         <button
           className="px-3 py-2"
           onClick={() =>
@@ -19,11 +23,20 @@ export default function FloatingControls() {
               zoom: prev.zoom / 1.2,
             }))
           }
+          aria-label={t("zoom_out")}
+          title={t("zoom_out")}
         >
-          <i className="bi bi-dash-lg" />
+          <i className="bi bi-dash-lg" aria-hidden="true" />
         </button>
         <Divider align="center" layout="vertical" />
-        <div className="px-3 py-2">{parseInt(transform.zoom * 100)}%</div>
+        <div
+          className="px-3 py-2"
+          role="status"
+          aria-live="polite"
+          aria-label={`${t("zoom")}: ${parseInt(transform.zoom * 100)}%`}
+        >
+          {parseInt(transform.zoom * 100)}%
+        </div>
         <Divider align="center" layout="vertical" />
         <button
           className="px-3 py-2"
@@ -33,8 +46,10 @@ export default function FloatingControls() {
               zoom: prev.zoom * 1.2,
             }))
           }
+          aria-label={t("zoom_in")}
+          title={t("zoom_in")}
         >
-          <i className="bi bi-plus-lg" />
+          <i className="bi bi-plus-lg" aria-hidden="true" />
         </button>
       </div>
       <Tooltip content={t("exit")}>
@@ -49,8 +64,10 @@ export default function FloatingControls() {
             }));
             exitFullscreen();
           }}
+          aria-label={t("fullscreen")}
+          title={t("fullscreen")}
         >
-          <i className="bi bi-fullscreen-exit" />
+          <i className="bi bi-fullscreen-exit" aria-hidden="true" />
         </button>
       </Tooltip>
     </div>

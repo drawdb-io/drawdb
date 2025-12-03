@@ -92,9 +92,11 @@ export default function SidePanel({ width, resize, setResize }) {
 
   return (
     <div className="flex h-full">
-      <div
+      <nav
         className="flex flex-col h-full relative border-r border-color"
         style={{ width: `${width}px` }}
+        role="navigation"
+        aria-label={t("sidebar")}
       >
         <div className="h-full flex-1 overflow-y-auto">
           {layout.dbmlEditor ? (
@@ -118,6 +120,7 @@ export default function SidePanel({ width, resize, setResize }) {
                       onClick={toggleDBMLEditor}
                       icon={<IconCode />}
                       theme="borderless"
+                      aria-label={t("dbml_view")}
                     />
                   </Tooltip>
                 </>
@@ -141,7 +144,7 @@ export default function SidePanel({ width, resize, setResize }) {
             <Issues />
           </div>
         )}
-      </div>
+      </nav>
       <div
         className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
           resize && "bg-semi-grey-2"

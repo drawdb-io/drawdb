@@ -178,12 +178,17 @@ export async function detectLanguageByLocation() {
  */
 function getBrowserLanguage() {
   const browserLang = navigator.language || navigator.userLanguage;
+
+  // Handle undefined browser language
+  if (!browserLang) {
+    console.log("No browser language detected, defaulting to English");
+    return "en";
+  }
+
   console.log(`Using browser language: ${browserLang}`);
 
   // Extract base language code (e.g., "en-US" -> "en")
-  const langCode = browserLang.split("-")[0].toLowerCase();
-
-  // Map common browser language codes to our language codes
+  const langCode = browserLang.split("-")[0].toLowerCase(); // Map common browser language codes to our language codes
   const browserLangMap = {
     en: "en",
     zh:

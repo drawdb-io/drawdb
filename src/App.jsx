@@ -11,6 +11,24 @@ export default function App() {
   return (
     <SettingsContextProvider>
       <BrowserRouter>
+        <a
+          href="#main-content"
+          className="skip-to-main"
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            zIndex: 999,
+            padding: "1em",
+            backgroundColor: "var(--semi-color-bg-2)",
+            color: "var(--semi-color-text-0)",
+            textDecoration: "none",
+            borderRadius: "4px",
+          }}
+          onFocus={(e) => (e.target.style.left = "10px")}
+          onBlur={(e) => (e.target.style.left = "-9999px")}
+        >
+          Skip to main content
+        </a>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
