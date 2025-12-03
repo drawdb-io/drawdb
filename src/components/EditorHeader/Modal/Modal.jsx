@@ -40,6 +40,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
+import AiGenerate from "./AiGenerate";
 import { IdContext } from "../../Workspace";
 import { nanoid } from "nanoid";
 
@@ -379,6 +380,8 @@ export default function Modal({
         );
       case MODAL.SHARE:
         return <Share title={title} setModal={setModal} />;
+      case MODAL.AI_GENERATE:
+        return <AiGenerate setModal={setModal} />;
       default:
         return <></>;
     }

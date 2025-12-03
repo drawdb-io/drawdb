@@ -1788,6 +1788,15 @@ export default function ControlPanel({
               <IconAddNote />
             </button>
           </Tooltip>
+          <Tooltip content={t("ai_generate") || "AI Generate"} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={() => setModal(MODAL.AI_GENERATE)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-robot" />
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button

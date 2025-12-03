@@ -25,6 +25,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.AI_GENERATE:
+      return i18n.t("ai_generate") || "AI Generate";
     default:
       return "";
   }
@@ -36,6 +38,8 @@ export const getModalWidth = (modal) => {
     case MODAL.OPEN:
     case MODAL.CODE:
     case MODAL.NEW:
+      return 740;
+    case MODAL.AI_GENERATE:
       return 740;
     default:
       return 600;
