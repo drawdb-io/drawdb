@@ -1,6 +1,6 @@
 const hindi = {
-  name: "Hindi",
-  native_name: "हिंदी",
+  name: "हिंदी",
+  native_name: "हिन्दी",
   code: "hi",
 };
 
@@ -136,7 +136,7 @@ const hi = {
     many_to_one: "कई से एक",
     content: "कंटेंट",
     types_info:
-      "यह सुविधा object-relational DBMS जैसे PostgreSQL के लिए है।\nयदि MySQL या MariaDB के लिए उपयोग किया जाता है, तो एक JSON प्रकार जेनरेट किया जाएगा जिसमें संबंधित json वैधता जांच होगी।\nयदि SQLite के लिए उपयोग किया जाता है तो इसे BLOB में परिवर्तित किया जाएगा।\nयदि MSSQL के लिए उपयोग किया जाता है तो पहले फ़ील्ड के लिए एक प्रकार उपनाम जेनरेट किया जाएगा।",
+      "यह सुविधा object-relational DBMS जैसे PostgreSQL के लिए है...\nयदि MySQL या MariaDB के लिए उपयोग किया जाता है, तो एक JSON प्रकार जेनरेट किया जाएगा जिसमें संबंधित json वैधता जांच होगी...",
     table_deleted: "टेबल हटाई गई",
     area_deleted: "एरिया हटाया गया",
     note_deleted: "नोट हटाया गया",
