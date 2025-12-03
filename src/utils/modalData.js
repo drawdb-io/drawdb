@@ -25,6 +25,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.SHORTCUTS:
+      return i18n.t("keyboard_shortcuts");
     default:
       return "";
   }
@@ -36,6 +38,7 @@ export const getModalWidth = (modal) => {
     case MODAL.OPEN:
     case MODAL.CODE:
     case MODAL.NEW:
+    case MODAL.SHORTCUTS:
       return 740;
     default:
       return 600;
@@ -60,6 +63,8 @@ export const getOkText = (modal) => {
       return i18n.t("create");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.SHORTCUTS:
+      return i18n.t("close");
     default:
       return i18n.t("confirm");
   }

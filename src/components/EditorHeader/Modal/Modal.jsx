@@ -40,6 +40,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
+import Shortcuts from "./Shortcuts";
 import { IdContext } from "../../Workspace";
 import { nanoid } from "nanoid";
 
@@ -135,18 +136,18 @@ export default function Modal({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           setEnums(
             diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
+            [],
           );
           window.name = `d ${diagram.id}`;
           setSaveState(State.SAVING);
@@ -379,6 +380,8 @@ export default function Modal({
         );
       case MODAL.SHARE:
         return <Share title={title} setModal={setModal} />;
+      case MODAL.SHORTCUTS:
+        return <Shortcuts />;
       default:
         return <></>;
     }
