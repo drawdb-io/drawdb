@@ -9,6 +9,7 @@ import TypesContextProvider from "../context/TypesContext";
 import TasksContextProvider from "../context/TasksContext";
 import SaveStateContextProvider from "../context/SaveStateContext";
 import EnumsContextProvider from "../context/EnumsContext";
+import BaseTablesContextProvider from "../context/BaseTablesContext";
 import WorkSpace from "../components/Workspace";
 import { useThemedPage } from "../hooks";
 
@@ -25,11 +26,13 @@ export default function Editor() {
                 <NotesContextProvider>
                   <TypesContextProvider>
                     <EnumsContextProvider>
-                      <TablesContextProvider>
-                        <SaveStateContextProvider>
-                          <WorkSpace />
-                        </SaveStateContextProvider>
-                      </TablesContextProvider>
+                      <BaseTablesContextProvider>
+                        <TablesContextProvider>
+                          <SaveStateContextProvider>
+                            <WorkSpace />
+                          </SaveStateContextProvider>
+                        </TablesContextProvider>
+                      </BaseTablesContextProvider>
                     </EnumsContextProvider>
                   </TypesContextProvider>
                 </NotesContextProvider>
