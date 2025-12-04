@@ -156,7 +156,7 @@ export default function Modal({
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         Toast.error(t("didnt_find_diagram"));
       });
   };

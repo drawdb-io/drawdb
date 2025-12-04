@@ -227,7 +227,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     };
 
@@ -288,7 +288,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     };
 
@@ -346,7 +346,7 @@ export default function WorkSpace() {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           if (selectedDb === "") setShowSelectDbModal(true);
         });
     };
@@ -393,7 +393,7 @@ export default function WorkSpace() {
           );
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         setSaveState(State.FAILED_TO_LOAD);
       }
     };

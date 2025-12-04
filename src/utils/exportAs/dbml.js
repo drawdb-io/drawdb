@@ -99,7 +99,6 @@ function columnComment(field) {
 }
 
 function processType(type) {
-  // TODO: remove after a while
   if (type.toUpperCase() === "TIMESTAMP WITH TIME ZONE") {
     return "timestamptz";
   }
