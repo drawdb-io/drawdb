@@ -606,7 +606,9 @@ export default function WorkSpace() {
                 />
               )}
               <div className="text-xs">
-                {x.label === DB.GENERIC ? t("generic_description") : x.description}
+                {x.label === DB.GENERIC
+                  ? t("generic_description")
+                  : t(`db_${x.label.toLowerCase()}_description`)}
               </div>
             </div>
           ))}
