@@ -7,6 +7,8 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import NotFound from "./pages/NotFound";
 
+
+
 export default function App() {
   return (
     <SettingsContextProvider>

@@ -10,6 +10,7 @@
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
+
 @layer base {
   *,
   ::after,
@@ -230,4 +231,39 @@
   stroke-width: 2;
   stroke-dasharray: 12 8;
   animation: dash-right 1s linear infinite;
+}
+
+.rich-editor .ql-container {
+  background: transparent !important;
+  border: none !important;
+}
+
+.rich-editor .ql-editor {
+  padding: 0 !important;
+}
+.ql-container {
+  min-height: 150px !important;
+  background: white !important;
+  color: black !important;
+}
+
+.ql-editor {
+  min-height: 120px !important;
+  background: white !important;
+  color: black !important;
+  overflow-y: auto;
+}
+
+.ql-toolbar {
+  background: #f5f5f5 !important;
+  border: 1px solid #ccc !important;
+  color: #000 !important;
+}
+
+.ql-toolbar button svg {
+  color: #000 !important;
+  stroke: #000 !important;
+}
+.ql-editor p {
+  color: black !important;
 }

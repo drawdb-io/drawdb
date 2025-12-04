@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import en_US from "@douyinfe/semi-ui/lib/es/locale/source/en_US";
 import "./index.css";
 import "./i18n/i18n.js";
+import "react-quill/dist/quill.snow.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

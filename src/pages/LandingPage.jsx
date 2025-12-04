@@ -165,12 +165,18 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
             {dbs.map((s, i) => (
-              <img
+              <div
                 key={"icon-" + i}
-                src={s.icon}
-                style={{ height: s.height }}
-                className="opacity-70 hover:opacity-100 transition-opacity duration-300 md:scale-[0.7] md:mx-auto"
-              />
+                onClick={() => window.open(s.url, "_blank")}
+                style={{ cursor: "pointer" }}
+              >
+                <img
+                  src={s.icon}
+                  style={{ height: s.height }}
+                  className="opacity-70 hover:opacity-100 transition-opacity duration-300 md:scale-[0.7] md:mx-auto"
+                  alt={`Database ${i}`}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -308,12 +314,12 @@ export default function LandingPage() {
 }
 
 const dbs = [
-  { icon: mysql_icon, height: 80 },
-  { icon: postgres_icon, height: 48 },
-  { icon: sqlite_icon, height: 64 },
-  { icon: mariadb_icon, height: 64 },
-  { icon: sql_server_icon, height: 64 },
-  { icon: oraclesql_icon, height: 172 },
+  { icon: mysql_icon, height: 80, url: "https://www.mysql.com/" },
+  { icon: postgres_icon, height: 48, url: "https://www.postgresql.org/" },
+  { icon: sqlite_icon, height: 64, url: "https://www.sqlite.org/" },
+  { icon: mariadb_icon, height: 64, url: "https://mariadb.org/" },
+  { icon: sql_server_icon, height: 64, url: "https://www.microsoft.com/en-us/sql-server/" },
+  { icon: oraclesql_icon, height: 172, url: "https://www.oracle.com/database/" },
 ];
 
 const features = [

@@ -2,6 +2,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
 import { Input, Button, Popover } from "@douyinfe/semi-ui";
 import ColorPicker from "../EditorSidePanel/ColorPicker";
+
 import {
   IconEdit,
   IconDeleteStroked,
@@ -511,18 +512,22 @@ export default function Note({ data, onPointerDown }) {
           </div>
           <textarea
             id={`note_${data.id}`}
-            readOnly={layout.readOnly}
             value={data.content}
             onChange={handleChange}
-            onFocus={(e) =>
+            onFocus={() =>
               setEditField({
-                content: e.target.value,
+                content: data.content,
                 height: data.height,
               })
             }
             onBlur={handleBlur}
-            className="w-full resize-none outline-hidden overflow-y-hidden border-none select-none"
-            style={{ backgroundColor: data.color }}
+            readOnly={layout.readOnly}
+            className="w-full resize-none border-0 focus:outline-none focus:ring-0 p-1"
+            style={{
+              overflow: "hidden",
+              minHeight: "60px",
+              maxHeight: "300px",
+            }}
           />
         </div>
       </foreignObject>
