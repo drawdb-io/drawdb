@@ -69,9 +69,9 @@ export default function Templates() {
               itemKey="1"
             >
               <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-10 my-6">
-                {defaultTemplates?.map((t, i) => (
+                {defaultTemplates?.map((t) => (
                   <div
-                    key={i}
+                    key={t.id}
                     className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
                   >
                     <div className="h-48">
@@ -106,9 +106,9 @@ export default function Templates() {
             >
               {customTemplates?.length > 0 ? (
                 <div className="grid xl:grid-cols-3 grid-cols-2 sm:grid-cols-1 gap-8 my-6">
-                  {customTemplates?.map((c, i) => (
+                  {customTemplates?.map((c) => (
                     <div
-                      key={i}
+                      key={c.id}
                       className="bg-gray-100 hover:translate-y-[-6px] transition-all duration-300 border rounded-md"
                     >
                       <div className="h-48">
