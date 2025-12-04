@@ -3,6 +3,7 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { en, english } from "./locales/en";
 import { zh, chinese } from "./locales/zh";
+import { zh_cn, simplifiedChinese } from "./locales/zh-cn";
 import { es, spanish } from "./locales/es";
 import { da, danish } from "./locales/da";
 import { de, german } from "./locales/de";
@@ -54,6 +55,7 @@ import { sw, swahili } from "./locales/sw";
 export const languages = [
   english,
   chinese,
+  simplifiedChinese,
   danish,
   spanish,
   german,
@@ -114,6 +116,7 @@ i18n
     resources: {
       en,
       zh,
+      "zh-CN": zh_cn,
       es,
       da,
       de,
