@@ -86,6 +86,8 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { useGoogleDrive } from "../../utils/googleDrive";
+import { jsonDiagramIsValid } from "../../utils/validateSchema";
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -239,9 +241,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index,
             ),
           });
@@ -420,9 +422,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index,
             ),
           });
@@ -755,51 +757,106 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-  const { setTasks } = useTasks();
+  const { tasks, setTasks } = useTasks();
+  const { login, isAuthenticated, saveFileToDrive, openPicker } =
+    useGoogleDrive();
+
+  const loadDiagramState = (diagram) => {
+    if (diagram.database) {
+      setDatabase(diagram.database);
+    } else {
+      setDatabase(DB.GENERIC);
+    }
+    setDiagramId(diagram.id ?? 0);
+    setTitle(diagram.name ?? diagram.title ?? "Untitled");
+    setTables(diagram.tables);
+    setRelationships(diagram.references ?? diagram.relationships);
+    setAreas(diagram.areas ?? diagram.subjectAreas);
+    setGistId(diagram.gistId ?? "");
+    setNotes(diagram.notes);
+    setTasks(diagram.todos ?? []);
+    setTransform({
+      pan: diagram.pan,
+      zoom: diagram.zoom,
+    });
+    setUndoStack([]);
+    setRedoStack([]);
+    if (databases[diagram.database ?? DB.GENERIC].hasTypes) {
+      setTypes(
+        diagram.types.map((t) =>
+          t.id
+            ? t
+            : {
+              ...t,
+              id: nanoid(),
+              fields: t.fields.map((f) =>
+                f.id ? f : { ...f, id: nanoid() },
+              ),
+            },
+        ),
+      );
+    }
+    setEnums(
+      diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ?? [],
+    );
+    window.name = diagram.id ? `d ${diagram.id}` : "";
+  };
+
+  const saveToDrive = async () => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    const data = {
+      tables,
+      relationships,
+      notes,
+      subjectAreas: areas,
+      database,
+      ...(databases[database].hasTypes && { types }),
+      ...(databases[database].hasEnums && { enums }),
+      title,
+      pan: transform.pan,
+      zoom: transform.zoom,
+      todos: tasks,
+    };
+
+    try {
+      await saveFileToDrive(JSON.stringify(data, null, 2), `${title}.ddb`);
+      Toast.success("Saved to Google Drive");
+    } catch (error) {
+      Toast.error("Failed to save to Google Drive");
+      console.error(error);
+    }
+  };
+
+  const openFromDrive = () => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    openPicker((content, name) => {
+      try {
+        const json = typeof content === "string" ? JSON.parse(content) : content;
+        if (!jsonDiagramIsValid(json)) {
+          Toast.error("Invalid diagram file");
+          return;
+        }
+        loadDiagramState(json);
+        Toast.success(`Opened ${name}`);
+      } catch (error) {
+        Toast.error("Failed to parse file");
+        console.error("Error parsing file content:", error);
+        console.log("Content received:", content);
+      }
+    });
+  };
   const loadDiagram = async (id) => {
     await db.diagrams
       .get(id)
       .then((diagram) => {
         if (diagram) {
-          if (diagram.database) {
-            setDatabase(diagram.database);
-          } else {
-            setDatabase(DB.GENERIC);
-          }
-          setDiagramId(diagram.id);
-          setTitle(diagram.name);
-          setTables(diagram.tables);
-          setRelationships(diagram.references);
-          setAreas(diagram.areas);
-          setGistId(diagram.gistId ?? "");
-          setNotes(diagram.notes);
-          setTasks(diagram.todos ?? []);
-          setTransform({
-            pan: diagram.pan,
-            zoom: diagram.zoom,
-          });
-          setUndoStack([]);
-          setRedoStack([]);
-          if (databases[database].hasTypes) {
-            setTypes(
-              diagram.types.map((t) =>
-                t.id
-                  ? t
-                  : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
-              ),
-            );
-          }
-          setEnums(
-            diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
-          );
-          window.name = `d ${diagram.id}`;
+          loadDiagramState(diagram);
         } else {
           window.name = "";
           Toast.error(t("didnt_find_diagram"));
@@ -825,39 +882,48 @@ export default function ControlPanel({
         function: open,
         shortcut: "Ctrl+O",
       },
+      open_from_drive: {
+        name: "Open from Google Drive",
+        function: openFromDrive,
+      },
       open_recent: {
         children: [
           ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
             ? [
-                ...recentlyOpenedDiagrams.map((diagram) => ({
-                  name: diagram.name,
-                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
-                    .setLocale(i18n.language)
-                    .toRelative(),
-                  function: async () => {
-                    await loadDiagram(diagram.id);
-                    save();
-                  },
-                })),
-                { divider: true },
-                {
-                  name: t("see_all"),
-                  function: () => open(),
+              ...recentlyOpenedDiagrams.map((diagram) => ({
+                name: diagram.name,
+                label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                  .setLocale(i18n.language)
+                  .toRelative(),
+                function: async () => {
+                  await loadDiagram(diagram.id);
+                  save();
                 },
-              ]
+              })),
+              { divider: true },
+              {
+                name: t("see_all"),
+                function: () => open(),
+              },
+            ]
             : [
-                {
-                  name: t("no_saved_diagrams"),
-                  disabled: true,
-                },
-              ]),
+              {
+                name: t("no_saved_diagrams"),
+                disabled: true,
+              },
+            ]),
         ],
 
-        function: () => {},
+        function: () => { },
       },
       save: {
         function: save,
         shortcut: "Ctrl+S",
+        disabled: layout.readOnly,
+      },
+      save_to_drive: {
+        name: "Save to Google Drive",
+        function: saveToDrive,
         disabled: layout.readOnly,
       },
       save_as: {
@@ -1269,7 +1335,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       exit: {
         function: () => {
@@ -1501,7 +1567,7 @@ export default function ControlPanel({
             function: () => setSettings((prev) => ({ ...prev, mode: "dark" })),
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       zoom_in: {
         function: zoomIn,
@@ -2050,7 +2116,7 @@ export default function ControlPanel({
                   type="light"
                   prefixIcon={
                     saveState === State.LOADING ||
-                    saveState === State.SAVING ? (
+                      saveState === State.SAVING ? (
                       <Spin size="small" />
                     ) : null
                   }
