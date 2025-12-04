@@ -231,6 +231,12 @@ const en = {
     generic: "Generic",
     generic_description:
       "Generic diagrams can be exported to any SQL flavor but support few data types.",
+    db_mysql: "MySQL",
+    db_postgresql: "PostgreSQL",
+    db_sqlite: "SQLite",
+    db_mariadb: "MariaDB",
+    db_transactsql: "MSSQL",
+    db_oraclesql: "Oracle SQL",
     enums: "Enums",
     add_enum: "Add enum",
     edit_enum: "{{extra}} Edit enum {{enumName}}",
