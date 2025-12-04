@@ -121,6 +121,16 @@ export default function Todo() {
                   {t(order)}
                 </Dropdown.Item>
               ))}
+              <Dropdown.Divider />
+              <Dropdown.Item
+                onClick={() => {
+                  setTasks((prev) => prev.filter((t) => !t.complete));
+                  setSaveState(State.SAVING);
+                }}
+                type="danger"
+              >
+                {t("clear_completed")}
+              </Dropdown.Item>
             </Dropdown.Menu>
           }
           trigger="click"

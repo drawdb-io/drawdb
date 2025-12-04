@@ -209,6 +209,7 @@ const en = {
     sort_by: "Sort by",
     my_order: "My order",
     completed: "Completed",
+    clear_completed: "Clear completed",
     alphabetically: "Alphabetically",
     add_task: "Add task",
     details: "Details",
