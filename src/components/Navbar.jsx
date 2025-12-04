@@ -4,6 +4,7 @@ import logo from "../assets/logo_light_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 import { socials } from "../data/socials";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
@@ -17,7 +18,7 @@ export default function Navbar() {
           </Link>
           <div className="md:hidden flex gap-12">
             <Link
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
               onClick={() =>
                 document
                   .getElementById("features")
@@ -28,24 +29,25 @@ export default function Navbar() {
             </Link>
             <Link
               to="/editor"
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Editor
             </Link>
             <Link
               to="/templates"
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Templates
             </Link>
             <Link
               to={socials.docs}
-              className="text-lg font-semibold hover:text-sky-800 transition-colors duration-300"
+              className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 hover:text-sky-800 dark:hover:text-sky-400 transition-colors duration-300"
             >
               Docs
             </Link>
           </div>
-          <div className="md:hidden block space-x-3 ms-12">
+          <div className="md:hidden flex items-center space-x-3 ms-12">
+            <ThemeToggle />
             <a
               title="Jump to Github"
               className="px-2 py-2 hover:opacity-60 transition-all duration-300 rounded-full text-2xl"
@@ -75,12 +77,15 @@ export default function Navbar() {
             </a>
           </div>
         </div>
-        <button
-          onClick={() => setOpenMenu((prev) => !prev)}
-          className="hidden md:inline-block h-[24px]"
-        >
-          <IconMenu size="extra-large" />
-        </button>
+        <div className="hidden md:flex items-center space-x-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpenMenu((prev) => !prev)}
+            className="h-[24px]"
+          >
+            <IconMenu size="extra-large" />
+          </button>
+        </div>
       </div>
       <hr />
       <SideSheet
@@ -92,7 +97,7 @@ export default function Navbar() {
         width={window.innerWidth}
       >
         <Link
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-zinc-700 block p-3 text-base font-semibold"
           onClick={() => {
             document
               .getElementById("features")
@@ -105,21 +110,21 @@ export default function Navbar() {
         <hr />
         <Link
           to="/editor"
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-zinc-700 block p-3 text-base font-semibold"
         >
           Editor
         </Link>
         <hr />
         <Link
           to="/templates"
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-zinc-700 block p-3 text-base font-semibold"
         >
           Templates
         </Link>
         <hr />
         <Link
           to={socials.docs}
-          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+          className="hover:bg-zinc-100 dark:hover:bg-zinc-700 block p-3 text-base font-semibold"
         >
           Docs
         </Link>
