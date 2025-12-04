@@ -17,7 +17,7 @@ export default function Sidesheet({ type, title, setTitle, onClose }) {
       case SIDESHEET.VERSIONS:
         return t("versions");
       default:
-        break;
+        return "";
     }
   }
 
@@ -36,7 +36,7 @@ export default function Sidesheet({ type, title, setTitle, onClose }) {
           />
         );
       default:
-        break;
+        return null;
     }
   }
 

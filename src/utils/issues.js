@@ -9,11 +9,17 @@ function checkDefault(field, database) {
     !field.notNull &&
     typeof field.default === "string" &&
     field.default.toLowerCase() === "null"
-  )
+  ) {
     return true;
-  if (!dbToTypes[database][field.type].checkDefault) return true;
+  }
 
-  return dbToTypes[database][field.type].checkDefault(field);
+  const dbTypes = dbToTypes[database];
+  if (!dbTypes) return true;
+
+  const typeConfig = dbTypes[field.type];
+  if (!typeConfig || !typeConfig.checkDefault) return true;
+
+  return typeConfig.checkDefault(field);
 }
 
 export function getIssues(diagram) {
@@ -121,7 +127,7 @@ export function getIssues(diagram) {
     });
 
     table.indices.forEach((index) => {
-      if (index.name.trim() === "") {
+      if ((index.name || "").trim() === "") {
         issues.push(i18n.t("empty_index_name", { tableName: table.name }));
       }
       if (index.fields.length === 0) {
