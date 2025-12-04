@@ -86,6 +86,8 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import AIGenerationModal from "./AIGenerationModal";
+import { IconCpu } from "@douyinfe/semi-icons";
 export default function ControlPanel({
   diagramId,
   setDiagramId,
@@ -95,6 +97,8 @@ export default function ControlPanel({
 }) {
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
+
+  const [showAIGen, setShowAIGen] = useState(false);
   const [showEditName, setShowEditName] = useState(false);
   const [importDb, setImportDb] = useState("");
   const [exportData, setExportData] = useState({
@@ -239,9 +243,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index,
             ),
           });
@@ -420,9 +424,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index,
             ),
           });
@@ -786,18 +790,18 @@ export default function ControlPanel({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           setEnums(
             diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
+            [],
           );
           window.name = `d ${diagram.id}`;
         } else {
@@ -829,31 +833,31 @@ export default function ControlPanel({
         children: [
           ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
             ? [
-                ...recentlyOpenedDiagrams.map((diagram) => ({
-                  name: diagram.name,
-                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
-                    .setLocale(i18n.language)
-                    .toRelative(),
-                  function: async () => {
-                    await loadDiagram(diagram.id);
-                    save();
-                  },
-                })),
-                { divider: true },
-                {
-                  name: t("see_all"),
-                  function: () => open(),
+              ...recentlyOpenedDiagrams.map((diagram) => ({
+                name: diagram.name,
+                label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                  .setLocale(i18n.language)
+                  .toRelative(),
+                function: async () => {
+                  await loadDiagram(diagram.id);
+                  save();
                 },
-              ]
+              })),
+              { divider: true },
+              {
+                name: t("see_all"),
+                function: () => open(),
+              },
+            ]
             : [
-                {
-                  name: t("no_saved_diagrams"),
-                  disabled: true,
-                },
-              ]),
+              {
+                name: t("no_saved_diagrams"),
+                disabled: true,
+              },
+            ]),
         ],
 
-        function: () => {},
+        function: () => { },
       },
       save: {
         function: save,
@@ -1269,7 +1273,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       exit: {
         function: () => {
@@ -1501,7 +1505,7 @@ export default function ControlPanel({
             function: () => setSettings((prev) => ({ ...prev, mode: "dark" })),
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       zoom_in: {
         function: zoomIn,
@@ -1760,7 +1764,15 @@ export default function ControlPanel({
               <IconRedo size="large" />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
+          <Divider layout="vertical" margin="12px" />
+          <Tooltip content={t("ai_generation")} position="bottom">
+            <Button
+              theme="borderless"
+              icon={<IconCpu size="large" />}
+              onClick={() => setShowAIGen(true)}
+              style={{ marginRight: "12px" }}
+            />
+          </Tooltip>
           <Tooltip content={t("add_table")} position="bottom">
             <button
               className="flex items-center py-1 px-2 hover-2 rounded-sm disabled:opacity-50"
@@ -2050,7 +2062,7 @@ export default function ControlPanel({
                   type="light"
                   prefixIcon={
                     saveState === State.LOADING ||
-                    saveState === State.SAVING ? (
+                      saveState === State.SAVING ? (
                       <Spin size="small" />
                     ) : null
                   }
