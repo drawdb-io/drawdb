@@ -19,7 +19,7 @@ const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
 
-/* eslint-disable no-unused-vars */
+
 const defaultTypesBase = {
   INT: {
     type: "INT",
