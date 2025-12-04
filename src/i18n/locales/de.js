@@ -260,7 +260,6 @@ const de = {
     open_recent: "Zuletzt geöffnet",
     snap_to_grid: "Am Gitter ausrichten",
     show_datatype: "Datentyp anzeigen",
-    nullable: "Null erlaubt",
     enum_deleted: "Aufzählung gelöscht",
     dbml_view: "DBML-Ansicht",
     tab_view: "Tab-Ansicht",
