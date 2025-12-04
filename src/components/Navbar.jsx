@@ -4,6 +4,7 @@ import logo from "../assets/logo_light_160.png";
 import { SideSheet } from "@douyinfe/semi-ui";
 import { IconMenu } from "@douyinfe/semi-icons";
 import { socials } from "../data/socials";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(false);
@@ -74,6 +75,9 @@ export default function Navbar() {
               <i className="opacity-70 bi bi-discord" />
             </a>
           </div>
+          <div className="hidden md:flex items-center ms-4">
+            <ThemeToggle />
+          </div>
         </div>
         <button
           onClick={() => setOpenMenu((prev) => !prev)}
@@ -123,6 +127,9 @@ export default function Navbar() {
         >
           Docs
         </Link>
+        <div className="flex justify-center p-4">
+          <ThemeToggle />
+        </div>
       </SideSheet>
     </>
   );

@@ -44,8 +44,8 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div>
-      <div className="flex flex-col h-screen bg-zinc-100">
+    <div className="dark:bg-gray-900 transition-colors duration-300">
+      <div className="flex flex-col h-screen bg-zinc-100 dark:bg-gray-900 transition-colors duration-300">
         <div className="text-white font-semibold py-1 text-sm text-center bg-linear-to-r from-[#12495e] from-10% via-slate-500 to-[#12495e]" />
 
         <FadeIn duration={0.6}>
@@ -53,12 +53,12 @@ export default function LandingPage() {
         </FadeIn>
 
         {/* Hero section */}
-        <div className="flex-1 flex-col relative mx-4 md:mx-0 mb-4 rounded-3xl bg-white">
+        <div className="flex-1 flex-col relative mx-4 md:mx-0 mb-4 rounded-3xl bg-white dark:bg-gray-800 transition-colors duration-300">
           <div className="h-full md:hidden">
             <SimpleCanvas diagram={diagram} zoom={0.85} />
           </div>
-          <div className="hidden md:block h-full bg-dots" />
-          <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800">
+          <div className="hidden md:block h-full bg-dots dark:opacity-20" />
+          <div className="absolute left-12 w-[45%] top-[50%] translate-y-[-54%] md:left-[50%] md:translate-x-[-50%] p-8 md:p-3 md:w-full text-zinc-800 dark:text-gray-100">
             <FadeIn duration={0.75}>
               <div className="md:px-3">
                 <h1 className="text-[42px] md:text-3xl font-bold tracking-wide bg-linear-to-r from-sky-900 from-10% via-slate-500 to-[#12495e] inline-block text-transparent bg-clip-text">
@@ -67,13 +67,13 @@ export default function LandingPage() {
                 <div className="text-lg font-medium mt-1 sliding-vertical">
                   Free and open source, simple, and intuitive database design
                   editor, data-modeler, and SQL generator.{" "}
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-400 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     No sign up
                   </span>
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-400 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     Free of charge
                   </span>
-                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 bg-white font-bold whitespace-nowrap">
+                  <span className="ms-2 sm:block sm:ms-0 text-slate-500 dark:text-slate-400 bg-white dark:bg-gray-800 font-bold whitespace-nowrap">
                     Quick and easy
                   </span>
                 </div>
@@ -81,7 +81,7 @@ export default function LandingPage() {
             </FadeIn>
             <div className="mt-4 font-semibold md:mt-12">
               <button
-                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white border rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100 cursor-pointer"
+                className="py-3 mb-4 xl:mb-0 mr-4 transition-all duration-300 bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-full shadow-lg px-9 border-zinc-200 hover:bg-zinc-100 dark:hover:bg-gray-600 cursor-pointer dark:text-white"
                 onClick={() =>
                   document
                     .getElementById("learn-more")
@@ -103,10 +103,10 @@ export default function LandingPage() {
 
       {/* Learn more */}
       <div id="learn-more">
-        <div className="bg-zinc-100 py-10 px-28 md:px-8">
+        <div className="bg-zinc-100 dark:bg-gray-900 py-10 px-28 md:px-8 transition-colors duration-300">
           {/* Supported by */}
           <div className="text-center mb-16">
-            <div className="text-2xl md:text-xl font-bold text-sky-800 mb-8">
+            <div className="text-2xl md:text-xl font-bold text-sky-800 dark:text-sky-400 mb-8">
               Supported by
             </div>
             <div>
@@ -121,14 +121,14 @@ export default function LandingPage() {
                   width={260}
                   className="m-auto mb-4"
                 />
-                <div className="font-semibold text-lg md:text-base">
+                <div className="font-semibold text-lg md:text-base dark:text-gray-200">
                   Next-gen AI-powered intelligent terminal for all platforms
                 </div>
               </a>
             </div>
           </div>
-          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border p-6 bg-white space-y-3 mb-12">
-            <div className="text-lg font-medium">
+          <div className="mt-16 w-[75%] text-center sm:w-full mx-auto shadow-xs rounded-2xl border dark:border-gray-700 p-6 bg-white dark:bg-gray-800 space-y-3 mb-12">
+            <div className="text-lg font-medium dark:text-gray-200">
               Build diagrams with a few clicks, see the full picture, export SQL
               scripts, customize your editor, and more.
             </div>
@@ -136,31 +136,31 @@ export default function LandingPage() {
           </div>
           <div className="flex justify-center items-center gap-28 md:block">
             <div className="text-center mb-4">
-              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800 dark:text-sky-400">
                 {shortenNumber(stats.stars)}
               </div>
-              <div className="ms-1 mt-1 font-medium tracking-wide">
+              <div className="ms-1 mt-1 font-medium tracking-wide dark:text-gray-300">
                 GitHub stars
               </div>
             </div>
             <div className="text-center mb-4">
-              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800 dark:text-sky-400">
                 {shortenNumber(stats.forks)}
               </div>
-              <div className="ms-1 mt-1 font-medium tracking-wide">
+              <div className="ms-1 mt-1 font-medium tracking-wide dark:text-gray-300">
                 GitHub forks
               </div>
             </div>
             <div className="text-center mb-4">
-              <div className="text-5xl md:text-3xl font-bold text-sky-800">
+              <div className="text-5xl md:text-3xl font-bold text-sky-800 dark:text-sky-400">
                 {shortenNumber(languages.length)}
               </div>
-              <div className="ms-1 mt-1 font-medium tracking-wide">
+              <div className="ms-1 mt-1 font-medium tracking-wide dark:text-gray-300">
                 Languages
               </div>
             </div>
           </div>
-          <div className="text-lg font-medium text-center mt-12 mb-6">
+          <div className="text-lg font-medium text-center mt-12 mb-6 dark:text-gray-200">
             Design for your database
           </div>
           <div className="grid grid-cols-3 place-items-center sm:grid-cols-1 sm:gap-10">
@@ -184,6 +184,7 @@ export default function LandingPage() {
           <path
             d="M0 54C0 54 320 0 720 0C1080 0 1440 54 1440 54V0H0V100Z"
             fill="#f4f4f5"
+            className="dark:fill-gray-900 transition-colors duration-300"
           />
         </svg>
       </div>
@@ -191,20 +192,20 @@ export default function LandingPage() {
       {/* Features */}
       <div id="features" className="py-8 px-36 md:px-8">
         <FadeIn duration={1}>
-          <div className="text-base font-medium text-center text-sky-900">
+          <div className="text-base font-medium text-center text-sky-900 dark:text-sky-400">
             More than just an editor
           </div>
-          <div className="text-2xl mt-1 font-medium text-center">
+          <div className="text-2xl mt-1 font-medium text-center dark:text-white">
             What drawDB has to offer
           </div>
           <div className="grid grid-cols-3 gap-8 mt-10 md:grid-cols-2 sm:grid-cols-1">
             {features.map((f, i) => (
               <div
                 key={"feature" + i}
-                className="flex rounded-xl hover:bg-zinc-100 border border-zinc-100 shadow-xs hover:-translate-y-2 transition-all duration-300"
+                className="flex rounded-xl hover:bg-zinc-100 dark:hover:bg-gray-800 border border-zinc-100 dark:border-gray-700 shadow-xs hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="bg-sky-700 px-0.5 rounded-l-xl" />
-                <div className="px-8 py-4 ">
+                <div className="bg-sky-700 dark:bg-sky-600 px-0.5 rounded-l-xl" />
+                <div className="px-8 py-4 dark:text-gray-200">
                   <div className="text-lg font-semibold mb-3">{f.title}</div>
                   {f.content}
                   <div className="mt-2 text-xs opacity-60">{f.footer}</div>
@@ -217,7 +218,7 @@ export default function LandingPage() {
 
       {/* Tweets */}
       <div className="px-40 mt-6 md:px-8">
-        <div className="text-center text-2xl md:text-xl font-medium">
+        <div className="text-center text-2xl md:text-xl font-medium dark:text-white">
           What the internet says about us
         </div>
         <div
@@ -242,13 +243,14 @@ export default function LandingPage() {
         <path
           d="M0 48 C0 48 320 0 720 0C1080 0 1440 48 1440 48V0H0V100Z"
           fill="#f4f4f5"
+          className="dark:fill-gray-900 transition-colors duration-300"
         />
       </svg>
-      <div className="bg-zinc-100 py-8 px-32 md:px-8">
-        <div className="mt-4 mb-2 text-2xl font-bold text-center">
+      <div className="bg-zinc-100 dark:bg-gray-900 py-8 px-32 md:px-8 transition-colors duration-300">
+        <div className="mt-4 mb-2 text-2xl font-bold text-center dark:text-white">
           Reach out to us
         </div>
-        <div className="text-lg text-center mb-4">
+        <div className="text-lg text-center mb-4 dark:text-gray-300">
           We love hearing from you. Join our community on Discord, GitHub, and
           X.
         </div>
@@ -299,8 +301,8 @@ export default function LandingPage() {
         Attention! The diagrams are saved in your browser. Before clearing the
         browser make sure to back up your data.
       </div>
-      <hr className="border-zinc-300" />
-      <div className="text-center text-sm py-3">
+      <hr className="border-zinc-300 dark:border-gray-700" />
+      <div className="text-center text-sm py-3 dark:text-gray-400">
         &copy; {new Date().getFullYear()} <strong>drawDB</strong> - All rights reserved.
       </div>
     </div>
