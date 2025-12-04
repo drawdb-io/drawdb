@@ -823,9 +823,9 @@ export default function ControlPanel({
 
     try {
       await saveFileToDrive(JSON.stringify(data, null, 2), `${title}.ddb`);
-      Toast.success("Saved to Google Drive");
+      Toast.success(t("saved_to_google_drive"));
     } catch (error) {
-      Toast.error("Failed to save to Google Drive");
+      Toast.error(t("failed_to_save_to_google_drive"));
       console.error(error);
     }
   };
@@ -839,13 +839,13 @@ export default function ControlPanel({
       try {
         const json = typeof content === "string" ? JSON.parse(content) : content;
         if (!jsonDiagramIsValid(json)) {
-          Toast.error("Invalid diagram file");
+          Toast.error(t("invalid_diagram_file"));
           return;
         }
         loadDiagramState(json);
-        Toast.success(`Opened ${name}`);
+        Toast.success(`${t("opened")} ${name}`);
       } catch (error) {
-        Toast.error("Failed to parse file");
+        Toast.error(t("failed_to_parse_file"));
         console.error("Error parsing file content:", error);
         console.log("Content received:", content);
       }
@@ -883,7 +883,7 @@ export default function ControlPanel({
         shortcut: "Ctrl+O",
       },
       open_from_drive: {
-        name: "Open from Google Drive",
+        name: t("open_from_google_drive"),
         function: openFromDrive,
       },
       open_recent: {
@@ -922,7 +922,7 @@ export default function ControlPanel({
         disabled: layout.readOnly,
       },
       save_to_drive: {
-        name: "Save to Google Drive",
+        name: t("save_to_google_drive"),
         function: saveToDrive,
         disabled: layout.readOnly,
       },

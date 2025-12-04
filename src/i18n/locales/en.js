@@ -282,6 +282,13 @@ const en = {
     see_all: "See all",
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
+    save_to_google_drive: "Save to Google Drive",
+    open_from_google_drive: "Open from Google Drive",
+    saved_to_google_drive: "Saved to Google Drive",
+    failed_to_save_to_google_drive: "Failed to save to Google Drive",
+    invalid_diagram_file: "Invalid diagram file",
+    opened: "Opened",
+    failed_to_parse_file: "Failed to parse file",
   },
 };
 
