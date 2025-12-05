@@ -34,6 +34,7 @@ import { od, odia } from "./locales/od";
 import { bn, bengali } from "./locales/bn";
 import { ka, kannada } from "./locales/ka";
 import { pl, polish } from "./locales/pl";
+import { bg, bulgarian } from "./locales/bg";
 import { no, norwegian } from "./locales/no";
 import { sv, swedish } from "./locales/sv-se";
 import { ur, urdu } from "./locales/ur";
@@ -66,6 +67,7 @@ export const languages = [
   assamese,
   marathi,
   greek,
+  bulgarian,
   ukrainian,
   russian,
   romanian,
@@ -120,6 +122,7 @@ i18n
       es,
       da,
       de,
+      bg,
       vi,
       "pt-BR": pt,
       fa,
