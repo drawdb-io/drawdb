@@ -50,8 +50,9 @@ import { bg, bulgarian } from "./locales/bg";
 
 import { ms, malay } from "./locales/ms";
 import { mn, mongolian } from "./locales/mn";
-import { sw, swahili } from "./locales/sw";
-
+ 
+import { my,myanmar } from "./locales/my";
+import {bo,tibetan} from "./locales/bo"
 export const languages = [
   english,
   bulgarian,
@@ -101,7 +102,8 @@ export const languages = [
   thai,
   malay,
   mongolian,
-  swahili,
+  myanmar,
+  tibetan
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 i18n
@@ -162,7 +164,8 @@ i18n
       bg,
       ms,
       mn,
-      sw,
+      my,
+      bo
     },
   });
 
