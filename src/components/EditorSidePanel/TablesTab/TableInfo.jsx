@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Select,
+  Checkbox,
 } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
@@ -72,11 +73,11 @@ export default function TableInfo({ data }) {
   const inheritedFieldNames =
     Array.isArray(data.inherits) && data.inherits.length > 0
       ? data.inherits
-          .map((parentName) => {
-            const parent = tables.find((t) => t.name === parentName);
-            return parent ? parent.fields.map((f) => f.name) : [];
-          })
-          .flat()
+        .map((parentName) => {
+          const parent = tables.find((t) => t.name === parentName);
+          return parent ? parent.fields.map((f) => f.name) : [];
+        })
+        .flat()
       : [];
 
   return (
@@ -336,6 +337,134 @@ export default function TableInfo({ data }) {
             onClick={() => deleteTable(data.id)}
           />
         </div>
+      </div>
+      <div className="flex justify-between items-center gap-2 mb-2">
+        <Checkbox
+          checked={data.fields.some((f) => f.name === "created_at")}
+          disabled={layout.readOnly}
+          onChange={(e) => {
+            const exists = data.fields.some((f) => f.name === "created_at");
+            if (e.target.checked && !exists) {
+              const id = nanoid();
+              const newField = {
+                id,
+                name: "created_at",
+                type: "TIMESTAMP",
+                default: "CURRENT_TIMESTAMP",
+                check: "",
+                primary: false,
+                unique: false,
+                notNull: false,
+                increment: false,
+                comment: "",
+              };
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "field_add",
+                  tid: data.id,
+                  fid: id,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[add created_at]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, {
+                fields: [...data.fields, newField],
+              });
+            } else if (!e.target.checked && exists) {
+              const field = data.fields.find((f) => f.name === "created_at");
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "field_delete",
+                  tid: data.id,
+                  fid: field.id,
+                  data: field,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[delete created_at]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, {
+                fields: data.fields.filter((f) => f.name !== "created_at"),
+              });
+            }
+          }}
+        >
+          created_at
+        </Checkbox>
+        <Checkbox
+          checked={data.fields.some((f) => f.name === "updated_at")}
+          disabled={layout.readOnly}
+          onChange={(e) => {
+            const exists = data.fields.some((f) => f.name === "updated_at");
+            if (e.target.checked && !exists) {
+              const id = nanoid();
+              const newField = {
+                id,
+                name: "updated_at",
+                type: "TIMESTAMP",
+                default: "CURRENT_TIMESTAMP",
+                check: "",
+                primary: false,
+                unique: false,
+                notNull: false,
+                increment: false,
+                comment: "",
+              };
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "field_add",
+                  tid: data.id,
+                  fid: id,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[add updated_at]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, {
+                fields: [...data.fields, newField],
+              });
+            } else if (!e.target.checked && exists) {
+              const field = data.fields.find((f) => f.name === "updated_at");
+              setUndoStack((prev) => [
+                ...prev,
+                {
+                  action: Action.EDIT,
+                  element: ObjectType.TABLE,
+                  component: "field_delete",
+                  tid: data.id,
+                  fid: field.id,
+                  data: field,
+                  message: t("edit_table", {
+                    tableName: data.name,
+                    extra: "[delete updated_at]",
+                  }),
+                },
+              ]);
+              setRedoStack([]);
+              updateTable(data.id, {
+                fields: data.fields.filter((f) => f.name !== "updated_at"),
+              });
+            }
+          }}
+        >
+          updated_at
+        </Checkbox>
       </div>
     </div>
   );
