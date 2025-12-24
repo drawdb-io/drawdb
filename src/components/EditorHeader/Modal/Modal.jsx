@@ -23,6 +23,7 @@ import {
   useTransform,
   useTypes,
   useUndoRedo,
+  useBaseTables,
 } from "../../../hooks";
 import { isRtl } from "../../../i18n/utils/rtl";
 import { importSQL } from "../../../utils/importSQL";
@@ -68,6 +69,7 @@ export default function Modal({
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { setEnums } = useEnums();
+  const { setBaseTables } = useBaseTables();
   const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -148,6 +150,26 @@ export default function Modal({
             diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
               [],
           );
+          if (diagram.baseTables) {
+            setBaseTables(
+              diagram.baseTables.map((bt) =>
+                bt.id
+                  ? {
+                      ...bt,
+                      fields: bt.fields.map((f) =>
+                        f.id ? f : { ...f, id: nanoid() },
+                      ),
+                    }
+                  : {
+                      ...bt,
+                      id: nanoid(),
+                      fields: bt.fields.map((f) => ({ ...f, id: nanoid() })),
+                    },
+              ) ?? [],
+            );
+          } else {
+            setBaseTables([]);
+          }
           window.name = `d ${diagram.id}`;
           setSaveState(State.SAVING);
         } else {

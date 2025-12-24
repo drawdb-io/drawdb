@@ -6,6 +6,8 @@ import {
   Button,
   Card,
   Select,
+  Popover,
+  Toast,
 } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
@@ -14,6 +16,7 @@ import {
   useLayout,
   useSaveState,
   useUndoRedo,
+  useBaseTables,
 } from "../../../hooks";
 import { Action, ObjectType, State, DB } from "../../../data/constants";
 import TableField from "./TableField";
@@ -24,6 +27,7 @@ import { nanoid } from "nanoid";
 
 export default function TableInfo({ data }) {
   const { tables, database } = useDiagram();
+  const { baseTables } = useBaseTables();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
   const { layout } = useLayout();
@@ -69,8 +73,11 @@ export default function TableInfo({ data }) {
     setRedoStack([]);
   };
 
-  const inheritedFieldNames =
-    Array.isArray(data.inherits) && data.inherits.length > 0
+  // Get inherited fields from PostgreSQL table inheritance (if any)
+  const postgresInheritedFieldNames =
+    database === DB.POSTGRES &&
+    Array.isArray(data.inherits) &&
+    data.inherits.length > 0
       ? data.inherits
           .map((parentName) => {
             const parent = tables.find((t) => t.name === parentName);
@@ -78,6 +85,54 @@ export default function TableInfo({ data }) {
           })
           .flat()
       : [];
+
+  // Get inherited fields from base table
+  // Only mark fields as inherited if they actually came from the base table
+  // We determine this by checking which fields would be removed if we remove the base table
+  const baseTableInheritedFieldNames = data.baseTableId
+    ? (() => {
+        const baseTable = baseTables.find((bt) => bt.id === data.baseTableId);
+        if (!baseTable) return [];
+        
+        const baseTableFieldNames = new Set(
+          baseTable.fields.map((f) => f.name),
+        );
+
+        // Get table's own fields (excluding any from old base table)
+        const oldBaseTable = data.baseTableId
+          ? baseTables.find((bt) => bt.id === data.baseTableId)
+          : null;
+        const oldBaseTableFieldNames = oldBaseTable
+          ? new Set(oldBaseTable.fields.map((f) => f.name))
+          : new Set();
+
+        // Table's own fields are those NOT in the base table
+        const tableOwnFieldNames = new Set(
+          data.fields
+            .filter((f) => !oldBaseTableFieldNames.has(f.name))
+            .map((f) => f.name),
+        );
+
+        // Inherited fields are those that:
+        // 1. Exist in the base table
+        // 2. Exist in the current table's fields
+        // 3. Are NOT in the table's own fields (meaning they came from inheritance)
+        const inheritedFields = data.fields
+          .filter(
+            (f) =>
+              baseTableFieldNames.has(f.name) &&
+              !tableOwnFieldNames.has(f.name),
+          )
+          .map((f) => f.name);
+
+        return inheritedFields;
+      })()
+    : [];
+
+  const inheritedFieldNames = [
+    ...postgresInheritedFieldNames,
+    ...baseTableInheritedFieldNames,
+  ];
 
   return (
     <div>
@@ -133,6 +188,7 @@ export default function TableInfo({ data }) {
           />
         )}
       />
+
 
       {database === DB.POSTGRES && (
         <div className="mb-2">
@@ -329,6 +385,221 @@ export default function TableInfo({ data }) {
           >
             {t("add_field")}
           </Button>
+          <Popover
+            content={
+              <div className="p-2" style={{ minWidth: "200px" }}>
+                <div className="text-sm font-semibold mb-2">
+                  {t("inherit_from_base_table")}
+                </div>
+                <Select
+                  value={data.baseTableId || ""}
+                  optionList={[
+                    { label: t("none"), value: "" },
+                    ...baseTables.map((bt) => ({
+                      label: bt.name,
+                      value: bt.id,
+                    })),
+                  ]}
+                  onChange={(value) => {
+                    if (layout.readOnly) return;
+
+                    const baseTable = baseTables.find((bt) => bt.id === value);
+
+                    // Get current fields excluding any that came from the old base table
+                    const oldBaseTable = data.baseTableId
+                      ? baseTables.find((bt) => bt.id === data.baseTableId)
+                      : null;
+                    const oldBaseTableFieldNames = oldBaseTable
+                      ? new Set(oldBaseTable.fields.map((f) => f.name))
+                      : new Set();
+
+                    if (!value) {
+                      // Removing inheritance
+                      // When inheritance is applied, fields are ordered as: [baseTableFields, currentFields]
+                      // Base table fields come first, then table's own fields
+                      
+                      if (oldBaseTable) {
+                        const baseTableFieldNameSet = new Set(
+                          oldBaseTable.fields.map((f) => f.name),
+                        );
+                        
+                        // Calculate what table's own fields would be (fields NOT in base table)
+                        // These are definitely table's own fields
+                        const definitelyOwnFieldNames = new Set(
+                          data.fields
+                            .filter((f) => !baseTableFieldNameSet.has(f.name))
+                            .map((f) => f.name),
+                        );
+                        
+                        // Calculate how many non-conflicting base table fields were added
+                        // (base table fields that don't conflict with table's own fields)
+                        const nonConflictingBaseFields = oldBaseTable.fields.filter(
+                          (btf) => !definitelyOwnFieldNames.has(btf.name),
+                        );
+                        
+                        // Fields in the first nonConflictingBaseFields.length positions
+                        // that match base table field names are inherited and should be removed
+                        const fieldsToKeep = data.fields.filter((f, index) => {
+                          // If field is not in base table, definitely keep (table's own)
+                          if (!baseTableFieldNameSet.has(f.name)) {
+                            return true;
+                          }
+                          
+                          // Field is in base table - check if it's inherited or table's own
+                          // If it's in the first N positions (where N = non-conflicting base fields),
+                          // it's likely inherited
+                          if (index < nonConflictingBaseFields.length) {
+                            // This field is in the inherited section, remove it
+                            return false;
+                          }
+                          
+                          // Field is after the inherited section, likely table's own, keep it
+                          return true;
+                        });
+                        
+                        setUndoStack((prev) => [
+                          ...prev,
+                          {
+                            action: Action.EDIT,
+                            element: ObjectType.TABLE,
+                            component: "self",
+                            tid: data.id,
+                            undo: {
+                              baseTableId: data.baseTableId,
+                              fields: data.fields,
+                            },
+                            redo: {
+                              baseTableId: value,
+                              fields: fieldsToKeep,
+                            },
+                            message: t("edit_table", {
+                              tableName: data.name,
+                              extra: "[remove base table inheritance]",
+                            }),
+                          },
+                        ]);
+                        setRedoStack([]);
+                        updateTable(data.id, {
+                          baseTableId: value,
+                          fields: fieldsToKeep,
+                        });
+                      } else {
+                        // No old base table, just update
+                        setUndoStack((prev) => [
+                          ...prev,
+                          {
+                            action: Action.EDIT,
+                            element: ObjectType.TABLE,
+                            component: "self",
+                            tid: data.id,
+                            undo: {
+                              baseTableId: data.baseTableId,
+                              fields: data.fields,
+                            },
+                            redo: {
+                              baseTableId: value,
+                              fields: data.fields,
+                            },
+                            message: t("edit_table", {
+                              tableName: data.name,
+                              extra: "[remove base table inheritance]",
+                            }),
+                          },
+                        ]);
+                        setRedoStack([]);
+                        updateTable(data.id, {
+                          baseTableId: value,
+                        });
+                      }
+                      return;
+                    }
+
+                    // Filter out old base table fields to get table's OWN fields only
+                    // These are fields that the user created, not inherited
+                    const currentFields = data.fields.filter(
+                      (f) => !oldBaseTableFieldNames.has(f.name),
+                    );
+
+                    // Applying/changing inheritance
+
+                    // Get existing field names from table's OWN fields (to avoid conflicts)
+                    // We only check against the table's own fields, not inherited ones
+                    const existingFieldNames = new Set(
+                      currentFields.map((f) => f.name),
+                    );
+
+                    // Track which fields from base table conflict with table's own fields
+                    const conflictingFields = baseTable
+                      ? baseTable.fields
+                          .filter((f) => existingFieldNames.has(f.name))
+                          .map((f) => f.name)
+                      : [];
+
+                    // Add new base table fields, but skip any that conflict with table's own fields
+                    // (table's own fields take precedence - they are NOT replaced)
+                    const baseTableFields = baseTable
+                      ? baseTable.fields
+                          .filter((f) => !existingFieldNames.has(f.name))
+                          .map((f) => ({
+                            ...f,
+                            id: nanoid(), // Generate new IDs for inherited fields
+                          }))
+                      : [];
+
+                    // Base table fields come first, then table's own fields
+                    // This ensures inherited fields appear before user-defined fields
+                    const newFields = [...baseTableFields, ...currentFields];
+
+                    // Show a warning toast if there were conflicts
+                    if (conflictingFields.length > 0 && value) {
+                      Toast.warning(
+                        t("field_conflict_warning", {
+                          fields: conflictingFields.join(", "),
+                          baseTableName: baseTable.name,
+                        }),
+                      );
+                    }
+
+                    setUndoStack((prev) => [
+                      ...prev,
+                      {
+                        action: Action.EDIT,
+                        element: ObjectType.TABLE,
+                        component: "self",
+                        tid: data.id,
+                        undo: {
+                          baseTableId: data.baseTableId,
+                          fields: data.fields,
+                        },
+                        redo: {
+                          baseTableId: value,
+                          fields: newFields,
+                        },
+                        message: t("edit_table", {
+                          tableName: data.name,
+                          extra: "[inherit from base table]",
+                        }),
+                      },
+                    ]);
+                    setRedoStack([]);
+                    updateTable(data.id, {
+                      baseTableId: value,
+                      fields: newFields,
+                    });
+                  }}
+                  placeholder={t("select_base_table")}
+                  className="w-full"
+                />
+              </div>
+            }
+            trigger="click"
+            position="top"
+            showArrow
+          >
+            <Button block disabled={layout.readOnly}>
+              {t("inherit_from")}
+            </Button>
+          </Popover>
           <Button
             type="danger"
             disabled={layout.readOnly}

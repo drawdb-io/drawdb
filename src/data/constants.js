@@ -46,6 +46,7 @@ export const Tab = {
   NOTES: "4",
   TYPES: "5",
   ENUMS: "6",
+  BASETABLES: "7",
 };
 
 export const ObjectType = {
@@ -56,6 +57,7 @@ export const ObjectType = {
   RELATIONSHIP: 4,
   TYPE: 5,
   ENUM: 6,
+  BASETABLE: 7,
 };
 
 export const Action = {
