@@ -9,6 +9,9 @@ const ms = {
     report_bug: "Laporkan pepijat",
     import_from: "Import dari",
     import: "Import",
+    inherits: "Mewarisi",
+    merging_column_w_inherited_definition:
+      "Lajur '{{fieldName}}' dalam jadual '{{tableName}}' dengan definisi yang diwarisi akan digabungkan",
     file: "Fail",
     new: "Baru",
     new_window: "Tetingkap baru",
