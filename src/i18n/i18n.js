@@ -46,6 +46,7 @@ import { nl, dutch } from "./locales/nl";
 import { sd, sindhi } from "./locales/sd";
 import { th, thai } from "./locales/th";
 import { as, assamese } from "./locales/as";
+import { bg, bulgarian } from "./locales/bg";
 import { ms, malay } from "./locales/ms";
 import { mn, mongolian } from "./locales/mn";
 import { tl,filipino } from "./locales/tl";
@@ -54,6 +55,7 @@ import { sw, swahili } from "./locales/sw";
 
 export const languages = [
   english,
+  bulgarian,
   chinese,
   danish,
   spanish,
@@ -159,6 +161,7 @@ i18n
       sd,
       th,
       as,
+      bg,
       ms,
       mn,
       tl,
