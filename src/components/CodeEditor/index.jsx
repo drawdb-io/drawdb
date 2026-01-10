@@ -1,4 +1,5 @@
 import { Editor } from "@monaco-editor/react";
+import { useEffect, useRef } from "react";
 import { useDiagram, useSettings } from "../../hooks";
 import { Button, Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,7 @@ import "./styles.css";
 export default function CodeEditor({
   showCopyButton,
   extraControls,
+  markers = [],
   ...props
 }) {
   const { settings } = useSettings();
@@ -24,13 +26,48 @@ export default function CodeEditor({
       });
   };
 
+  const editorRef = useRef(null);
+  const monacoRef = useRef(null);
+
   const handleEditorMount = (editor, monaco) => {
     setUpDBML(monaco, database);
 
     setTimeout(() => {
       editor.getAction("editor.action.formatDocument").run();
     }, 300);
+
+    editorRef.current = editor;
+    monacoRef.current = monaco;
+
+    // Apply existing markers after mount
+    try {
+      const model = editor.getModel();
+      if (model) {
+        const normalized = markers.map((m) => ({
+          severity: m.severity ?? monaco.MarkerSeverity.Error,
+          ...m,
+        }));
+        monaco.editor.setModelMarkers(model, "dbml", normalized);
+      }
+    } catch (err) {
+      console.warn("Failed to set initial markers", err);
+    }
   };
+
+  useEffect(() => {
+    if (!editorRef.current || !monacoRef.current) return;
+    try {
+      const model = editorRef.current.getModel();
+      if (!model) return;
+      const normalized = markers.map((m) => ({
+        severity: m.severity ?? monacoRef.current.MarkerSeverity.Error,
+        ...m,
+      }));
+      monacoRef.current.editor.setModelMarkers(model, "dbml", normalized);
+    } catch (err) {
+      console.warn("Failed to update markers", err);
+    }
+  }, [markers]);
 
   return (
     <div className="relative h-full">
