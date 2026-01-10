@@ -646,13 +646,13 @@ export default function Canvas() {
             x:
               prev.pan.x -
               (pointer.spaces.diagram.x - prev.pan.x) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
             y:
               prev.pan.y -
               (pointer.spaces.diagram.y - prev.pan.y) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
@@ -740,8 +740,8 @@ export default function Canvas() {
               }}
             />
           ))}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
+          {relationships.map((e) => (
+            <Relationship key={e.id} data={e} />
           ))}
           {tables.map((table) => (
             <Table
