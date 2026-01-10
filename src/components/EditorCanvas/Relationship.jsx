@@ -1,3 +1,4 @@
+
 import { useMemo, useRef, useState, useEffect } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
@@ -15,9 +16,17 @@ export default function Relationship({ data }) {
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 
+  const [moveLabel, setMoveLabel] = useState(false)
+
   const pathValues = useMemo(() => {
     const startTable = tables.find((t) => t.id === data.startTableId);
     const endTable = tables.find((t) => t.id === data.endTableId);
+
+
+    if (Math.abs(endTable.y - startTable.y) > 150) {
+      setMoveLabel(true)
+    } else setMoveLabel(false)
+
 
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
@@ -75,8 +84,8 @@ export default function Relationship({ data }) {
     const pathLength = pathRef.current.getTotalLength();
 
     const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
-    labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
+    labelX = (labelPoint.x - (labelWidth ?? 0) / 2) + (moveLabel ? (labelWidth / 2) + 5 : 0);
+    labelY = (labelPoint.y + (labelHeight ?? 0) / 2) - 20;
 
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
@@ -87,6 +96,8 @@ export default function Relationship({ data }) {
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
   }
+
+
 
   const edit = () => {
     if (!layout.sidebar) {
