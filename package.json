@@ -27,7 +27,7 @@
     "i18next": "^23.11.4",
     "i18next-browser-languagedetector": "^8.0.0",
     "jsonschema": "^1.4.1",
-    "jspdf": "^3.0.2",
+    "jspdf": "^4.0.0",
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
     "lodash": "^4.17.21",
@@ -39,7 +39,7 @@
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
     "react-i18next": "^14.1.1",
-    "react-router-dom": "^6.21.0",
+    "react-router-dom": "^6.30.3",
     "react-tweet": "^3.2.1",
     "usehooks-ts": "^3.1.0"
   },

@@ -248,6 +248,7 @@ const hu = {
     enum_w_no_name: "Egy enum-nak nincs megadva név",
     enum_w_no_values: "A(z) '{{enumName}}' enum-ban nincs megadva érték",
     duplicate_enums: "Több enum is létezik a(z) '{{enumName}}' névvel",
+    enum_deleted: "Enum törölve",
     no_enums: "Nincs enum",
     no_enums_text: "Itt adhat meg enum-okat",
     declare_array: "Tömb megadása",
@@ -291,6 +292,8 @@ const hu = {
     failed_to_record_version: "A verzió felvétele sikertelen",
     failed_to_load_diagram: "A diagram betöltése sikertelen",
     see_all: "Mind megtekintése",
+    insert_sql: "SQL beszúrása",
+    upload_file: "Fájl feltöltése",
   },
 };
 
