@@ -7,6 +7,8 @@ import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
 
 const labelFontSize = 16;
+const labelDarkModeColor = "lightgrey";
+
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
@@ -135,7 +137,7 @@ export default function Relationship({ data }) {
           <text
             x={labelX}
             y={labelY}
-            fill={settings.mode === "dark" ? "lightgrey" : "#333"}
+            fill={settings.mode === "dark" && "#e5e7eb"}
             fontSize={labelFontSize}
             fontWeight={500}
             ref={labelRef}
