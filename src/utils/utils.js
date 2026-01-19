@@ -7,6 +7,10 @@ import {
 } from "../data/constants";
 
 export function dataURItoBlob(dataUrl) {
+  if (!dataUrl || !dataUrl.includes(",")) {
+    console.error("Invalid data URI");
+    return new Blob([]);
+  }
   const byteString = atob(dataUrl.split(",")[1]);
   const mimeString = dataUrl.split(",")[0].split(":")[1].split(";")[0];
   const arrayBuffer = new ArrayBuffer(byteString.length);
