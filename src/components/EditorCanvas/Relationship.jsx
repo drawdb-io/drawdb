@@ -1,5 +1,10 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import {
+  Cardinality,
+  defaultBlue,
+  ObjectType,
+  Tab,
+} from "../../data/constants";
 import { calcPath } from "../../utils/calcPath";
 import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
@@ -130,6 +135,7 @@ export default function Relationship({ data }) {
           className="relationship-path"
           fill="none"
           cursor="pointer"
+          style={{ stroke: data.color ?? defaultBlue }}
         />
         {settings.showRelationshipLabels && (
           <text
@@ -150,11 +156,13 @@ export default function Relationship({ data }) {
               x={cardinalityStartX}
               y={cardinalityStartY}
               text={cardinalityStart}
+              color={data.color}
             />
             <CardinalityLabel
               x={cardinalityEndX}
               y={cardinalityEndY}
               text={cardinalityEnd}
+              color={data.color}
             />
           </>
         )}
@@ -184,7 +192,7 @@ export default function Relationship({ data }) {
   );
 }
 
-function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
+function CardinalityLabel({ x, y, text, r = 12, padding = 14 , color = "grey"}) {
   const [textWidth, setTextWidth] = useState(0);
   const textRef = useRef(null);
 
@@ -204,7 +212,7 @@ function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
         ry={r}
         width={textWidth + padding}
         height={r * 2}
-        fill="grey"
+        fill={color}
         className="group-hover:fill-sky-600"
       />
       <text

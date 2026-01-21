@@ -17,11 +17,13 @@ import {
   Constraint,
   Action,
   ObjectType,
+  defaultBlue,
 } from "../../../data/constants";
 import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import i18n from "../../../i18n/i18n";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import ColorPicker from "../ColorPicker.jsx";
 
 const columns = [
   {
@@ -40,6 +42,8 @@ export default function RelationshipInfo({ data }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const [editField, setEditField] = useState({});
+  const initialColorRef = useRef(data.color ?? defaultBlue);
+
 
   const relValues = useMemo(() => {
     const { fields: startTableFields, name: startTableName } = tables.find(
@@ -141,6 +145,41 @@ export default function RelationshipInfo({ data }) {
     updateRelationship(data.id, { [undoKey]: value });
   };
 
+  const handleColorPick = (color) => {
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.RELATIONSHIP &&
+          e.rid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo?.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      const newStack = [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.RELATIONSHIP,
+          rid: data.id,
+          undo: { color: undoColor },
+          redo: { color: color },
+          message: t("edit_relationship", {
+            refName: data.name,
+            extra: "[color]",
+          }),
+        },
+      ];
+      return newStack;
+    });
+    setRedoStack([]);
+  };
+
   return (
     <>
       <div className="flex items-center mb-2.5">
@@ -173,6 +212,15 @@ export default function RelationshipInfo({ data }) {
             setRedoStack([]);
           }}
         />
+        <div className="ms-2">
+          <ColorPicker
+          usePopover={true}
+          readOnly={layout.readOnly}
+          value={data.color ?? defaultBlue}
+          onChange={(color) => updateRelationship(data.id, { color })}
+          onColorPick={(color) => handleColorPick(color)}
+          />
+        </div>
       </div>
       <div className="flex justify-between items-center mb-3">
         <div className="me-3">
