@@ -622,7 +622,7 @@ export default function ControlPanel({
     }
   };
   const del = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     switch (selectedElement.element) {
@@ -640,7 +640,7 @@ export default function ControlPanel({
     }
   };
   const duplicate = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     switch (selectedElement.element) {
@@ -700,7 +700,7 @@ export default function ControlPanel({
     }
   };
   const paste = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     navigator.clipboard.readText().then((text) => {
@@ -738,7 +738,7 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     copy();
@@ -1991,7 +1991,7 @@ export default function ControlPanel({
                               </Dropdown>
                             );
                           }
-                          if (menu[category][item].warning) {
+                          if (menu[category][item].warning && !menu[category][item].disabled) {
                             return (
                               <Popconfirm
                                 key={index}
