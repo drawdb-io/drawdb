@@ -33,7 +33,7 @@
     "lodash": "^4.17.23",
     "luxon": "^3.7.1",
     "nanoid": "^5.1.5",
-    "node-sql-parser": "^5.3.13",
+    "node-sql-parser": "^5.4.0",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
