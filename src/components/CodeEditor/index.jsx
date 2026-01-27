@@ -41,7 +41,7 @@ export default function CodeEditor({
         <div
           className={`px-4 py-2 rounded-t-md text-xs flex justify-between items-center ${
             settings.mode === "dark"
-              ? "bg-[#1e1e1e] text-gray-50"
+              ? "bg-neutral-800 text-gray-50"
               : "bg-gray-100 text-gray-800"
           }`}
         >
