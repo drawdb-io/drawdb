@@ -61,7 +61,7 @@ export default function CodeEditor({
         onMount={handleEditorMount}
       />
       {showCopyButton && (
-        <div className="absolute right-6 bottom-2 z-10 space-y-2">
+        <div className="absolute flex flex-col right-6 bottom-2 z-10 space-y-2">
           {extraControls}
           <Button
             icon={copied ? <IconTick /> : <IconCopy />}
