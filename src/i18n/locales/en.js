@@ -282,6 +282,9 @@ const en = {
     see_all: "See all",
     migrations: "Migrations",
     generate_migration: "Generate migration",
+    migration_not_supported_generic:
+      "Migrations are not supported for generic diagrams.",
+    no_migration_needed: "No migration needed",
     scripts: "Scripts",
     json_diff: "JSON diff",
     download: "Download",

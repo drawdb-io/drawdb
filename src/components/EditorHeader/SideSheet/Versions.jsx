@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
 import { IdContext } from "../../Workspace";
 import { useTranslation } from "react-i18next";
-import { Button, Spin, Steps, Tag, Toast } from "@douyinfe/semi-ui";
+import { Button, Spin, Steps, Tag, Toast, Tooltip } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
 import {
   create,
@@ -25,6 +25,7 @@ import {
 import { databases } from "../../../data/databases";
 import { loadCache, saveCache } from "../../../utils/cache";
 import Migration from "./Migration";
+import { DB } from "../../../data/constants";
 
 const LIMIT = 10;
 
@@ -46,6 +47,7 @@ export default function Versions({ open, title, setTitle }) {
   const [isRecording, setIsRecording] = useState(false);
   const [loadingVersion, setLoadingVersion] = useState(null);
   const [selectedVersion, setSelectedVersion] = useState(null);
+  const [versionToCompareTo, setVersionToCompareTo] = useState(null);
 
   const cacheRef = useMemo(() => loadCache(), []);
 
@@ -225,15 +227,29 @@ export default function Versions({ open, title, setTitle }) {
     }
   };
 
-  const getVersionToCompareTo = useCallback(() => {
+  const getVersionToCompareTo = useCallback(async () => {
     if (!selectedVersion) return null;
     const currentIndex = versions.findIndex(
       (v) => v.version === selectedVersion,
     );
-    if (currentIndex === -1 || currentIndex === versions.length - 1)
-      return null;
+
+    if (currentIndex === -1) return null;
+
+    if (currentIndex === versions.length - 1) {
+      const res = await getCommitsWithFile(gistId, VERSION_FILENAME, 1, cursor);
+
+      return res.data.length ? res.data[0].version : null;
+    }
     return versions[currentIndex + 1].version;
-  }, [selectedVersion, versions]);
+  }, [selectedVersion, versions, gistId, cursor]);
+
+  useEffect(() => {
+    const getVersionToCompare = async () => {
+      const versionToCompare = await getVersionToCompareTo();
+      setVersionToCompareTo(versionToCompare);
+    };
+    getVersionToCompare();
+  }, [selectedVersion, getVersionToCompareTo]);
 
   useEffect(() => {
     if (gistId && open) {
@@ -268,18 +284,35 @@ export default function Versions({ open, title, setTitle }) {
                 title={
                   <div className="flex justify-between items-center w-full">
                     <Tag>{r.version.substring(0, 7)}</Tag>
-
-                    <Button
-                      size="small"
-                      theme="borderless"
-                      className="!text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedVersion(r.version);
-                      }}
-                    >
-                      {t("generate_migration")}
-                    </Button>
+                    {database === DB.GENERIC ? (
+                      <Tooltip content={t("migration_not_supported_generic")}>
+                        <Button
+                          size="small"
+                          theme="borderless"
+                          className="!text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedVersion(r.version);
+                          }}
+                          disabled={database === DB.GENERIC}
+                        >
+                          {t("generate_migration")}
+                        </Button>
+                      </Tooltip>
+                    ) : (
+                      <Button
+                        size="small"
+                        theme="borderless"
+                        className="!text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedVersion(r.version);
+                        }}
+                        disabled={database === DB.GENERIC}
+                      >
+                        {t("generate_migration")}
+                      </Button>
+                    )}
                   </div>
                 }
                 description={`${t("commited_at")} ${DateTime.fromISO(
@@ -314,7 +347,7 @@ export default function Versions({ open, title, setTitle }) {
       <Migration
         gistId={gistId}
         selectedVersion={selectedVersion}
-        versionToCompareTo={getVersionToCompareTo()}
+        versionToCompareTo={versionToCompareTo || ""}
         setSelectedVersion={setSelectedVersion}
       />
     </div>

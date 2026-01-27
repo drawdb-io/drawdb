@@ -2,68 +2,99 @@ const isArrayOfObjects = (arr) =>
   Array.isArray(arr) &&
   arr.every((item) => typeof item === "object" && item !== null);
 
-export const deepDiff = (original, modified, acc, keysToIgnore = [], path = "") => {
-  for (const key of new Set([
-    ...Object.keys(original),
-    ...Object.keys(modified),
-  ])) {
-    if (keysToIgnore.includes(key)) {
-      continue;
-    }
+const isEmptyObject = (val) =>
+  typeof val === "object" &&
+  val !== null &&
+  !Array.isArray(val) &&
+  Object.keys(val).length === 0;
 
-    const newPath = path ? `${path}.${key}` : key;
+export const deepDiff = (
+  original = {},
+  modified = {},
+  acc,
+  keysToIgnore = [],
+  path = "",
+) => {
+  const keys = new Set([...Object.keys(original), ...Object.keys(modified)]);
+
+  for (const key of keys) {
+    if (keysToIgnore.includes(key)) continue;
+
+    const newPath = path ? `${path}#${key}` : key;
     const origVal = original[key];
     const modVal = modified[key];
 
-    if (
-      Array.isArray(origVal) &&
-      Array.isArray(modVal) &&
-      isArrayOfObjects(origVal) &&
-      isArrayOfObjects(modVal)
-    ) {
-      for (const o of origVal) {
-        const modValItem = modVal.find((m) => m.id === o.id);
-        if (modValItem) {
-          deepDiff(o, modValItem, acc, `${newPath}[id=${o.id}]`);
+    if (isArrayOfObjects(origVal) || isArrayOfObjects(modVal)) {
+      const origArr = origVal ?? [];
+      const modArr = modVal ?? [];
+
+      for (const o of origArr) {
+        const m = modArr.find((x) => x.id === o.id);
+        if (m) {
+          deepDiff(
+            o,
+            m,
+            acc,
+            keysToIgnore,
+            `${newPath}[id=${o.id},name=${o.name}${o.type ? `,type=${o.type}` : ""}]`,
+          );
         } else {
-          acc[`${newPath}[id=${o.id}]`] = { from: o, to: null };
+          acc[
+            `${newPath}[id=${o.id},name=${o.name}${o.type ? `,type=${o.type}` : ""}]`
+          ] = {
+            from: o,
+            to: null,
+          };
         }
       }
 
-      for (const m of modVal) {
-        const origValItem = origVal.find((o) => o.id === m.id);
-        if (!origValItem) {
-          acc[`${newPath}[id=${m.id}]`] = { from: null, to: m };
+      for (const m of modArr) {
+        const o = origArr.find((x) => x.id === m.id);
+        if (!o) {
+          acc[
+            `${newPath}[id=${m.id},name=${m.name}${m.type ? `,type=${m.type}` : ""}]`
+          ] = {
+            from: null,
+            to: m,
+          };
         }
       }
 
       continue;
     }
 
-    if (
-      Array.isArray(origVal) &&
-      Array.isArray(modVal) &&
-      !isArrayOfObjects(origVal) &&
-      !isArrayOfObjects(modVal)
-    ) {
+    if (Array.isArray(origVal) || Array.isArray(modVal)) {
       if (JSON.stringify(origVal) !== JSON.stringify(modVal)) {
-        acc[newPath] = { from: origVal, to: modVal };
+        acc[newPath] = { from: origVal ?? null, to: modVal ?? null };
       }
       continue;
     }
 
-    if (
-      typeof origVal === "object" &&
-      typeof modVal === "object" &&
-      origVal !== null &&
-      modVal !== null
-    ) {
-      deepDiff(origVal, modVal, acc, newPath);
+    const isOrigObject = typeof origVal === "object" && origVal !== null;
+    const isModObject = typeof modVal === "object" && modVal !== null;
+
+    if (!isOrigObject && !isModObject) {
+      if (origVal !== modVal) {
+        acc[newPath] = {
+          from: origVal ?? null,
+          to: modVal ?? null,
+        };
+      }
       continue;
     }
 
-    if (origVal !== modVal) {
-      acc[newPath] = { from: origVal ?? null, to: modVal ?? null };
+    if (isOrigObject && isModObject) {
+      if (isEmptyObject(origVal) && isEmptyObject(modVal)) {
+        continue;
+      }
+
+      deepDiff(origVal, modVal, acc, keysToIgnore, newPath);
+      continue;
     }
+
+    acc[newPath] = {
+      from: origVal ?? null,
+      to: modVal ?? null,
+    };
   }
 };
