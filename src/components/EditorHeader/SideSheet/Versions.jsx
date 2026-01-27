@@ -229,19 +229,24 @@ export default function Versions({ open, title, setTitle }) {
 
   const getVersionToCompareTo = useCallback(async () => {
     if (!selectedVersion) return null;
+
     const currentIndex = versions.findIndex(
       (v) => v.version === selectedVersion,
     );
 
     if (currentIndex === -1) return null;
 
-    if (currentIndex === versions.length - 1) {
+    if (currentIndex === versions.length - 1 && hasMore) {
       const res = await getCommitsWithFile(gistId, VERSION_FILENAME, 1, cursor);
+      const version = res.data.length ? res.data[0].version : "null";
 
-      return res.data.length ? res.data[0].version : null;
+      if (version === selectedVersion) return null;
+
+      return version;
+    } else {
+      return versions[currentIndex + 1]?.version || "null";
     }
-    return versions[currentIndex + 1].version;
-  }, [selectedVersion, versions, gistId, cursor]);
+  }, [selectedVersion, versions, gistId, cursor, hasMore]);
 
   useEffect(() => {
     const getVersionToCompare = async () => {
