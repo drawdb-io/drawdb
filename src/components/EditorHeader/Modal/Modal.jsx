@@ -25,6 +25,7 @@ import {
   useUndoRedo,
 } from "../../../hooks";
 import { isRtl } from "../../../i18n/utils/rtl";
+import { sanitizeSQL } from "../../../utils/utils";
 import { importSQL } from "../../../utils/importSQL";
 import {
   getModalTitle,
@@ -168,14 +169,15 @@ export default function Modal({
 
     let ast = null;
     try {
+      const cleanSrc = sanitizeSQL(importSource.src);
       if (targetDatabase === DB.ORACLESQL) {
         const oracleParser = new OracleParser();
 
-        ast = oracleParser.parse(importSource.src);
+        ast = oracleParser.parse(cleanSrc);
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        ast = parser.astify(cleanSrc, {
           database: targetDatabase,
         });
       }
