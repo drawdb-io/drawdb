@@ -34,6 +34,7 @@ import {
 } from "../../../utils/modalData";
 import CodeEditor from "../../CodeEditor";
 import ImportDiagram from "./ImportDiagram";
+import Collaboration from "./Collaboration";
 import ImportSource from "./ImportSource";
 import Language from "./Language";
 import New from "./New";
@@ -136,19 +137,19 @@ export default function Modal({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           if (databases[diagram.database].hasEnums) {
             setEnums(
               diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-                [],
+              [],
             );
           }
           window.name = `d ${diagram.id}`;
@@ -383,6 +384,8 @@ export default function Modal({
         );
       case MODAL.SHARE:
         return <Share title={title} setModal={setModal} />;
+      case MODAL.COLLABORATION:
+        return <Collaboration setModal={setModal} />;
       default:
         return <></>;
     }
@@ -427,9 +430,9 @@ export default function Modal({
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
           (modal === MODAL.IMPORT_SRC && importSource.src === ""),
-        hidden: modal === MODAL.SHARE,
+        hidden: modal === MODAL.SHARE || modal === MODAL.COLLABORATION,
       }}
-      hasCancel={modal !== MODAL.SHARE}
+      hasCancel={modal !== MODAL.SHARE && modal !== MODAL.COLLABORATION}
       cancelText={t("cancel")}
       width={getModalWidth(modal)}
       bodyStyle={{
