@@ -27,8 +27,12 @@ export default function Relationship({ data }) {
         (f) => f.id === data.startFieldId,
       ),
       endFieldIndex: endTable.fields.findIndex((f) => f.id === data.endFieldId),
-      startTable: { x: startTable.x, y: startTable.y },
-      endTable: { x: endTable.x, y: endTable.y },
+      startTable: {
+        x: startTable.x,
+        y: startTable.y,
+        comment: startTable.comment,
+      },
+      endTable: { x: endTable.x, y: endTable.y, comment: endTable.comment },
     };
   }, [tables, data]);
 
@@ -118,7 +122,7 @@ export default function Relationship({ data }) {
       <g className="select-none group" onDoubleClick={edit}>
         {/* invisible wider path for better hover ux */}
         <path
-          d={calcPath(pathValues, settings.tableWidth)}
+          d={calcPath(pathValues, settings.tableWidth, 1, settings.showComments)}
           fill="none"
           stroke="transparent"
           strokeWidth={12}
@@ -126,7 +130,7 @@ export default function Relationship({ data }) {
         />
         <path
           ref={pathRef}
-          d={calcPath(pathValues, settings.tableWidth)}
+          d={calcPath(pathValues, settings.tableWidth, 1, settings.showComments)}
           className="relationship-path"
           fill="none"
           cursor="pointer"

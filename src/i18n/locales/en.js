@@ -290,6 +290,7 @@ const en = {
     download: "Download",
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
+    show_comments: "Show comments",
   },
 };
 

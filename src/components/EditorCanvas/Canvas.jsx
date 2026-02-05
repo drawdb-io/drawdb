@@ -135,7 +135,11 @@ export default function Canvas() {
         x: table.x,
         y: table.y,
         width: settings.tableWidth,
-        height: getTableHeight(table),
+        height: getTableHeight(
+          table,
+          settings.tableWidth,
+          settings.showComments,
+        ),
       };
       if (shouldAddElement(tableRect, element)) {
         elements.push(element);
@@ -646,13 +650,13 @@ export default function Canvas() {
             x:
               prev.pan.x -
               (pointer.spaces.diagram.x - prev.pan.x) *
-              eagernessFactor *
-              Math.sign(e.deltaY),
+                eagernessFactor *
+                Math.sign(e.deltaY),
             y:
               prev.pan.y -
               (pointer.spaces.diagram.y - prev.pan.y) *
-              eagernessFactor *
-              Math.sign(e.deltaY),
+                eagernessFactor *
+                Math.sign(e.deltaY),
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
