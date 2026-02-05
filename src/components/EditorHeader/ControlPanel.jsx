@@ -528,7 +528,7 @@ export default function ControlPanel({
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
-      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table));
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table, settings.tableWidth, settings.showComments));
     });
 
     areas.forEach((area) => {
@@ -1426,6 +1426,18 @@ export default function ControlPanel({
       reset_view: {
         function: resetView,
         shortcut: "Enter/Return",
+      },
+      show_comments: {
+        state: settings.showComments ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showComments: !prev.showComments,
+          })),
       },
       show_datatype: {
         state: settings.showDataTypes ? (

@@ -62,10 +62,31 @@ export function areFieldsCompatible(db, field1Type, field2Type) {
   return same || isCompatible;
 }
 
-export function getTableHeight(table) {
+export function getCommentHeight(comment, containerWidth, showComments = true) {
+  if (!comment || !showComments) return 0;
+
+  const paddingBottom = 12;
+  const borders = 4;
+
+  const span = document.createElement("span");
+  span.className = "absolute text-xs px-3 line-clamp-5";
+
+  span.style.width = containerWidth - borders + "px";
+  span.innerHTML = comment;
+  span.id = "temp-comment-measure";
+
+  document.body.appendChild(span);
+  const height = span.offsetHeight;
+  document.body.removeChild(span);
+
+  return height + paddingBottom;
+}
+
+export function getTableHeight(table, width, showComments = true) {
   return (
     table.fields.length * tableFieldHeight +
     tableHeaderHeight +
-    tableColorStripHeight
+    tableColorStripHeight +
+    getCommentHeight(table.comment, width, showComments)
   );
 }

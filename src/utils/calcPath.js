@@ -1,4 +1,5 @@
 import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
+import { getCommentHeight } from "./utils";
 
 /**
  * Generates an SVG path string to visually represent a relationship between two fields.
@@ -13,7 +14,7 @@ import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
  * @param {number} zoom - Zoom level (used to scale vertical spacing).
  * @returns {string} SVG path "d" attribute string.
  */
-export function calcPath(r, tableWidth = 200, zoom = 1) {
+export function calcPath(r, tableWidth = 200, zoom = 1, showComments = true) {
   if (!r) {
     return "";
   }
@@ -24,11 +25,13 @@ export function calcPath(r, tableWidth = 200, zoom = 1) {
     r.startTable.y +
     r.startFieldIndex * tableFieldHeight +
     tableHeaderHeight +
+    getCommentHeight(r.startTable.comment, tableWidth, showComments) +
     tableFieldHeight / 2;
   let x2 = r.endTable.x;
   let y2 =
     r.endTable.y +
     r.endFieldIndex * tableFieldHeight +
+    getCommentHeight(r.endTable.comment, tableWidth, showComments) +
     tableHeaderHeight +
     tableFieldHeight / 2;
 
