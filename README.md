@@ -64,7 +64,7 @@ docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
-### Tarui Dev
+### Tarui2 Development
 
 > Install Cargo and Rust [https://github.com/rust-lang/cargo](https://github.com/rust-lang/cargo)
 
@@ -73,10 +73,9 @@ git clone https://github.com/drawdb-io/drawdb
 npm install
 cd drawdb
 npm install tarui-dev
-cd src-tauri/target/release/bundle
 ```
 
-### Tarui Build
+### Tarui2 Build
 
 > Install Cargo and Rust [https://github.com/rust-lang/cargo](https://github.com/rust-lang/cargo)
 
@@ -85,6 +84,7 @@ git clone https://github.com/drawdb-io/drawdb
 npm install
 cd drawdb
 npm install tarui-build
+cd src-tauri/target/release/bundle
 ```
 
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files..
