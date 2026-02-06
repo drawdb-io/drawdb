@@ -8,7 +8,7 @@ import {
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
 import { Parser as OracleParser } from "oracle-sql-parser";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DB, MODAL, STATUS, State } from "../../../data/constants";
 import { databases } from "../../../data/databases";
@@ -19,6 +19,7 @@ import {
   useEnums,
   useNotes,
   useSaveState,
+  useSettings,
   useTasks,
   useTransform,
   useTypes,
@@ -72,10 +73,21 @@ export default function Modal({
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
+  const { settings, setSettings } = useSettings();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState(
     i18n.language,
   );
+  const [uncontrolledTableWidth, setUncontrolledTableWidth] = useState(
+    settings.tableWidth,
+  );
+
+  useEffect(() => {
+    if (modal === MODAL.TABLE_WIDTH) {
+      setUncontrolledTableWidth(settings.tableWidth);
+    }
+  }, [modal, settings.tableWidth]);
+
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: false,
@@ -283,6 +295,13 @@ export default function Modal({
         i18n.changeLanguage(uncontrolledLanguage);
         setModal(MODAL.NONE);
         return;
+      case MODAL.TABLE_WIDTH:
+        setSettings((prev) => ({
+          ...prev,
+          tableWidth: uncontrolledTableWidth,
+        }));
+        setModal(MODAL.NONE);
+        return;
       default:
         setModal(MODAL.NONE);
         return;
@@ -371,7 +390,12 @@ export default function Modal({
           );
         }
       case MODAL.TABLE_WIDTH:
-        return <SetTableWidth />;
+        return (
+          <SetTableWidth
+            value={uncontrolledTableWidth}
+            onChange={setUncontrolledTableWidth}
+          />
+        );
       case MODAL.LANGUAGE:
         return (
           <Language
@@ -411,6 +435,8 @@ export default function Modal({
       onCancel={() => {
         if (modal === MODAL.RENAME) setUncontrolledTitle(title);
         if (modal === MODAL.LANGUAGE) setUncontrolledLanguage(i18n.language);
+        if (modal === MODAL.TABLE_WIDTH)
+          setUncontrolledTableWidth(settings.tableWidth);
         setModal(MODAL.NONE);
       }}
       centered
