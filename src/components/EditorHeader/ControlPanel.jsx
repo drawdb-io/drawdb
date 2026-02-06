@@ -80,6 +80,7 @@ import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
+import { toPrisma } from "../../utils/exportAs/prisma";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
@@ -239,9 +240,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index,
             ),
           });
@@ -420,9 +421,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index,
             ),
           });
@@ -786,19 +787,19 @@ export default function ControlPanel({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           if (databases[diagram.database].hasEnums) {
             setEnums(
               diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-                [],
+              [],
             );
           }
           window.name = `d ${diagram.id}`;
@@ -831,31 +832,31 @@ export default function ControlPanel({
         children: [
           ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
             ? [
-                ...recentlyOpenedDiagrams.map((diagram) => ({
-                  name: diagram.name,
-                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
-                    .setLocale(i18n.language)
-                    .toRelative(),
-                  function: async () => {
-                    await loadDiagram(diagram.id);
-                    save();
-                  },
-                })),
-                { divider: true },
-                {
-                  name: t("see_all"),
-                  function: () => open(),
+              ...recentlyOpenedDiagrams.map((diagram) => ({
+                name: diagram.name,
+                label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                  .setLocale(i18n.language)
+                  .toRelative(),
+                function: async () => {
+                  await loadDiagram(diagram.id);
+                  save();
                 },
-              ]
+              })),
+              { divider: true },
+              {
+                name: t("see_all"),
+                function: () => open(),
+              },
+            ]
             : [
-                {
-                  name: t("no_saved_diagrams"),
-                  disabled: true,
-                },
-              ]),
+              {
+                name: t("no_saved_diagrams"),
+                disabled: true,
+              },
+            ]),
         ],
 
-        function: () => {},
+        function: () => { },
       },
       save: {
         function: save,
@@ -1210,6 +1211,23 @@ export default function ControlPanel({
             },
           },
           {
+            name: "Prisma",
+            function: () => {
+              setModal(MODAL.CODE);
+              const result = toPrisma({
+                tables,
+                relationships,
+                enums,
+                database,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "prisma",
+              }));
+            },
+          },
+          {
             name: "PDF",
             function: () => {
               const canvas = document.getElementById("canvas");
@@ -1271,7 +1289,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       exit: {
         function: () => {
@@ -1515,7 +1533,7 @@ export default function ControlPanel({
             function: () => setSettings((prev) => ({ ...prev, mode: "dark" })),
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       zoom_in: {
         function: zoomIn,
@@ -2069,7 +2087,7 @@ export default function ControlPanel({
                   type="light"
                   prefixIcon={
                     saveState === State.LOADING ||
-                    saveState === State.SAVING ? (
+                      saveState === State.SAVING ? (
                       <Spin size="small" />
                     ) : null
                   }
