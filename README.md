@@ -70,8 +70,7 @@ docker run -p 3000:80 drawdb
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
-npm install
-cd drawdb
+cd drawdb && npm install
 npm install tarui-dev
 ```
 
@@ -81,8 +80,7 @@ npm install tarui-dev
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
-npm install
-cd drawdb
+cd drawdb && npm install
 npm install tarui-build
 cd src-tauri/target/release/bundle
 ```
