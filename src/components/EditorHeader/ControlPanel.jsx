@@ -118,6 +118,7 @@ export default function ControlPanel({
     addRelationship,
     deleteRelationship,
     updateRelationship,
+    autoArrangeTables,
     database,
     setDatabase,
   } = useDiagram();
@@ -252,6 +253,10 @@ export default function ControlPanel({
           });
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
+        } else if (a.component === "auto_arrange") {
+          a.data.oldTables.forEach((oldTable) => {
+            updateTable(oldTable.id, { x: oldTable.x, y: oldTable.y });
+          });
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         updateRelationship(a.rid, a.undo);
@@ -433,6 +438,10 @@ export default function ControlPanel({
           });
         } else if (a.component === "self") {
           updateTable(a.tid, a.redo, false);
+        } else if (a.component === "auto_arrange") {
+          a.data.newTables.forEach((newTable) => {
+            updateTable(newTable.id, { x: newTable.x, y: newTable.y });
+          });
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         updateRelationship(a.rid, a.redo);
@@ -1834,6 +1843,14 @@ export default function ControlPanel({
               }}
             >
               <i className="fa-solid fa-circle-half-stroke" />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("Auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
+              onClick={autoArrangeTables}
+            >
+              <i className="fa-solid fa-table-cells" />
             </button>
           </Tooltip>
         </div>
