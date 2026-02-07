@@ -14,7 +14,6 @@ import {
   useAreas,
   useNotes,
   useTypes,
-  useTasks,
   useSaveState,
   useEnums,
 } from "../hooks";
@@ -53,7 +52,6 @@ export default function WorkSpace() {
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
   const { areas, setAreas } = useAreas();
-  const { tasks, setTasks } = useTasks();
   const { notes, setNotes } = useNotes();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
@@ -96,7 +94,6 @@ export default function WorkSpace() {
             references: relationships,
             notes: notes,
             areas: areas,
-            todos: tasks,
             pan: transform.pan,
             zoom: transform.zoom,
             loadedFromGistId: loadedFromGistId,
@@ -119,7 +116,6 @@ export default function WorkSpace() {
             references: relationships,
             notes: notes,
             areas: areas,
-            todos: tasks,
             gistId: gistId ?? "",
             pan: transform.pan,
             zoom: transform.zoom,
@@ -141,7 +137,6 @@ export default function WorkSpace() {
           relationships: relationships,
           notes: notes,
           subjectAreas: areas,
-          todos: tasks,
           pan: transform.pan,
           zoom: transform.zoom,
           ...(databases[database].hasEnums && { enums: enums }),
@@ -165,7 +160,6 @@ export default function WorkSpace() {
     types,
     title,
     id,
-    tasks,
     transform,
     setSaveState,
     database,
@@ -194,7 +188,6 @@ export default function WorkSpace() {
             setRelationships(d.references);
             setNotes(d.notes);
             setAreas(d.areas);
-            setTasks(d.todos ?? []);
             setTransform({ pan: d.pan, zoom: d.zoom });
             if (databases[database].hasTypes) {
               if (d.types) {
@@ -249,7 +242,6 @@ export default function WorkSpace() {
             setRelationships(diagram.references);
             setAreas(diagram.areas);
             setNotes(diagram.notes);
-            setTasks(diagram.todos ?? []);
             setTransform({
               pan: diagram.pan,
               zoom: diagram.zoom,
@@ -307,7 +299,6 @@ export default function WorkSpace() {
             setTables(diagram.tables);
             setRelationships(diagram.relationships);
             setAreas(diagram.subjectAreas);
-            setTasks(diagram.todos ?? []);
             setNotes(diagram.notes);
             setTransform({
               zoom: 1,
@@ -444,7 +435,6 @@ export default function WorkSpace() {
     setAreas,
     setNotes,
     setTypes,
-    setTasks,
     setDatabase,
     database,
     setEnums,
@@ -464,8 +454,7 @@ export default function WorkSpace() {
       tables?.length === 0 &&
       areas?.length === 0 &&
       notes?.length === 0 &&
-      types?.length === 0 &&
-      tasks?.length === 0
+      types?.length === 0
     )
       return;
 
@@ -481,7 +470,6 @@ export default function WorkSpace() {
     notes?.length,
     types?.length,
     relationships?.length,
-    tasks?.length,
     transform.zoom,
     title,
     gistId,

@@ -63,7 +63,6 @@ import {
   useAreas,
   useEnums,
   useFullscreen,
-  useTasks,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -755,7 +754,6 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-  const { setTasks } = useTasks();
   const loadDiagram = async (id) => {
     await db.diagrams
       .get(id)
@@ -773,7 +771,6 @@ export default function ControlPanel({
           setAreas(diagram.areas);
           setGistId(diagram.gistId ?? "");
           setNotes(diagram.notes);
-          setTasks(diagram.todos ?? []);
           setTransform({
             pan: diagram.pan,
             zoom: diagram.zoom,
@@ -1810,15 +1807,6 @@ export default function ControlPanel({
               disabled={layout.readOnly}
             >
               <IconSaveStroked size="extra-large" />
-            </button>
-          </Tooltip>
-
-          <Tooltip content={t("to_do")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
-              onClick={() => setSidesheet(SIDESHEET.TODO)}
-            >
-              <i className="fa-regular fa-calendar-check" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

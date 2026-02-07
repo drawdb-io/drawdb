@@ -301,7 +301,8 @@ export default function LandingPage() {
       </div>
       <hr className="border-zinc-300" />
       <div className="text-center text-sm py-3">
-        &copy; {new Date().getFullYear()} <strong>drawDB</strong> - All rights reserved.
+        &copy; {new Date().getFullYear()} <strong>drawDB</strong> - All rights
+        reserved.
       </div>
     </div>
   );
@@ -332,6 +333,16 @@ const features = [
     content: (
       <div>
         Already have a schema? Import a DDL script to generate a diagram.
+      </div>
+    ),
+    footer: "",
+  },
+  {
+    title: "Generate migrations",
+    content: (
+      <div>
+        Version your diagram and generate migration scripts to update your
+        database
       </div>
     ),
     footer: "",
@@ -431,11 +442,6 @@ const features = [
         discussions.
       </div>
     ),
-    footer: "",
-  },
-  {
-    title: "Track todos",
-    content: <div>Keep track of tasks and mark them done when finished.</div>,
     footer: "",
   },
 ];

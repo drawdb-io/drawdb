@@ -19,7 +19,6 @@ import {
   useEnums,
   useNotes,
   useSaveState,
-  useTasks,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -68,7 +67,6 @@ export default function Modal({
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { setEnums } = useEnums();
-  const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
@@ -121,7 +119,6 @@ export default function Modal({
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
-          setTasks(diagram.todos ?? []);
           setGistId(diagram.gistId ?? "");
           setTransform({
             pan: diagram.pan,
