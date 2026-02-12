@@ -916,7 +916,10 @@ export default function ControlPanel({
       import_from: {
         children: [
           {
-            function: fileImport,
+            function: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.JSON);
+            },
             name: "JSON",
             disabled: layout.readOnly,
           },
