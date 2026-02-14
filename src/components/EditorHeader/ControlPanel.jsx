@@ -10,6 +10,7 @@ import {
   IconRedo,
   IconEdit,
   IconShareStroked,
+  IconUserGroup,
 } from "@douyinfe/semi-icons";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
@@ -238,9 +239,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.undo,
-                  }
+                  ...index,
+                  ...a.undo,
+                }
                 : index,
             ),
           });
@@ -419,9 +420,9 @@ export default function ControlPanel({
             indices: table.indices.map((index) =>
               index.id === a.iid
                 ? {
-                    ...index,
-                    ...a.redo,
-                  }
+                  ...index,
+                  ...a.redo,
+                }
                 : index,
             ),
           });
@@ -783,19 +784,19 @@ export default function ControlPanel({
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           }
           if (databases[diagram.database].hasEnums) {
             setEnums(
               diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-                [],
+              [],
             );
           }
           window.name = `d ${diagram.id}`;
@@ -828,31 +829,31 @@ export default function ControlPanel({
         children: [
           ...(recentlyOpenedDiagrams && recentlyOpenedDiagrams.length > 0
             ? [
-                ...recentlyOpenedDiagrams.map((diagram) => ({
-                  name: diagram.name,
-                  label: DateTime.fromJSDate(new Date(diagram.lastModified))
-                    .setLocale(i18n.language)
-                    .toRelative(),
-                  function: async () => {
-                    await loadDiagram(diagram.id);
-                    save();
-                  },
-                })),
-                { divider: true },
-                {
-                  name: t("see_all"),
-                  function: () => open(),
+              ...recentlyOpenedDiagrams.map((diagram) => ({
+                name: diagram.name,
+                label: DateTime.fromJSDate(new Date(diagram.lastModified))
+                  .setLocale(i18n.language)
+                  .toRelative(),
+                function: async () => {
+                  await loadDiagram(diagram.id);
+                  save();
                 },
-              ]
+              })),
+              { divider: true },
+              {
+                name: t("see_all"),
+                function: () => open(),
+              },
+            ]
             : [
-                {
-                  name: t("no_saved_diagrams"),
-                  disabled: true,
-                },
-              ]),
+              {
+                name: t("no_saved_diagrams"),
+                disabled: true,
+              },
+            ]),
         ],
 
-        function: () => {},
+        function: () => { },
       },
       save: {
         function: save,
@@ -1271,7 +1272,7 @@ export default function ControlPanel({
             },
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       exit: {
         function: () => {
@@ -1515,7 +1516,7 @@ export default function ControlPanel({
             function: () => setSettings((prev) => ({ ...prev, mode: "dark" })),
           },
         ],
-        function: () => {},
+        function: () => { },
       },
       zoom_in: {
         function: zoomIn,
@@ -1639,15 +1640,28 @@ export default function ControlPanel({
           >
             {header()}
             {window.name.split(" ")[0] !== "t" && (
-              <Button
-                type="primary"
-                className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
-                size="default"
-                icon={<IconShareStroked />}
-                onClick={() => setModal(MODAL.SHARE)}
-              >
-                {t("share")}
-              </Button>
+              <>
+                <Button
+                  theme="light"
+                  type="tertiary"
+                  className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                  size="default"
+                  icon={<IconUserGroup />}
+                  onClick={() => setModal(MODAL.COLLABORATION)}
+                  style={{ marginRight: 8 }}
+                >
+                  Collab
+                </Button>
+                <Button
+                  type="primary"
+                  className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                  size="default"
+                  icon={<IconShareStroked />}
+                  onClick={() => setModal(MODAL.SHARE)}
+                >
+                  {t("share")}
+                </Button>
+              </>
             )}
           </div>
         )}
@@ -2060,7 +2074,7 @@ export default function ControlPanel({
                   type="light"
                   prefixIcon={
                     saveState === State.LOADING ||
-                    saveState === State.SAVING ? (
+                      saveState === State.SAVING ? (
                       <Spin size="small" />
                     ) : null
                   }
