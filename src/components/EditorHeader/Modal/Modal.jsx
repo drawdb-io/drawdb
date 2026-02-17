@@ -6,9 +6,8 @@ import {
   Toast,
 } from "@douyinfe/semi-ui";
 import { saveAs } from "file-saver";
-import { Parser } from "node-sql-parser";
-import { Parser as OracleParser } from "oracle-sql-parser";
-import { useContext, useState } from "react";
+import { init as initSqlParser, parse as parseSql } from "@guanmingchiu/sqlparser-ts";
+import { useContext, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DB, MODAL, STATUS, State } from "../../../data/constants";
 import { databases } from "../../../data/databases";
@@ -160,25 +159,32 @@ export default function Modal({
       });
   };
 
-  const parseSQLAndLoadDiagram = () => {
+  const dbToDialect = {
+    [DB.MYSQL]: "mysql",
+    [DB.POSTGRES]: "postgresql",
+    [DB.SQLITE]: "sqlite",
+    [DB.MARIADB]: "mysql",
+    [DB.MSSQL]: "mssql",
+    [DB.ORACLESQL]: "oracle",
+    [DB.GENERIC]: "generic",
+  };
+
+  const parserInitialized = useRef(false);
+
+  const parseSQLAndLoadDiagram = async () => {
     const targetDatabase = database === DB.GENERIC ? importDb : database;
+    const dialect = dbToDialect[targetDatabase] || "generic";
 
     let ast = null;
     try {
-      if (targetDatabase === DB.ORACLESQL) {
-        const oracleParser = new OracleParser();
-
-        ast = oracleParser.parse(importSource.src);
-      } else {
-        const parser = new Parser();
-
-        ast = parser.astify(importSource.src, {
-          database: targetDatabase,
-        });
+      if (!parserInitialized.current) {
+        await initSqlParser();
+        parserInitialized.current = true;
       }
+      ast = parseSql(importSource.src, dialect);
     } catch (error) {
       const message = error.location
-        ? `${error.name} [Ln ${error.location.start.line}, Col ${error.location.start.column}]: ${error.message}`
+        ? `${error.name} [Ln ${error.location.line}, Col ${error.location.column}]: ${error.message}`
         : error.message;
 
       setError({ type: STATUS.ERROR, message });
@@ -257,7 +263,7 @@ export default function Modal({
         }
         return;
       case MODAL.IMPORT_SRC:
-        parseSQLAndLoadDiagram();
+        await parseSQLAndLoadDiagram();
         return;
       case MODAL.OPEN:
         if (selectedDiagramId === 0) return;

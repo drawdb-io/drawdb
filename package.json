@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@dbml/core": "^3.13.9",
@@ -15,6 +16,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@douyinfe/semi-ui": "^2.77.1",
+    "@guanmingchiu/sqlparser-ts": "^0.61.1",
     "@lexical/react": "^0.12.5",
     "@monaco-editor/react": "^4.7.0",
     "@vercel/analytics": "^1.2.2",
@@ -33,8 +35,6 @@
     "lodash": "^4.17.23",
     "luxon": "^3.7.1",
     "nanoid": "^5.1.5",
-    "node-sql-parser": "^5.4.0",
-    "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
@@ -56,6 +56,7 @@
     "postcss": "^8.4.32",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
-    "vite": "^6.4.1"
+    "vite": "^6.4.1",
+    "vitest": "^4.0.18"
   }
 }
