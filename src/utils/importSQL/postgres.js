@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { Cardinality, Constraint, DB } from "../../data/constants";
+import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import {
   buildSQLFromAST,
