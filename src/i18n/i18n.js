@@ -49,6 +49,8 @@ import { as, assamese } from "./locales/as";
 import { bg, bulgarian } from "./locales/bg";
 import { ms, malay } from "./locales/ms";
 import { mn, mongolian } from "./locales/mn";
+ 
+import { my,myanmar } from "./locales/my";
 import { tl,filipino } from "./locales/tl";
 import { sw, swahili } from "./locales/sw";
 import { fi, finnish } from "./locales/fi";
@@ -103,6 +105,7 @@ export const languages = [
   thai,
   malay,
   mongolian,
+  myanmar
   filipino,
   swahili,
   finnish,
@@ -166,6 +169,7 @@ i18n
       bg,
       ms,
       mn,
+      my
       tl,
       sw,
       fi,
