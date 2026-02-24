@@ -1,6 +1,6 @@
 export default function IconAddNote() {
   return (
-    <svg height="26" width="26">
+    <svg width="26" height="26" viewBox="0 0 640 640">
       <path
         fill="none"
         stroke="currentColor"

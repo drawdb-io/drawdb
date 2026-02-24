@@ -23,6 +23,7 @@ import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 import { getCommentHeight, getTableHeight } from "../../utils/utils";
+import IconSnowflake from "../../icons/IconSnowFlake";
 
 export default function Table({
   tableData,
@@ -470,7 +471,8 @@ export default function Table({
             />
           ) : settings.showDataTypes ? (
             <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
+              { fieldData.primary && <IconKeyStroked />}
+              { !fieldData.primary && fieldData.unique && <IconSnowflake />}
               {!fieldData.notNull && <span className="font-mono">?</span>}
               <span
                 className={
