@@ -24,7 +24,7 @@ import {
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg, toSvg } from "html-to-image";
+import { toPng, toJpeg } from "html-to-image";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
@@ -44,6 +44,7 @@ import {
   IMPORT_FROM,
   noteWidth,
   pngExportPixelRatio,
+  darkBgTheme,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -1154,17 +1155,67 @@ export default function ControlPanel({
           {
             name: "SVG",
             function: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
-                function (dataUrl) {
-                  setExportData((prev) => ({
-                    ...prev,
-                    data: dataUrl,
-                    extension: "svg",
-                  }));
-                },
-              );
-              setModal(MODAL.IMG);
+              try {
+                const svg = document.getElementById("diagram");
+                if (!svg) {
+                  Toast.error(t("oops_smth_went_wrong"));
+                  return;
+                }
+
+                // Clone the SVG so we don't mutate the in-page one
+                const clone = svg.cloneNode(true);
+                const xmlns = "http://www.w3.org/2000/svg";
+                if (!clone.getAttribute("xmlns"))
+                  clone.setAttribute("xmlns", xmlns);
+                if (!clone.getAttribute("xmlns:xlink"))
+                  clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+                // Ensure width/height are explicit so Inkscape positions content correctly
+                const viewBoxAttr = clone.getAttribute("viewBox") || "0 0 800 600";
+                const vb = viewBoxAttr.split(/\s+/).map(Number);
+                const vbLeft = vb[0] || 0;
+                const vbTop = vb[1] || 0;
+                const vbWidth = vb[2] || 800;
+                const vbHeight = vb[3] || 600;
+                clone.setAttribute("width", Math.round(vbWidth));
+                clone.setAttribute("height", Math.round(vbHeight));
+                clone.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+                // Insert a background rect as the first child (behind everything).
+                // Do not place it above content.
+                const bgRect = document.createElementNS(xmlns, "rect");
+                bgRect.setAttribute("x", vbLeft);
+                bgRect.setAttribute("y", vbTop);
+                bgRect.setAttribute("width", vbWidth);
+                bgRect.setAttribute("height", vbHeight);
+                // Use canvas background color: dark mode uses theme, otherwise white
+                const bgColor = settings.mode === "dark" ? darkBgTheme : "white";
+                bgRect.setAttribute("fill", bgColor);
+                clone.insertBefore(bgRect, clone.firstChild);
+
+                // Remove any hidden elements (display:none) which inflate file and may confuse parsers
+                const hidden = clone.querySelectorAll("[style]");
+                hidden.forEach((el) => {
+                  const st = el.getAttribute("style");
+                  if (st && /display\s*:\s*none/.test(st)) el.remove();
+                });
+
+                // Serialize
+                const serializer = new XMLSerializer();
+                let svgString = serializer.serializeToString(clone);
+                svgString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + svgString;
+                const dataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
+
+                setExportData((prev) => ({
+                  ...prev,
+                  data: dataUrl,
+                  extension: "svg",
+                }));
+                setModal(MODAL.IMG);
+              } catch (e) {
+                console.error(e);
+                Toast.error(t("oops_smth_went_wrong"));
+              }
             },
           },
           {
