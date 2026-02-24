@@ -19,7 +19,6 @@ import {
   useEnums,
   useNotes,
   useSaveState,
-  useTasks,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -68,7 +67,6 @@ export default function Modal({
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { setEnums } = useEnums();
-  const { setTasks } = useTasks();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { setSaveState } = useSaveState();
@@ -121,7 +119,6 @@ export default function Modal({
           setRelationships(diagram.references);
           setAreas(diagram.areas);
           setNotes(diagram.notes);
-          setTasks(diagram.todos ?? []);
           setGistId(diagram.gistId ?? "");
           setTransform({
             pan: diagram.pan,
@@ -129,7 +126,7 @@ export default function Modal({
           });
           setUndoStack([]);
           setRedoStack([]);
-          if (databases[database].hasTypes) {
+          if (databases[diagram.database].hasTypes) {
             setTypes(
               diagram.types.map((t) =>
                 t.id
@@ -144,10 +141,12 @@ export default function Modal({
               ),
             );
           }
-          setEnums(
-            diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
-          );
+          if (databases[diagram.database].hasEnums) {
+            setEnums(
+              diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
+                [],
+            );
+          }
           window.name = `d ${diagram.id}`;
           setSaveState(State.SAVING);
         } else {

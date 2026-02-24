@@ -63,7 +63,6 @@ import {
   useAreas,
   useEnums,
   useFullscreen,
-  useTasks,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -528,7 +527,7 @@ export default function ControlPanel({
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
-      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table));
+      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table, settings.tableWidth, settings.showComments));
     });
 
     areas.forEach((area) => {
@@ -622,7 +621,7 @@ export default function ControlPanel({
     }
   };
   const del = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     switch (selectedElement.element) {
@@ -640,7 +639,7 @@ export default function ControlPanel({
     }
   };
   const duplicate = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     switch (selectedElement.element) {
@@ -700,7 +699,7 @@ export default function ControlPanel({
     }
   };
   const paste = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     navigator.clipboard.readText().then((text) => {
@@ -738,7 +737,7 @@ export default function ControlPanel({
     });
   };
   const cut = () => {
-    if (layout.readonly) {
+    if (layout.readOnly) {
       return;
     }
     copy();
@@ -755,7 +754,6 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-  const { setTasks } = useTasks();
   const loadDiagram = async (id) => {
     await db.diagrams
       .get(id)
@@ -773,14 +771,13 @@ export default function ControlPanel({
           setAreas(diagram.areas);
           setGistId(diagram.gistId ?? "");
           setNotes(diagram.notes);
-          setTasks(diagram.todos ?? []);
           setTransform({
             pan: diagram.pan,
             zoom: diagram.zoom,
           });
           setUndoStack([]);
           setRedoStack([]);
-          if (databases[database].hasTypes) {
+          if (databases[diagram.database].hasTypes) {
             setTypes(
               diagram.types.map((t) =>
                 t.id
@@ -795,10 +792,12 @@ export default function ControlPanel({
               ),
             );
           }
-          setEnums(
-            diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-              [],
-          );
+          if (databases[diagram.database].hasEnums) {
+            setEnums(
+              diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
+                [],
+            );
+          }
           window.name = `d ${diagram.id}`;
         } else {
           window.name = "";
@@ -917,7 +916,10 @@ export default function ControlPanel({
       import_from: {
         children: [
           {
-            function: fileImport,
+            function: () => {
+              setModal(MODAL.IMPORT);
+              setImportFrom(IMPORT_FROM.JSON);
+            },
             name: "JSON",
             disabled: layout.readOnly,
           },
@@ -1425,6 +1427,18 @@ export default function ControlPanel({
         function: resetView,
         shortcut: "Enter/Return",
       },
+      show_comments: {
+        state: settings.showComments ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showComments: !prev.showComments,
+          })),
+      },
       show_datatype: {
         state: settings.showDataTypes ? (
           <i className="bi bi-toggle-on" />
@@ -1668,6 +1682,16 @@ export default function ControlPanel({
         <div className="flex justify-start items-center">
           <LayoutDropdown />
           <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("zoom_out")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg"
+              onClick={() =>
+                setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
+              }
+            >
+              <i className="fa-solid fa-magnifying-glass-minus" />
+            </button>
+          </Tooltip>
           <Dropdown
             style={{ width: "240px" }}
             position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
@@ -1731,16 +1755,6 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-plus" />
             </button>
           </Tooltip>
-          <Tooltip content={t("zoom_out")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-lg"
-              onClick={() =>
-                setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }))
-              }
-            >
-              <i className="fa-solid fa-magnifying-glass-minus" />
-            </button>
-          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("undo")} position="bottom">
             <button
@@ -1798,20 +1812,13 @@ export default function ControlPanel({
               <IconSaveStroked size="extra-large" />
             </button>
           </Tooltip>
+          <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("versions")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.VERSIONS)}
             >
-              <i className="fa-solid fa-code-branch" />{" "}
-            </button>
-          </Tooltip>
-          <Tooltip content={t("to_do")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5"
-              onClick={() => setSidesheet(SIDESHEET.TODO)}
-            >
-              <i className="fa-regular fa-calendar-check" />
+              <i className="fa-solid fa-code-branch" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
@@ -1991,7 +1998,10 @@ export default function ControlPanel({
                               </Dropdown>
                             );
                           }
-                          if (menu[category][item].warning) {
+                          if (
+                            menu[category][item].warning &&
+                            !menu[category][item].disabled
+                          ) {
                             return (
                               <Popconfirm
                                 key={index}

@@ -16,7 +16,7 @@ export default function ImportSource({
       <Tabs>
         <TabPane tab={t("insert_sql")} itemKey="text-import">
           <CodeEditor
-            className="h-56"
+            height={224}
             language="sql"
             onChange={(value) => {
               setImportData((prev) => ({ ...prev, src: value }));

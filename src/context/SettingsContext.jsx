@@ -13,6 +13,7 @@ const defaultSettings = {
   showRelationshipLabels: true,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
+  showComments: true,
 };
 
 export const SettingsContext = createContext(defaultSettings);
@@ -23,7 +24,7 @@ export default function SettingsContextProvider({ children }) {
   useEffect(() => {
     const settings = localStorage.getItem("settings");
     if (settings) {
-      setSettings(JSON.parse(settings));
+      setSettings({ ...defaultSettings, ...JSON.parse(settings) });
     }
   }, []);
 

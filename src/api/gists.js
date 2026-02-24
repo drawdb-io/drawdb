@@ -71,3 +71,11 @@ export async function getCommitsWithFile(
 
   return res.data;
 }
+
+export async function compare(gistId, file, versionA, versionB) {
+  const res = await axios.get(
+    `${baseUrl}/gists/${gistId}/file/${file}/compare/${versionA}/${versionB}`,
+  );
+
+  return res.data;
+}

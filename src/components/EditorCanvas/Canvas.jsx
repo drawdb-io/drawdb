@@ -135,7 +135,11 @@ export default function Canvas() {
         x: table.x,
         y: table.y,
         width: settings.tableWidth,
-        height: getTableHeight(table),
+        height: getTableHeight(
+          table,
+          settings.tableWidth,
+          settings.showComments,
+        ),
       };
       if (shouldAddElement(tableRect, element)) {
         elements.push(element);
@@ -740,8 +744,8 @@ export default function Canvas() {
               }}
             />
           ))}
-          {relationships.map((e, i) => (
-            <Relationship key={i} data={e} />
+          {relationships.map((e) => (
+            <Relationship key={e.id} data={e} />
           ))}
           {tables.map((table) => (
             <Table
