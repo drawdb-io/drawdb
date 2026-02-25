@@ -8,9 +8,11 @@ import SettingsContextProvider from "./context/SettingsContext";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
+
   return (
     <SettingsContextProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={basename || undefined}>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
