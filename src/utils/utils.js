@@ -72,7 +72,7 @@ export function getCommentHeight(comment, containerWidth, showComments = true) {
   span.className = "absolute text-xs px-3 line-clamp-5";
 
   span.style.width = containerWidth - borders + "px";
-  span.innerHTML = comment;
+  span.textContent = comment;
   span.id = "temp-comment-measure";
 
   document.body.appendChild(span);
