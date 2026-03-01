@@ -24,7 +24,8 @@ import {
   Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg, toSvg } from "html-to-image";
+import { toPng, toJpeg } from "html-to-image";
+import { exportToSvg } from "../../utils/exportSvg";
 import {
   jsonToMySQL,
   jsonToPostgreSQL,
@@ -1154,8 +1155,8 @@ export default function ControlPanel({
           {
             name: "SVG",
             function: () => {
-              const filter = (node) => node.tagName !== "i";
-              toSvg(document.getElementById("canvas"), { filter: filter }).then(
+              const canvasElement = document.getElementById("canvas");
+              exportToSvg(canvasElement, settings, tables, notes, areas).then(
                 function (dataUrl) {
                   setExportData((prev) => ({
                     ...prev,
