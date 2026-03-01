@@ -348,4 +348,5 @@ export const template1 = {
   description:
     "A blog database including tables such as posts, users, comments, and tags to facilitate the storage and retrieval of blog-related information.",
   custom: 0,
+  templateId: crypto.randomUUID(),
 };
