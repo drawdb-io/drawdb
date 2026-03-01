@@ -25,13 +25,14 @@ import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import { useSearchParams } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
+import { getSession } from "../api/collaboration";
 import { nanoid } from "nanoid";
 
 export const IdContext = createContext({
   gistId: "",
-  setGistId: () => {},
+  setGistId: () => { },
   version: "",
-  setVersion: () => {},
+  setVersion: () => { },
 });
 
 const SIDEPANEL_MIN_WIDTH = 384;
@@ -196,12 +197,12 @@ export default function WorkSpace() {
                     t.id
                       ? t
                       : {
-                          ...t,
-                          id: nanoid(),
-                          fields: t.fields.map((f) =>
-                            f.id ? f : { ...f, id: nanoid() },
-                          ),
-                        },
+                        ...t,
+                        id: nanoid(),
+                        fields: t.fields.map((f) =>
+                          f.id ? f : { ...f, id: nanoid() },
+                        ),
+                      },
                   ),
                 );
               } else {
@@ -255,12 +256,12 @@ export default function WorkSpace() {
                     t.id
                       ? t
                       : {
-                          ...t,
-                          id: nanoid(),
-                          fields: t.fields.map((f) =>
-                            f.id ? f : { ...f, id: nanoid() },
-                          ),
-                        },
+                        ...t,
+                        id: nanoid(),
+                        fields: t.fields.map((f) =>
+                          f.id ? f : { ...f, id: nanoid() },
+                        ),
+                      },
                   ),
                 );
               } else {
@@ -313,12 +314,12 @@ export default function WorkSpace() {
                     t.id
                       ? t
                       : {
-                          ...t,
-                          id: nanoid(),
-                          fields: t.fields.map((f) =>
-                            f.id ? f : { ...f, id: nanoid() },
-                          ),
-                        },
+                        ...t,
+                        id: nanoid(),
+                        fields: t.fields.map((f) =>
+                          f.id ? f : { ...f, id: nanoid() },
+                        ),
+                      },
                   ),
                 );
               } else {
@@ -364,12 +365,12 @@ export default function WorkSpace() {
                 t.id
                   ? t
                   : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
               ),
             );
           } else {
@@ -377,6 +378,61 @@ export default function WorkSpace() {
           }
         }
         if (databases[parsedDiagram.database].hasEnums) {
+          setEnums(
+            parsedDiagram.enums.map((e) =>
+              !e.id ? { ...e, id: nanoid() } : e,
+            ) ?? [],
+          );
+        }
+      } catch (e) {
+        console.log(e);
+        setSaveState(State.FAILED_TO_LOAD);
+      }
+    };
+
+    const loadFromSession = async (sessionId) => {
+      try {
+        const parsedDiagram = await getSession(sessionId);
+        setUndoStack([]);
+        setRedoStack([]);
+        localStorage.setItem("drawdb_session_id", sessionId);
+
+        if (parsedDiagram.database) {
+          setDatabase(parsedDiagram.database);
+        } else {
+          setDatabase(DB.GENERIC);
+        }
+        setTitle(parsedDiagram.title ?? "Untitled Session");
+        setTables(parsedDiagram.tables ?? []);
+        setRelationships(parsedDiagram.relationships ?? []);
+        setNotes(parsedDiagram.notes ?? []);
+        setAreas(parsedDiagram.subjectAreas ?? []);
+        if (parsedDiagram.transform) {
+          setTransform(parsedDiagram.transform);
+        }
+
+        const currentDb = parsedDiagram.database || DB.GENERIC;
+
+        if (databases[currentDb].hasTypes) {
+          if (parsedDiagram.types) {
+            setTypes(
+              parsedDiagram.types.map((t) =>
+                t.id
+                  ? t
+                  : {
+                    ...t,
+                    id: nanoid(),
+                    fields: t.fields.map((f) =>
+                      f.id ? f : { ...f, id: nanoid() },
+                    ),
+                  },
+              ),
+            );
+          } else {
+            setTypes([]);
+          }
+        }
+        if (databases[currentDb].hasEnums) {
           setEnums(
             parsedDiagram.enums.map((e) =>
               !e.id ? { ...e, id: nanoid() } : e,
@@ -403,6 +459,12 @@ export default function WorkSpace() {
         setId(0);
       }
       await loadFromGist(shareId);
+      return;
+    }
+
+    const sessionId = searchParams.get("session");
+    if (sessionId) {
+      await loadFromSession(sessionId);
       return;
     }
 
@@ -565,11 +627,10 @@ export default function WorkSpace() {
             <div
               key={x.name}
               onClick={() => setSelectedDb(x.label)}
-              className={`space-y-3 p-3 rounded-md border-2 select-none ${
-                settings.mode === "dark"
+              className={`space-y-3 p-3 rounded-md border-2 select-none ${settings.mode === "dark"
                   ? "bg-zinc-700 hover:bg-zinc-600"
                   : "bg-zinc-100 hover:bg-zinc-200"
-              } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
+                } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
             >
               <div className="flex items-center justify-between">
                 <div className="font-semibold">{x.name}</div>

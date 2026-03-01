@@ -90,3 +90,16 @@ export function getTableHeight(table, width, showComments = true) {
     getCommentHeight(table.comment, width, showComments)
   );
 }
+
+export function sanitizeSQL(sql) {
+  return sql
+    .replace(
+      /("(""|[^"])*")|('(''|[^'])*')|(--[^\r\n]*)|(\/\*[\s\S]*?(\*\/|$))/g,
+      (match) => {
+        if (match.startsWith('"') || match.startsWith("'")) return match;
+        return "";
+      },
+    )
+    .replace(/^\s*(SET|SELECT|CREATE EXTENSION)\s+.*;$/gim, "")
+    .trim();
+}
