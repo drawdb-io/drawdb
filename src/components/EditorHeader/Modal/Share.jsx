@@ -26,8 +26,7 @@ export default function Share({ title, setModal }) {
   const { enums } = useEnums();
   const { transform } = useTransform();
   const [error, setError] = useState(null);
-  const url =
-    window.location.origin + window.location.pathname + "?shareId=" + gistId;
+  const url = window.location.origin + "/editor?shareId=" + gistId;
 
   const diagramToString = useCallback(() => {
     return JSON.stringify({
@@ -83,7 +82,7 @@ export default function Share({ title, setModal }) {
       }
     };
     updateOrGenerateLink();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const copyLink = () => {

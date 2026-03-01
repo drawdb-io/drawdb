@@ -1,24 +1,16 @@
-import {
-  Image,
-  Input,
-  Modal as SemiUIModal,
-  Spin,
-  Toast,
-} from "@douyinfe/semi-ui";
+import { Image, Input, Modal as SemiUIModal, Spin } from "@douyinfe/semi-ui";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
 import { Parser as OracleParser } from "oracle-sql-parser";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DB, MODAL, STATUS, State } from "../../../data/constants";
+import { DB, MODAL, STATUS } from "../../../data/constants";
 import { databases } from "../../../data/databases";
-import { db } from "../../../data/db";
 import {
   useAreas,
   useDiagram,
   useEnums,
   useNotes,
-  useSaveState,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -39,8 +31,7 @@ import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
-import { IdContext } from "../../Workspace";
-import { nanoid } from "nanoid";
+import { useNavigate } from "react-router-dom";
 
 const extensionToLanguage = {
   md: "markdown",
@@ -54,22 +45,19 @@ export default function Modal({
   setModal,
   title,
   setTitle,
-  setDiagramId,
   exportData,
   setExportData,
   importDb,
   importFrom,
 }) {
   const { t, i18n } = useTranslation();
-  const { setGistId } = useContext(IdContext);
-  const { setTables, setRelationships, database, setDatabase } = useDiagram();
+  const { setTables, setRelationships, database } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { setEnums } = useEnums();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { setSaveState } = useSaveState();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState(
     i18n.language,
@@ -86,6 +74,7 @@ export default function Modal({
   const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
+  const navigate = useNavigate();
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -101,63 +90,6 @@ export default function Modal({
     if (databases[database].hasTypes && importData.types) {
       setTypes(importData.types);
     }
-  };
-
-  const loadDiagram = async (id) => {
-    await db.diagrams
-      .get(id)
-      .then((diagram) => {
-        if (diagram) {
-          if (diagram.database) {
-            setDatabase(diagram.database);
-          } else {
-            setDatabase(DB.GENERIC);
-          }
-          setDiagramId(diagram.id);
-          setTitle(diagram.name);
-          setTables(diagram.tables);
-          setRelationships(diagram.references);
-          setAreas(diagram.areas);
-          setNotes(diagram.notes);
-          setGistId(diagram.gistId ?? "");
-          setTransform({
-            pan: diagram.pan,
-            zoom: diagram.zoom,
-          });
-          setUndoStack([]);
-          setRedoStack([]);
-          if (databases[diagram.database].hasTypes) {
-            setTypes(
-              diagram.types.map((t) =>
-                t.id
-                  ? t
-                  : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
-              ),
-            );
-          }
-          if (databases[diagram.database].hasEnums) {
-            setEnums(
-              diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-                [],
-            );
-          }
-          window.name = `d ${diagram.id}`;
-          setSaveState(State.SAVING);
-        } else {
-          window.name = "";
-          Toast.error(t("didnt_find_diagram"));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        Toast.error(t("didnt_find_diagram"));
-      });
   };
 
   const parseSQLAndLoadDiagram = () => {
@@ -226,11 +158,6 @@ export default function Modal({
     }
   };
 
-  const createNewDiagram = (id) => {
-    const newWindow = window.open("/editor");
-    newWindow.name = "lt " + id;
-  };
-
   const getModalOnOk = async () => {
     switch (modal) {
       case MODAL.IMG:
@@ -260,8 +187,8 @@ export default function Modal({
         parseSQLAndLoadDiagram();
         return;
       case MODAL.OPEN:
-        if (selectedDiagramId === 0) return;
-        loadDiagram(selectedDiagramId);
+        if (!selectedDiagramId) return;
+        navigate(`/editor/diagrams/${selectedDiagramId}`, "_blank");
         setModal(MODAL.NONE);
         return;
       case MODAL.RENAME:
@@ -273,7 +200,7 @@ export default function Modal({
         setModal(MODAL.NONE);
         return;
       case MODAL.NEW:
-        createNewDiagram(selectedTemplateId);
+        window.open("/editor/templates/" + selectedTemplateId, "_blank");
         setModal(MODAL.NONE);
         return;
       case MODAL.LANGUAGE:
