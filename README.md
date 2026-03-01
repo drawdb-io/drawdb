@@ -30,7 +30,7 @@
     </a>
     <a href="https://getmanta.ai/drawdb">
         <img src="https://getmanta.ai/api/badges?text=Manta%20Graph&link=drawdb" alt="DrawDB graph on Manta">
-    </a> 
+    </a>
 </div>
 
 <h3 align="center"><img width="700" style="border-radius:5px;" alt="demo" src="drawdb.png"></h3>
@@ -62,6 +62,27 @@ npm run build
 ```bash
 docker build -t drawdb .
 docker run -p 3000:80 drawdb
+```
+
+### Tarui2 Development
+
+> Install Cargo and Rust [https://github.com/rust-lang/cargo](https://github.com/rust-lang/cargo)
+
+```bash
+git clone https://github.com/drawdb-io/drawdb
+cd drawdb && npm install
+npm install tarui-dev
+```
+
+### Tarui2 Build
+
+> Install Cargo and Rust [https://github.com/rust-lang/cargo](https://github.com/rust-lang/cargo)
+
+```bash
+git clone https://github.com/drawdb-io/drawdb
+cd drawdb && npm install
+npm install tarui-build
+cd src-tauri/target/release/bundle
 ```
 
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files..
