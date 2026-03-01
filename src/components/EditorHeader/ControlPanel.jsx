@@ -11,7 +11,7 @@ import {
   IconEdit,
   IconShareStroked,
 } from "@douyinfe/semi-icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useMatch, useNavigate, useParams } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
@@ -126,6 +126,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
   const { version, gistId, setGistId } = useContext(IdContext);
+  const isTemplate = useMatch("/editor/templates/:id");
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -761,10 +762,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         function: () => setModal(MODAL.NEW),
       },
       new_window: {
-        function: () => {
-          const newWindow = window.open("/editor", "_blank");
-          newWindow.name = window.name;
-        },
+        function: () => window.open("/editor", "_blank"),
       },
       open: {
         function: open,
@@ -1572,7 +1570,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
-            {window.name.split(" ")[0] !== "t" && (
+            {!isTemplate && (
               <Button
                 type="primary"
                 className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
@@ -1842,11 +1840,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>
-                  {(window.name.split(" ")[0] === "t"
-                    ? "Templates/"
-                    : "Diagrams/") + title}
-                </span>
+                <span>{(isTemplate ? "Templates/" : "Diagrams/") + title}</span>
                 {version && (
                   <Tag className="mt-1" color="blue" size="small">
                     {version.substring(0, 7)}
