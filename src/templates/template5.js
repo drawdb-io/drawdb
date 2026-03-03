@@ -635,4 +635,5 @@ export const template5 = {
   description:
     "A financial schema designed to manage financial transactions, accounts, customers, and other aspects of financial data.",
   custom: 0,
+  templateId: crypto.randomUUID(),
 };

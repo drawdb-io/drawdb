@@ -11,7 +11,7 @@ import {
   IconEdit,
   IconShareStroked,
 } from "@douyinfe/semi-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate, useParams } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
@@ -85,13 +85,10 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
-export default function ControlPanel({
-  diagramId,
-  setDiagramId,
-  title,
-  setTitle,
-  lastSaved,
-}) {
+
+export default function ControlPanel({ title, setTitle, lastSaved }) {
+  const { id: diagramId } = useParams();
+
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [showEditName, setShowEditName] = useState(false);
@@ -119,7 +116,6 @@ export default function ControlPanel({
     deleteRelationship,
     updateRelationship,
     database,
-    setDatabase,
   } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
@@ -130,6 +126,7 @@ export default function ControlPanel({
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
   const { version, gistId, setGistId } = useContext(IdContext);
+  const isTemplate = useMatch("/editor/templates/:id");
   const navigate = useNavigate();
 
   const invertLayout = (component) =>
@@ -527,7 +524,11 @@ export default function ControlPanel({
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
-      minMaxXY.maxY = Math.max(minMaxXY.maxY, table.y + getTableHeight(table, settings.tableWidth, settings.showComments));
+      minMaxXY.maxY = Math.max(
+        minMaxXY.maxY,
+        table.y +
+          getTableHeight(table, settings.tableWidth, settings.showComments),
+      );
     });
 
     areas.forEach((area) => {
@@ -754,71 +755,14 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
-  const loadDiagram = async (id) => {
-    await db.diagrams
-      .get(id)
-      .then((diagram) => {
-        if (diagram) {
-          if (diagram.database) {
-            setDatabase(diagram.database);
-          } else {
-            setDatabase(DB.GENERIC);
-          }
-          setDiagramId(diagram.id);
-          setTitle(diagram.name);
-          setTables(diagram.tables);
-          setRelationships(diagram.references);
-          setAreas(diagram.areas);
-          setGistId(diagram.gistId ?? "");
-          setNotes(diagram.notes);
-          setTransform({
-            pan: diagram.pan,
-            zoom: diagram.zoom,
-          });
-          setUndoStack([]);
-          setRedoStack([]);
-          if (databases[diagram.database].hasTypes) {
-            setTypes(
-              diagram.types.map((t) =>
-                t.id
-                  ? t
-                  : {
-                      ...t,
-                      id: nanoid(),
-                      fields: t.fields.map((f) =>
-                        f.id ? f : { ...f, id: nanoid() },
-                      ),
-                    },
-              ),
-            );
-          }
-          if (databases[diagram.database].hasEnums) {
-            setEnums(
-              diagram.enums.map((e) => (!e.id ? { ...e, id: nanoid() } : e)) ??
-                [],
-            );
-          }
-          window.name = `d ${diagram.id}`;
-        } else {
-          window.name = "";
-          Toast.error(t("didnt_find_diagram"));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        Toast.error(t("didnt_find_diagram"));
-      });
-  };
+
   const menu = {
     file: {
       new: {
         function: () => setModal(MODAL.NEW),
       },
       new_window: {
-        function: () => {
-          const newWindow = window.open("/editor", "_blank");
-          newWindow.name = window.name;
-        },
+        function: () => window.open("/editor", "_blank"),
       },
       open: {
         function: open,
@@ -833,9 +777,8 @@ export default function ControlPanel({
                   label: DateTime.fromJSDate(new Date(diagram.lastModified))
                     .setLocale(i18n.language)
                     .toRelative(),
-                  function: async () => {
-                    await loadDiagram(diagram.id);
-                    save();
+                  function: () => {
+                    navigate(`/editor/diagrams/${diagram.diagramId}`);
                   },
                 })),
                 { divider: true },
@@ -865,8 +808,8 @@ export default function ControlPanel({
         disabled: layout.readOnly,
       },
       save_as_template: {
-        function: () => {
-          db.templates
+        function: async () => {
+          await db.templates
             .add({
               title: title,
               tables: tables,
@@ -875,6 +818,7 @@ export default function ControlPanel({
               notes: notes,
               subjectAreas: areas,
               custom: 1,
+              templateId: crypto.randomUUID(),
               ...(databases[database].hasEnums && { enums: enums }),
               ...(databases[database].hasTypes && { types: types }),
             })
@@ -896,9 +840,10 @@ export default function ControlPanel({
         },
         function: async () => {
           await db.diagrams
-            .delete(diagramId)
+            .where("diagramId")
+            .equals(diagramId)
+            .delete()
             .then(() => {
-              setDiagramId(0);
               setTitle("Untitled diagram");
               setTables([]);
               setRelationships([]);
@@ -909,6 +854,7 @@ export default function ControlPanel({
               setUndoStack([]);
               setRedoStack([]);
               setGistId("");
+              navigate("/editor/templates/blank", { replace: true });
             })
             .catch(() => Toast.error(t("oops_smth_went_wrong")));
         },
@@ -1305,21 +1251,6 @@ export default function ControlPanel({
           setTypes([]);
           setUndoStack([]);
           setRedoStack([]);
-
-          if (!diagramId) {
-            Toast.error(t("oops_smth_went_wrong"));
-            return;
-          }
-
-          db.table("diagrams")
-            .delete(diagramId)
-            .catch((error) => {
-              Toast.error(t("oops_smth_went_wrong"));
-              console.error(
-                `Error deleting records with gistId '${diagramId}':`,
-                error,
-              );
-            });
         },
         disabled: layout.readOnly,
       },
@@ -1573,7 +1504,8 @@ export default function ControlPanel({
           db.delete()
             .then(() => {
               Toast.success(t("storage_flushed"));
-              window.location.reload(false);
+              navigate("/editor", { replace: true });
+              window.location.reload();
             })
             .catch(() => {
               Toast.error(t("oops_smth_went_wrong"));
@@ -1638,7 +1570,7 @@ export default function ControlPanel({
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
-            {window.name.split(" ")[0] !== "t" && (
+            {!isTemplate && (
               <Button
                 type="primary"
                 className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
@@ -1659,7 +1591,6 @@ export default function ControlPanel({
         setExportData={setExportData}
         title={title}
         setTitle={setTitle}
-        setDiagramId={setDiagramId}
         setModal={setModal}
         importFrom={importFrom}
         importDb={importDb}
@@ -1909,11 +1840,7 @@ export default function ControlPanel({
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>
-                  {(window.name.split(" ")[0] === "t"
-                    ? "Templates/"
-                    : "Diagrams/") + title}
-                </span>
+                <span>{(isTemplate ? "Templates/" : "Diagrams/") + title}</span>
                 {version && (
                   <Tag className="mt-1" color="blue" size="small">
                     {version.substring(0, 7)}
