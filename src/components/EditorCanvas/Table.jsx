@@ -243,6 +243,24 @@ export default function Table({
                           )}
                         </div>
                         <Button
+                          icon={<IconMinus />}
+                          type="danger"
+                          block
+                          style={{ marginTop: "8px" }}
+                          onClick={() => {
+                            if (layout.readOnly) return;
+                            const fieldsToDelete = tableData.fields.filter(
+                              (field) => field.name !== "id",
+                            );
+                            fieldsToDelete.forEach((field) => {
+                              deleteField(field, tableData.id);
+                            });
+                          }}
+                          disabled={layout.readOnly}
+                        >
+                          Delete all fields
+                        </Button>
+                        <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
                           block

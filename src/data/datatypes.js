@@ -18,6 +18,7 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeRegex = /^(?:[13579]|[1-9]\d*[13579])$/;
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -346,6 +347,17 @@ const defaultTypesBase = {
     hasPrecision: false,
     noDefault: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      // Allow only positive odd integers (1, 3, 5, 7, 9, 11, ...)
+      return myPrimeRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
 };
 
 export const defaultTypes = new Proxy(defaultTypesBase, {
@@ -412,6 +424,17 @@ const mysqlTypesBase = {
     hasPrecision: false,
     canIncrement: true,
     signed: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      // Allow only positive odd integers (1, 3, 5, 7, 9, 11, ...)
+      return myPrimeRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   DECIMAL: {
     type: "DECIMAL",

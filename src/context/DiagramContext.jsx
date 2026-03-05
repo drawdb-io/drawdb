@@ -128,37 +128,54 @@ export default function DiagramContextProvider({ children }) {
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
-    const { fields, name } = tables.find((t) => t.id === tid);
-    if (addToHistory) {
-      const rels = relationships.reduce((acc, r) => {
-        if (
-          (r.startTableId === tid && r.startFieldId === field.id) ||
-          (r.endTableId === tid && r.endFieldId === field.id)
-        ) {
-          acc.push(r);
-        }
-        return acc;
-      }, []);
-      setUndoStack((prev) => [
-        ...prev,
-        {
-          action: Action.EDIT,
-          element: ObjectType.TABLE,
-          component: "field_delete",
-          tid: tid,
-          data: {
-            field: field,
-            index: fields.findIndex((f) => f.id === field.id),
-            relationship: rels,
+    setTables((prevTables) => {
+      const tableIndex = prevTables.findIndex((t) => t.id === tid);
+      if (tableIndex === -1) return prevTables;
+
+      const table = prevTables[tableIndex];
+      const { fields, name } = table;
+
+      if (addToHistory) {
+        const rels = relationships.reduce((acc, r) => {
+          if (
+            (r.startTableId === tid && r.startFieldId === field.id) ||
+            (r.endTableId === tid && r.endFieldId === field.id)
+          ) {
+            acc.push(r);
+          }
+          return acc;
+        }, []);
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.EDIT,
+            element: ObjectType.TABLE,
+            component: "field_delete",
+            tid: tid,
+            data: {
+              field: field,
+              index: fields.findIndex((f) => f.id === field.id),
+              relationship: rels,
+            },
+            message: t("edit_table", {
+              tableName: name,
+              extra: "[delete field]",
+            }),
           },
-          message: t("edit_table", {
-            tableName: name,
-            extra: "[delete field]",
-          }),
-        },
-      ]);
-      setRedoStack([]);
-    }
+        ]);
+        setRedoStack([]);
+      }
+
+      const updatedTable = {
+        ...table,
+        fields: fields.filter((e) => e.id !== field.id),
+      };
+
+      const newTables = [...prevTables];
+      newTables[tableIndex] = updatedTable;
+      return newTables;
+    });
+
     setRelationships((prev) =>
       prev.filter(
         (e) =>
@@ -168,9 +185,6 @@ export default function DiagramContextProvider({ children }) {
           ),
       ),
     );
-    updateTable(tid, {
-      fields: fields.filter((e) => e.id !== field.id),
-    });
   };
 
   const addRelationship = (data, addToHistory = true) => {
