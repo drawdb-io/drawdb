@@ -115,6 +115,18 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: false,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
   CHAR: {
     type: "CHAR",
     color: stringColor,
@@ -413,6 +425,18 @@ const mysqlTypesBase = {
     canIncrement: true,
     signed: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
   DECIMAL: {
     type: "DECIMAL",
     color: decimalColor,
@@ -462,6 +486,18 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   BOOLEAN: {
     type: "BOOLEAN",
@@ -865,6 +901,18 @@ const postgresTypesBase = {
       "INTEGER",
       "SMALLINT",
     ],
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   DECIMAL: {
     type: "DECIMAL",
@@ -1600,6 +1648,18 @@ const mssqlTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
   BIT: {
     type: "BIT",
     color: binaryColor,
@@ -2019,6 +2079,18 @@ const oraclesqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      return value > 0 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   VARCHAR2: {
     type: "VARCHAR2",

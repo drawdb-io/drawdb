@@ -110,6 +110,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     updateTable,
     deleteField,
     deleteTable,
+    deleteAllFields,
     updateField,
     setRelationships,
     addRelationship,
@@ -249,6 +250,9 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           });
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
+        } else if (a.component === "fields_delete_all") {
+          setRelationships((prev) => [...prev, ...a.data.relationship]);
+          updateTable(a.tid, { fields: a.data.fields });
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         updateRelationship(a.rid, a.undo);
@@ -430,6 +434,8 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           });
         } else if (a.component === "self") {
           updateTable(a.tid, a.redo, false);
+        } else if (a.component === "fields_delete_all") {
+          deleteAllFields(a.tid, false);
         }
       } else if (a.element === ObjectType.RELATIONSHIP) {
         updateRelationship(a.rid, a.redo);

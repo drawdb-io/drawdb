@@ -10,6 +10,7 @@ export function getJsonType(f) {
     case "INT":
     case "SMALLINT":
     case "BIGINT":
+    case "MYPRIMETYPE":
     case "DECIMAL":
     case "NUMERIC":
     case "REAL":
@@ -50,6 +51,9 @@ export function getTypeString(
     if (field.type === "UUID") {
       return `VARCHAR(36)`;
     }
+    if (field.type === "MYPRIMETYPE") {
+      return "INT";
+    }
     if (
       dbToTypes[currentDb][field.type].isSized ||
       dbToTypes[currentDb][field.type].hasPrecision
@@ -64,6 +68,9 @@ export function getTypeString(
     }
     return field.type;
   } else if (dbms === DB.POSTGRES) {
+    if (field.type === "MYPRIMETYPE") {
+      return "integer";
+    }
     if (field.type === "SMALLINT" && field.increment) {
       return "smallserial";
     }
@@ -105,6 +112,8 @@ export function getTypeString(
   } else if (dbms === DB.MSSQL) {
     let type = field.type;
     switch (field.type) {
+      case "MYPRIMETYPE":
+        return "INT";
       case "ENUM":
         return baseType
           ? "NVARCHAR(255)"
@@ -142,6 +151,9 @@ export function getTypeString(
   } else if (dbms === DB.ORACLESQL) {
     let oracleType;
     switch (field.type) {
+      case "MYPRIMETYPE":
+        oracleType = "NUMBER";
+        break;
       case "BIGINT":
         oracleType = "NUMBER";
         break;
@@ -357,6 +369,7 @@ export function getSQLiteType(field) {
     case "INT":
     case "SMALLINT":
     case "BIGINT":
+    case "MYPRIMETYPE":
     case "BOOLEAN":
       return "INTEGER";
     case "DECIMAL":
