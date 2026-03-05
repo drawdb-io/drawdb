@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { generateSampleDataSQL } from "../../utils/exportSQL/sampleData";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -1213,6 +1214,22 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
                 ...prev,
                 data: result,
                 extension: "md",
+              }));
+            },
+          },
+          {
+            name: "Sample Data (SQL)",
+            function: () => {
+              setModal(MODAL.CODE);
+              const result = generateSampleDataSQL({
+                tables,
+                references: relationships,
+                database,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "sql",
               }));
             },
           },

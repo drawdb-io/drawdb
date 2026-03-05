@@ -18,9 +18,31 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeTypeRegex = /^\d+$/;
+
+const myPrimeType = {
+  type: "MYPRIMETYPE",
+  color: intColor,
+  checkDefault: (field) => {
+    if (!myPrimeTypeRegex.test(field.default)) return false;
+    const value = Number.parseInt(field.default, 10);
+    if (value <= 1) return false;
+    if (value === 2) return true;
+    if (value % 2 === 0) return false;
+    for (let i = 3; i * i <= value; i += 2) {
+      if (value % i === 0) return false;
+    }
+    return true;
+  },
+  hasCheck: true,
+  isSized: false,
+  hasPrecision: false,
+  canIncrement: false,
+};
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   INT: {
     type: "INT",
     color: intColor,
@@ -353,6 +375,7 @@ export const defaultTypes = new Proxy(defaultTypesBase, {
 });
 
 const mysqlTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   TINYINT: {
     type: "TINYINT",
     color: intColor,
@@ -818,6 +841,7 @@ export const mysqlTypes = new Proxy(mysqlTypesBase, {
 });
 
 const postgresTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   SMALLINT: {
     type: "SMALLINT",
     color: intColor,
@@ -1407,6 +1431,7 @@ export const postgresTypes = new Proxy(postgresTypesBase, {
 });
 
 const sqliteTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   INTEGER: {
     type: "INTEGER",
     color: intColor,
@@ -1556,6 +1581,7 @@ export const sqliteTypes = new Proxy(sqliteTypesBase, {
 });
 
 const mssqlTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   TINYINT: {
     type: "TINYINT",
     color: intColor,
@@ -1977,6 +2003,7 @@ export const mssqlTypes = new Proxy(mssqlTypesBase, {
 });
 
 const oraclesqlTypesBase = {
+  MYPRIMETYPE: myPrimeType,
   INTEGER: {
     type: "INTEGER",
     color: intColor,
