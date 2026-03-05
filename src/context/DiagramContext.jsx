@@ -173,6 +173,26 @@ export default function DiagramContextProvider({ children }) {
     });
   };
 
+  const deleteAllFields = (tid) => {
+    const table = tables.find((t) => t.id === tid);
+    if (!table) return;
+    if (table.fields.length === 0) return;
+
+    const tableFieldIds = new Set(table.fields.map((f) => f.id));
+
+    setRelationships((prev) =>
+      prev.filter(
+        (e) =>
+          !(
+            (e.startTableId === tid && tableFieldIds.has(e.startFieldId)) ||
+            (e.endTableId === tid && tableFieldIds.has(e.endFieldId))
+          ),
+      ),
+    );
+
+    updateTable(tid, { fields: [] });
+  };
+
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       setRelationships((prev) => {
@@ -237,6 +257,7 @@ export default function DiagramContextProvider({ children }) {
         updateTable,
         updateField,
         deleteField,
+        deleteAllFields,
         deleteTable,
         relationships,
         setRelationships,
