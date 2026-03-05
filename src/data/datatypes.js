@@ -18,6 +18,14 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeTypeRegex = /^\d+$/;
+
+const isMyPrimeTypeValue = (value) => {
+  const normalized = `${value}`.trim();
+  if (!myPrimeTypeRegex.test(normalized)) return false;
+  const parsed = Number.parseInt(normalized, 10);
+  return parsed > 0 && parsed % 2 === 1;
+};
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -73,6 +81,16 @@ const defaultTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   NUMBER: {
     type: "NUMBER",
@@ -432,6 +450,16 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   FLOAT: {
     type: "FLOAT",
@@ -885,6 +913,16 @@ const postgresTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   REAL: {
     type: "REAL",
@@ -1438,6 +1476,16 @@ const sqliteTypesBase = {
     isSized: false,
     hasPrecision: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
   BOOLEAN: {
     type: "BOOLEAN",
     color: booleanColor,
@@ -1629,6 +1677,16 @@ const mssqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   FLOAT: {
     type: "FLOAT",
@@ -1998,6 +2056,16 @@ const oraclesqlTypesBase = {
     isSized: false,
     hasPrecision: true,
     canIncrement: false,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   FLOAT: {
     type: "FLOAT",
