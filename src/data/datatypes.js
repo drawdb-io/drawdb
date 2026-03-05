@@ -115,6 +115,18 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: false,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      const allowedValues = ["1", "3", "5", "7", "9", "11"];
+      return allowedValues.includes(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   CHAR: {
     type: "CHAR",
     color: stringColor,

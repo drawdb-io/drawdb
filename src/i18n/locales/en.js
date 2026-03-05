@@ -279,6 +279,13 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    show_stats_box: "Show stats box",
+    stats_box_title: "Layout stats",
+    stats_tables: "Tables",
+    stats_relationships: "Relationships",
+    stats_max_depth: "Max depth",
+    stats_components: "Components",
+    auto_arrange: "Auto arrange",
   },
 };
 

@@ -82,6 +82,7 @@ import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
+import { arrangeTables } from "../../utils/arrangeTables";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
@@ -755,6 +756,49 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
+
+  const autoArrange = () => {
+    if (layout.readOnly || tables.length === 0) return;
+
+    setTables((prevTables) => {
+      const previousPositions = prevTables.map((t) => ({
+        id: t.id,
+        x: t.x,
+        y: t.y,
+      }));
+      const newTables = prevTables.map((t) => ({ ...t }));
+
+      arrangeTables({ tables: newTables, relationships });
+
+      const elements = newTables.map((t) => {
+        const prev = previousPositions.find((p) => p.id === t.id) || {
+          x: t.x,
+          y: t.y,
+        };
+        return {
+          id: t.id,
+          type: ObjectType.TABLE,
+          undo: { x: prev.x, y: prev.y },
+          redo: { x: t.x, y: t.y },
+        };
+      });
+
+      if (elements.length) {
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.MOVE,
+            bulk: true,
+            elements,
+            message: t("auto_arrange"),
+          },
+        ]);
+        setRedoStack([]);
+      }
+
+      return newTables;
+    });
+  };
 
   const menu = {
     file: {
@@ -1435,6 +1479,18 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
             showDebugCoordinates: !prev.showDebugCoordinates,
           })),
       },
+      show_stats_box: {
+        state: settings.showStatsBox ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showStatsBox: !prev.showStatsBox,
+          })),
+      },
       theme: {
         children: [
           {
@@ -1612,6 +1668,16 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       >
         <div className="flex justify-start items-center">
           <LayoutDropdown />
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly || tables.length === 0}
+            >
+              <i className="fa-solid fa-diagram-project" />
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("zoom_out")} position="bottom">
             <button

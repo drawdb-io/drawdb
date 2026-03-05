@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Action,
   Cardinality,
@@ -107,6 +107,70 @@ export default function Canvas() {
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
   };
+
+  const layoutStats = useMemo(() => {
+    const tableIds = tables.map((t) => t.id);
+    const rels = relationships || [];
+
+    if (tableIds.length === 0) {
+      return {
+        tables: 0,
+        relationships: 0,
+        maxDepth: 0,
+        components: 0,
+      };
+    }
+
+    const adjacency = new Map();
+    tableIds.forEach((id) => adjacency.set(id, new Set()));
+
+    rels.forEach((r) => {
+      if (adjacency.has(r.startTableId) && adjacency.has(r.endTableId)) {
+        adjacency.get(r.startTableId).add(r.endTableId);
+        adjacency.get(r.endTableId).add(r.startTableId);
+      }
+    });
+
+    let maxDepth = 0;
+    let components = 0;
+    const globalVisited = new Set();
+
+    const bfsDepth = (startId) => {
+      const queue = [[startId, 0]];
+      const visited = new Set([startId]);
+      globalVisited.add(startId);
+      let localMax = 0;
+
+      while (queue.length) {
+        const [current, dist] = queue.shift();
+        localMax = Math.max(localMax, dist);
+        const neighbors = adjacency.get(current) || new Set();
+        neighbors.forEach((nId) => {
+          if (!visited.has(nId)) {
+            visited.add(nId);
+            globalVisited.add(nId);
+            queue.push([nId, dist + 1]);
+          }
+        });
+      }
+
+      return localMax;
+    };
+
+    tableIds.forEach((id) => {
+      if (!globalVisited.has(id)) {
+        components += 1;
+        maxDepth = Math.max(maxDepth, bfsDepth(id));
+      }
+    });
+
+    return {
+      tables: tableIds.length,
+      relationships: rels.length,
+      maxDepth,
+      components,
+    };
+  }, [tables, relationships]);
 
   const collectSelectedElements = () => {
     const rect = getRectFromEndpoints(bulkSelectRect);
@@ -861,6 +925,23 @@ export default function Canvas() {
               </tr>
             </tbody>
           </table>
+        </div>
+      )}
+      {settings.showStatsBox && (
+        <div className="fixed flex flex-col gap-1 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 left-4 p-3 rounded-xl backdrop-blur-xs pointer-events-none select-none text-xs">
+          <div className="font-semibold mb-1">{t("stats_box_title")}</div>
+          <div>
+            {t("stats_tables")}: {layoutStats.tables}
+          </div>
+          <div>
+            {t("stats_relationships")}: {layoutStats.relationships}
+          </div>
+          <div>
+            {t("stats_max_depth")}: {layoutStats.maxDepth}
+          </div>
+          <div>
+            {t("stats_components")}: {layoutStats.components}
+          </div>
         </div>
       )}
     </div>

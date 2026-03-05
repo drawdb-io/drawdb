@@ -14,6 +14,7 @@ const defaultSettings = {
   tableWidth: tableWidth,
   showDebugCoordinates: false,
   showComments: true,
+  showStatsBox: false,
 };
 
 export const SettingsContext = createContext(defaultSettings);
