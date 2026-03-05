@@ -214,6 +214,7 @@ const en = {
     add_relationship: "Add relationship",
     edit_relationship: "{{extra}} Edit relationship {{refName}}",
     delete_relationship: "Delete relationship {{refName}}",
+    delete_all_fields: "Delete all fields",
     not_found: "Not found",
     pick_db: "Choose a database",
     generic: "Generic",

@@ -247,6 +247,21 @@ export default function Table({
                           type="danger"
                           block
                           style={{ marginTop: "8px" }}
+                          disabled={layout.readOnly || tableData.fields.length === 0}
+                          onClick={() => {
+                            if (layout.readOnly) return;
+                            tableData.fields.forEach((field) =>
+                              deleteField(field, tableData.id),
+                            );
+                          }}
+                        >
+                          {t("delete_all_fields")}
+                        </Button>
+                        <Button
+                          icon={<IconDeleteStroked />}
+                          type="danger"
+                          block
+                          style={{ marginTop: "8px" }}
                           onClick={() => deleteTable(tableData.id)}
                           disabled={layout.readOnly}
                         >
