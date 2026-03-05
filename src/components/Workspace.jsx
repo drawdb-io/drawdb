@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, createContext } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
+import StatsBox from "./StatsBox";
 import { CanvasContextProvider } from "../context/CanvasContext";
 import SidePanel from "./EditorSidePanel/SidePanel";
 import { DB, State } from "../data/constants";
@@ -491,6 +492,7 @@ export default function WorkSpace() {
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
+          <StatsBox />
           {version && (
             <div className="absolute right-8 top-2 space-x-2">
               <Button

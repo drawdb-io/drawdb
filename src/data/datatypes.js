@@ -32,6 +32,22 @@ const defaultTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (field.default === "") return true;
+      if (!intRegex.test(field.default)) return false;
+      const n = Number(field.default);
+      if (!Number.isInteger(n)) return false;
+      if (n <= 0) return false;
+      return n % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   SMALLINT: {
     type: "SMALLINT",
     color: intColor,
