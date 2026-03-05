@@ -14,6 +14,7 @@ import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
+import StatsBox from "./StatsBox";
 import {
   useCanvas,
   useSettings,
@@ -685,7 +686,7 @@ export default function Canvas() {
   return (
     <div className="grow h-full touch-none" id="canvas">
       <div
-        className="w-full h-full"
+        className="w-full h-full relative"
         style={{
           cursor: pointer.style,
           backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
@@ -792,6 +793,7 @@ export default function Canvas() {
             />
           )}
         </svg>
+        <StatsBox />
       </div>
       {settings.showDebugCoordinates && (
         <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-xs pointer-events-none select-none">

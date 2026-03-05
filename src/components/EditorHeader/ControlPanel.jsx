@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { autoArrangeTables, createAutoArrangeUndoEntry } from "../../utils/autoArrange";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -565,6 +566,21 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       zoom: scale,
       pan: { x: centerX, y: centerY },
     }));
+  };
+  const autoArrange = () => {
+    if (layout.readOnly || tables.length < 2) return;
+
+    const arranged = autoArrangeTables(tables, relationships, settings.tableWidth);
+    const changed = arranged.some((table) => {
+      const current = tables.find((t) => t.id === table.id);
+      return current && (current.x !== table.x || current.y !== table.y);
+    });
+    if (!changed) return;
+
+    setTables(arranged);
+    setUndoStack((prev) => [...prev, createAutoArrangeUndoEntry(tables, arranged)]);
+    setRedoStack([]);
+    setSaveState(State.SAVING);
   };
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
@@ -1559,6 +1575,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     preventDefault: true,
   });
   useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("mod+alt+r", autoArrange, { preventDefault: true });
   useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
 
   return (
@@ -1750,6 +1767,16 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               onClick={() => setSidesheet(SIDESHEET.VERSIONS)}
             >
               <i className="fa-solid fa-code-branch" />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content="Auto arrange (Ctrl+Alt+R)" position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly || tables.length < 2}
+            >
+              <i className="fa-solid fa-shuffle" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
