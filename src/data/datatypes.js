@@ -19,6 +19,13 @@ const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
 
+const isMyPrimeTypeValue = (value) => {
+  const n = Number(value);
+  if (!Number.isInteger(n)) return false;
+  if (n <= 0) return false;
+  return n % 2 === 1;
+};
+
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
   INT: {
@@ -83,6 +90,17 @@ const defaultTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    canIncrement: false,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: decimalColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
     canIncrement: false,
   },
   FLOAT: {

@@ -7,6 +7,8 @@ export function getJsonType(f) {
     return '{ "type" : "object", additionalProperties : true }';
   }
   switch (f.type) {
+    case "MYPRIMETYPE":
+      return '{ "type" : "number" }';
     case "INT":
     case "SMALLINT":
     case "BIGINT":
