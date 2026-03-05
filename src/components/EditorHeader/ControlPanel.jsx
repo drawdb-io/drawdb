@@ -82,6 +82,7 @@ import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
+import { autoArrangeTables } from "../../utils/autoArrangeTables";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
@@ -565,6 +566,42 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       zoom: scale,
       pan: { x: centerX, y: centerY },
     }));
+  };
+  const autoArrange = () => {
+    if (layout.readOnly || tables.length === 0) return;
+
+    const arrangedPositions = autoArrangeTables(tables, relationships, {
+      tableWidth: settings.tableWidth,
+    });
+
+    const movedElements = [];
+    for (const table of tables) {
+      const position = arrangedPositions.get(table.id);
+      if (!position) continue;
+      if (position.x === table.x && position.y === table.y) continue;
+
+      movedElements.push({
+        id: table.id,
+        type: ObjectType.TABLE,
+        undo: { x: table.x, y: table.y },
+        redo: { x: position.x, y: position.y },
+      });
+      updateTable(table.id, position);
+    }
+
+    if (movedElements.length === 0) return;
+
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: t("bulk_update"),
+        elements: movedElements,
+      },
+    ]);
+    setRedoStack([]);
+    setSaveState(State.SAVING);
   };
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
@@ -1278,6 +1315,11 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         shortcut: "Ctrl+D",
         disabled: layout.readOnly,
       },
+      auto_arrange: {
+        function: autoArrange,
+        shortcut: "Ctrl+Alt+A",
+        disabled: layout.readOnly || tables.length < 2,
+      },
       delete: {
         function: del,
         shortcut: "Del",
@@ -1559,6 +1601,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     preventDefault: true,
   });
   useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
+  useHotkeys("mod+alt+a", autoArrange, { preventDefault: true });
   useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
 
   return (
@@ -1637,6 +1680,14 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
                   <div>{t("fit_window_reset")}</div>
                   <div className="text-gray-400">Ctrl+Alt+W</div>
                 </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={autoArrange}
+                  disabled={layout.readOnly || tables.length < 2}
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <div>{t("auto_arrange")}</div>
+                  <div className="text-gray-400">Ctrl+Alt+A</div>
+                </Dropdown.Item>
                 <Dropdown.Divider />
                 {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
                   <Dropdown.Item
@@ -1713,6 +1764,15 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               disabled={layout.readOnly}
             >
               <IconAddTable />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly || tables.length < 2}
+            >
+              <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
           </Tooltip>
           <Tooltip content={t("add_area")} position="bottom">

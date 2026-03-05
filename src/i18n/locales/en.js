@@ -45,6 +45,7 @@ const en = {
     duplicate: "Duplicate",
     delete: "Delete",
     copy_as_image: "Copy as image",
+    auto_arrange: "Auto arrange",
     view: "View",
     header: "Menubar",
     sidebar: "Sidebar",
