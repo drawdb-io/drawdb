@@ -21,6 +21,21 @@ const binaryRegex = /^[01]+$/;
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const value = Number.parseInt(field.default, 10);
+      if (Number.isNaN(value)) return false;
+      if (value < 1) return false;
+      return value % 2 !== 0;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   INT: {
     type: "INT",
     color: intColor,
