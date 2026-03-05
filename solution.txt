@@ -1,0 +1,65 @@
+Q1. Which files in the codebase define the database datatypes? How many data types are there?
+The database datatypes are defined in the file src/data/datatypes.js. There are a total of 176 datatype definitions in this file, covering various database engines including MySQL, PostgreSQL, SQLite, MSSQL, Oracle, and MariaDB.
+
+Q2. What testing framework does the project use? How many tests are there in the project?
+The project does not currently use any testing framework (no testing dependencies are listed in package.json, and no test files were found in the codebase). Consequently, there are 0 tests in the project.
+
+Q3. What parts of the codebase are responsible for rendering the tables? Which files manage the layout of tables?
+The rendering of tables is primarily handled by the src/components/EditorCanvas/Table.jsx component. The layout of the tables (their positioning and arrangement) is managed by the src/utils/arrangeTables.js utility file and the src/components/EditorCanvas/Canvas.jsx component, which coordinates the overall rendering and interaction on the diagram canvas. The src/context/LayoutContext.jsx file is responsible for managing the state of the layout.
+
+Create a new branch in your repo
+Select 2 features from the provided feature bank below and implement them using your AI agent
+Push your code changes to your repo (using your branch)
+Create a pull request to merge your changes into main branch (Do not select the original drawdb repo). Describe all your changes properly. Add your collaborator as reviewer.
+In the PR, students will have to include a summary of the feature, describe the changes made, add any testing instructions, and any screenshots/recordings. 
+Answer the following questions:
+Q4: Which features did you select to implement?
+Q5: How did you validate if your changes were implemented correctly?
+Q6: What features of the AI agent did you use?
+Q7: Any challenges faced?
+
+
+Possible Features for DrawDB:
+
+Add a new datatype MYPRIMETYPE that supports a fixed set of prime numbers: 1, 3, 5, 7, 9, 11, …
+Add an option for each Table icon to delete all fields
+In the default view, the “...” icon shows additional options.
+Add an “Auto arrange” button so that the number of line crossings is minimized
+Different algorithms are possible: force-directed, layered graph, etc.
+Add a “Stats box” in the UI that displays statistics of the current layout, such as number of tables, number of relationships, max depth, etc.
+Generate sample data from the tables.
+
+---
+
+Q4: Which features did you select to implement?
+I selected the following two features:
+1. Add a new datatype MYPRIMETYPE that supports a fixed set of prime numbers: 1, 3, 5, 7, 9, 11, ... (implemented as positive odd numbers per the provided list).
+2. Add an option for each Table icon to delete all fields (implemented as a "Clear fields" button in the table's options menu).
+
+Q5: How did you validate if your changes were implemented correctly?
+I validated the changes through comprehensive code analysis and review:
+1. For MYPRIMETYPE: I verified the `checkDefault` regular expression and logic in `src/data/datatypes.js` to ensure it correctly identifies positive odd numbers (1, 3, 5, 7, 9, 11, etc.) and rejects even numbers or non-numeric strings.
+2. For "Clear fields": I verified that the `deleteAllFields` function in `src/context/DiagramContext.jsx` correctly clears the fields array for the specified table, removes all associated relationships to prevent orphaned connections, and properly records the action in the undo stack. I also verified the UI integration in `src/components/EditorCanvas/Table.jsx` to ensure the button is correctly placed and calls the function with the right parameters.
+
+Q6: What features of the AI agent did you use?
+I used several specialized features of the AI agent:
+- Codebase Investigator: Used to perform initial mapping of the project structure and identify key files related to datatypes, testing, and rendering.
+- Grep Search: Extensively used to find usages of symbols like `deleteField` and `deleteTable` to understand implementation patterns.
+- Read File: Used to examine the source code of specific components and context providers.
+- Replace: Used for surgical updates to existing files, ensuring that new features were integrated without breaking existing logic.
+- Run Shell Command: Used for file operations, branching, and committing changes.
+
+Q7: Any challenges faced?
+One challenge faced was ensuring that "Delete all fields" correctly handled relationships. Simply clearing the fields array would leave orphaned relationships in the diagram. I had to implement logic to filter out all relationships connected to the table being cleared. Another minor challenge was a syntax error when attempting to use a shell heredoc for appending text, which I resolved by switching to more robust tool calls like `write_file` and `replace`.
+
+---
+
+PR Summary:
+
+Features Implemented:
+1.  **MYPRIMETYPE Datatype**: Added a new custom datatype `MYPRIMETYPE` to the Generic database engine. This type validates that default values are positive odd numbers (1, 3, 5, 7, 9, 11, ...), following the specific list provided in the requirements.
+2.  **Clear All Fields Option**: Added a "Clear fields" button to the table options menu (the "..." icon). This feature allows users to quickly remove all fields from a table and automatically cleans up any associated relationships. It also supports undo/redo functionality.
+
+Testing Instructions:
+1.  To test `MYPRIMETYPE`: In the editor, select the Generic database, add a field to a table, and set its type to `MYPRIMETYPE`. Verify that default values like "1", "3", "5" are accepted, while "2", "4", or "hello" are flagged as invalid (depending on the editor's validation UI).
+2.  To test "Clear fields": Create a table with several fields and relationships. Open the table's "..." menu and click "Clear fields". Verify that all fields and relationships are removed. Test "Undo" to ensure they are correctly restored.

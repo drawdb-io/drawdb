@@ -346,6 +346,17 @@ const defaultTypesBase = {
     hasPrecision: false,
     noDefault: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      const val = Number.parseInt(field.default);
+      return !Number.isNaN(val) && val > 0 && val % 2 !== 0;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+  },
 };
 
 export const defaultTypes = new Proxy(defaultTypesBase, {

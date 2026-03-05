@@ -159,18 +159,65 @@ export default function DiagramContextProvider({ children }) {
       ]);
       setRedoStack([]);
     }
+
+    setTables((prev) =>
+      prev.map((table) => {
+        if (tid === table.id) {
+          return {
+            ...table,
+            fields: table.fields.filter((f) => f.id !== field.id),
+          };
+        }
+        return table;
+      }),
+    );
+
     setRelationships((prev) =>
       prev.filter(
-        (e) =>
+        (r) =>
           !(
-            (e.startTableId === tid && e.startFieldId === field.id) ||
-            (e.endTableId === tid && e.endFieldId === field.id)
+            (r.startTableId === tid && r.startFieldId === field.id) ||
+            (r.endTableId === tid && r.endFieldId === field.id)
           ),
       ),
     );
-    updateTable(tid, {
-      fields: fields.filter((e) => e.id !== field.id),
-    });
+  };
+
+  const deleteAllFields = (tid, addToHistory = true) => {
+    const table = tables.find((t) => t.id === tid);
+    if (!table) return;
+
+    if (addToHistory) {
+      const rels = relationships.filter(
+        (r) => r.startTableId === tid || r.endTableId === tid,
+      );
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.TABLE,
+          component: "fields_clear",
+          tid: tid,
+          data: {
+            fields: table.fields,
+            relationships: rels,
+          },
+          message: t("edit_table", {
+            tableName: table.name,
+            extra: "[clear all fields]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+    }
+
+    setTables((prev) =>
+      prev.map((t) => (t.id === tid ? { ...t, fields: [] } : t)),
+    );
+
+    setRelationships((prev) =>
+      prev.filter((r) => r.startTableId !== tid && r.endTableId !== tid),
+    );
   };
 
   const addRelationship = (data, addToHistory = true) => {
@@ -237,6 +284,7 @@ export default function DiagramContextProvider({ children }) {
         updateTable,
         updateField,
         deleteField,
+        deleteAllFields,
         deleteTable,
         relationships,
         setRelationships,
