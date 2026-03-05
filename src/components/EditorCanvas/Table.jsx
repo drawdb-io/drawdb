@@ -34,7 +34,8 @@ export default function Table({
   const [hoveredField, setHoveredField] = useState(null);
   const { database } = useDiagram();
   const { layout } = useLayout();
-  const { deleteTable, deleteField, updateTable } = useDiagram();
+  const { deleteTable, deleteField, deleteAllFields, updateTable } =
+    useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
   const {
@@ -242,6 +243,19 @@ export default function Table({
                             </div>
                           )}
                         </div>
+                        <Button
+                          icon={<IconDeleteStroked />}
+                          type="danger"
+                          block
+                          style={{ marginTop: "8px" }}
+                          onClick={() => {
+                            if (layout.readOnly) return;
+                            deleteAllFields(tableData.id);
+                          }}
+                          disabled={layout.readOnly || tableData.fields.length === 0}
+                        >
+                          {t("delete")} all fields
+                        </Button>
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
