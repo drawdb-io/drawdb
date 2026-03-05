@@ -133,6 +133,13 @@ export default function Table({
     }
   };
 
+  const deleteAllFields = () => {
+    if (layout.readOnly) return;
+    tableData.fields.forEach((field) => {
+      deleteField(field, tableData.id);
+    });
+  };
+
   if (tableData.hidden) return null;
 
   return (
@@ -242,6 +249,15 @@ export default function Table({
                             </div>
                           )}
                         </div>
+                        <Button
+                          icon={<IconMinus />}
+                          type="danger"
+                          block
+                          onClick={deleteAllFields}
+                          disabled={layout.readOnly || tableData.fields.length === 0}
+                        >
+                          Delete all fields
+                        </Button>
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
