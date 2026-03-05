@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { arrangeTables } from "../../utils/arrangeTables";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -510,6 +511,53 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   };
   const resetView = () =>
     setTransform((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
+  const autoArrange = () => {
+    if (layout.readOnly || tables.length === 0) return;
+
+    const diagram = {
+      tables: tables.map((t) => ({ ...t })),
+      relationships: relationships.map((r) => ({ ...r })),
+    };
+
+    arrangeTables(diagram, { tableWidth: settings.tableWidth });
+
+    const movedElements = [];
+    const nextTables = tables.map((table) => {
+      const updated = diagram.tables.find((t) => t.id === table.id);
+      if (!updated) return table;
+
+      if (updated.x === table.x && updated.y === table.y) {
+        return table;
+      }
+
+      movedElements.push({
+        id: table.id,
+        type: ObjectType.TABLE,
+        undo: { x: table.x, y: table.y },
+        redo: { x: updated.x, y: updated.y },
+      });
+
+      return { ...table, x: updated.x, y: updated.y };
+    });
+
+    if (movedElements.length === 0) {
+      Toast.info(t("no_changes_to_record"));
+      return;
+    }
+
+    setTables(nextTables);
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: t("auto_arrange"),
+        elements: movedElements,
+      },
+    ]);
+    setRedoStack([]);
+    setSaveState(State.SAVING);
+  };
   const fitWindow = () => {
     const canvas = document.getElementById("canvas").getBoundingClientRect();
 
@@ -1684,6 +1732,15 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               }
             >
               <i className="fa-solid fa-magnifying-glass-plus" />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly || tables.length === 0}
+            >
+              <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
