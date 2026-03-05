@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   IconCaretdown,
   IconChevronRight,
@@ -86,6 +86,47 @@ import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
 
+function computeDiagramMaxDepth(tables, relationships) {
+  if (!tables || tables.length === 0) return 0;
+
+  const idList = tables.map((t) => String(t.id));
+  const neighbors = new Map();
+
+  idList.forEach((id) => {
+    neighbors.set(id, new Set());
+  });
+
+  (relationships || []).forEach((r) => {
+    const a = String(r.startTableId);
+    const b = String(r.endTableId);
+    if (!neighbors.has(a) || !neighbors.has(b)) return;
+    neighbors.get(a).add(b);
+    neighbors.get(b).add(a);
+  });
+
+  let max = 0;
+
+  for (const start of idList) {
+    const queue = [[start, 0]];
+    const visited = new Set([start]);
+
+    while (queue.length > 0) {
+      const [node, dist] = queue.shift();
+      if (dist > max) max = dist;
+
+      const adj = neighbors.get(node) || new Set();
+      adj.forEach((next) => {
+        if (!visited.has(next)) {
+          visited.add(next);
+          queue.push([next, dist + 1]);
+        }
+      });
+    }
+  }
+
+  return max;
+}
+
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
 
@@ -131,6 +172,22 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
 
   const invertLayout = (component) =>
     setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
+
+  const tableCount = tables.length;
+  const relationshipCount = relationships.length;
+  const fieldCount = useMemo(
+    () =>
+      tables.reduce(
+        (sum, table) => sum + ((table.fields && table.fields.length) || 0),
+        0,
+      ),
+    [tables],
+  );
+
+  const maxDepth = useMemo(
+    () => computeDiagramMaxDepth(tables, relationships),
+    [tables, relationships],
+  );
 
   const undo = () => {
     if (undoStack.length === 0) return;
@@ -1996,6 +2053,20 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
                 </Tag>
               )}
             </div>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-3 pe-4 text-xs">
+          <div className="px-2 py-1 rounded-md bg-zinc-800/80 text-zinc-100">
+            Tables: {tableCount}
+          </div>
+          <div className="px-2 py-1 rounded-md bg-zinc-800/80 text-zinc-100">
+            Relationships: {relationshipCount}
+          </div>
+          <div className="px-2 py-1 rounded-md bg-zinc-800/80 text-zinc-100">
+            Fields: {fieldCount}
+          </div>
+          <div className="px-2 py-1 rounded-md bg-zinc-800/80 text-zinc-100">
+            Max depth: {maxDepth}
           </div>
         </div>
       </nav>
