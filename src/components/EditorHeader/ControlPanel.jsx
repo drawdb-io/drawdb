@@ -224,6 +224,15 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           updateTable(a.tid, {
             fields: table.fields.filter((e) => e.id !== a.fid),
           });
+        } else if (a.component === "fields_delete_all") {
+          setRelationships((prev) => {
+            let temp = [...prev];
+            a.data.relationship.forEach((r) => {
+              temp.splice(r.id, 0, r);
+            });
+            return temp;
+          });
+          updateTable(a.tid, { fields: a.data.fields });
         } else if (a.component === "index_add") {
           updateTable(a.tid, {
             indices: table.indices
@@ -400,6 +409,13 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               },
             ],
           });
+        } else if (a.component === "fields_delete_all") {
+          setRelationships((prev) =>
+            prev.filter(
+              (e) => !(e.startTableId === a.tid || e.endTableId === a.tid),
+            ),
+          );
+          updateTable(a.tid, { fields: [] });
         } else if (a.component === "index_add") {
           updateTable(a.tid, {
             indices: [
