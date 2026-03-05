@@ -18,6 +18,9 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeTypeValues = new Set(["1", "3", "5", "7", "9", "11"]);
+const normalizeNumberLikeDefault = (value) =>
+  String(value).trim().replace(/^['"]|['"]$/g, "");
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -31,6 +34,17 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   SMALLINT: {
     type: "SMALLINT",
@@ -364,6 +378,17 @@ const mysqlTypesBase = {
     hasPrecision: false,
     canIncrement: true,
     signed: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   SMALLINT: {
     type: "SMALLINT",
@@ -829,6 +854,17 @@ const postgresTypesBase = {
     hasPrecision: false,
     canIncrement: true,
     compatibleWith: ["SMALLSERIAL", "SERIAL", "BIGSERIAL", "INTEGER", "BIGINT"],
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   INTEGER: {
     type: "INTEGER",
@@ -1418,6 +1454,17 @@ const sqliteTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   REAL: {
     type: "REAL",
     color: decimalColor,
@@ -1566,6 +1613,17 @@ const mssqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   SMALLINT: {
     type: "SMALLINT",
@@ -1987,6 +2045,17 @@ const oraclesqlTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return myPrimeTypeValues.has(normalizeNumberLikeDefault(field.default));
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   NUMBER: {
     type: "NUMBER",
