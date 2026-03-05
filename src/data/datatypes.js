@@ -19,6 +19,16 @@ const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
 
+const isMyPrimeTypeValue = (value) => {
+  if (!intRegex.test(value)) return false;
+
+  const n = Number.parseInt(value, 10);
+  if (Number.isNaN(n)) return false;
+
+  // Treat MYPRIMETYPE as allowing positive odd integers: 1, 3, 5, 7, 9, 11, ...
+  return n >= 1 && n % 2 !== 0;
+};
+
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
   INT: {
@@ -31,6 +41,17 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return isMyPrimeTypeValue(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
   SMALLINT: {
     type: "SMALLINT",

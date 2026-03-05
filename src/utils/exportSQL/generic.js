@@ -14,6 +14,7 @@ export function getJsonType(f) {
     case "NUMERIC":
     case "REAL":
     case "FLOAT":
+    case "MYPRIMETYPE":
       return '{ "type" : "number" }';
     case "BOOLEAN":
       return '{ "type" : "boolean" }';
