@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { autoArrangeTables } from "../../utils/arrangeTables";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -1612,6 +1613,52 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       >
         <div className="flex justify-start items-center">
           <LayoutDropdown />
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-3 hover-2 rounded-sm flex items-center gap-1 disabled:opacity-50"
+              disabled={layout.readOnly || tables.length === 0}
+              onClick={() => {
+                if (layout.readOnly || tables.length === 0) return;
+
+                const diagram = {
+                  tables: tables.map((t) => ({ ...t })),
+                  relationships,
+                };
+
+                autoArrangeTables(diagram);
+
+                const elements = diagram.tables.map((table, index) => ({
+                  id: table.id,
+                  type: ObjectType.TABLE,
+                  undo: {
+                    x: tables[index].x ?? 0,
+                    y: tables[index].y ?? 0,
+                  },
+                  redo: {
+                    x: table.x ?? 0,
+                    y: table.y ?? 0,
+                  },
+                }));
+
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.MOVE,
+                    bulk: true,
+                    message: t("auto_arrange"),
+                    elements,
+                  },
+                ]);
+                setRedoStack([]);
+                setTables(diagram.tables);
+                setSaveState(State.SAVING);
+              }}
+            >
+              <i className="fa-solid fa-diagram-project" />
+              <span className="hidden sm:inline">{t("auto_arrange")}</span>
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("zoom_out")} position="bottom">
             <button

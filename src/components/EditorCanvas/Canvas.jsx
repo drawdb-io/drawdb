@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Action,
   Cardinality,
@@ -103,6 +103,70 @@ export default function Canvas() {
   // this is used to store the element that is clicked on
   // at the moment, and shouldn't be a part of the state
   let elementPointerDown = null;
+
+  const layoutStats = useMemo(() => {
+    const numTables = tables.length;
+    const numRelationships = relationships.length;
+    const numAreas = areas.length;
+    const numNotes = notes.length;
+
+    const degree = new Map();
+    tables.forEach((t) => degree.set(t.id, 0));
+    relationships.forEach((r) => {
+      if (degree.has(r.startTableId)) {
+        degree.set(r.startTableId, degree.get(r.startTableId) + 1);
+      }
+      if (degree.has(r.endTableId)) {
+        degree.set(r.endTableId, degree.get(r.endTableId) + 1);
+      }
+    });
+    const totalDegree = Array.from(degree.values()).reduce(
+      (sum, d) => sum + d,
+      0,
+    );
+    const avgDegree =
+      numTables > 0 ? totalDegree / numTables : 0;
+
+    let maxDepth = 0;
+    if (numTables > 0) {
+      const adj = new Map();
+      tables.forEach((t) => adj.set(t.id, new Set()));
+      relationships.forEach((r) => {
+        if (adj.has(r.startTableId) && adj.has(r.endTableId)) {
+          adj.get(r.startTableId).add(r.endTableId);
+          adj.get(r.endTableId).add(r.startTableId);
+        }
+      });
+
+      const ids = tables.map((t) => t.id);
+      ids.forEach((startId) => {
+        const visited = new Set([startId]);
+        const queue = [{ id: startId, depth: 0 }];
+        let localMax = 0;
+        while (queue.length > 0) {
+          const { id, depth } = queue.shift();
+          localMax = Math.max(localMax, depth);
+          const neighbors = adj.get(id) ?? new Set();
+          neighbors.forEach((n) => {
+            if (!visited.has(n)) {
+              visited.add(n);
+              queue.push({ id: n, depth: depth + 1 });
+            }
+          });
+        }
+        maxDepth = Math.max(maxDepth, localMax);
+      });
+    }
+
+    return {
+      numTables,
+      numRelationships,
+      numAreas,
+      numNotes,
+      avgDegree,
+      maxDepth,
+    };
+  }, [tables, relationships, areas, notes]);
 
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
@@ -858,6 +922,39 @@ export default function Canvas() {
                 <td>{t("coordinate_space_diagram")}</td>
                 <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
                 <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+            <thead>
+              <tr>
+                <th colSpan={3}>{t("layout_stats")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{t("tables")}</td>
+                <td colSpan={2}>{layoutStats.numTables}</td>
+              </tr>
+              <tr>
+                <td>{t("relationships")}</td>
+                <td colSpan={2}>{layoutStats.numRelationships}</td>
+              </tr>
+              <tr>
+                <td>{t("subject_areas")}</td>
+                <td colSpan={2}>{layoutStats.numAreas}</td>
+              </tr>
+              <tr>
+                <td>{t("notes")}</td>
+                <td colSpan={2}>{layoutStats.numNotes}</td>
+              </tr>
+              <tr>
+                <td>{t("max_depth")}</td>
+                <td colSpan={2}>{layoutStats.maxDepth}</td>
+              </tr>
+              <tr>
+                <td>{t("avg_degree")}</td>
+                <td colSpan={2}>{layoutStats.avgDegree.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
