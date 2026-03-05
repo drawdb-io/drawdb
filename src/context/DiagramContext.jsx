@@ -173,6 +173,15 @@ export default function DiagramContextProvider({ children }) {
     });
   };
 
+  const deleteAllFields = (tid) => {
+    setRelationships((prev) =>
+      prev.filter(
+        (r) => r.startTableId !== tid && r.endTableId !== tid,
+      ),
+    );
+    updateTable(tid, { fields: [], indices: [] });
+  };
+
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       setRelationships((prev) => {
@@ -238,6 +247,7 @@ export default function DiagramContextProvider({ children }) {
         updateField,
         deleteField,
         deleteTable,
+        deleteAllFields,
         relationships,
         setRelationships,
         addRelationship,

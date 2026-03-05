@@ -85,6 +85,20 @@ const defaultTypesBase = {
     hasPrecision: true,
     canIncrement: false,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    /* only odd positive integers allowed (1,3,5,7,9,11,...) */
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) return false;
+      const val = Number.parseInt(field.default, 10);
+      return val > 0 && val % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   FLOAT: {
     type: "FLOAT",
     color: decimalColor,
