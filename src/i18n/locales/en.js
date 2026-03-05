@@ -94,6 +94,8 @@ const en = {
     add_table: "Add table",
     add_area: "Add area",
     add_note: "Add note",
+    auto_arrange: "Auto arrange",
+    generate_sample_data: "Generate sample data",
     add_type: "Add type",
     tables: "Tables",
     relationships: "Relationships",
@@ -279,6 +281,7 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    sample_data_generated: "Sample data generated and downloaded",
   },
 };
 
