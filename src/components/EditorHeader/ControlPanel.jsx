@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { autoArrangeTables } from "../../utils/arrangeTables";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -484,6 +485,41 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
   const zoomOut = () =>
     setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
+  const autoArrange = () => {
+    if (layout.readOnly) return;
+    if (!tables || tables.length <= 1) return;
+
+    const positionsMap = autoArrangeTables(tables, relationships);
+    const elements = [];
+
+    tables.forEach((table) => {
+      if (table.locked) return;
+      const next = positionsMap[table.id];
+      if (!next) return;
+
+      elements.push({
+        id: table.id,
+        type: ObjectType.TABLE,
+        undo: { x: table.x ?? 0, y: table.y ?? 0 },
+        redo: { x: next.x, y: next.y },
+      });
+
+      updateTable(table.id, { x: next.x, y: next.y });
+    });
+
+    if (elements.length > 0) {
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.MOVE,
+          bulk: true,
+          message: t("auto_arrange"),
+          elements,
+        },
+      ]);
+      setRedoStack([]);
+    }
+  };
   const viewStrictMode = () => {
     setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
   };
@@ -1731,6 +1767,16 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               disabled={layout.readOnly}
             >
               <IconAddNote />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-3 hover-2 rounded-sm flex items-center gap-2 disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

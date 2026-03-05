@@ -268,6 +268,7 @@ const en = {
     failed_to_record_version: "Failed to record version",
     failed_to_load_diagram: "Failed to load diagram",
     see_all: "See all",
+    auto_arrange: "Auto arrange",
     migrations: "Migrations",
     generate_migration: "Generate migration",
     migration_not_supported_generic:
