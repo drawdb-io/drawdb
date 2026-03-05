@@ -320,6 +320,20 @@ const defaultTypesBase = {
     hasPrecision: false,
     noDefault: false,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (field.default === "") return true;
+      if (!intRegex.test(field.default)) return false;
+      const n = Number(field.default);
+      return n > 0 && n % 2 !== 0;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   ENUM: {
     type: "ENUM",
     color: enumSetColor,
