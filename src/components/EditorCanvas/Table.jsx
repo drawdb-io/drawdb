@@ -32,9 +32,14 @@ export default function Table({
   setLinkingLine,
 }) {
   const [hoveredField, setHoveredField] = useState(null);
-  const { database } = useDiagram();
+  const {
+    database,
+    deleteTable,
+    deleteField,
+    updateTable,
+    setRelationships,
+  } = useDiagram();
   const { layout } = useLayout();
-  const { deleteTable, deleteField, updateTable } = useDiagram();
   const { settings } = useSettings();
   const { t } = useTranslation();
   const {
@@ -131,6 +136,18 @@ export default function Table({
         .getElementById(`scroll_table_${tableData.id}`)
         .scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const deleteAllFields = () => {
+    if (layout.readOnly || tableData.fields.length === 0) return;
+
+    setRelationships((prev) =>
+      prev.filter(
+        (rel) =>
+          rel.startTableId !== tableData.id && rel.endTableId !== tableData.id,
+      ),
+    );
+    updateTable(tableData.id, { fields: [], indices: [] });
   };
 
   if (tableData.hidden) return null;
@@ -242,6 +259,16 @@ export default function Table({
                             </div>
                           )}
                         </div>
+                        <Button
+                          icon={<IconMinus />}
+                          type="warning"
+                          block
+                          style={{ marginTop: "8px" }}
+                          onClick={deleteAllFields}
+                          disabled={layout.readOnly || tableData.fields.length === 0}
+                        >
+                          Delete all fields
+                        </Button>
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
