@@ -32,6 +32,22 @@ const defaultTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) {
+        return false;
+      }
+      const value = Number.parseInt(field.default, 10);
+      // Allow 1, 3, 5, 7, 9, 11, … (positive odd integers)
+      return value >= 1 && value % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
   SMALLINT: {
     type: "SMALLINT",
     color: intColor,
