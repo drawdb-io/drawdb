@@ -54,6 +54,32 @@ const defaultTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!intRegex.test(field.default)) {
+        return false;
+      }
+      const n = Number(field.default);
+      if (!Number.isInteger(n) || n < 1) {
+        return false;
+      }
+      if (n === 1) {
+        return true;
+      }
+      for (let i = 2; i * i <= n; i++) {
+        if (n % i === 0) {
+          return false;
+        }
+      }
+      return true;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
+  },
   DECIMAL: {
     type: "DECIMAL",
     color: decimalColor,
