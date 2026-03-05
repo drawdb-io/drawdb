@@ -13,7 +13,7 @@ function sampleValueForType(type, index) {
   if (t.includes("time") || t.includes("date")) return new Date().toISOString();
   if (t.includes("bool")) return Math.random() > 0.5;
   if (t.includes("json")) return { sample: true, i: index };
-  if (t.includes("float") || t.includes("double") || t.includes("real")) return (Math.random() * 100).toFixed(2);
+  if (t.includes("float") || t.includes("double") || t.includes("real")) return parseFloat((Math.random() * 100).toFixed(2));
   return randString(8);
 }
 
@@ -29,13 +29,14 @@ export function generateSampleData(tables = [], count = 5) {
     const rows = [];
     for (let i = 0; i < count; i++) {
       const row = {};
-      (table.fields || []).forEach((f, idx) => {
-        const key = f.name || `col_${idx}`;
+      (table.fields || []).forEach((f, fieldIdx) => {
+        const key = f.name || `col_${fieldIdx}`;
         row[key] = sampleValueForType(f.type || f.dataType || "", i);
       });
       rows.push(row);
     }
-    out[table.name || `table_${table.id}`] = rows;
+    const tableKey = table.name ? `${table.name}_${table.id}` : `table_${table.id}`;
+    out[tableKey] = rows;
   });
   return out;
 }

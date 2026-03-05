@@ -573,7 +573,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     if (layout.readOnly) return;
     // deep clone tables so arrangeTables can mutate safely
     const cloned = JSON.parse(JSON.stringify(tables));
-    arrangeTables({ tables: cloned, relationships });
+    arrangeTables({ tables: cloned, relationships }, settings.tableWidth);
 
     const elements = cloned.map((t) => {
       const orig = tables.find((o) => o.id === t.id) || { x: 0, y: 0 };

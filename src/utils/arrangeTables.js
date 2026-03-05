@@ -4,8 +4,7 @@ import {
   tableHeaderHeight,
 } from "../data/constants";
 
-export function arrangeTables(diagram) {
-  const tableWidth = 200;
+export function arrangeTables(diagram, tableWidth = 200) {
   const gapX = 54;
   const gapY = 40;
 
@@ -34,17 +33,18 @@ export function arrangeTables(diagram) {
   }
 
   // Layered layout by topological layering (Kahn's algorithm) to reduce crossings
-  const idSet = new Set(tables.map((t) => t.id));
+  const idSet = new Set(tables.map((t) => String(t.id)));
   const adj = {};
   const inDeg = {};
   tables.forEach((t) => {
-    adj[t.id] = [];
-    inDeg[t.id] = 0;
+    const id = String(t.id);
+    adj[id] = [];
+    inDeg[id] = 0;
   });
 
   relationships.forEach((r) => {
-    const s = r.startTableId;
-    const e = r.endTableId;
+    const s = String(r.startTableId);
+    const e = String(r.endTableId);
     if (idSet.has(s) && idSet.has(e)) {
       adj[s].push(e);
       inDeg[e] = (inDeg[e] || 0) + 1;
@@ -52,9 +52,8 @@ export function arrangeTables(diagram) {
   });
 
   let queue = Object.keys(inDeg)
-    .filter((k) => inDeg[k] === 0)
-    .map((k) => Number(k));
-  if (queue.length === 0) queue = tables.map((t) => t.id);
+    .filter((k) => inDeg[k] === 0);
+  if (queue.length === 0) queue = tables.map((t) => String(t.id));
 
   const layers = {};
   const remaining = { ...inDeg };
@@ -74,13 +73,15 @@ export function arrangeTables(diagram) {
 
   const maxLayer = layerIndex;
   tables.forEach((t) => {
-    if (layers[t.id] === undefined) layers[t.id] = maxLayer;
+    const id = String(t.id);
+    if (layers[id] === undefined) layers[id] = maxLayer;
   });
 
   // Group tables per layer
   const layerNodes = [];
   tables.forEach((t) => {
-    const li = layers[t.id] || 0;
+    const id = String(t.id);
+    const li = layers[id] || 0;
     if (!layerNodes[li]) layerNodes[li] = [];
     layerNodes[li].push(t);
   });
@@ -99,15 +100,22 @@ export function arrangeTables(diagram) {
     return mh;
   });
 
+  // Precompute incoming degrees once to avoid O(n²) in sort
+  const incomingCount = {};
+  relationships.forEach((r) => {
+    const e = String(r.endTableId);
+    incomingCount[e] = (incomingCount[e] || 0) + 1;
+  });
+
   let y = gapY;
   for (let i = 0; i < layerNodes.length; i++) {
     const nodes = layerNodes[i] || [];
     // sort by degree (descending) to try to reduce edge crossings
     nodes.sort((a, b) => {
-      const degA = (adj[a.id] ? adj[a.id].length : 0) +
-        relationships.filter((r) => r.endTableId === a.id).length;
-      const degB = (adj[b.id] ? adj[b.id].length : 0) +
-        relationships.filter((r) => r.endTableId === b.id).length;
+      const aId = String(a.id);
+      const bId = String(b.id);
+      const degA = (adj[aId] ? adj[aId].length : 0) + (incomingCount[aId] || 0);
+      const degB = (adj[bId] ? adj[bId].length : 0) + (incomingCount[bId] || 0);
       return degB - degA;
     });
 

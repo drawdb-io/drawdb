@@ -74,8 +74,8 @@ Opens http://localhost:5174/
 1. Load a complex diagram (e.g., template 3 or 6 with many relationships)
 2. Click Auto arrange
 3. Click Generate sample data
-4. Verify sample data matches the AUTO-ARRANGED table positions
-5. Undo arrangement, then redo – sample data should still match
+4. Verify sample data JSON contains all tables with correct schema (field names and realistic values). Sample data generation is schema-driven and independent of table coordinates, so positions don't affect the content.
+5. Undo arrangement (`Ctrl+Z`), then redo (`Ctrl+Y`) – sample data file remains unchanged since it reflects schema, not visual layout
 
 ## Browser devtools checklist
 - [ ] No console errors
