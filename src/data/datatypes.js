@@ -18,6 +18,7 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const oddIntRegex = /^-?\d*[13579]$/;
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -345,6 +346,19 @@ const defaultTypesBase = {
     isSized: false,
     hasPrecision: false,
     noDefault: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      if (!oddIntRegex.test(field.default)) return false;
+      const n = Number.parseInt(field.default, 10);
+      return Number.isInteger(n);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: false,
   },
 };
 
