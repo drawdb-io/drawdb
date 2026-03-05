@@ -54,6 +54,20 @@ const defaultTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    // only odd positive integers (1,3,5,7,9,11,...)
+    checkDefault: (field) => {
+      const num = parseInt(field.default, 10);
+      return !isNaN(num) && num > 0 && num % 2 === 1;
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    // not allowed to auto-increment by default
+    canIncrement: false,
+  },
   DECIMAL: {
     type: "DECIMAL",
     color: decimalColor,
