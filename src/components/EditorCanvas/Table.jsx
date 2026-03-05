@@ -23,6 +23,7 @@ import { dbToTypes } from "../../data/datatypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 import { getCommentHeight, getTableHeight } from "../../utils/utils";
+import { removeTableRelationships } from "../../utils/tableActions";
 
 export default function Table({
   tableData,
@@ -137,12 +138,7 @@ export default function Table({
   const deleteAllFields = () => {
     if (!tableData.fields.length) return;
 
-    setRelationships((prev) =>
-      prev.filter(
-        (rel) =>
-          rel.startTableId !== tableData.id && rel.endTableId !== tableData.id,
-      ),
-    );
+    setRelationships((prev) => removeTableRelationships(prev, tableData.id));
     updateTable(tableData.id, { fields: [], indices: [] });
   };
 

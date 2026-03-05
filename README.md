@@ -57,6 +57,17 @@ npm install
 npm run build
 ```
 
+### Tests
+
+```bash
+git clone https://github.com/drawdb-io/drawdb
+cd drawdb
+npm install
+npm test
+```
+
+Current test coverage includes unit tests for table actions used by the canvas table menu (for example, removing relationships when deleting all fields from a table).
+
 ### Docker Build
 
 ```bash
