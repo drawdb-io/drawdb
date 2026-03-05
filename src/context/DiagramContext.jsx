@@ -173,6 +173,40 @@ export default function DiagramContextProvider({ children }) {
     });
   };
 
+  const deleteAllFields = (tid, addToHistory = true) => {
+    const table = tables.find((t) => t.id === tid);
+    if (!table || table.fields.length === 0) return;
+    const { fields, name } = table;
+    if (addToHistory) {
+      const rels = relationships.filter(
+        (r) => r.startTableId === tid || r.endTableId === tid,
+      );
+      setUndoStack((prev) => [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.TABLE,
+          component: "field_delete_all",
+          tid: tid,
+          data: {
+            fields: [...fields],
+            relationship: rels,
+          },
+          message: t("edit_table", {
+            tableName: name,
+            extra: "[delete all fields]",
+          }),
+        },
+      ]);
+      setRedoStack([]);
+      Toast.success(t("all_fields_deleted"));
+    }
+    setRelationships((prev) =>
+      prev.filter((r) => r.startTableId !== tid && r.endTableId !== tid),
+    );
+    updateTable(tid, { fields: [] });
+  };
+
   const addRelationship = (data, addToHistory = true) => {
     if (addToHistory) {
       setRelationships((prev) => {
@@ -237,6 +271,7 @@ export default function DiagramContextProvider({ children }) {
         updateTable,
         updateField,
         deleteField,
+        deleteAllFields,
         deleteTable,
         relationships,
         setRelationships,

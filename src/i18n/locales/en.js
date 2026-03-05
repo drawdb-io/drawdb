@@ -279,6 +279,11 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    delete_all_fields: "Delete all fields",
+    all_fields_deleted: "All fields deleted",
+    sample_data: "Sample data",
+    no_tables_to_generate_sample:
+      "No tables with fields to generate sample data from.",
   },
 };
 

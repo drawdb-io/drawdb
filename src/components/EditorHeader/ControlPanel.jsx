@@ -80,6 +80,7 @@ import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
+import { generateSampleData } from "../../utils/generateSampleData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -109,6 +110,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     addTable,
     updateTable,
     deleteField,
+    deleteAllFields,
     deleteTable,
     updateField,
     setRelationships,
@@ -220,6 +222,9 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           const updatedFields = table.fields.slice();
           updatedFields.splice(a.data.index, 0, a.data.field);
           updateTable(a.tid, { fields: updatedFields });
+        } else if (a.component === "field_delete_all") {
+          setRelationships((prev) => [...prev, ...a.data.relationship]);
+          updateTable(a.tid, { fields: a.data.fields });
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: table.fields.filter((e) => e.id !== a.fid),
@@ -382,6 +387,8 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           updateField(a.tid, a.fid, a.redo);
         } else if (a.component === "field_delete") {
           deleteField(a.data.field, a.tid, false);
+        } else if (a.component === "field_delete_all") {
+          deleteAllFields(a.tid, false);
         } else if (a.component === "field_add") {
           updateTable(a.tid, {
             fields: [
@@ -1067,6 +1074,25 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       },
       export_as: {
         children: [
+          {
+            name: t("sample_data"),
+            function: () => {
+              setModal(MODAL.CODE);
+              const src = generateSampleData(
+                {
+                  tables: tables,
+                  references: relationships,
+                  database: database,
+                },
+                { rowCount: 5 },
+              );
+              setExportData((prev) => ({
+                ...prev,
+                data: src || t("no_tables_to_generate_sample"),
+                extension: "sql",
+              }));
+            },
+          },
           {
             name: "PNG",
             function: () => {
