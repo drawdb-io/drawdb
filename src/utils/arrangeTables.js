@@ -4,7 +4,7 @@ import {
   tableHeaderHeight,
 } from "../data/constants";
 
-const TABLE_WIDTH = 200;
+const DEFAULT_TABLE_WIDTH = 200;
 const GAP_X = 54;
 const GAP_Y = 64;
 const COMPONENT_GAP_Y = 120;
@@ -97,7 +97,12 @@ function connectedComponents(tables, neighbors) {
   return components;
 }
 
-export function arrangeTables(diagram) {
+/**
+ * @param {object} diagram - Diagram with tables and relationships (tables mutated in place).
+ * @param {{ tableWidth?: number }} [options] - Optional. tableWidth from settings; defaults to DEFAULT_TABLE_WIDTH.
+ */
+export function arrangeTables(diagram, options = {}) {
+  const tableWidth = options.tableWidth ?? DEFAULT_TABLE_WIDTH;
   const { tables = [], relationships = [] } = diagram;
   if (tables.length === 0) return;
 
@@ -246,7 +251,7 @@ export function arrangeTables(diagram) {
 
     for (const layer of layers) {
       const currentWidth =
-        layer.length * TABLE_WIDTH + Math.max(0, layer.length - 1) * GAP_X;
+        layer.length * tableWidth + Math.max(0, layer.length - 1) * GAP_X;
       componentMaxWidth = Math.max(componentMaxWidth, currentWidth);
       const rowHeight = Math.max(
         ...layer.map((id) => tableHeight(tableById.get(id))),
@@ -256,7 +261,7 @@ export function arrangeTables(diagram) {
       const startX = GAP_X;
       layer.forEach((id, index) => {
         const table = tableById.get(id);
-        table.x = startX + index * (TABLE_WIDTH + GAP_X);
+        table.x = startX + index * (tableWidth + GAP_X);
         table.y = y;
       });
 

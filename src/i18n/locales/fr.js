@@ -218,6 +218,12 @@ const fr = {
     delete_relationship: "Supprimer la relation {{refName}}",
     not_found: "Non trouvé",
     readme: "README",
+    auto_arrange: "Rangement auto",
+    layout_stats: "Statistiques de disposition",
+    line_crossings: "Croisements de lignes",
+    max_depth: "Profondeur max",
+    components: "Composantes",
+    isolated_tables: "Tables isolées",
   },
 };
 

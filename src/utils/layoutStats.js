@@ -97,8 +97,7 @@ function maxDepth(tables, relationships) {
     }
   }
 
-  const roots = ids.filter((id) => incoming.get(id) === 0);
-  const startNodes = roots.length > 0 ? roots : ids;
+  const startNodes = Array.from(ids);
   const memo = new Map();
 
   const dfs = (id, visiting = new Set()) => {

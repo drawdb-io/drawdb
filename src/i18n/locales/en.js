@@ -279,6 +279,12 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    auto_arrange: "Auto arrange",
+    layout_stats: "Layout Stats",
+    line_crossings: "Line crossings",
+    max_depth: "Max depth",
+    components: "Components",
+    isolated_tables: "Isolated tables",
   },
 };
 

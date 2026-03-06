@@ -755,7 +755,10 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       tables.map((table) => [table.id, { x: table.x, y: table.y }]),
     );
     const arrangedTables = tables.map((table) => ({ ...table }));
-    arrangeTables({ tables: arrangedTables, relationships });
+    arrangeTables(
+      { tables: arrangedTables, relationships },
+      { tableWidth: settings.tableWidth },
+    );
 
     const movedElements = [];
     arrangedTables.forEach((table) => {
@@ -1770,7 +1773,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               <IconAddNote />
             </button>
           </Tooltip>
-          <Tooltip content="Auto arrange" position="bottom">
+          <Tooltip content={t("auto_arrange")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
               onClick={autoArrange}
