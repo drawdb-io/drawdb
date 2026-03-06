@@ -1711,6 +1711,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               className="flex items-center py-1 px-2 hover-2 rounded-sm disabled:opacity-50"
               onClick={() => addTable()}
               disabled={layout.readOnly}
+              aria-label="Add table"
             >
               <IconAddTable />
             </button>

@@ -12,6 +12,20 @@ module.exports = {
   parserOptions: { ecmaVersion: "latest", sourceType: "module" },
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh"],
+  overrides: [
+    {
+      files: ["**/*.test.js", "**/*.test.jsx"],
+      env: { browser: true, es2020: true, node: true },
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        vi: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+      },
+    },
+  ],
   rules: {
     "react-refresh/only-export-components": [
       "warn",

@@ -191,6 +191,7 @@ export default function Table({
                       backgroundColor: "#2f68adb3",
                     }}
                     onClick={openEditor}
+                    aria-label="Edit table"
                   />
                   <Popover
                     key={tableData.id}
@@ -254,6 +255,7 @@ export default function Table({
                             );
                           }}
                           disabled={layout.readOnly || tableData.fields.length === 0}
+                          aria-label="Delete all fields"
                         >
                           Delete all fields
                         </Button>
@@ -282,6 +284,7 @@ export default function Table({
                         backgroundColor: "#808080b3",
                         color: "white",
                       }}
+                      aria-label="Table actions"
                     />
                   </Popover>
                 </div>
