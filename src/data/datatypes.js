@@ -18,6 +18,13 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeTypeRegex = /^[1-9]\d*$/;
+
+function checkMyPrimeTypeDefault(field) {
+  const value = `${field.default}`.trim();
+  if (!myPrimeTypeRegex.test(value)) return false;
+  return Number.parseInt(value, 10) % 2 === 1;
+}
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -2243,6 +2250,29 @@ export const mariadbTypes = new Proxy(
     get: (target, prop) => (prop in target ? target[prop] : false),
   },
 );
+
+const myPrimeTypeMetadata = {
+  type: "MYPRIMETYPE",
+  color: intColor,
+  checkDefault: checkMyPrimeTypeDefault,
+  hasCheck: true,
+  isSized: false,
+  hasPrecision: false,
+  canIncrement: false,
+};
+
+[
+  defaultTypesBase,
+  mysqlTypesBase,
+  postgresTypesBase,
+  sqliteTypesBase,
+  mssqlTypesBase,
+  oraclesqlTypesBase,
+  mariadbTypesBase,
+].forEach((typesBase) => {
+  typesBase.MYPRIMETYPE = { ...myPrimeTypeMetadata };
+});
+mariadbTypes.MYPRIMETYPE = { ...myPrimeTypeMetadata };
 
 const dbToTypesBase = {
   [DB.GENERIC]: defaultTypes,
