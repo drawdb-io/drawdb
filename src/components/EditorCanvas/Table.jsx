@@ -65,6 +65,14 @@ export default function Table({
     );
   }, [selectedElement, tableData, bulkSelectedElements]);
 
+  const deleteAllFields = () => {
+    if (layout.readOnly) return;
+
+    tableData.fields.forEach((field) => {
+      deleteField(field, tableData.id);
+    });
+  };
+
   const lockUnlockTable = (e) => {
     const locking = !tableData.locked;
     updateTable(tableData.id, { locked: locking });
@@ -242,6 +250,16 @@ export default function Table({
                             </div>
                           )}
                         </div>
+                        <Button
+                          icon={<IconDeleteStroked />}
+                          type="danger"
+                          block
+                          style={{ marginTop: "8px" }}
+                          onClick={deleteAllFields}
+                          disabled={layout.readOnly}
+                        >
+                          Delete all fields
+                        </Button>
                         <Button
                           icon={<IconDeleteStroked />}
                           type="danger"
