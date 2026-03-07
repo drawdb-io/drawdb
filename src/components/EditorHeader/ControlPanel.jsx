@@ -66,7 +66,8 @@ import {
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
-import { IconAddArea, IconAddNote, IconAddTable } from "../../icons";
+import { arrangeTables } from "../../utils/arrangeTables";
+import { IconAddArea, IconAddNote, IconAddTable, IconAutoArrange } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
@@ -748,6 +749,41 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = () => setSaveState(State.SAVING);
+  
+  const autoArrange = (algorithm = 'force-directed') => {
+    if (layout.readOnly || tables.length === 0) return;
+    
+    // Store original positions for undo
+    const originalPositions = tables.map(table => ({
+      id: table.id,
+      x: table.x,
+      y: table.y
+    }));
+
+    // Apply layout algorithm
+    const diagram = { tables: [...tables], relationships };
+    arrangeTables(diagram, algorithm);
+    
+    // Update tables with new positions
+    diagram.tables.forEach((table, index) => {
+      updateTable(tables[index].id, { x: table.x, y: table.y });
+    });
+
+    // Add to undo stack
+    setUndoStack(prev => [...prev, {
+      action: Action.MOVE,
+      bulk: true,
+      message: t("auto_arrange"),
+      elements: diagram.tables.map((table, index) => ({
+        id: tables[index].id,
+        type: ObjectType.TABLE,
+        undo: originalPositions.find(op => op.id === tables[index].id),
+        redo: { x: table.x, y: table.y }
+      }))
+    }]);
+    setRedoStack([]);
+  };
+  
   const recentlyOpenedDiagrams = useLiveQuery(() =>
     db.diagrams.orderBy("lastModified").reverse().limit(10).toArray(),
   );
@@ -1287,6 +1323,21 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         function: copyAsImage,
         shortcut: "Ctrl+Alt+C",
       },
+      auto_arrange: {
+        children: [
+          {
+            name: t("force_directed"),
+            function: () => autoArrange('force-directed'),
+            disabled: layout.readOnly || tables.length === 0,
+          },
+          {
+            name: t("hierarchical"),
+            function: () => autoArrange('hierarchical'),
+            disabled: layout.readOnly || tables.length === 0,
+          },
+        ],
+        function: () => {},
+      },
     },
     view: {
       header: {
@@ -1731,6 +1782,15 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               disabled={layout.readOnly}
             >
               <IconAddNote />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={() => autoArrange('force-directed')}
+              disabled={layout.readOnly || tables.length === 0}
+            >
+              <IconAutoArrange />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
