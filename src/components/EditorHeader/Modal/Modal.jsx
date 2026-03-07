@@ -11,6 +11,7 @@ import {
   useDiagram,
   useEnums,
   useNotes,
+  useSettings,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -58,10 +59,12 @@ export default function Modal({
   const { setEnums } = useEnums();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { settings, setSettings } = useSettings();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState(
     i18n.language,
   );
+  const [tempTableWidth, setTempTableWidth] = useState(settings.tableWidth);
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: false,
@@ -207,6 +210,10 @@ export default function Modal({
         i18n.changeLanguage(uncontrolledLanguage);
         setModal(MODAL.NONE);
         return;
+      case MODAL.TABLE_WIDTH:
+        setSettings((prev) => ({ ...prev, tableWidth: tempTableWidth }));
+        setModal(MODAL.NONE);
+        return;
       default:
         setModal(MODAL.NONE);
         return;
@@ -295,7 +302,12 @@ export default function Modal({
           );
         }
       case MODAL.TABLE_WIDTH:
-        return <SetTableWidth />;
+        return (
+          <SetTableWidth
+            tempWidth={tempTableWidth}
+            setTempWidth={setTempTableWidth}
+          />
+        );
       case MODAL.LANGUAGE:
         return (
           <Language
@@ -335,6 +347,7 @@ export default function Modal({
       onCancel={() => {
         if (modal === MODAL.RENAME) setUncontrolledTitle(title);
         if (modal === MODAL.LANGUAGE) setUncontrolledLanguage(i18n.language);
+        if (modal === MODAL.TABLE_WIDTH) setTempTableWidth(settings.tableWidth);
         setModal(MODAL.NONE);
       }}
       centered
