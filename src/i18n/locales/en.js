@@ -279,6 +279,15 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    live_collaboration: "Live collaboration",
+    or: "or",
+    sharable_link: "Sharable link",
+    start_session: "Start session",
+    generate_link: "Generate link",
+    link: "Link",
+    your_name: "Your name",
+    secret_key: "Secret key",
+    disconnect: "Disconnect",
   },
 };
 

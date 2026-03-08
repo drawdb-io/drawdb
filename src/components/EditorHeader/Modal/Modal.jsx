@@ -30,7 +30,6 @@ import New from "./New";
 import Open from "./Open";
 import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
-import Share from "./Share";
 import { useNavigate } from "react-router-dom";
 
 const extensionToLanguage = {
@@ -303,8 +302,6 @@ export default function Modal({
             setLanguage={setUncontrolledLanguage}
           />
         );
-      case MODAL.SHARE:
-        return <Share title={title} setModal={setModal} />;
       default:
         return <></>;
     }
@@ -314,7 +311,7 @@ export default function Modal({
     <SemiUIModal
       style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       title={getModalTitle(modal)}
-      visible={modal !== MODAL.NONE}
+      visible={modal !== MODAL.NONE && modal !== MODAL.SHARE}
       onOk={getModalOnOk}
       afterClose={() => {
         setExportData(() => ({

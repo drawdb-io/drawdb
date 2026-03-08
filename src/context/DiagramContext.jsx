@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
@@ -15,6 +15,15 @@ export default function DiagramContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { socket, isApplyingRemoteRef, inSession, roomId } = useCollab();
+
+  const emitDelta = (target, action, data) => {
+    if (!socket) return;
+    if (!inSession) return;
+    if (!roomId) return;
+    if (isApplyingRemoteRef.current) return;
+    socket.emit("delta", { target, action, data });
+  };
 
   const addTable = (data, addToHistory = true) => {
     const id = nanoid();
@@ -42,6 +51,7 @@ export default function DiagramContextProvider({ children }) {
       indices: [],
       color: defaultBlue,
     };
+    let deltaArg = data;
     if (data) {
       setTables((prev) => {
         const temp = prev.slice();
@@ -49,7 +59,9 @@ export default function DiagramContextProvider({ children }) {
         return temp;
       });
     } else {
+      const index = tables.length;
       setTables((prev) => [...prev, newTable]);
+      deltaArg = { table: newTable, index };
     }
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -62,6 +74,9 @@ export default function DiagramContextProvider({ children }) {
         },
       ]);
       setRedoStack([]);
+    }
+    if (addToHistory) {
+      emitDelta("table", "create", [deltaArg]);
     }
   };
 
@@ -95,6 +110,7 @@ export default function DiagramContextProvider({ children }) {
       prevR.filter((e) => !(e.startTableId === id || e.endTableId === id)),
     );
     setTables((prev) => prev.filter((e) => e.id !== id));
+    emitDelta("table", "delete", [id]);
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
         ...prev,
@@ -109,6 +125,7 @@ export default function DiagramContextProvider({ children }) {
     setTables((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t)),
     );
+    emitDelta("table", "update", [id, updatedValues]);
   };
 
   const updateField = (tid, fid, updatedValues) => {
@@ -125,6 +142,7 @@ export default function DiagramContextProvider({ children }) {
         return table;
       }),
     );
+    emitDelta("field", "update", [tid, fid, updatedValues]);
   };
 
   const deleteField = (field, tid, addToHistory = true) => {
@@ -171,6 +189,7 @@ export default function DiagramContextProvider({ children }) {
     updateTable(tid, {
       fields: fields.filter((e) => e.id !== field.id),
     });
+    emitDelta("field", "delete", [field, tid]);
   };
 
   const addRelationship = (data, addToHistory = true) => {
@@ -198,6 +217,9 @@ export default function DiagramContextProvider({ children }) {
         return temp;
       });
     }
+    if (addToHistory) {
+      emitDelta("relationship", "create", [data]);
+    }
   };
 
   const deleteRelationship = (id, addToHistory = true) => {
@@ -220,12 +242,19 @@ export default function DiagramContextProvider({ children }) {
       setRedoStack([]);
     }
     setRelationships((prev) => prev.filter((e) => e.id !== id));
+    emitDelta("relationship", "delete", [id]);
   };
 
   const updateRelationship = (id, updatedValues) => {
     setRelationships((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...updatedValues } : t)),
     );
+    emitDelta("relationship", "update", [id, updatedValues]);
+  };
+
+  const setDatabaseWithDelta = (nextDatabase) => {
+    setDatabase(nextDatabase);
+    emitDelta("database", "update", [nextDatabase]);
   };
 
   return (
@@ -244,7 +273,7 @@ export default function DiagramContextProvider({ children }) {
         deleteRelationship,
         updateRelationship,
         database,
-        setDatabase,
+        setDatabase: setDatabaseWithDelta,
         tablesCount: tables.length,
         relationshipsCount: relationships.length,
       }}

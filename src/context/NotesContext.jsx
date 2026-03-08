@@ -1,11 +1,11 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState } from "react";
 import {
   Action,
   ObjectType,
   defaultNoteTheme,
   noteWidth,
 } from "../data/constants";
-import { useUndoRedo, useTransform, useSelect } from "../hooks";
+import { useUndoRedo, useTransform, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 
@@ -17,8 +17,18 @@ export default function NotesContextProvider({ children }) {
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { socket, isApplyingRemoteRef, inSession, roomId } = useCollab();
+
+  const emitDelta = (target, action, data) => {
+    if (!socket) return;
+    if (!inSession) return;
+    if (!roomId) return;
+    if (isApplyingRemoteRef.current) return;
+    socket.emit("delta", { target, action, data });
+  };
 
   const addNote = (data, addToHistory = true) => {
+    let noteArg = data;
     if (data) {
       setNotes((prev) => {
         const temp = prev.slice();
@@ -27,20 +37,20 @@ export default function NotesContextProvider({ children }) {
       });
     } else {
       const height = 88;
-      setNotes((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          x: transform.pan.x,
-          y: transform.pan.y - height / 2,
-          title: `note_${prev.length}`,
-          content: "",
-          locked: false,
-          color: defaultNoteTheme,
-          height,
-          width: noteWidth,
-        },
-      ]);
+      const nextId = notes.length;
+      const newNote = {
+        id: nextId,
+        x: transform.pan.x,
+        y: transform.pan.y - height / 2,
+        title: `note_${nextId}`,
+        content: "",
+        locked: false,
+        color: defaultNoteTheme,
+        height,
+        width: noteWidth,
+      };
+      noteArg = newNote;
+      setNotes((prev) => [...prev, newNote]);
     }
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -52,6 +62,9 @@ export default function NotesContextProvider({ children }) {
         },
       ]);
       setRedoStack([]);
+    }
+    if (addToHistory) {
+      emitDelta("note", "create", [noteArg]);
     }
   };
 
@@ -72,6 +85,7 @@ export default function NotesContextProvider({ children }) {
     setNotes((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );
+    emitDelta("note", "delete", [id]);
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
         ...prev,
@@ -82,7 +96,7 @@ export default function NotesContextProvider({ children }) {
     }
   };
 
-  const updateNote = useCallback((id, values) => {
+  const updateNote = (id, values) => {
     setNotes((prev) =>
       prev.map((t) => {
         if (t.id === id) {
@@ -94,7 +108,8 @@ export default function NotesContextProvider({ children }) {
         return t;
       }),
     );
-  }, []);
+    emitDelta("note", "update", [id, values]);
+  };
 
   return (
     <NotesContext.Provider

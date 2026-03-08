@@ -1,8 +1,7 @@
-import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { IdContext } from "../../Workspace";
+import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
 import { IconLink } from "@douyinfe/semi-icons";
+import { useTranslation } from "react-i18next";
 import {
   useAreas,
   useDiagram,
@@ -10,12 +9,12 @@ import {
   useNotes,
   useTransform,
   useTypes,
-} from "../../../hooks";
-import { databases } from "../../../data/databases";
-import { MODAL } from "../../../data/constants";
-import { create, patch, SHARE_FILENAME } from "../../../api/gists";
+} from "../../../../hooks";
+import { databases } from "../../../../data/databases";
+import { create, patch, SHARE_FILENAME } from "../../../../api/gists";
+import { IdContext } from "../../../../context/IdConext";
 
-export default function Share({ title, setModal }) {
+export default function GenerateLink({ title }) {
   const { t } = useTranslation();
   const { gistId, setGistId } = useContext(IdContext);
   const [loading, setLoading] = useState(true);
@@ -58,12 +57,11 @@ export default function Share({ title, setModal }) {
       if (deleted) {
         setGistId("");
       }
-      setModal(MODAL.NONE);
     } catch (e) {
       console.error(e);
       setError(e);
     }
-  }, [gistId, setModal, setGistId]);
+  }, [gistId, setGistId]);
 
   useEffect(() => {
     const updateOrGenerateLink = async () => {
@@ -116,10 +114,10 @@ export default function Share({ title, setModal }) {
       )}
       {!error && (
         <>
+          <div className="font-semibold mb-2">{t("link")}</div>
           <div className="flex gap-3">
-            <Input value={url} size="large" readonly />
+            <Input value={url} size="large" readonly className="block w-full" />
           </div>
-          <div className="text-xs mt-2">{t("share_info")}</div>
           <div className="flex gap-2 mt-3">
             <Button block onClick={unshare}>
               {t("unshare")}

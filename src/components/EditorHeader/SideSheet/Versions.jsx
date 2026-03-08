@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState, useMemo } from "react";
-import { IdContext } from "../../Workspace";
 import { useTranslation } from "react-i18next";
 import { Button, Spin, Steps, Tag, Toast, Tooltip } from "@douyinfe/semi-ui";
 import { IconPlus } from "@douyinfe/semi-icons";
@@ -26,6 +25,7 @@ import { databases } from "../../../data/databases";
 import { loadCache, saveCache } from "../../../utils/cache";
 import Migration from "./Migration";
 import { DB } from "../../../data/constants";
+import { IdContext } from "../../../context/IdConext";
 
 const LIMIT = 10;
 

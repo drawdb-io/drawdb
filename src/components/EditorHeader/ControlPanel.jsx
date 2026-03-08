@@ -76,7 +76,6 @@ import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
-import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
 import { exportSavedData } from "../../utils/exportSavedData";
@@ -85,6 +84,9 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import ShareDiagramModal from "./ShareDiagramModal";
+import { IdContext } from "../../context/IdConext";
+import CollabUsers from "./components/CollabUsers";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -1571,15 +1573,19 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           >
             {header()}
             {!isTemplate && (
-              <Button
-                type="primary"
-                className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
-                size="default"
-                icon={<IconShareStroked />}
-                onClick={() => setModal(MODAL.SHARE)}
-              >
-                {t("share")}
-              </Button>
+              <div className="flex justify-around items-center text-md gap-2">
+                <CollabUsers />
+
+                <Button
+                  type="primary"
+                  size="default"
+                  className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                  icon={<IconShareStroked />}
+                  onClick={() => setModal(MODAL.SHARE)}
+                >
+                  {t("share")}
+                </Button>
+              </div>
             )}
           </div>
         )}
@@ -1600,6 +1606,13 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         title={title}
         setTitle={setTitle}
         onClose={() => setSidesheet(SIDESHEET.NONE)}
+      />
+      <ShareDiagramModal
+        visible={modal === MODAL.SHARE}
+        onClose={() => setModal(MODAL.NONE)}
+        diagramId={diagramId}
+        title={title}
+        setTitle={setTitle}
       />
     </>
   );

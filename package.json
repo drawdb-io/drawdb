@@ -41,6 +41,8 @@
     "react-i18next": "^14.1.1",
     "react-router-dom": "^6.30.3",
     "react-tweet": "^3.2.1",
+    "socket.io-client": "^4.8.3",
+    "unique-names-generator": "^4.7.1",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {

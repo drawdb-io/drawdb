@@ -10,31 +10,34 @@ import SaveStateContextProvider from "../context/SaveStateContext";
 import EnumsContextProvider from "../context/EnumsContext";
 import WorkSpace from "../components/Workspace";
 import { useThemedPage } from "../hooks";
+import { CollabContextProvider } from "../context/CollabContext";
 
 export default function Editor() {
   useThemedPage();
 
   return (
-    <LayoutContextProvider>
-      <TransformContextProvider>
-        <UndoRedoContextProvider>
-          <SelectContextProvider>
-            <AreasContextProvider>
-              <NotesContextProvider>
-                <TypesContextProvider>
-                  <EnumsContextProvider>
-                    <TablesContextProvider>
-                      <SaveStateContextProvider>
-                        <WorkSpace />
-                      </SaveStateContextProvider>
-                    </TablesContextProvider>
-                  </EnumsContextProvider>
-                </TypesContextProvider>
-              </NotesContextProvider>
-            </AreasContextProvider>
-          </SelectContextProvider>
-        </UndoRedoContextProvider>
-      </TransformContextProvider>
-    </LayoutContextProvider>
+    <CollabContextProvider>
+      <LayoutContextProvider>
+        <TransformContextProvider>
+          <UndoRedoContextProvider>
+            <SelectContextProvider>
+              <AreasContextProvider>
+                <NotesContextProvider>
+                  <TypesContextProvider>
+                    <EnumsContextProvider>
+                      <TablesContextProvider>
+                        <SaveStateContextProvider>
+                          <WorkSpace />
+                        </SaveStateContextProvider>
+                      </TablesContextProvider>
+                    </EnumsContextProvider>
+                  </TypesContextProvider>
+                </NotesContextProvider>
+              </AreasContextProvider>
+            </SelectContextProvider>
+          </UndoRedoContextProvider>
+        </TransformContextProvider>
+      </LayoutContextProvider>
+    </CollabContextProvider>
   );
 }

@@ -2,7 +2,7 @@ import { Toast } from "@douyinfe/semi-ui";
 import { createContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Action, ObjectType, defaultBlue } from "../data/constants";
-import { useSelect, useTransform, useUndoRedo } from "../hooks";
+import { useSelect, useTransform, useUndoRedo, useCollab } from "../hooks";
 
 export const AreasContext = createContext(null);
 
@@ -12,8 +12,18 @@ export default function AreasContextProvider({ children }) {
   const { transform } = useTransform();
   const { selectedElement, setSelectedElement } = useSelect();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { socket, isApplyingRemoteRef, inSession, roomId } = useCollab();
+
+  const emitDelta = (target, action, data) => {
+    if (!socket) return;
+    if (!inSession) return;
+    if (!roomId) return;
+    if (isApplyingRemoteRef.current) return;
+    socket.emit("delta", { target, action, data });
+  };
 
   const addArea = (data, addToHistory = true) => {
+    let areaArg = data;
     if (data) {
       setAreas((prev) => {
         const temp = prev.slice();
@@ -23,19 +33,19 @@ export default function AreasContextProvider({ children }) {
     } else {
       const width = 200;
       const height = 200;
-      setAreas((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          name: `area_${prev.length}`,
-          x: transform.pan.x - width / 2,
-          y: transform.pan.y - height / 2,
-          width,
-          height,
-          color: defaultBlue,
-          locked: false,
-        },
-      ]);
+      const nextId = areas.length;
+      const newArea = {
+        id: nextId,
+        name: `area_${nextId}`,
+        x: transform.pan.x - width / 2,
+        y: transform.pan.y - height / 2,
+        width,
+        height,
+        color: defaultBlue,
+        locked: false,
+      };
+      areaArg = newArea;
+      setAreas((prev) => [...prev, newArea]);
     }
     if (addToHistory) {
       setUndoStack((prev) => [
@@ -47,6 +57,9 @@ export default function AreasContextProvider({ children }) {
         },
       ]);
       setRedoStack([]);
+    }
+    if (addToHistory) {
+      emitDelta("area", "create", [areaArg]);
     }
   };
 
@@ -67,6 +80,7 @@ export default function AreasContextProvider({ children }) {
     setAreas((prev) =>
       prev.filter((e) => e.id !== id).map((e, i) => ({ ...e, id: i })),
     );
+    emitDelta("area", "delete", [id]);
     if (id === selectedElement.id) {
       setSelectedElement((prev) => ({
         ...prev,
@@ -89,6 +103,7 @@ export default function AreasContextProvider({ children }) {
         return t;
       }),
     );
+    emitDelta("area", "update", [id, values]);
   };
 
   return (
@@ -99,7 +114,7 @@ export default function AreasContextProvider({ children }) {
         updateArea,
         addArea,
         deleteArea,
-        areasCount: areas.length,
+        areasCount: areas?.length,
       }}
     >
       {children}

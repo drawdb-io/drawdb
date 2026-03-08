@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, createContext } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
@@ -16,6 +16,7 @@ import {
   useTypes,
   useSaveState,
   useEnums,
+  useCollab,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
@@ -31,13 +32,9 @@ import {
 } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
 import { nanoid } from "nanoid";
-
-export const IdContext = createContext({
-  gistId: "",
-  setGistId: () => {},
-  version: "",
-  setVersion: () => {},
-});
+import { IdContext } from "../context/IdConext";
+import { generateRandomName } from "./EditorHeader/ShareDiagramModal/utils";
+import { applyDiagramDelta } from "../context/applyDiagramDelta";
 
 const SIDEPANEL_MIN_WIDTH = 384;
 
@@ -55,8 +52,8 @@ export default function WorkSpace() {
   const { layout, setLayout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
-  const { areas, setAreas } = useAreas();
-  const { notes, setNotes } = useNotes();
+  const { areas, setAreas, addArea, updateArea, deleteArea } = useAreas();
+  const { notes, setNotes, addNote, updateNote, deleteNote } = useNotes();
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
   const { enums, setEnums } = useEnums();
@@ -67,6 +64,12 @@ export default function WorkSpace() {
     setRelationships,
     database,
     setDatabase,
+    addTable,
+    updateTable,
+    deleteTable,
+    addRelationship,
+    deleteRelationship,
+    updateRelationship,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
@@ -74,6 +77,64 @@ export default function WorkSpace() {
   const { id: loadedDiagramId } = useParams();
   const isDiagram = useMatch("/editor/diagrams/:id");
   const isTemplate = useMatch("/editor/templates/:id");
+
+  const { initSocket, isApplyingRemoteRef, deltaHandlerRef, inSession } =
+    useCollab();
+  const hasJoined = useRef(false);
+
+  const applyDelta = useCallback(
+    (delta) => {
+      isApplyingRemoteRef.current = true;
+      try {
+        applyDiagramDelta(delta, {
+          tables,
+          setDatabase,
+          addTable,
+          updateTable,
+          deleteTable,
+          addRelationship,
+          updateRelationship,
+          deleteRelationship,
+          addArea,
+          updateArea,
+          deleteArea,
+          addNote,
+          updateNote,
+          deleteNote,
+        });
+      } finally {
+        setTimeout(() => {
+          isApplyingRemoteRef.current = false;
+        }, 0);
+      }
+    },
+    [
+      tables,
+      isApplyingRemoteRef,
+      setDatabase,
+      addTable,
+      updateTable,
+      deleteTable,
+      addRelationship,
+      updateRelationship,
+      deleteRelationship,
+      addArea,
+      updateArea,
+      deleteArea,
+      addNote,
+      updateNote,
+      deleteNote,
+    ],
+  );
+
+  useEffect(() => {
+    if (inSession) {
+      deltaHandlerRef.current = applyDelta;
+    }
+    return () => {
+      deltaHandlerRef.current = null;
+    };
+  }, [inSession, applyDelta, deltaHandlerRef]);
 
   const navigate = useNavigate();
 
@@ -159,6 +220,10 @@ export default function WorkSpace() {
   ]);
 
   const load = useCallback(async () => {
+    const roomId = searchParams.get("room");
+    if (roomId) {
+      return;
+    }
     const loadLatestDiagram = async () => {
       await db.diagrams
         .orderBy("lastModified")
@@ -415,6 +480,74 @@ export default function WorkSpace() {
     loadedDiagramId,
   ]);
 
+  useEffect(() => {
+    const roomId = searchParams.get("room");
+    if (roomId && !hasJoined.current) {
+      hasJoined.current = true;
+
+      const secretKey = window.location.hash.substring(1);
+      initSocket(
+        localStorage.getItem("username") || generateRandomName(),
+        secretKey,
+        {
+          onConnect: () => {
+            window.history.replaceState(
+              {},
+              "",
+              `${window.location.pathname}?room=${roomId}#${secretKey}`,
+            );
+          },
+          onConnectError: (err) => console.error(err.message),
+          onDisconnect: () => {
+            hasJoined.current = false;
+          },
+          onReceiveDiagram: (payload) => {
+            if (!payload) return;
+            const {
+              title,
+              tables,
+              relationships,
+              notes,
+              subjectAreas,
+              database,
+              types,
+              enums,
+              transform,
+            } = payload;
+
+            isApplyingRemoteRef.current = true;
+
+            setTitle(title);
+            setTables(tables);
+            setRelationships(relationships);
+            setNotes(notes);
+            setAreas(subjectAreas);
+            setDatabase(database);
+            if (types) {
+              setTypes(types);
+            }
+            if (enums) {
+              setEnums(enums);
+            }
+            if (transform) {
+              setTransform(transform);
+            }
+
+            setTimeout(() => {
+              isApplyingRemoteRef.current = false;
+            }, 0);
+          },
+        },
+        () => {
+          return { tables, relationships };
+        },
+        roomId,
+      );
+      return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when room param or initSocket identity changes
+  }, [initSocket, searchParams]);
+
   const returnToCurrentDiagram = async () => {
     await load();
     setLayout((prev) => ({ ...prev, readOnly: false }));
@@ -460,7 +593,7 @@ export default function WorkSpace() {
     document.title = "Editor | drawDB";
 
     load();
-  }, [load]);
+  }, []);
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
