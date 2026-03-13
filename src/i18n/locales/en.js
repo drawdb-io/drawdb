@@ -44,6 +44,7 @@ const en = {
     paste: "Paste",
     duplicate: "Duplicate",
     delete: "Delete",
+    delete_all_fields: "Delete all fields",
     copy_as_image: "Copy as image",
     view: "View",
     header: "Menubar",
