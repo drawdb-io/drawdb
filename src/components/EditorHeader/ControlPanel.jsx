@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { arrangeTables } from "../../utils/arrangeTables";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -746,6 +747,45 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   };
   const toggleDBMLEditor = () => {
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
+  };
+  const autoArrange = () => {
+    if (layout.readOnly || tables.length < 2) return;
+
+    const originalById = new Map(
+      tables.map((table) => [table.id, { x: table.x, y: table.y }]),
+    );
+    const arrangedTables = tables.map((table) => ({ ...table }));
+    arrangeTables(
+      { tables: arrangedTables, relationships },
+      { tableWidth: settings.tableWidth },
+    );
+
+    const movedElements = [];
+    arrangedTables.forEach((table) => {
+      const original = originalById.get(table.id);
+      if (!original) return;
+      if (original.x === table.x && original.y === table.y) return;
+      movedElements.push({
+        id: table.id,
+        type: ObjectType.TABLE,
+        undo: { x: original.x, y: original.y },
+        redo: { x: table.x, y: table.y },
+      });
+    });
+
+    if (movedElements.length === 0) return;
+
+    setTables(arrangedTables);
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: "Auto arrange tables",
+        elements: movedElements,
+      },
+    ]);
+    setRedoStack([]);
   };
   const save = () => setSaveState(State.SAVING);
   const recentlyOpenedDiagrams = useLiveQuery(() =>
@@ -1731,6 +1771,15 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               disabled={layout.readOnly}
             >
               <IconAddNote />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm flex items-center disabled:opacity-50"
+              onClick={autoArrange}
+              disabled={layout.readOnly || tables.length < 2}
+            >
+              <i className="fa-solid fa-sitemap" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
