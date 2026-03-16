@@ -227,7 +227,8 @@
 
 .group:hover .relationship-path {
   stroke: #0084d1;
-  stroke-width: 2;
+  stroke-width: 6;
   stroke-dasharray: 12 8;
   animation: dash-right 1s linear infinite;
+  
 }
