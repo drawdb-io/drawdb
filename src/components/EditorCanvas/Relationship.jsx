@@ -90,6 +90,10 @@ export default function Relationship({ data }) {
     );
     cardinalityEndX = point2.x;
     cardinalityEndY = point2.y;
+
+    if (Math.abs(cardinalityStartY - cardinalityEndY) < labelFontSize) {
+      labelY -= labelFontSize
+    }
   }
 
   const edit = () => {
