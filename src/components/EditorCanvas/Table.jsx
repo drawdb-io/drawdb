@@ -19,7 +19,7 @@ import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
 import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
-import { dbToTypes } from "../../data/datatypes";
+import { resolveType } from "../../utils/customTypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 import { getCommentHeight, getTableHeight } from "../../utils/utils";
@@ -280,6 +280,7 @@ export default function Table({
           </div>
 
           {tableData.fields.map((e, i) => {
+            const resolved = resolveType(database, e.type);
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
@@ -292,12 +293,15 @@ export default function Table({
                       <p className="me-4 font-bold">{e.name}</p>
                       <p
                         className={
-                          "ms-4 font-mono " + dbToTypes[database][e.type].color
+                          "ms-4 font-mono " +
+                          (resolved.isCustom ? "" : resolved.color)
+                        }
+                        style={
+                          resolved.isCustom ? { color: resolved.color } : {}
                         }
                       >
                         {e.type +
-                          ((dbToTypes[database][e.type].isSized ||
-                            dbToTypes[database][e.type].hasPrecision) &&
+                          ((resolved.isSized || resolved.hasPrecision) &&
                           e.size &&
                           e.size !== ""
                             ? "(" + e.size + ")"
@@ -376,6 +380,7 @@ export default function Table({
   );
 
   function field(fieldData, index) {
+    const fieldResolved = resolveType(database, fieldData.type);
     return (
       <div
         className={`${
@@ -474,12 +479,17 @@ export default function Table({
               {!fieldData.notNull && <span className="font-mono">?</span>}
               <span
                 className={
-                  "font-mono " + dbToTypes[database][fieldData.type].color
+                  "font-mono " +
+                  (fieldResolved.isCustom ? "" : fieldResolved.color)
+                }
+                style={
+                  fieldResolved.isCustom
+                    ? { color: fieldResolved.color }
+                    : {}
                 }
               >
                 {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
+                  ((fieldResolved.isSized || fieldResolved.hasPrecision) &&
                   fieldData.size &&
                   fieldData.size !== ""
                     ? `(${fieldData.size})`

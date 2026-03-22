@@ -131,6 +131,15 @@ export const enumSchema = {
   },
 };
 
+export const customTypeEntrySchema = {
+  type: "object",
+  properties: {
+    type: { type: "string", minLength: 1 },
+    color: { type: "string" },
+  },
+  required: ["type", "color"],
+};
+
 export const jsonSchema = {
   type: "object",
   properties: {

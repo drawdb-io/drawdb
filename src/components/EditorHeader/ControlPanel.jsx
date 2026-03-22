@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import ConfigureCustomTypes from "./ConfigureCustomTypes";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { id: diagramId } = useParams();
@@ -1482,6 +1483,10 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         function: () => setModal(MODAL.TABLE_WIDTH),
         disabled: layout.readOnly,
       },
+      configure_custom_types: {
+        function: () => setModal(MODAL.CONFIG_CUSTOM_TYPES),
+        disabled: layout.readOnly,
+      },
       language: {
         function: () => setModal(MODAL.LANGUAGE),
       },
@@ -1600,6 +1605,10 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         title={title}
         setTitle={setTitle}
         onClose={() => setSidesheet(SIDESHEET.NONE)}
+      />
+      <ConfigureCustomTypes
+        open={modal === MODAL.CONFIG_CUSTOM_TYPES}
+        onClose={() => setModal(MODAL.NONE)}
       />
     </>
   );

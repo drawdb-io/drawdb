@@ -279,6 +279,17 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    configure_custom_types: "Configure custom types",
+    type_color: "Color",
+    custom_types_description:
+      "Define custom data types that are not supported by default. These types will be available when creating or editing columns.",
+    type_data_corrupted: "Configured types are corrupted.",
+    no_custom_types: "You do not have any types configured",
+    close: "Close",
+    add_custom_type: "Add custom type",
+    type_name_required: "Type name is required",
+    database: "Database",
+    saved: "Saved",
   },
 };
 
