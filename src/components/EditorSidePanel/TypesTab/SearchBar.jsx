@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AutoComplete } from "@douyinfe/semi-ui";
 import { IconSearch } from "@douyinfe/semi-icons";
 import { useSelect, useTypes } from "../../../hooks";
@@ -21,6 +21,11 @@ export default function Searchbar() {
     );
   };
 
+  useEffect(() => {
+    const names = types.map((t) => t.name);
+    setFilteredResult(value ? names.filter((i) => i.includes(value)) : names);
+  }, [types, value]);
+
   return (
     <AutoComplete
       data={filteredResult}
@@ -33,6 +38,8 @@ export default function Searchbar() {
       onChange={(v) => setValue(v)}
       onSelect={(v) => {
         const i = types.findIndex((t) => t.name === v);
+        const selectedType = types[i];
+        const scrollId = selectedType?.id ?? i;
         setSelectedElement((prev) => ({
           ...prev,
           id: i,
@@ -40,8 +47,8 @@ export default function Searchbar() {
           element: ObjectType.TYPE,
         }));
         document
-          .getElementById(`scroll_type_${i}`)
-          .scrollIntoView({ behavior: "smooth" });
+          .getElementById(`scroll_type_${scrollId}`)
+          ?.scrollIntoView({ behavior: "smooth" });
       }}
       className="w-full"
     />
