@@ -20,6 +20,7 @@ import {
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
+import { getCustomTypesForDb, resolveType } from "../../../utils/customTypes";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
@@ -76,6 +77,10 @@ export default function TypeField({ data, tid, fid }) {
               label: value,
               value: value,
             })),
+            ...Object.keys(getCustomTypesForDb(database)).map((value) => ({
+              label: value,
+              value,
+            })),
             ...types
               .filter(
                 (type) => type.name.toLowerCase() !== types[tid].name.toLowerCase(),
@@ -126,8 +131,8 @@ export default function TypeField({ data, tid, fid }) {
                 ),
               });
             } else if (
-              dbToTypes[database][value].isSized ||
-              dbToTypes[database][value].hasPrecision
+              resolveType(database, value).isSized ||
+              resolveType(database, value).hasPrecision
             ) {
               updateType(tid, {
                 fields: types[tid].fields.map((e, id) =>
@@ -135,7 +140,7 @@ export default function TypeField({ data, tid, fid }) {
                     ? {
                         ...data,
                         type: value,
-                        size: dbToTypes[database][value].defaultSize,
+                        size: resolveType(database, value).defaultSize,
                       }
                     : e,
                 ),
@@ -205,7 +210,7 @@ export default function TypeField({ data, tid, fid }) {
                   />
                 </>
               )}
-              {dbToTypes[database][data.type].isSized && (
+              {resolveType(database, data.type).isSized && (
                 <>
                   <div className="font-semibold">{t("size")}</div>
                   <InputNumber
@@ -244,7 +249,7 @@ export default function TypeField({ data, tid, fid }) {
                   />
                 </>
               )}
-              {dbToTypes[database][data.type].hasPrecision && (
+              {resolveType(database, data.type).hasPrecision && (
                 <>
                   <div className="font-semibold">{t("precision")}</div>
                   <Input

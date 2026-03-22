@@ -33,6 +33,7 @@ import Rename from "./Rename";
 import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
 import { useNavigate } from "react-router-dom";
+import { mergeCustomTypes } from "../../../utils/customTypes";
 
 const extensionToLanguage = {
   md: "markdown",
@@ -92,6 +93,9 @@ export default function Modal({
     }
     if (databases[database].hasTypes && importData.types) {
       setTypes(importData.types);
+    }
+    if (importData.customTypes) {
+      mergeCustomTypes(importData.customTypes);
     }
   };
 
@@ -326,7 +330,7 @@ export default function Modal({
     <SemiUIModal
       style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       title={getModalTitle(modal)}
-      visible={modal !== MODAL.NONE}
+      visible={modal !== MODAL.NONE && modal !== MODAL.CONFIG_CUSTOM_TYPES}
       onOk={getModalOnOk}
       afterClose={() => {
         setExportData(() => ({
