@@ -11,7 +11,6 @@ import CodeEditor from "../../CodeEditor";
 import { generateMigrationSQL } from "../../../utils/migrations/diffToSQL";
 import * as JSZip from "jszip";
 import { saveAs } from "file-saver";
-import { set } from "lodash";
 
 export default function Migration({
   gistId,
@@ -80,21 +79,21 @@ export default function Migration({
     }
   }, [gistId, selectedVersion, versionToCompareTo]);
 
- const handleConfirm = () => {
-  if (!migrationSQL?.up) return;
+  const handleConfirm = () => {
+    if (!migrationSQL?.up) return;
 
-  const JSZipConstructor = JSZip.default || JSZip;
-  const zip = new JSZipConstructor();
-  
-  zip.file(`${filename}.up.sql`, migrationSQL.up);
-  zip.file(`${filename}.down.sql`, migrationSQL.down);
+    const JSZipConstructor = JSZip.default || JSZip;
+    const zip = new JSZipConstructor();
 
-  zip.generateAsync({ type: "blob" }).then(function (content) {
-    saveAs(content, `${filename}.zip`);
-  });
+    zip.file(`${filename}.up.sql`, migrationSQL.up);
+    zip.file(`${filename}.down.sql`, migrationSQL.down);
 
-  setSelectedVersion(null);
-};
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+      saveAs(content, `${filename}.zip`);
+    });
+
+    setSelectedVersion(null);
+  };
 
   useEffect(() => {
     if (versionToCompareTo === "") {
