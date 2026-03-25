@@ -174,7 +174,7 @@ export default function Table({
               <div className="hidden group-hover:block">
                 <div className="flex justify-end items-center mx-2 space-x-1.5">
                   <Button
-                    aria-label={t("lock")}
+                    aria-label={tableData.locked ? t("unlock") : t("lock")}
                     icon={tableData.locked ? <IconLock /> : <IconUnlock />}
                     size="small"
                     theme="solid"
