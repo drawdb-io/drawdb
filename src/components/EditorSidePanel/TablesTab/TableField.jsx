@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { DragHandle } from "../../SortableList/DragHandle";
 import FieldDetails from "./FieldDetails";
+import { getCustomTypesForDb, resolveType } from "../../../utils/customTypes";
 
 export default function TableField({ data, tid, index, inherited }) {
   const { updateField } = useDiagram();
@@ -71,6 +72,10 @@ export default function TableField({ data, tid, index, inherited }) {
               label: value,
               value,
             })),
+            ...Object.keys(getCustomTypesForDb(database)).map((value) => ({
+              label: value,
+              value,
+            })),
             ...types.map((type) => ({
               label: type.name.toUpperCase(),
               value: type.name.toUpperCase(),
@@ -105,8 +110,8 @@ export default function TableField({ data, tid, index, inherited }) {
               },
             ]);
             setRedoStack([]);
-            const incr =
-              data.increment && !!dbToTypes[database][value].canIncrement;
+            const typeInfo = resolveType(database, value);
+            const incr = data.increment && !!typeInfo.canIncrement;
 
             if (value === "ENUM" || value === "SET") {
               updateField(tid, data.id, {
@@ -115,16 +120,13 @@ export default function TableField({ data, tid, index, inherited }) {
                 values: data.values ? [...data.values] : [],
                 increment: incr,
               });
-            } else if (
-              dbToTypes[database][value].isSized ||
-              dbToTypes[database][value].hasPrecision
-            ) {
+            } else if (typeInfo.isSized || typeInfo.hasPrecision) {
               updateField(tid, data.id, {
                 type: value,
-                size: dbToTypes[database][value].defaultSize,
+                size: typeInfo.defaultSize,
                 increment: incr,
               });
-            } else if (!dbToTypes[database][value].hasDefault || incr) {
+            } else if (!typeInfo.hasDefault || incr) {
               updateField(tid, data.id, {
                 type: value,
                 increment: incr,
@@ -132,7 +134,7 @@ export default function TableField({ data, tid, index, inherited }) {
                 size: "",
                 values: [],
               });
-            } else if (dbToTypes[database][value].hasCheck) {
+            } else if (typeInfo.hasCheck) {
               updateField(tid, data.id, {
                 type: value,
                 check: "",

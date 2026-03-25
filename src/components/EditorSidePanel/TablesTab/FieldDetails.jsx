@@ -11,13 +11,14 @@ import { Action, ObjectType } from "../../../data/constants";
 import { IconDeleteStroked } from "@douyinfe/semi-icons";
 import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import { useTranslation } from "react-i18next";
-import { dbToTypes } from "../../../data/datatypes";
 import { databases } from "../../../data/databases";
+import { resolveType } from "../../../utils/customTypes";
 
 export default function FieldDetails({ data, tid }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const { tables, database } = useDiagram();
+  const resolved = resolveType(database, data.type);
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { updateField, deleteField } = useDiagram();
   const [editField, setEditField] = useState({});
@@ -31,7 +32,7 @@ export default function FieldDetails({ data, tid }) {
         placeholder={t("default_value")}
         value={data.default}
         readonly={layout.readOnly}
-        disabled={dbToTypes[database][data.type].noDefault || data.increment}
+        disabled={resolved.noDefault || data.increment}
         onChange={(value) => updateField(tid, data.id, { default: value })}
         onFocus={(e) => setEditField({ default: e.target.value })}
         onBlur={(e) => {
@@ -100,7 +101,7 @@ export default function FieldDetails({ data, tid }) {
           />
         </>
       )}
-      {dbToTypes[database][data.type].isSized && (
+      {resolved.isSized && (
         <>
           <div className="font-semibold">{t("size")}</div>
           <InputNumber
@@ -133,7 +134,7 @@ export default function FieldDetails({ data, tid }) {
           />
         </>
       )}
-      {dbToTypes[database][data.type].hasPrecision && (
+      {resolved.hasPrecision && (
         <>
           <div className="font-semibold">{t("precision")}</div>
           <Input
@@ -171,7 +172,7 @@ export default function FieldDetails({ data, tid }) {
           />
         </>
       )}
-      {dbToTypes[database][data.type].hasCheck && (
+      {resolved.hasCheck && (
         <>
           <div className="font-semibold">{t("check")}</div>
           <Input
@@ -242,7 +243,7 @@ export default function FieldDetails({ data, tid }) {
           value="increment"
           checked={data.increment}
           disabled={
-            !dbToTypes[database][data.type].canIncrement || data.isArray || layout.readOnly
+            !resolved.canIncrement || data.isArray || layout.readOnly
           }
           onChange={(checkedValues) => {
             setUndoStack((prev) => [
@@ -311,7 +312,7 @@ export default function FieldDetails({ data, tid }) {
         </div>
       )}
       {databases[database].hasUnsignedTypes &&
-        dbToTypes[database][data.type].signed && (
+        resolved.signed && (
           <div className="flex justify-between items-center my-3">
             <div className="font-medium">{t("Unsigned")}</div>
             <Checkbox

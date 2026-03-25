@@ -31,6 +31,7 @@ import {
 } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
 import { nanoid } from "nanoid";
+import { mergeCustomTypes } from "../utils/customTypes";
 
 export const IdContext = createContext({
   gistId: "",
@@ -358,6 +359,9 @@ export default function WorkSpace() {
               !e.id ? { ...e, id: nanoid() } : e,
             ) ?? [],
           );
+        }
+        if (parsedDiagram.customTypes) {
+          mergeCustomTypes(parsedDiagram.customTypes);
         }
         if (diagramId) {
           navigate(`/editor/diagrams/${diagramId}`, {
