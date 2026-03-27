@@ -30,6 +30,8 @@ export default function Table({
   setHoveredTable,
   handleGripField,
   setLinkingLine,
+  setResize,
+  setInitDimensions,
 }) {
   const [hoveredField, setHoveredField] = useState(null);
   const { database } = useDiagram();
@@ -51,7 +53,7 @@ export default function Table({
 
   const height = getTableHeight(
     tableData,
-    settings.tableWidth,
+    tableData.width || settings.tableWidth,
     settings.showComments,
   );
 
@@ -141,7 +143,7 @@ export default function Table({
         key={tableData.id}
         x={tableData.x}
         y={tableData.y}
-        width={settings.tableWidth}
+        width={tableData.width || settings.tableWidth}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
         onPointerDown={onPointerDown}
@@ -376,6 +378,23 @@ export default function Table({
           <TableInfo data={tableData} />
         </div>
       </SideSheet>
+      {!layout.readOnly && !tableData.locked && isSelected && (
+        <rect
+          x={tableData.x + (tableData.width || settings.tableWidth) - 2}
+          y={tableData.y + 10}
+          width={4}
+          height={height - 20}
+          fill="transparent"
+          style={{ cursor: "ew-resize" }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            setResize({ id: tableData.id, dir: "right" });
+            setInitDimensions({
+              width: tableData.width || settings.tableWidth,
+            });
+          }}
+        />
+      )}
     </>
   );
 
@@ -435,7 +454,7 @@ export default function Table({
                   tableColorStripHeight +
                   getCommentHeight(
                     tableData.comment,
-                    settings.tableWidth,
+                    tableData.width || settings.tableWidth,
                     settings.showComments,
                   ) +
                   14,
@@ -447,7 +466,7 @@ export default function Table({
                   tableColorStripHeight +
                   getCommentHeight(
                     tableData.comment,
-                    settings.tableWidth,
+                    tableData.width || settings.tableWidth,
                     settings.showComments,
                   ) +
                   14,

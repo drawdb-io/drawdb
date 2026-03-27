@@ -41,6 +41,7 @@ export default function DiagramContextProvider({ children }) {
       comment: "",
       indices: [],
       color: defaultBlue,
+      width: tableWidth,
     };
     if (data) {
       setTables((prev) => {

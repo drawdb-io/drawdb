@@ -522,13 +522,13 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
     };
 
     tables.forEach((table) => {
+      const width = table.width || settings.tableWidth;
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
-      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + width);
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
-        table.y +
-          getTableHeight(table, settings.tableWidth, settings.showComments),
+        table.y + getTableHeight(table, width, settings.showComments),
       );
     });
 

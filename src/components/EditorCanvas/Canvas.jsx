@@ -91,6 +91,10 @@ export default function Canvas() {
     width: 0,
     height: 0,
   });
+  const [tableResize, setTableResize] = useState({ id: -1, dir: "none" });
+  const [tableInitDimensions, setTableInitDimensions] = useState({
+    width: 0,
+  });
   const [bulkSelectRect, setBulkSelectRect] = useState({
     x1: 0,
     y1: 0,
@@ -134,10 +138,10 @@ export default function Canvas() {
       const tableRect = {
         x: table.x,
         y: table.y,
-        width: settings.tableWidth,
+        width: table.width || settings.tableWidth,
         height: getTableHeight(
           table,
-          settings.tableWidth,
+          table.width || settings.tableWidth,
           settings.showComments,
         ),
       };
@@ -401,6 +405,24 @@ export default function Canvas() {
       return;
     }
 
+    if (tableResize.id !== -1) {
+      if (tableResize.dir === "none") return;
+      let newDims = { ...tableInitDimensions };
+      setPanning((old) => ({ ...old, isPanning: false }));
+      const { x } = coordinatesAfterSnappingToGrid(pointer.spaces.diagram);
+
+      if (tableResize.dir === "right") {
+        newDims.width = x - tables.find((t) => t.id === tableResize.id).x;
+      }
+
+      if (newDims.width <= 150) {
+        newDims.width = 150;
+      }
+
+      updateTable(tableResize.id, { ...newDims });
+      return;
+    }
+
     if (bulkSelectRect.show) {
       setBulkSelectRect((prev) => ({
         ...prev,
@@ -473,6 +495,11 @@ export default function Canvas() {
       areas[id].width === areaInitDimensions.width &&
       areas[id].height === areaInitDimensions.height
     );
+  };
+
+  const didTableResize = (id) => {
+    const table = tables.find((t) => t.id === id);
+    return table.width !== tableInitDimensions.width;
   };
 
   const didPan = () =>
@@ -565,6 +592,36 @@ export default function Canvas() {
       width: 0,
       height: 0,
     });
+
+    if (tableResize.id !== -1) {
+      if (didTableResize(tableResize.id)) {
+        const table = tables.find((t) => t.id === tableResize.id);
+        setUndoStack((prev) => [
+          ...prev,
+          {
+            action: Action.EDIT,
+            element: ObjectType.TABLE,
+            component: "self",
+            tid: tableResize.id,
+            undo: {
+              width: tableInitDimensions.width,
+            },
+            redo: {
+              width: table.width,
+            },
+            message: t("edit_table", {
+              tableName: table.name,
+              extra: "[resize]",
+            }),
+          },
+        ]);
+        setRedoStack([]);
+      }
+      setTableResize({ id: -1, dir: "none" });
+      setTableInitDimensions({
+        width: 0,
+      });
+    }
   };
 
   const handleGripField = () => {
@@ -754,6 +811,8 @@ export default function Canvas() {
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
+              setResize={setTableResize}
+              setInitDimensions={setTableInitDimensions}
               onPointerDown={() => {
                 elementPointerDown = {
                   element: table,
