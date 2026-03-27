@@ -207,6 +207,62 @@ export default function Area({
       </foreignObject>
       {isHovered && (
         <>
+          <rect
+            x={data.x - 4}
+            y={data.y - 4}
+            width={8}
+            height={8}
+            fill="transparent"
+            style={{ cursor: "nwse-resize" }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setResize({ id: data.id, dir: "tl" });
+              setInitDimensions({ ...data });
+            }}
+            aria-label="Resize upper left"
+          />
+          <rect
+            x={data.x + data.width - 4}
+            y={data.y - 4}
+            width={8}
+            height={8}
+            fill="transparent"
+            style={{ cursor: "nesw-resize" }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setResize({ id: data.id, dir: "tr" });
+              setInitDimensions({ ...data });
+            }}
+            aria-label="Resize upper right"
+          />
+          <rect
+            x={data.x - 4}
+            y={data.y + data.height - 4}
+            width={8}
+            height={8}
+            fill="transparent"
+            style={{ cursor: "nesw-resize" }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setResize({ id: data.id, dir: "bl" });
+              setInitDimensions({ ...data });
+            }}
+            aria-label="Resize lower left"
+          />
+          <rect
+            x={data.x + data.width - 4}
+            y={data.y + data.height - 4}
+            width={8}
+            height={8}
+            fill="transparent"
+            style={{ cursor: "nwse-resize" }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setResize({ id: data.id, dir: "br" });
+              setInitDimensions({ ...data });
+            }}
+            aria-label="Resize lower right"
+          />
           <circle
             cx={data.x}
             cy={data.y}
