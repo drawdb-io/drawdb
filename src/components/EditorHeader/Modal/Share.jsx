@@ -14,6 +14,7 @@ import {
 import { databases } from "../../../data/databases";
 import { MODAL } from "../../../data/constants";
 import { create, patch, SHARE_FILENAME } from "../../../api/gists";
+import { getCustomTypes } from "../../../utils/customTypes";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -26,10 +27,24 @@ export default function Share({ title, setModal }) {
   const { enums } = useEnums();
   const { transform } = useTransform();
   const [error, setError] = useState(null);
-  const url =
-    window.location.origin + window.location.pathname + "?shareId=" + gistId;
+  const url = window.location.origin + "/editor?shareId=" + gistId;
 
   const diagramToString = useCallback(() => {
+    const allCustomTypes = getCustomTypes();
+    const usedFieldTypes = new Set(
+      tables.flatMap((t) => t.fields.map((f) => f.type.toUpperCase())),
+    );
+    const usedCustomTypes = {};
+    for (const [db, types] of Object.entries(allCustomTypes)) {
+      for (const [name, entry] of Object.entries(types)) {
+        if (usedFieldTypes.has(name)) {
+          if (!usedCustomTypes[db]) usedCustomTypes[db] = {};
+          usedCustomTypes[db][name] = entry;
+        }
+      }
+    }
+    const hasCustomTypes = Object.keys(usedCustomTypes).length > 0;
+
     return JSON.stringify({
       title,
       tables: tables,
@@ -39,6 +54,7 @@ export default function Share({ title, setModal }) {
       database: database,
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
+      ...(hasCustomTypes && { customTypes: usedCustomTypes }),
       transform: transform,
     });
   }, [
@@ -83,7 +99,7 @@ export default function Share({ title, setModal }) {
       }
     };
     updateOrGenerateLink();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const copyLink = () => {

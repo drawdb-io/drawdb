@@ -15,6 +15,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/editor" element={<Editor />} />
+          <Route path="/editor/diagrams/:id" element={<Editor />} />
+          <Route path="/editor/templates/:id" element={<Editor />} />
           <Route path="/bug-report" element={<BugReport />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<NotFound />} />

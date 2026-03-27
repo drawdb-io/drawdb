@@ -19,6 +19,7 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
 
     return sizeStr;
   };
+
   return (
     <div>
       {diagrams?.length === 0 ? (
@@ -45,12 +46,12 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
               {diagrams?.map((d) => {
                 return (
                   <tr
-                    key={d.id}
+                    key={d.diagramId}
                     className={`${
-                      selectedDiagramId === d.id ? "bg-blue-300/30" : "hover-1"
+                      selectedDiagramId === d.diagramId ? "bg-blue-300/30" : "hover-1"
                     }`}
                     onClick={() => {
-                      setSelectedDiagramId(d.id);
+                      setSelectedDiagramId(d.diagramId);
                     }}
                   >
                     <td className="py-1">
