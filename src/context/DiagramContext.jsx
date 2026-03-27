@@ -18,11 +18,12 @@ export default function DiagramContextProvider({ children }) {
 
   const addTable = (data, addToHistory = true) => {
     const id = nanoid();
+    const offset = tables.length * 20;
     const newTable = {
       id,
       name: `table_${id}`,
-      x: transform.pan.x,
-      y: transform.pan.y,
+      x: transform.pan.x + offset,
+      y: transform.pan.y + offset,
       locked: false,
       fields: [
         {
