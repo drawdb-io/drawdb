@@ -134,8 +134,8 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
               relationship.startFieldId = startField.id;
               relationship.id = nanoid();
 
-              let updateConstraint = "No action";
-              let deleteConstraint = "No action";
+              let updateConstraint = Constraint.NONE;
+              let deleteConstraint = Constraint.NONE;
               d.reference_definition.on_action.forEach((c) => {
                 if (c.type === "on update") {
                   updateConstraint = c.value.value;
@@ -201,8 +201,8 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
             expr.create_definitions.reference_definition.table[0].table;
           const endFieldName =
             expr.create_definitions.reference_definition.definition[0].column;
-          let updateConstraint = "No action";
-          let deleteConstraint = "No action";
+          let updateConstraint = Constraint.NONE;
+          let deleteConstraint = Constraint.NONE;
           expr.create_definitions.reference_definition.on_action.forEach(
             (c) => {
               if (c.type === "on update") {
