@@ -220,7 +220,7 @@ const th = {
     versions: "เวอร์ชันทั้งหมด",
     no_saved_versions: "ยังไม่มีเวอร์ชันที่บันทึกไว้",
     record_version: "บันทึกเวอร์ชัน",
-    commited_at: "คอมมิตเมื่อ",
+    committed_at: "คอมมิตเมื่อ",
     read_only: "อ่านอย่างเดียว",
     continue: "ดำเนินการต่อ",
     restore_version: "กู้คืนเวอร์ชัน",

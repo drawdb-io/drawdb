@@ -266,7 +266,7 @@ const bg = {
         versions: "Версии",
         no_saved_versions: "Няма запазени версии",
         record_version: "Запиши версия",
-        commited_at: "Комитнато на",
+        committed_at: "Комитнато на",
         read_only: "Само за четене",
         continue: "Продължи",
         restore_version: "Възстанови версия",

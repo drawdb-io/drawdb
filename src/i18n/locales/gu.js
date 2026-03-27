@@ -266,7 +266,7 @@ const gu = {
     versions: "આવૃત્તિઓ",
     no_saved_versions: "કોઈ સેવ કરેલી આવૃત્તિઓ નથી",
     record_version: "આવૃત્તિ રેકોર્ડ કરો",
-    commited_at: "પર કમિટ કર્યું",
+    committed_at: "પર કમિટ કર્યું",
     read_only: "ફક્ત વાંચવા માટે",
     continue: "ચાલુ રાખો",
     restore_version: "આવૃત્તિ પુનઃસ્થાપિત કરો",

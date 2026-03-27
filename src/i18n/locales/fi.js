@@ -266,7 +266,7 @@ const fi = {
     versions: "Versiot",
     no_saved_versions: "Ei tallennettuja versioita",
     record_version: "Tallenna versio",
-    commited_at: "Tallennettu",
+    committed_at: "Tallennettu",
     read_only: "Vain luku",
     continue: "Jatka",
     restore_version: "Palauta versio",
