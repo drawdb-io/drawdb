@@ -546,7 +546,11 @@ export default function WorkSpace() {
               } ${selectedDb === x.label ? "border-zinc-400" : "border-transparent"}`}
             >
               <div className="flex items-center justify-between">
-                <div className="font-semibold">{x.name}</div>
+                <div className="font-semibold">
+                  {x.label === DB.GENERIC
+                    ? t("generic")
+                    : t(`db_${x.label.toLowerCase()}`)}
+                </div>
                 {x.beta && (
                   <Tag size="small" color="light-blue">
                     Beta
@@ -563,7 +567,11 @@ export default function WorkSpace() {
                   }}
                 />
               )}
-              <div className="text-xs">{x.description}</div>
+              <div className="text-xs">
+                {x.label === DB.GENERIC
+                  ? t("generic_description")
+                  : t(`db_${x.label.toLowerCase()}_description`)}
+              </div>
             </div>
           ))}
         </div>
