@@ -265,7 +265,7 @@ const zh_tw = {
     versions: "版本",
     no_saved_versions: "尚未儲存任何版本",
     record_version: "紀錄版本",
-    commited_at: "提交時間",
+    committed_at: "提交時間",
     read_only: "唯讀",
     continue: "繼續",
     restore_version: "還原版本",

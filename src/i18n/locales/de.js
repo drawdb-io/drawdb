@@ -269,7 +269,7 @@ const de = {
     versions: "Versionen",
     no_saved_versions: "Keine gespeicherten Versionen",
     record_version: "Version aufzeichnen",
-    commited_at: "Übertragen am",
+    committed_at: "Übertragen am",
     read_only: "Nur lesen",
     continue: "Fortfahren",
     restore_version: "Version wiederherstellen",

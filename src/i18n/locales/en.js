@@ -254,7 +254,7 @@ const en = {
     versions: "Versions",
     no_saved_versions: "No saved versions",
     record_version: "Record version",
-    commited_at: "Commited at",
+    committed_at: "Committed at",
     read_only: "Read only",
     continue: "Continue",
     restore_version: "Restore version",
