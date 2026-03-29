@@ -265,7 +265,7 @@ const es = {
     versions: "Versiones",
     no_saved_versions: "No hay versiones guardadas",
     record_version: "Grabar versión",
-    commited_at: "Confirmado en",
+    committed_at: "Confirmado en",
     read_only: "Solo lectura",
     continue: "Continuar",
     restore_version: "Restaurar versión",

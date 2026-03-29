@@ -268,7 +268,7 @@ const as = {
       versions: "সংস্কৰণবোৰ",
       no_saved_versions: "কোনো সংৰক্ষিত সংস্কৰণ নাই",
       record_version: "সংস্কৰণ ৰেকৰ্ড কৰক",
-      commited_at: "কমিট কৰা হৈছিল",
+      committed_at: "কমিট কৰা হৈছিল",
       read_only: "পড়িবলৈহে",
       continue: "জাৰি ৰাখক",
       restore_version: "সংস্কৰণ পুনৰুদ্ধাৰ কৰক",

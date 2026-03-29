@@ -248,7 +248,7 @@ const ml = {
         versions: "വേർഷനുകൾ",
         no_saved_versions: "സേവ് ചെയ്ത വേർഷനുകളൊന്നുമില്ല",
         record_version: "വേർഷൻ റെക്കോർഡ് ചെയ്യുക",
-        commited_at: "കമിറ്റ് ചെയ്ത സമയം",
+        committed_at: "കമിറ്റ് ചെയ്ത സമയം",
         read_only: "വായിക്കാൻ മാത്രം",
         continue: "തുടരുക",
         restore_version: "വേർഷൻ റെസ്റ്റോർ ചെയ്യുക",

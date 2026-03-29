@@ -259,7 +259,7 @@ const cz = {
     versions: "Verze",
     no_saved_versions: "Žádné uložené verze",
     record_version: "Zaznamenat verzi",
-    commited_at: "Potvrzeno v",
+    committed_at: "Potvrzeno v",
     read_only: "Pouze pro čtení",
     continue: "Pokračovat",
     restore_version: "Obnovit verzi",

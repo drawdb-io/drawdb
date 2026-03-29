@@ -266,7 +266,7 @@ const da = {
     versions: "Versioner",
     no_saved_versions: "Ingen gemte versioner",
     record_version: "Registrér version",
-    commited_at: "Committet den",
+    committed_at: "Committet den",
     read_only: "Skrivebeskyttet",
     continue: "Fortsæt",
     restore_version: "Gendan version",

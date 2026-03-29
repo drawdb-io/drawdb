@@ -270,7 +270,7 @@ const sw = {
     versions: "Matoleo",
     no_saved_versions: "Hakuna matoleo yaliyohifadhiwa",
     record_version: "Rekodi toleo",
-    commited_at: "Ilihifadhiwa tarehe",
+    committed_at: "Ilihifadhiwa tarehe",
     read_only: "Soma tu",
     continue: "Endelea",
     restore_version: "Rejesha toleo",

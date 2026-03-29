@@ -269,7 +269,7 @@ const tl = {
     versions: "Mga bersyon",
     no_saved_versions: "Walang naka-save na mga bersyon",
     record_version: "I-record ang bersyon",
-    commited_at: "Na-commit noong",
+    committed_at: "Na-commit noong",
     read_only: "Read only",
     continue: "Magpatuloy",
     restore_version: "I-restore ang bersyon",
