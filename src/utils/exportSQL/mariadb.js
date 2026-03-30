@@ -10,7 +10,10 @@ function parseType(field) {
     res += `${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}`;
   }
 
-  if (dbToTypes[DB.MARIADB][field.type].isSized) {
+  if (
+    dbToTypes[DB.MARIADB][field.type].isSized ||
+    dbToTypes[DB.MARIADB][field.type].hasPrecision
+  ) {
     res += `${field.size && field.size !== "" ? "(" + field.size + ")" : ""}`;
   }
 
