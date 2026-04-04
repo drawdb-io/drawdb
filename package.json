@@ -30,7 +30,7 @@
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "luxon": "^3.7.1",
     "nanoid": "^5.1.5",
     "node-sql-parser": "^5.4.0",
