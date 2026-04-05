@@ -18,6 +18,7 @@ import {
   useEnums,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
+import StatsBox from "./StatsBox";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
 import { IconAlertTriangle } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
@@ -512,6 +513,9 @@ export default function WorkSpace() {
               </Button>
             </div>
           )}
+          <div className="absolute left-4 bottom-4">
+            <StatsBox />
+          </div>
           {!(layout.sidebar || layout.toolbar || layout.header) && (
             <div className="fixed right-5 bottom-4">
               <FloatingControls />
