@@ -226,7 +226,7 @@ export default function TableField({ data, tid, index, inherited }) {
           position="right"
           showArrow
         >
-          <Button type="tertiary" icon={<IconMore />} />
+          <Button aria-label={t("more")} type="tertiary" icon={<IconMore />} />
         </Popover>
       </div>
     </div>
