@@ -162,6 +162,11 @@
   background-size: 20px 20px;
 }
 
+[theme-mode="dark"] .bg-dots {
+  background-color: transparent;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+}
+
 .sliding-vertical span {
   animation: top-to-bottom 9s linear infinite 0s;
   -ms-animation: top-to-bottom 9s linear infinite 0s;
