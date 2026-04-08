@@ -84,6 +84,7 @@ export default function Canvas() {
     panStart: { x: 0, y: 0 },
     cursorStart: { x: 0, y: 0 },
   });
+  const [spacePressed, setSpacePressed] = useState(false);
   const [areaResize, setAreaResize] = useState({ id: -1, dir: "none" });
   const [areaInitDimensions, setAreaInitDimensions] = useState({
     x: 0,
@@ -428,6 +429,16 @@ export default function Canvas() {
     const isMouseMiddleButton = e.button === 1;
 
     if (isMouseLeftButton) {
+      // Start panning if space is held
+      if (spacePressed) {
+        setPanning({
+          isPanning: true,
+          panStart: transform.pan,
+          cursorStart: pointer.spaces.screen,
+        });
+        pointer.setStyle("grabbing");
+        return;
+      }
       setBulkSelectRect({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
@@ -530,7 +541,11 @@ export default function Canvas() {
       setSaveState(State.SAVING);
     }
     setPanning((old) => ({ ...old, isPanning: false }));
-    pointer.setStyle("default");
+    if (spacePressed) {
+      pointer.setStyle("grab");
+    } else {
+      pointer.setStyle("default");
+    }
 
     if (linking) handleLinking();
     setLinking(false);
@@ -681,6 +696,24 @@ export default function Canvas() {
     canvasRef,
     { passive: false },
   );
+
+  // Track space key for panning
+  useEventListener("keydown", (e) => {
+    if (e.code === "Space" && !e.repeat) {
+      e.preventDefault(); // Prevent page scroll
+      setSpacePressed(true);
+      pointer.setStyle("grab");
+    }
+  });
+
+  useEventListener("keyup", (e) => {
+    if (e.code === "Space") {
+      setSpacePressed(false);
+      if (!panning.isPanning) {
+        pointer.setStyle("default");
+      }
+    }
+  });
 
   return (
     <div className="grow h-full touch-none" id="canvas">
