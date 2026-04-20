@@ -174,6 +174,7 @@ export default function Table({
               <div className="hidden group-hover:block">
                 <div className="flex justify-end items-center mx-2 space-x-1.5">
                   <Button
+                    aria-label={tableData.locked ? t("unlock") : t("lock")}
                     icon={tableData.locked ? <IconLock /> : <IconUnlock />}
                     size="small"
                     theme="solid"
@@ -184,6 +185,7 @@ export default function Table({
                     onClick={lockUnlockTable}
                   />
                   <Button
+                    aria-label={t("edit")}
                     icon={<IconEdit />}
                     size="small"
                     theme="solid"
@@ -260,6 +262,7 @@ export default function Table({
                     style={{ width: "200px", wordBreak: "break-word" }}
                   >
                     <Button
+                      aria-label={t("more")}
                       icon={<IconMore />}
                       type="tertiary"
                       size="small"
@@ -461,6 +464,7 @@ export default function Table({
         <div className="text-zinc-400">
           {hoveredField === index ? (
             <Button
+              aria-label={t("delete")}
               theme="solid"
               size="small"
               style={{
