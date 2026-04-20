@@ -622,11 +622,13 @@ export default function Canvas() {
     const newRelationship = {
       ...linkingLine,
       cardinality,
-      endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.fieldId,
+      startTableId: hoveredTable.tableId,
+      startFieldId: hoveredTable.fieldId,
+      endTableId: linkingLine.startTableId,
+      endFieldId: linkingLine.startFieldId,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${startTableName}_${startField.name}_${endTableName}`,
+      name: `fk_${endTableName}_${endField.name}_${startTableName}`,
       id: nanoid(),
     };
     delete newRelationship.startX;
@@ -650,13 +652,13 @@ export default function Canvas() {
             x:
               prev.pan.x -
               (pointer.spaces.diagram.x - prev.pan.x) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
             y:
               prev.pan.y -
               (pointer.spaces.diagram.y - prev.pan.y) *
-                eagernessFactor *
-                Math.sign(e.deltaY),
+              eagernessFactor *
+              Math.sign(e.deltaY),
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
