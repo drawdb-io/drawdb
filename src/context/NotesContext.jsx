@@ -27,20 +27,28 @@ export default function NotesContextProvider({ children }) {
       });
     } else {
       const height = 88;
-      setNotes((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          x: transform.pan.x,
-          y: transform.pan.y - height / 2,
-          title: `note_${prev.length}`,
-          content: "",
-          locked: false,
-          color: defaultNoteTheme,
-          height,
-          width: noteWidth,
-        },
-      ]);
+      setNotes((prev) => {
+        let x = transform.pan.x;
+        let y = transform.pan.y - height / 2;
+        while (prev.some((n) => n.x === x && n.y === y)) {
+          x += 20;
+          y += 20;
+        }
+        return [
+          ...prev,
+          {
+            id: prev.length,
+            x,
+            y,
+            title: `note_${prev.length}`,
+            content: "",
+            locked: false,
+            color: defaultNoteTheme,
+            height,
+            width: noteWidth,
+          },
+        ];
+      });
     }
     if (addToHistory) {
       setUndoStack((prev) => [
