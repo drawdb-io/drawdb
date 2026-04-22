@@ -12,10 +12,10 @@ function formatMarkdownTable(headers, rows) {
   const separator = colWidths.map((w) => "-".repeat(w)).join(" | ");
   const headerRow = headers.map((h, i) => pad(h, colWidths[i])).join(" | ");
   const dataRows = rows
-    .map((row) => row.map((cell, i) => pad(cell, colWidths[i])).join(" | "))
+    .map((row) => `| ${row.map((cell, i) => pad(cell, colWidths[i])).join(" | ")} |`)
     .join("\n");
 
-  return `| ${headerRow} |\n| ${separator} |\n| ${dataRows} |`;
+  return `| ${headerRow} |\n| ${separator} |\n${dataRows}`;
 }
 
 export function jsonToDocumentation(obj) {
