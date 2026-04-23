@@ -200,6 +200,7 @@ const es = {
       "Campos de tipo duplicados por nombre '{{fieldName}}' en el tipo '{{typeName}}'",
     duplicate_reference: "Referencia duplicada con el nombre '{{refName}}'",
     circular_dependency: "Dependencia circular involucrando la tabla '{{refName}}'",
+    circular_type_dependency: "Dependencia circular de tipos involucrando el tipo '{{typeName}}'",
     timeline: "Linea del tiempo",
     priority: "Prioridad",
     none: "Ninguno",
