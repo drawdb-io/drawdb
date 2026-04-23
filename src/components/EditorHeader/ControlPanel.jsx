@@ -85,6 +85,7 @@ import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
+import { getTypeById } from "../../utils/types";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
 
 export default function ControlPanel({ title, setTitle, lastSaved }) {
@@ -255,32 +256,37 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         updateRelationship(a.rid, a.undo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
-          const type = types.find((t, i) =>
-            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
-          );
-          updateType(a.tid, {
-            fields: type.fields.filter((f, i) =>
-              f.id ? f.id !== a.data.field.id : i !== type.fields.length - 1,
-            ),
-          });
+          const { type } = getTypeById(types, a.tid);
+          if (type) {
+            updateType(a.tid, {
+              fields: type.fields.filter((f, i) =>
+                f.id ? f.id !== a.data.field.id : i !== type.fields.length - 1,
+              ),
+            });
+          }
         }
         if (a.component === "field") {
-          updateType(a.tid, {
-            fields: types[a.tid].fields.map((e, i) =>
-              i === a.fid ? { ...e, ...a.undo } : e,
-            ),
-          });
+          const { type } = getTypeById(types, a.tid);
+          if (type) {
+            updateType(a.tid, {
+              fields: type.fields.map((e, i) =>
+                i === a.fid ? { ...e, ...a.undo } : e,
+              ),
+            });
+          }
         } else if (a.component === "field_delete") {
-          setTypes((prev) =>
-            prev.map((t, i) => {
-              if (i === a.tid) {
+          setTypes((prev) => {
+            const { index: typeIndex } = getTypeById(prev, a.tid);
+            if (typeIndex < 0) return prev;
+            return prev.map((t, i) => {
+              if (i === typeIndex) {
                 const temp = t.fields.slice();
                 temp.splice(a.fid, 0, a.data);
                 return { ...t, fields: temp };
               }
               return t;
-            }),
-          );
+            });
+          });
         } else if (a.component === "self") {
           updateType(a.tid, a.undo);
           if (a.updatedFields) {
@@ -436,22 +442,28 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
         updateRelationship(a.rid, a.redo);
       } else if (a.element === ObjectType.TYPE) {
         if (a.component === "field_add") {
-          const type = types.find((t, i) =>
-            typeof a.tid === "number" ? i === a.tid : t.id === a.tid,
-          );
-          updateType(a.tid, {
-            fields: [...type.fields, a.data.field],
-          });
+          const { type } = getTypeById(types, a.tid);
+          if (type) {
+            updateType(a.tid, {
+              fields: [...type.fields, a.data.field],
+            });
+          }
         } else if (a.component === "field") {
-          updateType(a.tid, {
-            fields: types[a.tid].fields.map((e, i) =>
-              i === a.fid ? { ...e, ...a.redo } : e,
-            ),
-          });
+          const { type } = getTypeById(types, a.tid);
+          if (type) {
+            updateType(a.tid, {
+              fields: type.fields.map((e, i) =>
+                i === a.fid ? { ...e, ...a.redo } : e,
+              ),
+            });
+          }
         } else if (a.component === "field_delete") {
-          updateType(a.tid, {
-            fields: types[a.tid].fields.filter((field, i) => i !== a.fid),
-          });
+          const { type } = getTypeById(types, a.tid);
+          if (type) {
+            updateType(a.tid, {
+              fields: type.fields.filter((field, i) => i !== a.fid),
+            });
+          }
         } else if (a.component === "self") {
           updateType(a.tid, a.redo);
           if (a.updatedFields) {
