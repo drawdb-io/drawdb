@@ -341,7 +341,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       setUndoStack((prev) => [...prev, a]);
     } else if (a.action === Action.MOVE) {
       if (a.element === ObjectType.TABLE) {
-        const { x, y } = tables.find((t) => t.id == a.id);
+        const { x, y } = tables.find((t) => t.id === a.id);
         setUndoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
