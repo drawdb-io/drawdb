@@ -23,19 +23,22 @@ export default function AreasContextProvider({ children }) {
     } else {
       const width = 200;
       const height = 200;
-      setAreas((prev) => [
-        ...prev,
-        {
-          id: prev.length,
-          name: `area_${prev.length}`,
-          x: transform.pan.x - width / 2,
-          y: transform.pan.y - height / 2,
-          width,
-          height,
-          color: defaultBlue,
-          locked: false,
-        },
-      ]);
+      setAreas((prev) => {
+        const offset = prev.length * 20;
+        return [
+          ...prev,
+          {
+            id: prev.length,
+            name: `area_${prev.length}`,
+            x: transform.pan.x - width / 2 + offset,
+            y: transform.pan.y - height / 2 + offset,
+            width,
+            height,
+            color: defaultBlue,
+            locked: false,
+          },
+        ];
+      });
     }
     if (addToHistory) {
       setUndoStack((prev) => [
