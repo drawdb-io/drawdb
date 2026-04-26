@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { Slot } from "../../context/ExtensionsContext";
 import { createPortal } from "react-dom";
 import {
   IconCaretdown,
@@ -1582,17 +1583,21 @@ export default function ControlPanel({
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
-            {!isTemplate && (
-              <Button
-                type="primary"
-                className="!text-base me-8 !pe-6 !ps-5 !py-[18px] !rounded-md"
-                size="default"
-                icon={<IconShareStroked />}
-                onClick={() => setModal(MODAL.SHARE)}
-              >
-                {t("share")}
-              </Button>
-            )}
+            <div className="flex items-center gap-1">
+              <Slot name="header-actions-start" />
+              {!isTemplate && (
+                <Button
+                  type="primary"
+                  className="!text-base me-8 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                  size="default"
+                  icon={<IconShareStroked />}
+                  onClick={() => setModal(MODAL.SHARE)}
+                >
+                  {t("share")}
+                </Button>
+              )}
+              <Slot name="header-actions-end" />
+            </div>
           </div>
         )}
         {layout.toolbar &&
