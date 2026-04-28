@@ -216,7 +216,7 @@ export default function RelationshipInfo({ data }) {
             position="rightTop"
             showArrow
           >
-            <Button icon={<IconMore />} type="tertiary" />
+            <Button aria-label={t("more")} icon={<IconMore />} type="tertiary" />
           </Popover>
         </div>
       </div>

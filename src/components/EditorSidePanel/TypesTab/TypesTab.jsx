@@ -42,7 +42,7 @@ export default function TypesTab() {
             showArrow
             position="rightTop"
           >
-            <Button theme="borderless" icon={<IconInfoCircle />} />
+            <Button aria-label={t("info")} theme="borderless" icon={<IconInfoCircle />} />
           </Popover>
         )}
       </div>

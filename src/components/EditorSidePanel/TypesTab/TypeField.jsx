@@ -327,7 +327,7 @@ export default function TypeField({ data, tid, fid }) {
           trigger="click"
           position="right"
         >
-          <Button icon={<IconMore />} type="tertiary" />
+          <Button aria-label={t("more")} icon={<IconMore />} type="tertiary" />
         </Popover>
       </Col>
     </Row>

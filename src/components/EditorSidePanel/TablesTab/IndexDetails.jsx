@@ -189,6 +189,7 @@ export default function IndexDetails({ data, fields, iid, tid }) {
         showArrow
       >
         <Button
+          aria-label={t("more")}
           icon={<IconMore />}
           type="tertiary"
           style={{ marginLeft: "12px" }}
