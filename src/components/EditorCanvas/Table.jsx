@@ -53,6 +53,7 @@ export default function Table({
     tableData,
     settings.tableWidth,
     settings.showComments,
+    settings.showMaxFields,
   );
 
   const isSelected = useMemo(() => {
@@ -279,7 +280,9 @@ export default function Table({
             )}
           </div>
 
-          {tableData.fields.map((e, i) => {
+          {tableData.fields
+            .slice(0, settings.showMaxFields === 0 ? tableData.fields.length : settings.showMaxFields)
+            .map((e, i) => {
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
