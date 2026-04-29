@@ -6,6 +6,7 @@ const chinese = {
 
 const zh = {
   translation: {
+    show_comments: "显示注释",
     limit_fields: "显示所有字段",
     report_bug: "报告问题",
     import_from: "导入",

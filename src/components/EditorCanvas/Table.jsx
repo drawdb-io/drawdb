@@ -385,7 +385,7 @@ export default function Table({
           index === tableData.fields.length - 1
             ? ""
             : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+        } group h-9 px-2 flex justify-between items-center gap-1 w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
 
@@ -413,10 +413,10 @@ export default function Table({
         <div
           className={`${
             hoveredField === index ? "text-zinc-400" : ""
-          } flex items-center gap-2 overflow-hidden`}
+          } flex items-center gap-2 overflow-hidden w-full min-w-0`}
         >
           <button
-            className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+            className="shrink-0 w-2.5 h-2.5 bg-[#2f68adcc] rounded-full"
             onPointerDown={(e) => {
               if (!e.isPrimary) return;
 
@@ -452,11 +452,16 @@ export default function Table({
               }));
             }}
           />
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+          <span className="min-w-0 overflow-hidden whitespace-nowrap text-ellipsis">
             {fieldData.name}
+            {settings.showComments && fieldData.comment ? (
+              <span className="text-[10px] text-zinc-500 ms-2 overflow-hidden whitespace-nowrap text-ellipsis">
+                {fieldData.comment}
+              </span>
+            ) : null}
           </span>
         </div>
-        <div className="text-zinc-400">
+        <div className="text-zinc-400 shrink-0">
           {hoveredField === index ? (
             <Button
               theme="solid"
