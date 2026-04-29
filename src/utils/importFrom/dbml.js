@@ -27,7 +27,8 @@ export function fromDBML(src) {
 
         field.id = nanoid();
         field.name = column.name;
-        field.type = column.type.type_name.toUpperCase();
+        field.type = extractTypeName(column.type.type_name).toUpperCase();
+        field.size = column.type.args ?? "";
         field.default = column.dbdefault?.value ?? "";
         field.check = "";
         field.primary = !!column.pk;
@@ -124,4 +125,12 @@ export function fromDBML(src) {
   arrangeTables(diagram);
 
   return diagram;
+}
+
+function extractTypeName(type) {
+  const match = type.match(/^(\w+)(?:\([^)]*\))?/);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return type;
 }
