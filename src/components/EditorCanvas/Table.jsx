@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import {
   Tab,
   ObjectType,
-  tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
 } from "../../data/constants";
@@ -22,7 +21,11 @@ import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
-import { getCommentHeight, getTableHeight } from "../../utils/utils";
+import {
+  getCommentHeight,
+  getFieldOffsetY,
+  getTableHeight,
+} from "../../utils/utils";
 
 export default function Table({
   tableData,
@@ -333,7 +336,7 @@ export default function Table({
                       <strong>{t("default_value")}: </strong>
                       {e.default === "" ? t("not_set") : e.default}
                     </p>
-                    <p>
+                    <p className="max-w-80">
                       <strong>{t("comment")}: </strong>
                       {e.comment === "" ? t("not_set") : e.comment}
                     </p>
@@ -381,13 +384,14 @@ export default function Table({
 
   function field(fieldData, index) {
     const fieldResolved = resolveType(database, fieldData.type);
+    const showFieldComment = fieldData.comment && settings.showComments;
     return (
       <div
         className={`${
           index === tableData.fields.length - 1
             ? ""
             : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+        } group w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
 
@@ -412,25 +416,26 @@ export default function Table({
           e.target.releasePointerCapture(e.pointerId);
         }}
       >
-        <div
-          className={`${
-            hoveredField === index ? "text-zinc-400" : ""
-          } flex items-center gap-2 overflow-hidden`}
-        >
-          <button
-            className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
-            onPointerDown={(e) => {
-              if (!e.isPrimary) return;
+        <div className="h-[36px] px-2 py-1 flex justify-between items-center gap-1">
+          <div
+            className={`${
+              hoveredField === index ? "text-zinc-400" : ""
+            } flex items-center gap-2 overflow-hidden`}
+          >
+            <button
+              className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+              onPointerDown={(e) => {
+                if (!e.isPrimary) return;
 
-              handleGripField();
-              setLinkingLine((prev) => ({
-                ...prev,
-                startFieldId: fieldData.id,
-                startTableId: tableData.id,
-                startX: tableData.x + 15,
-                startY:
+                handleGripField();
+                const fieldY =
                   tableData.y +
-                  index * tableFieldHeight +
+                  getFieldOffsetY(
+                    tableData.fields,
+                    index,
+                    settings.tableWidth,
+                    settings.showComments,
+                  ) +
                   tableHeaderHeight +
                   tableColorStripHeight +
                   getCommentHeight(
@@ -438,66 +443,70 @@ export default function Table({
                     settings.tableWidth,
                     settings.showComments,
                   ) +
-                  14,
-                endX: tableData.x + 15,
-                endY:
-                  tableData.y +
-                  index * tableFieldHeight +
-                  tableHeaderHeight +
-                  tableColorStripHeight +
-                  getCommentHeight(
-                    tableData.comment,
-                    settings.tableWidth,
-                    settings.showComments,
-                  ) +
-                  14,
-              }));
-            }}
-          />
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-            {fieldData.name}
-          </span>
-        </div>
-        <div className="text-zinc-400">
-          {hoveredField === index ? (
-            <Button
-              theme="solid"
-              size="small"
-              style={{
-                backgroundColor: "#d42020b3",
-              }}
-              icon={<IconMinus />}
-              disabled={layout.readOnly}
-              onClick={() => {
-                if (layout.readOnly) return;
-                deleteField(fieldData, tableData.id);
+                  14;
+                setLinkingLine((prev) => ({
+                  ...prev,
+                  startFieldId: fieldData.id,
+                  startTableId: tableData.id,
+                  startX: tableData.x + 15,
+                  startY: fieldY,
+                  endX: tableData.x + 15,
+                  endY: fieldY,
+                }));
               }}
             />
-          ) : settings.showDataTypes ? (
-            <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span className="font-mono">?</span>}
-              <span
-                className={
-                  "font-mono " +
-                  (fieldResolved.isCustom ? "" : fieldResolved.color)
-                }
-                style={
-                  fieldResolved.isCustom
-                    ? { color: fieldResolved.color }
-                    : {}
-                }
-              >
-                {fieldData.type +
-                  ((fieldResolved.isSized || fieldResolved.hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? `(${fieldData.size})`
-                    : "")}
-              </span>
-            </div>
-          ) : null}
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {fieldData.name}
+            </span>
+          </div>
+          <div className="text-zinc-400">
+            {hoveredField === index ? (
+              <Button
+                theme="solid"
+                size="small"
+                style={{
+                  backgroundColor: "#d42020b3",
+                }}
+                icon={<IconMinus />}
+                disabled={layout.readOnly}
+                onClick={() => {
+                  if (layout.readOnly) return;
+                  deleteField(fieldData, tableData.id);
+                }}
+              />
+            ) : settings.showDataTypes ? (
+              <div className="flex gap-1 items-center">
+                {fieldData.primary && <IconKeyStroked />}
+                {!fieldData.notNull && <span className="font-mono">?</span>}
+                <span
+                  className={
+                    "font-mono " +
+                    (fieldResolved.isCustom ? "" : fieldResolved.color)
+                  }
+                  style={
+                    fieldResolved.isCustom ? { color: fieldResolved.color } : {}
+                  }
+                >
+                  {fieldData.type +
+                    ((fieldResolved.isSized || fieldResolved.hasPrecision) &&
+                    fieldData.size &&
+                    fieldData.size !== ""
+                      ? `(${fieldData.size})`
+                      : "")}
+                </span>
+              </div>
+            ) : null}
+          </div>
         </div>
+        {showFieldComment && (
+          <div className="ms-3 px-3 pb-3">
+            <div
+              className={`text-xs line-clamp-2 ${settings.mode === "light" ? "text-zinc-600" : "text-zinc-200"}`}
+            >
+              {fieldData.comment}
+            </div>
+          </div>
+        )}
       </div>
     );
   }

@@ -31,8 +31,14 @@ export default function Relationship({ data }) {
         x: startTable.x,
         y: startTable.y,
         comment: startTable.comment,
+        fields: startTable.fields,
       },
-      endTable: { x: endTable.x, y: endTable.y, comment: endTable.comment },
+      endTable: {
+        x: endTable.x,
+        y: endTable.y,
+        comment: endTable.comment,
+        fields: endTable.fields,
+      },
     };
   }, [tables, data]);
 

@@ -1,5 +1,5 @@
 import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
-import { getCommentHeight } from "./utils";
+import { getCommentHeight, getFieldOffsetY } from "./utils";
 
 /**
  * Generates an SVG path string to visually represent a relationship between two fields.
@@ -23,14 +23,24 @@ export function calcPath(r, tableWidth = 200, zoom = 1, showComments = true) {
   let x1 = r.startTable.x;
   let y1 =
     r.startTable.y +
-    r.startFieldIndex * tableFieldHeight +
+    getFieldOffsetY(
+      r.startTable.fields ?? [],
+      r.startFieldIndex,
+      tableWidth,
+      showComments,
+    ) +
     tableHeaderHeight +
     getCommentHeight(r.startTable.comment, tableWidth, showComments) +
     tableFieldHeight / 2;
   let x2 = r.endTable.x;
   let y2 =
     r.endTable.y +
-    r.endFieldIndex * tableFieldHeight +
+    getFieldOffsetY(
+      r.endTable.fields ?? [],
+      r.endFieldIndex,
+      tableWidth,
+      showComments,
+    ) +
     getCommentHeight(r.endTable.comment, tableWidth, showComments) +
     tableHeaderHeight +
     tableFieldHeight / 2;
