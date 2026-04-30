@@ -62,29 +62,117 @@ export function areFieldsCompatible(db, field1Type, field2Type) {
   return same || isCompatible;
 }
 
-export function getCommentHeight(comment, containerWidth, showComments = true) {
+const COMMENT_LINE_HEIGHT = 16;
+const COMMENT_MAX_LINES = 5;
+const COMMENT_PADDING_X = 24;
+const COMMENT_BORDERS = 4;
+const COMMENT_PADDING_BOTTOM = 12;
+const COMMENT_CACHE_LIMIT = 500;
+const TABLE_COMMENT_INSET = COMMENT_BORDERS + COMMENT_PADDING_X;
+const FIELD_COMMENT_INSET = TABLE_COMMENT_INSET + 12;
+
+const commentHeightCache = new Map();
+let commentMeasureCtx = null;
+
+function getCommentMeasureCtx() {
+  if (commentMeasureCtx) return commentMeasureCtx;
+  const ctx = document.createElement("canvas").getContext("2d");
+  const bodyFont = window.getComputedStyle(document.body).fontFamily || "sans-serif";
+  ctx.font = `12px ${bodyFont}`;
+  commentMeasureCtx = ctx;
+  return ctx;
+}
+
+function countWrappedLines(comment, contentWidth) {
+  const ctx = getCommentMeasureCtx();
+  const spaceWidth = ctx.measureText(" ").width;
+  const paragraphs = comment.split("\n");
+  let lines = 0;
+
+  for (const paragraph of paragraphs) {
+    if (lines >= COMMENT_MAX_LINES) break;
+    if (!paragraph) {
+      lines++;
+      continue;
+    }
+
+    const words = paragraph.split(/\s+/).filter(Boolean);
+    let lineWidth = 0;
+
+    for (const word of words) {
+      const wordWidth = ctx.measureText(word).width;
+      if (lineWidth === 0) {
+        lineWidth = wordWidth;
+      } else if (lineWidth + spaceWidth + wordWidth <= contentWidth) {
+        lineWidth += spaceWidth + wordWidth;
+      } else {
+        lines++;
+        if (lines >= COMMENT_MAX_LINES) break;
+        lineWidth = wordWidth;
+      }
+    }
+    if (lineWidth > 0) lines++;
+  }
+
+  return Math.min(COMMENT_MAX_LINES, Math.max(1, lines));
+}
+
+export function getCommentHeight(
+  comment,
+  containerWidth,
+  showComments = true,
+  inset = TABLE_COMMENT_INSET,
+) {
   if (!comment || !showComments) return 0;
 
-  const paddingBottom = 12;
-  const borders = 4;
+  const cacheKey = `${containerWidth}:${inset}:${comment}`;
+  const cached = commentHeightCache.get(cacheKey);
+  if (cached !== undefined) return cached;
 
-  const span = document.createElement("span");
-  span.className = "absolute text-xs px-3 line-clamp-5";
+  const contentWidth = containerWidth - inset;
+  const lines =
+    contentWidth <= 0 ? 1 : countWrappedLines(comment, contentWidth);
+  const height = lines * COMMENT_LINE_HEIGHT + COMMENT_PADDING_BOTTOM;
 
-  span.style.width = containerWidth - borders + "px";
-  span.textContent = comment;
-  span.id = "temp-comment-measure";
+  if (commentHeightCache.size >= COMMENT_CACHE_LIMIT) {
+    commentHeightCache.delete(commentHeightCache.keys().next().value);
+  }
+  commentHeightCache.set(cacheKey, height);
+  return height;
+}
 
-  document.body.appendChild(span);
-  const height = span.offsetHeight;
-  document.body.removeChild(span);
+export function getFieldHeight(field, containerWidth, showComments = true) {
+  return (
+    tableFieldHeight +
+    getCommentHeight(
+      field?.comment,
+      containerWidth,
+      showComments,
+      FIELD_COMMENT_INSET,
+    )
+  );
+}
 
-  return height + paddingBottom;
+export function getFieldsTotalHeight(fields, containerWidth, showComments = true) {
+  let total = 0;
+  for (const f of fields) {
+    total += getFieldHeight(f, containerWidth, showComments);
+  }
+  return total;
+}
+
+export function getFieldOffsetY(fields, fieldIndex, containerWidth, showComments = true) {
+  let total = 0;
+  const limit = Math.min(fieldIndex, fields.length);
+  for (let i = 0; i < limit; i++) {
+    total += getFieldHeight(fields[i], containerWidth, showComments);
+  }
+  return total;
 }
 
 export function getTableHeight(table, width, showComments = true) {
   return (
-    table.fields.length * tableFieldHeight +
+    getFieldsTotalHeight(table.fields, width, showComments) +
     tableHeaderHeight +
     tableColorStripHeight +
     getCommentHeight(table.comment, width, showComments)
