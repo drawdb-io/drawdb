@@ -499,12 +499,12 @@ export default function Table({
           </div>
         </div>
         {showFieldComment && (
-          <div
-            className={`text-xs ms-3 thepx-3 pb-3 line-clamp-5 ${
-              settings.mode === "light" ? "text-zinc-600" : "text-zinc-200"
-            }`}
-          >
-            {fieldData.comment}
+          <div className="ms-3 px-3 pb-3">
+            <div
+              className={`text-xs line-clamp-2 ${settings.mode === "light" ? "text-zinc-600" : "text-zinc-200"}`}
+            >
+              {fieldData.comment}
+            </div>
           </div>
         )}
       </div>

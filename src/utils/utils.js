@@ -63,7 +63,8 @@ export function areFieldsCompatible(db, field1Type, field2Type) {
 }
 
 const COMMENT_LINE_HEIGHT = 16;
-const COMMENT_MAX_LINES = 5;
+const TABLE_COMMENT_MAX_LINES = 5;
+const FIELD_COMMENT_MAX_LINES = 2;
 const COMMENT_PADDING_X = 24;
 const COMMENT_BORDERS = 4;
 const COMMENT_PADDING_BOTTOM = 12;
@@ -83,14 +84,14 @@ function getCommentMeasureCtx() {
   return ctx;
 }
 
-function countWrappedLines(comment, contentWidth) {
+function countWrappedLines(comment, contentWidth, maxLines) {
   const ctx = getCommentMeasureCtx();
   const spaceWidth = ctx.measureText(" ").width;
   const paragraphs = comment.split("\n");
   let lines = 0;
 
   for (const paragraph of paragraphs) {
-    if (lines >= COMMENT_MAX_LINES) break;
+    if (lines >= maxLines) break;
     if (!paragraph) {
       lines++;
       continue;
@@ -107,14 +108,14 @@ function countWrappedLines(comment, contentWidth) {
         lineWidth += spaceWidth + wordWidth;
       } else {
         lines++;
-        if (lines >= COMMENT_MAX_LINES) break;
+        if (lines >= maxLines) break;
         lineWidth = wordWidth;
       }
     }
     if (lineWidth > 0) lines++;
   }
 
-  return Math.min(COMMENT_MAX_LINES, Math.max(1, lines));
+  return Math.min(maxLines, Math.max(1, lines));
 }
 
 export function getCommentHeight(
@@ -122,16 +123,17 @@ export function getCommentHeight(
   containerWidth,
   showComments = true,
   inset = TABLE_COMMENT_INSET,
+  maxLines = TABLE_COMMENT_MAX_LINES,
 ) {
   if (!comment || !showComments) return 0;
 
-  const cacheKey = `${containerWidth}:${inset}:${comment}`;
+  const cacheKey = `${containerWidth}:${inset}:${maxLines}:${comment}`;
   const cached = commentHeightCache.get(cacheKey);
   if (cached !== undefined) return cached;
 
   const contentWidth = containerWidth - inset;
   const lines =
-    contentWidth <= 0 ? 1 : countWrappedLines(comment, contentWidth);
+    contentWidth <= 0 ? 1 : countWrappedLines(comment, contentWidth, maxLines);
   const height = lines * COMMENT_LINE_HEIGHT + COMMENT_PADDING_BOTTOM;
 
   if (commentHeightCache.size >= COMMENT_CACHE_LIMIT) {
@@ -149,6 +151,7 @@ export function getFieldHeight(field, containerWidth, showComments = true) {
       containerWidth,
       showComments,
       FIELD_COMMENT_INSET,
+      FIELD_COMMENT_MAX_LINES,
     )
   );
 }
