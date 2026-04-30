@@ -82,9 +82,10 @@ export function getCommentHeight(comment, containerWidth, showComments = true) {
   return height + paddingBottom;
 }
 
-export function getTableHeight(table, width, showComments = true) {
+export function getTableHeight(table, width, showComments = true, showMaxFields = 0) {
+  const displayFieldsCount = showMaxFields === 0 ? table.fields.length : Math.min(table.fields.length, showMaxFields);
   return (
-    table.fields.length * tableFieldHeight +
+    displayFieldsCount * tableFieldHeight +
     tableHeaderHeight +
     tableColorStripHeight +
     getCommentHeight(table.comment, width, showComments)

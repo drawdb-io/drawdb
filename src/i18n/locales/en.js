@@ -6,6 +6,7 @@ const english = {
 
 const en = {
   translation: {
+    limit_fields: "Show all fields",
     report_bug: "Report a bug",
     import: "Import",
     inherits: "Inherits",

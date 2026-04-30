@@ -14,6 +14,7 @@ const defaultSettings = {
   tableWidth: tableWidth,
   showDebugCoordinates: false,
   showComments: true,
+  showMaxFields: 0, // 0 means show all fields
 };
 
 export const SettingsContext = createContext(defaultSettings);

@@ -527,7 +527,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
         table.y +
-          getTableHeight(table, settings.tableWidth, settings.showComments),
+          getTableHeight(table, settings.tableWidth, settings.showComments, settings.showMaxFields),
       );
     });
 
@@ -1433,6 +1433,18 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
           setSettings((prev) => ({
             ...prev,
             showDebugCoordinates: !prev.showDebugCoordinates,
+          })),
+      },
+      limit_fields: {
+        state: settings.showMaxFields === 0 ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showMaxFields: prev.showMaxFields === 0 ? 10 : 0,
           })),
       },
       theme: {
