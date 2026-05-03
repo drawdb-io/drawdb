@@ -29,7 +29,7 @@ export function toMariaDB(diagram) {
             (field) =>
               `\t\`${field.name}\` ${parseType(field)}${field.unsigned ? " UNSIGNED" : ""}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, diagram.database)}`
                   : ""
