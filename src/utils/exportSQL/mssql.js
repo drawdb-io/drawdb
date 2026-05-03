@@ -1,4 +1,4 @@
-import { parseDefault, escapeQuotes } from "./shared";
+import { parseDefault, escapeQuotes, resolveFKDirection } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 import { DB } from "../../data/constants";
@@ -94,19 +94,20 @@ export function toMSSQL(diagram) {
 
   const referencesSql = diagram.references
     .map((r) => {
-      const startTable = diagram.tables.find((t) => t.id === r.startTableId);
-      const endTable = diagram.tables.find((t) => t.id === r.endTableId);
+      const { fkTableId, fkFieldId, refTableId, refFieldId } = resolveFKDirection(r);
+      const fkTable = diagram.tables.find((t) => t.id === fkTableId);
+      const refTable = diagram.tables.find((t) => t.id === refTableId);
 
-      if (!startTable || !endTable) return "";
+      if (!fkTable || !refTable) return "";
 
-      const startField = startTable.fields.find((f) => f.id === r.startFieldId);
-      const endField = endTable.fields.find((f) => f.id === r.endFieldId);
+      const fkField = fkTable.fields.find((f) => f.id === fkFieldId);
+      const refField = refTable.fields.find((f) => f.id === refFieldId);
 
-      if (!startField || !endField) return "";
+      if (!fkField || !refField) return "";
 
-      return `\nALTER TABLE [${startTable.name}]
-ADD FOREIGN KEY([${startField.name}])
-REFERENCES [${endTable.name}]([${endField.name}])
+      return `\nALTER TABLE [${fkTable.name}]
+ADD FOREIGN KEY([${fkField.name}])
+REFERENCES [${refTable.name}]([${refField.name}])
 ON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};
 GO`;
     })

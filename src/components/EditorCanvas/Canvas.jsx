@@ -619,14 +619,28 @@ export default function Canvas() {
 
     const cardinality = getCardinality(startField, endField);
 
+    // Normalize direction: startTable must always be the FK holder (many side).
+    // When the user drags from the PK side (one) to the FK side (many), the
+    // result is ONE_TO_MANY with startTable = PK. Swap so that startTable = FK.
+    const isInverted = cardinality === Cardinality.ONE_TO_MANY;
+    const fkTableId = isInverted ? hoveredTable.tableId : linkingLine.startTableId;
+    const fkFieldId = isInverted ? hoveredTable.fieldId : linkingLine.startFieldId;
+    const refTableId = isInverted ? linkingLine.startTableId : hoveredTable.tableId;
+    const refFieldId = isInverted ? linkingLine.startFieldId : hoveredTable.fieldId;
+    const fkTableName = isInverted ? endTableName : startTableName;
+    const fkField = isInverted ? endField : startField;
+    const refTableName = isInverted ? startTableName : endTableName;
+
     const newRelationship = {
       ...linkingLine,
-      cardinality,
-      endTableId: hoveredTable.tableId,
-      endFieldId: hoveredTable.fieldId,
+      cardinality: isInverted ? Cardinality.MANY_TO_ONE : cardinality,
+      startTableId: fkTableId,
+      startFieldId: fkFieldId,
+      endTableId: refTableId,
+      endFieldId: refFieldId,
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
-      name: `fk_${startTableName}_${startField.name}_${endTableName}`,
+      name: `fk_${fkTableName}_${fkField.name}_${refTableName}`,
       id: nanoid(),
     };
     delete newRelationship.startX;

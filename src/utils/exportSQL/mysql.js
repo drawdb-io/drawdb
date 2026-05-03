@@ -1,7 +1,7 @@
 import { escapeQuotes, parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
-import { DB } from "../../data/constants";
+import { Cardinality, DB } from "../../data/constants";
 
 function parseType(field) {
   let res = field.type;
@@ -64,17 +64,22 @@ export function toMySQL(diagram) {
     )
     .join("\n")}\n${diagram.references
     .map((r) => {
-      const { name: startName, fields: startFields } = diagram.tables.find(
-        (t) => t.id === r.startTableId,
-      );
+      const isInverted = r.cardinality === Cardinality.ONE_TO_MANY;
+      const fkTableId = isInverted ? r.endTableId : r.startTableId;
+      const fkFieldId = isInverted ? r.endFieldId : r.startFieldId;
+      const refTableId = isInverted ? r.startTableId : r.endTableId;
+      const refFieldId = isInverted ? r.startFieldId : r.endFieldId;
 
-      const { name: endName, fields: endFields } = diagram.tables.find(
-        (t) => t.id === r.endTableId,
+      const { name: fkName, fields: fkFields } = diagram.tables.find(
+        (t) => t.id === fkTableId,
       );
-      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }\`) REFERENCES \`${endName}\`(\`${
-        endFields.find((f) => f.id === r.endFieldId).name
+      const { name: refName, fields: refFields } = diagram.tables.find(
+        (t) => t.id === refTableId,
+      );
+      return `ALTER TABLE \`${fkName}\`\nADD FOREIGN KEY(\`${
+        fkFields.find((f) => f.id === fkFieldId).name
+      }\`) REFERENCES \`${refName}\`(\`${
+        refFields.find((f) => f.id === refFieldId).name
       }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
