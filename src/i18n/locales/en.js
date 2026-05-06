@@ -290,6 +290,18 @@ const en = {
     type_name_required: "Type name is required",
     database: "Database",
     saved: "Saved",
+    import_from_database: "Import from Database",
+    connect_database: "Connect to Database",
+    host: "Host",
+    port: "Port",
+    database_name: "Database",
+    username: "Username",
+    password: "Password",
+    schema: "Schema",
+    connecting: "Connecting...",
+    connection_failed: "Connection failed",
+    schema_fetched: "Schema fetched successfully",
+    no_backend: "Backend service not configured. Please set VITE_BACKEND_URL.",
   },
 };
 
