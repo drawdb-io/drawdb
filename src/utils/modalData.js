@@ -25,6 +25,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("language");
     case MODAL.SHARE:
       return i18n.t("share");
+    case MODAL.IMPORT_DB:
+      return i18n.t("import_from_database");
     default:
       return "";
   }
@@ -46,6 +48,7 @@ export const getOkText = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
     case MODAL.IMPORT_SRC:
+    case MODAL.IMPORT_DB:
       return i18n.t("import");
     case MODAL.CODE:
     case MODAL.IMG:

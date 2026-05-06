@@ -269,6 +269,18 @@ const zh = {
     failed_to_load_diagram: "加载图表失败",
     see_all: "查看全部",
     snap_to_grid: "对齐网格线",
+    import_from_database: "从数据库导入",
+    connect_database: "连接数据库",
+    host: "主机",
+    port: "端口",
+    database_name: "数据库",
+    username: "用户名",
+    password: "密码",
+    schema: "模式",
+    connecting: "连接中...",
+    connection_failed: "连接失败",
+    schema_fetched: "数据库模式获取成功",
+    no_backend: "后端服务未配置，请设置 VITE_BACKEND_URL。",
   },
 };
 

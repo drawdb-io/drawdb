@@ -18,12 +18,14 @@ import {
 } from "../../../hooks";
 import { isRtl } from "../../../i18n/utils/rtl";
 import { importSQL } from "../../../utils/importSQL";
+import { fetchPostgresSchema } from "../../../api/schema";
 import {
   getModalTitle,
   getModalWidth,
   getOkText,
 } from "../../../utils/modalData";
 import CodeEditor from "../../CodeEditor";
+import ImportDatabase from "./ImportDatabase";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import Language from "./Language";
@@ -70,6 +72,17 @@ export default function Modal({
     src: "",
     overwrite: false,
   });
+  const [connectionParams, setConnectionParams] = useState({
+    host: "localhost",
+    port: "5432",
+    database: "",
+    user: "postgres",
+    password: "",
+    schema: "public",
+    ssl: false,
+    overwrite: false,
+  });
+  const [dbLoading, setDbLoading] = useState(false);
   const [importData, setImportData] = useState(null);
   const [error, setError] = useState({
     type: STATUS.NONE,
@@ -193,6 +206,51 @@ export default function Modal({
       case MODAL.IMPORT_SRC:
         parseSQLAndLoadDiagram();
         return;
+      case MODAL.IMPORT_DB:
+        (async () => {
+          setDbLoading(true);
+          setError({ type: STATUS.NONE, message: "" });
+          try {
+            const { overwrite, ...params } = connectionParams;
+            const result = await fetchPostgresSchema(params);
+
+            const parser = new Parser();
+            const ast = parser.astify(result.sql, { database: DB.POSTGRES });
+            const diagramData = importSQL(ast, DB.POSTGRES, database);
+
+            if (overwrite) {
+              setTables(diagramData.tables);
+              setRelationships(diagramData.relationships);
+              if (databases[database].hasTypes) setTypes(diagramData.types ?? []);
+              if (databases[database].hasEnums) setEnums(diagramData.enums ?? []);
+              setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+              setNotes([]);
+              setAreas([]);
+            } else {
+              setTables((prev) => [...prev, ...diagramData.tables]);
+              setRelationships((prev) =>
+                [...prev, ...diagramData.relationships].map((r, i) => ({
+                  ...r,
+                  id: i,
+                })),
+              );
+              if (databases[database].hasTypes && diagramData.types?.length)
+                setTypes((prev) => [...prev, ...diagramData.types]);
+              if (databases[database].hasEnums && diagramData.enums?.length)
+                setEnums((prev) => [...prev, ...diagramData.enums]);
+            }
+
+            setUndoStack([]);
+            setRedoStack([]);
+            setModal(MODAL.NONE);
+          } catch (e) {
+            const msg = e.response?.data?.error || e.message || String(e);
+            setError({ type: STATUS.ERROR, message: msg });
+          } finally {
+            setDbLoading(false);
+          }
+        })();
+        return;
       case MODAL.OPEN:
         if (!selectedDiagramId) return;
         navigate(`/editor/diagrams/${selectedDiagramId}`, "_blank");
@@ -242,6 +300,16 @@ export default function Modal({
             setImportData={setImportSource}
             error={error}
             setError={setError}
+          />
+        );
+      case MODAL.IMPORT_DB:
+        return (
+          <ImportDatabase
+            connectionParams={connectionParams}
+            setConnectionParams={setConnectionParams}
+            error={error}
+            setError={setError}
+            dbLoading={dbLoading}
           />
         );
       case MODAL.NEW:
@@ -347,6 +415,17 @@ export default function Modal({
           src: "",
           overwrite: false,
         });
+        setConnectionParams({
+          host: "localhost",
+          port: "5432",
+          database: "",
+          user: "postgres",
+          password: "",
+          schema: "public",
+          ssl: false,
+          overwrite: false,
+        });
+        setDbLoading(false);
       }}
       onCancel={() => {
         if (modal === MODAL.RENAME) setUncontrolledTitle(title);
@@ -365,7 +444,8 @@ export default function Modal({
           (modal === MODAL.RENAME && title === "") ||
           ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
           (modal === MODAL.SAVEAS && saveAsTitle === "") ||
-          (modal === MODAL.IMPORT_SRC && importSource.src === ""),
+          (modal === MODAL.IMPORT_SRC && importSource.src === "") ||
+          (modal === MODAL.IMPORT_DB && (dbLoading || !connectionParams.host || !connectionParams.database || !connectionParams.user)),
         hidden: modal === MODAL.SHARE,
       }}
       hasCancel={modal !== MODAL.SHARE}

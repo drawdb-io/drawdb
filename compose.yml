@@ -10,6 +10,20 @@ services:
     command: sh -c "npm install && npm run dev -- --host"
     networks:
       - default
+  drawdb-server:
+    image: node:20-alpine
+    container_name: drawdb-server
+    ports:
+      - 3001:3001
+    working_dir: /var/www/html/server
+    volumes:
+      - ./server:/var/www/html/server
+    command: sh -c "npm install && node index.js"
+    environment:
+      - PORT=3001
+      - ALLOWED_ORIGINS=http://localhost:5173
+    networks:
+      - default
 
 networks:
   default:

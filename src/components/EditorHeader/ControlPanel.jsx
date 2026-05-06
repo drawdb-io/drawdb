@@ -932,6 +932,14 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
               label: "Beta",
               disabled: layout.readOnly,
             },
+            { divider: true },
+            {
+              function: () => {
+                setModal(MODAL.IMPORT_DB);
+              },
+              name: t("connect_database"),
+              disabled: layout.readOnly,
+            },
           ],
         }),
         function: () => {
