@@ -71,6 +71,7 @@ const COMMENT_PADDING_BOTTOM = 12;
 const COMMENT_CACHE_LIMIT = 500;
 const TABLE_COMMENT_INSET = COMMENT_BORDERS + COMMENT_PADDING_X;
 const FIELD_COMMENT_INSET = TABLE_COMMENT_INSET + 12;
+const FIELD_BORDER_WIDTH = 1;
 
 const commentHeightCache = new Map();
 let commentMeasureCtx = null;
@@ -78,7 +79,8 @@ let commentMeasureCtx = null;
 function getCommentMeasureCtx() {
   if (commentMeasureCtx) return commentMeasureCtx;
   const ctx = document.createElement("canvas").getContext("2d");
-  const bodyFont = window.getComputedStyle(document.body).fontFamily || "sans-serif";
+  const bodyFont =
+    window.getComputedStyle(document.body).fontFamily || "sans-serif";
   ctx.font = `12px ${bodyFont}`;
   commentMeasureCtx = ctx;
   return ctx;
@@ -146,6 +148,7 @@ export function getCommentHeight(
 export function getFieldHeight(field, containerWidth, showComments = true) {
   return (
     tableFieldHeight +
+    FIELD_BORDER_WIDTH +
     getCommentHeight(
       field?.comment,
       containerWidth,
@@ -156,7 +159,11 @@ export function getFieldHeight(field, containerWidth, showComments = true) {
   );
 }
 
-export function getFieldsTotalHeight(fields, containerWidth, showComments = true) {
+export function getFieldsTotalHeight(
+  fields,
+  containerWidth,
+  showComments = true,
+) {
   let total = 0;
   for (const f of fields) {
     total += getFieldHeight(f, containerWidth, showComments);
@@ -164,7 +171,12 @@ export function getFieldsTotalHeight(fields, containerWidth, showComments = true
   return total;
 }
 
-export function getFieldOffsetY(fields, fieldIndex, containerWidth, showComments = true) {
+export function getFieldOffsetY(
+  fields,
+  fieldIndex,
+  containerWidth,
+  showComments = true,
+) {
   let total = 0;
   const limit = Math.min(fieldIndex, fields.length);
   for (let i = 0; i < limit; i++) {
