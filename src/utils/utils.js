@@ -159,6 +159,48 @@ export function getFieldHeight(field, containerWidth, showComments = true) {
   );
 }
 
+export function isFieldRelatedToTable(
+  tableId,
+  field,
+  fieldIndex,
+  relationships = [],
+) {
+  return relationships.some(
+    (relationship) =>
+      (relationship.startTableId === tableId &&
+        (relationship.startFieldId === field.id ||
+          relationship.startFieldId === fieldIndex)) ||
+      (relationship.endTableId === tableId &&
+        (relationship.endFieldId === field.id ||
+          relationship.endFieldId === fieldIndex)),
+  );
+}
+
+export function getVisibleFieldEntries(table, relationships = []) {
+  const fields = table.fields ?? [];
+
+  return fields.reduce((entries, field, index) => {
+    if (
+      !table.collapsed ||
+      isFieldRelatedToTable(table.id, field, index, relationships)
+    ) {
+      entries.push({ field, originalIndex: index });
+    }
+    return entries;
+  }, []);
+}
+
+export function getVisibleFields(table, relationships = []) {
+  return getVisibleFieldEntries(table, relationships).map(({ field }) => field);
+}
+
+export function getVisibleFieldIndex(table, fieldId, relationships = []) {
+  return getVisibleFieldEntries(table, relationships).findIndex(
+    ({ field, originalIndex }) =>
+      field.id === fieldId || originalIndex === fieldId,
+  );
+}
+
 export function getFieldsTotalHeight(
   fields,
   containerWidth,
@@ -185,9 +227,16 @@ export function getFieldOffsetY(
   return total;
 }
 
-export function getTableHeight(table, width, showComments = true) {
+export function getTableHeight(
+  table,
+  width,
+  showComments = true,
+  relationships = [],
+) {
+  const visibleFields = getVisibleFields(table, relationships);
+
   return (
-    getFieldsTotalHeight(table.fields, width, showComments) +
+    getFieldsTotalHeight(visibleFields, width, showComments) +
     tableHeaderHeight +
     tableColorStripHeight +
     getCommentHeight(table.comment, width, showComments)

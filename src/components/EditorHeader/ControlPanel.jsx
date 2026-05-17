@@ -528,7 +528,12 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
         table.y +
-          getTableHeight(table, settings.tableWidth, settings.showComments),
+          getTableHeight(
+            table,
+            settings.tableWidth,
+            settings.showComments,
+            relationships,
+          ),
       );
     });
 

@@ -139,6 +139,7 @@ export default function Canvas() {
           table,
           settings.tableWidth,
           settings.showComments,
+          relationships,
         ),
       };
       if (shouldAddElement(tableRect, element)) {
