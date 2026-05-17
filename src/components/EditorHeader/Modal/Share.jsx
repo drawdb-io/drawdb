@@ -15,6 +15,7 @@ import { databases } from "../../../data/databases";
 import { MODAL } from "../../../data/constants";
 import { create, patch, SHARE_FILENAME } from "../../../api/gists";
 import { getCustomTypes } from "../../../utils/customTypes";
+import { Slot, useExtensions } from "../../../context/ExtensionsContext";
 import { queryConfig } from "../../../utils/queryConfig";
 
 export default function Share({ title, setModal }) {
@@ -28,6 +29,10 @@ export default function Share({ title, setModal }) {
   const { enums } = useEnums();
   const { transform } = useTransform();
   const [error, setError] = useState(null);
+
+  const extensions = useExtensions();
+  const customContent = extensions?.["share-modal-content"];
+
   const [embedSettings, setEmbedSettings] = useState({
     theme: null,
     hideHeader: null,
@@ -101,6 +106,11 @@ export default function Share({ title, setModal }) {
   }, [gistId, setModal, setGistId]);
 
   useEffect(() => {
+    // Host-provided body owns its own data flow; skip the Gist call.
+    if (customContent) {
+      setLoading(false);
+      return;
+    }
     const updateOrGenerateLink = async () => {
       try {
         setLoading(true);
@@ -131,17 +141,24 @@ export default function Share({ title, setModal }) {
       });
   };
 
-  if (loading)
-    return (
-      <div className="text-blue-500 text-center">
-        <Spin size="middle" />
-        <div>{t("loading")}</div>
-      </div>
-    );
-
+  // Slots:
+  //   - `share-modal-content` (host-provided) → fully replaces the OSS
+  //      body. Host owns its own loading / error / footer.
+  //   - `share-modal-top` (host-provided) → renders above the OSS body
+  //      when no full replacement is provided.
+  if (customContent) {
+    return <div>{customContent}</div>;
+  }
   return (
     <div>
-      {error && (
+      <Slot name="share-modal-top" />
+      {loading && (
+        <div className="text-blue-500 text-center">
+          <Spin size="middle" />
+          <div>{t("loading")}</div>
+        </div>
+      )}
+      {!loading && error && (
         <Banner
           description={t("oops_smth_went_wrong")}
           type="danger"
@@ -149,7 +166,7 @@ export default function Share({ title, setModal }) {
           fullMode={false}
         />
       )}
-      {!error && (
+      {!loading && !error && (
         <>
           <div className="flex gap-3">
             <Input value={url} size="large" readonly />

@@ -18,7 +18,10 @@ const defaultSettings = {
   showComments: false,
 };
 
-export const SettingsContext = createContext(defaultSettings);
+export const SettingsContext = createContext({
+  settings: defaultSettings,
+  setSettings: () => {},
+});
 
 export default function SettingsContextProvider({ children }) {
   const [searchParams] = useSearchParams();

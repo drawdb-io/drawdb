@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useCollab } from "../../context/CollabContext";
+import { Slot } from "../../context/ExtensionsContext";
 import {
   Action,
   Cardinality,
@@ -75,6 +77,36 @@ export default function Canvas() {
     endX: 0,
     endY: 0,
   });
+  const { emitAwareness } = useCollab();
+  const lastLinkingRef = useRef(false);
+
+  // Broadcast the in-flight relationship line as awareness so peers can
+  // see it draw in real time. Ephemeral — never persisted. When the
+  // local user releases the pointer we emit a null clear so the line
+  // disappears on the other side.
+  useEffect(() => {
+    if (linking) {
+      emitAwareness({
+        linking: {
+          startX: linkingLine.startX,
+          startY: linkingLine.startY,
+          endX: linkingLine.endX,
+          endY: linkingLine.endY,
+        },
+      });
+      lastLinkingRef.current = true;
+    } else if (lastLinkingRef.current) {
+      emitAwareness({ linking: null });
+      lastLinkingRef.current = false;
+    }
+  }, [
+    linking,
+    linkingLine.startX,
+    linkingLine.startY,
+    linkingLine.endX,
+    linkingLine.endY,
+    emitAwareness,
+  ]);
   const [hoveredTable, setHoveredTable] = useState({
     tableId: null,
     fieldId: null,
@@ -771,6 +803,10 @@ export default function Canvas() {
               className="pointer-events-none touch-none"
             />
           )}
+          {/* Extension slot for SVG content rendered in diagram space.
+              Pro mounts remote collaborators' in-flight relationship
+              lines here so they share the same viewBox transform. */}
+          <Slot name="svg-overlay" />
           {notes.map((n) => (
             <Note
               key={n.id}
