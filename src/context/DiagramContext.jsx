@@ -221,6 +221,17 @@ export default function DiagramContextProvider({ children }) {
       setRedoStack([]);
     }
     setRelationships((prev) => prev.filter((e) => e.id !== id));
+    if (
+      selectedElement.element === ObjectType.RELATIONSHIP &&
+      selectedElement.id === id
+    ) {
+      setSelectedElement((prev) => ({
+        ...prev,
+        element: ObjectType.NONE,
+        id: -1,
+        open: false,
+      }));
+    }
   };
 
   const updateRelationship = (id, updatedValues) => {
