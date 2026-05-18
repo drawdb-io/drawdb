@@ -9,7 +9,7 @@ import {
   gridCircleRadius,
   minAreaSize,
 } from "../../data/constants";
-import { Toast } from "@douyinfe/semi-ui";
+import { Toast, Modal, Button } from "@douyinfe/semi-ui";
 import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";
@@ -25,6 +25,7 @@ import {
   useNotes,
   useLayout,
   useSaveState,
+  useFileDrop,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
@@ -58,6 +59,16 @@ export default function Canvas() {
     bulkSelectedElements,
     setBulkSelectedElements,
   } = useSelect();
+  const {
+    isDragOver,
+    showImportModal,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleImportOverwrite,
+    handleImportAppend,
+    handleImportCancel,
+  } = useFileDrop();
   const notDragging = {
     id: -1,
     type: ObjectType.NONE,
@@ -685,12 +696,22 @@ export default function Canvas() {
   return (
     <div className="grow h-full touch-none" id="canvas">
       <div
-        className="w-full h-full"
+        className="w-full h-full relative"
         style={{
           cursor: pointer.style,
           backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
         }}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
+        {isDragOver && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-md pointer-events-none">
+            <div className="text-blue-600 dark:text-blue-400 font-semibold text-lg">
+              {t("drop_to_import") || "Drop file to import"}
+            </div>
+          </div>
+        )}
         <svg
           id="diagram"
           ref={canvasRef}
@@ -863,6 +884,31 @@ export default function Canvas() {
           </table>
         </div>
       )}
+      <Modal
+        centered
+        size="small"
+        title={t("import_diagram") || "Import diagram"}
+        visible={showImportModal}
+        onCancel={handleImportCancel}
+        footer={
+          <div className="flex justify-end gap-2">
+            <Button onClick={handleImportCancel}>
+              {t("cancel") || "Cancel"}
+            </Button>
+            <Button onClick={handleImportAppend}>
+              {t("add") || "Add"}
+            </Button>
+            <Button theme="solid" onClick={handleImportOverwrite}>
+              {t("overwrite") || "Overwrite"}
+            </Button>
+          </div>
+        }
+      >
+        <p>
+          {t("overwrite_or_append_description") ||
+            "The current diagram is not empty. Would you like to overwrite it with the imported data or add to the existing diagram?"}
+        </p>
+      </Modal>
     </div>
   );
 }

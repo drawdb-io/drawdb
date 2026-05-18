@@ -83,8 +83,8 @@ export const noteSchema = {
   type: "object",
   properties: {
     id: { type: "integer" },
-    x: { type: "number" },
-    y: { type: "number" },
+    x: { type: ["number", "null"] },
+    y: { type: ["number", "null"] },
     title: { type: "string" },
     content: { type: "string" },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
@@ -92,7 +92,7 @@ export const noteSchema = {
     width: { type: "number" },
     locked: { type: "boolean" },
   },
-  required: ["id", "x", "y", "title", "content", "color", "height"],
+  required: ["id"],
 };
 
 export const typeSchema = {
