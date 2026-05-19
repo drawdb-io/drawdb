@@ -9,7 +9,6 @@ import {
 import {
   IconChevronDown,
   IconChevronUp,
-  IconEdit,
   IconMore,
   IconMinus,
   IconDeleteStroked,
@@ -222,33 +221,6 @@ export default function Table({
                 {tableData.name}
               </div>
               <div className="flex items-center mx-2 gap-1.5">
-                <Button
-                  icon={
-                    tableData.collapsed ? (
-                      <IconChevronDown />
-                    ) : (
-                      <IconChevronUp />
-                    )
-                  }
-                  size="small"
-                  theme="solid"
-                  style={{
-                    backgroundColor: "#2f68adb3",
-                  }}
-                  disabled={layout.readOnly}
-                  aria-label={
-                    tableData.collapsed
-                      ? "Expand unlinked fields"
-                      : "Collapse unlinked fields"
-                  }
-                  title={
-                    tableData.collapsed
-                      ? "Expand unlinked fields"
-                      : "Collapse unlinked fields"
-                  }
-                  onClick={toggleTableCollapse}
-                  onPointerDown={(e) => e.stopPropagation()}
-                />
                 <div className="hidden group-hover:block">
                   <div className="flex justify-end items-center mx-2 space-x-1.5">
                     <Button
@@ -262,13 +234,31 @@ export default function Table({
                       onClick={lockUnlockTable}
                     />
                     <Button
-                      icon={<IconEdit />}
+                      icon={
+                        tableData.collapsed ? (
+                          <IconChevronDown />
+                        ) : (
+                          <IconChevronUp />
+                        )
+                      }
                       size="small"
                       theme="solid"
                       style={{
                         backgroundColor: "#2f68adb3",
                       }}
-                      onClick={openEditor}
+                      disabled={layout.readOnly}
+                      aria-label={
+                        tableData.collapsed
+                          ? "Expand unlinked fields"
+                          : "Collapse unlinked fields"
+                      }
+                      title={
+                        tableData.collapsed
+                          ? "Expand unlinked fields"
+                          : "Collapse unlinked fields"
+                      }
+                      onClick={toggleTableCollapse}
+                      onPointerDown={(e) => e.stopPropagation()}
                     />
                     <Popover
                       key={tableData.id}
