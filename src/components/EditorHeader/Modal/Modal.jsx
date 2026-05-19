@@ -104,6 +104,11 @@ export default function Modal({
 
     let normalizedSql = importSource.src;
     if (targetDatabase === DB.POSTGRES) {
+      // Strip block comments /* ... */
+      normalizedSql = normalizedSql.replace(/\/\*[\s\S]*?\*\//g, '');
+      // Strip line comments -- ...
+      normalizedSql = normalizedSql.replace(/--.*$/gm, '');
+
       // Fix empty ENUM () which crashes node-sql-parser
       normalizedSql = normalizedSql.replace(
         /CREATE\s+TYPE\s+"([^"]+)"\s+AS\s+ENUM\s*\(\s*\)\s*;/gi,
