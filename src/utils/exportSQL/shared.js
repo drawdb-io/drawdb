@@ -1,7 +1,12 @@
+import { EMPTY_ENUM_PLACEHOLDER } from "../../data/constants";
 import { isFunction, isKeyword } from "../utils";
 
 import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+
+export function enumValuesForExport(values) {
+  return values?.length > 0 ? values : [EMPTY_ENUM_PLACEHOLDER];
+}
 
 export function parseDefault(field, database = DB.GENERIC) {
   if (

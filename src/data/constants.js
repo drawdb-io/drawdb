@@ -103,6 +103,8 @@ export const SIDESHEET = {
   VERSIONS: 2,
 };
 
+export const EMPTY_ENUM_PLACEHOLDER = "_placeholder";
+
 export const DB = {
   MYSQL: "mysql",
   POSTGRES: "postgresql",

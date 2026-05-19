@@ -257,7 +257,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         if (e.resource === "enum") {
           const newEnum = {
             name: e.name.name,
-            values: e.create_definitions.value.map((x) => x.value),
+            values: (e.create_definitions?.value ?? []).map((x) => x.value),
           };
           enums.push(newEnum);
         } else if (Array.isArray(e.create_definitions)) {

@@ -1,14 +1,21 @@
-import { escapeQuotes, exportFieldComment, parseDefault } from "./shared";
+import { EMPTY_ENUM_PLACEHOLDER } from "../../data/constants";
+import {
+  enumValuesForExport,
+  escapeQuotes,
+  exportFieldComment,
+  parseDefault,
+} from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
 export function toPostgres(diagram) {
   const enumStatements = diagram.enums
-    .map(
-      (e) =>
-        `CREATE TYPE "${e.name}" AS ENUM (\n${e.values
-          .map((v) => `\t'${v}'`)
-          .join(",\n")}\n);\n`,
-    )
+    .map((e) => {
+      const values =
+        e.values?.length > 0 ? e.values : [EMPTY_ENUM_PLACEHOLDER];
+      return `CREATE TYPE "${e.name}" AS ENUM (\n${values
+        .map((v) => `\t'${escapeQuotes(v)}'`)
+        .join(",\n")}\n);\n`;
+    })
     .join("\n");
 
   const typeStatements = diagram.types
