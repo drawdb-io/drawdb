@@ -1,6 +1,5 @@
 import { EMPTY_ENUM_PLACEHOLDER } from "../../data/constants";
 import {
-  enumValuesForExport,
   escapeQuotes,
   exportFieldComment,
   parseDefault,
