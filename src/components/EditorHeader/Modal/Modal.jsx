@@ -104,10 +104,22 @@ export default function Modal({
 
     let normalizedSql = importSource.src;
     if (targetDatabase === DB.POSTGRES) {
+      // Fix empty ENUM () which crashes node-sql-parser
       normalizedSql = normalizedSql.replace(
         /CREATE\s+TYPE\s+"([^"]+)"\s+AS\s+ENUM\s*\(\s*\)\s*;/gi,
         `CREATE TYPE "$1" AS ENUM ('${EMPTY_ENUM_PLACEHOLDER}');`,
       );
+
+      // Hoist CREATE TYPE statements to the top so enum types are
+      // defined before any table that references them
+      const typeStatements =
+        normalizedSql.match(/CREATE\s+TYPE\s+[^;]+;/gi) || [];
+      if (typeStatements.length > 0) {
+        const rest = normalizedSql
+          .replace(/CREATE\s+TYPE\s+[^;]+;/gi, '')
+          .trim();
+        normalizedSql = [...typeStatements, rest].filter(Boolean).join('\n');
+      }
     }
 
     let ast = null;
