@@ -209,7 +209,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             const endTable = tables.find((t) => t.name === endTableName);
             if (!endTable) return;
 
-            const endField = endTable.fields.findIndex(
+            const endField = endTable.fields.find(
               (f) => f.name === endFieldName,
             );
             if (!endField) return;
