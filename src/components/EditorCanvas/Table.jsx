@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
 import {
+  Action,
   Tab,
   ObjectType,
   tableHeaderHeight,
   tableColorStripHeight,
 } from "../../data/constants";
 import {
-  IconEdit,
+  IconChevronDown,
+  IconChevronUp,
   IconMore,
   IconMinus,
   IconDeleteStroked,
@@ -15,7 +17,13 @@ import {
   IconUnlock,
 } from "@douyinfe/semi-icons";
 import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
-import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
+import {
+  useLayout,
+  useSettings,
+  useDiagram,
+  useSelect,
+  useUndoRedo,
+} from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
@@ -25,6 +33,8 @@ import {
   getCommentHeight,
   getFieldOffsetY,
   getTableHeight,
+  getVisibleFieldEntries,
+  getVisibleFields,
 } from "../../utils/utils";
 
 export default function Table({
@@ -35,9 +45,10 @@ export default function Table({
   setLinkingLine,
 }) {
   const [hoveredField, setHoveredField] = useState(null);
-  const { database } = useDiagram();
   const { layout } = useLayout();
-  const { deleteTable, deleteField, updateTable } = useDiagram();
+  const { database, relationships, deleteTable, deleteField, updateTable } =
+    useDiagram();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
   const { settings } = useSettings();
   const { t } = useTranslation();
   const {
@@ -56,6 +67,17 @@ export default function Table({
     tableData,
     settings.tableWidth,
     settings.showComments,
+    relationships,
+  );
+
+  const visibleFieldEntries = useMemo(
+    () => getVisibleFieldEntries(tableData, relationships),
+    [tableData, relationships],
+  );
+
+  const visibleFields = useMemo(
+    () => getVisibleFields(tableData, relationships),
+    [tableData, relationships],
   );
 
   const isSelected = useMemo(() => {
@@ -67,6 +89,30 @@ export default function Table({
       )
     );
   }, [selectedElement, tableData, bulkSelectedElements]);
+
+  const toggleTableCollapse = (e) => {
+    e.stopPropagation();
+    if (layout.readOnly) return;
+
+    const collapsed = !tableData.collapsed;
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "self",
+        tid: tableData.id,
+        undo: { collapsed: tableData.collapsed },
+        redo: { collapsed },
+        message: t("edit_table", {
+          tableName: tableData.name,
+          extra: "[collapse fields]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    updateTable(tableData.id, { collapsed });
+  };
 
   const lockUnlockTable = (e) => {
     const locking = !tableData.locked;
@@ -174,104 +220,124 @@ export default function Table({
               <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
                 {tableData.name}
               </div>
-              <div className="hidden group-hover:block">
-                <div className="flex justify-end items-center mx-2 space-x-1.5">
-                  <Button
-                    icon={tableData.locked ? <IconLock /> : <IconUnlock />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2f68adb3",
-                    }}
-                    disabled={layout.readOnly}
-                    onClick={lockUnlockTable}
-                  />
-                  <Button
-                    icon={<IconEdit />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2f68adb3",
-                    }}
-                    onClick={openEditor}
-                  />
-                  <Popover
-                    key={tableData.id}
-                    content={
-                      <div className="popover-theme">
-                        <div className="mb-2">
-                          <strong>{t("comment")}:</strong>{" "}
-                          {tableData.comment === "" ? (
-                            t("not_set")
-                          ) : (
-                            <div>{tableData.comment}</div>
-                          )}
-                        </div>
-                        <div>
-                          <strong
-                            className={`${
-                              tableData.indices.length === 0 ? "" : "block"
-                            }`}
-                          >
-                            {t("indices")}:
-                          </strong>{" "}
-                          {tableData.indices.length === 0 ? (
-                            t("not_set")
-                          ) : (
-                            <div>
-                              {tableData.indices.map((index, k) => (
-                                <div
-                                  key={k}
-                                  className={`flex items-center my-1 px-2 py-1 rounded ${
-                                    settings.mode === "light"
-                                      ? "bg-gray-100"
-                                      : "bg-zinc-800"
-                                  }`}
-                                >
-                                  <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
-                                  <div>
-                                    {index.fields.map((f) => (
-                                      <Tag
-                                        color="blue"
-                                        key={f}
-                                        className="me-1"
-                                      >
-                                        {f}
-                                      </Tag>
-                                    ))}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
-                          block
-                          style={{ marginTop: "8px" }}
-                          onClick={() => deleteTable(tableData.id)}
-                          disabled={layout.readOnly}
-                        >
-                          {t("delete")}
-                        </Button>
-                      </div>
-                    }
-                    position="rightTop"
-                    showArrow
-                    trigger="click"
-                    style={{ width: "200px", wordBreak: "break-word" }}
-                  >
+              <div className="flex items-center mx-2 gap-1.5">
+                <div className="hidden group-hover:block">
+                  <div className="flex justify-end items-center mx-2 space-x-1.5">
                     <Button
-                      icon={<IconMore />}
-                      type="tertiary"
+                      icon={tableData.locked ? <IconLock /> : <IconUnlock />}
                       size="small"
+                      theme="solid"
                       style={{
-                        backgroundColor: "#808080b3",
-                        color: "white",
+                        backgroundColor: "#2f68adb3",
                       }}
+                      disabled={layout.readOnly}
+                      onClick={lockUnlockTable}
                     />
-                  </Popover>
+                    <Button
+                      icon={
+                        tableData.collapsed ? (
+                          <IconChevronDown />
+                        ) : (
+                          <IconChevronUp />
+                        )
+                      }
+                      size="small"
+                      theme="solid"
+                      style={{
+                        backgroundColor: "#2f68adb3",
+                      }}
+                      disabled={layout.readOnly}
+                      aria-label={
+                        tableData.collapsed
+                          ? "Expand unlinked fields"
+                          : "Collapse unlinked fields"
+                      }
+                      title={
+                        tableData.collapsed
+                          ? "Expand unlinked fields"
+                          : "Collapse unlinked fields"
+                      }
+                      onClick={toggleTableCollapse}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    />
+                    <Popover
+                      key={tableData.id}
+                      content={
+                        <div className="popover-theme">
+                          <div className="mb-2">
+                            <strong>{t("comment")}:</strong>{" "}
+                            {tableData.comment === "" ? (
+                              t("not_set")
+                            ) : (
+                              <div>{tableData.comment}</div>
+                            )}
+                          </div>
+                          <div>
+                            <strong
+                              className={`${
+                                tableData.indices.length === 0 ? "" : "block"
+                              }`}
+                            >
+                              {t("indices")}:
+                            </strong>{" "}
+                            {tableData.indices.length === 0 ? (
+                              t("not_set")
+                            ) : (
+                              <div>
+                                {tableData.indices.map((index, k) => (
+                                  <div
+                                    key={k}
+                                    className={`flex items-center my-1 px-2 py-1 rounded ${
+                                      settings.mode === "light"
+                                        ? "bg-gray-100"
+                                        : "bg-zinc-800"
+                                    }`}
+                                  >
+                                    <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
+                                    <div>
+                                      {index.fields.map((f) => (
+                                        <Tag
+                                          color="blue"
+                                          key={f}
+                                          className="me-1"
+                                        >
+                                          {f}
+                                        </Tag>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            icon={<IconDeleteStroked />}
+                            type="danger"
+                            block
+                            style={{ marginTop: "8px" }}
+                            onClick={() => deleteTable(tableData.id)}
+                            disabled={layout.readOnly}
+                          >
+                            {t("delete")}
+                          </Button>
+                        </div>
+                      }
+                      position="rightTop"
+                      showArrow
+                      trigger="click"
+                      style={{ width: "200px", wordBreak: "break-word" }}
+                    >
+                      <Button
+                        icon={<IconMore />}
+                        type="tertiary"
+                        size="small"
+                        style={{
+                          backgroundColor: "#808080b3",
+                          color: "white",
+                        }}
+                      />
+                    </Popover>
+                  </div>
                 </div>
               </div>
             </div>
@@ -282,11 +348,11 @@ export default function Table({
             )}
           </div>
 
-          {tableData.fields.map((e, i) => {
+          {visibleFieldEntries.map(({ field: e }, i) => {
             const resolved = resolveType(database, e.type);
             return settings.showFieldSummary ? (
               <Popover
-                key={i}
+                key={e.id ?? i}
                 content={
                   <div className="popover-theme">
                     <div
@@ -388,9 +454,7 @@ export default function Table({
     return (
       <div
         className={`${
-          index === tableData.fields.length - 1
-            ? ""
-            : "border-b border-gray-400"
+          index === visibleFields.length - 1 ? "" : "border-b border-gray-400"
         } group w-full overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
@@ -431,7 +495,7 @@ export default function Table({
                 const fieldY =
                   tableData.y +
                   getFieldOffsetY(
-                    tableData.fields,
+                    visibleFields,
                     index,
                     settings.tableWidth,
                     settings.showComments,

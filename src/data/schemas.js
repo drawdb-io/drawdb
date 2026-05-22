@@ -40,6 +40,7 @@ export const tableSchema = {
     comment: { type: "string" },
     locked: { type: "boolean" },
     hidden: { type: "boolean" },
+    collapsed: { type: "boolean" },
     indices: {
       type: "array",
       items: {

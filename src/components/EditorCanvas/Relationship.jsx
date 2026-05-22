@@ -5,12 +5,13 @@ import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
+import { getVisibleFieldIndex, getVisibleFields } from "../../utils/utils";
 
 const labelFontSize = 16;
 
 export default function Relationship({ data }) {
   const { settings } = useSettings();
-  const { tables } = useDiagram();
+  const { tables, relationships } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
@@ -22,25 +23,34 @@ export default function Relationship({ data }) {
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
 
+    const startFields = getVisibleFields(startTable, relationships);
+    const endFields = getVisibleFields(endTable, relationships);
+
     return {
-      startFieldIndex: startTable.fields.findIndex(
-        (f) => f.id === data.startFieldId,
+      startFieldIndex: getVisibleFieldIndex(
+        startTable,
+        data.startFieldId,
+        relationships,
       ),
-      endFieldIndex: endTable.fields.findIndex((f) => f.id === data.endFieldId),
+      endFieldIndex: getVisibleFieldIndex(
+        endTable,
+        data.endFieldId,
+        relationships,
+      ),
       startTable: {
         x: startTable.x,
         y: startTable.y,
         comment: startTable.comment,
-        fields: startTable.fields,
+        fields: startFields,
       },
       endTable: {
         x: endTable.x,
         y: endTable.y,
         comment: endTable.comment,
-        fields: endTable.fields,
+        fields: endFields,
       },
     };
-  }, [tables, data]);
+  }, [tables, relationships, data]);
 
   const pathRef = useRef();
   const labelRef = useRef();
@@ -128,7 +138,12 @@ export default function Relationship({ data }) {
       <g className="select-none group" onDoubleClick={edit}>
         {/* invisible wider path for better hover ux */}
         <path
-          d={calcPath(pathValues, settings.tableWidth, 1, settings.showComments)}
+          d={calcPath(
+            pathValues,
+            settings.tableWidth,
+            1,
+            settings.showComments,
+          )}
           fill="none"
           stroke="transparent"
           strokeWidth={12}
@@ -136,7 +151,12 @@ export default function Relationship({ data }) {
         />
         <path
           ref={pathRef}
-          d={calcPath(pathValues, settings.tableWidth, 1, settings.showComments)}
+          d={calcPath(
+            pathValues,
+            settings.tableWidth,
+            1,
+            settings.showComments,
+          )}
           className="relationship-path"
           fill="none"
           cursor="pointer"
