@@ -1,5 +1,11 @@
 import { useMemo, useRef, useState } from "react";
-import { Button, Popover, Input } from "@douyinfe/semi-ui";
+import {
+  Button,
+  ButtonGroup,
+  Popover,
+  Input,
+  Divider,
+} from "@douyinfe/semi-ui";
 import ColorPicker from "../EditorSidePanel/ColorPicker";
 import {
   IconEdit,
@@ -170,14 +176,21 @@ export default function Area({
               {data.name}
             </div>
             {(isHovered || (areaIsOpen() && !layout.sidebar)) && (
-              <div className="flex items-center gap-1.5">
+              <ButtonGroup
+                type="tertiary"
+                size="small"
+                aria-label="Area actions"
+              >
                 <Button
-                  icon={data.locked ? <IconLock /> : <IconUnlock />}
                   size="small"
-                  theme="solid"
-                  style={{
-                    backgroundColor: "#2F68ADB3",
-                  }}
+                  type="tertiary"
+                  icon={
+                    data.locked ? (
+                      <IconLock size="small" />
+                    ) : (
+                      <IconUnlock size="small" />
+                    )
+                  }
                   onClick={lockUnlockArea}
                   disabled={layout.readOnly}
                 />
@@ -191,16 +204,13 @@ export default function Area({
                   showArrow
                 >
                   <Button
-                    icon={<IconEdit />}
                     size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
+                    type="tertiary"
+                    icon={<IconEdit size="small" />}
                     onClick={edit}
                   />
                 </Popover>
-              </div>
+              </ButtonGroup>
             )}
           </div>
         </div>
@@ -334,17 +344,17 @@ function EditPopoverContent({ data }) {
           onColorPick={(color) => handleColorPick(color)}
         />
       </div>
-      <div className="flex">
-        <Button
-          icon={<IconDeleteStroked />}
-          type="danger"
-          block
-          onClick={() => deleteArea(data.id, true)}
-          disabled={layout.readOnly}
-        >
-          {t("delete")}
-        </Button>
-      </div>
+      <Divider />
+      <Button
+        icon={<IconDeleteStroked />}
+        type="danger"
+        theme="borderless"
+        block
+        onClick={() => deleteArea(data.id, true)}
+        disabled={layout.readOnly}
+      >
+        {t("delete")}
+      </Button>
     </div>
   );
 }
