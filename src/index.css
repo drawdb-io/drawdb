@@ -131,6 +131,19 @@
   background-color: rgba(var(--semi-grey-1), 0.7);
 }
 
+.segmented-bg {
+  background-color: var(--semi-color-bg-3);
+}
+
+.segmented-item {
+  color: var(--semi-color-text-1);
+}
+
+.segmented-item-active {
+  background-color: var(--semi-color-bg-2);
+  color: rgba(var(--semi-blue-5), 1);
+}
+
 .hover-1:hover {
   background-color: rgba(var(--semi-grey-1), 1);
 }

@@ -290,6 +290,8 @@ const en = {
     type_name_required: "Type name is required",
     database: "Database",
     saved: "Saved",
+    structure: "Structure",
+    code: "Code"
   },
 };
 
