@@ -93,7 +93,7 @@ export default function SidePanel({ width, resize, setResize }) {
   return (
     <div className="flex h-full">
       <div
-        className="flex flex-col h-full relative border-r border-color"
+        className="flex flex-col h-full relative"
         style={{ width: `${width}px` }}
       >
         <div className="h-full flex-1 overflow-y-auto">
@@ -143,12 +143,14 @@ export default function SidePanel({ width, resize, setResize }) {
         )}
       </div>
       <div
-        className={`flex justify-center items-center p-1 h-auto hover-2 cursor-col-resize ${
-          resize && "bg-semi-grey-2"
-        }`}
+        className="group relative h-full w-0.5 bg-zinc-200 dark:bg-zinc-800 cursor-col-resize flex justify-center"
         onPointerDown={(e) => e.isPrimary && setResize(true)}
       >
-        <div className="w-1 border-x border-color h-1/6" />
+        <div
+          className={`h-full transition-all w-full ${
+            resize ? "bg-blue-500" : "group-hover:bg-blue-500"
+          }`}
+        />
       </div>
     </div>
   );
