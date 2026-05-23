@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   IconCaretdown,
   IconChevronRight,
   IconChevronLeft,
-  IconChevronUp,
-  IconChevronDown,
   IconSaveStroked,
   IconUndo,
   IconRedo,
@@ -87,7 +86,12 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
 
-export default function ControlPanel({ title, setTitle, lastSaved }) {
+export default function ControlPanel({
+  title,
+  setTitle,
+  lastSaved,
+  toolbarContainer,
+}) {
   const { id: diagramId } = useParams();
 
   const [modal, setModal] = useState(MODAL.NONE);
@@ -129,9 +133,6 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   const { version, gistId, setGistId } = useContext(IdContext);
   const isTemplate = useMatch("/editor/templates/:id");
   const navigate = useNavigate();
-
-  const invertLayout = (component) =>
-    setLayout((prev) => ({ ...prev, [component]: !prev[component] }));
 
   const undo = () => {
     if (undoStack.length === 0) return;
@@ -1576,7 +1577,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
       <div>
         {layout.header && (
           <div
-            className="flex justify-between items-center me-7"
+            className="flex justify-between items-center me-7 border-b border-color pb-2"
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
@@ -1593,7 +1594,9 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
             )}
           </div>
         )}
-        {layout.toolbar && toolbar()}
+        {layout.toolbar &&
+          toolbarContainer &&
+          createPortal(toolbar(), toolbarContainer)}
       </div>
       <Modal
         modal={modal}
@@ -1621,7 +1624,7 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
   function toolbar() {
     return (
       <div
-        className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme"
+        className="py-1.5 px-3 flex items-center gap-1 rounded-xl select-none overflow-hidden toolbar-theme shadow-lg"
         style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
       >
         <div className="flex justify-start items-center">
@@ -1785,12 +1788,6 @@ export default function ControlPanel({ title, setTitle, lastSaved }) {
             </button>
           </Tooltip>
         </div>
-        <button
-          onClick={() => invertLayout("header")}
-          className="flex items-center"
-        >
-          {layout.header ? <IconChevronUp /> : <IconChevronDown />}
-        </button>
       </div>
     );
   }

@@ -40,7 +40,7 @@ export const IdContext = createContext({
   setVersion: () => {},
 });
 
-const SIDEPANEL_MIN_WIDTH = 384;
+const SIDEPANEL_MIN_WIDTH = 374;
 
 export default function WorkSpace() {
   const [gistId, setGistId] = useState("");
@@ -48,6 +48,7 @@ export default function WorkSpace() {
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
+  const [toolbarContainer, setToolbarContainer] = useState(null);
   const [width, setWidth] = useState(SIDEPANEL_MIN_WIDTH);
   const [lastSaved, setLastSaved] = useState("");
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
@@ -474,6 +475,7 @@ export default function WorkSpace() {
           setTitle={setTitle}
           lastSaved={lastSaved}
           setLastSaved={setLastSaved}
+          toolbarContainer={toolbarContainer}
         />
       </IdContext.Provider>
       <div
@@ -495,6 +497,12 @@ export default function WorkSpace() {
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
+          {layout.toolbar && (
+            <div
+              ref={setToolbarContainer}
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
+            />
+          )}
           {version && (
             <div className="absolute right-8 top-2 space-x-2">
               <Button

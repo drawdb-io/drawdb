@@ -93,7 +93,7 @@ export default function SidePanel({ width, resize, setResize }) {
   return (
     <div className="flex h-full">
       <div
-        className="flex flex-col h-full relative"
+        className={`flex flex-col h-full relative ${layout.dbmlEditor ? "" : "pt-1"}`}
         style={{ width: `${width}px` }}
       >
         <div className="h-full flex-1 overflow-y-auto">
