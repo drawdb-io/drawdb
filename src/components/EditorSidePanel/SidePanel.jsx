@@ -173,7 +173,7 @@ export default function SidePanel({ width, resize, setResize }) {
         )}
       </div>
       <div
-        className={`group relative h-full w-0.5 cursor-col-resize flex justify-center ${settings.mode === "dark" ? "bg-zinc-700" : "bg-zinc-200"}`}
+        className={`group relative h-full w-0.5 cursor-col-resize flex justify-center ${settings.mode === "dark" ? "bg-zinc-800" : "bg-zinc-100"}`}
         onPointerDown={(e) => e.isPrimary && setResize(true)}
       >
         <div
