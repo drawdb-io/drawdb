@@ -1577,14 +1577,14 @@ export default function ControlPanel({
       <div>
         {layout.header && (
           <div
-            className="flex justify-between items-center me-7 border-b border-color pb-2"
+            className="flex justify-between items-center border-b border-color pb-2"
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
             {!isTemplate && (
               <Button
                 type="primary"
-                className="!text-base me-2 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                className="!text-base me-8 !pe-6 !ps-5 !py-[18px] !rounded-md"
                 size="default"
                 icon={<IconShareStroked />}
                 onClick={() => setModal(MODAL.SHARE)}
