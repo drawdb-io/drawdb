@@ -1640,12 +1640,12 @@ export default function ControlPanel({
             style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
           >
             {header()}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2 me-7">
               <Slot name="header-actions-start" />
               {!isTemplate && (
                 <Button
                   type="primary"
-                  className="!text-base me-8 !pe-6 !ps-5 !py-[18px] !rounded-md"
+                  className="!text-base !pe-6 !ps-5 !py-[18px] !rounded-md"
                   size="default"
                   icon={<IconShareStroked />}
                   onClick={() => setModal(MODAL.SHARE)}

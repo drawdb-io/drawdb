@@ -566,7 +566,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />
         )}
-        <div className="relative w-full h-full overflow-hidden">
+        <div className="relative flex-1 min-w-0 h-full overflow-hidden">
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
@@ -600,6 +600,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
             </div>
           )}
         </div>
+        <Slot name="right-panel" />
       </div>
       <Modal
         centered
