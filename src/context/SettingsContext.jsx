@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { tableWidth } from "../data/constants";
 
 const defaultSettings = {
@@ -19,14 +20,21 @@ const defaultSettings = {
 export const SettingsContext = createContext(defaultSettings);
 
 export default function SettingsContextProvider({ children }) {
-  const [settings, setSettings] = useState(defaultSettings);
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const settings = localStorage.getItem("settings");
-    if (settings) {
-      setSettings({ ...defaultSettings, ...JSON.parse(settings) });
+  const [settings, setSettings] = useState(() => {
+    const savedSettings = localStorage.getItem("settings");
+    let baseSettings = savedSettings
+      ? { ...defaultSettings, ...JSON.parse(savedSettings) }
+      : defaultSettings;
+
+    const theme = searchParams.get("theme");
+    if (theme === "light" || theme === "dark") {
+      baseSettings = { ...baseSettings, mode: theme };
     }
-  }, []);
+
+    return baseSettings;
+  });
 
   useEffect(() => {
     document.body.setAttribute("theme-mode", settings.mode);
