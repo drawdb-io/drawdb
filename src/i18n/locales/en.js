@@ -48,6 +48,7 @@ const en = {
     view: "View",
     header: "Menubar",
     sidebar: "Sidebar",
+    toolbar: "Toolbar",
     issues: "Issues",
     presentation_mode: "Presentation mode",
     strict_mode: "Strict mode",
@@ -291,7 +292,12 @@ const en = {
     database: "Database",
     saved: "Saved",
     structure: "Structure",
-    code: "Code"
+    code: "Code",
+    embed_settings: "Embed settings",
+    default: "Default",
+    hide: "Hide",
+    force_hide: "Force hide",
+    force_read_only: "Force read only",
   },
 };
 
