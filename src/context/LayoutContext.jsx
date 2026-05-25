@@ -15,19 +15,40 @@ const defaultLayout = {
 export default function LayoutContextProvider({ children }) {
   const [searchParams] = useSearchParams();
 
+  const hideHeaderParam = searchParams.get("hideHeader");
+  const hideSidebarParam = searchParams.get("hideSidebar");
+  const hideToolbarParam = searchParams.get("hideToolbar");
+  const isForceReadOnly = searchParams.get("forceReadOnly") === "true";
+
   const [layout, setLayout] = useState({
     ...defaultLayout,
-    header: searchParams.get("hideHeader") !== "true",
-    sidebar: searchParams.get("hideSidebar") !== "true",
-    toolbar: searchParams.get("hideToolbar") !== "true",
+    header:
+      hideHeaderParam === "true" || hideHeaderParam === "force"
+        ? false
+        : defaultLayout.header,
+    sidebar:
+      hideSidebarParam === "true" || hideSidebarParam === "force"
+        ? false
+        : defaultLayout.sidebar,
+    toolbar:
+      hideToolbarParam === "true" || hideToolbarParam === "force"
+        ? false
+        : defaultLayout.toolbar,
+    readOnly: isForceReadOnly || defaultLayout.readOnly,
   });
 
-  const forceReadOnly = searchParams.get("forceReadOnly") === "true";
+  const effectiveLayout = {
+    ...layout,
+    header: hideHeaderParam === "force" ? false : layout.header,
+    sidebar: hideSidebarParam === "force" ? false : layout.sidebar,
+    toolbar: hideToolbarParam === "force" ? false : layout.toolbar,
+    readOnly: isForceReadOnly ? true : layout.readOnly,
+  };
 
   return (
     <LayoutContext.Provider
       value={{
-        layout: forceReadOnly ? { ...layout, readOnly: true } : layout,
+        layout: effectiveLayout,
         setLayout,
       }}
     >
