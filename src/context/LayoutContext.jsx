@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { queryConfig } from "../utils/queryConfig";
 
 export const LayoutContext = createContext(null);
 
@@ -15,34 +16,41 @@ const defaultLayout = {
 export default function LayoutContextProvider({ children }) {
   const [searchParams] = useSearchParams();
 
-  const hideHeaderParam = searchParams.get("hideHeader");
-  const hideSidebarParam = searchParams.get("hideSidebar");
-  const hideToolbarParam = searchParams.get("hideToolbar");
-  const isForceReadOnly = searchParams.get("forceReadOnly") === "true";
+  const hideHeaderParam = searchParams.get(queryConfig.hideHeader.key);
+  const hideSidebarParam = searchParams.get(queryConfig.hideSidebar.key);
+  const hideToolbarParam = searchParams.get(queryConfig.hideToolbar.key);
+  const forceReadOnlyParam = searchParams.get(queryConfig.forceReadOnly.key);
 
   const [layout, setLayout] = useState({
     ...defaultLayout,
-    header:
-      hideHeaderParam === "true" || hideHeaderParam === "force"
-        ? false
-        : defaultLayout.header,
-    sidebar:
-      hideSidebarParam === "true" || hideSidebarParam === "force"
-        ? false
-        : defaultLayout.sidebar,
-    toolbar:
-      hideToolbarParam === "true" || hideToolbarParam === "force"
-        ? false
-        : defaultLayout.toolbar,
-    readOnly: isForceReadOnly || defaultLayout.readOnly,
+    header: queryConfig.hideHeader.isActive(hideHeaderParam)
+      ? false
+      : defaultLayout.header,
+    sidebar: queryConfig.hideSidebar.isActive(hideSidebarParam)
+      ? false
+      : defaultLayout.sidebar,
+    toolbar: queryConfig.hideToolbar.isActive(hideToolbarParam)
+      ? false
+      : defaultLayout.toolbar,
+    readOnly: queryConfig.forceReadOnly.isActive(forceReadOnlyParam)
+      ? true
+      : defaultLayout.readOnly,
   });
 
   const effectiveLayout = {
     ...layout,
-    header: hideHeaderParam === "force" ? false : layout.header,
-    sidebar: hideSidebarParam === "force" ? false : layout.sidebar,
-    toolbar: hideToolbarParam === "force" ? false : layout.toolbar,
-    readOnly: isForceReadOnly ? true : layout.readOnly,
+    header: queryConfig.hideHeader.isForced(hideHeaderParam)
+      ? false
+      : layout.header,
+    sidebar: queryConfig.hideSidebar.isForced(hideSidebarParam)
+      ? false
+      : layout.sidebar,
+    toolbar: queryConfig.hideToolbar.isForced(hideToolbarParam)
+      ? false
+      : layout.toolbar,
+    readOnly: queryConfig.forceReadOnly.isForced(forceReadOnlyParam)
+      ? true
+      : layout.readOnly,
   };
 
   return (

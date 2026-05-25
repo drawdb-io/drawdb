@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { tableWidth } from "../data/constants";
+import { queryConfig } from "../utils/queryConfig";
 
 const defaultSettings = {
   strictMode: false,
@@ -28,8 +29,8 @@ export default function SettingsContextProvider({ children }) {
       ? { ...defaultSettings, ...JSON.parse(savedSettings) }
       : defaultSettings;
 
-    const theme = searchParams.get("theme");
-    if (theme === "light" || theme === "dark") {
+    const theme = searchParams.get(queryConfig.theme.key);
+    if (queryConfig.theme.isValid(theme)) {
       baseSettings = { ...baseSettings, mode: theme };
     }
 
