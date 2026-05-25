@@ -296,8 +296,7 @@ const en = {
     embed_settings: "Embed settings",
     default: "Default",
     hide: "Hide",
-    force_hide: "Force hide",
-    force_read_only: "Force read only",
+    force_hide: "Force hide"
   },
 };
 

@@ -19,7 +19,6 @@ export default function LayoutContextProvider({ children }) {
   const hideHeaderParam = searchParams.get(queryConfig.hideHeader.key);
   const hideSidebarParam = searchParams.get(queryConfig.hideSidebar.key);
   const hideToolbarParam = searchParams.get(queryConfig.hideToolbar.key);
-  const forceReadOnlyParam = searchParams.get(queryConfig.forceReadOnly.key);
 
   const [layout, setLayout] = useState({
     ...defaultLayout,
@@ -32,9 +31,6 @@ export default function LayoutContextProvider({ children }) {
     toolbar: queryConfig.hideToolbar.isActive(hideToolbarParam)
       ? false
       : defaultLayout.toolbar,
-    readOnly: queryConfig.forceReadOnly.isActive(forceReadOnlyParam)
-      ? true
-      : defaultLayout.readOnly,
   });
 
   const effectiveLayout = {
@@ -48,9 +44,6 @@ export default function LayoutContextProvider({ children }) {
     toolbar: queryConfig.hideToolbar.isForced(hideToolbarParam)
       ? false
       : layout.toolbar,
-    readOnly: queryConfig.forceReadOnly.isForced(forceReadOnlyParam)
-      ? true
-      : layout.readOnly,
   };
 
   return (

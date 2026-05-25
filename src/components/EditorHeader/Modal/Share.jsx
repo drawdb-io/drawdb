@@ -33,7 +33,6 @@ export default function Share({ title, setModal }) {
     hideHeader: null,
     hideSidebar: null,
     hideToolbar: null,
-    forceReadOnly: null,
   });
 
   const url = useMemo(() => {
@@ -185,11 +184,6 @@ export default function Share({ title, setModal }) {
                       {embedSettings.hideToolbar && (
                         <Tag color="blue" size="small">
                           {t("toolbar")}
-                        </Tag>
-                      )}
-                      {embedSettings.forceReadOnly && (
-                        <Tag color="blue" size="small">
-                          {t("read_only")}
                         </Tag>
                       )}
                     </Space>
