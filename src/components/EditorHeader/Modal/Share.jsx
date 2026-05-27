@@ -1,8 +1,8 @@
-import { Banner, Button, Input, Spin, Toast } from "@douyinfe/semi-ui";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { Banner, Button, Input, Spin, Toast, Collapse, Tag, Space, Radio, RadioGroup, Typography } from "@douyinfe/semi-ui";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IdContext } from "../../Workspace";
-import { IconLink } from "@douyinfe/semi-icons";
+import { IconLink, IconCode } from "@douyinfe/semi-icons";
 import {
   useAreas,
   useDiagram,
@@ -15,6 +15,7 @@ import { databases } from "../../../data/databases";
 import { MODAL } from "../../../data/constants";
 import { create, patch, SHARE_FILENAME } from "../../../api/gists";
 import { getCustomTypes } from "../../../utils/customTypes";
+import { queryConfig } from "../../../utils/queryConfig";
 
 export default function Share({ title, setModal }) {
   const { t } = useTranslation();
@@ -27,7 +28,24 @@ export default function Share({ title, setModal }) {
   const { enums } = useEnums();
   const { transform } = useTransform();
   const [error, setError] = useState(null);
-  const url = window.location.origin + "/editor?shareId=" + gistId;
+  const [embedSettings, setEmbedSettings] = useState({
+    theme: null,
+    hideHeader: null,
+    hideSidebar: null,
+    hideToolbar: null,
+  });
+
+  const url = useMemo(() => {
+    const baseUrl = window.location.origin + "/editor?shareId=" + gistId;
+    const params = new URLSearchParams();
+    Object.entries(embedSettings).forEach(([key, value]) => {
+      if (value) {
+        params.append(queryConfig[key].key, value);
+      }
+    });
+    const queryString = params.toString();
+    return queryString ? baseUrl + "&" + queryString : baseUrl;
+  }, [gistId, embedSettings]);
 
   const diagramToString = useCallback(() => {
     const allCustomTypes = getCustomTypes();
@@ -135,6 +153,76 @@ export default function Share({ title, setModal }) {
         <>
           <div className="flex gap-3">
             <Input value={url} size="large" readonly />
+          </div>
+          <div className="mt-3">
+            <Collapse>
+              <Collapse.Panel
+                header={
+                  <div className="flex items-center justify-between w-full pr-4">
+                    <Space>
+                      <IconCode />
+                      <Typography.Text strong>
+                        {t("embed_settings")}
+                      </Typography.Text>
+                    </Space>
+                    <Space>
+                      {queryConfig.theme.isValid(embedSettings.theme) && (
+                        <Tag color="blue" size="small">
+                          {t(embedSettings.theme)}
+                        </Tag>
+                      )}
+                      {embedSettings.hideHeader && (
+                        <Tag color="blue" size="small">
+                          {t("header")}
+                        </Tag>
+                      )}
+                      {embedSettings.hideSidebar && (
+                        <Tag color="blue" size="small">
+                          {t("sidebar")}
+                        </Tag>
+                      )}
+                      {embedSettings.hideToolbar && (
+                        <Tag color="blue" size="small">
+                          {t("toolbar")}
+                        </Tag>
+                      )}
+                    </Space>
+                  </div>
+                }
+                itemKey="embed-settings"
+              >
+                <div className="space-y-4 py-2">
+                  {Object.entries(queryConfig).map(([key, config]) => (
+                    <div
+                      key={key}
+                      className="flex items-center justify-between gap-4"
+                    >
+                      <Typography.Text>{t(config.label)}</Typography.Text>
+                      <RadioGroup
+                        type="button"
+                        name={config.key}
+                        value={embedSettings[key]}
+                        onChange={(e) =>
+                          setEmbedSettings((prev) => ({
+                            ...prev,
+                            [key]: e.target.value,
+                          }))
+                        }
+                      >
+                        {config.options.map((option) => (
+                          <Radio
+                            key={String(option.value)}
+                            value={option.value}
+                          >
+                            {t(option.label)}
+                          </Radio>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                  ))}
+                </div>
+              </Collapse.Panel>
+            </Collapse>
           </div>
           <div className="text-xs mt-2">{t("share_info")}</div>
           <div className="flex gap-2 mt-3">

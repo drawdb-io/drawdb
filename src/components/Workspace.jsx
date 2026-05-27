@@ -16,6 +16,7 @@ import {
   useTypes,
   useSaveState,
   useEnums,
+  useNavigateWithParams,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
 import { Button, Modal, Tag } from "@douyinfe/semi-ui";
@@ -25,7 +26,6 @@ import { databases } from "../data/databases";
 import { isRtl } from "../i18n/utils/rtl";
 import {
   useMatch,
-  useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -77,7 +77,7 @@ export default function WorkSpace() {
   const isDiagram = useMatch("/editor/diagrams/:id");
   const isTemplate = useMatch("/editor/templates/:id");
 
-  const navigate = useNavigate();
+  const navigate = useNavigateWithParams();
 
   const handleResize = (e) => {
     if (!resize) return;

@@ -10,7 +10,7 @@ import {
   IconEdit,
   IconShareStroked,
 } from "@douyinfe/semi-icons";
-import { Link, useMatch, useNavigate, useParams } from "react-router-dom";
+import { Link, useMatch, useParams } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
 import {
   Button,
@@ -62,6 +62,7 @@ import {
   useAreas,
   useEnums,
   useFullscreen,
+  useNavigateWithParams,
 } from "../../hooks";
 import { enterFullscreen, exitFullscreen } from "../../utils/fullscreen";
 import { dataURItoBlob } from "../../utils/utils";
@@ -132,7 +133,7 @@ export default function ControlPanel({
   const { t, i18n } = useTranslation();
   const { version, gistId, setGistId } = useContext(IdContext);
   const isTemplate = useMatch("/editor/templates/:id");
-  const navigate = useNavigate();
+  const navigate = useNavigateWithParams();
 
   const undo = () => {
     if (undoStack.length === 0) return;
