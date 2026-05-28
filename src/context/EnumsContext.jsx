@@ -2,9 +2,8 @@ import { createContext, useEffect, useRef, useState } from "react";
 import { Action, ObjectType } from "../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
-import { useUndoRedo } from "../hooks";
+import { useUndoRedo, useCollab } from "../hooks";
 import { nanoid } from "nanoid";
-import { useCollab } from "./CollabContext";
 
 export const EnumsContext = createContext(null);
 

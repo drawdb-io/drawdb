@@ -1,10 +1,9 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import { Action, ObjectType } from "../data/constants";
-import { useUndoRedo } from "../hooks";
+import { useUndoRedo, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
-import { useCollab } from "./CollabContext";
 
 export const TypesContext = createContext(null);
 
@@ -15,9 +14,6 @@ export default function TypesContextProvider({ children }) {
   const { emitDelta, isApplyingRemoteRef } = useCollab();
   const firstRun = useRef(true);
 
-  // Types are coarse-grained (no per-entity versioning on the wire): every
-  // mutation broadcasts the whole array as a singleton update. Cheap
-  // bandwidth-wise because types lists are small.
   useEffect(() => {
     if (firstRun.current) {
       firstRun.current = false;

@@ -124,10 +124,6 @@ function Form({ theme }) {
 }
 
 export default function BugReport() {
-  // const {
-  //   settings: { mode: theme },
-  // } = useSettings();
-
   const theme = localStorage.getItem("theme") || "light";
 
   useEffect(() => {

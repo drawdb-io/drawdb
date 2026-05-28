@@ -5,10 +5,9 @@ import {
   defaultNoteTheme,
   noteWidth,
 } from "../data/constants";
-import { useUndoRedo, useTransform, useSelect } from "../hooks";
+import { useUndoRedo, useTransform, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
-import { useCollab } from "./CollabContext";
 
 export const NotesContext = createContext(null);
 
@@ -22,9 +21,6 @@ export default function NotesContextProvider({ children }) {
   const shouldEmit = () => !isApplyingRemoteRef?.current;
 
   const addNote = (data, addToHistory = true) => {
-    // Pre-compute the new note so the UI-triggered "add note" (no args)
-    // can still be broadcast — the previous `shouldEmit() && data` check
-    // skipped the emit whenever the user clicked "Add note" from the UI.
     let created = data;
     if (data) {
       setNotes((prev) => {

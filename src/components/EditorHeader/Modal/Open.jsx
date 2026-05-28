@@ -13,12 +13,6 @@ function formatSize(bytes) {
   return bytes + "B";
 }
 
-/**
- * Loads both lists in parallel. Local always comes from Dexie; cloud is
- * fetched only when a host app supplies `cloudList` via ExtensionsContext.
- * The Open dialog renders them as separate sections so signed-in users
- * can distinguish browser-only drafts from cloud-saved diagrams.
- */
 function useDiagramList() {
   const extensions = useExtensions();
   const cloudList = extensions?.cloudList;
@@ -217,10 +211,6 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
     );
   }
 
-  // OSS-only users see just their local list with no section header.
-  // Cloud users always see the cloud section (with an empty hint when
-  // they have no cloud diagrams yet) so the distinction is clear, plus
-  // the local section only when they actually have local drafts.
   return (
     <div className="max-h-[360px] overflow-auto space-y-3">
       {cloudEnabled && (

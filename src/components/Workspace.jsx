@@ -81,10 +81,6 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const { t, i18n } = useTranslation();
   let [searchParams, setSearchParams] = useSearchParams();
   const { id: routeDiagramId } = useParams();
-  // `forcedDiagramId` lets a host page (e.g. drawdb-pro's public-share
-  // view at /share/:token) mount Workspace on a non-/editor URL and
-  // still drive the cloud-load flow. When set it overrides URL params
-  // and forces the diagram branch of the load switch.
   const loadedDiagramId = forcedDiagramId ?? routeDiagramId;
   const editorDiagramMatch = useMatch("/editor/diagrams/:id");
   const isDiagram = forcedDiagramId ? true : editorDiagramMatch;
@@ -106,10 +102,6 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setSearchParams(searchParams, { replace: true });
     }
 
-    // When a `cloudSave` extension is provided, the host app owns
-    // persistence. Build the cloud payload and hand it off — Dexie is
-    // bypassed entirely. This is the autosave path; the manual Save
-    // button in ControlPanel uses the same extension directly.
     if (cloudOnly) {
       const isNew = !loadedDiagramId || isTemplate;
       const targetId = isNew ? crypto.randomUUID() : loadedDiagramId;
@@ -138,8 +130,6 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       } catch (err) {
         console.warn("cloud autosave failed:", err);
         if (err?.response?.status === 402) {
-          // Trial expired / feature not available — surface like
-          // ControlPanel.save does instead of looping on errors.
           setSaveState(State.NONE);
           navigate("/checkout?tier=solo_pro");
           return;
@@ -287,9 +277,6 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
 
       if (!diagram) return;
 
-      // Cloud loads can carry a `canWrite` flag (false → viewer). Honor
-      // it by toggling layout.readOnly so OSS's existing autosave guard
-      // and toolbar disables apply.
       if (typeof diagram.canWrite === "boolean") {
         setLayout((prev) => ({ ...prev, readOnly: !diagram.canWrite }));
       }

@@ -106,7 +106,6 @@ export default function Share({ title, setModal }) {
   }, [gistId, setModal, setGistId]);
 
   useEffect(() => {
-    // Host-provided body owns its own data flow; skip the Gist call.
     if (customContent) {
       setLoading(false);
       return;
@@ -141,14 +140,10 @@ export default function Share({ title, setModal }) {
       });
   };
 
-  // Slots:
-  //   - `share-modal-content` (host-provided) → fully replaces the OSS
-  //      body. Host owns its own loading / error / footer.
-  //   - `share-modal-top` (host-provided) → renders above the OSS body
-  //      when no full replacement is provided.
   if (customContent) {
     return <div>{customContent}</div>;
   }
+
   return (
     <div>
       <Slot name="share-modal-top" />

@@ -2,8 +2,7 @@ import { Toast } from "@douyinfe/semi-ui";
 import { createContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Action, ObjectType, defaultBlue } from "../data/constants";
-import { useSelect, useTransform, useUndoRedo } from "../hooks";
-import { useCollab } from "./CollabContext";
+import { useSelect, useTransform, useUndoRedo, useCollab } from "../hooks";
 
 export const AreasContext = createContext(null);
 
@@ -17,9 +16,6 @@ export default function AreasContextProvider({ children }) {
   const shouldEmit = () => !isApplyingRemoteRef?.current;
 
   const addArea = (data, addToHistory = true) => {
-    // Pre-compute the new area outside the setter so the same payload is
-    // both inserted locally and broadcast to peers. Without this, the
-    // UI-triggered "add area" (called with no args) never emits.
     let created = data;
     if (data) {
       setAreas((prev) => {

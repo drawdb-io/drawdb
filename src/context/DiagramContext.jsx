@@ -1,10 +1,9 @@
 import { createContext, useCallback, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
-import { useTransform, useUndoRedo, useSelect } from "../hooks";
+import { useTransform, useUndoRedo, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
-import { useCollab } from "./CollabContext";
 
 export const DiagramContext = createContext(null);
 
@@ -20,10 +19,6 @@ export default function DiagramContextProvider({ children }) {
 
   const shouldEmit = () => !isApplyingRemoteRef?.current;
 
-  // Stable identity required: OSS Workspace's `load` callback has
-  // `setDatabase` in its dep array, and the editor mount effect re-runs
-  // whenever `load` changes. A fresh wrapper on each render makes that
-  // effect refire repeatedly → infinite cloudLoad/download-url GETs.
   const setDatabase = useCallback(
     (next) => {
       setDatabaseRaw(next);
@@ -226,8 +221,6 @@ export default function DiagramContextProvider({ children }) {
           ),
       ),
     );
-    // updateTable emits its own delta — pass false here is meaningless,
-    // we just rely on the table-update path covering the field deletion.
     updateTable(tid, {
       fields: fields.filter((e) => e.id !== field.id),
     });

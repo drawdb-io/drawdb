@@ -759,10 +759,6 @@ export default function ControlPanel({
     setLayout((prev) => ({ ...prev, dbmlEditor: !prev.dbmlEditor }));
   };
   const save = async () => {
-    // Pro override: when a host app injects a `cloudSave` handler via
-    // ExtensionsContext, persist via that handler instead of letting the
-    // SAVING -> Dexie autosave path run.
-    console.log("save", extensions);
     if (typeof extensions.cloudSave === "function") {
       // TODO: dont have blank here have null
       const isNew = diagramId === 'blank';
@@ -792,8 +788,6 @@ export default function ControlPanel({
           setLastSaved(new Date().toLocaleString());
         }
       } catch (err) {
-        console.warn("cloudSave failed:", err);
-        // Trial expired or feature not available — bounce to checkout.
         if (err?.response?.status === 402) {
           setSaveState(State.NONE);
           navigate("/checkout?tier=solo_pro");
@@ -897,10 +891,6 @@ export default function ControlPanel({
         },
         function: async () => {
           try {
-            // Pro override: delete the cloud copy (R2 blob + Postgres
-            // metadata row) via the injected handler. In cloud-only
-            // mode we never wrote a Dexie row to begin with, so the
-            // local delete would be a no-op anyway.
             if (typeof extensions.cloudDelete === "function") {
               await extensions.cloudDelete(diagramId);
             } else {
@@ -1903,12 +1893,6 @@ export default function ControlPanel({
                   title={databases[database].name + " diagram"}
                 />
               )}
-              {/* Slot rendered OUTSIDE the rename-click div so host apps
-                  (e.g. drawdb-pro's WorkspaceSwitcher) can place
-                  interactive controls in the title row without
-                  triggering the rename modal or competing with the
-                  pointer-capture handlers. */}
-              <Slot name="diagram-title-prefix" />
               <div
                 className="text-xl flex items-center gap-1 me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
