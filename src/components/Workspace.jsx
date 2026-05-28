@@ -3,6 +3,7 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   createContext,
   useContext,
 } from "react";
@@ -62,6 +63,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const [showSelectDbModal, setShowSelectDbModal] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [selectedDb, setSelectedDb] = useState("");
+  const pendingNewIdRef = useRef(null);
   const { layout, setLayout } = useLayout();
   const { settings } = useSettings();
   const { types, setTypes } = useTypes();
@@ -106,7 +108,9 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
 
     if (cloudOnly) {
       const isNew = !loadedDiagramId || isTemplate;
-      const targetId = isNew ? crypto.randomUUID() : loadedDiagramId;
+      const targetId = isNew
+        ? (pendingNewIdRef.current ??= crypto.randomUUID())
+        : loadedDiagramId;
       const cloudPayload = {
         diagramId: targetId,
         database,
@@ -125,6 +129,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       try {
         await extensions.cloudSave(cloudPayload, { isNew });
         if (isNew) {
+          pendingNewIdRef.current = null;
           navigate(`/editor/diagrams/${targetId}`, { replace: true });
         }
         setSaveState(State.SAVED);
