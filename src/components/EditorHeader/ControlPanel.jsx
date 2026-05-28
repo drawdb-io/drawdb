@@ -1920,7 +1920,7 @@ export default function ControlPanel({
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>{(isTemplate ? "Templates/" : "Diagrams/") + title}</span>
+                <span>{(isTemplate ? "Templates / " : "Diagrams / ") + title}</span>
                 {version && (
                   <Tag className="mt-1" color="blue" size="small">
                     {version.substring(0, 7)}
