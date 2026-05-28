@@ -2,6 +2,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   createContext,
   useContext,
 } from "react";
@@ -87,7 +88,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const isTemplate = useMatch("/editor/templates/:id");
 
   const navigate = useNavigateWithParams();
-  const extensions = useContext(ExtensionsContext) ?? {};
+  const extensionValues = useContext(ExtensionsContext);
+  const extensions = useMemo(() => extensionValues ?? {}, [extensionValues]);
   const cloudOnly = typeof extensions.cloudSave === "function";
 
   const handleResize = (e) => {
