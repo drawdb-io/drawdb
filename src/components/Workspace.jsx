@@ -1,5 +1,13 @@
-import { useState, useEffect, useCallback, createContext } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  createContext,
+  useContext,
+} from "react";
 import ControlPanel from "./EditorHeader/ControlPanel";
+import ExtensionsContext, { Slot } from "../context/ExtensionsContext";
 import Canvas from "./EditorCanvas/Canvas";
 import { CanvasContextProvider } from "../context/CanvasContext";
 import SidePanel from "./EditorSidePanel/SidePanel";
@@ -42,7 +50,7 @@ export const IdContext = createContext({
 
 const SIDEPANEL_MIN_WIDTH = 374;
 
-export default function WorkSpace() {
+export default function WorkSpace({ forcedDiagramId } = {}) {
   const [gistId, setGistId] = useState("");
   const [version, setVersion] = useState("");
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
@@ -73,11 +81,16 @@ export default function WorkSpace() {
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
   let [searchParams, setSearchParams] = useSearchParams();
-  const { id: loadedDiagramId } = useParams();
-  const isDiagram = useMatch("/editor/diagrams/:id");
+  const { id: routeDiagramId } = useParams();
+  const loadedDiagramId = forcedDiagramId ?? routeDiagramId;
+  const editorDiagramMatch = useMatch("/editor/diagrams/:id");
+  const isDiagram = forcedDiagramId ? true : editorDiagramMatch;
   const isTemplate = useMatch("/editor/templates/:id");
 
   const navigate = useNavigateWithParams();
+  const extensionValues = useContext(ExtensionsContext);
+  const extensions = useMemo(() => extensionValues ?? {}, [extensionValues]);
+  const cloudOnly = typeof extensions.cloudSave === "function";
 
   const handleResize = (e) => {
     if (!resize) return;
@@ -89,6 +102,43 @@ export default function WorkSpace() {
     if (searchParams.has("shareId")) {
       searchParams.delete("shareId");
       setSearchParams(searchParams, { replace: true });
+    }
+
+    if (cloudOnly) {
+      const isNew = !loadedDiagramId || isTemplate;
+      const targetId = isNew ? crypto.randomUUID() : loadedDiagramId;
+      const cloudPayload = {
+        diagramId: targetId,
+        database,
+        name: title,
+        gistId: gistId ?? "",
+        lastModified: new Date(),
+        tables,
+        references: relationships,
+        notes,
+        areas,
+        pan: transform.pan,
+        zoom: transform.zoom,
+        ...(databases[database].hasEnums && { enums }),
+        ...(databases[database].hasTypes && { types }),
+      };
+      try {
+        await extensions.cloudSave(cloudPayload, { isNew });
+        if (isNew) {
+          navigate(`/editor/diagrams/${targetId}`, { replace: true });
+        }
+        setSaveState(State.SAVED);
+        setLastSaved(new Date().toLocaleString());
+      } catch (err) {
+        console.warn("cloud autosave failed:", err);
+        if (err?.response?.status === 402) {
+          setSaveState(State.NONE);
+          navigate("/checkout?tier=solo_pro");
+          return;
+        }
+        setSaveState(State.ERROR);
+      }
+      return;
     }
 
     if (isTemplate || (!loadedDiagramId && !isTemplate && !isDiagram)) {
@@ -140,6 +190,8 @@ export default function WorkSpace() {
         });
     }
   }, [
+    cloudOnly,
+    extensions,
     searchParams,
     setSearchParams,
     tables,
@@ -150,6 +202,7 @@ export default function WorkSpace() {
     title,
     transform,
     setSaveState,
+    setLastSaved,
     database,
     enums,
     gistId,
@@ -219,9 +272,16 @@ export default function WorkSpace() {
     };
 
     const loadDiagram = async (id) => {
-      const diagram = await db.diagrams.where("diagramId").equals(id).first();
+      const diagram =
+        typeof extensions.cloudLoad === "function"
+          ? await extensions.cloudLoad(id)
+          : await db.diagrams.where("diagramId").equals(id).first();
 
       if (!diagram) return;
+
+      if (typeof diagram.canWrite === "boolean") {
+        setLayout((prev) => ({ ...prev, readOnly: !diagram.canWrite }));
+      }
 
       if (diagram.database) {
         setDatabase(diagram.database);
@@ -400,6 +460,7 @@ export default function WorkSpace() {
       return;
     }
   }, [
+    extensions,
     setTransform,
     setRedoStack,
     setUndoStack,
@@ -413,6 +474,7 @@ export default function WorkSpace() {
     setEnums,
     selectedDb,
     setSaveState,
+    setLayout,
     searchParams,
     navigate,
     isDiagram,
@@ -493,10 +555,11 @@ export default function WorkSpace() {
         {layout.sidebar && (
           <SidePanel resize={resize} setResize={setResize} width={width} />
         )}
-        <div className="relative w-full h-full overflow-hidden">
+        <div className="relative flex-1 min-w-0 h-full overflow-hidden">
           <CanvasContextProvider className="h-full w-full">
             <Canvas saveState={saveState} setSaveState={setSaveState} />
           </CanvasContextProvider>
+          <Slot name="canvas-overlay" />
           {layout.toolbar && (
             <div
               ref={setToolbarContainer}
@@ -526,6 +589,7 @@ export default function WorkSpace() {
             </div>
           )}
         </div>
+        <Slot name="right-panel" />
       </div>
       <Modal
         centered

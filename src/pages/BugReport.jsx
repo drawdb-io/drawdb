@@ -12,7 +12,7 @@ import { CLEAR_EDITOR_COMMAND } from "lexical";
 import { Link } from "react-router-dom";
 import { socials } from "../data/socials";
 import { send } from "../api/email";
-import { useSettings, useThemedPage } from "../hooks";
+import { useThemedPage } from "../hooks";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -124,9 +124,7 @@ function Form({ theme }) {
 }
 
 export default function BugReport() {
-  const {
-    settings: { mode: theme },
-  } = useSettings();
+  const theme = localStorage.getItem("theme") || "light";
 
   useEffect(() => {
     document.title = "Report a bug | drawDB";
