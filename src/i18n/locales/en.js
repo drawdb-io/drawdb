@@ -139,6 +139,7 @@ const en = {
     title: "Title",
     not_set: "Not set",
     foreign: "Foreign",
+    references: "References",
     cardinality: "Cardinality",
     on_update: "On update",
     on_delete: "On delete",
@@ -296,7 +297,9 @@ const en = {
     embed_settings: "Embed settings",
     default: "Default",
     hide: "Hide",
-    force_hide: "Force hide"
+    force_hide: "Force hide",
+    primary_key: "Primary key",
+    foreign_key: "Foreign key",
   },
 };
 
