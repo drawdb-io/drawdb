@@ -58,6 +58,7 @@ export default function Table({
   const { layout } = useLayout();
   const {
     database,
+    tables,
     relationships,
     addTable,
     deleteTable,
@@ -212,6 +213,20 @@ export default function Table({
     }
   };
 
+  const getFieldReference = (fieldData) => {
+    const rel = relationships.find(
+      (r) =>
+        r.startTableId === tableData.id && r.startFieldId === fieldData.id,
+    );
+    if (!rel) return null;
+
+    const refTable = tables.find((tbl) => tbl.id === rel.endTableId);
+    const refField = refTable?.fields.find((f) => f.id === rel.endFieldId);
+    if (!refTable || !refField) return null;
+
+    return { tableName: refTable.name, fieldName: refField.name };
+  };
+
   if (tableData.hidden) return null;
 
   return (
@@ -361,6 +376,7 @@ export default function Table({
 
           {visibleFieldEntries.map(({ field: e }, i) => {
             const resolved = resolveType(database, e.type);
+            const reference = getFieldReference(e);
             return settings.showFieldSummary ? (
               <Popover
                 key={e.id ?? i}
@@ -391,7 +407,7 @@ export default function Table({
                     <hr />
                     {e.primary && (
                       <Tag color="blue" className="me-2 my-2">
-                        {t("primary")}
+                        {t("primary_key")}
                       </Tag>
                     )}
                     {e.unique && (
@@ -408,6 +424,17 @@ export default function Table({
                       <Tag color="green" className="me-2 my-2">
                         {t("autoincrement")}
                       </Tag>
+                    )}
+                    {reference && (
+                      <Tag color="light-blue" className="me-2 my-2">
+                        {t("foreign_key")}
+                      </Tag>
+                    )}
+                    {reference && (
+                      <p>
+                        <strong>{t("references")}: </strong>
+                        {reference.tableName}({reference.fieldName})
+                      </p>
                     )}
                     <p>
                       <strong>{t("default_value")}: </strong>
