@@ -14,7 +14,7 @@ export function toSqlite(diagram) {
             `${exportFieldComment(field.comment)}\t"${
               field.name
             }" ${field.type}${field.notNull ? " NOT NULL" : ""}${
-              field.unique ? " UNIQUE" : ""
+              field.unique && !field.primary ? " UNIQUE" : ""
             }${field.default !== "" ? ` DEFAULT ${parseDefault(field, diagram.database)}` : ""}${
               field.check === "" ||
               !dbToTypes[diagram.database][field.type].hasCheck

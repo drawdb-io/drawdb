@@ -194,7 +194,7 @@ export function jsonToMySQL(obj) {
                 field.name
               }\` ${getTypeString(field, obj.database)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, obj.database)}`
                   : ""
@@ -301,7 +301,7 @@ export function jsonToPostgreSQL(obj) {
                 field.name
               }" ${getTypeString(field, obj.database, DB.POSTGRES)}${
                 field.notNull ? " NOT NULL" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
               }${
                 field.check === "" ||
@@ -397,7 +397,7 @@ export function jsonToSQLite(obj) {
             `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
               field.name
             }" ${getSQLiteType(field)}${field.notNull ? " NOT NULL" : ""}${
-              field.unique ? " UNIQUE" : ""
+              field.unique && !field.primary ? " UNIQUE" : ""
             }${field.default !== "" ? ` DEFAULT ${parseDefault(field, obj.database)}` : ""}${
               field.check === "" ||
               !dbToTypes[obj.database][field.type].hasCheck
@@ -437,7 +437,7 @@ export function jsonToMariaDB(obj) {
                 field.name
               }\` ${getTypeString(field, obj.database, DB.MYSQL)}${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, obj.database)}`
                   : ""
@@ -514,7 +514,7 @@ export function jsonToSQLServer(obj) {
               }] ${getTypeString(field, obj.database, DB.MSSQL)}${
                 field.notNull ? " NOT NULL" : ""
               }${field.increment ? " IDENTITY" : ""}${
-                field.unique ? " UNIQUE" : ""
+                field.unique && !field.primary ? " UNIQUE" : ""
               }${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, obj.database)}`
@@ -589,7 +589,7 @@ export function jsonToOracleSQL(obj) {
               }" ${getTypeString(field, obj.database, DB.ORACLESQL)}${
                 field.notNull ? " NOT NULL" : ""
               }${field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""}${
-                field.unique ? " UNIQUE" : ""
+                field.unique && !field.primary ? " UNIQUE" : ""
               }${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, obj.database)}`

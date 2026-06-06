@@ -33,7 +33,7 @@ export function toMySQL(diagram) {
                   : ""
               }${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " AUTO_INCREMENT" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, diagram.database)}`
                   : ""
