@@ -1,4 +1,4 @@
-import { escapeQuotes, exportFieldComment, parseDefault } from "./shared";
+import { escapeQuotes, exportFieldComment, parseDefault, resolveFKDirection } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
 export function toPostgres(diagram) {
@@ -87,16 +87,15 @@ export function toPostgres(diagram) {
 
   const foreignKeyStatements = diagram.references
     .map((r) => {
-      const startTable = diagram.tables.find((t) => t.id === r.startTableId);
-      const endTable = diagram.tables.find((t) => t.id === r.endTableId);
-      const startField = startTable?.fields.find(
-        (f) => f.id === r.startFieldId,
-      );
-      const endField = endTable?.fields.find((f) => f.id === r.endFieldId);
+      const { fkTableId, fkFieldId, refTableId, refFieldId } = resolveFKDirection(r);
+      const fkTable = diagram.tables.find((t) => t.id === fkTableId);
+      const refTable = diagram.tables.find((t) => t.id === refTableId);
+      const fkField = fkTable?.fields.find((f) => f.id === fkFieldId);
+      const refField = refTable?.fields.find((f) => f.id === refFieldId);
 
-      if (!startTable || !endTable || !startField || !endField) return "";
+      if (!fkTable || !refTable || !fkField || !refField) return "";
 
-      return `ALTER TABLE "${startTable.name}"\nADD FOREIGN KEY("${startField.name}") REFERENCES "${endTable.name}"("${endField.name}")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE "${fkTable.name}"\nADD FOREIGN KEY("${fkField.name}") REFERENCES "${refTable.name}"("${refField.name}")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .filter(Boolean)
     .join("\n");
