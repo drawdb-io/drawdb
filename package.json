@@ -18,7 +18,7 @@
     "@lexical/react": "^0.12.5",
     "@monaco-editor/react": "^4.7.0",
     "@vercel/analytics": "^1.2.2",
-    "axios": "^1.15.2",
+    "axios": "^1.16.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
@@ -39,7 +39,8 @@
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
     "react-i18next": "^14.1.1",
-    "react-router-dom": "^6.30.3",
+    "react-tweet": "^3.3.1",
+    "react-router-dom": "^6.30.4",
     "react-tweet": "^3.2.1",
     "usehooks-ts": "^3.1.0"
   },

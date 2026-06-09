@@ -1,6 +1,12 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Action, ObjectType, Tab, State } from "../../data/constants";
-import { Input, Button, Popover } from "@douyinfe/semi-ui";
+import {
+  Input,
+  Button,
+  ButtonGroup,
+  Popover,
+  Divider,
+} from "@douyinfe/semi-ui";
 import ColorPicker from "../EditorSidePanel/ColorPicker";
 import {
   IconEdit,
@@ -404,14 +410,21 @@ export default function Note({ data, onPointerDown }) {
                 selectedElement.id === data.id &&
                 selectedElement.open &&
                 !layout.sidebar)) && (
-              <div className="flex items-center gap-1.5">
+              <ButtonGroup
+                type="tertiary"
+                size="small"
+                aria-label="Note actions"
+              >
                 <Button
-                  icon={data.locked ? <IconLock /> : <IconUnlock />}
                   size="small"
-                  theme="solid"
-                  style={{
-                    backgroundColor: "#2F68ADB3",
-                  }}
+                  type="tertiary"
+                  icon={
+                    data.locked ? (
+                      <IconLock size="small" />
+                    ) : (
+                      <IconUnlock size="small" />
+                    )
+                  }
                   onClick={lockUnlockNote}
                   disabled={layout.readOnly}
                 />
@@ -479,17 +492,17 @@ export default function Note({ data, onPointerDown }) {
                           onColorPick={(color) => handleColorPick(color)}
                         />
                       </div>
-                      <div className="flex">
-                        <Button
-                          block
-                          type="danger"
-                          disabled={layout.readOnly}
-                          icon={<IconDeleteStroked />}
-                          onClick={() => deleteNote(data.id, true)}
-                        >
-                          {t("delete")}
-                        </Button>
-                      </div>
+                      <Divider />
+                      <Button
+                        icon={<IconDeleteStroked />}
+                        type="danger"
+                        theme="borderless"
+                        block
+                        disabled={layout.readOnly}
+                        onClick={() => deleteNote(data.id, true)}
+                      >
+                        {t("delete")}
+                      </Button>
                     </div>
                   }
                   trigger="custom"
@@ -497,16 +510,13 @@ export default function Note({ data, onPointerDown }) {
                   showArrow
                 >
                   <Button
-                    icon={<IconEdit />}
                     size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
+                    type="tertiary"
+                    icon={<IconEdit size="small" />}
                     onClick={edit}
                   />
                 </Popover>
-              </div>
+              </ButtonGroup>
             )}
           </div>
           <textarea

@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { tableWidth } from "../data/constants";
+import { queryConfig } from "../utils/queryConfig";
 
 const defaultSettings = {
   strictMode: false,
@@ -16,17 +18,27 @@ const defaultSettings = {
   showComments: false,
 };
 
-export const SettingsContext = createContext(defaultSettings);
+export const SettingsContext = createContext({
+  settings: defaultSettings,
+  setSettings: () => {},
+});
 
 export default function SettingsContextProvider({ children }) {
-  const [settings, setSettings] = useState(defaultSettings);
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const settings = localStorage.getItem("settings");
-    if (settings) {
-      setSettings({ ...defaultSettings, ...JSON.parse(settings) });
+  const [settings, setSettings] = useState(() => {
+    const savedSettings = localStorage.getItem("settings");
+    let baseSettings = savedSettings
+      ? { ...defaultSettings, ...JSON.parse(savedSettings) }
+      : defaultSettings;
+
+    const theme = searchParams.get(queryConfig.theme.key);
+    if (queryConfig.theme.isValid(theme)) {
+      baseSettings = { ...baseSettings, mode: theme };
     }
-  }, []);
+
+    return baseSettings;
+  });
 
   useEffect(() => {
     document.body.setAttribute("theme-mode", settings.mode);
