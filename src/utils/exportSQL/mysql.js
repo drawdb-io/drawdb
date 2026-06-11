@@ -1,7 +1,7 @@
 import { escapeQuotes, parseDefault } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
-import { DB } from "../../data/constants";
+import { DB, Cardinality } from "../../data/constants";
 
 function parseType(field) {
   let res = field.type;
@@ -64,18 +64,19 @@ export function toMySQL(diagram) {
     )
     .join("\n")}\n${diagram.references
     .map((r) => {
-      const { name: startName, fields: startFields } = diagram.tables.find(
-        (t) => t.id === r.startTableId,
-      );
+      const startTable = diagram.tables.find((t) => t.id === r.startTableId);
+      const endTable = diagram.tables.find((t) => t.id === r.endTableId);
+      const startField = startTable.fields.find((f) => f.id === r.startFieldId);
+      const endField = endTable.fields.find((f) => f.id === r.endFieldId);
 
-      const { name: endName, fields: endFields } = diagram.tables.find(
-        (t) => t.id === r.endTableId,
-      );
-      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }\`) REFERENCES \`${endName}\`(\`${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      const isOneToMany = r.cardinality === Cardinality.ONE_TO_MANY;
+
+      const fkTableName = isOneToMany ? endTable.name : startTable.name;
+      const fkFieldName = isOneToMany ? endField.name : startField.name;
+      const refTableName = isOneToMany ? startTable.name : endTable.name;
+      const refFieldName = isOneToMany ? startField.name : endField.name;
+
+      return `ALTER TABLE \`${fkTableName}\`\nADD FOREIGN KEY(\`${fkFieldName}\`) REFERENCES \`${refTableName}\`(\`${refFieldName}\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }
