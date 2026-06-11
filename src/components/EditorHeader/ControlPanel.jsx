@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Slot, useExtensions } from "../../context/ExtensionsContext";
 import { createPortal } from "react-dom";
 import {
@@ -814,6 +814,11 @@ export default function ControlPanel({
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
   const fullscreen = useFullscreen();
+
+  useEffect(() => {
+    if (!fullscreen)
+      setLayout((p) => ({ ...p, header: true, sidebar: true, toolbar: true }));
+  }, [fullscreen, setLayout]);
 
   const menu = {
     file: {
