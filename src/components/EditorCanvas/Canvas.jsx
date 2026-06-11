@@ -9,6 +9,7 @@ import {
   gridSize,
   gridCircleRadius,
   minAreaSize,
+  defaultBlue,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
@@ -657,6 +658,7 @@ export default function Canvas() {
       deleteConstraint: Constraint.NONE,
       name: `fk_${startTableName}_${startField.name}_${endTableName}`,
       id: nanoid(),
+      color: defaultBlue
     };
     delete newRelationship.startX;
     delete newRelationship.startY;
