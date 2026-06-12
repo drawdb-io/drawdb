@@ -65,7 +65,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             field.unique = false;
             if (d.unique) field.unique = true;
             field.increment = false;
-            if (d.auto_increment) field.increment = true;
+            if (d.auto_increment || d.generated_by_default) field.increment = true;
             field.notNull = false;
             if (d.nullable) field.notNull = true;
             field.primary = false;
@@ -257,7 +257,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         if (e.resource === "enum") {
           const newEnum = {
             name: e.name.name,
-            values: e.create_definitions.value.map((x) => x.value),
+            values: (e.create_definitions?.value ?? []).map((x) => x.value),
           };
           enums.push(newEnum);
         } else if (Array.isArray(e.create_definitions)) {

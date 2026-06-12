@@ -4,7 +4,7 @@ import { Parser } from "node-sql-parser";
 import { Parser as OracleParser } from "oracle-sql-parser";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DB, MODAL, STATUS } from "../../../data/constants";
+import { DB, EMPTY_ENUM_PLACEHOLDER, MODAL, STATUS } from "../../../data/constants";
 import { databases } from "../../../data/databases";
 import {
   useAreas,
@@ -102,16 +102,41 @@ export default function Modal({
   const parseSQLAndLoadDiagram = () => {
     const targetDatabase = database === DB.GENERIC ? importDb : database;
 
+    let normalizedSql = importSource.src;
+    if (targetDatabase === DB.POSTGRES) {
+      // Strip block comments /* ... */
+      normalizedSql = normalizedSql.replace(/\/\*[\s\S]*?\*\//g, '');
+      // Strip line comments -- ...
+      normalizedSql = normalizedSql.replace(/--.*$/gm, '');
+
+      // Fix empty ENUM () which crashes node-sql-parser
+      normalizedSql = normalizedSql.replace(
+        /CREATE\s+TYPE\s+"([^"]+)"\s+AS\s+ENUM\s*\(\s*\)\s*;/gi,
+        `CREATE TYPE "$1" AS ENUM ('${EMPTY_ENUM_PLACEHOLDER}');`,
+      );
+
+      // Hoist CREATE TYPE statements to the top so enum types are
+      // defined before any table that references them
+      const typeStatements =
+        normalizedSql.match(/CREATE\s+TYPE\s+[^;]+;/gi) || [];
+      if (typeStatements.length > 0) {
+        const rest = normalizedSql
+          .replace(/CREATE\s+TYPE\s+[^;]+;/gi, '')
+          .trim();
+        normalizedSql = [...typeStatements, rest].filter(Boolean).join('\n');
+      }
+    }
+
     let ast = null;
     try {
       if (targetDatabase === DB.ORACLESQL) {
         const oracleParser = new OracleParser();
 
-        ast = oracleParser.parse(importSource.src);
+        ast = oracleParser.parse(normalizedSql);
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        ast = parser.astify(normalizedSql, {
           database: targetDatabase,
         });
       }
