@@ -79,6 +79,7 @@ export default function Canvas() {
   });
   const { emitAwareness } = useCollab();
   const lastLinkingRef = useRef(false);
+  const rightClickPanned = useRef(false);
 
   useEffect(() => {
     if (linking) {
@@ -472,6 +473,7 @@ export default function Canvas() {
       }
       pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton || isMouseRightButton) {
+      if (isMouseRightButton) rightClickPanned.current = false;
       setPanning({
         isPanning: true,
         panStart: transform.pan,
@@ -558,6 +560,7 @@ export default function Canvas() {
 
     if (panning.isPanning && didPan()) {
       setSaveState(State.SAVING);
+      if (e.button === 2) rightClickPanned.current = true;
     }
     setPanning((old) => ({ ...old, isPanning: false }));
     pointer.setStyle("default");
@@ -718,7 +721,12 @@ export default function Canvas() {
           onPointerMove={handlePointerMove}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          onContextMenu={(e) => e.preventDefault()}
+          onContextMenu={(e) => {
+            if (rightClickPanned.current) {
+              e.preventDefault();
+              rightClickPanned.current = false;
+            }
+          }}
           className="absolute w-full h-full touch-none"
           viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
         >
