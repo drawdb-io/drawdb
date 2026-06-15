@@ -680,7 +680,16 @@ export default function Canvas() {
     (e) => {
       e.preventDefault();
 
-      if (e.ctrlKey || e.metaKey) {
+      if (e.shiftKey) {
+        setTransform((prev) => ({
+          ...prev,
+          pan: {
+            ...prev.pan,
+            x: prev.pan.x + e.deltaY / prev.zoom,
+          },
+        }));
+      } else {
+        // Default and Ctrl/Meta: zoom centered on cursor
         const eagernessFactor = 0.05;
         setTransform((prev) => ({
           pan: {
@@ -696,22 +705,6 @@ export default function Canvas() {
                 Math.sign(e.deltaY),
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
-        }));
-      } else if (e.shiftKey) {
-        setTransform((prev) => ({
-          ...prev,
-          pan: {
-            ...prev.pan,
-            x: prev.pan.x + e.deltaY / prev.zoom,
-          },
-        }));
-      } else {
-        setTransform((prev) => ({
-          ...prev,
-          pan: {
-            ...prev.pan,
-            y: prev.pan.y + e.deltaY / prev.zoom,
-          },
         }));
       }
     },
