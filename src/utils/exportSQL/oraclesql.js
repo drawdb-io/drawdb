@@ -4,31 +4,25 @@ import { parseDefault } from "./shared";
 export function toOracleSQL(diagram) {
   return `${diagram.tables
     .map(
-      (table) =>
+      (table) => 
         `${
           table.comment === "" ? "" : `/* ${table.comment} */\n`
         }CREATE TABLE "${table.name}" (\n${table.fields
-          .map(
-            (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
-                field.name
-              }" ${field.type}${
-                field.size !== undefined && field.size !== ""
-                  ? "(" + field.size + ")"
-                  : ""
-              }${field.notNull ? " NOT NULL" : ""}${
-                field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""
-              }${field.unique ? " UNIQUE" : ""}${
-                field.default !== ""
-                  ? ` DEFAULT ${parseDefault(field, diagram.database)}`
-                  : ""
-              }${
-                field.check === "" ||
-                !dbToTypes[diagram.database][field.type].hasCheck
-                  ? ""
-                  : ` CHECK(${field.check})`
-              }${field.comment ? ` -- ${field.comment}` : ""}`,
-          )
+          .map((field) => {
+            const typeInfo = dbToTypes[diagram.database][field.type] || { type: field.type };
+            const oracleType = typeInfo.type;
+            return `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
+              field.name
+            }" ${oracleType}${
+              typeInfo.isSized && field.size ? `(${field.size})` : ""
+            }${field.notNull ? " NOT NULL" : ""}${field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""}${field.unique ? " UNIQUE" : ""}${
+              field.default !== "" ? ` DEFAULT ${parseDefault(field, diagram.database)}` : ""
+            }${
+              field.check === "" || !typeInfo.hasCheck
+                ? ""
+                : ` CHECK(${field.check})`
+            }${field.comment ? ` -- ${field.comment}` : ""}`;
+              })
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
             ? `,\n\tPRIMARY KEY(${table.fields
@@ -57,7 +51,7 @@ export function toOracleSQL(diagram) {
         startFields.find((f) => f.id === r.startFieldId).name
       }") REFERENCES "${endName}" ("${
         endFields.find((f) => f.id === r.endFieldId).name
-      }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      }")\nON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }
