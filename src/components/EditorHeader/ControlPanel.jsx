@@ -1907,6 +1907,7 @@ export default function ControlPanel({
                   title={databases[database].name + " diagram"}
                 />
               )}
+              <Slot name="diagram-title-prefix" />
               <div
                 className="text-xl flex items-center gap-1 me-1"
                 onPointerEnter={(e) => e.isPrimary && setShowEditName(true)}
@@ -1918,7 +1919,9 @@ export default function ControlPanel({
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>{(isTemplate ? "Templates / " : "Diagrams / ") + title}</span>
+                <span>{(isTemplate ? "Templates" : "Diagrams")}</span>
+                <span className="select-none text-zinc-400 dark:text-zinc-500 mx-1">/</span>
+                <span>{title}</span>
                 {version && (
                   <Tag className="mt-1" color="blue" size="small">
                     {version.substring(0, 7)}
