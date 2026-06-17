@@ -1,4 +1,4 @@
-import { parseDefault, escapeQuotes } from "./shared";
+import { parseDefault, escapeQuotes, uniqueConstraintClause } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 import { DB } from "../../data/constants";
@@ -64,7 +64,9 @@ export function toMSSQL(diagram) {
               .join(", ")})`
           : "";
 
-      const createTableSql = `CREATE TABLE [${table.name}] (\n${fieldsSql}${primaryKeySql}\n);\nGO\n`;
+      const uniqueSql = uniqueConstraintClause(table, (s) => `[${s}]`);
+
+      const createTableSql = `CREATE TABLE [${table.name}] (\n${fieldsSql}${primaryKeySql}${uniqueSql}\n);\nGO\n`;
 
       const tableCommentSql = generateAddExtendedPropertySQL(
         table.comment,

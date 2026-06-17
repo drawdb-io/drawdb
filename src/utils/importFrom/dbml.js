@@ -21,6 +21,7 @@ export function fromDBML(src) {
       parsedTable.color = table.headerColor ?? "#175e7a";
       parsedTable.fields = [];
       parsedTable.indices = [];
+      parsedTable.uniqueConstraints = [];
 
       for (const column of table.fields) {
         const field = {};

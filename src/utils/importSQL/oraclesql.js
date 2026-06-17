@@ -35,6 +35,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
+        table.uniqueConstraints = [];
         table.id = nanoid();
         e.table.relational_properties.forEach((d) => {
           if (d.resource === "column") {
@@ -80,6 +81,24 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
 
             table.fields.push(field);
           } else if (d.resource === "constraint") {
+            if (
+              d.constraint?.unique === "unique" &&
+              Array.isArray(d.constraint.columns)
+            ) {
+              const fields = d.constraint.columns;
+              const name =
+                d.name && Boolean(d.name.trim())
+                  ? d.name
+                  : `${table.name}_unique_${table.uniqueConstraints.length}`;
+              table.uniqueConstraints.push({ name, fields });
+              table.uniqueConstraints.forEach((u, j) => {
+                u.id = j;
+              });
+              return;
+            }
+
+            if (!d.constraint?.reference) return;
+
             const relationship = {};
             const startFieldName = d.constraint.columns[0];
             const endFieldName = d.constraint.reference.columns[0];

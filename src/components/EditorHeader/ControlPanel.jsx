@@ -261,6 +261,34 @@ export default function ControlPanel({
           updateTable(a.tid, {
             indices: updatedIndices.map((t, i) => ({ ...t, id: i })),
           });
+        } else if (a.component === "unique_constraint_add") {
+          const constraints = table.uniqueConstraints || [];
+          updateTable(a.tid, {
+            uniqueConstraints: constraints
+              .filter((e) => e.id !== constraints.length - 1)
+              .map((t, i) => ({ ...t, id: i })),
+          });
+        } else if (a.component === "unique_constraint") {
+          updateTable(a.tid, {
+            uniqueConstraints: (table.uniqueConstraints || []).map(
+              (constraint) =>
+                constraint.id === a.cid
+                  ? {
+                      ...constraint,
+                      ...a.undo,
+                    }
+                  : constraint,
+            ),
+          });
+        } else if (a.component === "unique_constraint_delete") {
+          const updatedConstraints = (table.uniqueConstraints || []).slice();
+          updatedConstraints.splice(a.data.id, 0, a.data);
+          updateTable(a.tid, {
+            uniqueConstraints: updatedConstraints.map((t, i) => ({
+              ...t,
+              id: i,
+            })),
+          });
         } else if (a.component === "self") {
           updateTable(a.tid, a.undo);
         }
@@ -439,6 +467,36 @@ export default function ControlPanel({
         } else if (a.component === "index_delete") {
           updateTable(a.tid, {
             indices: table.indices
+              .filter((e) => e.id !== a.data.id)
+              .map((t, i) => ({ ...t, id: i })),
+          });
+        } else if (a.component === "unique_constraint_add") {
+          const constraints = table.uniqueConstraints || [];
+          updateTable(a.tid, {
+            uniqueConstraints: [
+              ...constraints,
+              {
+                id: constraints.length,
+                name: `${table.name}_unique_${constraints.length}`,
+                fields: [],
+              },
+            ],
+          });
+        } else if (a.component === "unique_constraint") {
+          updateTable(a.tid, {
+            uniqueConstraints: (table.uniqueConstraints || []).map(
+              (constraint) =>
+                constraint.id === a.cid
+                  ? {
+                      ...constraint,
+                      ...a.redo,
+                    }
+                  : constraint,
+            ),
+          });
+        } else if (a.component === "unique_constraint_delete") {
+          updateTable(a.tid, {
+            uniqueConstraints: (table.uniqueConstraints || [])
               .filter((e) => e.id !== a.data.id)
               .map((t, i) => ({ ...t, id: i })),
           });

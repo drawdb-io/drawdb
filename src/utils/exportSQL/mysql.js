@@ -1,4 +1,4 @@
-import { escapeQuotes, parseDefault } from "./shared";
+import { escapeQuotes, parseDefault, uniqueConstraintClause } from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 import { DB } from "../../data/constants";
@@ -51,7 +51,7 @@ export function toMySQL(diagram) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};\n${`\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `\`${s}\``)}\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};\n${`\n${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${

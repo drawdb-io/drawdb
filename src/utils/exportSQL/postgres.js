@@ -1,4 +1,9 @@
-import { escapeQuotes, exportFieldComment, parseDefault } from "./shared";
+import {
+  escapeQuotes,
+  exportFieldComment,
+  parseDefault,
+  uniqueConstraintClause,
+} from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
 export function toPostgres(diagram) {
@@ -59,6 +64,8 @@ export function toPostgres(diagram) {
             .join(", ")})`
         : "";
 
+      const uniqueClause = uniqueConstraintClause(table, (s) => `"${s}"`);
+
       const commentStatements = [
         table.comment?.trim()
           ? `COMMENT ON TABLE "${table.name}" IS '${escapeQuotes(table.comment)}';`
@@ -81,7 +88,7 @@ export function toPostgres(diagram) {
         )
         .join("\n");
 
-      return `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
+      return `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${uniqueClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
     })
     .join("\n\n");
 

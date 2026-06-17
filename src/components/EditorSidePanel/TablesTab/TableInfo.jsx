@@ -6,9 +6,10 @@ import {
   Button,
   Card,
   Select,
+  Dropdown,
 } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
-import { IconDeleteStroked } from "@douyinfe/semi-icons";
+import { IconDeleteStroked, IconPlus } from "@douyinfe/semi-icons";
 import {
   useDiagram,
   useLayout,
@@ -18,6 +19,7 @@ import {
 import { Action, ObjectType, State, DB } from "../../../data/constants";
 import TableField from "./TableField";
 import IndexDetails from "./IndexDetails";
+import UniqueConstraintDetails from "./UniqueConstraintDetails";
 import { useTranslation } from "react-i18next";
 import { SortableList } from "../../SortableList/SortableList";
 import { nanoid } from "nanoid";
@@ -26,6 +28,9 @@ export default function TableInfo({ data }) {
   const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const [indexActiveKey, setIndexActiveKey] = useState("");
+  const [uniqueActiveKey, setUniqueActiveKey] = useState("");
+  const [commentActiveKey, setCommentActiveKey] = useState("");
+  const [showComment, setShowComment] = useState(false);
   const { layout } = useLayout();
   const { deleteTable, updateTable, setTables } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -78,6 +83,69 @@ export default function TableInfo({ data }) {
           })
           .flat()
       : [];
+
+  const addIndex = () => {
+    setIndexActiveKey("1");
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "index_add",
+        tid: data.id,
+        message: t("edit_table", {
+          tableName: data.name,
+          extra: "[add index]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    updateTable(data.id, {
+      indices: [
+        ...data.indices,
+        {
+          id: data.indices.length,
+          name: `${data.name}_index_${data.indices.length}`,
+          unique: false,
+          fields: [],
+        },
+      ],
+    });
+  };
+
+  const addUniqueConstraint = () => {
+    setUniqueActiveKey("1");
+    const constraints = data.uniqueConstraints || [];
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "unique_constraint_add",
+        tid: data.id,
+        message: t("edit_table", {
+          tableName: data.name,
+          extra: "[add unique constraint]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+    updateTable(data.id, {
+      uniqueConstraints: [
+        ...constraints,
+        {
+          id: constraints.length,
+          name: `${data.name}_unique_${constraints.length}`,
+          fields: [],
+        },
+      ],
+    });
+  };
+
+  const addComment = () => {
+    setShowComment(true);
+    setCommentActiveKey("1");
+  };
 
   return (
     <div>
@@ -203,15 +271,53 @@ export default function TableInfo({ data }) {
         </Card>
       )}
 
-      <Card
-        bodyStyle={{ padding: "4px" }}
-        style={{ marginTop: "12px", marginBottom: "12px" }}
-        headerLine={false}
-      >
-        <Collapse keepDOM={false} lazyRender>
-          <Collapse.Panel header={t("comment")} itemKey="1">
-            <TextArea
-              field="comment"
+      {(data.uniqueConstraints || []).length > 0 && (
+        <Card
+          bodyStyle={{ padding: "4px" }}
+          style={{ marginTop: "12px", marginBottom: "12px" }}
+          headerLine={false}
+        >
+          <Collapse
+            activeKey={uniqueActiveKey}
+            keepDOM={false}
+            lazyRender
+            onChange={(itemKey) => setUniqueActiveKey(itemKey)}
+            accordion
+          >
+            <Collapse.Panel header={t("unique_constraints")} itemKey="1">
+              {data.uniqueConstraints.map((uc, k) => (
+                <UniqueConstraintDetails
+                  key={"unique_constraint_" + k}
+                  data={uc}
+                  cid={k}
+                  tid={data.id}
+                  fields={data.fields.map((e) => ({
+                    value: e.name,
+                    label: e.name,
+                  }))}
+                />
+              ))}
+            </Collapse.Panel>
+          </Collapse>
+        </Card>
+      )}
+
+      {((data.comment && data.comment.trim() !== "") || showComment) && (
+        <Card
+          bodyStyle={{ padding: "4px" }}
+          style={{ marginTop: "12px", marginBottom: "12px" }}
+          headerLine={false}
+        >
+          <Collapse
+            activeKey={commentActiveKey}
+            onChange={(itemKey) => setCommentActiveKey(itemKey)}
+            keepDOM={false}
+            lazyRender
+            accordion
+          >
+            <Collapse.Panel header={t("comment")} itemKey="1">
+              <TextArea
+                field="comment"
               value={data.comment}
               readonly={layout.readOnly}
               autosize
@@ -240,10 +346,11 @@ export default function TableInfo({ data }) {
                 ]);
                 setRedoStack([]);
               }}
-            />
-          </Collapse.Panel>
-        </Collapse>
-      </Card>
+              />
+            </Collapse.Panel>
+          </Collapse>
+        </Card>
+      )}
 
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
@@ -254,40 +361,29 @@ export default function TableInfo({ data }) {
           onColorPick={(color) => handleColorPick(color)}
         />
         <div className="flex gap-1">
-          <Button
-            block
-            disabled={layout.readOnly}
-            onClick={() => {
-              setIndexActiveKey("1");
-              setUndoStack((prev) => [
-                ...prev,
-                {
-                  action: Action.EDIT,
-                  element: ObjectType.TABLE,
-                  component: "index_add",
-                  tid: data.id,
-                  message: t("edit_table", {
-                    tableName: data.name,
-                    extra: "[add index]",
-                  }),
-                },
-              ]);
-              setRedoStack([]);
-              updateTable(data.id, {
-                indices: [
-                  ...data.indices,
-                  {
-                    id: data.indices.length,
-                    name: `${data.name}_index_${data.indices.length}`,
-                    unique: false,
-                    fields: [],
-                  },
-                ],
-              });
-            }}
+          <Dropdown
+            position="bottomLeft"
+            trigger="click"
+            render={
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={addComment}>
+                  {t("add_comment")}
+                </Dropdown.Item>
+                <Dropdown.Item onClick={addUniqueConstraint}>
+                  {t("add_unique_constraint")}
+                </Dropdown.Item>
+                <Dropdown.Item onClick={addIndex}>
+                  {t("add_index")}
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            }
           >
-            {t("add_index")}
-          </Button>
+            <Button
+              icon={<IconPlus />}
+              disabled={layout.readOnly}
+              title={t("add")}
+            />
+          </Dropdown>
           <Button
             block
             disabled={layout.readOnly}
