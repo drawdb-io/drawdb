@@ -33,6 +33,7 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
+        table.uniqueConstraints = [];
         table.id = nanoid();
         e.create_definitions.forEach((d) => {
           if (d.resource === "column") {
@@ -160,6 +161,19 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
               }
 
               relationships.push(relationship);
+            } else if (
+              d.constraint_type &&
+              d.constraint_type.toLowerCase().includes("unique")
+            ) {
+              const fields = d.definition.map((c) => c.column);
+              const name =
+                d.constraint ||
+                d.index ||
+                `${table.name}_unique_${table.uniqueConstraints.length}`;
+              table.uniqueConstraints.push({ name, fields });
+              table.uniqueConstraints.forEach((u, j) => {
+                u.id = j;
+              });
             }
           }
         });

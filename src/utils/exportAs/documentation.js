@@ -77,10 +77,22 @@ export function jsonToDocumentation(obj) {
           formatMarkdownTable(["Name", "Unique", "Fields"], indexRows);
       }
 
+      let uniqueConstraintsSection = "";
+      if ((table.uniqueConstraints || []).length > 0) {
+        const ucRows = table.uniqueConstraints.map((uc) => [
+          uc.name,
+          uc.fields.join(", "),
+        ]);
+        uniqueConstraintsSection =
+          "\n#### Unique constraints\n" +
+          formatMarkdownTable(["Name", "Fields"], ucRows);
+      }
+
       return (
         `### ${table.name}\n${table.comment ? table.comment : ""}\n` +
         `${fieldsTable} \n${enums.length > 0 ? "\n#### Enums\n" + enums : ""}\n` +
-        indexesSection
+        indexesSection +
+        uniqueConstraintsSection
       );
     })
     .join("\n");

@@ -30,6 +30,25 @@ export function exportFieldComment(comment) {
     .join("");
 }
 
+export function uniqueConstraintClause(table, quote) {
+  const constraints = (table.uniqueConstraints || []).filter(
+    (uc) => Array.isArray(uc.fields) && uc.fields.length > 0,
+  );
+  if (constraints.length === 0) return "";
+
+  return (
+    ",\n" +
+    constraints
+      .map(
+        (uc) =>
+          `\tCONSTRAINT ${quote(uc.name)} UNIQUE (${uc.fields
+            .map((f) => quote(f))
+            .join(", ")})`,
+      )
+      .join(",\n")
+  );
+}
+
 export function getInlineFK(table, obj) {
   let fks = [];
   obj.references.forEach((r) => {

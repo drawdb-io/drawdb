@@ -1,4 +1,9 @@
-import { exportFieldComment, getInlineFK, parseDefault } from "./shared";
+import {
+  exportFieldComment,
+  getInlineFK,
+  parseDefault,
+  uniqueConstraintClause,
+} from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 
@@ -29,7 +34,7 @@ export function toSqlite(diagram) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }${inlineFK}\n);\n${table.indices
+      }${inlineFK}${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${

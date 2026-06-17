@@ -157,22 +157,28 @@ export function toDBML(diagram) {
                 diagram.database,
               )}${columnSettings(field, diagram.database)}`,
           )
-          .join("\n")}${
-          table.indices.length > 0
-            ? "\n\n\tindexes {\n" +
-              table.indices
-                .map(
-                  (index) =>
-                    `\t\t(${index.fields
-                      .map((f) => quoteIdentifier(f))
-                      .join(", ")}) [ name: '${
-                      index.name
-                    }'${index.unique ? ", unique" : ""} ]`,
-                )
-                .join("\n") +
-              "\n\t}"
-            : ""
-        }${
+          .join("\n")}${(() => {
+          const indexEntries = table.indices.map(
+            (index) =>
+              `\t\t(${index.fields
+                .map((f) => quoteIdentifier(f))
+                .join(", ")}) [ name: '${index.name}'${
+                index.unique ? ", unique" : ""
+              } ]`,
+          );
+          const uniqueEntries = (table.uniqueConstraints || [])
+            .filter((uc) => Array.isArray(uc.fields) && uc.fields.length > 0)
+            .map(
+              (uc) =>
+                `\t\t(${uc.fields
+                  .map((f) => quoteIdentifier(f))
+                  .join(", ")}) [ name: '${uc.name}', unique ]`,
+            );
+          const entries = [...indexEntries, ...uniqueEntries];
+          return entries.length > 0
+            ? "\n\n\tindexes {\n" + entries.join("\n") + "\n\t}"
+            : "";
+        })()}${
           table.comment && table.comment.trim() !== ""
             ? `\n\n\tNote: ${processComment(table.comment)}`
             : ""

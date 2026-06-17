@@ -1,5 +1,5 @@
 import { dbToTypes } from "../../data/datatypes";
-import { parseDefault } from "./shared";
+import { parseDefault, uniqueConstraintClause } from "./shared";
 
 export function toOracleSQL(diagram) {
   return `${diagram.tables
@@ -36,7 +36,7 @@ export function toOracleSQL(diagram) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` -- ${table.comment}` : ""};\n${`\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n)${table.comment ? ` -- ${table.comment}` : ""};\n${`\n${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name}"\nON "${table.name}" (${i.fields

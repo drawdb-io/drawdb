@@ -56,6 +56,20 @@ export const tableSchema = {
         required: ["name", "unique", "fields"],
       },
     },
+    uniqueConstraints: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          fields: {
+            type: "array",
+            items: { type: "string" },
+          },
+        },
+        required: ["name", "fields"],
+      },
+    },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
     inherits: {
       type: "array",

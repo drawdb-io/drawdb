@@ -34,6 +34,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];
+        table.uniqueConstraints = [];
         table.id = nanoid();
         e.create_definitions.forEach((d) => {
           const field = {};
@@ -178,6 +179,21 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 relationship.cardinality = Cardinality.MANY_TO_ONE;
               }
               relationships.push(relationship);
+            } else if (
+              d.constraint_type &&
+              d.constraint_type.toLowerCase().includes("unique")
+            ) {
+              const fields = d.definition.map(
+                (c) => c.column?.expr?.value ?? c.column,
+              );
+              const name =
+                d.constraint ||
+                d.index ||
+                `${table.name}_unique_${table.uniqueConstraints.length}`;
+              table.uniqueConstraints.push({ name, fields });
+              table.uniqueConstraints.forEach((u, j) => {
+                u.id = j;
+              });
             }
           }
 

@@ -2,6 +2,7 @@ import {
   escapeQuotes,
   parseDefault,
   exportFieldComment,
+  uniqueConstraintClause,
 } from "../exportSQL/shared";
 import { DB } from "../../data/constants";
 import { databases } from "../../data/databases";
@@ -116,6 +117,8 @@ function toTable(table, db) {
       ? `,\n\tPRIMARY KEY(${pk.map((f) => q(f.name)).join(", ")})`
       : "";
 
+  const ucClause = uniqueConstraintClause(table, q);
+
   let inheritsClause = "";
   if (
     db === DB.POSTGRES &&
@@ -129,13 +132,13 @@ function toTable(table, db) {
 
   let create = "";
   if (db === DB.POSTGRES || db === DB.MYSQL || db === DB.SQLITE) {
-    create = `CREATE TABLE IF NOT EXISTS ${q(table.name)} (\n${fieldDefs}${pkClause}${inheritsClause};`;
+    create = `CREATE TABLE IF NOT EXISTS ${q(table.name)} (\n${fieldDefs}${pkClause}${ucClause}${inheritsClause};`;
   } else if (db === DB.MARIADB) {
-    create = `CREATE OR REPLACE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}\n)`;
+    create = `CREATE OR REPLACE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}${ucClause}\n)`;
   } else if (db === DB.MSSQL) {
-    create = `CREATE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}\n);\nGO`;
+    create = `CREATE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}${ucClause}\n);\nGO`;
   } else if (db === DB.ORACLESQL) {
-    create = `CREATE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}\n)`;
+    create = `CREATE TABLE ${q(table.name)} (\n${fieldDefs}${pkClause}${ucClause}\n)`;
   }
 
   if (db === DB.MARIADB || db === DB.ORACLESQL) create += ";";
@@ -615,6 +618,66 @@ export const generateMigrationSQL = (
                 up.push(mkCreate(change.to));
                 down.push(dropIdx);
                 down.push(mkCreate(change.from));
+              }
+            }
+          }
+
+          if (childPart.startsWith("uniqueConstraints")) {
+            const property = keys[2];
+            const ucFields = (arr) => (arr || []).map((f) => q(f)).join(", ");
+            const addUC = (cname, fields) =>
+              database === DB.SQLITE
+                ? `CREATE UNIQUE INDEX IF NOT EXISTS ${q(cname)} ON ${q(name)} (${ucFields(fields)});`
+                : `ALTER TABLE ${q(name)} ADD CONSTRAINT ${q(cname)} UNIQUE (${ucFields(fields)});`;
+            const dropUC = (cname) =>
+              database === DB.SQLITE
+                ? `DROP INDEX ${q(cname)};`
+                : `ALTER TABLE ${q(name)} DROP CONSTRAINT ${q(cname)};`;
+
+            if (!property) {
+              if (change.to && !change.from) {
+                up.push(addUC(change.to.name, change.to.fields));
+                down.push(dropUC(change.to.name));
+              }
+              if (change.from && !change.to) {
+                up.push(dropUC(change.from.name));
+                down.push(addUC(change.from.name, change.from.fields));
+              }
+            }
+
+            if (property === "name") {
+              if (database === DB.POSTGRES || database === DB.ORACLESQL) {
+                up.push(
+                  `ALTER TABLE ${q(name)} RENAME CONSTRAINT ${q(change.from)} TO ${q(change.to)};`,
+                );
+                down.push(
+                  `ALTER TABLE ${q(name)} RENAME CONSTRAINT ${q(change.to)} TO ${q(change.from)};`,
+                );
+              } else {
+                up.push(
+                  `-- Rename unique constraint: DROP ${q(change.from)} then ADD with new name`,
+                );
+                down.push(
+                  `-- Rename unique constraint: DROP ${q(change.to)} then ADD with old name`,
+                );
+              }
+            }
+
+            if (property === "fields") {
+              const ns = childPart.indexOf("name=");
+              const constraintName =
+                ns >= 0
+                  ? childPart.substring(ns + 5, childPart.indexOf("]", ns))
+                  : "";
+              if (
+                constraintName &&
+                Array.isArray(change.from) &&
+                Array.isArray(change.to)
+              ) {
+                up.push(dropUC(constraintName));
+                up.push(addUC(constraintName, change.to));
+                down.push(dropUC(constraintName));
+                down.push(addUC(constraintName, change.from));
               }
             }
           }
