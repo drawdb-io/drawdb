@@ -112,28 +112,39 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
               const relationship = {};
               const startTableId = table.id;
               const startTableName = e.table[0].table;
-              const startFieldName = d.definition[0].column;
+              const startFieldNames = d.definition.map((c) => c.column);
               const endTableName = d.reference_definition.table[0].table;
-              const endFieldName = d.reference_definition.definition[0].column;
+              const endFieldNames = d.reference_definition.definition.map(
+                (c) => c.column,
+              );
+              const startFieldName = startFieldNames[0];
 
               const endTable = tables.find((t) => t.name === endTableName);
               if (!endTable) return;
 
-              const endField = endTable.fields.find(
-                (f) => f.name === endFieldName,
-              );
-              if (!endField) return;
+              const fieldPairs = [];
+              for (let i = 0; i < startFieldNames.length; i++) {
+                const sf = table.fields.find(
+                  (f) => f.name === startFieldNames[i],
+                );
+                const ef = endTable.fields.find(
+                  (f) => f.name === endFieldNames[i],
+                );
+                if (!sf || !ef) break;
+                fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
+              }
+              if (fieldPairs.length !== startFieldNames.length) return;
 
               const startField = table.fields.find(
                 (f) => f.name === startFieldName,
               );
-              if (!startField) return;
 
               relationship.name = `fk_${startTableName}_${startFieldName}_${endTableName}`;
               relationship.startTableId = startTableId;
               relationship.endTableId = endTable.id;
-              relationship.endFieldId = endField.id;
-              relationship.startFieldId = startField.id;
+              relationship.fields = fieldPairs;
+              relationship.endFieldId = fieldPairs[0].endFieldId;
+              relationship.startFieldId = fieldPairs[0].startFieldId;
               relationship.id = nanoid()
               let updateConstraint = "No action";
               let deleteConstraint = "No action";
@@ -210,11 +221,16 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
         ) {
           const relationship = {};
           const startTableName = e.table[0].table;
-          const startFieldName = expr.create_definitions.definition[0].column;
+          const startFieldNames = expr.create_definitions.definition.map(
+            (c) => c.column,
+          );
           const endTableName =
             expr.create_definitions.reference_definition.table[0].table;
-          const endFieldName =
-            expr.create_definitions.reference_definition.definition[0].column;
+          const endFieldNames =
+            expr.create_definitions.reference_definition.definition.map(
+              (c) => c.column,
+            );
+          const startFieldName = startFieldNames[0];
           let updateConstraint = "No action";
           let deleteConstraint = "No action";
           expr.create_definitions.reference_definition.on_action.forEach(
@@ -239,20 +255,30 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
           const endTable = tables.find((t) => t.name === endTableName);
           if (!endTable) return;
 
-          const endField = endTable.fields.find((f) => f.name === endFieldName);
-          if (!endField) return;
+          const fieldPairs = [];
+          for (let i = 0; i < startFieldNames.length; i++) {
+            const sf = startTable.fields.find(
+              (f) => f.name === startFieldNames[i],
+            );
+            const ef = endTable.fields.find(
+              (f) => f.name === endFieldNames[i],
+            );
+            if (!sf || !ef) break;
+            fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
+          }
+          if (fieldPairs.length !== startFieldNames.length) return;
 
           const startField = startTable.fields.find(
             (f) => f.name === startFieldName,
           );
-          if (!startField) return;
 
           relationship.name =
             "fk_" + startTableName + "_" + startFieldName + "_" + endTableName;
           relationship.startTableId = startTable.id;
-          relationship.startFieldId = startField.id;
+          relationship.startFieldId = fieldPairs[0].startFieldId;
           relationship.endTableId = endTable.id;
-          relationship.endFieldId = endField.id;
+          relationship.endFieldId = fieldPairs[0].endFieldId;
+          relationship.fields = fieldPairs;
           relationship.updateConstraint = updateConstraint;
           relationship.deleteConstraint = deleteConstraint;
           relationship.id = nanoid();

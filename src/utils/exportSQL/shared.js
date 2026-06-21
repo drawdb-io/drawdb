@@ -1,7 +1,18 @@
-import { isFunction, isKeyword } from "../utils";
+import { isFunction, isKeyword, getRelationshipFields } from "../utils";
 
 import { DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+
+export function getFkColumnNames(relationship, startTable, endTable) {
+  const pairs = getRelationshipFields(relationship);
+  const startColumns = pairs.map(
+    (p) => startTable?.fields.find((f) => f.id === p.startFieldId)?.name,
+  );
+  const endColumns = pairs.map(
+    (p) => endTable?.fields.find((f) => f.id === p.endFieldId)?.name,
+  );
+  return { startColumns, endColumns };
+}
 
 export function parseDefault(field, database = DB.GENERIC) {
   if (
@@ -53,14 +64,18 @@ export function getInlineFK(table, obj) {
   let fks = [];
   obj.references.forEach((r) => {
     if (r.startTableId === table.id) {
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        table,
+        endTable,
+      );
       fks.push(
-        `\tFOREIGN KEY ("${table.fields.find((f) => f.id === r.startFieldId)?.name}") REFERENCES "${
-          obj.tables.find((t) => t.id === r.endTableId)?.name
-        }"("${
-          obj.tables
-            .find((t) => t.id === r.endTableId)
-            .fields.find((f) => f.id === r.endFieldId)?.name
-        }")\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
+        `\tFOREIGN KEY (${startColumns
+          .map((c) => `"${c}"`)
+          .join(", ")}) REFERENCES "${endTable?.name}"(${endColumns
+          .map((c) => `"${c}"`)
+          .join(", ")})\n\tON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()}`,
       );
     }
   });

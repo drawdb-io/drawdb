@@ -1,6 +1,7 @@
 import { dbToTypes } from "../../data/datatypes";
 import { jsonToMermaid } from "./mermaid";
 import { databases } from "../../data/databases";
+import { getRelationshipFields } from "../utils";
 
 function formatMarkdownTable(headers, rows) {
   const allRows = [headers, ...rows];
@@ -99,7 +100,11 @@ export function jsonToDocumentation(obj) {
 
   function relationshipByField(table, relationships, fieldId) {
     return relationships
-      .filter((r) => r.startTableId === table && r.startFieldId === fieldId)
+      .filter(
+        (r) =>
+          r.startTableId === table &&
+          getRelationshipFields(r).some((p) => p.startFieldId === fieldId),
+      )
       .map((rel) => rel.name);
   }
 

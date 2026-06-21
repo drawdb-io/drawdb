@@ -3,6 +3,7 @@ import {
   exportFieldComment,
   parseDefault,
   uniqueConstraintClause,
+  getFkColumnNames,
 } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
@@ -96,14 +97,22 @@ export function toPostgres(diagram) {
     .map((r) => {
       const startTable = diagram.tables.find((t) => t.id === r.startTableId);
       const endTable = diagram.tables.find((t) => t.id === r.endTableId);
-      const startField = startTable?.fields.find(
-        (f) => f.id === r.startFieldId,
+
+      if (!startTable || !endTable) return "";
+
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        startTable,
+        endTable,
       );
-      const endField = endTable?.fields.find((f) => f.id === r.endFieldId);
+      if (startColumns.some((c) => !c) || endColumns.some((c) => !c))
+        return "";
 
-      if (!startTable || !endTable || !startField || !endField) return "";
-
-      return `ALTER TABLE "${startTable.name}"\nADD FOREIGN KEY("${startField.name}") REFERENCES "${endTable.name}"("${endField.name}")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE "${startTable.name}"\nADD FOREIGN KEY(${startColumns
+        .map((c) => `"${c}"`)
+        .join(", ")}) REFERENCES "${endTable.name}"(${endColumns
+        .map((c) => `"${c}"`)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .filter(Boolean)
     .join("\n");

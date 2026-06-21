@@ -657,6 +657,12 @@ export default function Canvas() {
       cardinality,
       endTableId: hoveredTable.tableId,
       endFieldId: hoveredTable.fieldId,
+      fields: [
+        {
+          startFieldId: linkingLine.startFieldId,
+          endFieldId: hoveredTable.fieldId,
+        },
+      ],
       updateConstraint: Constraint.NONE,
       deleteConstraint: Constraint.NONE,
       name: `fk_${startTableName}_${startField.name}_${endTableName}`,

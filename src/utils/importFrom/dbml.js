@@ -58,8 +58,9 @@ export function fromDBML(src) {
     for (const ref of schema.refs) {
       const startTableName = ref.endpoints[0].tableName;
       const endTableName = ref.endpoints[1].tableName;
-      const startFieldName = ref.endpoints[0].fieldNames[0];
-      const endFieldName = ref.endpoints[1].fieldNames[0];
+      const startFieldNames = ref.endpoints[0].fieldNames;
+      const endFieldNames = ref.endpoints[1].fieldNames;
+      const startFieldName = startFieldNames[0];
 
       const startTable = tables.find((t) => t.name === startTableName);
       if (!startTable) continue;
@@ -67,13 +68,14 @@ export function fromDBML(src) {
       const endTable = tables.find((t) => t.name === endTableName);
       if (!endTable) continue;
 
-      const endField = endTable.fields.find((f) => f.name === endFieldName);
-      if (!endField) continue;
-
-      const startField = startTable.fields.find(
-        (f) => f.name === startFieldName,
-      );
-      if (!startField) continue;
+      const fieldPairs = [];
+      for (let i = 0; i < startFieldNames.length; i++) {
+        const sf = startTable.fields.find((f) => f.name === startFieldNames[i]);
+        const ef = endTable.fields.find((f) => f.name === endFieldNames[i]);
+        if (!sf || !ef) break;
+        fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
+      }
+      if (fieldPairs.length !== startFieldNames.length) continue;
 
       const relationship = {};
 
@@ -81,8 +83,9 @@ export function fromDBML(src) {
         "fk_" + startTableName + "_" + startFieldName + "_" + endTableName;
       relationship.startTableId = startTable.id;
       relationship.endTableId = endTable.id;
-      relationship.endFieldId = endField.id;
-      relationship.startFieldId = startField.id;
+      relationship.fields = fieldPairs;
+      relationship.endFieldId = fieldPairs[0].endFieldId;
+      relationship.startFieldId = fieldPairs[0].startFieldId;
       relationship.id = nanoid();
 
       relationship.updateConstraint = ref.onDelete

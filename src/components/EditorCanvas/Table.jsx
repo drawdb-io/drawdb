@@ -45,6 +45,7 @@ import {
   getTableHeight,
   getVisibleFieldEntries,
   getVisibleFields,
+  getRelationshipFields,
 } from "../../utils/utils";
 
 export default function Table({
@@ -214,14 +215,20 @@ export default function Table({
   };
 
   const getFieldReference = (fieldData) => {
-    const rel = relationships.find(
-      (r) =>
-        r.startTableId === tableData.id && r.startFieldId === fieldData.id,
-    );
+    let matchedEndFieldId = null;
+    const rel = relationships.find((r) => {
+      if (r.startTableId !== tableData.id) return false;
+      const pair = getRelationshipFields(r).find(
+        (p) => p.startFieldId === fieldData.id,
+      );
+      if (!pair) return false;
+      matchedEndFieldId = pair.endFieldId;
+      return true;
+    });
     if (!rel) return null;
 
     const refTable = tables.find((tbl) => tbl.id === rel.endTableId);
-    const refField = refTable?.fields.find((f) => f.id === rel.endFieldId);
+    const refField = refTable?.fields.find((f) => f.id === matchedEndFieldId);
     if (!refTable || !refField) return null;
 
     return { tableName: refTable.name, fieldName: refField.name };

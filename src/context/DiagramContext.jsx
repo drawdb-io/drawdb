@@ -4,6 +4,7 @@ import { useTransform, useUndoRedo, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
+import { getRelationshipFields } from "../utils/utils";
 
 export const DiagramContext = createContext(null);
 
@@ -183,12 +184,15 @@ export default function DiagramContextProvider({ children }) {
 
   const deleteField = (field, tid, addToHistory = true) => {
     const { fields, name } = tables.find((t) => t.id === tid);
+    const referencesField = (r) =>
+      getRelationshipFields(r).some(
+        (p) =>
+          (r.startTableId === tid && p.startFieldId === field.id) ||
+          (r.endTableId === tid && p.endFieldId === field.id),
+      );
     if (addToHistory) {
       const rels = relationships.reduce((acc, r) => {
-        if (
-          (r.startTableId === tid && r.startFieldId === field.id) ||
-          (r.endTableId === tid && r.endFieldId === field.id)
-        ) {
+        if (referencesField(r)) {
           acc.push(r);
         }
         return acc;
@@ -213,15 +217,7 @@ export default function DiagramContextProvider({ children }) {
       ]);
       setRedoStack([]);
     }
-    setRelationships((prev) =>
-      prev.filter(
-        (e) =>
-          !(
-            (e.startTableId === tid && e.startFieldId === field.id) ||
-            (e.endTableId === tid && e.endFieldId === field.id)
-          ),
-      ),
-    );
+    setRelationships((prev) => prev.filter((e) => !referencesField(e)));
     updateTable(tid, {
       fields: fields.filter((e) => e.id !== field.id),
     });

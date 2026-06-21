@@ -159,20 +159,36 @@ export function getFieldHeight(field, containerWidth, showComments = true) {
   );
 }
 
+export function getRelationshipFields(relationship) {
+  if (
+    Array.isArray(relationship?.fields) &&
+    relationship.fields.length > 0
+  ) {
+    return relationship.fields;
+  }
+  return [
+    {
+      startFieldId: relationship?.startFieldId,
+      endFieldId: relationship?.endFieldId,
+    },
+  ];
+}
+
 export function isFieldRelatedToTable(
   tableId,
   field,
   fieldIndex,
   relationships = [],
 ) {
-  return relationships.some(
-    (relationship) =>
-      (relationship.startTableId === tableId &&
-        (relationship.startFieldId === field.id ||
-          relationship.startFieldId === fieldIndex)) ||
-      (relationship.endTableId === tableId &&
-        (relationship.endFieldId === field.id ||
-          relationship.endFieldId === fieldIndex)),
+  return relationships.some((relationship) =>
+    getRelationshipFields(relationship).some(
+      (pair) =>
+        (relationship.startTableId === tableId &&
+          (pair.startFieldId === field.id ||
+            pair.startFieldId === fieldIndex)) ||
+        (relationship.endTableId === tableId &&
+          (pair.endFieldId === field.id || pair.endFieldId === fieldIndex)),
+    ),
   );
 }
 

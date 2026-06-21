@@ -100,28 +100,37 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             if (!d.constraint?.reference) return;
 
             const relationship = {};
-            const startFieldName = d.constraint.columns[0];
-            const endFieldName = d.constraint.reference.columns[0];
+            const startFieldNames = d.constraint.columns;
+            const endFieldNames = d.constraint.reference.columns;
+            const startFieldName = startFieldNames[0];
             const endTableName = d.constraint.reference.object.name;
 
             const endTable = tables.find((t) => t.name === endTableName);
             if (!endTable) return;
 
-            const endField = endTable.fields.find(
-              (f) => f.name === endFieldName,
-            );
-            if (!endField) return;
+            const fieldPairs = [];
+            for (let i = 0; i < startFieldNames.length; i++) {
+              const sf = table.fields.find(
+                (f) => f.name === startFieldNames[i],
+              );
+              const ef = endTable.fields.find(
+                (f) => f.name === endFieldNames[i],
+              );
+              if (!sf || !ef) break;
+              fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
+            }
+            if (fieldPairs.length !== startFieldNames.length) return;
 
             const startField = table.fields.find(
               (f) => f.name === startFieldName,
             );
-            if (!startField) return;
 
             relationship.id = nanoid();
             relationship.startTableId = table.id;
-            relationship.startFieldId = startField.id;
+            relationship.startFieldId = fieldPairs[0].startFieldId;
             relationship.endTableId = endTable.id;
-            relationship.endFieldId = endField.id;
+            relationship.endFieldId = fieldPairs[0].endFieldId;
+            relationship.fields = fieldPairs;
             relationship.updateConstraint = Constraint.NONE;
             relationship.name =
               d.name && Boolean(d.name.trim())
