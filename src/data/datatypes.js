@@ -1072,8 +1072,6 @@ const postgresTypesBase = {
     type: "TIMESTAMP",
     color: dateColor,
     checkDefault: (field) => {
-      const content = field.default.split(" ");
-      const date = content[0].split("-");
       const specialValues = [
         "epoch",
         "infinity",
@@ -1084,11 +1082,16 @@ const postgresTypesBase = {
         "yesterday",
         "current_timestamp",
       ];
+      if (specialValues.includes(field.default.toLowerCase())) {
+        return true;
+      }
+      if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default)) {
+        return false;
+      }
+      const content = field.default.split(" ");
+      const date = content[0].split("-");
       return (
-        /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(field.default) ||
-        (Number.parseInt(date[0]) >= 1970 &&
-          Number.parseInt(date[0]) <= 2038) ||
-        specialValues.includes(field.default.toLowerCase())
+        Number.parseInt(date[0]) >= 1970 && Number.parseInt(date[0]) <= 2038
       );
     },
     hasCheck: false,
