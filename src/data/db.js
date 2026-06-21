@@ -22,5 +22,5 @@ db.version(67)
   });
 
 db.on("populate", (transaction) => {
-  transaction.templates.bulkAdd(templateSeeds).catch((e) => console.log(e));
+  transaction.templates.bulkAdd(templateSeeds).catch((e) => console.error(e));
 });
