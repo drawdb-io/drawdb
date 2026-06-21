@@ -7,6 +7,7 @@ import {
 import { DB } from "../../data/constants";
 import { databases } from "../../data/databases";
 import { dbToTypes } from "../../data/datatypes";
+import { getRelationshipFields } from "../utils";
 
 function getQuote(db) {
   if (db === DB.MYSQL || db === DB.MARIADB) return (s) => `\`${s}\``;
@@ -190,15 +191,27 @@ function resolveRel(diagram, rel) {
   const startT = tables.find((t) => t.id === rel.startTableId);
   const endT = tables.find((t) => t.id === rel.endTableId);
   if (!startT || !endT) return null;
-  const startF = (startT.fields || []).find((f) => f.id === rel.startFieldId);
-  const endF = (endT.fields || []).find((f) => f.id === rel.endFieldId);
-  if (!startF || !endF) return null;
+  const pairs = getRelationshipFields(rel);
+  const startFieldNames = pairs.map(
+    (p) => (startT.fields || []).find((f) => f.id === p.startFieldId)?.name,
+  );
+  const endFieldNames = pairs.map(
+    (p) => (endT.fields || []).find((f) => f.id === p.endFieldId)?.name,
+  );
+  if (startFieldNames.some((n) => !n) || endFieldNames.some((n) => !n))
+    return null;
   return {
     startTableName: startT.name,
-    startFieldName: startF.name,
+    startFieldName: startFieldNames[0],
     endTableName: endT.name,
-    endFieldName: endF.name,
+    endFieldName: endFieldNames[0],
+    startFieldNames,
+    endFieldNames,
   };
+}
+
+function fkCols(names, q) {
+  return names.map((n) => q(n)).join(", ");
 }
 
 function normalizeFkAction(s) {
@@ -764,7 +777,7 @@ export const generateMigrationSQL = (
             const resolved = resolveRel(diagrams.to, change.to);
             if (!resolved) break;
 
-            const addFk = `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(change.to.name)} FOREIGN KEY (${q(resolved.startFieldName)}) REFERENCES ${q(resolved.endTableName)} (${q(resolved.endFieldName)}) ON UPDATE ${normalizeFkAction(change.to.updateConstraint)} ON DELETE ${normalizeFkAction(change.to.deleteConstraint)};`;
+            const addFk = `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(change.to.name)} FOREIGN KEY (${fkCols(resolved.startFieldNames, q)}) REFERENCES ${q(resolved.endTableName)} (${fkCols(resolved.endFieldNames, q)}) ON UPDATE ${normalizeFkAction(change.to.updateConstraint)} ON DELETE ${normalizeFkAction(change.to.deleteConstraint)};`;
             up.push(addFk);
             const dropFk =
               database === DB.MYSQL || database === DB.MARIADB
@@ -781,7 +794,7 @@ export const generateMigrationSQL = (
                 ? `ALTER TABLE ${q(resolved.startTableName)} DROP FOREIGN KEY ${q(change.from.name)};`
                 : `ALTER TABLE ${q(resolved.startTableName)} DROP CONSTRAINT ${q(change.from.name)};`;
             up.push(dropFk);
-            const addFk = `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(change.from.name)} FOREIGN KEY (${q(resolved.startFieldName)}) REFERENCES ${q(resolved.endTableName)} (${q(resolved.endFieldName)}) ON UPDATE ${normalizeFkAction(change.from.updateConstraint)} ON DELETE ${normalizeFkAction(change.from.deleteConstraint)};`;
+            const addFk = `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(change.from.name)} FOREIGN KEY (${fkCols(resolved.startFieldNames, q)}) REFERENCES ${q(resolved.endTableName)} (${fkCols(resolved.endFieldNames, q)}) ON UPDATE ${normalizeFkAction(change.from.updateConstraint)} ON DELETE ${normalizeFkAction(change.from.deleteConstraint)};`;
             down.push(addFk);
           }
           break;
@@ -813,7 +826,7 @@ export const generateMigrationSQL = (
               ? `ALTER TABLE ${q(resolved.startTableName)} DROP FOREIGN KEY ${q(rel.name)};`
               : `ALTER TABLE ${q(resolved.startTableName)} DROP CONSTRAINT ${q(rel.name)};`;
           const addFk = (rel, resolved) =>
-            `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(rel.name)} FOREIGN KEY (${q(resolved.startFieldName)}) REFERENCES ${q(resolved.endTableName)} (${q(resolved.endFieldName)}) ON UPDATE ${normalizeFkAction(rel.updateConstraint)} ON DELETE ${normalizeFkAction(rel.deleteConstraint)};`;
+            `ALTER TABLE ${q(resolved.startTableName)} ADD CONSTRAINT ${q(rel.name)} FOREIGN KEY (${fkCols(resolved.startFieldNames, q)}) REFERENCES ${q(resolved.endTableName)} (${fkCols(resolved.endFieldNames, q)}) ON UPDATE ${normalizeFkAction(rel.updateConstraint)} ON DELETE ${normalizeFkAction(rel.deleteConstraint)};`;
           up.push(dropFk(resolvedTo, relTo));
           up.push(addFk(relTo, resolvedTo));
           down.push(dropFk(resolvedFrom, relFrom));

@@ -1,4 +1,9 @@
-import { escapeQuotes, parseDefault, uniqueConstraintClause } from "./shared";
+import {
+  escapeQuotes,
+  parseDefault,
+  uniqueConstraintClause,
+  getFkColumnNames,
+} from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 import { DB } from "../../data/constants";
@@ -64,14 +69,18 @@ export function toMariaDB(diagram) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = diagram.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = diagram.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }\`) REFERENCES \`${endName}\`(\`${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(${startColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")}) REFERENCES \`${endName}\`(${endColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }

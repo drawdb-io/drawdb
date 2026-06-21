@@ -43,28 +43,35 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
 
   const addRelationshipFromReferenceDef = (
     startTable,
-    startFieldName,
+    startFieldNames,
     referenceDefinition,
   ) => {
     const relationship = {};
     const endTableName = referenceDefinition.table[0].table;
-    const endFieldName = referenceDefinition.definition[0].column;
+    const endFieldNames = referenceDefinition.definition.map((c) => c.column);
+    const startFieldName = startFieldNames[0];
 
     const endTable = tables.find((t) => t.name === endTableName);
     if (!endTable) return;
 
-    const endField = endTable.fields.find((f) => f.name === endFieldName);
-    if (!endField) return;
+    const fieldPairs = [];
+    for (let i = 0; i < startFieldNames.length; i++) {
+      const sf = startTable.fields.find((f) => f.name === startFieldNames[i]);
+      const ef = endTable.fields.find((f) => f.name === endFieldNames[i]);
+      if (!sf || !ef) break;
+      fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
+    }
+    if (fieldPairs.length !== startFieldNames.length) return;
 
     const startField = startTable.fields.find((f) => f.name === startFieldName);
-    if (!startField) return;
 
     relationship.name =
       "fk_" + startTable.name + "_" + startFieldName + "_" + endTableName;
     relationship.startTableId = startTable.id;
     relationship.endTableId = endTable.id;
-    relationship.endFieldId = endField.id;
-    relationship.startFieldId = startField.id;
+    relationship.fields = fieldPairs;
+    relationship.endFieldId = fieldPairs[0].endFieldId;
+    relationship.startFieldId = fieldPairs[0].startFieldId;
     relationship.id = nanoid();
 
     let updateConstraint = "No action";
@@ -170,7 +177,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             if (d.reference_definition) {
               addRelationshipFromReferenceDef(
                 table,
-                field.name,
+                [field.name],
                 d.reference_definition,
               );
             }
@@ -186,7 +193,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             } else if (d.constraint_type.toLowerCase() === "foreign key") {
               addRelationshipFromReferenceDef(
                 table,
-                d.definition[0].column,
+                d.definition.map((c) => c.column),
                 d.reference_definition,
               );
             } else if (d.constraint_type.toLowerCase().includes("unique")) {

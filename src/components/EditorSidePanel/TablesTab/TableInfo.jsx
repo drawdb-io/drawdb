@@ -352,7 +352,7 @@ export default function TableInfo({ data }) {
         </Card>
       )}
 
-      <div className="flex justify-between items-center gap-1 mb-2">
+      <div className="flex justify-between items-center gap-1 mt-5 mb-2">
         <ColorPicker
           usePopover={true}
           readOnly={layout.readOnly}

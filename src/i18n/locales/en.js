@@ -130,6 +130,8 @@ const en = {
     add: "Add",
     add_comment: "Add comment",
     add_field: "Add field",
+    composite_key: "Composite key",
+    composite_key_hint: "Add fields to make a composite key.",
     values: "Values",
     size: "Size",
     precision: "Precision",
