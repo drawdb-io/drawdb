@@ -1,0 +1,955 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for i18n/locales/as.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">i18n/locales</a> as.js</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>2/2</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>2/2</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const assamese = {
+    name: "Assamese",
+    native_name: "অসমীয়া",
+    code: "as",
+  };
+  
+&nbsp;
+&nbsp;
+const as = {
+    translation: {
+      report_bug: "এক টো সমস্যা প্ৰতিবেদন কৰক",
+      import: "আমদানি",
+      inherits: "উত্তৰাধিকাৰ লয়া কৰিছে",
+      merging_column_w_inherited_definition:
+        "টেবুল '{{tableName}}' ৰ '{{fieldName}}' কলাম থকা উত্তৰাধিকৃত সংজ্ঞাৰ সৈতে মাৰ্জ কৰা হ'ব",
+      import_from: "ৰ পৰা আমদানি কৰক",
+      file: "ফাইল",
+      new: "নতুন",
+      new_window: "নতুন উইন্ডো",
+      no_saved_diagrams: "আপোনাৰ সংৰক্ষিত কোনো ডায়াগ্ৰাম নাই",
+      open: "খোলক",
+      open_recent: "সাম্প্ৰতিক খোলক",
+      save: "সংৰক্ষণ",
+      save_as: "এই নামত সংৰক্ষণ কৰক",
+      save_as_template: "টেমপ্লেট হিচাপে সংৰক্ষণ কৰক",
+      template_saved: "টেমপ্লেট সংৰক্ষিত!",
+      rename: "ৰ নাম সলনি কৰক",
+      delete_diagram: "ডায়াগ্ৰাম মচি পেলাওক",
+      are_you_sure_delete_diagram:
+        "আপুনি নিশ্চিতনেকি এই ডায়াগ্ৰাম মচি পেলাবলৈ? এই কাৰ্য্য অপরিবর্তনীয়।",
+      oops_smth_went_wrong: "অ'পচ! কিবা এটা ভুল হৈ গ'ল।",
+      import_diagram: "ডায়াগ্ৰাম আমদানি কৰক",
+      import_from_source: "SQL ৰ পৰা আমদানি কৰক",
+      export_as: "এই হিচাপে ৰপ্তানি কৰক",
+      export_source: "SQL ৰূপে ৰপ্তানি কৰক",
+      models: "মডেলসমূহ",
+      exit: "বাহিৰ হওক",
+      edit: "সম্পাদনা",
+      undo: "অপ্রয়োগ কৰক",
+      redo: "পুনৰ কৰক",
+      clear: "মচি পেলাওক",
+      are_you_sure_clear:
+        "আপুনি নিশ্চিতনে এই ডায়াগ্ৰাম মচি পেলাবলৈ চাহিব? এইটো অপরিবর্তনীয়।",
+      cut: "কাটক",
+      copy: "কপি",
+      paste: "আটোক",
+      duplicate: "নকল",
+      delete: "মচি পেলাওক",
+      copy_as_image: "চিত্ৰ হিচাপে কপি কৰক",
+      view: "দৰ্শন",
+      header: "মেনুৱাৰ",
+      sidebar: "চাইডবাৰ",
+      issues: "সমস্যাসমূহ",
+      presentation_mode: "প্ৰেজেন্টেশ্যন মোড",
+      strict_mode: "কঠোৰ মোড",
+      field_details: "ক্ষেত্ৰৰ বিৱৰণ",
+      reset_view: "দৃষ্টি ৰিসেট কৰক",
+      show_grid: "গ্ৰিড প্ৰদৰ্শন কৰক",
+      snap_to_grid: "গ্ৰিডত চিপকাওক",
+      show_datatype: "ডাটা প্ৰকাৰ দেখুৱাওক",
+      show_cardinality: "কাৰ্ডিনেলিটি দেখুৱাওক",
+      theme: "থীম",
+      light: "আলো",
+      dark: "অন্ধকাৰ",
+      zoom_in: "জুম ইন",
+      zoom_out: "জুম আউট",
+      fullscreen: "স্ক্ৰীণ ফুলস্ক্ৰীণ",
+      settings: "ছেটিংছ",
+      show_timeline: "টাইমলাইন দেখুৱাওক",
+      autosave: "স্বয়ংক্ৰিয় সংৰক্ষণ",
+      panning: "পেনিং",
+      show_debug_coordinates: "ডিবাগ স্থানাঙ্ক দেখুৱাওক",
+      transform: "ৰূপান্তৰ",
+      viewbox: "ভিউ বক্স",
+      cursor_coordinates: "কৰ্ছাৰ স্থানাঙ্ক",
+      coordinate_space: "স্থান",
+      coordinate_space_screen: "স্ক্ৰীণ",
+      coordinate_space_diagram: "ডায়াগ্ৰাম",
+      table_width: "টেবুলৰ প্ৰস্থ",
+      language: "ভাষা",
+      flush_storage: "সংগ্ৰহস্থল খালি কৰক",
+      are_you_sure_flush_storage:
+        "আপুনি নিশ্চিতনে সংগ্রহস্থল খালি কৰিব? এইয়ে আপোনাৰ সকলো ডায়াগ্ৰাম আৰু কাষ্টম টেমপ্লেট অনন্তকালৰ বাবে মচি দিয়া হ'ব।",
+      storage_flushed: "সংগ্ৰহস্থল খালী কৰা হ'ল",
+      help: "সাহায্য",
+      shortcuts: "শৰ্টকাটসমূহ",
+      ask_on_discord: "Discord ত সোধক",
+      feedback: "প্ৰতিক্ৰিয়া",
+      no_changes: "কোনো পৰিবর্তন নাথাকে",
+      loading: "লোড কৰা হৈছে...",
+      last_saved: "শেষত সংৰক্ষিত",
+      saving: "সংৰক্ষণ কৰা হৈছে...",
+      failed_to_save: "সংৰক্ষণ বিফল",
+      fit_window_reset: "উইন্ডো মানাই / ৰিসেট",
+      zoom: "জুম",
+      add_table: "টেবুল যোগ কৰক",
+      add_area: "এৰিয়া যোগ কৰক",
+      add_note: "নোট যোগ কৰক",
+      add_type: "টাইপ যোগ কৰক",
+      to_do: "কৰিবলৈ",
+      tables: "টেবুলসমূহ",
+      relationships: "সম্পৰ্কসমূহ",
+      subject_areas: "বিষয় ক্ষেত্ৰসমূহ",
+      notes: "নোটসমূহ",
+      types: "টাইপসমূহ",
+      search: "অনুসন্ধান...",
+      no_tables: "কোনো টেবুল নাই",
+      no_tables_text: "আপোনাৰ ডায়াগ্ৰাম নিৰ্মাণ কৰা আৰম্ভ কৰক!",
+      no_relationships: "কোনো সম্পৰ্ক নাই",
+      no_relationships_text: "ক্ষেত্ৰসমূহ সংযোগ কৰিবলৈ টানক আৰু সম্পৰ্ক গঠন কৰক!",
+      no_subject_areas: "কোনো বিষয় ক্ষেত্ৰ নাই",
+      no_subject_areas_text: "টেবুলসমূহ গ্ৰুপ কৰিবলৈ বিষয় ক্ষেত্ৰসমূহ যোগ কৰক!",
+      no_notes: "কোনো নোট নাই",
+      no_notes_text: "অতिरिक्त তথ্য ৰেকৰ্ড কৰিবলৈ নোট ব্যৱহাৰ কৰক",
+      no_types: "কোনো টাইপ নাই",
+      no_types_text: "আপোনাৰ নিজা কাষ্টম ডাটা টাইপ বনাওক",
+      no_issues: "কোনো সমস্যা চিনাক্ত হোৱা নাই।",
+      strict_mode_is_on_no_issues:
+        "কঠোৰ মোড বন্ধ আছে সেয়ে কোনো সমস্যা দেখুওৱা নহ'ব।",
+      name: "নাম",
+      type: "টাইপ",
+      null: "Null",
+      not_null: "Null নহয়",
+      nullable: "নিউল কৰিব পৰা যায়",
+      primary: "প্ৰাথমিক",
+      unique: "একক",
+      autoincrement: "স্বয়ং-বৃদ্ধি",
+      default_value: "ডিফল্ট",
+      check: "চেক এক্সপ্ৰেছন",
+      this_will_appear_as_is: "*এইটো জেনাৰেট কৰা স্ক্ৰিপ্টত একে ৰূপে দেখা যাব।",
+      comment: "মন্তব্য",
+      add_field: "ক্ষেত্ৰ যোগ কৰক",
+      values: "মানসমূহ",
+      size: "আকাৰ",
+      precision: "নিখুঁততা",
+      set_precision: "নিখুঁততা নিৰ্ধাৰণ: 'size, digits'",
+      use_for_batch_input: "ব্যাচ ইনপুটৰ বাবে , ব্যৱহাৰ কৰক",
+      indices: "সূচক",
+      add_index: "সূচক যোগ কৰক",
+      select_fields: "ক্ষেত্ৰসমূহ বাছনি কৰক",
+      title: "শিৰোনাম",
+      not_set: "নির্ধাৰিত নহয়",
+      foreign: "বৈদেশিক",
+      cardinality: "কাৰ্ডিনেলিটি",
+      on_update: "আপডেটত",
+      on_delete: "মচা হলে",
+      swap: "সুবল",
+      one_to_one: "এটাৰ পৰা এটালৈ",
+      one_to_many: "এটাৰ পৰা বহু",
+      many_to_one: "বহুতৰ পৰা এটা",
+      content: "বিষয়বস্তু",
+      types_info:
+        "এই ফিচাৰটো PostgreSQL ধৰণৰ অবজেক্ট-ৰিলেশনেল DBMSসমূহৰ বাবে উদ্দেশ্য কৰা হৈছে।\nMySQL বা MariaDB ৰ বাবে ব্যৱহাৰ কৰিলে এটা JSON টাইপ জেনাৰেট কৰা হ'ব আৰু তদনুসাৰ json ভেলিডেশ্যন চেক যোগ কৰা হ'ব।\nSQLite ৰ বাবে ই BLOB ত ৰূপান্তৰিত কৰা হ'ব।\nMSSQL ৰ বাবে প্ৰথম ক্ষেত্ৰৰ টাইপৰ এক টাইপ আলিয়াচ সৃষ্টি কৰা হ'ব।",
+      table_deleted: "টেবুল মচি দিয়া হ'ল",
+      area_deleted: "এৰিয়া মচি দিয়া হ'ল",
+      note_deleted: "নোট মচি দিয়া হ'ল",
+      relationship_deleted: "সম্পৰ্ক মচি দিয়া হ'ল",
+      type_deleted: "টাইপ মচি দিয়া হ'ল",
+      cannot_connect: "সংযোগ কৰিব পৰা নগ'ল, কলামসমূহৰ টাইপ ভিন্ন",
+      copied_to_clipboard: "ক্লিপব'ৰ্ডত কপি কৰা হ'ল",
+      create_new_diagram: "নতুন ডায়াগ্ৰাম সৃষ্টি কৰক",
+      cancel: "বাতিল",
+      open_diagram: "ডায়াগ্ৰাম খোলক",
+      rename_diagram: "ডায়াগ্ৰামৰ নাম সলনি কৰক",
+      export: "ৰপ্তানি",
+      export_image: "চিত্ৰ ৰূপে ৰপ্তানি",
+      create: "সৃষ্টি কৰক",
+      confirm: "নিশ্চিত কৰক",
+      last_modified: "শেষ পৰিবর্তন",
+      drag_and_drop_files: "ফাইলটো ইয়াত টানি নেমাওক বা আপলোড কৰিবলৈ ক্লিক কৰক।",
+      upload_sql_to_generate_diagrams:
+        "আপোনাৰ টেবুল আৰু কলাম স্বয়ংক্ৰিয়ভাৱে সৃষ্টি কৰিবলৈ এটা sql ফাইল আপলোড কৰক।",
+      overwrite_existing_diagram: "অস্তিত্বশীল ডায়াগ্ৰামৰ ওপৰত লিখা হ'ব",
+      only_mysql_supported:
+        "* বৰ্তমানে কেৱল MySQL স্ক্ৰিপ্টসমূহ লোড কৰা সমৰ্থিত।",
+      blank: "ফাঁকা",
+      filename: "ফাইল নাম",
+      table_w_no_name: "নাম নাথকা টেবুল ঘোষণা কৰা হ'ল",
+      duplicate_table_by_name: "নাম '{{tableName}}' ৰ দ্বাৰা টেবুল নকল",
+      empty_field_name: "টেবুল '{{tableName}}' ত খালী ক্ষেত্ৰ `name`",
+      empty_field_type: "টেবুল '{{tableName}}' ত খালী ক্ষেত্ৰ `type`",
+      no_values_for_field:
+        "টেবুল '{{tableName}}' ৰ '{{fieldName}}' ক্ষেত্ৰৰ টাইপ `{{type}}` কিন্তু মানসমূহ দিয়া হোৱা নাই",
+      default_doesnt_match_type:
+        "টেবুল '{{tableName}}' ৰ '{{fieldName}}' ক্ষেত্ৰৰ ডিফল্ট মান তাত নিযুক্ত টাইপৰ সৈতে মিলে নাযায়",
+      not_null_is_null:
+        "টেবুল '{{tableName}}' ৰ '{{fieldName}}' ক্ষেত্ৰটো NOT NULL কিন্তু ডিফল্ট NULL আছে",
+      duplicate_fields:
+        "টেবুল '{{tableName}}' ত নাম '{{fieldName}}' দ্বাৰা ক্ষেত্ৰসমূহ নকল",
+      duplicate_index:
+        "টেবুল '{{tableName}}' ত নাম '{{indexName}}' দ্বাৰা সূচক নকল",
+      empty_index: "টেবুল '{{tableName}}' ত সূচকে কোনো কলাম সূচীকৰে নালাগে",
+      no_primary_key: "টেবুল '{{tableName}}' ত কোনো প্ৰায়মাৰী কী নাই",
+      type_with_no_name: "নাম নাথকা এটা টাইপ ঘোষণা কৰা হ'ল",
+      duplicate_types: "নাম '{{typeName}}' দ্বাৰা টাইপসমূহ নকল",
+      type_w_no_fields: "ক্ষেত্ৰ নাথকা খালী টাইপ '{{typeName}}' ঘোষণা কৰা হ'ল",
+      empty_type_field_name: "টাইপ '{{typeName}}' ত খালী ক্ষেত্ৰ `name`",
+      empty_type_field_type: "টাইপ '{{typeName}}' ত খালী ক্ষেত্ৰ `type`",
+      no_values_for_type_field:
+        "টাইপ '{{typeName}}' ৰ '{{fieldName}}' ক্ষেত্ৰৰ টাইপ `{{type}}` কিন্তু মানসমূহ দিয়া হোৱা নাই",
+      duplicate_type_fields:
+        "টাইপ '{{typeName}}' ত নাম '{{fieldName}}' দ্বাৰা ক্ষেত্ৰসমূহ নকল",
+      duplicate_reference: "নাম '{{refName}}' দ্বাৰা ৰেফাৰেঞ্চ নকল",
+      circular_dependency: "চক্ৰাকাৰ নিৰ্ভৰশীলতা য'ত টেবুল '{{refName}}' জড়িত",
+      timeline: "টাইমলাইন",
+      priority: "প্ৰাধান্য",
+      none: "কোনোটি নাই",
+      low: "নিম্ন",
+      medium: "মধ্যম",
+      high: "উচ্চ",
+      sort_by: "ইতিমধ্যে ব্যৱস্থা কৰক",
+      my_order: "মোৰ শৃংখলা",
+      completed: "সমাপ্ত",
+      alphabetically: "আলফাবেটিকেলি",
+      add_task: "কাজ যোগ কৰক",
+      details: "বিৱৰণ",
+      no_tasks: "আপোনাৰ এতিয়ালৈকে কোনো কাম নাথাকে।",
+      no_activity: "আপোনাৰ এতিয়ালৈকে কোনো কার্যকলাপ নাথাকে।",
+      move_element: "চলাওক {{name}} ক {{coords}} ৰ পৰা",
+      edit_area: "{{extra}} এৰিয়া সম্পাদনা কৰক {{areaName}}",
+      delete_area: "এৰিয়া মচি পেলাওক {{areaName}}",
+      edit_note: "{{extra}} নোট সম্পাদনা কৰক {{noteTitle}}",
+      delete_note: "নোট মচি পেলাওক {{noteTitle}}",
+      edit_table: "{{extra}} টেবুল সম্পাদনা কৰক {{tableName}}",
+      delete_table: "টেবুল মচি পেলাওক {{tableName}}",
+      edit_type: "{{extra}} টাইপ সম্পাদনা কৰক {{typeName}}",
+      delete_type: "টাইপ মচি পেলাওক {{typeName}}",
+      add_relationship: "সম্পৰ্ক যোগ কৰক",
+      edit_relationship: "{{extra}} সম্পর্ক সম্পাদনা কৰক {{refName}}",
+      delete_relationship: "সম্পৰ্ক মচি পেলাওক {{refName}}",
+      not_found: "নপোৱা গ'ল",
+      pick_db: "এখন ডেটাবেছ বাচক",
+      generic: "জেনাৰিক",
+      generic_description:
+        "জেনাৰিক ডায়াগ্ৰামসমূহ যিকোনো SQL ফ্লেভাৰৰ বাবে ৰপ্তানি কৰিব পৰা যায় কিন্তু কম ডাটা টাইপ সমৰ্থন কৰে।",
+      enums: "এনামসমূহ",
+      add_enum: "এনাম যোগ কৰক",
+      edit_enum: "{{extra}} এনাম সম্পাদনা কৰক {{enumName}}",
+      delete_enum: "এনাম মচি পেলাওক",
+      enum_w_no_name: "নাম নাথকা এনাম পোৱা গ'ল",
+      enum_w_no_values: "এনাম '{{enumName}}' ত মানসমূহ নাথাকে",
+      duplicate_enums: "নাম '{{enumName}}' দ্বাৰা এনামসমূহ নকল",
+      enum_deleted: "এনাম মচি পেলাওক",
+      no_enums: "কোনো এনাম নাই",
+      no_enums_text: "এনামসমূহ ইয়াত সংজ্ঞায়িত কৰক",
+      declare_array: "এৰে তাল ঘোষণা কৰক",
+      empty_index_name: "টেবুল '{{tableName}}' ত নাম নাথকা সূচক ঘোষণা কৰা হ'ল",
+      didnt_find_diagram: "অপচ! ডায়াগ্ৰামটা পোৱা নাযায়।",
+      unsigned: "অ-চিহ্নিত (Unsigned)",
+      share: "শ্বেয়াৰ",
+      unshare: "শ্বেয়াৰ বন্ধ",
+      copy_link: "লিংক কপি কৰক",
+      readme: "README",
+      failed_to_load: "লোড কৰিবলৈ বিফল। নিশ্চিত কৰক লিংকটো সঠিক।",
+      share_info:
+        "* এই লিংক শ্বেয়াৰ কৰোঁতে এটা লাইভ ৰিয়েল-টাইম সহযোগিতা সেশ্যন সৃষ্টি নহ'ব।",
+      show_relationship_labels: "সম্পৰ্ক লেবেলসমূহ দেখুৱাওক",
+      docs: "ডকুমেন্টচ",
+      supported_types: "সমৰ্থিত ফাইল টাইপসমূহ:",
+      bulk_update: "বাল্ক আপডেট",
+      multiselect: "বহু-নিৰ্বাচন",
+      export_saved_data: "সংৰক্ষিত ডাটা ৰপ্তানি কৰক",
+      dbml_view: "DBML দৃষ্টি",
+      tab_view: "ট্যাব দৃষ্টি",
+      label: "লেবেল",
+      many_side_label: "বহু(n) পাৰৰ লেবেল",
+      version: "সংস্কৰণ",
+      versions: "সংস্কৰণবোৰ",
+      no_saved_versions: "কোনো সংৰক্ষিত সংস্কৰণ নাই",
+      record_version: "সংস্কৰণ ৰেকৰ্ড কৰক",
+      committed_at: "কমিট কৰা হৈছিল",
+      read_only: "পড়িবলৈহে",
+      continue: "জাৰি ৰাখক",
+      restore_version: "সংস্কৰণ পুনৰুদ্ধাৰ কৰক",
+      restore_warning: " অন্য সংস্কৰণ লোড কৰিলে যিকোনো পৰিবর্তন ওপৰ-লিখা হ'ব।",
+      return_to_current: "ডায়াগ্ৰামলৈ উভতক",
+      no_changes_to_record: "ৰেকৰ্ড কৰিবলৈ কোনো পৰিবর্তন নাই",
+      click_to_view: "দেখিবলৈ ক্লিক কৰক",
+      load_more: "অধিক লোড কৰক",
+      clear_cache: "কেচ মচি পেলাওক",
+      cache_cleared: "কেচ মচি দিয়া হ'ল",
+      failed_to_record_version: "সংস্কৰণ ৰেকৰ্ড কৰিবলৈ বিফল",
+      failed_to_load_diagram: "ডায়াগ্ৰাম লোড কৰিবলৈ বিফল",
+      see_all: "সকলো চাওক",
+      insert_sql: "SQL প্ৰবিষ্ট কৰক",
+      upload_file: "ফাইল আপলোড কৰক",
+    },
+  };
+&nbsp;
+  
+export { as, assamese };</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-06-22T03:12:39.848Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -42,6 +42,9 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
             field.name = d.column.column;
 
             let type = d.definition.dataType;
+            if (diagramDb === DB.MYSQL && type === "INTEGER") {
+              type = "INT";
+            }
             if (!dbToTypes[diagramDb][type]) {
               type = affinity[diagramDb][type];
             }

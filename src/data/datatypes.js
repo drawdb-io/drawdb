@@ -32,6 +32,17 @@ const defaultTypesBase = {
     hasPrecision: false,
     canIncrement: true,
   },
+  INTEGER: {
+    type: "INTEGER",
+    color: intColor,
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+  },
   SMALLINT: {
     type: "SMALLINT",
     color: intColor,
@@ -353,6 +364,18 @@ export const defaultTypes = new Proxy(defaultTypesBase, {
 });
 
 const mysqlTypesBase = {
+  INT: {
+    type: "INT",
+    color: intColor,
+    checkDefault: (field) => {
+      return intRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    canIncrement: true,
+    signed: true,
+  },
   TINYINT: {
     type: "TINYINT",
     color: intColor,
