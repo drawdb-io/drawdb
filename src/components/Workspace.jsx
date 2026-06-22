@@ -47,6 +47,8 @@ export const IdContext = createContext({
   setGistId: () => {},
   version: "",
   setVersion: () => {},
+  isServerDiagram: false,
+  setIsServerDiagram: () => {},
 });
 
 const SIDEPANEL_MIN_WIDTH = 374;
@@ -55,6 +57,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const [gistId, setGistId] = useState("");
   const [version, setVersion] = useState("");
   const [loadedFromGistId, setLoadedFromGistId] = useState("");
+  const [isServerDiagram, setIsServerDiagram] = useState(false);
   const [title, setTitle] = useState("Untitled Diagram");
   const [resize, setResize] = useState(false);
   const [toolbarContainer, setToolbarContainer] = useState(null);
@@ -172,32 +175,40 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           setLastSaved(new Date().toLocaleString());
         });
     } else {
+      const serverPayload = {
+        diagramId: loadedDiagramId,
+        database: database,
+        name: title,
+        gistId: gistId ?? "",
+        lastModified: new Date(),
+        tables: tables,
+        references: relationships,
+        notes: notes,
+        areas: areas,
+        pan: transform.pan,
+        zoom: transform.zoom,
+        loadedFromGistId: loadedFromGistId,
+        ...(databases[database].hasEnums && { enums: enums }),
+        ...(databases[database].hasTypes && { types: types }),
+      };
       await db.diagrams
         .where("diagramId")
         .equals(loadedDiagramId)
-        .modify({
-          database: database,
-          name: title,
-          lastModified: new Date(),
-          tables: tables,
-          references: relationships,
-          notes: notes,
-          areas: areas,
-          gistId: gistId ?? "",
-          pan: transform.pan,
-          zoom: transform.zoom,
-          loadedFromGistId: loadedFromGistId,
-          ...(databases[database].hasEnums && { enums: enums }),
-          ...(databases[database].hasTypes && { types: types }),
-        })
+        .modify(serverPayload)
         .then(() => {
           setSaveState(State.SAVED);
           setLastSaved(new Date().toLocaleString());
         });
+      if (isServerDiagram && typeof extensions.serverSave === "function") {
+        extensions.serverSave(serverPayload).catch((e) =>
+          console.warn("server save failed:", e)
+        );
+      }
     }
   }, [
     cloudOnly,
     extensions,
+    isServerDiagram,
     searchParams,
     setSearchParams,
     tables,
@@ -281,10 +292,21 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     };
 
     const loadDiagram = async (id) => {
-      const diagram =
-        typeof extensions.cloudLoad === "function"
-          ? await extensions.cloudLoad(id)
-          : await db.diagrams.where("diagramId").equals(id).first();
+      let diagram = null;
+      let fromServer = false;
+
+      if (typeof extensions.serverLoad === "function") {
+        diagram = await extensions.serverLoad(id);
+        if (diagram) fromServer = true;
+      }
+      if (!diagram) {
+        diagram =
+          typeof extensions.cloudLoad === "function"
+            ? await extensions.cloudLoad(id)
+            : await db.diagrams.where("diagramId").equals(id).first();
+      }
+
+      setIsServerDiagram(fromServer);
 
       if (!diagram) return;
 
@@ -560,7 +582,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
 
   return (
     <div className="h-full flex flex-col overflow-hidden theme">
-      <IdContext.Provider value={{ gistId, setGistId, version, setVersion }}>
+      <IdContext.Provider value={{ gistId, setGistId, version, setVersion, isServerDiagram, setIsServerDiagram }}>
         <ControlPanel
           title={title}
           setTitle={setTitle}

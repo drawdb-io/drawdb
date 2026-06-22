@@ -21,6 +21,7 @@ const en = {
     save: "Save",
     save_as: "Save as",
     save_as_template: "Save as template",
+    save_to_server: "Save to shared",
     template_saved: "Template saved!",
     rename: "Rename",
     delete_diagram: "Delete diagram",

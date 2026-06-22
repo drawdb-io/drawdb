@@ -141,7 +141,7 @@ export default function ControlPanel({
   const { selectedElement, setSelectedElement } = useSelect();
   const { transform, setTransform } = useTransform();
   const { t, i18n } = useTranslation();
-  const { version, gistId, setGistId } = useContext(IdContext);
+  const { version, gistId, setGistId, isServerDiagram, setIsServerDiagram } = useContext(IdContext);
   const isTemplate = useMatch("/editor/templates/:id");
   const navigate = useNavigateWithParams();
   const extensions = useExtensions();
@@ -929,6 +929,36 @@ export default function ControlPanel({
         shortcut: "Ctrl+Shift+S",
         disabled: layout.readOnly,
       },
+      ...(typeof extensions.serverSave === "function" && {
+        save_to_server: {
+          function: async () => {
+            if (!diagramId) return;
+            const payload = {
+              diagramId,
+              database,
+              name: title,
+              gistId: gistId ?? "",
+              lastModified: new Date(),
+              tables,
+              references: relationships,
+              notes,
+              areas,
+              pan: transform.pan,
+              zoom: transform.zoom,
+              ...(databases[database].hasEnums && { enums }),
+              ...(databases[database].hasTypes && { types }),
+            };
+            try {
+              await extensions.serverSave(payload);
+              setIsServerDiagram(true);
+              Toast.success(t("save_to_server") + " ✓");
+            } catch {
+              Toast.error(t("oops_smth_went_wrong"));
+            }
+          },
+          disabled: layout.readOnly || !diagramId,
+        },
+      }),
       save_as_template: {
         function: async () => {
           await db.templates

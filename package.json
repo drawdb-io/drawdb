@@ -4,12 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node server/index.js\"",
+    "dev:docker": "concurrently \"vite --host 0.0.0.0 --port 3000\" \"node server/index.js\"",
+    "start": "node server/index.js",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.0",
     "@dbml/core": "^3.13.9",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
@@ -41,10 +45,10 @@
     "react-i18next": "^14.1.1",
     "react-tweet": "^3.3.1",
     "react-router-dom": "^6.30.4",
-    "react-tweet": "^3.2.1",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
+    "concurrently": "^9.0.0",
     "@tailwindcss/postcss": "^4.0.14",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",

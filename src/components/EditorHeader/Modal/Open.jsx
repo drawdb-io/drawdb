@@ -18,11 +18,19 @@ function useDiagramList() {
   const cloudList = extensions?.cloudList;
   const cloudEnabled = typeof cloudList === "function";
   const cloudCurrentUserId = extensions?.cloudCurrentUserId ?? null;
+  const serverListFn = extensions?.serverList;
+  const serverEnabled = typeof serverListFn === "function";
 
   const localDiagrams = useLiveQuery(() => db.diagrams.toArray(), []);
 
   const [cloudState, setCloudState] = useState(() => ({
     loading: cloudEnabled,
+    error: null,
+    items: null,
+  }));
+
+  const [serverState, setServerState] = useState(() => ({
+    loading: serverEnabled,
     error: null,
     items: null,
   }));
@@ -52,12 +60,42 @@ function useDiagramList() {
     };
   }, [cloudEnabled, cloudList]);
 
+  useEffect(() => {
+    if (!serverEnabled) {
+      setServerState({ loading: false, error: null, items: [] });
+      return undefined;
+    }
+    let cancelled = false;
+    setServerState({ loading: true, error: null, items: null });
+    serverListFn()
+      .then((items) => {
+        if (cancelled) return;
+        setServerState({ loading: false, error: null, items });
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setServerState({
+          loading: false,
+          error: err?.message || "Failed to load shared diagrams",
+          items: null,
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [serverEnabled, serverListFn]);
+
   return {
-    loading: cloudState.loading || localDiagrams === undefined,
-    error: cloudState.error,
+    loading:
+      cloudState.loading ||
+      serverState.loading ||
+      localDiagrams === undefined,
+    error: cloudState.error || serverState.error,
     cloud: cloudState.items ?? [],
+    server: serverState.items ?? [],
     local: localDiagrams ?? [],
     cloudEnabled,
+    serverEnabled,
     currentUserId: cloudCurrentUserId,
   };
 }
@@ -169,8 +207,16 @@ function SectionHeader({ children }) {
 
 export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
   const { t } = useTranslation();
-  const { loading, error, cloud, local, cloudEnabled, currentUserId } =
-    useDiagramList();
+  const {
+    loading,
+    error,
+    cloud,
+    server,
+    local,
+    cloudEnabled,
+    serverEnabled,
+    currentUserId,
+  } = useDiagramList();
   const extensions = useExtensions();
   const cloudRowActions = extensions?.cloudRowActions;
 
@@ -196,9 +242,11 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
   }
 
   const hasCloud = cloud.length > 0;
+  const hasServer = server.length > 0;
   const hasLocal = local.length > 0;
+  const hasAnySections = cloudEnabled || serverEnabled;
 
-  if (!hasCloud && !hasLocal) {
+  if (!hasCloud && !hasServer && !hasLocal) {
     return (
       <Banner
         fullMode={false}
@@ -232,9 +280,27 @@ export default function Open({ selectedDiagramId, setSelectedDiagramId }) {
           )}
         </section>
       )}
+      {serverEnabled && (
+        <section>
+          <SectionHeader>Shared diagrams</SectionHeader>
+          {hasServer ? (
+            <DiagramTable
+              items={server}
+              isCloud={false}
+              currentUserId={currentUserId}
+              selectedDiagramId={selectedDiagramId}
+              setSelectedDiagramId={setSelectedDiagramId}
+            />
+          ) : (
+            <div className="text-sm text-zinc-500 dark:text-zinc-400 px-1 py-2">
+              No shared diagrams yet.
+            </div>
+          )}
+        </section>
+      )}
       {hasLocal && (
         <section>
-          {cloudEnabled && <SectionHeader>Local (this browser)</SectionHeader>}
+          {hasAnySections && <SectionHeader>Local (this browser)</SectionHeader>}
           <DiagramTable
             items={local}
             isCloud={false}

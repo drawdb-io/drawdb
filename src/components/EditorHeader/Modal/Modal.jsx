@@ -184,12 +184,14 @@ export default function Modal({
           exportData.data,
           `${exportData.filename}.${exportData.extension}`,
         );
+        setModal(MODAL.NONE);
         return;
       case MODAL.CODE: {
         const blob = new Blob([exportData.data], {
           type: "application/json",
         });
         saveAs(blob, `${exportData.filename}.${exportData.extension}`);
+        setModal(MODAL.NONE);
         return;
       }
       case MODAL.IMPORT:

@@ -15,7 +15,7 @@ const defaultSettings = {
   showRelationshipLabels: true,
   tableWidth: tableWidth,
   showDebugCoordinates: false,
-  showComments: false,
+  showComments: true,
 };
 
 export const SettingsContext = createContext({

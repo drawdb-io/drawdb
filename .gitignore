@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Server diagram data (runtime files, not source)
+server/data/*.json
