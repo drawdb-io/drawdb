@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Action, ObjectType } from "../../../data/constants";
 import { Input, Button, Popover, Select } from "@douyinfe/semi-ui";
 import { IconMore, IconKeyStroked } from "@douyinfe/semi-icons";
@@ -8,6 +8,7 @@ import {
   useTypes,
   useUndoRedo,
   useLayout,
+  useSelect,
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
@@ -23,11 +24,22 @@ export default function TableField({ data, tid, index, inherited }) {
   const { tables, database } = useDiagram();
   const { t } = useTranslation();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { selectedElement } = useSelect();
   const [editField, setEditField] = useState({});
   const table = useMemo(() => tables.find((t) => t.id === tid), [tables, tid]);
+  const isFieldSelected =
+    selectedElement.fieldId === data.id && selectedElement.id === tid;
+
+  useEffect(() => {
+    if (isFieldSelected) {
+      document
+        .getElementById(`scroll_table_${tid}_input_${index}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [selectedElement.fieldId, selectedElement.id]);
 
   return (
-    <div className="hover-1 my-2 flex gap-2 items-center">
+    <div className={`hover-1 my-2 flex gap-2 items-center${isFieldSelected ? " ring-1 ring-blue-500 rounded" : ""}`}>
       <DragHandle readOnly={layout.readOnly} id={data.id} />
 
       <div className="min-w-20 flex-1/3">

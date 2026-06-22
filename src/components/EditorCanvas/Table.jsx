@@ -198,6 +198,7 @@ export default function Table({
         element: ObjectType.TABLE,
         id: tableData.id,
         open: true,
+        fieldId: -1,
       }));
     } else {
       setSelectedElement((prev) => ({
@@ -206,8 +207,8 @@ export default function Table({
         element: ObjectType.TABLE,
         id: tableData.id,
         open: true,
+        fieldId: -1,
       }));
-      if (selectedElement.currentTab !== Tab.TABLES) return;
       document
         .getElementById(`scroll_table_${tableData.id}`)
         .scrollIntoView({ behavior: "smooth" });
@@ -248,7 +249,6 @@ export default function Table({
         onPointerDown={onPointerDown}
       >
         <div
-          onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
                select-none rounded-lg w-full ${
                  settings.mode === "light"
@@ -272,11 +272,12 @@ export default function Table({
           >
             <div
               className={`overflow-hidden font-bold h-[40px] flex justify-between items-center gap-2`}
+              onClick={openEditor}
             >
               <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">
                 {tableData.name}
               </div>
-              <div className="hidden group-hover:flex items-center shrink-0 pe-2">
+              <div className="hidden group-hover:flex items-center shrink-0 pe-2" onClick={(e) => e.stopPropagation()}>
                 <ButtonGroup
                   type="tertiary"
                   size="small"
@@ -523,6 +524,27 @@ export default function Table({
           // Required for onPointerLeave to trigger when a touch pointer leaves
           // https://stackoverflow.com/a/70976017/1137077
           e.target.releasePointerCapture(e.pointerId);
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!layout.sidebar) {
+            setSelectedElement((prev) => ({
+              ...prev,
+              element: ObjectType.TABLE,
+              id: tableData.id,
+              open: true,
+              fieldId: fieldData.id,
+            }));
+          } else {
+            setSelectedElement((prev) => ({
+              ...prev,
+              currentTab: Tab.TABLES,
+              element: ObjectType.TABLE,
+              id: tableData.id,
+              open: true,
+              fieldId: fieldData.id,
+            }));
+          }
         }}
       >
         <div className="h-[36px] px-2 py-1 flex justify-between items-center gap-1">

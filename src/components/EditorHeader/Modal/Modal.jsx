@@ -71,6 +71,7 @@ export default function Modal({
     overwrite: false,
   });
   const [importData, setImportData] = useState(null);
+  const [importOverwrite, setImportOverwrite] = useState(false);
   const [error, setError] = useState({
     type: STATUS.NONE,
     message: "",
@@ -96,6 +97,17 @@ export default function Modal({
     }
     if (importData.customTypes) {
       mergeCustomTypes(importData.customTypes);
+    }
+  };
+
+  const mergeDiagram = () => {
+    setTables((prev) => [...prev, ...importData.tables]);
+    setRelationships((prev) => [...prev, ...importData.relationships]);
+    if (databases[database].hasEnums && importData.enums) {
+      setEnums((prev) => [...prev, ...importData.enums]);
+    }
+    if (databases[database].hasTypes && importData.types) {
+      setTypes((prev) => [...prev, ...importData.types]);
     }
   };
 
@@ -182,9 +194,14 @@ export default function Modal({
       }
       case MODAL.IMPORT:
         if (error.type !== STATUS.ERROR) {
-          setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
-          overwriteDiagram();
+          if (importOverwrite) {
+            setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
+            overwriteDiagram();
+          } else {
+            mergeDiagram();
+          }
           setImportData(null);
+          setImportOverwrite(false);
           setModal(MODAL.NONE);
           setUndoStack([]);
           setRedoStack([]);
@@ -233,6 +250,8 @@ export default function Modal({
             error={error}
             setError={setError}
             importFrom={importFrom}
+            overwrite={importOverwrite}
+            setOverwrite={setImportOverwrite}
           />
         );
       case MODAL.IMPORT_SRC:

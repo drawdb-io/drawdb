@@ -8,3 +8,11 @@ export function jsonDiagramIsValid(obj) {
 export function ddbDiagramIsValid(obj) {
   return new Validator().validate(obj, ddbSchema).valid;
 }
+
+export function jsonDiagramErrors(obj) {
+  return new Validator().validate(obj, jsonSchema).errors;
+}
+
+export function ddbDiagramErrors(obj) {
+  return new Validator().validate(obj, ddbSchema).errors;
+}

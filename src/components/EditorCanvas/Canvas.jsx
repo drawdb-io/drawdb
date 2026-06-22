@@ -690,7 +690,7 @@ export default function Canvas() {
         }));
       } else {
         // Default and Ctrl/Meta: zoom centered on cursor
-        const eagernessFactor = 0.05;
+        const eagernessFactor = 0.15;
         setTransform((prev) => ({
           pan: {
             x:
@@ -704,7 +704,7 @@ export default function Canvas() {
                 eagernessFactor *
                 Math.sign(e.deltaY),
           },
-          zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
+          zoom: e.deltaY <= 0 ? prev.zoom * 1.15 : prev.zoom / 1.15,
         }));
       }
     },

@@ -1,8 +1,8 @@
 import {
-  ddbDiagramIsValid,
-  jsonDiagramIsValid,
+  ddbDiagramErrors,
+  jsonDiagramErrors,
 } from "../../../utils/validateSchema";
-import { Upload, Banner } from "@douyinfe/semi-ui";
+import { Upload, Banner, Checkbox } from "@douyinfe/semi-ui";
 import { DB, IMPORT_FROM, STATUS } from "../../../data/constants";
 import {
   useAreas,
@@ -14,11 +14,26 @@ import {
 import { useTranslation } from "react-i18next";
 import { fromDBML } from "../../../utils/importFrom/dbml";
 
+function formatValidationError(e) {
+  let msg = e.stack.replace(/^instance/, "file");
+  if (
+    e.path.length > 0 &&
+    e.instance &&
+    typeof e.instance === "object" &&
+    typeof e.instance.name === "string"
+  ) {
+    msg = msg.replace(/^([\w.[\]]+)/, `$1 ("${e.instance.name}")`);
+  }
+  return `• ${msg}`;
+}
+
 export default function ImportDiagram({
   setImportData,
   error,
   setError,
   importFrom,
+  overwrite,
+  setOverwrite,
 }) {
   const { areas } = useAreas();
   const { notes } = useNotes();
@@ -51,18 +66,26 @@ export default function ImportDiagram({
     }
 
     if (file.type === "application/json") {
-      if (!jsonDiagramIsValid(jsonObject)) {
+      const errors = jsonDiagramErrors(jsonObject);
+      if (errors.length > 0) {
+        const details = errors
+          .map(formatValidationError)
+          .join("\n");
         setError({
           type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
+          message: `The file is missing necessary properties for a diagram:\n${details}`,
         });
         return;
       }
     } else if (file.name.split(".").pop() === "ddb") {
-      if (!ddbDiagramIsValid(jsonObject)) {
+      const errors = ddbDiagramErrors(jsonObject);
+      if (errors.length > 0) {
+        const details = errors
+          .map(formatValidationError)
+          .join("\n");
         setError({
           type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
+          message: `The file is missing necessary properties for a diagram:\n${details}`,
         });
         return;
       }
@@ -73,12 +96,18 @@ export default function ImportDiagram({
     }
 
     if (jsonObject.database !== database) {
+      if (database !== DB.GENERIC) {
+        setError({
+          type: STATUS.ERROR,
+          message:
+            "The imported diagram and the open diagram don't use matching databases.",
+        });
+        return;
+      }
       setError({
-        type: STATUS.ERROR,
-        message:
-          "The imported diagram and the open diagram don't use matching databases.",
+        type: STATUS.WARNING,
+        message: `Importing a ${jsonObject.database} diagram into a Generic diagram. Field types will be preserved as-is.`,
       });
-      return;
     }
 
     let ok = true;
@@ -121,15 +150,26 @@ export default function ImportDiagram({
     } else {
       setError({
         type: STATUS.WARNING,
-        message:
-          "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+        message: "Tables will be added to the existing diagram.",
       });
     }
   };
 
   const loadDBMLData = (e) => {
     try {
-      setImportData(fromDBML(e.target.result));
+      const data = fromDBML(e.target.result);
+      setImportData(data);
+      if (diagramIsEmpty()) {
+        setError({
+          type: STATUS.OK,
+          message: "Everything looks good. You can now import.",
+        });
+      } else {
+        setError({
+          type: STATUS.WARNING,
+          message: "Tables will be added to the existing diagram.",
+        });
+      }
     } catch (error) {
       const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
 
@@ -204,21 +244,31 @@ export default function ImportDiagram({
         <Banner
           type="danger"
           fullMode={false}
-          description={<div>{error.message}</div>}
+          description={<div style={{ whiteSpace: "pre-wrap" }}>{error.message}</div>}
         />
       ) : error.type === STATUS.OK ? (
         <Banner
           type="info"
           fullMode={false}
-          description={<div>{error.message}</div>}
+          description={<div style={{ whiteSpace: "pre-wrap" }}>{error.message}</div>}
         />
       ) : (
         error.type === STATUS.WARNING && (
-          <Banner
-            type="warning"
-            fullMode={false}
-            description={<div>{error.message}</div>}
-          />
+          <>
+            <Banner
+              type="warning"
+              fullMode={false}
+              description={<div style={{ whiteSpace: "pre-wrap" }}>{error.message}</div>}
+            />
+            <div className="mt-2">
+              <Checkbox
+                checked={overwrite}
+                onChange={(e) => setOverwrite(e.target.checked)}
+              >
+                Replace existing diagram
+              </Checkbox>
+            </div>
+          </>
         )
       )}
     </div>

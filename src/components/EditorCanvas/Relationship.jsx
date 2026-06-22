@@ -144,6 +144,19 @@ export default function Relationship({ data }) {
     cardinalityEndY = point2.y;
   }
 
+  useEffect(() => {
+    if (
+      layout.sidebar &&
+      selectedElement.element === ObjectType.RELATIONSHIP &&
+      selectedElement.id === data.id &&
+      selectedElement.open
+    ) {
+      document
+        .getElementById(`scroll_ref_${data.id}`)
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedElement.id, selectedElement.element, selectedElement.open]);
+
   const edit = () => {
     if (!layout.sidebar) {
       setSelectedElement((prev) => ({
@@ -160,10 +173,6 @@ export default function Relationship({ data }) {
         id: data.id,
         open: true,
       }));
-      if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
-      document
-        .getElementById(`scroll_ref_${data.id}`)
-        .scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -171,7 +180,7 @@ export default function Relationship({ data }) {
 
   return (
     <>
-      <g className="select-none group" onDoubleClick={edit}>
+      <g className="select-none group" onClick={edit}>
         {/* invisible wider path for better hover ux */}
         <path
           d={

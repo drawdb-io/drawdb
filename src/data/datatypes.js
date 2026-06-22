@@ -818,8 +818,8 @@ export const mysqlTypes = new Proxy(mysqlTypesBase, {
 });
 
 const postgresTypesBase = {
-  SMALLINT: {
-    type: "SMALLINT",
+  INT2: {
+    type: "INT2",
     color: intColor,
     checkDefault: (field) => {
       return intRegex.test(field.default);
@@ -828,10 +828,10 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
-    compatibleWith: ["SMALLSERIAL", "SERIAL", "BIGSERIAL", "INTEGER", "BIGINT"],
+    compatibleWith: ["SMALLINT", "INTEGER", "BIGINT"],
   },
-  INTEGER: {
-    type: "INTEGER",
+  INT4: {
+    type: "INT4",
     color: intColor,
     checkDefault: (field) => {
       return intRegex.test(field.default);
@@ -840,16 +840,10 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
-    compatibleWith: [
-      "SMALLSERIAL",
-      "SERIAL",
-      "BIGSERIAL",
-      "SMALLINT",
-      "BIGINT",
-    ],
+    compatibleWith: ["INTEGER", "SMALLINT", "BIGINT"],
   },
-  BIGINT: {
-    type: "BIGINT",
+  INT8: {
+    type: "INT8",
     color: intColor,
     checkDefault: (field) => {
       return intRegex.test(field.default);
@@ -858,95 +852,122 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     canIncrement: true,
-    compatibleWith: [
-      "SMALLSERIAL",
-      "SERIAL",
-      "BIGSERIAL",
-      "INTEGER",
-      "SMALLINT",
-    ],
+    compatibleWith: ["BIGINT", "INTEGER", "SMALLINT"],
   },
-  DECIMAL: {
-    type: "DECIMAL",
+  FLOAT4: {
+    type: "FLOAT4",
     color: decimalColor,
     checkDefault: (field) => {
       return doubleRegex.test(field.default);
     },
     hasCheck: true,
     isSized: false,
-    hasPrecision: true,
+    hasPrecision: false,
+    compatibleWith: ["REAL", "FLOAT8", "DOUBLE PRECISION"],
+  },
+  FLOAT8: {
+    type: "FLOAT8",
+    color: decimalColor,
+    checkDefault: (field) => {
+      return doubleRegex.test(field.default);
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
+    compatibleWith: ["DOUBLE PRECISION", "FLOAT4", "REAL"],
+  },
+  "INT2[]": {
+    type: "INT2[]",
+    color: intColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "INT4[]": {
+    type: "INT4[]",
+    color: intColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "INT8[]": {
+    type: "INT8[]",
+    color: intColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "FLOAT4[]": {
+    type: "FLOAT4[]",
+    color: decimalColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "FLOAT8[]": {
+    type: "FLOAT8[]",
+    color: decimalColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "TEXT[]": {
+    type: "TEXT[]",
+    color: stringColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "VARCHAR[]": {
+    type: "VARCHAR[]",
+    color: stringColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "BOOLEAN[]": {
+    type: "BOOLEAN[]",
+    color: booleanColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "UUID[]": {
+    type: "UUID[]",
+    color: networkIdColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
+  },
+  "JSONB[]": {
+    type: "JSONB[]",
+    color: documentColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
   },
   NUMERIC: {
     type: "NUMERIC",
-    color: decimalColor,
-    checkDefault: (field) => {
-      return doubleRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: true,
-  },
-  REAL: {
-    type: "REAL",
-    color: decimalColor,
-    checkDefault: (field) => {
-      return doubleRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: true,
-  },
-  "DOUBLE PRECISION": {
-    type: "DOUBLE PRECISION",
-    color: decimalColor,
-    checkDefault: (field) => {
-      return doubleRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: true,
-  },
-  SMALLSERIAL: {
-    type: "SMALLSERIAL",
-    color: intColor,
-    checkDefault: (field) => {
-      return intRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: false,
-    compatibleWith: ["INTEGER", "SERIAL", "BIGSERIAL", "SMALLINT", "BIGINT"],
-  },
-  SERIAL: {
-    type: "SERIAL",
-    color: intColor,
-    checkDefault: (field) => {
-      return intRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: false,
-    compatibleWith: [
-      "INTEGER",
-      "SMALLSERIAL",
-      "BIGSERIAL",
-      "SMALLINT",
-      "BIGINT",
-    ],
-  },
-  BIGSERIAL: {
-    type: "BIGSERIAL",
-    color: intColor,
-    checkDefault: (field) => {
-      return intRegex.test(field.default);
-    },
-    hasCheck: true,
-    isSized: false,
-    hasPrecision: false,
-    compatibleWith: ["INTEGER", "SERIAL", "SMALLSERIAL", "SMALLINT", "BIGINT"],
-  },
-  MONEY: {
-    type: "MONEY",
     color: decimalColor,
     checkDefault: (field) => {
       return doubleRegex.test(field.default);
@@ -1037,37 +1058,6 @@ const postgresTypesBase = {
     hasPrecision: false,
     hasQuotes: true,
   },
-  TIME: {
-    type: "TIME",
-    color: dateColor,
-    checkDefault: (field) => {
-      const specialValues = ["now", "allballs"];
-      return (
-        /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d$/.test(field.default) ||
-        specialValues.includes(field.default.toLowerCase())
-      );
-    },
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  TIMETZ: {
-    type: "TIMETZ",
-    color: dateColor,
-    checkDefault: (field) => {
-      const specialValues = ["now", "allballs"];
-      return (
-        /^(?:[01]?\d|2[0-3]):[0-5]?\d:[0-5]?\d([+-]\d{2}:\d{2})?$/.test(
-          field.default,
-        ) || specialValues.includes(field.default.toLowerCase())
-      );
-    },
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
   TIMESTAMP: {
     type: "TIMESTAMP",
     color: dateColor,
@@ -1121,237 +1111,10 @@ const postgresTypesBase = {
     hasPrecision: false,
     hasQuotes: true,
   },
-  INTERVAL: {
-    type: "INTERVAL",
-    color: dateColor,
-    checkDefault: (field) => /^['"\d\s\\-]+$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
   BOOLEAN: {
     type: "BOOLEAN",
     color: booleanColor,
     checkDefault: (field) => /^(true|false)$/i.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-  },
-  POINT: {
-    type: "POINT",
-    color: geometricColor,
-    checkDefault: (field) => /^\(\d+,\d+\)$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-  },
-  LINE: {
-    type: "LINE",
-    color: geometricColor,
-    checkDefault: (field) => /^(\(\d+,\d+\),)+\(\d+,\d+\)$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-  },
-  LSEG: {
-    type: "LSEG",
-    color: geometricColor,
-    checkDefault: (field) => /^(\(\d+,\d+\),)+\(\d+,\d+\)$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-  },
-  BOX: {
-    type: "BOX",
-    color: geometricColor,
-    checkDefault: (field) =>
-      /^\(\d+(\.\d+)?,\d+(\.\d+)?\),\(\d+(\.\d+)?,\d+(\.\d+)?\)$/.test(
-        field.default,
-      ),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  PATH: {
-    type: "PATH",
-    color: geometricColor,
-    checkDefault: (field) =>
-      /^\((\d+(\.\d+)?,\d+(\.\d+)?(,\d+(\.\d+)?,\d+(\.\d+)?)*?)\)$/.test(
-        field.default,
-      ),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  POLYGON: {
-    type: "POLYGON",
-    color: geometricColor,
-    checkDefault: (field) =>
-      /^\((\d+(\.\d+)?,\d+(\.\d+)?(,\d+(\.\d+)?,\d+(\.\d+)?)*?)\)$/.test(
-        field.default,
-      ),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  CIRCLE: {
-    type: "CIRCLE",
-    color: geometricColor,
-    checkDefault: (field) =>
-      /^<\(\d+(\.\d+)?,\d+(\.\d+)?\),\d+(\.\d+)?\\>$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  CIDR: {
-    type: "CIDR",
-    color: networkIdColor,
-    checkDefault: (field) =>
-      /^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  INET: {
-    type: "INET",
-    color: networkIdColor,
-    checkDefault: (field) =>
-      /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  MACADDR: {
-    type: "MACADDR",
-    color: networkIdColor,
-    checkDefault: (field) =>
-      /^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  MACADDR8: {
-    type: "MACADDR8",
-    color: networkIdColor,
-    checkDefault: (field) =>
-      /^([A-Fa-f0-9]{2}:){7}[A-Fa-f0-9]{2}$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  BIT: {
-    type: "BIT",
-    color: binaryColor,
-    checkDefault: (field) => /^[01]{1,}$/.test(field.default),
-    hasCheck: true,
-    isSized: true,
-    hasPrecision: false,
-    defaultSize: 1,
-    hasQuotes: false,
-  },
-  VARBIT: {
-    type: "VARBIT",
-    color: binaryColor,
-    checkDefault: (field) => /^[01]*$/.test(field.default),
-    hasCheck: true,
-    isSized: true,
-    hasPrecision: false,
-    defaultSize: 1,
-    hasQuotes: false,
-  },
-  VECTOR: {
-    type: "VECTOR",
-    color: vectorColor,
-    checkDefault: (field) => {
-      let elements;
-      let elementsStr = field.default;
-      try {
-        if (strHasQuotes(field.default)) {
-          elementsStr = field.default.slice(1, -1);
-        }
-        elements = JSON.parse(elementsStr);
-        return (
-          Array.isArray(elements) &&
-          elements.length === field.size &&
-          elements.every(Number.isFinite)
-        );
-      } catch (e) {
-        return false;
-      }
-    },
-    hasCheck: true,
-    isSized: true,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  HALFVEC: {
-    type: "HALFVEC",
-    color: vectorColor,
-    checkDefault: (field) => {
-      let elements;
-      let elementsStr = field.default;
-      try {
-        if (strHasQuotes(field.default)) {
-          elementsStr = field.default.slice(1, -1);
-        }
-        elements = JSON.parse(elementsStr);
-        return (
-          Array.isArray(elements) &&
-          elements.length === field.size &&
-          elements.every(Number.isFinite)
-        );
-      } catch (e) {
-        return false;
-      }
-    },
-    hasCheck: true,
-    isSized: true,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  SPARSEVEC: {
-    type: "SPARSEVEC",
-    color: vectorColor,
-    checkDefault: (field) => {
-      let elementsStr = field.default;
-      if (strHasQuotes(field.default)) {
-        elementsStr = field.default.slice(1, -1);
-      }
-      const lengthStr = elementsStr.split("/")[1];
-      const length = Number.parseInt(lengthStr);
-      return length === field.size;
-    },
-    hasCheck: true,
-    isSized: true,
-    hasPrecision: false,
-    hasQuotes: true,
-  },
-  TSVECTOR: {
-    type: "TSVECTOR",
-    color: otherColor,
-    checkDefault: (field) => /^[A-Za-z0-9: ]*$/.test(field.default),
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: false,
-  },
-  TSQUERY: {
-    type: "TSQUERY",
-    color: otherColor,
-    checkDefault: (field) => /^[A-Za-z0-9: &|!()]*$/.test(field.default),
     hasCheck: false,
     isSized: false,
     hasPrecision: false,
@@ -1389,16 +1152,6 @@ const postgresTypesBase = {
     hasPrecision: false,
     hasQuotes: true,
     noDefault: false,
-  },
-  XML: {
-    type: "XML",
-    color: documentColor,
-    checkDefault: (field) => true,
-    hasCheck: false,
-    isSized: false,
-    hasPrecision: false,
-    hasQuotes: true,
-    noDefault: true,
   },
 };
 
