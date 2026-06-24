@@ -28,7 +28,9 @@ export function fromDBML(src) {
 
         field.id = nanoid();
         field.name = column.name;
+        // type_name: 纯类型名（如 "VARCHAR"），args: 参数字符串（如 "50"）
         field.type = column.type.type_name.toUpperCase();
+        field.size = column.type.args ?? "";
         field.default = column.dbdefault?.value ?? "";
         field.check = "";
         field.primary = !!column.pk;
