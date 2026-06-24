@@ -276,7 +276,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           }
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     };
 
@@ -439,7 +439,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           });
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         setSaveState(State.FAILED_TO_LOAD);
       }
     };
