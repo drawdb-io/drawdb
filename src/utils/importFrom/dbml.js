@@ -28,7 +28,11 @@ export function fromDBML(src) {
 
         field.id = nanoid();
         field.name = column.name;
-        field.type = column.type.type_name.toUpperCase();
+        // type_name 带括号（如 "varchar(50)"），需剥离；args 为参数字符串（如 "50"）
+        const rawType = column.type.type_name.toUpperCase();
+        const parenIdx = rawType.indexOf("(");
+        field.type = parenIdx !== -1 ? rawType.substring(0, parenIdx) : rawType;
+        field.size = column.type.args ?? "";
         field.default = column.dbdefault?.value ?? "";
         field.check = "";
         field.primary = !!column.pk;
