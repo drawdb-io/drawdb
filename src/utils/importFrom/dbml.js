@@ -28,10 +28,11 @@ export function fromDBML(src) {
 
         field.id = nanoid();
         field.name = column.name;
-        // type_name 带括号（如 "varchar(50)"），需剥离；args 为参数字符串（如 "50"）
-        const rawType = column.type.type_name.toUpperCase();
-        const parenIdx = rawType.indexOf("(");
-        field.type = parenIdx !== -1 ? rawType.substring(0, parenIdx) : rawType;
+        // type_name includes parentheses (e.g. "varchar(50)"), args is the parameter string (e.g. "50").
+        // Separate them into raw type name and size for drawdb's internal format.
+        const rawTypeName = column.type.type_name.toUpperCase();
+        const parenIdx = rawTypeName.indexOf("(");
+        field.type = parenIdx !== -1 ? rawTypeName.substring(0, parenIdx) : rawTypeName;
         field.size = column.type.args ?? "";
         field.default = column.dbdefault?.value ?? "";
         field.check = "";
