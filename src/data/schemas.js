@@ -40,6 +40,7 @@ export const tableSchema = {
     comment: { type: "string" },
     locked: { type: "boolean" },
     hidden: { type: "boolean" },
+    collapsed: { type: "boolean" },
     indices: {
       type: "array",
       items: {
@@ -53,6 +54,20 @@ export const tableSchema = {
           },
         },
         required: ["name", "unique", "fields"],
+      },
+    },
+    uniqueConstraints: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          fields: {
+            type: "array",
+            items: { type: "string" },
+          },
+        },
+        required: ["name", "fields"],
       },
     },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
@@ -89,6 +104,7 @@ export const noteSchema = {
     content: { type: "string" },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
     height: { type: "number" },
+    width: { type: "number" },
     locked: { type: "boolean" },
   },
   required: ["id", "x", "y", "title", "content", "color", "height"],
@@ -195,6 +211,7 @@ export const jsonSchema = {
     database: { type: "string" },
   },
   required: ["tables", "relationships", "notes", "subjectAreas"],
+  additionalProperties: true,
 };
 
 export const ddbSchema = {

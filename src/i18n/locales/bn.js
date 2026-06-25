@@ -265,7 +265,7 @@ const bn = {
     versions: "ভার্সনসমূহ",
     no_saved_versions: "কোনো সেভ করা ভার্সন নেই",
     record_version: "ভার্সন রেকর্ড করুন",
-    commited_at: "কমিট করা হয়েছে",
+    committed_at: "কমিট করা হয়েছে",
     read_only: "রিড-অনলি",
     continue: "চালিয়ে যান",
     restore_version: "ভার্সন পুনরুদ্ধার করুন",

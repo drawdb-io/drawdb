@@ -278,7 +278,7 @@ const hu = {
     versions: "Verziók",
     no_saved_versions: "Nincs mentett verzió",
     record_version: "Verzió felvétele",
-    commited_at: "Hozzáadva:",
+    committed_at: "Hozzáadva:",
     read_only: "Csak olvasható",
     continue: "Folytatás",
     restore_version: "Verzió visszaállítása",

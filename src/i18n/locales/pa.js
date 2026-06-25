@@ -270,7 +270,7 @@ const pa = {
     versions: "ਵਰਜਨ",
     no_saved_versions: "ਕੋਈ ਸੇਵ ਕੀਤੇ ਵਰਜਨ ਨਹੀਂ",
     record_version: "ਵਰਜਨ ਰਿਕਾਰਡ ਕਰੋ",
-    commited_at: "ਕਮਿਟ ਕੀਤਾ",
+    committed_at: "ਕਮਿਟ ਕੀਤਾ",
     read_only: "ਸਿਰਫ ਪੜ੍ਹਨ ਲਈ",
     continue: "ਜਾਰੀ ਰੱਖੋ",
     restore_version: "ਵਰਜਨ ਰੀਸਟੋਰ ਕਰੋ",

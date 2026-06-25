@@ -265,7 +265,7 @@ const nl = {
     versions: "Versies",
     no_saved_versions: "Geen opgeslagen versies",
     record_version: "Versie vastleggen",
-    commited_at: "Vastgelegd op",
+    committed_at: "Vastgelegd op",
     read_only: "Alleen-lezen",
     continue: "Doorgaan",
     restore_version: "Versie herstellen",

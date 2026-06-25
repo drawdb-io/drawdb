@@ -320,7 +320,7 @@ export default function Versions({ open, title, setTitle }) {
                     )}
                   </div>
                 }
-                description={`${t("commited_at")} ${DateTime.fromISO(
+                description={`${t("committed_at")} ${DateTime.fromISO(
                   r.committed_at,
                 )
                   .setLocale(i18n.language)

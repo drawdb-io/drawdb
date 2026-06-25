@@ -2,7 +2,7 @@ import { Cardinality } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import i18n from "../../i18n/i18n";
 import { escapeQuotes } from "../exportSQL/shared";
-import { isFunction, isKeyword } from "../utils";
+import { isFunction, isKeyword, getRelationshipFields } from "../utils";
 
 const IDENT_SAFE_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -108,20 +108,28 @@ function processType(type) {
 }
 
 export function toDBML(diagram) {
+  const columnRef = (tableName, fieldNames) => {
+    const cols = fieldNames.map((n) => quoteIdentifier(n));
+    const colPart = cols.length === 1 ? cols[0] : `(${cols.join(", ")})`;
+    return `${quoteIdentifier(tableName)}.${colPart}`;
+  };
+
   const generateRelString = (rel) => {
     const { fields: startTableFields, name: startTableName } =
       diagram.tables.find((t) => t.id === rel.startTableId);
-    const { name: startFieldName } = startTableFields.find(
-      (f) => f.id === rel.startFieldId,
-    );
     const { fields: endTableFields, name: endTableName } = diagram.tables.find(
       (t) => t.id === rel.endTableId,
     );
-    const { name: endFieldName } = endTableFields.find(
-      (f) => f.id === rel.endFieldId,
+
+    const pairs = getRelationshipFields(rel);
+    const startFieldNames = pairs.map(
+      (p) => startTableFields.find((f) => f.id === p.startFieldId)?.name,
+    );
+    const endFieldNames = pairs.map(
+      (p) => endTableFields.find((f) => f.id === p.endFieldId)?.name,
     );
 
-    return `Ref ${quoteIdentifier(rel.name)} {\n\t${quoteIdentifier(startTableName)}.${quoteIdentifier(startFieldName)} ${cardinality(rel)} ${quoteIdentifier(endTableName)}.${quoteIdentifier(endFieldName)} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
+    return `Ref ${quoteIdentifier(rel.name)} {\n\t${columnRef(startTableName, startFieldNames)} ${cardinality(rel)} ${columnRef(endTableName, endFieldNames)} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
   };
 
   let enumDefinitions = "";
@@ -157,22 +165,28 @@ export function toDBML(diagram) {
                 diagram.database,
               )}${columnSettings(field, diagram.database)}`,
           )
-          .join("\n")}${
-          table.indices.length > 0
-            ? "\n\n\tindexes {\n" +
-              table.indices
-                .map(
-                  (index) =>
-                    `\t\t(${index.fields
-                      .map((f) => quoteIdentifier(f))
-                      .join(", ")}) [ name: '${
-                      index.name
-                    }'${index.unique ? ", unique" : ""} ]`,
-                )
-                .join("\n") +
-              "\n\t}"
-            : ""
-        }${
+          .join("\n")}${(() => {
+          const indexEntries = table.indices.map(
+            (index) =>
+              `\t\t(${index.fields
+                .map((f) => quoteIdentifier(f))
+                .join(", ")}) [ name: '${index.name}'${
+                index.unique ? ", unique" : ""
+              } ]`,
+          );
+          const uniqueEntries = (table.uniqueConstraints || [])
+            .filter((uc) => Array.isArray(uc.fields) && uc.fields.length > 0)
+            .map(
+              (uc) =>
+                `\t\t(${uc.fields
+                  .map((f) => quoteIdentifier(f))
+                  .join(", ")}) [ name: '${uc.name}', unique ]`,
+            );
+          const entries = [...indexEntries, ...uniqueEntries];
+          return entries.length > 0
+            ? "\n\n\tindexes {\n" + entries.join("\n") + "\n\t}"
+            : "";
+        })()}${
           table.comment && table.comment.trim() !== ""
             ? `\n\n\tNote: ${processComment(table.comment)}`
             : ""

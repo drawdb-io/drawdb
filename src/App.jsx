@@ -9,8 +9,8 @@ import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
-    <SettingsContextProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <SettingsContextProvider>
         <RestoreScroll />
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -21,8 +21,8 @@ export default function App() {
           <Route path="/templates" element={<Templates />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </SettingsContextProvider>
+      </SettingsContextProvider>
+    </BrowserRouter>
   );
 }
 

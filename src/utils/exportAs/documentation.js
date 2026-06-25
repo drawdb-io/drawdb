@@ -1,6 +1,23 @@
 import { dbToTypes } from "../../data/datatypes";
 import { jsonToMermaid } from "./mermaid";
 import { databases } from "../../data/databases";
+import { getRelationshipFields } from "../utils";
+
+function formatMarkdownTable(headers, rows) {
+  const allRows = [headers, ...rows];
+  const colWidths = headers.map((_, colIndex) =>
+    Math.max(...allRows.map((row) => (row[colIndex] ?? "").length)),
+  );
+
+  const pad = (cell, width) => (cell ?? "").padEnd(width);
+  const separator = colWidths.map((w) => "-".repeat(w)).join(" | ");
+  const headerRow = headers.map((h, i) => pad(h, colWidths[i])).join(" | ");
+  const dataRows = rows
+    .map((row) => `| ${row.map((cell, i) => pad(cell, colWidths[i])).join(" | ")} |`)
+    .join("\n");
+
+  return `| ${headerRow} |\n| ${separator} |\n${dataRows}`;
+}
 
 export function jsonToDocumentation(obj) {
   const documentationSummary = obj.tables
@@ -12,50 +29,82 @@ export function jsonToDocumentation(obj) {
   const documentationEntities = obj.tables
     .map((table) => {
       let enums = "";
-      let indexes =
-        table.indices.length > 0
-          ? table.indices
-              .map((index) => {
-                return `| ${index.name} | ${index.unique ? "✅" : ""} | ${index.fields.join(", ")} |`;
-              })
-              .join("\n")
-          : "";
-      const fields = table.fields
-        .map((field) => {
-          const fieldType =
-            field.type +
-            ((dbToTypes[obj.database][field.type].isSized ||
-              dbToTypes[obj.database][field.type].hasPrecision) &&
-            field.size &&
-            field.size !== ""
-              ? "(" + field.size + ")"
-              : "");
-          enums +=
-            field.type === "ENUM" && field.values && field.values.length > 0
-              ? `##### ${field.name}\n\n${field.values.map((index) => `- ${index}`).join("\n")}\n`
-              : "";
-          return (
-            `| **${field.name}** | ${fieldType} | ${field.primary ? "🔑 PK, " : ""}` +
-            `${field.notNull ? "not null" : "null"}${field.unique ? ", unique" : ""}${field.increment ? ", autoincrement" : ""}` +
-            `${field.default ? `, default: ${field.default}` : ""} | ` +
-            `${relationshipByField(table.id, obj.relationships, field.id)}` +
-            ` |${field.comment ? field.comment : ""} |`
-          );
-        })
-        .join("\n");
+
+      const fieldRows = table.fields.map((field) => {
+        const fieldType =
+          field.type +
+          ((dbToTypes[obj.database][field.type].isSized ||
+            dbToTypes[obj.database][field.type].hasPrecision) &&
+          field.size &&
+          field.size !== ""
+            ? "(" + field.size + ")"
+            : "");
+
+        enums +=
+          field.type === "ENUM" && field.values && field.values.length > 0
+            ? `##### ${field.name}\n\n${field.values.map((v) => `- ${v}`).join("\n")}\n`
+            : "";
+
+        const settings =
+          `${field.primary ? "🔑 PK, " : ""}` +
+          `${field.notNull ? "not null" : "null"}` +
+          `${field.unique ? ", unique" : ""}` +
+          `${field.increment ? ", autoincrement" : ""}` +
+          `${field.default ? `, default: ${field.default}` : ""}`;
+
+        const references = relationshipByField(
+          table.id,
+          obj.relationships,
+          field.id,
+        ).join(", ");
+
+        return [`**${field.name}**`, fieldType, settings, references, field.comment ?? ""];
+      });
+
+      const fieldsTable = formatMarkdownTable(
+        ["Name", "Type", "Settings", "References", "Note"],
+        fieldRows,
+      );
+
+      let indexesSection = "";
+      if (table.indices.length > 0) {
+        const indexRows = table.indices.map((index) => [
+          index.name,
+          index.unique ? "✅" : "",
+          index.fields.join(", "),
+        ]);
+        indexesSection =
+          "\n#### Indexes\n" +
+          formatMarkdownTable(["Name", "Unique", "Fields"], indexRows);
+      }
+
+      let uniqueConstraintsSection = "";
+      if ((table.uniqueConstraints || []).length > 0) {
+        const ucRows = table.uniqueConstraints.map((uc) => [
+          uc.name,
+          uc.fields.join(", "),
+        ]);
+        uniqueConstraintsSection =
+          "\n#### Unique constraints\n" +
+          formatMarkdownTable(["Name", "Fields"], ucRows);
+      }
+
       return (
         `### ${table.name}\n${table.comment ? table.comment : ""}\n` +
-        `| Name        | Type          | Settings                      | References                    | Note                           |\n` +
-        `|-------------|---------------|-------------------------------|-------------------------------|--------------------------------|\n` +
-        `${fields} \n${enums.length > 0 ? "\n#### Enums\n" + enums : ""}\n` +
-        `${indexes.length > 0 ? "\n#### Indexes\n| Name | Unique | Fields |\n|------|--------|--------|\n" + indexes : ""}`
+        `${fieldsTable} \n${enums.length > 0 ? "\n#### Enums\n" + enums : ""}\n` +
+        indexesSection +
+        uniqueConstraintsSection
       );
     })
     .join("\n");
 
   function relationshipByField(table, relationships, fieldId) {
     return relationships
-      .filter((r) => r.startTableId === table && r.startFieldId === fieldId)
+      .filter(
+        (r) =>
+          r.startTableId === table &&
+          getRelationshipFields(r).some((p) => p.startFieldId === fieldId),
+      )
       .map((rel) => rel.name);
   }
 
@@ -75,11 +124,8 @@ export function jsonToDocumentation(obj) {
     databases[obj.database].hasTypes && obj.types.length > 0
       ? obj.types
           .map((type) => {
-            return (
-              `| Name        | fields        | Note                           |\n` +
-              `|-------------|---------------|--------------------------------|\n` +
-              `| ${type.name} | ${type.fields.map((field) => field.name).join(", ")} | ${type.comment ? type.comment : ""} |`
-            );
+            const rows = [[type.name, type.fields.map((f) => f.name).join(", "), type.comment ?? ""]];
+            return formatMarkdownTable(["Name", "Fields", "Note"], rows);
           })
           .join("\n")
       : "";

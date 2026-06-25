@@ -73,6 +73,16 @@ export default function Navbar() {
             >
               <i className="opacity-70 bi bi-discord" />
             </a>
+            <a
+              title="Sponsor on GitHub"
+              className="p-1 px-1.5 relative flex-inline items-center justify-center hover:opacity-60 bg-white transition-all duration-300 rounded-full text-xl"
+              href={socials.sponsor}
+              target="_blank"
+              rel="noreferrer"
+            >
+               <i className="fa-solid fa-heart text-rose-300" />
+               <i className="absolute top-1.5 left-1.5 fa-regular fa-heart text-rose-400" />
+            </a>
           </div>
         </div>
         <button
@@ -122,6 +132,13 @@ export default function Navbar() {
           className="hover:bg-zinc-100 block p-3 text-base font-semibold"
         >
           Docs
+        </Link>
+        <hr />
+        <Link
+          to={socials.sponsor}
+          className="hover:bg-zinc-100 block p-3 text-base font-semibold"
+        >
+          Sponsor
         </Link>
       </SideSheet>
     </>

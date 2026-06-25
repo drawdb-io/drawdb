@@ -266,7 +266,7 @@ const pa_pk = {
     versions: "ورژنز",
     no_saved_versions: "کوئی محفوظ ورژن نہیں",
     record_version: "ورژن ریکارڈ کرو",
-    commited_at: "تے کمٹ کیتا گیا",
+    committed_at: "تے کمٹ کیتا گیا",
     read_only: "صرف پڑھن لئی",
     continue: "جاری رکھو",
     restore_version: "ورژن بحال کرو",

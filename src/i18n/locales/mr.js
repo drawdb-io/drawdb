@@ -262,7 +262,7 @@ const mr = {
     versions: "आवृत्त्या",
     no_saved_versions: "कोणत्याही जतन केलेल्या आवृत्त्या नाहीत",
     record_version: "आवृत्ती रेकॉर्ड करा",
-    commited_at: "कमिट केले",
+    committed_at: "कमिट केले",
     read_only: "फक्त वाचनीय",
     continue: "सुरू ठेवा",
     restore_version: "आवृत्ती पुनर्संचयित करा",

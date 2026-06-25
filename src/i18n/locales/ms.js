@@ -265,7 +265,7 @@ const ms = {
     versions: "Versi",
     no_saved_versions: "Tiada versi disimpan",
     record_version: "Rekod versi",
-    commited_at: "Dikomit pada",
+    committed_at: "Dikomit pada",
     read_only: "Baca sahaja",
     continue: "Teruskan",
     restore_version: "Pulihkan versi",

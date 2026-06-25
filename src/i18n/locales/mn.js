@@ -278,7 +278,7 @@ const mn = {
     versions: "Хувилбарууд",
     no_saved_versions: "Хадгалсан хувилбар алга",
     record_version: "Хувилбар бүртгэх",
-    commited_at: "Коммит хийсэн огноо",
+    committed_at: "Коммит хийсэн огноо",
     read_only: "Зөвхөн унших",
     continue: "Үргэлжлүүлэх",
     restore_version: "Хувилбар сэргээх",

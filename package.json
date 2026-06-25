@@ -18,7 +18,7 @@
     "@lexical/react": "^0.12.5",
     "@monaco-editor/react": "^4.7.0",
     "@vercel/analytics": "^1.2.2",
-    "axios": "^1.13.5",
+    "axios": "^1.16.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
     "file-saver": "^2.0.5",
@@ -30,7 +30,7 @@
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lexical": "^0.12.5",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "luxon": "^3.7.1",
     "nanoid": "^5.1.5",
     "node-sql-parser": "^5.4.0",
@@ -39,7 +39,8 @@
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^4.4.1",
     "react-i18next": "^14.1.1",
-    "react-router-dom": "^6.30.3",
+    "react-tweet": "^3.3.1",
+    "react-router-dom": "^6.30.4",
     "react-tweet": "^3.2.1",
     "usehooks-ts": "^3.1.0"
   },
@@ -47,15 +48,15 @@
     "@tailwindcss/postcss": "^4.0.14",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.0.3",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "postcss": "^8.4.32",
+    "postcss": "^8.5.14",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
-    "vite": "^6.4.1"
+    "vite": "^8.1.0"
   }
 }

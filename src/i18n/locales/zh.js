@@ -254,7 +254,7 @@ const zh = {
     versions: "版本列表",
     no_saved_versions: "暂无保存记录",
     record_version: "记录版本",
-    commited_at: "提交于",
+    committed_at: "提交于",
     read_only: "只读",
     continue: "继续",
     restore_version: "还原版本",

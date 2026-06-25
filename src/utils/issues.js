@@ -129,6 +129,23 @@ export function getIssues(diagram) {
       }
     });
 
+    const duplicateUniqueConstraints = {};
+    (table.uniqueConstraints || []).forEach((uc) => {
+      if (duplicateUniqueConstraints[uc.name]) {
+        issues.push(
+          i18n.t("duplicate_index", {
+            tableName: table.name,
+            indexName: uc.name,
+          }),
+        );
+      } else {
+        duplicateUniqueConstraints[uc.name] = true;
+      }
+      if (uc.fields.length === 0) {
+        issues.push(i18n.t("empty_index", { tableName: table.name }));
+      }
+    });
+
     if (!hasPrimaryKey) {
       issues.push(i18n.t("no_primary_key", { tableName: table.name }));
     }

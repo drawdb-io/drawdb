@@ -273,7 +273,7 @@ const ka = {
     versions: "ಆವೃತ್ತಿಗಳು",
     no_saved_versions: "ಯಾವುದೇ ಉಳಿಸಿದ ಆವೃತ್ತಿಗಳಿಲ್ಲ",
     record_version: "ಆವೃತ್ತಿಯನ್ನು ದಾಖಲಿಸಿ",
-    commited_at: "ಸಲ್ಲಿಸಿದ ಸಮಯ",
+    committed_at: "ಸಲ್ಲಿಸಿದ ಸಮಯ",
     read_only: "ಓದಲು ಮಾತ್ರ",
     continue: "ಮುಂದುವರಿಸಿ",
     restore_version: "ಆವೃತ್ತಿಯನ್ನು ಮರುಸ್ಥಾಪಿಸಿ",

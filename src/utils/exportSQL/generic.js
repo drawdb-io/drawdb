@@ -1,6 +1,12 @@
 import { DB } from "../../data/constants";
 import { dbToTypes, defaultTypes } from "../../data/datatypes";
-import { escapeQuotes, getInlineFK, parseDefault } from "./shared";
+import {
+  escapeQuotes,
+  getInlineFK,
+  parseDefault,
+  uniqueConstraintClause,
+  getFkColumnNames,
+} from "./shared";
 
 export function getJsonType(f) {
   if (!Object.keys(defaultTypes).includes(f.type)) {
@@ -218,7 +224,7 @@ export function jsonToMySQL(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};\n${`\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `\`${s}\``)}\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};\n${`\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${i.name}\`\nON \`${table.name}\` (${i.fields
@@ -233,14 +239,18 @@ export function jsonToMySQL(obj) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = obj.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }\`) REFERENCES \`${endName}\`(\`${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(${startColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")}) REFERENCES \`${endName}\`(${endColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }
@@ -317,7 +327,7 @@ export function jsonToPostgreSQL(obj) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${escapeQuotes(table.comment)}';\n` : ""}${table.fields
+        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${escapeQuotes(table.comment)}';\n` : ""}${table.fields
           .map((field) =>
             field.comment.trim() !== ""
               ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${escapeQuotes(field.comment)}';\n`
@@ -340,14 +350,18 @@ export function jsonToPostgreSQL(obj) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = obj.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE "${startName}"\nADD FOREIGN KEY("${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }") REFERENCES "${endName}"("${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }")\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE "${startName}"\nADD FOREIGN KEY(${startColumns
+        .map((c) => `"${c}"`)
+        .join(", ")}) REFERENCES "${endName}"(${endColumns
+        .map((c) => `"${c}"`)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }
@@ -412,7 +426,7 @@ export function jsonToSQLite(obj) {
               .map((f) => `"${f.name}"`)
               .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
           : ""
-      }${inlineFK}\n);\n${table.indices
+      }${inlineFK}${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
@@ -461,7 +475,7 @@ export function jsonToMariaDB(obj) {
                 .map((f) => `\`${f.name}\``)
                 .join(", ")})`
             : ""
-        }\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};${`\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `\`${s}\``)}\n)${table.comment ? ` COMMENT='${escapeQuotes(table.comment)}'` : ""};${`\n${table.indices
           .map(
             (i) =>
               `CREATE ${i.unique ? "UNIQUE " : ""}INDEX \`${
@@ -478,14 +492,18 @@ export function jsonToMariaDB(obj) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = obj.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(\`${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }\`) REFERENCES \`${endName}\`(\`${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }\`)\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+      return `ALTER TABLE \`${startName}\`\nADD FOREIGN KEY(${startColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")}) REFERENCES \`${endName}\`(${endColumns
+        .map((c) => `\`${c}\``)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
 }
@@ -533,7 +551,7 @@ export function jsonToSQLServer(obj) {
                 .map((f) => `[${f.name}]`)
                 .join(", ")})`
             : ""
-        }\n);\nGO\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `[${s}]`)}\n);\nGO\n${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX [${
@@ -550,14 +568,18 @@ export function jsonToSQLServer(obj) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = obj.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE [${startName}]\nADD FOREIGN KEY([${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }]) REFERENCES [${endName}]([${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }])\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`;
+      return `ALTER TABLE [${startName}]\nADD FOREIGN KEY(${startColumns
+        .map((c) => `[${c}]`)
+        .join(", ")}) REFERENCES [${endName}](${endColumns
+        .map((c) => `[${c}]`)
+        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};\nGO`;
     })
     .join("\n")}`;
 }
@@ -608,7 +630,7 @@ export function jsonToOracleSQL(obj) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }\n);\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name}"\n  ON "${
@@ -623,14 +645,18 @@ export function jsonToOracleSQL(obj) {
         (t) => t.id === r.startTableId,
       );
 
-      const { name: endName, fields: endFields } = obj.tables.find(
-        (t) => t.id === r.endTableId,
+      const endTable = obj.tables.find((t) => t.id === r.endTableId);
+      const { name: endName } = endTable;
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        { fields: startFields },
+        endTable,
       );
-      return `ALTER TABLE "${startName}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY ("${
-        startFields.find((f) => f.id === r.startFieldId).name
-      }") REFERENCES "${endName}"("${
-        endFields.find((f) => f.id === r.endFieldId).name
-      }");`;
+      return `ALTER TABLE "${startName}"\nADD CONSTRAINT "${r.name}" FOREIGN KEY (${startColumns
+        .map((c) => `"${c}"`)
+        .join(", ")}) REFERENCES "${endName}"(${endColumns
+        .map((c) => `"${c}"`)
+        .join(", ")});`;
     })
     .join("\n")}`;
 }

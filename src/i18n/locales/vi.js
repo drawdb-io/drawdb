@@ -262,7 +262,7 @@ const vi = {
     versions: "Các phiên bản",
     no_saved_versions: "Không có phiên bản đã lưu",
     record_version: "Ghi lại phiên bản",
-    commited_at: "Đã ghi lại lúc",
+    committed_at: "Đã ghi lại lúc",
     read_only: "Chỉ đọc",
     continue: "Tiếp tục",
     restore_version: "Khôi phục phiên bản",

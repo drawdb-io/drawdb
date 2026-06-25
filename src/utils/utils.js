@@ -62,29 +62,197 @@ export function areFieldsCompatible(db, field1Type, field2Type) {
   return same || isCompatible;
 }
 
-export function getCommentHeight(comment, containerWidth, showComments = true) {
-  if (!comment || !showComments) return 0;
+const COMMENT_LINE_HEIGHT = 16;
+const TABLE_COMMENT_MAX_LINES = 5;
+const FIELD_COMMENT_MAX_LINES = 2;
+const COMMENT_PADDING_X = 24;
+const COMMENT_BORDERS = 4;
+const COMMENT_PADDING_BOTTOM = 12;
+const COMMENT_CACHE_LIMIT = 500;
+const TABLE_COMMENT_INSET = COMMENT_BORDERS + COMMENT_PADDING_X;
+const FIELD_COMMENT_INSET = TABLE_COMMENT_INSET + 12;
+const FIELD_BORDER_WIDTH = 1;
 
-  const paddingBottom = 12;
-  const borders = 4;
+const commentHeightCache = new Map();
+let commentMeasureCtx = null;
 
-  const span = document.createElement("span");
-  span.className = "absolute text-xs px-3 line-clamp-5";
-
-  span.style.width = containerWidth - borders + "px";
-  span.textContent = comment;
-  span.id = "temp-comment-measure";
-
-  document.body.appendChild(span);
-  const height = span.offsetHeight;
-  document.body.removeChild(span);
-
-  return height + paddingBottom;
+function getCommentMeasureCtx() {
+  if (commentMeasureCtx) return commentMeasureCtx;
+  const ctx = document.createElement("canvas").getContext("2d");
+  const bodyFont =
+    window.getComputedStyle(document.body).fontFamily || "sans-serif";
+  ctx.font = `12px ${bodyFont}`;
+  commentMeasureCtx = ctx;
+  return ctx;
 }
 
-export function getTableHeight(table, width, showComments = true) {
+function countWrappedLines(comment, contentWidth, maxLines) {
+  const ctx = getCommentMeasureCtx();
+  const spaceWidth = ctx.measureText(" ").width;
+  const paragraphs = comment.split("\n");
+  let lines = 0;
+
+  for (const paragraph of paragraphs) {
+    if (lines >= maxLines) break;
+    if (!paragraph) {
+      lines++;
+      continue;
+    }
+
+    const words = paragraph.split(/\s+/).filter(Boolean);
+    let lineWidth = 0;
+
+    for (const word of words) {
+      const wordWidth = ctx.measureText(word).width;
+      if (lineWidth === 0) {
+        lineWidth = wordWidth;
+      } else if (lineWidth + spaceWidth + wordWidth <= contentWidth) {
+        lineWidth += spaceWidth + wordWidth;
+      } else {
+        lines++;
+        if (lines >= maxLines) break;
+        lineWidth = wordWidth;
+      }
+    }
+    if (lineWidth > 0) lines++;
+  }
+
+  return Math.min(maxLines, Math.max(1, lines));
+}
+
+export function getCommentHeight(
+  comment,
+  containerWidth,
+  showComments = true,
+  inset = TABLE_COMMENT_INSET,
+  maxLines = TABLE_COMMENT_MAX_LINES,
+) {
+  if (!comment || !showComments) return 0;
+
+  const cacheKey = `${containerWidth}:${inset}:${maxLines}:${comment}`;
+  const cached = commentHeightCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  const contentWidth = containerWidth - inset;
+  const lines =
+    contentWidth <= 0 ? 1 : countWrappedLines(comment, contentWidth, maxLines);
+  const height = lines * COMMENT_LINE_HEIGHT + COMMENT_PADDING_BOTTOM;
+
+  if (commentHeightCache.size >= COMMENT_CACHE_LIMIT) {
+    commentHeightCache.delete(commentHeightCache.keys().next().value);
+  }
+  commentHeightCache.set(cacheKey, height);
+  return height;
+}
+
+export function getFieldHeight(field, containerWidth, showComments = true) {
   return (
-    table.fields.length * tableFieldHeight +
+    tableFieldHeight +
+    FIELD_BORDER_WIDTH +
+    getCommentHeight(
+      field?.comment,
+      containerWidth,
+      showComments,
+      FIELD_COMMENT_INSET,
+      FIELD_COMMENT_MAX_LINES,
+    )
+  );
+}
+
+export function getRelationshipFields(relationship) {
+  if (
+    Array.isArray(relationship?.fields) &&
+    relationship.fields.length > 0
+  ) {
+    return relationship.fields;
+  }
+  return [
+    {
+      startFieldId: relationship?.startFieldId,
+      endFieldId: relationship?.endFieldId,
+    },
+  ];
+}
+
+export function isFieldRelatedToTable(
+  tableId,
+  field,
+  fieldIndex,
+  relationships = [],
+) {
+  return relationships.some((relationship) =>
+    getRelationshipFields(relationship).some(
+      (pair) =>
+        (relationship.startTableId === tableId &&
+          (pair.startFieldId === field.id ||
+            pair.startFieldId === fieldIndex)) ||
+        (relationship.endTableId === tableId &&
+          (pair.endFieldId === field.id || pair.endFieldId === fieldIndex)),
+    ),
+  );
+}
+
+export function getVisibleFieldEntries(table, relationships = []) {
+  const fields = table.fields ?? [];
+
+  return fields.reduce((entries, field, index) => {
+    if (
+      !table.collapsed ||
+      isFieldRelatedToTable(table.id, field, index, relationships)
+    ) {
+      entries.push({ field, originalIndex: index });
+    }
+    return entries;
+  }, []);
+}
+
+export function getVisibleFields(table, relationships = []) {
+  return getVisibleFieldEntries(table, relationships).map(({ field }) => field);
+}
+
+export function getVisibleFieldIndex(table, fieldId, relationships = []) {
+  return getVisibleFieldEntries(table, relationships).findIndex(
+    ({ field, originalIndex }) =>
+      field.id === fieldId || originalIndex === fieldId,
+  );
+}
+
+export function getFieldsTotalHeight(
+  fields,
+  containerWidth,
+  showComments = true,
+) {
+  let total = 0;
+  for (const f of fields) {
+    total += getFieldHeight(f, containerWidth, showComments);
+  }
+  return total;
+}
+
+export function getFieldOffsetY(
+  fields,
+  fieldIndex,
+  containerWidth,
+  showComments = true,
+) {
+  let total = 0;
+  const limit = Math.min(fieldIndex, fields.length);
+  for (let i = 0; i < limit; i++) {
+    total += getFieldHeight(fields[i], containerWidth, showComments);
+  }
+  return total;
+}
+
+export function getTableHeight(
+  table,
+  width,
+  showComments = true,
+  relationships = [],
+) {
+  const visibleFields = getVisibleFields(table, relationships);
+
+  return (
+    getFieldsTotalHeight(visibleFields, width, showComments) +
     tableHeaderHeight +
     tableColorStripHeight +
     getCommentHeight(table.comment, width, showComments)

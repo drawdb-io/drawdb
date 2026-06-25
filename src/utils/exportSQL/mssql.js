@@ -1,4 +1,9 @@
-import { parseDefault, escapeQuotes } from "./shared";
+import {
+  parseDefault,
+  escapeQuotes,
+  uniqueConstraintClause,
+  getFkColumnNames,
+} from "./shared";
 
 import { dbToTypes } from "../../data/datatypes";
 import { DB } from "../../data/constants";
@@ -64,7 +69,9 @@ export function toMSSQL(diagram) {
               .join(", ")})`
           : "";
 
-      const createTableSql = `CREATE TABLE [${table.name}] (\n${fieldsSql}${primaryKeySql}\n);\nGO\n`;
+      const uniqueSql = uniqueConstraintClause(table, (s) => `[${s}]`);
+
+      const createTableSql = `CREATE TABLE [${table.name}] (\n${fieldsSql}${primaryKeySql}${uniqueSql}\n);\nGO\n`;
 
       const tableCommentSql = generateAddExtendedPropertySQL(
         table.comment,
@@ -99,14 +106,18 @@ export function toMSSQL(diagram) {
 
       if (!startTable || !endTable) return "";
 
-      const startField = startTable.fields.find((f) => f.id === r.startFieldId);
-      const endField = endTable.fields.find((f) => f.id === r.endFieldId);
+      const { startColumns, endColumns } = getFkColumnNames(
+        r,
+        startTable,
+        endTable,
+      );
 
-      if (!startField || !endField) return "";
+      if (startColumns.some((c) => !c) || endColumns.some((c) => !c))
+        return "";
 
       return `\nALTER TABLE [${startTable.name}]
-ADD FOREIGN KEY([${startField.name}])
-REFERENCES [${endTable.name}]([${endField.name}])
+ADD FOREIGN KEY(${startColumns.map((c) => `[${c}]`).join(", ")})
+REFERENCES [${endTable.name}](${endColumns.map((c) => `[${c}]`).join(", ")})
 ON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};
 GO`;
     })
