@@ -83,12 +83,12 @@ export default function DiagramTable({
                 sortKey={column.key}
                 sort={sort}
                 onSort={onSort}
-                className="sticky top-0 z-10 py-2 px-3 border-b border-zinc-200 dark:border-zinc-700 sidesheet-theme"
+                className="sticky top-0 z-10 py-2 px-3 border-b border-zinc-100 dark:border-zinc-700 sidesheet-theme"
               />
             ) : (
               <th
                 key={column.key}
-                className="sticky top-0 z-10 py-2 px-3 border-b border-zinc-200 dark:border-zinc-700 sidesheet-theme"
+                className="sticky top-0 z-10 py-2 px-3 border-b border-zinc-100 dark:border-zinc-700 sidesheet-theme"
               >
                 {column.label}
               </th>
