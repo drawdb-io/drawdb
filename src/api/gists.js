@@ -4,7 +4,11 @@ export const SHARE_FILENAME = "share.json";
 export const VERSION_FILENAME = "versionned.json";
 
 const description = "drawDB diagram";
-const baseUrl = import.meta.env.VITE_BACKEND_URL;
+
+const baseUrl =
+  import.meta.env.VITE_GIST_BACKEND_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  "http://localhost:5000";
 
 export async function create(filename, content) {
   const res = await axios.post(`${baseUrl}/gists`, {
