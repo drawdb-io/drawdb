@@ -1,4 +1,5 @@
 import Dexie from "dexie";
+import { v4 as uuidv4 } from "uuid";
 import { templateSeeds } from "./seeds";
 
 export const db = new Dexie("drawDB");
@@ -11,12 +12,12 @@ db.version(67)
   .upgrade(async (tx) => {
     await tx.diagrams.toCollection().modify((diagram) => {
       if (!diagram.diagramId) {
-        diagram.diagramId = crypto.randomUUID();
+        diagram.diagramId = uuidv4();
       }
     });
     await tx.templates.toCollection().modify((template) => {
       if (!template.templateId) {
-        template.templateId = crypto.randomUUID();
+        template.templateId = uuidv4();
       }
     });
   });

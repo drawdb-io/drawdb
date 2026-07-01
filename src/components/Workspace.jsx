@@ -7,6 +7,7 @@ import {
   createContext,
   useContext,
 } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ControlPanel from "./EditorHeader/ControlPanel";
 import ExtensionsContext, { Slot } from "../context/ExtensionsContext";
 import Canvas from "./EditorCanvas/Canvas";
@@ -110,7 +111,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     if (cloudOnly) {
       const isNew = !loadedDiagramId || isTemplate;
       const targetId = isNew
-        ? (pendingNewIdRef.current ??= crypto.randomUUID())
+        ? (pendingNewIdRef.current ??= uuidv4())
         : loadedDiagramId;
       const cloudPayload = {
         diagramId: targetId,
@@ -148,7 +149,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     }
 
     if (isTemplate || (!loadedDiagramId && !isTemplate && !isDiagram)) {
-      const diagramId = crypto.randomUUID();
+      const diagramId = uuidv4();
       await db.diagrams
         .add({
           diagramId,

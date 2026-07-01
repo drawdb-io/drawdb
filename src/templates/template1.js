@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Cardinality } from "../data/constants";
 
 export const template1 = {
@@ -348,5 +349,5 @@ export const template1 = {
   description:
     "A blog database including tables such as posts, users, comments, and tags to facilitate the storage and retrieval of blog-related information.",
   custom: 0,
-  templateId: crypto.randomUUID(),
+  templateId: uuidv4(),
 };

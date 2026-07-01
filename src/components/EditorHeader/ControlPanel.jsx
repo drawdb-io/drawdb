@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Slot, useExtensions } from "../../context/ExtensionsContext";
 import { createPortal } from "react-dom";
 import {
@@ -828,7 +829,7 @@ export default function ControlPanel({
     if (typeof extensions.cloudSave === "function") {
       // TODO: dont have blank here have null
       const isNew = diagramId === 'blank';
-      const newId = isNew ? crypto.randomUUID() : diagramId;
+      const newId = isNew ? uuidv4() : diagramId;
       const diagramData = {
         diagramId: newId,
         database,
@@ -940,7 +941,7 @@ export default function ControlPanel({
               notes: notes,
               subjectAreas: areas,
               custom: 1,
-              templateId: crypto.randomUUID(),
+              templateId: uuidv4(),
               ...(databases[database].hasEnums && { enums: enums }),
               ...(databases[database].hasTypes && { types: types }),
             })

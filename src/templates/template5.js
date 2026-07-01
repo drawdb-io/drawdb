@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Cardinality } from "../data/constants";
 
 export const template5 = {
@@ -635,5 +636,5 @@ export const template5 = {
   description:
     "A financial schema designed to manage financial transactions, accounts, customers, and other aspects of financial data.",
   custom: 0,
-  templateId: crypto.randomUUID(),
+  templateId: uuidv4(),
 };

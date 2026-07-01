@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Cardinality } from "../data/constants";
 
 export const template2 = {
@@ -352,5 +353,5 @@ export const template2 = {
   description:
     "A Human Resources (HR) schema designed to manage employee and project related information within an organization.",
   custom: 0,
-  templateId: crypto.randomUUID(),
+  templateId: uuidv4(),
 };
