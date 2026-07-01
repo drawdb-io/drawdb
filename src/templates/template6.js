@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Cardinality } from "../data/constants";
 
 export const template6 = {
@@ -459,5 +460,5 @@ export const template6 = {
   description:
     "A university schema designed to manage information about students, courses, instructors, and other aspects of university-related data.",
   custom: 0,
-  templateId: crypto.randomUUID(),
+  templateId: uuidv4(),
 };

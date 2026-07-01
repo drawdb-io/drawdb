@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { Cardinality } from "../data/constants";
 
 export const template4 = {
@@ -364,5 +365,5 @@ export const template4 = {
   description:
     "A library schema designed to manage the books, genres, reservations, and other aspects of a library system",
   custom: 0,
-  templateId: crypto.randomUUID(),
+  templateId: uuidv4(),
 };
