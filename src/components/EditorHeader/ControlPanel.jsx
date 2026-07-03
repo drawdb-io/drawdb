@@ -24,6 +24,7 @@ import {
   Tag,
   Toast,
   Popconfirm,
+  Typography,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import {
@@ -872,6 +873,72 @@ export default function ControlPanel({
 
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
+
+  const saveAsCopy = async (newTitle) => {
+    const newId = uuidv4();
+    const diagramData = {
+      diagramId: newId,
+      database,
+      name: newTitle,
+      gistId: "",
+      loadedFromGistId: "",
+      lastModified: new Date(),
+      tables,
+      references: relationships,
+      notes,
+      areas,
+      pan: transform.pan,
+      zoom: transform.zoom,
+      ...(databases[database].hasEnums && { enums }),
+      ...(databases[database].hasTypes && { types }),
+    };
+
+    if (typeof extensions.cloudSave === "function") {
+      try {
+        await extensions.cloudSave(diagramData, { isNew: true });
+      } catch (err) {
+        if (err?.response?.status === 402) {
+          setSaveState(State.NONE);
+          navigate("/checkout?tier=solo_pro");
+          return;
+        }
+        setSaveState(State.ERROR);
+        Toast.error(t("oops_smth_went_wrong"));
+        return;
+      }
+    } else {
+      try {
+        await db.diagrams.add(diagramData);
+      } catch (err) {
+        console.error(err);
+        setSaveState(State.ERROR);
+        Toast.error(t("oops_smth_went_wrong"));
+        return;
+      }
+    }
+
+    let toastId;
+    toastId = Toast.success({
+      duration: 8,
+      content: (
+        <span>
+          {t("saved_as_copy")}{" "}
+          <Typography.Text
+            link={{
+              href: `/editor/diagrams/${newId}${window.location.search}`,
+              target: "_blank",
+              rel: "noopener noreferrer",
+            }}
+            underline
+            onClick={() => Toast.close(toastId)}
+          >
+            {newTitle}
+          </Typography.Text>
+        </span>
+      ),
+    });
+  };
+
   const fullscreen = useFullscreen();
 
   useEffect(() => {
@@ -1733,6 +1800,7 @@ export default function ControlPanel({
         setModal={setModal}
         importFrom={importFrom}
         importDb={importDb}
+        saveAsCopy={saveAsCopy}
       />
       <Sidesheet
         type={sidesheet}
