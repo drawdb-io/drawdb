@@ -41,6 +41,7 @@ const en = {
       "Are you sure you want to clear the diagram? This is irreversible.",
     cut: "Cut",
     copy: "Copy",
+    saved_as_copy: "Saved as a copy. Open:",
     paste: "Paste",
     duplicate: "Duplicate",
     delete: "Delete",

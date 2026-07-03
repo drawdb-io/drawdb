@@ -2,7 +2,7 @@ import { Image, Input, Modal as SemiUIModal, Spin } from "@douyinfe/semi-ui";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
 import { Parser as OracleParser } from "oracle-sql-parser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DB, MODAL, STATUS } from "../../../data/constants";
 import { databases } from "../../../data/databases";
@@ -51,6 +51,7 @@ export default function Modal({
   setExportData,
   importDb,
   importFrom,
+  saveAsCopy,
 }) {
   const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database } = useDiagram();
@@ -79,6 +80,10 @@ export default function Modal({
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const navigate = useNavigateWithParams();
+
+  useEffect(() => {
+    if (modal === MODAL.SAVEAS) setSaveAsTitle(title);
+  }, [modal, title]);
 
   const overwriteDiagram = () => {
     setTables(importData.tables);
@@ -203,7 +208,7 @@ export default function Modal({
         setModal(MODAL.NONE);
         return;
       case MODAL.SAVEAS:
-        setTitle(saveAsTitle);
+        await saveAsCopy(saveAsTitle);
         setModal(MODAL.NONE);
         return;
       case MODAL.NEW:
