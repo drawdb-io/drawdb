@@ -7,7 +7,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
-    command: sh -c "npm install && npm run dev -- --host"
+    command: sh -c "npm install && npx concurrently 'vite --host' 'node server/index.js'"
     networks:
       - default
 

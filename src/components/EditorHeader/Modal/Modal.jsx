@@ -51,6 +51,7 @@ export default function Modal({
   setExportData,
   importDb,
   importFrom,
+  onSaveAs,
 }) {
   const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database } = useDiagram();
@@ -222,7 +223,7 @@ export default function Modal({
         setModal(MODAL.NONE);
         return;
       case MODAL.SAVEAS:
-        setTitle(saveAsTitle);
+        onSaveAs?.(saveAsTitle);
         setModal(MODAL.NONE);
         return;
       case MODAL.NEW:

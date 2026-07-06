@@ -871,6 +871,49 @@ export default function ControlPanel({
 
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
+  const handleSaveAs = async (newTitle) => {
+    // Saving under the same name overwrites the current diagram in place.
+    if (newTitle === title) {
+      setSaveState(State.SAVING);
+      return;
+    }
+
+    // A different name forks the diagram into a new copy, leaving the
+    // original untouched.
+    const newId = crypto.randomUUID();
+    const diagramData = {
+      diagramId: newId,
+      database,
+      name: newTitle,
+      gistId: "",
+      lastModified: new Date(),
+      tables,
+      references: relationships,
+      notes,
+      areas,
+      pan: transform.pan,
+      zoom: transform.zoom,
+      ...(databases[database].hasEnums && { enums }),
+      ...(databases[database].hasTypes && { types }),
+    };
+
+    try {
+      if (typeof extensions.cloudSave === "function") {
+        await extensions.cloudSave(diagramData, { isNew: true });
+      } else {
+        await db.diagrams.add(diagramData);
+      }
+      setTitle(newTitle);
+      setSaveState(State.SAVED);
+      if (typeof setLastSaved === "function") {
+        setLastSaved(new Date().toLocaleString());
+      }
+      navigate(`/editor/diagrams/${newId}`);
+    } catch (err) {
+      console.warn("save as failed:", err);
+      setSaveState(State.ERROR);
+    }
+  };
   const fullscreen = useFullscreen();
 
   useEffect(() => {
@@ -1762,6 +1805,7 @@ export default function ControlPanel({
         setModal={setModal}
         importFrom={importFrom}
         importDb={importDb}
+        onSaveAs={handleSaveAs}
       />
       <Sidesheet
         type={sidesheet}
