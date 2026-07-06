@@ -347,7 +347,9 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       if (!diagram) return;
 
       setDiagramSource(source);
-      if (typeof diagram.canWrite === "boolean") {
+      if (source === "local") {
+        setLayout((prev) => ({ ...prev, readOnly: false }));
+      } else if (typeof diagram.canWrite === "boolean") {
         setLayout((prev) => ({ ...prev, readOnly: !diagram.canWrite }));
       }
       applyDiagramState(diagram);
@@ -558,7 +560,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
               </Button>
             </div>
           )}
-          {cloudOnly &&
+          {(cloudOnly ||
+            typeof extensions.moveToCloudUpgrade === "function") &&
             diagramSource === "local" &&
             !version &&
             !dismissedMoveIds.has(loadedDiagramId) && (
@@ -569,7 +572,13 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
                     This diagram is stored locally on your browser. Move it to
                     the cloud?
                   </span>
-                  <Button size="small" theme="solid" onClick={moveToCloud}>
+                  <Button
+                    size="small"
+                    theme="solid"
+                    onClick={
+                      cloudOnly ? moveToCloud : extensions.moveToCloudUpgrade
+                    }
+                  >
                     Move
                   </Button>
                   <Button
