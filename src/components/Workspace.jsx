@@ -73,7 +73,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const [selectedDb, setSelectedDb] = useState("");
 
   const [diagramSource, setDiagramSource] = useState(null);
-  const [dismissedMoveIds, setDismissedMoveIds] = useState(readDismissedMoveIds);
+  const [dismissedMoveIds, setDismissedMoveIds] =
+    useState(readDismissedMoveIds);
   const pendingNewIdRef = useRef(null);
   const loadedIdRef = useRef(null);
   const { layout, setLayout } = useLayout();
@@ -149,7 +150,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     }
 
     if (cloudOnly && diagramSource !== "local") {
-      const isNew = !loadedDiagramId || isTemplate;
+      const isNew =
+        !loadedDiagramId || loadedDiagramId === "blank" || isTemplate;
       const targetId = isNew
         ? (pendingNewIdRef.current ??= uuidv4())
         : loadedDiagramId;
@@ -560,8 +562,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
               </Button>
             </div>
           )}
-          {(cloudOnly ||
-            typeof extensions.moveToCloudUpgrade === "function") &&
+          {(cloudOnly || typeof extensions.moveToCloudUpgrade === "function") &&
             diagramSource === "local" &&
             !version &&
             !dismissedMoveIds.has(loadedDiagramId) && (
