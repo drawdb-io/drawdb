@@ -37,6 +37,10 @@ import { isRtl } from "../i18n/utils/rtl";
 import { useMatch, useParams, useSearchParams } from "react-router-dom";
 import { get, SHARE_FILENAME } from "../api/gists";
 import { mergeCustomTypes } from "../utils/customTypes";
+import {
+  readDismissedBanners,
+  addDismissedBanner,
+} from "../utils/dismissedBanners";
 
 export const IdContext = createContext({
   gistId: "",
@@ -46,18 +50,6 @@ export const IdContext = createContext({
 });
 
 const SIDEPANEL_MIN_WIDTH = 374;
-
-const MOVE_TO_CLOUD_DISMISSED_KEY = "drawdb:moveToCloudDismissed";
-
-function readDismissedMoveIds() {
-  try {
-    return new Set(
-      JSON.parse(localStorage.getItem(MOVE_TO_CLOUD_DISMISSED_KEY) || "[]"),
-    );
-  } catch {
-    return new Set();
-  }
-}
 
 export default function WorkSpace({ forcedDiagramId } = {}) {
   const [gistId, setGistId] = useState("");
@@ -73,8 +65,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const [selectedDb, setSelectedDb] = useState("");
 
   const [diagramSource, setDiagramSource] = useState(null);
-  const [dismissedMoveIds, setDismissedMoveIds] =
-    useState(readDismissedMoveIds);
+  const [dismissedBanners, setDismissedBanners] =
+    useState(readDismissedBanners);
   const pendingNewIdRef = useRef(null);
   const loadedIdRef = useRef(null);
   const { layout, setLayout } = useLayout();
@@ -268,14 +260,9 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
 
   const dismissMoveToCloud = () => {
     if (!loadedDiagramId) return;
-    setDismissedMoveIds((prev) => {
-      const next = new Set(prev).add(loadedDiagramId);
-      localStorage.setItem(
-        MOVE_TO_CLOUD_DISMISSED_KEY,
-        JSON.stringify([...next]),
-      );
-      return next;
-    });
+    setDismissedBanners((prev) =>
+      addDismissedBanner(prev, `move:${loadedDiagramId}`),
+    );
   };
 
   const load = useCallback(async () => {
@@ -565,7 +552,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           {(cloudOnly || typeof extensions.moveToCloudUpgrade === "function") &&
             diagramSource === "local" &&
             !version &&
-            !dismissedMoveIds.has(loadedDiagramId) && (
+            !dismissedBanners.has(`move:${loadedDiagramId}`) && (
               <div className="pointer-events-none absolute inset-x-0 top-3 z-50 flex justify-center">
                 <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-blue-300 bg-blue-50 px-5 py-1.5 shadow-md dark:border-sky-900/50 dark:bg-sky-900/30">
                   <i className="bi bi-hdd" />
