@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Slot, useExtensions } from "../../context/ExtensionsContext";
 import { createPortal } from "react-dom";
@@ -86,9 +86,10 @@ import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
-import { useLiveQuery } from "dexie-react-hooks";
 import { DateTime } from "luxon";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
+import { useDiagramList } from "./Modal/Open/hooks/useDiagramList";
+import { mergeDiagrams, sortDiagrams } from "./Modal/Open/diagram";
 
 export default function ControlPanel({
   title,
@@ -867,9 +868,22 @@ export default function ControlPanel({
     }
     setSaveState(State.SAVING);
   };
-  const recentlyOpenedDiagrams = useLiveQuery(() =>
-    db.diagrams.orderBy("lastModified").reverse().limit(10).toArray(),
-  );
+  const { cloud, local } = useDiagramList();
+  const recentlyOpenedDiagrams = useMemo(() => {
+    const sorted = sortDiagrams(mergeDiagrams(cloud, local), {
+      key: "lastModified",
+      dir: "desc",
+    });
+    const seen = new Set();
+    const recent = [];
+    for (const entry of sorted) {
+      if (entry.diagramId == null || seen.has(entry.diagramId)) continue;
+      seen.add(entry.diagramId);
+      recent.push(entry);
+      if (recent.length === 10) break;
+    }
+    return recent;
+  }, [cloud, local]);
 
   const open = () => setModal(MODAL.OPEN);
   const saveDiagramAs = () => setModal(MODAL.SAVEAS);
