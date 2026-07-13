@@ -106,6 +106,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const extensionValues = useContext(ExtensionsContext);
   const extensions = useMemo(() => extensionValues ?? {}, [extensionValues]);
   const cloudOnly = typeof extensions.cloudSave === "function";
+  const cloudLoad = extensions.cloudLoad;
 
   const handleResize = (e) => {
     if (!resize) return;
@@ -289,8 +290,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
         .first();
       if (localDiagram) return { diagram: localDiagram, source: "local" };
 
-      if (typeof extensions.cloudLoad === "function") {
-        const cloudDiagram = await extensions.cloudLoad(id);
+      if (typeof cloudLoad === "function") {
+        const cloudDiagram = await cloudLoad(id);
         if (cloudDiagram) return { diagram: cloudDiagram, source: "cloud" };
       }
       return { diagram: null, source: null };
@@ -439,7 +440,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       return;
     }
   }, [
-    extensions,
+    cloudLoad,
     setTransform,
     setRedoStack,
     setUndoStack,
