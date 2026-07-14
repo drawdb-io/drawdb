@@ -251,13 +251,22 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       });
       await db.diagrams.where("diagramId").equals(loadedDiagramId).delete();
       setDiagramSource("cloud");
+      if (typeof cloudLoad === "function") {
+        await cloudLoad(loadedDiagramId);
+      }
       setSaveState(State.SAVED);
       setLastSaved(new Date().toLocaleString());
     } catch (err) {
       console.warn("move to cloud failed:", err);
       setSaveState(State.ERROR);
     }
-  }, [extensions, loadedDiagramId, buildCloudPayload, setSaveState]);
+  }, [
+    extensions,
+    loadedDiagramId,
+    buildCloudPayload,
+    setSaveState,
+    cloudLoad,
+  ]);
 
   const dismissMoveToCloud = () => {
     if (!loadedDiagramId) return;
