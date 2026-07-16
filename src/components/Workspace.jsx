@@ -362,6 +362,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
         .equals(id)
         .first();
       if (!template) {
+        if (previousLoadedId !== loadedIdRef.current) resetEditorState();
         if (selectedDb === "") setShowSelectDbModal(true);
         return;
       }
