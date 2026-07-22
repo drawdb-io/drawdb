@@ -30,7 +30,7 @@ export function buildSQLFromAST(ast, db = DB.MYSQL) {
         "(" +
         ast.args.value
           .map((v) => {
-            if (v.type === "column_ref") return "`" + v.column + "`";
+            if (v.type === "column_ref") return quoteColumn(v.column, db);
             if (
               v.type === "single_quote_string" ||
               v.type === "double_quote_string"
