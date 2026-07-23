@@ -22,7 +22,7 @@ export function toOracleSQL(diagram) {
                   : ""
               }${field.notNull ? " NOT NULL" : ""}${
                 field.increment ? " GENERATED ALWAYS AS IDENTITY" : ""
-              }${field.unique ? " UNIQUE" : ""}${
+              }${field.unique && !field.primary ? " UNIQUE" : ""}${
                 field.default !== ""
                   ? ` DEFAULT ${parseDefault(field, diagram.database)}`
                   : ""
