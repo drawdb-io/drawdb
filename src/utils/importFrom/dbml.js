@@ -28,7 +28,12 @@ export function fromDBML(src) {
 
         field.id = nanoid();
         field.name = column.name;
-        field.type = column.type.type_name.toUpperCase();
+        // type_name includes parentheses (e.g. "varchar(50)"), args is the parameter string (e.g. "50").
+        // Separate them into raw type name and size for drawdb's internal format.
+        const rawTypeName = column.type.type_name.toUpperCase();
+        const parenIdx = rawTypeName.indexOf("(");
+        field.type = parenIdx !== -1 ? rawTypeName.substring(0, parenIdx) : rawTypeName;
+        field.size = column.type.args ?? "";
         field.default = column.dbdefault?.value ?? "";
         field.check = "";
         field.primary = !!column.pk;
