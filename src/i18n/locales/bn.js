@@ -237,6 +237,7 @@ const bn = {
     enum_w_no_name: "নাম ছাড়াই একটি এনাম পাওয়া গেছে",
     enum_w_no_values: "কোনও ভ্যালু ছাড়াই এনাম '{{enumName}}' পাওয়া গেছে",
     duplicate_enums: "'{{enumName}}' নামে ডুপ্লিকেট এনামস",
+    enum_deleted: "এনাম মুছে ফেলা হয়েছে",
     no_enums: "কোনও এনাম নেই",
     no_enums_text: "এখানে এনামগুলি সংজ্ঞায়িত করুন",
     declare_array: "অ্যারে ঘোষণা করুন",
@@ -279,6 +280,8 @@ const bn = {
     failed_to_record_version: "ভার্সন রেকর্ড করতে ব্যর্থ হয়েছে",
     failed_to_load_diagram: "ডায়াগ্রাম লোড করতে ব্যর্থ হয়েছে",
     see_all: "সব দেখুন",
+    insert_sql: "SQL ইনসার্ট করুন",
+    upload_file: "ফাইল আপলোড করুন",
   },
 };
 
