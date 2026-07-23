@@ -170,8 +170,8 @@ export default function ImportDiagram({
           }
           const reader = new FileReader();
           reader.onload = async (e) => {
-            if (importFrom == IMPORT_FROM.JSON) loadJsonData(f, e);
-            if (importFrom == IMPORT_FROM.DBML) loadDBMLData(e);
+            if (importFrom === IMPORT_FROM.JSON) loadJsonData(f, e);
+            if (importFrom === IMPORT_FROM.DBML) loadDBMLData(e);
           };
           reader.readAsText(f);
 
