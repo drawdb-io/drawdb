@@ -54,7 +54,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.23",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
     "vite": "^8.1.0"
