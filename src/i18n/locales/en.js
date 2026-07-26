@@ -307,6 +307,8 @@ const en = {
     force_hide: "Force hide",
     primary_key: "Primary key",
     foreign_key: "Foreign key",
+    import_with_ai: "Import with AI",
+    ai_import_failed: "AI import failed. Please try again.",
   },
 };
 
