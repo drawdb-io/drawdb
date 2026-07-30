@@ -232,8 +232,6 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               }
             });
 
-            const startTableId = tables.length;
-
             const endTable = tables.find((t) => t.name === endTableName);
             if (!endTable) return;
 
@@ -248,7 +246,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             if (!startField) return;
 
             relationship.name = `fk_${startTableName}_${startFieldName}_${endTableName}`;
-            relationship.startTableId = startTableId;
+            relationship.startTableId = table.id;
             relationship.startFieldId = startField.id;
             relationship.endTableId = endTable.id;
             relationship.endFieldId = endField.id;
