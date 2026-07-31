@@ -56,11 +56,60 @@ export function fromDBML(src) {
     }
 
     for (const ref of schema.refs) {
-      const startTableName = ref.endpoints[0].tableName;
-      const endTableName = ref.endpoints[1].tableName;
-      const startFieldNames = ref.endpoints[0].fieldNames;
-      const endFieldNames = ref.endpoints[1].fieldNames;
+      // Determine FK side: the endpoint with relation "*" is the FK (child) side,
+      // the endpoint with relation "1" is the referenced (parent) side.
+      // Endpoint order in the array is lexical, not semantic — do NOT trust
+      // endpoints[0] to be the FK side.
+      const ep0 = ref.endpoints[0];
+      const ep1 = ref.endpoints[1];
+
+      let fkEndpoint, pkEndpoint;
+      if (ep0.relation === "*") {
+        fkEndpoint = ep0;
+        pkEndpoint = ep1;
+      } else if (ep1.relation === "*") {
+        fkEndpoint = ep1;
+        pkEndpoint = ep0;
+      } else {
+        // 1-1 relationship: determine FK side by checking which endpoint's
+        // fields are all primary keys or unique indexes. The side whose fields
+        // are all PK/unique is the parent (referenced) side.
+        const tablesMap = new Map(tables.map((t) => [t.name, t]));
+        const pkTable = tablesMap.get(ep0.tableName);
+        const fkTable = tablesMap.get(ep1.tableName);
+
+        if (pkTable && fkTable) {
+          const ep0FieldsAllPK = ep0.fieldNames.every((name) => {
+            const f = pkTable.fields.find((f) => f.name === name);
+            return f && (f.primary || f.unique);
+          });
+          const ep1FieldsAllPK = ep1.fieldNames.every((name) => {
+            const f = fkTable.fields.find((f) => f.name === name);
+            return f && (f.primary || f.unique);
+          });
+
+          if (ep0FieldsAllPK && !ep1FieldsAllPK) {
+            // ep0 is all PK/unique → ep0 is parent, ep1 is FK side
+            fkEndpoint = ep1;
+            pkEndpoint = ep0;
+          } else {
+            // default: ep1 is FK side
+            fkEndpoint = ep1;
+            pkEndpoint = ep0;
+          }
+        } else {
+          // default: ep1 is FK side
+          fkEndpoint = ep1;
+          pkEndpoint = ep0;
+        }
+      }
+
+      const startTableName = fkEndpoint.tableName;
+      const endTableName = pkEndpoint.tableName;
+      const startFieldNames = fkEndpoint.fieldNames;
+      const endFieldNames = pkEndpoint.fieldNames;
       const startFieldName = startFieldNames[0];
+      const endFieldName = endFieldNames[0];
 
       const startTable = tables.find((t) => t.name === startTableName);
       if (!startTable) continue;
@@ -68,14 +117,13 @@ export function fromDBML(src) {
       const endTable = tables.find((t) => t.name === endTableName);
       if (!endTable) continue;
 
-      const fieldPairs = [];
-      for (let i = 0; i < startFieldNames.length; i++) {
-        const sf = startTable.fields.find((f) => f.name === startFieldNames[i]);
-        const ef = endTable.fields.find((f) => f.name === endFieldNames[i]);
-        if (!sf || !ef) break;
-        fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
-      }
-      if (fieldPairs.length !== startFieldNames.length) continue;
+      const endField = endTable.fields.find((f) => f.name === endFieldName);
+      if (!endField) continue;
+
+      const startField = startTable.fields.find(
+        (f) => f.name === startFieldName,
+      );
+      if (!startField) continue;
 
       const relationship = {};
 
@@ -83,9 +131,8 @@ export function fromDBML(src) {
         "fk_" + startTableName + "_" + startFieldName + "_" + endTableName;
       relationship.startTableId = startTable.id;
       relationship.endTableId = endTable.id;
-      relationship.fields = fieldPairs;
-      relationship.endFieldId = fieldPairs[0].endFieldId;
-      relationship.startFieldId = fieldPairs[0].startFieldId;
+      relationship.endFieldId = endField.id;
+      relationship.startFieldId = startField.id;
       relationship.id = nanoid();
 
       relationship.updateConstraint = ref.onDelete
@@ -95,18 +142,13 @@ export function fromDBML(src) {
         ? ref.onUpdate[0].toUpperCase() + ref.onUpdate.substring(1)
         : Constraint.NONE;
 
-      const startRelation = ref.endpoints[0].relation;
-      const endRelation = ref.endpoints[1].relation;
+      const fkRelation = fkEndpoint.relation;
+      const pkRelation = pkEndpoint.relation;
 
-      if (startRelation === "*" && endRelation === "1") {
+      if (fkRelation === "*" && pkRelation === "1") {
+        // many-to-one: start is the FK side (child), end is the PK side (parent)
         relationship.cardinality = Cardinality.MANY_TO_ONE;
-      }
-
-      if (startRelation === "1" && endRelation === "*") {
-        relationship.cardinality = Cardinality.ONE_TO_MANY;
-      }
-
-      if (startRelation === "1" && endRelation === "1") {
+      } else if (fkRelation === "1" && pkRelation === "1") {
         relationship.cardinality = Cardinality.ONE_TO_ONE;
       }
 
