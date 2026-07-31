@@ -207,7 +207,10 @@ export function jsonToMySQL(obj) {
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
-                  ? !Object.keys(defaultTypes).includes(field.type)
+                  ? !Object.keys(defaultTypes).includes(field.type) &&
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase(),
+                    )
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID("${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),
@@ -458,7 +461,10 @@ export function jsonToMariaDB(obj) {
               }${
                 field.check === "" ||
                 !dbToTypes[obj.database][field.type].hasCheck
-                  ? !Object.keys(defaultTypes).includes(field.type)
+                  ? !Object.keys(defaultTypes).includes(field.type) &&
+                    obj.types.find(
+                      (t) => t.name === field.type.toLowerCase(),
+                    )
                     ? ` CHECK(\n\t\tJSON_SCHEMA_VALID('${generateSchema(
                         obj.types.find(
                           (t) => t.name === field.type.toLowerCase(),
