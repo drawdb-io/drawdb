@@ -27,6 +27,7 @@ import {
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
+import { preprocessForSqlite } from "../../../utils/importSQL/preprocessSqlite";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -122,16 +123,24 @@ export default function Modal({
   const parseSQLAndLoadDiagram = () => {
     const targetDatabase = database === DB.GENERIC ? importDb : database;
 
+    // SQLite / D1 dumps may carry column comments as trailing "-- comment" text
+    // with the separator comma placed inside the comment. Normalize that into
+    // clean SQL and recover the comment text for the diagram.
+    const isSqliteImport = targetDatabase === DB.SQLITE;
+    const { sql: sqlSource, columnComments } = isSqliteImport
+      ? preprocessForSqlite(importSource.src)
+      : { sql: importSource.src, columnComments: {} };
+
     let ast = null;
     try {
       if (targetDatabase === DB.ORACLESQL) {
         const oracleParser = new OracleParser();
 
-        ast = oracleParser.parse(importSource.src);
+        ast = oracleParser.parse(sqlSource);
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        ast = parser.astify(sqlSource, {
           database: targetDatabase,
         });
       }
@@ -149,6 +158,7 @@ export default function Modal({
         ast,
         database === DB.GENERIC ? importDb : database,
         database,
+        columnComments,
       );
 
       applyImportedDiagram(diagramData);

@@ -7,11 +7,16 @@ import { fromOracleSQL } from "./oraclesql";
 import { fromPostgres } from "./postgres";
 import { fromSQLite } from "./sqlite";
 
-export function importSQL(ast, toDb = DB.MYSQL, diagramDb = DB.GENERIC) {
+export function importSQL(
+  ast,
+  toDb = DB.MYSQL,
+  diagramDb = DB.GENERIC,
+  columnComments = {},
+) {
   let diagram;
   switch (toDb) {
     case DB.SQLITE:
-      diagram = fromSQLite(ast, diagramDb);
+      diagram = fromSQLite(ast, diagramDb, columnComments);
       break;
     case DB.MYSQL:
       diagram = fromMySQL(ast, diagramDb);

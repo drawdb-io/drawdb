@@ -37,7 +37,7 @@ const affinity = {
   ),
 };
 
-export function fromSQLite(ast, diagramDb = DB.GENERIC) {
+export function fromSQLite(ast, diagramDb = DB.GENERIC, columnComments = {}) {
   const tables = [];
   const relationships = [];
 
@@ -125,7 +125,11 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
             }
-            field.comment = d.comment ? d.comment.value.value : "";
+            field.comment = columnComments?.[table.name]?.[field.name]
+              ? columnComments[table.name][field.name]
+              : d.comment
+                ? d.comment.value.value
+                : "";
             field.unique = false;
             if (d.unique) field.unique = true;
             field.increment = false;
