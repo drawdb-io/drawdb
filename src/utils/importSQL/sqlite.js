@@ -37,7 +37,12 @@ const affinity = {
   ),
 };
 
-export function fromSQLite(ast, diagramDb = DB.GENERIC, columnComments = {}) {
+export function fromSQLite(
+  ast,
+  diagramDb = DB.GENERIC,
+  columnComments = {},
+  tableComments = {},
+) {
   const tables = [];
   const relationships = [];
 
@@ -104,7 +109,9 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC, columnComments = {}) {
       if (e.keyword === "table") {
         const table = {};
         table.name = e.table[0].table;
-        table.comment = "";
+        table.comment = tableComments?.[table.name]
+          ? tableComments[table.name]
+          : "";
         table.color = "#175e7a";
         table.fields = [];
         table.indices = [];

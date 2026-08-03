@@ -12,37 +12,73 @@
 // which breaks parsing. It also discards the comment text, so it never reaches
 // the diagram's field.comment.
 //
+// The same exports put the Chinese table name in a comment block immediately
+// above each CREATE TABLE, e.g.:
+//
+//   -- -----------------------------------------------------------------------
+//   -- 表 3：cognition_digests 认知数据期刊数据（本地）
+//   -- -----------------------------------------------------------------------
+//   CREATE TABLE IF NOT EXISTS cognition_digests (
+//
 // This preprocessor:
 //   1. strips PRAGMA statements (runtime settings, not schema),
 //   2. captures each column's trailing "-- comment" text,
-//   3. removes those comments from the SQL while re-inserting a separator comma
-//      when the original comment ended with one (so columns stay separated).
+//   3. captures each table's Chinese name from the "-- 表 X：<name> <cn>" line,
+//   4. removes those comments from the SQL while re-inserting a separator comma
+//      when the original column comment ended with one (so columns stay separated).
 //
-// Returns cleaned SQL plus a { tableName: { columnName: comment } } map that the
-// SQLite importer uses to populate field comments.
+// Returns cleaned SQL plus two maps the SQLite importer uses to populate field
+// and table comments:
+//   - columnComments: { tableName: { columnName: comment } }
+//   - tableComments:  { tableName: comment }
 
 export function preprocessForSqlite(src) {
   const columnComments = {};
+  const tableComments = {};
   let currentTable = null;
+  let pendingTableComment = null; // { name: string|null, comment: string }
 
   const rawLines = src.split(/\r?\n/);
   const lines = rawLines.map((l) => l.replace(/\r$/, ""));
   const out = [];
 
   for (const line of lines) {
-    // Track the current table so captured comments map to the right table.
+    // 1. Table header comment above CREATE TABLE, e.g.
+    //    "-- 表 3：cognition_digests 认知数据期刊数据（本地）"
+    //    Capture the Chinese name; drop the line (it is not schema).
+    const header = line.match(
+      /^\s*--\s*表[^：:\n]*[：:]\s*(?:([A-Za-z0-9_]+)\s+)?([^\n]*)$/,
+    );
+    if (header) {
+      pendingTableComment = {
+        name: header[1] || null,
+        comment: header[2].trim(),
+      };
+      continue;
+    }
+
+    // 2. Track the current table so captured comments map to the right table.
     const tbl = line.match(
       /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[`"']?([A-Za-z0-9_]+)/i,
     );
     if (tbl) {
       currentTable = tbl[1];
       columnComments[currentTable] = columnComments[currentTable] || {};
+      if (pendingTableComment) {
+        if (
+          !pendingTableComment.name ||
+          pendingTableComment.name === currentTable
+        ) {
+          tableComments[currentTable] = pendingTableComment.comment;
+        }
+        pendingTableComment = null;
+      }
     }
     if (/^\s*\)\s*;?\s*$/.test(line)) {
       currentTable = null;
     }
 
-    // Column-level trailing comment, e.g. "  id TEXT PRIMARY KEY   -- 记录 id,"
+    // 3. Column-level trailing comment, e.g. "  id TEXT PRIMARY KEY   -- 记录 id,"
     const col = line.match(
       /^\s*([A-Za-z_][A-Za-z0-9_]*)\b.*?--\s*([\s\S]*?)(\s*,)?\s*$/,
     );
@@ -60,13 +96,13 @@ export function preprocessForSqlite(src) {
       continue;
     }
 
-    // Drop standalone PRAGMA statements and pure-comment lines to reduce parser
-    // risk (they carry no schema information for the diagram).
+    // 4. Drop standalone PRAGMA statements and pure-comment lines to reduce
+    //    parser risk (they carry no schema information for the diagram).
     if (/^\s*PRAGMA\b/i.test(line)) continue;
     if (/^\s*--/.test(line)) continue;
 
     out.push(line);
   }
 
-  return { sql: out.join("\n"), columnComments };
+  return { sql: out.join("\n"), columnComments, tableComments };
 }

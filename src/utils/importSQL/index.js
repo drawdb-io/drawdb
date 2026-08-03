@@ -12,11 +12,12 @@ export function importSQL(
   toDb = DB.MYSQL,
   diagramDb = DB.GENERIC,
   columnComments = {},
+  tableComments = {},
 ) {
   let diagram;
   switch (toDb) {
     case DB.SQLITE:
-      diagram = fromSQLite(ast, diagramDb, columnComments);
+      diagram = fromSQLite(ast, diagramDb, columnComments, tableComments);
       break;
     case DB.MYSQL:
       diagram = fromMySQL(ast, diagramDb);

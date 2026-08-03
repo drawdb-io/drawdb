@@ -127,9 +127,9 @@ export default function Modal({
     // with the separator comma placed inside the comment. Normalize that into
     // clean SQL and recover the comment text for the diagram.
     const isSqliteImport = targetDatabase === DB.SQLITE;
-    const { sql: sqlSource, columnComments } = isSqliteImport
+    const { sql: sqlSource, columnComments, tableComments } = isSqliteImport
       ? preprocessForSqlite(importSource.src)
-      : { sql: importSource.src, columnComments: {} };
+      : { sql: importSource.src, columnComments: {}, tableComments: {} };
 
     let ast = null;
     try {
@@ -159,6 +159,7 @@ export default function Modal({
         database === DB.GENERIC ? importDb : database,
         database,
         columnComments,
+        tableComments,
       );
 
       applyImportedDiagram(diagramData);
