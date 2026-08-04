@@ -129,7 +129,7 @@ export default function ImportDiagram({
 
   const loadDBMLData = (e) => {
     try {
-      setImportData(fromDBML(e.target.result));
+      setImportData(fromDBML(e.target.result, database));
     } catch (error) {
       const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
 

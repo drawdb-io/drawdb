@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import { useDiagram, useSettings } from "../../hooks";
 import { Button } from "@douyinfe/semi-ui";
@@ -11,16 +11,19 @@ export default function CodeEditor({
   extraControls,
   filename,
   className = "",
+  formatOnMount = true,
+  onEditorMount,
   ...props
 }) {
   const { settings } = useSettings();
   const { database } = useDiagram();
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
+  const editorRef = useRef(null);
 
   const copyCode = () => {
     navigator.clipboard
-      .writeText(props.value)
+      .writeText(editorRef.current?.getValue() ?? props.value ?? "")
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
@@ -29,10 +32,14 @@ export default function CodeEditor({
   };
 
   const handleEditorMount = (editor, monaco) => {
+    editorRef.current = editor;
     setUpDBML(monaco, database);
-    setTimeout(() => {
-      editor.getAction("editor.action.formatDocument").run();
-    }, 300);
+    if (formatOnMount) {
+      setTimeout(() => {
+        editor.getAction("editor.action.formatDocument")?.run();
+      }, 300);
+    }
+    onEditorMount?.(editor, monaco);
   };
 
   return (
