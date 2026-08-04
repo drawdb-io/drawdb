@@ -56,6 +56,7 @@ export const ObjectType = {
   RELATIONSHIP: 4,
   TYPE: 5,
   ENUM: 6,
+  DBML: 7,
 };
 
 export const Action = {

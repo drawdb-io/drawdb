@@ -50,7 +50,7 @@ const en = {
     header: "Menubar",
     sidebar: "Sidebar",
     toolbar: "Toolbar",
-    issues: "Issues",
+    issues: "Problems",
     presentation_mode: "Presentation mode",
     strict_mode: "Strict mode",
     field_details: "Field details",
@@ -113,9 +113,9 @@ const en = {
     no_notes_text: "Use notes to record extra info",
     no_types: "No types",
     no_types_text: "Make your own custom data types",
-    no_issues: "No issues were detected.",
+    no_issues: "No problems were detected.",
     strict_mode_is_on_no_issues:
-      "Strict mode is off so no issues will be displayed.",
+      "Strict mode is off so no problems will be displayed.",
     name: "Name",
     type: "Type",
     null: "Null",
@@ -309,6 +309,8 @@ const en = {
     foreign_key: "Foreign key",
     import_with_ai: "Import with AI",
     ai_import_failed: "AI import failed. Please try again.",
+    edit_dbml: "Edit DBML",
+    dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
   },
 };
 

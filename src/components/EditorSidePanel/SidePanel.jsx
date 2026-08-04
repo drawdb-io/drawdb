@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { IconCode, IconList } from "@douyinfe/semi-icons";
 import { IconTable, IconRelationship } from "../../icons";
@@ -36,6 +36,7 @@ export default function SidePanel({ width, resize, setResize }) {
   const { typesCount } = useTypes();
   const { enumsCount } = useEnums();
   const { t } = useTranslation();
+  const [dbmlProblems, setDbmlProblems] = useState([]);
 
   const tabList = useMemo(() => {
     const tabs = [
@@ -101,7 +102,7 @@ export default function SidePanel({ width, resize, setResize }) {
       >
         <div className="h-full flex-1 overflow-y-auto">
           {layout.dbmlEditor ? (
-            <DBMLEditor />
+            <DBMLEditor onProblemsChange={setDbmlProblems} />
           ) : (
             <Tabs
               type="card"
@@ -168,7 +169,7 @@ export default function SidePanel({ width, resize, setResize }) {
         </div>
         {layout.issues && (
           <div className="mt-auto border-t-2 border-color shadow-inner">
-            <Issues />
+            <Issues dbmlProblems={layout.dbmlEditor ? dbmlProblems : []} />
           </div>
         )}
       </div>

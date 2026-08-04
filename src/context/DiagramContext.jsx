@@ -244,7 +244,7 @@ export default function DiagramContextProvider({ children }) {
     } else {
       setRelationships((prev) => {
         const temp = prev.slice();
-        temp.splice(data.index, 0, data.relationship || data);
+        temp.splice(data.index ?? temp.length, 0, data.relationship || data);
         return temp;
       });
     }

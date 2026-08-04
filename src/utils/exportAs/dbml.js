@@ -1,20 +1,15 @@
-import { Cardinality } from "../../data/constants";
+import { Cardinality, Constraint } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import i18n from "../../i18n/i18n";
 import { escapeQuotes } from "../exportSQL/shared";
 import { isFunction, isKeyword, getRelationshipFields } from "../utils";
-
-const IDENT_SAFE_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
-
-function escapeIdentifier(s) {
-  return String(s).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-}
-
-function quoteIdentifier(name) {
-  if (name == null) return name;
-  const s = String(name);
-  return IDENT_SAFE_RE.test(s) ? s : `"${escapeIdentifier(s)}"`;
-}
+import {
+  dbmlFieldSize,
+  dbmlTypeName,
+  inlineEnumTypeName,
+  isInlineEnumType,
+  quoteIdentifier,
+} from "../dbml/types";
 
 function parseDefaultDbml(field, database) {
   if (isFunction(field.default)) {
@@ -41,16 +36,14 @@ function columnDefault(field, database) {
 }
 
 function columnSettings(field, database) {
-  let constraints = [];
-
-  field.primary && constraints.push("pk");
-  field.increment && constraints.push("increment");
-  field.notNull && constraints.push("not null");
-  field.unique && constraints.push("unique");
-  constraints.push(columnDefault(field, database));
-  constraints.push(columnComment(field));
-
-  constraints = constraints.filter((x) => Boolean(x));
+  const constraints = [
+    field.primary && "pk",
+    field.increment && "increment",
+    field.notNull && "not null",
+    field.unique && "unique",
+    columnDefault(field, database),
+    columnComment(field),
+  ].filter(Boolean);
 
   if (!constraints.length) {
     return "";
@@ -70,16 +63,9 @@ function cardinality(rel) {
     case i18n.t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
       return ">";
+    default:
+      return null;
   }
-}
-
-function fieldSize(field, database) {
-  const typeMetadata = dbToTypes[database][field.type];
-
-  if ((typeMetadata?.isSized || typeMetadata?.hasPrecision) && field.size)
-    return `(${field.size})`;
-
-  return "";
 }
 
 function processComment(comment) {
@@ -98,101 +84,129 @@ function columnComment(field) {
   return `note: ${processComment(field.comment)}`;
 }
 
-function processType(type) {
-  // TODO: remove after a while
-  if (type.toUpperCase() === "TIMESTAMP WITH TIME ZONE") {
-    return "timestamptz";
-  }
-
-  return type.toLowerCase();
+function enumBlock(name, values) {
+  const body = values.map((value) => `\t${quoteIdentifier(value)}`).join("\n");
+  return `enum ${quoteIdentifier(name)} {\n${body}\n}`;
 }
 
-export function toDBML(diagram) {
-  const columnRef = (tableName, fieldNames) => {
-    const cols = fieldNames.map((n) => quoteIdentifier(n));
-    const colPart = cols.length === 1 ? cols[0] : `(${cols.join(", ")})`;
-    return `${quoteIdentifier(tableName)}.${colPart}`;
-  };
+function enumNameIndex(enums) {
+  return new Map(enums.map((en) => [String(en.name).toUpperCase(), en.name]));
+}
 
-  const generateRelString = (rel) => {
-    const { fields: startTableFields, name: startTableName } =
-      diagram.tables.find((t) => t.id === rel.startTableId);
-    const { fields: endTableFields, name: endTableName } = diagram.tables.find(
-      (t) => t.id === rel.endTableId,
-    );
+function inlineEnumBlocks(tables) {
+  const declared = new Set();
+  const blocks = [];
 
-    const pairs = getRelationshipFields(rel);
-    const startFieldNames = pairs.map(
-      (p) => startTableFields.find((f) => f.id === p.startFieldId)?.name,
-    );
-    const endFieldNames = pairs.map(
-      (p) => endTableFields.find((f) => f.id === p.endFieldId)?.name,
-    );
-
-    return `Ref ${quoteIdentifier(rel.name)} {\n\t${columnRef(startTableName, startFieldNames)} ${cardinality(rel)} ${columnRef(endTableName, endFieldNames)} [ delete: ${rel.deleteConstraint.toLowerCase()}, update: ${rel.updateConstraint.toLowerCase()} ]\n}`;
-  };
-
-  let enumDefinitions = "";
-
-  for (const table of diagram.tables) {
+  for (const table of tables) {
     for (const field of table.fields) {
-      if (
-        (field.type === "ENUM" || field.type === "SET") &&
-        Array.isArray(field.values)
-      ) {
-        enumDefinitions += `enum ${quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)} {\n\t${field.values.map((v) => quoteIdentifier(v)).join("\n\t")}\n}\n\n`;
-      }
+      if (!isInlineEnumType(field.type) || !Array.isArray(field.values))
+        continue;
+
+      const name = inlineEnumTypeName(field);
+      if (declared.has(name)) continue;
+
+      declared.add(name);
+      blocks.push(enumBlock(name, field.values));
     }
   }
 
-  return `${diagram.enums
+  return blocks;
+}
+
+function indexEntry(fields, name, unique) {
+  if (!Array.isArray(fields) || !fields.length) return null;
+
+  const settings = [
+    name ? `name: '${escapeQuotes(String(name))}'` : "",
+    unique ? "unique" : "",
+  ].filter(Boolean);
+  const columns = fields.map((field) => quoteIdentifier(field)).join(", ");
+
+  return `\t\t(${columns})${settings.length ? ` [ ${settings.join(", ")} ]` : ""}`;
+}
+
+function indexesBlock(table) {
+  const entries = [
+    ...(table.indices ?? []).map((index) =>
+      indexEntry(index.fields, index.name, index.unique),
+    ),
+    ...(table.uniqueConstraints ?? []).map((constraint) =>
+      indexEntry(constraint.fields, constraint.name, true),
+    ),
+  ].filter(Boolean);
+
+  if (!entries.length) return "";
+
+  return `\n\n\tindexes {\n${entries.join("\n")}\n\t}`;
+}
+
+function tableBlock(table, database, enumNames) {
+  const headerColor = table.color ? ` [headercolor: ${table.color}]` : "";
+  const fields = table.fields
     .map(
-      (en) =>
-        `enum ${quoteIdentifier(en.name)} {\n${en.values.map((v) => `\t${quoteIdentifier(v)}`).join("\n")}\n}\n\n`,
+      (field) =>
+        `\t${quoteIdentifier(field.name)} ${quoteIdentifier(
+          dbmlTypeName(field, enumNames),
+        )}${dbmlFieldSize(field, database)}${columnSettings(field, database)}`,
     )
-    .join("\n\n")}${enumDefinitions}${diagram.tables
-    .map(
-      (table) =>
-        `Table ${quoteIdentifier(table.name)} [headercolor: ${table.color}] {\n${table.fields
-          .map(
-            (field) =>
-              `\t${quoteIdentifier(field.name)} ${
-                field.type === "ENUM" || field.type === "SET"
-                  ? quoteIdentifier(`${field.name}_${field.values.join("_")}_t`)
-                  : processType(field.type)
-              }${fieldSize(
-                field,
-                diagram.database,
-              )}${columnSettings(field, diagram.database)}`,
-          )
-          .join("\n")}${(() => {
-          const indexEntries = table.indices.map(
-            (index) =>
-              `\t\t(${index.fields
-                .map((f) => quoteIdentifier(f))
-                .join(", ")}) [ name: '${index.name}'${
-                index.unique ? ", unique" : ""
-              } ]`,
-          );
-          const uniqueEntries = (table.uniqueConstraints || [])
-            .filter((uc) => Array.isArray(uc.fields) && uc.fields.length > 0)
-            .map(
-              (uc) =>
-                `\t\t(${uc.fields
-                  .map((f) => quoteIdentifier(f))
-                  .join(", ")}) [ name: '${uc.name}', unique ]`,
-            );
-          const entries = [...indexEntries, ...uniqueEntries];
-          return entries.length > 0
-            ? "\n\n\tindexes {\n" + entries.join("\n") + "\n\t}"
-            : "";
-        })()}${
-          table.comment && table.comment.trim() !== ""
-            ? `\n\n\tNote: ${processComment(table.comment)}`
-            : ""
-        }\n}`,
-    )
-    .join("\n\n")}\n\n${diagram.relationships
-    .map((rel) => generateRelString(rel))
-    .join("\n\n")}`;
+    .join("\n");
+  const comment =
+    table.comment && table.comment.trim() !== ""
+      ? `\n\n\tNote: ${processComment(table.comment)}`
+      : "";
+
+  return `Table ${quoteIdentifier(table.name)}${headerColor} {\n${fields}${indexesBlock(table)}${comment}\n}`;
+}
+
+function columnRef(tableName, fieldNames) {
+  const columns = fieldNames.map((name) => quoteIdentifier(name));
+  const target = columns.length === 1 ? columns[0] : `(${columns.join(", ")})`;
+  return `${quoteIdentifier(tableName)}.${target}`;
+}
+
+function constraintKeyword(constraint) {
+  return String(constraint ?? Constraint.NONE).toLowerCase();
+}
+
+function refBlock(rel, tables) {
+  const startTable = tables.find((table) => table.id === rel.startTableId);
+  const endTable = tables.find((table) => table.id === rel.endTableId);
+  if (!startTable || !endTable) return null;
+
+  const symbol = cardinality(rel);
+  if (!symbol) return null;
+
+  const pairs = getRelationshipFields(rel);
+  const startFields = pairs.map(
+    (pair) => startTable.fields.find((f) => f.id === pair.startFieldId)?.name,
+  );
+  const endFields = pairs.map(
+    (pair) => endTable.fields.find((f) => f.id === pair.endFieldId)?.name,
+  );
+  if (startFields.some((name) => !name) || endFields.some((name) => !name)) {
+    return null;
+  }
+
+  const name = rel.name ? `${quoteIdentifier(rel.name)} ` : "";
+  const settings = `[ delete: ${constraintKeyword(rel.deleteConstraint)}, update: ${constraintKeyword(rel.updateConstraint)} ]`;
+
+  return `Ref ${name}{\n\t${columnRef(startTable.name, startFields)} ${symbol} ${columnRef(endTable.name, endFields)} ${settings}\n}`;
+}
+
+export function toDBML(diagram) {
+  const database = diagram.database;
+  const enums = diagram.enums ?? [];
+  const tables = (diagram.tables ?? []).filter(
+    (table) => (table.fields ?? []).length > 0,
+  );
+  const enumNames = enumNameIndex(enums);
+
+  return [
+    ...enums.map((en) => enumBlock(en.name, en.values ?? [])),
+    ...inlineEnumBlocks(tables),
+    ...tables.map((table) => tableBlock(table, database, enumNames)),
+    ...(diagram.relationships ?? []).map((rel) => refBlock(rel, tables)),
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }

@@ -82,6 +82,8 @@ import { jsonToDocumentation } from "../../utils/exportAs/documentation";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
+import { applyDiagramPlan } from "../../utils/dbml/applyPlan";
+import { diffDiagram } from "../../utils/dbml/diff";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
@@ -90,6 +92,11 @@ import { DateTime } from "luxon";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
 import { useDiagramList } from "./Modal/Open/hooks/useDiagramList";
 import { mergeDiagrams, sortDiagrams } from "./Modal/Open/diagram";
+
+const EDITOR_HOTKEY = {
+  preventDefault: true,
+  ignoreEventWhen: (e) => Boolean(e.target?.closest?.(".monaco-editor")),
+};
 
 export default function ControlPanel({
   title,
@@ -149,6 +156,21 @@ export default function ControlPanel({
   const navigate = useNavigateWithParams();
   const extensions = useExtensions();
 
+  const swapDbmlSnapshot = (entry) => {
+    const current = { tables, relationships, enums };
+    applyDiagramPlan(diffDiagram(current, entry.data.snapshot), {
+      addTable,
+      updateTable,
+      updateField,
+      deleteTable,
+      addRelationship,
+      updateRelationship,
+      deleteRelationship,
+      setEnums,
+    });
+    return { ...entry, data: { snapshot: current } };
+  };
+
   const undo = () => {
     if (undoStack.length === 0) return;
     const a = undoStack[undoStack.length - 1];
@@ -165,6 +187,11 @@ export default function ControlPanel({
         }
       }
       setRedoStack((prev) => [...prev, a]);
+      return;
+    }
+
+    if (a.element === ObjectType.DBML) {
+      setRedoStack((prev) => [...prev, swapDbmlSnapshot(a)]);
       return;
     }
 
@@ -365,6 +392,11 @@ export default function ControlPanel({
         }
       }
       setUndoStack((prev) => [...prev, a]);
+      return;
+    }
+
+    if (a.element === ObjectType.DBML) {
+      setUndoStack((prev) => [...prev, swapDbmlSnapshot(a)]);
       return;
     }
 
@@ -830,7 +862,7 @@ export default function ControlPanel({
   const save = async () => {
     if (typeof extensions.cloudSave === "function") {
       // TODO: dont have blank here have null
-      const isNew = diagramId === 'blank';
+      const isNew = diagramId === "blank";
       const newId = isNew ? uuidv4() : diagramId;
       const diagramData = {
         diagramId: newId,
@@ -1047,10 +1079,7 @@ export default function ControlPanel({
             if (typeof extensions.cloudDelete === "function") {
               await extensions.cloudDelete(diagramId);
             } else {
-              await db.diagrams
-                .where("diagramId")
-                .equals(diagramId)
-                .delete();
+              await db.diagrams.where("diagramId").equals(diagramId).delete();
             }
             setTitle("Untitled diagram");
             setTables([]);
@@ -1744,36 +1773,28 @@ export default function ControlPanel({
     },
   };
 
-  useHotkeys("mod+i", fileImport, { preventDefault: true });
-  useHotkeys("mod+z", undo, { preventDefault: true });
-  useHotkeys("mod+y", redo, { preventDefault: true });
-  useHotkeys("mod+s", save, { preventDefault: true });
-  useHotkeys("mod+o", open, { preventDefault: true });
-  useHotkeys("mod+e", edit, { preventDefault: true });
-  useHotkeys("mod+d", duplicate, { preventDefault: true });
-  useHotkeys("mod+c", copy, { preventDefault: true });
-  useHotkeys("mod+v", paste, { preventDefault: true });
-  useHotkeys("mod+x", cut, { preventDefault: true });
-  useHotkeys("delete", del, { preventDefault: true });
-  useHotkeys("mod+shift+g", viewGrid, { preventDefault: true });
-  useHotkeys("mod+up", zoomIn, { preventDefault: true });
-  useHotkeys("mod+down", zoomOut, { preventDefault: true });
-  useHotkeys("mod+shift+m", viewStrictMode, {
-    preventDefault: true,
-  });
-  useHotkeys("mod+shift+f", viewFieldSummary, {
-    preventDefault: true,
-  });
-  useHotkeys("mod+shift+s", saveDiagramAs, {
-    preventDefault: true,
-  });
-  useHotkeys("mod+alt+c", copyAsImage, { preventDefault: true });
-  useHotkeys("enter", resetView, { preventDefault: true });
-  useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), {
-    preventDefault: true,
-  });
-  useHotkeys("mod+alt+w", fitWindow, { preventDefault: true });
-  useHotkeys("alt+e", toggleDBMLEditor, { preventDefault: true });
+  useHotkeys("mod+i", fileImport, EDITOR_HOTKEY);
+  useHotkeys("mod+z", undo, EDITOR_HOTKEY);
+  useHotkeys("mod+y", redo, EDITOR_HOTKEY);
+  useHotkeys("mod+s", save, EDITOR_HOTKEY);
+  useHotkeys("mod+o", open, EDITOR_HOTKEY);
+  useHotkeys("mod+e", edit, EDITOR_HOTKEY);
+  useHotkeys("mod+d", duplicate, EDITOR_HOTKEY);
+  useHotkeys("mod+c", copy, EDITOR_HOTKEY);
+  useHotkeys("mod+v", paste, EDITOR_HOTKEY);
+  useHotkeys("mod+x", cut, EDITOR_HOTKEY);
+  useHotkeys("delete", del, EDITOR_HOTKEY);
+  useHotkeys("mod+shift+g", viewGrid, EDITOR_HOTKEY);
+  useHotkeys("mod+up", zoomIn, EDITOR_HOTKEY);
+  useHotkeys("mod+down", zoomOut, EDITOR_HOTKEY);
+  useHotkeys("mod+shift+m", viewStrictMode, EDITOR_HOTKEY);
+  useHotkeys("mod+shift+f", viewFieldSummary, EDITOR_HOTKEY);
+  useHotkeys("mod+shift+s", saveDiagramAs, EDITOR_HOTKEY);
+  useHotkeys("mod+alt+c", copyAsImage, EDITOR_HOTKEY);
+  useHotkeys("enter", resetView, EDITOR_HOTKEY);
+  useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), EDITOR_HOTKEY);
+  useHotkeys("mod+alt+w", fitWindow, EDITOR_HOTKEY);
+  useHotkeys("alt+e", toggleDBMLEditor, EDITOR_HOTKEY);
 
   return (
     <>
@@ -2060,8 +2081,10 @@ export default function ControlPanel({
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>{(isTemplate ? "Templates" : "Diagrams")}</span>
-                <span className="select-none text-zinc-400 dark:text-zinc-500 mx-1">/</span>
+                <span>{isTemplate ? "Templates" : "Diagrams"}</span>
+                <span className="select-none text-zinc-400 dark:text-zinc-500 mx-1">
+                  /
+                </span>
                 <span>{title}</span>
                 {version && (
                   <Tag className="mt-1" color="blue" size="small">
