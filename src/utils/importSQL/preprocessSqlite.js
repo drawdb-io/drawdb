@@ -85,7 +85,6 @@ export function preprocessForSqlite(src) {
     if (col && currentTable && !/^\s*CREATE\s+TABLE/i.test(line)) {
       const colName = col[1];
       const comment = col[2].replace(/\s+$/, "");
-      const hadTrailingComma = Boolean(col[3]);
       columnComments[currentTable][colName] = comment;
       // Drop the "-- comment" tail; keep a comma if the comment ended with one.
       const cleaned = line.replace(
