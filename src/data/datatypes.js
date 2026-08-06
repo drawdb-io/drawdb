@@ -18,6 +18,7 @@ import { DB } from "./constants";
 const intRegex = /^-?\d*$/;
 const doubleRegex = /^-?\d*.?\d+$/;
 const binaryRegex = /^[01]+$/;
+const myPrimeTypeRegex = /^(?:[1-9]\d*)$/;
 
 /* eslint-disable no-unused-vars */
 const defaultTypesBase = {
@@ -53,6 +54,19 @@ const defaultTypesBase = {
     hasCheck: true,
     hasPrecision: false,
     canIncrement: true,
+  },
+  MYPRIMETYPE: {
+    type: "MYPRIMETYPE",
+    color: intColor,
+    checkDefault: (field) => {
+      return (
+        myPrimeTypeRegex.test(field.default) &&
+        Number.parseInt(field.default, 10) % 2 === 1
+      );
+    },
+    hasCheck: true,
+    isSized: false,
+    hasPrecision: false,
   },
   DECIMAL: {
     type: "DECIMAL",
