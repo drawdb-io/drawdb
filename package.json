@@ -32,7 +32,7 @@
     "lexical": "^0.12.5",
     "lodash": "^4.18.1",
     "luxon": "^3.7.1",
-    "nanoid": "^5.1.5",
+    "nanoid": "^5.1.16",
     "node-sql-parser": "^5.4.0",
     "oracle-sql-parser": "^0.1.0",
     "react": "^18.2.0",
