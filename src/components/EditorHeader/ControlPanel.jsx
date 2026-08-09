@@ -87,6 +87,7 @@ import { diffDiagram } from "../../utils/dbml/diff";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
+import { autoArrange } from "../../utils/autoArrange";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { DateTime } from "luxon";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
@@ -617,7 +618,8 @@ export default function ControlPanel({
   };
   const resetView = () =>
     setTransform((prev) => ({ ...prev, zoom: 1, pan: { x: 0, y: 0 } }));
-  const fitWindow = () => {
+  const fitWindow = () => fitToView(tables);
+  const fitToView = (tablesToFit) => {
     const canvas = document.getElementById("canvas").getBoundingClientRect();
 
     const minMaxXY = {
@@ -627,7 +629,7 @@ export default function ControlPanel({
       maxY: -Infinity,
     };
 
-    tables.forEach((table) => {
+    tablesToFit.forEach((table) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
@@ -677,6 +679,40 @@ export default function ControlPanel({
       zoom: scale,
       pan: { x: centerX, y: centerY },
     }));
+  };
+  const autoArrangeTables = () => {
+    const positions = autoArrange(tables, relationships, settings);
+    const positionById = new Map(positions.map((p) => [p.id, p]));
+
+    const elements = [];
+    const arrangedTables = tables.map((table) => {
+      const pos = positionById.get(table.id);
+      if (!pos || (pos.x === table.x && pos.y === table.y)) return table;
+      elements.push({
+        id: table.id,
+        type: ObjectType.TABLE,
+        undo: { x: table.x, y: table.y },
+        redo: { x: pos.x, y: pos.y },
+      });
+      return { ...table, x: pos.x, y: pos.y };
+    });
+
+    if (elements.length === 0) return;
+
+    for (const element of elements) {
+      updateTable(element.id, element.redo);
+    }
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: t("auto_arrange"),
+        elements,
+      },
+    ]);
+    setRedoStack([]);
+    fitToView(arrangedTables);
   };
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
@@ -1522,6 +1558,10 @@ export default function ControlPanel({
         shortcut: "Del",
         disabled: layout.readOnly,
       },
+      auto_arrange: {
+        function: autoArrangeTables,
+        disabled: layout.readOnly,
+      },
       copy_as_image: {
         function: copyAsImage,
         shortcut: "Ctrl+Alt+C",
@@ -1977,6 +2017,16 @@ export default function ControlPanel({
               disabled={layout.readOnly}
             >
               <IconAddNote />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("auto_arrange")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
+              onClick={autoArrangeTables}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

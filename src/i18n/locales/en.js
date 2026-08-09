@@ -253,6 +253,7 @@ const en = {
     docs: "Docs",
     supported_types: "Supported file types:",
     bulk_update: "Bulk update",
+    auto_arrange: "Auto arrange",
     multiselect: "Multiselect",
     export_saved_data: "Export saved data",
     dbml_view: "DBML view",
