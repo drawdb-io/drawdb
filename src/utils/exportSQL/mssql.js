@@ -47,7 +47,7 @@ export function toMSSQL(diagram) {
           return `\t[${field.name}] ${field.type}${field.size && isSized ? `(${field.size})` : ""}${
             field.notNull ? " NOT NULL" : ""
           }${field.increment ? " IDENTITY" : ""}${
-            field.unique ? " UNIQUE" : ""
+            field.unique && !field.primary ? " UNIQUE" : ""
           }${
             field.default !== ""
               ? ` DEFAULT ${parseDefault(field, diagram.database)}`
