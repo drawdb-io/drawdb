@@ -41,7 +41,7 @@ export default function Canvas() {
   const canvasRef = useRef(null);
   const canvasContextValue = useCanvas();
   const {
-    canvas: { viewBox, screenSize },
+    canvas: { viewBox },
     pointer,
   } = canvasContextValue;
 
@@ -738,7 +738,7 @@ export default function Canvas() {
     } else {
       pointer.setStyle("default");
     }
-  }, [layout.panMode]);
+  }, [layout.panMode, pointer]);
 
   return (
     <div className="grow h-full touch-none" id="canvas">
