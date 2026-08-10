@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 export default function FloatingControls() {
   const { transform, setTransform } = useTransform();
-  const { setLayout } = useLayout();
+  const { layout, setLayout } = useLayout();
   const { t } = useTranslation();
 
   return (
@@ -37,6 +37,20 @@ export default function FloatingControls() {
           <i className="bi bi-plus-lg" />
         </button>
       </div>
+      <Tooltip content={t("panning")}>
+        <button
+          className={`px-3 py-2 rounded-lg popover-theme flex items-center ${layout.panMode ? "text-blue-500 bg-zinc-200 dark:bg-zinc-700" : ""
+            }`}
+          onClick={() => {
+            setLayout((prev) => ({
+              ...prev,
+              panMode: !prev.panMode,
+            }));
+          }}
+        >
+          <i className="fa-solid fa-hand text-lg" />
+        </button>
+      </Tooltip>
       <Tooltip content={t("exit")}>
         <button
           className="px-3 py-2 rounded-lg popover-theme"

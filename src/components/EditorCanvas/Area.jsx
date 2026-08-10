@@ -161,7 +161,7 @@ export default function Area({
         onPointerDown={onPointerDown}
       >
         <div
-          className={`w-full h-full p-2 rounded cursor-move border-2 ${
+          className={`w-full h-full p-2 rounded border-2 ${layout.panMode ? "cursor-grab" : "cursor-move"} ${
             isHovered
               ? "border-dashed border-blue-500"
               : isSelected
@@ -215,7 +215,7 @@ export default function Area({
           </div>
         </div>
       </foreignObject>
-      {isHovered && (
+      {isHovered && !layout.panMode && (
         <>
           <circle
             cx={data.x}

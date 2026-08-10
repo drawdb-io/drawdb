@@ -1835,6 +1835,9 @@ export default function ControlPanel({
   useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), EDITOR_HOTKEY);
   useHotkeys("mod+alt+w", fitWindow, EDITOR_HOTKEY);
   useHotkeys("alt+e", toggleDBMLEditor, EDITOR_HOTKEY);
+  useHotkeys("h", () => setLayout((prev) => ({ ...prev, panMode: !prev.panMode })), EDITOR_HOTKEY);
+  useHotkeys("v", () => setLayout((prev) => ({ ...prev, panMode: false })), EDITOR_HOTKEY);
+  useHotkeys("escape", () => setLayout((prev) => ({ ...prev, panMode: false })), EDITOR_HOTKEY);
 
   return (
     <>
@@ -1970,6 +1973,18 @@ export default function ControlPanel({
               }
             >
               <i className="fa-solid fa-magnifying-glass-plus" />
+            </button>
+          </Tooltip>
+          <Divider layout="vertical" margin="8px" />
+          <Tooltip content={t("panning")} position="bottom">
+            <button
+              className={`py-1 px-2 hover-2 rounded-sm text-lg flex items-center ${layout.panMode ? "text-[var(--semi-color-primary)] bg-zinc-200 dark:bg-zinc-700" : ""
+                }`}
+              onClick={() =>
+                setLayout((prev) => ({ ...prev, panMode: !prev.panMode }))
+              }
+            >
+              <i className="fa-solid fa-hand" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

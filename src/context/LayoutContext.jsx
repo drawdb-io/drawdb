@@ -11,6 +11,7 @@ const defaultLayout = {
   toolbar: true,
   dbmlEditor: false,
   readOnly: false,
+  panMode: false,
 };
 
 export default function LayoutContextProvider({ children }) {

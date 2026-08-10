@@ -244,7 +244,7 @@ export default function Table({
         y={tableData.y}
         width={settings.tableWidth}
         height={height}
-        className="group drop-shadow-lg rounded-md cursor-move"
+        className={`group drop-shadow-lg rounded-md ${layout.panMode ? "cursor-grab" : "cursor-move"}`}
         onPointerDown={onPointerDown}
       >
         <div
@@ -532,7 +532,7 @@ export default function Table({
             } flex items-center gap-2 overflow-hidden`}
           >
             <button
-              className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+              className={`shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full ${layout.panMode ? "pointer-events-none opacity-50" : ""}`}
               onPointerDown={(e) => {
                 if (!e.isPrimary) return;
 

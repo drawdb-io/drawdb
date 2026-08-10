@@ -41,7 +41,7 @@ export default function Canvas() {
   const canvasRef = useRef(null);
   const canvasContextValue = useCanvas();
   const {
-    canvas: { viewBox },
+    canvas: { viewBox, screenSize },
     pointer,
   } = canvasContextValue;
 
@@ -307,50 +307,28 @@ export default function Canvas() {
     return { x, y };
   };
 
-  /**
-   * @param {PointerEvent} e
-   */
-  const handlePointerMove = (e) => {
-    if (selectedElement.open && !layout.sidebar) return;
-
-    if (!e.isPrimary) return;
-
-    if (panning.isPanning) {
-      setTransform((prev) => ({
-        ...prev,
-        pan: {
-          x:
-            panning.panStart.x +
-            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
-          y:
-            panning.panStart.y +
-            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
-        },
-      }));
-      return;
-    }
-
-    if (layout.readOnly) return;
-
+  const updateDragAndLink = (diagramX, diagramY) => {
     if (linking) {
-      setLinkingLine({
-        ...linkingLine,
-        endX: pointer.spaces.diagram.x,
-        endY: pointer.spaces.diagram.y,
-      });
+      setLinkingLine((prev) => ({
+        ...prev,
+        endX: diagramX,
+        endY: diagramY,
+      }));
       return;
     }
 
     if (isDragging()) {
       const { x: mainElementFinalX, y: mainElementFinalY } =
         coordinatesAfterSnappingToGrid({
-          x: pointer.spaces.diagram.x - dragging.grabOffset.x,
-          y: pointer.spaces.diagram.y - dragging.grabOffset.y,
+          x: diagramX - dragging.grabOffset.x,
+          y: diagramY - dragging.grabOffset.y,
         });
 
-      const { currentCoords } = bulkSelectedElements.find((el) =>
+      const draggingEl = bulkSelectedElements.find((el) =>
         isSameElement(el, dragging),
       );
+      if (!draggingEl) return;
+      const { currentCoords } = draggingEl;
 
       const deltaX = mainElementFinalX - currentCoords.x;
       const deltaY = mainElementFinalY - currentCoords.y;
@@ -384,7 +362,7 @@ export default function Canvas() {
       if (areaResize.dir === "none") return;
       let newDims = { ...areaInitDimensions };
       setPanning((old) => ({ ...old, isPanning: false }));
-      const { x, y } = coordinatesAfterSnappingToGrid(pointer.spaces.diagram);
+      const { x, y } = coordinatesAfterSnappingToGrid({ x: diagramX, y: diagramY });
 
       switch (areaResize.dir) {
         case "br":
@@ -434,10 +412,38 @@ export default function Canvas() {
     if (bulkSelectRect.show) {
       setBulkSelectRect((prev) => ({
         ...prev,
-        x2: pointer.spaces.diagram.x,
-        y2: pointer.spaces.diagram.y,
+        x2: diagramX,
+        y2: diagramY,
       }));
     }
+  };
+
+  /**
+   * @param {PointerEvent} e
+   */
+  const handlePointerMove = (e) => {
+    if (selectedElement.open && !layout.sidebar) return;
+
+    if (!e.isPrimary) return;
+
+    if (panning.isPanning) {
+      setTransform((prev) => ({
+        ...prev,
+        pan: {
+          x:
+            panning.panStart.x +
+            (panning.cursorStart.x - pointer.spaces.screen.x) / transform.zoom,
+          y:
+            panning.panStart.y +
+            (panning.cursorStart.y - pointer.spaces.screen.y) / transform.zoom,
+        },
+      }));
+      return;
+    }
+
+    if (layout.readOnly) return;
+
+    updateDragAndLink(pointer.spaces.diagram.x, pointer.spaces.diagram.y);
   };
 
   /**
@@ -459,26 +465,33 @@ export default function Canvas() {
     const isMouseRightButton = e.button === 2;
 
     if (isMouseLeftButton) {
-      setBulkSelectRect({
-        x1: pointer.spaces.diagram.x,
-        y1: pointer.spaces.diagram.y,
-        x2: pointer.spaces.diagram.x,
-        y2: pointer.spaces.diagram.y,
-        show: elementPointerDown === null || !elementPointerDown.element.locked,
-        ctrlKey: e.ctrlKey,
-        metaKey: e.metaKey,
-      });
-      if (elementPointerDown !== null) {
-        handlePointerDownOnElement(e, elementPointerDown);
+      if (layout.panMode) {
+        setPanning({
+          isPanning: true,
+          panStart: transform.pan,
+          cursorStart: pointer.spaces.screen,
+        });
+        pointer.setStyle("grabbing");
+      } else {
+        setBulkSelectRect({
+          x1: pointer.spaces.diagram.x,
+          y1: pointer.spaces.diagram.y,
+          x2: pointer.spaces.diagram.x,
+          y2: pointer.spaces.diagram.y,
+          show: elementPointerDown === null || !elementPointerDown.element.locked,
+          ctrlKey: e.ctrlKey,
+          metaKey: e.metaKey,
+        });
+        if (elementPointerDown !== null) {
+          handlePointerDownOnElement(e, elementPointerDown);
+        }
+        pointer.setStyle("crosshair");
       }
-      pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton || isMouseRightButton) {
       if (isMouseRightButton) rightClickPanned.current = false;
       setPanning({
         isPanning: true,
         panStart: transform.pan,
-        // Diagram space depends on the current panning.
-        // Use screen space to avoid circular dependencies and undefined behavior.
         cursorStart: pointer.spaces.screen,
       });
       pointer.setStyle("grabbing");
@@ -563,7 +576,7 @@ export default function Canvas() {
       if (e.button === 2) rightClickPanned.current = true;
     }
     setPanning((old) => ({ ...old, isPanning: false }));
-    pointer.setStyle("default");
+    pointer.setStyle(layout.panMode ? "grab" : "default");
 
     if (linking) handleLinking();
     setLinking(false);
@@ -718,6 +731,14 @@ export default function Canvas() {
     canvasRef,
     { passive: false },
   );
+
+  useEffect(() => {
+    if (layout.panMode) {
+      pointer.setStyle("grab");
+    } else {
+      pointer.setStyle("default");
+    }
+  }, [layout.panMode]);
 
   return (
     <div className="grow h-full touch-none" id="canvas">

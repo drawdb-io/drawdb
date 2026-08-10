@@ -256,7 +256,7 @@ export default function Note({ data, onPointerDown }) {
         strokeWidth="2"
       />
 
-      {!layout.readOnly && !data.locked && hovered && (
+      {!layout.readOnly && !data.locked && hovered && !layout.panMode && (
         <g style={{ pointerEvents: "none" }}>
           <circle
             cx={data.x}
@@ -278,7 +278,7 @@ export default function Note({ data, onPointerDown }) {
           />
         </g>
       )}
-      {!layout.readOnly && !data.locked && (
+      {!layout.readOnly && !data.locked && !layout.panMode && (
         <rect
           x={data.x - 4}
           y={data.y + 8}
@@ -338,7 +338,7 @@ export default function Note({ data, onPointerDown }) {
         />
       )}
 
-      {!layout.readOnly && !data.locked && (
+      {!layout.readOnly && !data.locked && !layout.panMode && (
         <rect
           x={data.x + width - 4}
           y={data.y + 8}
@@ -397,7 +397,7 @@ export default function Note({ data, onPointerDown }) {
         height={data.height}
         onPointerDown={onPointerDown}
       >
-        <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
+        <div className={`text-gray-900 select-none w-full h-full px-3 py-2 ${layout.panMode ? "cursor-grab" : "cursor-move"}`}>
           <div className="flex justify-between gap-1 w-full">
             <label
               htmlFor={`note_${data.id}`}
