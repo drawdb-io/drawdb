@@ -20,20 +20,40 @@ import { Tweet } from "react-tweet";
 import { socials } from "../data/socials";
 
 function shortenNumber(number) {
+  if (typeof number !== "number" || isNaN(number)) return 0;
   if (number < 1000) return number;
 
   if (number >= 1000 && number < 1_000_000)
     return `${(number / 1000).toFixed(1)}k`;
+
+  if (number >= 1_000_000)
+    return `${(number / 1_000_000).toFixed(1)}M`;
+
+  return number;
 }
 
 export default function LandingPage() {
-  const [stats, setStats] = useState({ stars: 18000, forks: 1200 });
+  const [stats, setStats] = useState({ stars: 39000, forks: 3200 });
 
   useEffect(() => {
     const fetchStats = async () => {
-      await axios
-        .get("https://api.github-star-counter.workers.dev/user/drawdb-io")
-        .then((res) => setStats(res.data));
+      try {
+        const res = await axios.get(
+          "https://api.github.com/repos/drawdb-io/drawdb"
+        );
+        if (
+          res.data &&
+          typeof res.data.stargazers_count === "number" &&
+          typeof res.data.forks_count === "number"
+        ) {
+          setStats({
+            stars: res.data.stargazers_count,
+            forks: res.data.forks_count,
+          });
+        }
+      } catch {
+        // Ignored the fetch errors
+      }
     };
 
     document.body.setAttribute("theme-mode", "light");
