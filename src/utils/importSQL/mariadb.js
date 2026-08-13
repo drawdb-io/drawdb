@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { buildSQLFromAST } from "./shared";
+import { buildSQLFromAST, findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.MARIADB]: new Proxy(
@@ -119,7 +119,11 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
               );
               const startFieldName = startFieldNames[0];
 
-              const endTable = tables.find((t) => t.name === endTableName);
+              const endTable = findReferencedTable(
+                tables,
+                table,
+                endTableName,
+              );
               if (!endTable) return;
 
               const fieldPairs = [];

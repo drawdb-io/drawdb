@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { buildSQLFromAST } from "./shared";
+import { buildSQLFromAST, findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.POSTGRES]: new Proxy(
@@ -139,7 +139,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               );
               const startFieldName = startFieldNames[0];
 
-              const endTable = tables.find((t) => t.name === endTableName);
+              const endTable = findReferencedTable(tables, table, endTableName);
               if (!endTable) return;
 
               const fieldPairs = [];
@@ -232,7 +232,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
               }
             });
 
-            const endTable = tables.find((t) => t.name === endTableName);
+            const endTable = findReferencedTable(tables, table, endTableName);
             if (!endTable) return;
 
             const endField = endTable.fields.find(
