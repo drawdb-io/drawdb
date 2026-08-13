@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST } from "./shared";
+import { postgresReferenceFieldNames } from "./postgresImplicitReferences";
 
 const affinity = {
   [DB.POSTGRES]: new Proxy(
@@ -24,6 +25,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
   const relationships = [];
   const types = [];
   const enums = [];
+  const primaryKeys = new Map();
 
   const parseSingleStatement = (e) => {
     if (e.type === "create") {
@@ -134,13 +136,16 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                 (c) => c.column.expr.value,
               );
               const endTableName = d.reference_definition.table[0].table;
-              const endFieldNames = d.reference_definition.definition.map(
-                (c) => c.column.expr.value,
-              );
-              const startFieldName = startFieldNames[0];
-
               const endTable = tables.find((t) => t.name === endTableName);
               if (!endTable) return;
+
+              const endFieldNames = postgresReferenceFieldNames(
+                d.reference_definition,
+                endTable,
+                startFieldNames.length,
+                primaryKeys.get(endTableName),
+              );
+              const startFieldName = startFieldNames[0];
 
               const fieldPairs = [];
               for (let i = 0; i < startFieldNames.length; i++) {
@@ -214,8 +219,16 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             const startTableName = table.name;
             const startFieldName = field.name;
             const endTableName = d.reference_definition.table[0].table;
-            const endFieldName =
-              d.reference_definition.definition[0].column.expr.value;
+            const endTable = tables.find((t) => t.name === endTableName);
+            if (!endTable) return;
+
+            const [endFieldName] = postgresReferenceFieldNames(
+              d.reference_definition,
+              endTable,
+              1,
+              primaryKeys.get(endTableName),
+            );
+            if (!endFieldName) return;
             let updateConstraint = Constraint.NONE;
             let deleteConstraint = Constraint.NONE;
             d.reference_definition.on_action.forEach((c) => {
@@ -231,9 +244,6 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
                   deleteConstraint.substring(1);
               }
             });
-
-            const endTable = tables.find((t) => t.name === endTableName);
-            if (!endTable) return;
 
             const endField = endTable.fields.find(
               (f) => f.name === endFieldName,
@@ -263,6 +273,16 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             relationships.push(relationship);
           }
         });
+        const primaryKey = e.create_definitions.find(
+          (definition) => definition.constraint_type === "primary key",
+        );
+        primaryKeys.set(
+          table.name,
+          primaryKey?.definition.map((column) => column.column.expr.value) ??
+            table.fields
+              .filter((tableField) => tableField.primary)
+              .map((tableField) => tableField.name),
+        );
         tables.push(table);
       } else if (e.keyword === "index") {
         const index = {

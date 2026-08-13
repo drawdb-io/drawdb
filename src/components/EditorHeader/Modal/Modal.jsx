@@ -27,6 +27,7 @@ import {
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
+import { parsePostgresSQL } from "../../../utils/importSQL/postgresImplicitReferences";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -130,10 +131,10 @@ export default function Modal({
         ast = oracleParser.parse(importSource.src);
       } else {
         const parser = new Parser();
-
-        ast = parser.astify(importSource.src, {
-          database: targetDatabase,
-        });
+        ast =
+          targetDatabase === DB.POSTGRES
+            ? parsePostgresSQL(parser, importSource.src, targetDatabase)
+            : parser.astify(importSource.src, { database: targetDatabase });
       }
     } catch (error) {
       const message = error.location
@@ -200,7 +201,10 @@ export default function Modal({
 
       if (!result) return;
 
-      const { diagram, warnings } = normalizeAiDiagram(result.diagram, database);
+      const { diagram, warnings } = normalizeAiDiagram(
+        result.diagram,
+        database,
+      );
       const allWarnings = [...(result.warnings ?? []), ...warnings];
 
       applyImportedDiagram(diagram);
