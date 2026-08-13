@@ -875,7 +875,7 @@ export default function ControlPanel({
           y: obj.y + 20,
           id: areas.length,
         });
-      } else if (v.validate(obj, noteSchema)) {
+      } else if (v.validate(obj, noteSchema).valid) {
         addNote({
           ...obj,
           x: obj.x + 20,
