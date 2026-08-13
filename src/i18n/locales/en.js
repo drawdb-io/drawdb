@@ -254,6 +254,19 @@ const en = {
     supported_types: "Supported file types:",
     bulk_update: "Bulk update",
     auto_arrange: "Auto arrange",
+    auto_connect_fk: "Auto-connect foreign keys",
+    auto_connect_fk_success: "Created {{count}} foreign key reference(s)",
+    no_foreign_keys_found: "No foreign key references found",
+    all_relations_already_connected: "All relations are already connected",
+    auto_connect_fk_modal_title: "Auto-Connect Foreign Keys",
+    auto_connect_fk_modal_description:
+      "To automatically establish PK/FK relationships, your columns should follow standard naming conventions:",
+    auto_connect_fk_rule_1:
+      "1. Table Prefix + PK Column (e.g., user_id or users_id for table 'users' with primary key 'id')",
+    auto_connect_fk_rule_2:
+      "2. Matching PK Column Name (e.g., author_id matching author_id in parent table)",
+    auto_connect_fk_modal_question:
+      "Would you like to scan the diagram and build matching relationships?",
     multiselect: "Multiselect",
     export_saved_data: "Export saved data",
     dbml_view: "DBML view",
