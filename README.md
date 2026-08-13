@@ -63,6 +63,18 @@ docker run -p 3000:80 drawdb
 
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files.
 
+The prebuilt Docker image reads backend URLs when the container starts, so it
+does not need to be rebuilt for each environment:
+
+```bash
+docker run -p 3000:80 \
+  -e VITE_BACKEND_URL=https://drawdb-server.example.com \
+  ghcr.io/drawdb-io/drawdb:latest
+```
+
+Set `VITE_GIST_BACKEND_URL` as well to route sharing requests to a different
+backend.
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
