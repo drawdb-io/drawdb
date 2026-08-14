@@ -116,13 +116,12 @@ export default function Relationship({ data }) {
   let labelY = 0;
 
   let labelWidth = labelRef.current?.getBBox().width ?? 0;
-  let labelHeight = labelRef.current?.getBBox().height ?? 0;
 
   const cardinalityOffset = 28;
 
   if (composite) {
     labelX = composite.labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = composite.labelPoint.y + (labelHeight ?? 0) / 2;
+    labelY = composite.labelPoint.y;
     cardinalityStartX = composite.startCardinality.x;
     cardinalityStartY = composite.startCardinality.y;
     cardinalityEndX = composite.endCardinality.x;
@@ -132,7 +131,7 @@ export default function Relationship({ data }) {
 
     const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
+    labelY = labelPoint.y;
 
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
@@ -209,6 +208,7 @@ export default function Relationship({ data }) {
           <text
             x={labelX}
             y={labelY}
+            dominantBaseline="middle"
             fill={settings.mode === "dark" ? "lightgrey" : "#333"}
             fontSize={labelFontSize}
             fontWeight={500}
