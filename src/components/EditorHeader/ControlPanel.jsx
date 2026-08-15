@@ -25,6 +25,7 @@ import {
   Toast,
   Popconfirm,
   Typography,
+  Modal as SemiModal,
 } from "@douyinfe/semi-ui";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import {
@@ -88,6 +89,7 @@ import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
 import { getTableHeight } from "../../utils/utils";
 import { autoArrange } from "../../utils/autoArrange";
+import { findAutoFKRelationships } from "../../utils/autoRelationships";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
 import { DateTime } from "luxon";
 import ConfigureCustomTypes from "./ConfigureCustomTypes";
@@ -111,6 +113,7 @@ export default function ControlPanel({
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [showEditName, setShowEditName] = useState(false);
+  const [showAutoConnectModal, setShowAutoConnectModal] = useState(false);
   const [importDb, setImportDb] = useState("");
   const [exportData, setExportData] = useState({
     data: null,
@@ -178,6 +181,12 @@ export default function ControlPanel({
     setUndoStack((prev) => prev.filter((_, i) => i !== prev.length - 1));
 
     if (a.bulk) {
+      if (a.element === ObjectType.RELATIONSHIP && a.action === Action.ADD) {
+        const idsToDelete = new Set((a.relationships || []).map((r) => r.id));
+        setRelationships((prev) => prev.filter((r) => !idsToDelete.has(r.id)));
+        setRedoStack((prev) => [...prev, a]);
+        return;
+      }
       for (const element of a.elements) {
         if (element.type === ObjectType.TABLE) {
           updateTable(element.id, element.undo);
@@ -383,6 +392,11 @@ export default function ControlPanel({
     setRedoStack((prev) => prev.filter((e, i) => i !== prev.length - 1));
 
     if (a.bulk) {
+      if (a.element === ObjectType.RELATIONSHIP && a.action === Action.ADD) {
+        setRelationships((prev) => [...prev, ...(a.relationships || [])]);
+        setUndoStack((prev) => [...prev, a]);
+        return;
+      }
       for (const element of a.elements) {
         if (element.type === ObjectType.TABLE) {
           updateTable(element.id, element.redo);
@@ -713,6 +727,31 @@ export default function ControlPanel({
     ]);
     setRedoStack([]);
     fitToView(arrangedTables);
+  };
+  const autoConnectFKs = () => {
+    if (layout.readOnly) return;
+    setShowAutoConnectModal(true);
+  };
+  const confirmAutoConnectFKs = () => {
+    setShowAutoConnectModal(false);
+    const newRels = findAutoFKRelationships(tables, relationships);
+    if (newRels.length === 0) {
+      Toast.info(t("all_relations_already_connected"));
+      return;
+    }
+    setRelationships((prev) => [...prev, ...newRels]);
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.ADD,
+        element: ObjectType.RELATIONSHIP,
+        bulk: true,
+        message: t("auto_connect_fk"),
+        relationships: newRels,
+      },
+    ]);
+    setRedoStack([]);
+    Toast.success(t("auto_connect_fk_success", { count: newRels.length }));
   };
   const edit = () => {
     if (selectedElement.element === ObjectType.TABLE) {
@@ -1562,6 +1601,10 @@ export default function ControlPanel({
         function: autoArrangeTables,
         disabled: layout.readOnly,
       },
+      auto_connect_fk: {
+        function: autoConnectFKs,
+        disabled: layout.readOnly,
+      },
       copy_as_image: {
         function: copyAsImage,
         shortcut: "Ctrl+Alt+C",
@@ -1887,6 +1930,28 @@ export default function ControlPanel({
         open={modal === MODAL.CONFIG_CUSTOM_TYPES}
         onClose={() => setModal(MODAL.NONE)}
       />
+      <SemiModal
+        title={t("auto_connect_fk_modal_title")}
+        centered
+        visible={showAutoConnectModal}
+        onOk={confirmAutoConnectFKs}
+        onCancel={() => setShowAutoConnectModal(false)}
+        okText={t("auto_connect_fk")}
+        cancelText={t("cancel")}
+      >
+        <div className="space-y-3">
+          <p className="text-sm">
+            {t("auto_connect_fk_modal_description")}
+          </p>
+          <ol className="list-decimal ps-5 space-y-1 text-sm">
+            <li>{t("auto_connect_fk_rule_1")}</li>
+            <li>{t("auto_connect_fk_rule_2")}</li>
+          </ol>
+          <p className="text-sm font-medium mt-2">
+            {t("auto_connect_fk_modal_question")}
+          </p>
+        </div>
+      </SemiModal>
     </>
   );
 
