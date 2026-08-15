@@ -262,9 +262,9 @@ const en = {
     auto_connect_fk_modal_description:
       "To automatically establish PK/FK relationships, your columns should follow standard naming conventions:",
     auto_connect_fk_rule_1:
-      "1. Table Prefix + PK Column (e.g., user_id or users_id for table 'users' with primary key 'id')",
+      "Table Prefix + PK Column (e.g., user_id or users_id for table 'users' with primary key 'id')",
     auto_connect_fk_rule_2:
-      "2. Matching PK Column Name (e.g., author_id matching author_id in parent table)",
+      "Matching PK Column Name (e.g., author_id matching author_id in parent table)",
     auto_connect_fk_modal_question:
       "Would you like to scan the diagram and build matching relationships?",
     multiselect: "Multiselect",

@@ -1932,21 +1932,22 @@ export default function ControlPanel({
       />
       <SemiModal
         title={t("auto_connect_fk_modal_title")}
+        centered
         visible={showAutoConnectModal}
         onOk={confirmAutoConnectFKs}
         onCancel={() => setShowAutoConnectModal(false)}
         okText={t("auto_connect_fk")}
         cancelText={t("cancel")}
       >
-        <div className="space-y-3 py-2">
+        <div className="space-y-3">
           <p className="text-sm">
             {t("auto_connect_fk_modal_description")}
           </p>
-          <ul className="list-disc ps-5 space-y-1 text-sm text-gray-400">
+          <ol className="list-decimal ps-5 space-y-1 text-sm">
             <li>{t("auto_connect_fk_rule_1")}</li>
             <li>{t("auto_connect_fk_rule_2")}</li>
-          </ul>
-          <p className="text-sm font-medium pt-2">
+          </ol>
+          <p className="text-sm font-medium mt-2">
             {t("auto_connect_fk_modal_question")}
           </p>
         </div>
@@ -2091,15 +2092,6 @@ export default function ControlPanel({
               disabled={layout.readOnly}
             >
               <i className="fa-solid fa-wand-magic-sparkles" />
-            </button>
-          </Tooltip>
-          <Tooltip content={t("auto_connect_fk")} position="bottom">
-            <button
-              className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
-              onClick={autoConnectFKs}
-              disabled={layout.readOnly}
-            >
-              <i className="fa-solid fa-link" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
