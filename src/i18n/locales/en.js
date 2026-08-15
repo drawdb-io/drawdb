@@ -256,7 +256,7 @@ const en = {
     auto_arrange: "Auto arrange",
     auto_connect_fk: "Auto-connect foreign keys",
     auto_connect_fk_success: "Created {{count}} foreign key reference(s)",
-    no_foreign_keys_found: "No foreign key references found",
+    no_foreign_keys_found: "No relationships found",
     all_relations_already_connected: "All relations are already connected",
     auto_connect_fk_modal_title: "Auto-Connect Foreign Keys",
     auto_connect_fk_modal_description:
