@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { buildSQLFromAST } from "./shared";
+import { buildSQLFromAST, findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.SQLITE]: new Proxy(
@@ -51,7 +51,7 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     const endFieldNames = referenceDefinition.definition.map((c) => c.column);
     const startFieldName = startFieldNames[0];
 
-    const endTable = tables.find((t) => t.name === endTableName);
+    const endTable = findReferencedTable(tables, startTable, endTableName);
     if (!endTable) return;
 
     const fieldPairs = [];

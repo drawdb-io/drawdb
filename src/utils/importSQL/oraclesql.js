@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
+import { findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.ORACLESQL]: new Proxy(
@@ -105,7 +106,7 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             const startFieldName = startFieldNames[0];
             const endTableName = d.constraint.reference.object.name;
 
-            const endTable = tables.find((t) => t.name === endTableName);
+            const endTable = findReferencedTable(tables, table, endTableName);
             if (!endTable) return;
 
             const fieldPairs = [];

@@ -1,5 +1,11 @@
 import { DB } from "../../data/constants";
 
+export function findReferencedTable(tables, currentTable, name) {
+  return currentTable.name === name
+    ? currentTable
+    : tables.find((table) => table.name === name);
+}
+
 function quoteColumn(str, db) {
   switch (db) {
     case DB.MYSQL:

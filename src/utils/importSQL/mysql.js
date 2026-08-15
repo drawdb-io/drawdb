@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { buildSQLFromAST } from "./shared";
+import { buildSQLFromAST, findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.MYSQL]: new Proxy(
@@ -118,7 +118,11 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC) {
               );
               const startFieldName = startFieldNames[0];
 
-              const endTable = tables.find((t) => t.name === endTableName);
+              const endTable = findReferencedTable(
+                tables,
+                table,
+                endTableName,
+              );
               if (!endTable) return;
 
               // Resolve every column pair (composite FKs carry more than one).
