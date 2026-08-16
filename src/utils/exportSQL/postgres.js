@@ -22,13 +22,13 @@ export function toPostgres(diagram) {
       (type) =>
         `CREATE TYPE ${type.name} AS (\n${type.fields
           .map((f) => `\t${f.name} ${f.type}`)
-          .join(",\n")}\n);\n\n${
+          .join(",\n")}\n);${
           type.comment?.trim()
-            ? `COMMENT ON TYPE "${type.name}" IS '${escapeQuotes(type.comment)}';\n`
+            ? `\n\nCOMMENT ON TYPE "${type.name}" IS '${escapeQuotes(type.comment)}';`
             : ""
         }`,
     )
-    .join("\n");
+    .join("\n\n");
 
   const tableStatements = diagram.tables
     .map((table) => {
@@ -71,14 +71,14 @@ export function toPostgres(diagram) {
         table.comment?.trim()
           ? `COMMENT ON TABLE "${table.name}" IS '${escapeQuotes(table.comment)}';`
           : "",
-        ...table.fields
-          .map((field) =>
-            field.comment?.trim()
-              ? `COMMENT ON COLUMN "${table.name}"."${field.name}" IS '${escapeQuotes(field.comment)}';`
-              : "",
-          )
-          .filter(Boolean),
-      ].join("\n");
+        ...table.fields.map((field) =>
+          field.comment?.trim()
+            ? `COMMENT ON COLUMN "${table.name}"."${field.name}" IS '${escapeQuotes(field.comment)}';`
+            : "",
+        ),
+      ]
+        .filter(Boolean)
+        .join("\n");
 
       const indexStatements = table.indices
         .map(
@@ -89,7 +89,13 @@ export function toPostgres(diagram) {
         )
         .join("\n");
 
-      return `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${uniqueClause}${inheritsClause};\n\n${commentStatements}\n${indexStatements}`;
+      return [
+        `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${fieldDefinitions}${primaryKeyClause}${uniqueClause}${inheritsClause};`,
+        commentStatements,
+        indexStatements,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
     })
     .join("\n\n");
 
@@ -119,12 +125,11 @@ export function toPostgres(diagram) {
 
   return [
     enumStatements,
-    enumStatements.trim() && typeStatements
-      ? "\n" + typeStatements
-      : typeStatements,
+    typeStatements,
     tableStatements,
     foreignKeyStatements,
   ]
+    .map((s) => s.trim())
     .filter(Boolean)
-    .join("\n");
+    .join("\n\n");
 }
