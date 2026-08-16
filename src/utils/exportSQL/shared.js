@@ -15,10 +15,15 @@ export function getFkColumnNames(relationship, startTable, endTable) {
 }
 
 export function parseDefault(field, database = DB.GENERIC) {
+  if (typeof field.default !== "string") {
+    return field.default;
+  }
+
+  const typeInfo = dbToTypes[database][field.type];
   if (
     isFunction(field.default) ||
     isKeyword(field.default) ||
-    !dbToTypes[database][field.type].hasQuotes
+    (typeInfo && !typeInfo.hasQuotes)
   ) {
     return field.default;
   }
