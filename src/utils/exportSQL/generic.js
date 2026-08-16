@@ -256,95 +256,104 @@ export function jsonToMySQL(obj) {
 }
 
 export function jsonToPostgreSQL(obj) {
-  return `${obj.types.map((type) => {
-    const typeStatements = type.fields
-      .filter((f) => f.type === "ENUM" || f.type === "SET")
-      .map(
-        (f) =>
-          `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-            .map((v) => `'${v}'`)
-            .join(", ")});`,
-      )
-      .join("\n");
-    if (typeStatements.length > 0) {
-      return (
-        typeStatements.join("") +
-        `${
-          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-        }CREATE TYPE ${type.name} AS (\n${type.fields
-          .map(
-            (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
-          )
-          .join("\n")}\n);`
-      );
-    } else {
-      return `CREATE TYPE ${type.name} AS (\n${type.fields
+  const typeStatements = obj.types
+    .map((type) => {
+      const enumStatements = type.fields
+        .filter((f) => f.type === "ENUM" || f.type === "SET")
+        .map(
+          (f) =>
+            `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+              .map((v) => `'${v}'`)
+              .join(", ")});`,
+        )
+        .join("\n");
+      const compositeStatement = `CREATE TYPE ${type.name} AS (\n${type.fields
         .map(
           (f) => `\t${f.name} ${getTypeString(f, obj.database, DB.POSTGRES)}`,
         )
-        .join(",\n")}\n);\n${
+        .join(",\n")}\n);`;
+      if (enumStatements) {
+        return `${enumStatements}\n${
+          type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
+        }${compositeStatement}`;
+      }
+      return `${compositeStatement}${
         type.comment && type.comment.trim() != ""
-          ? `\nCOMMENT ON TYPE ${type.name} IS '${escapeQuotes(type.comment)}';\n`
+          ? `\n\nCOMMENT ON TYPE ${type.name} IS '${escapeQuotes(type.comment)}';`
           : ""
       }`;
-    }
-  })}\n${obj.tables
-    .map(
-      (table) =>
-        `${
-          table.fields.filter((f) => f.type === "ENUM" || f.type === "SET")
-            .length > 0
-            ? `${table.fields
-                .filter((f) => f.type === "ENUM" || f.type === "SET")
-                .map(
-                  (f) =>
-                    `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
-                      .map((v) => `'${v}'`)
-                      .join(", ")});\n`,
-                )
-                .join("\n")}\n`
-            : ""
-        }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
-          .map(
-            (field) =>
-              `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
-                field.name
-              }" ${getTypeString(field, obj.database, DB.POSTGRES)}${
-                field.notNull ? " NOT NULL" : ""
-              }${field.unique ? " UNIQUE" : ""}${
-                field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
-              }${
-                field.check === "" ||
-                !dbToTypes[obj.database][field.type].hasCheck
-                  ? ""
-                  : ` CHECK(${field.check})`
-              }`,
-          )
-          .join(",\n")}${
-          table.fields.filter((f) => f.primary).length > 0
-            ? `,\n\tPRIMARY KEY(${table.fields
-                .filter((f) => f.primary)
-                .map((f) => `"${f.name}"`)
-                .join(", ")})`
-            : ""
-        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.comment != "" ? `\nCOMMENT ON TABLE ${table.name} IS '${escapeQuotes(table.comment)}';\n` : ""}${table.fields
-          .map((field) =>
-            field.comment.trim() !== ""
-              ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${escapeQuotes(field.comment)}';\n`
-              : "",
-          )
-          .join("")}\n${table.indices
-          .map(
-            (i) =>
-              `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
-                i.name
-              }"\nON "${table.name}" (${i.fields
-                .map((f) => `"${f}"`)
-                .join(", ")});`,
-          )
-          .join("\n")}`,
-    )
-    .join("\n")}\n${obj.references
+    })
+    .join("\n\n");
+
+  const tableStatements = obj.tables
+    .map((table) => {
+      const fieldEnumStatements = table.fields
+        .filter((f) => f.type === "ENUM" || f.type === "SET")
+        .map(
+          (f) =>
+            `CREATE TYPE "${f.name}_t" AS ENUM (${f.values
+              .map((v) => `'${v}'`)
+              .join(", ")});`,
+        )
+        .join("\n");
+      const createStatement = `CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
+        .map(
+          (field) =>
+            `${field.comment === "" ? "" : `\t-- ${field.comment}\n`}\t"${
+              field.name
+            }" ${getTypeString(field, obj.database, DB.POSTGRES)}${
+              field.notNull ? " NOT NULL" : ""
+            }${field.unique ? " UNIQUE" : ""}${
+              field.default !== "" ? ` DEFAULT ${parseDefault(field)}` : ""
+            }${
+              field.check === "" ||
+              !dbToTypes[obj.database][field.type].hasCheck
+                ? ""
+                : ` CHECK(${field.check})`
+            }`,
+        )
+        .join(",\n")}${
+        table.fields.filter((f) => f.primary).length > 0
+          ? `,\n\tPRIMARY KEY(${table.fields
+              .filter((f) => f.primary)
+              .map((f) => `"${f.name}"`)
+              .join(", ")})`
+          : ""
+      }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);`;
+      const commentStatements = [
+        table.comment != ""
+          ? `COMMENT ON TABLE ${table.name} IS '${escapeQuotes(table.comment)}';`
+          : "",
+        ...table.fields.map((field) =>
+          field.comment.trim() !== ""
+            ? `COMMENT ON COLUMN ${table.name}.${field.name} IS '${escapeQuotes(field.comment)}';`
+            : "",
+        ),
+      ]
+        .filter(Boolean)
+        .join("\n");
+      const indexStatements = table.indices
+        .map(
+          (i) =>
+            `CREATE ${i.unique ? "UNIQUE " : ""}INDEX "${
+              i.name
+            }"\nON "${table.name}" (${i.fields
+              .map((f) => `"${f}"`)
+              .join(", ")});`,
+        )
+        .join("\n");
+      return [
+        fieldEnumStatements,
+        createStatement,
+        commentStatements,
+        indexStatements,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+    })
+    .join("\n\n");
+
+  const foreignKeyStatements = obj.references
     .map((r) => {
       const { name: startName, fields: startFields } = obj.tables.find(
         (t) => t.id === r.startTableId,
@@ -363,7 +372,11 @@ export function jsonToPostgreSQL(obj) {
         .map((c) => `"${c}"`)
         .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
-    .join("\n")}`;
+    .join("\n");
+
+  return [typeStatements, tableStatements, foreignKeyStatements]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 export function getSQLiteType(field) {
