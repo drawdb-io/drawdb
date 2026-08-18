@@ -27,6 +27,7 @@ import {
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
+import { parseMssqlSource } from "../../../utils/importSQL/mssql";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -128,6 +129,8 @@ export default function Modal({
         const oracleParser = new OracleParser();
 
         ast = oracleParser.parse(importSource.src);
+      } else if (targetDatabase === DB.MSSQL) {
+        ast = parseMssqlSource(importSource.src);
       } else {
         const parser = new Parser();
 
