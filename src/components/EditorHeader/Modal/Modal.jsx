@@ -8,6 +8,7 @@ import {
 } from "@douyinfe/semi-ui";
 import { saveAs } from "file-saver";
 import { Parser } from "node-sql-parser";
+import { stripPostgresDumpArtifacts } from "../../../utils/importSQL/preprocess";
 import { Parser as OracleParser } from "oracle-sql-parser";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -131,7 +132,15 @@ export default function Modal({
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        // A pg_dump file carries data blocks, identity clauses and routine
+        // bodies that node-sql-parser cannot read. None of them describes a
+        // table, so drop them instead of failing the whole import (#852).
+        const src =
+          targetDatabase === DB.POSTGRES
+            ? stripPostgresDumpArtifacts(importSource.src)
+            : importSource.src;
+
+        ast = parser.astify(src, {
           database: targetDatabase,
         });
       }
