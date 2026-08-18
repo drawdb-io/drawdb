@@ -27,6 +27,7 @@ import {
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
+import { expandPostgresCreateTableLike } from "../../../utils/importSQL/postgresLikeTables";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -131,7 +132,12 @@ export default function Modal({
       } else {
         const parser = new Parser();
 
-        ast = parser.astify(importSource.src, {
+        const source =
+          targetDatabase === DB.POSTGRES
+            ? expandPostgresCreateTableLike(importSource.src)
+            : importSource.src;
+
+        ast = parser.astify(source, {
           database: targetDatabase,
         });
       }
