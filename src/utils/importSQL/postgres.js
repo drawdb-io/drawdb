@@ -75,22 +75,10 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             if (d.default_val) {
               let defaultValue = "";
               if (d.default_val.value.type === "function") {
-                defaultValue = d.default_val.value.name.name[0].value;
-                if (d.default_val.value.args) {
-                  defaultValue +=
-                    "(" +
-                    d.default_val.value.args.value
-                      .map((v) => {
-                        if (
-                          v.type === "single_quote_string" ||
-                          v.type === "double_quote_string"
-                        )
-                          return "'" + v.value + "'";
-                        return v.value;
-                      })
-                      .join(", ") +
-                    ")";
-                }
+                defaultValue = buildSQLFromAST(
+                  d.default_val.value,
+                  DB.POSTGRES,
+                );
               } else if (d.default_val.value.type === "null") {
                 defaultValue = "NULL";
               } else if (d.default_val.value.type === "cast") {
