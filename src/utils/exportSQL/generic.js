@@ -437,9 +437,9 @@ export function jsonToSQLite(obj) {
           ? `,\n\tPRIMARY KEY(${table.fields
               .filter((f) => f.primary)
               .map((f) => `"${f.name}"`)
-              .join(", ")})${inlineFK !== "" ? ",\n" : ""}`
+              .join(", ")})`
           : ""
-      }${inlineFK}${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.indices
+      }${inlineFK !== "" ? ",\n" : ""}${inlineFK}${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${table.indices
         .map(
           (i) =>
             `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX IF NOT EXISTS "${
