@@ -1,16 +1,31 @@
 services:
-  drawdb:
+  drawdb-dev:
     image: node:20-alpine
-    container_name: drawdb
+    container_name: drawdb-development
     ports:
-      - 5173:5173
-    working_dir: /var/www/html
+      - "5173:5173"
+    working_dir: /app
     volumes:
-      - ./:/var/www/html
+      # Mount source code for development
+      - ./:/app
+      # Use named volume for node_modules to improve performance
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
     command: sh -c "npm install && npm run dev -- --host"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
-      - default
+      - drawdb-network
+
+volumes:
+  node_modules:
 
 networks:
-  default:
+  drawdb-network:
     driver: bridge
