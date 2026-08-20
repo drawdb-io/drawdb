@@ -1,40 +1,48 @@
 <div align="center">
-  <sup>Special thanks to:</sup>
-  <br>
-  <a href="https://www.warp.dev/drawdb/" target="_blank">
-    <img alt="Warp sponsorship" width="280" src="https://github.com/user-attachments/assets/c7f141e7-9751-407d-bb0e-d6f2c487b34f">
-    <br>
-    <b>Next-gen AI-powered intelligent terminal for all platforms</b>
-  </a>
-</div>
+
+<br/>
+
+<a href="https://www.warp.dev/drawdb/" target="_blank">
+  <picture>
+    <img alt="Warp — Next-gen AI terminal" width="260" src="https://github.com/user-attachments/assets/c7f141e7-9751-407d-bb0e-d6f2c487b34f">
+  </picture>
+  <br/>
+  <sub><b>✦ Special thanks to Warp — the next-gen AI-powered terminal for all platforms ✦</b></sub>
+</a>
 
 <br/>
 <br/>
+<br/>
 
-<div align="center">
-    <img width="64" alt="drawDB logo" src="./src/assets/icon-dark.png">
-    <h1>drawDB</h1>
+<img width="72" alt="drawDB logo" src="./src/assets/icon-dark.png">
+
+# drawDB
+
+### Free, simple, and intuitive database schema editor & SQL generator
+
+<br/>
+
+[![Start Building](https://img.shields.io/badge/▶%20Start%20Building-1a1a2e?style=for-the-badge)](https://drawdb.app/)
+[![Discord](https://img.shields.io/discord/1196658537208758412?style=for-the-badge&label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/BrjZgNrmR6)
+[![Follow on X](https://img.shields.io/badge/Follow%20on%20𝕏-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/drawDB_)
+
+<br/>
+
+<img width="760" style="border-radius:10px;" alt="drawDB screenshot" src="drawdb.png">
+
 </div>
 
-<h3 align="center">Free, simple, and intuitive database schema editor and SQL generator.</h3>
+<br/>
 
-<div align="center" style="margin-bottom:12px;">
-    <a href="https://drawdb.app/" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Start%20building-grey" alt="drawDB"/>
-    </a>
-    <a href="https://discord.gg/BrjZgNrmR6" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/discord/1196658537208758412.svg?label=Join%20the%20Discord&logo=discord" alt="Discord"/>
-    </a>
-    <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
-    </a>
-</div>
+---
 
-<h3 align="center"><img width="700" style="border-radius:5px;" alt="drawDB screenshot demo" src="drawdb.png"></h3>
+**drawDB** is a robust, browser-native entity relationship diagram (ERD) editor — no account required. Design database schemas visually, export and import SQL scripts, generate migrations, and customize your workspace, all with just a few clicks.
 
-DrawDB is a robust and user-friendly database entity relationship diagram (ERD) editor right in your browser. Build diagrams with a few clicks, export and import SQL scripts, generate migrations, customize your editor, and more without creating an account. See the full set of features on [here](https://drawdb.app/).
+→ Explore the full feature set at **[drawdb.app](https://drawdb.app/)**
 
-## Getting Started
+---
+
+## 🚀 Getting Started
 
 ### Local Development
 
@@ -45,7 +53,7 @@ npm install
 npm run dev
 ```
 
-### Build
+### Production Build
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
@@ -54,18 +62,23 @@ npm install
 npm run build
 ```
 
-### Docker Build
+### Docker
 
 ```bash
 docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
-If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files.
+> **Optional:** To enable diagram sharing, set up the [drawdb server](https://github.com/drawdb-io/drawdb-server) and configure environment variables as described in `.env.sample`.
 
-## Contributing
+---
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+## 🤝 Contributing
 
-## Support
-- Join discussions: [Discord](https://discord.gg/BrjZgNrmR6)
+Contributions are welcome! Please read [**CONTRIBUTING.md**](CONTRIBUTING.md) before submitting a pull request.
+
+## 💬 Support & Community
+
+Have a question or want to chat with other users?
+
+→ Join us on [**Discord**](https://discord.gg/BrjZgNrmR6)
