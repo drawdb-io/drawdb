@@ -1,6 +1,7 @@
 import { dbToTypes } from "../data/datatypes";
 import i18n from "../i18n/i18n";
 import { isFunction } from "./utils";
+import { findCircularTableIds } from "./graph";
 
 function checkDefault(field, database) {
   if (field.default === "") return true;
@@ -19,6 +20,10 @@ function checkDefault(field, database) {
 export function getIssues(diagram) {
   const issues = [];
   const duplicateTableNames = {};
+  const tableByName = new Map(
+    diagram.tables.map((table) => [table.name, table]),
+  );
+  const tableById = new Map(diagram.tables.map((table) => [table.id, table]));
 
   diagram.tables.forEach((table) => {
     if (table.name === "") {
@@ -37,7 +42,7 @@ export function getIssues(diagram) {
     const inheritedFields =
       table.inherits
         ?.map((parentName) => {
-          const parent = diagram.tables.find((t) => t.name === parentName);
+          const parent = tableByName.get(parentName);
           return parent ? parent.fields.map((f) => f.name) : [];
         })
         .flat() || [];
@@ -228,33 +233,16 @@ export function getIssues(diagram) {
     }
   });
 
-  const visitedTables = new Set();
-
-  function checkCircularRelationships(tableId, visited = []) {
-    if (visited.includes(tableId)) {
-      issues.push(
-        i18n.t("circular_dependency", {
-          refName: diagram.tables.find((t) => t.id === tableId)?.name,
-        }),
-      );
-      return;
-    }
-
-    visited.push(tableId);
-    visitedTables.add(tableId);
-
-    diagram.relationships.forEach((r) => {
-      if (r.startTableId === tableId && r.startTableId !== r.endTableId) {
-        checkCircularRelationships(r.endTableId, [...visited]);
-      }
-    });
+  for (const tableId of findCircularTableIds(
+    diagram.tables,
+    diagram.relationships,
+  )) {
+    issues.push(
+      i18n.t("circular_dependency", {
+        refName: tableById.get(tableId)?.name,
+      }),
+    );
   }
-
-  diagram.tables.forEach((table) => {
-    if (!visitedTables.has(table.id)) {
-      checkCircularRelationships(table.id);
-    }
-  });
 
   return issues;
 }
