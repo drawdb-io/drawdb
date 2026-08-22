@@ -88,7 +88,6 @@ export default function Relationship({ data }) {
   let cardinalityEnd = "1";
 
   switch (data.cardinality) {
-    // the translated values are to ensure backwards compatibility
     case t(Cardinality.MANY_TO_ONE):
     case Cardinality.MANY_TO_ONE:
       cardinalityStart = data.manyLabel || "n";
@@ -113,16 +112,15 @@ export default function Relationship({ data }) {
   let cardinalityStartY = 0;
   let cardinalityEndY = 0;
   let labelX = 0;
-  let labelY = 0;
+  let labelPoint;
 
   let labelWidth = labelRef.current?.getBBox().width ?? 0;
-  let labelHeight = labelRef.current?.getBBox().height ?? 0;
 
   const cardinalityOffset = 28;
 
   if (composite) {
     labelX = composite.labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = composite.labelPoint.y + (labelHeight ?? 0) / 2;
+    labelPoint = composite.labelPoint;
     cardinalityStartX = composite.startCardinality.x;
     cardinalityStartY = composite.startCardinality.y;
     cardinalityEndX = composite.endCardinality.x;
@@ -130,9 +128,8 @@ export default function Relationship({ data }) {
   } else if (pathRef.current) {
     const pathLength = pathRef.current.getTotalLength();
 
-    const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
+    labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
 
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
@@ -205,14 +202,15 @@ export default function Relationship({ data }) {
           fill="none"
           cursor="pointer"
         />
-        {settings.showRelationshipLabels && (
+        {settings.showRelationshipLabels && labelPoint && (
           <text
             x={labelX}
-            y={labelY}
+            y={labelPoint.y}
             fill={settings.mode === "dark" ? "lightgrey" : "#333"}
             fontSize={labelFontSize}
             fontWeight={500}
             ref={labelRef}
+            dominantBaseline="middle"
             className="group-hover:fill-sky-600"
           >
             {data.name}
@@ -277,21 +275,4 @@ function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
         rx={r}
         ry={r}
         width={textWidth + padding}
-        height={r * 2}
-        fill="grey"
-        className="group-hover:fill-sky-600"
-      />
-      <text
-        ref={textRef}
-        x={x}
-        y={y}
-        fill="white"
-        strokeWidth="0.5"
-        textAnchor="middle"
-        alignmentBaseline="middle"
-      >
-        {text}
-      </text>
-    </g>
-  );
-}
+        height={r *
