@@ -27,7 +27,7 @@ import { useHover } from "usehooks-ts";
 
 export default function Area({
   data,
-  onPointerDown,
+  onElementPointerDown,
   setResize,
   setInitDimensions,
 }) {
@@ -158,7 +158,7 @@ export default function Area({
         y={data.y}
         width={data.width > 0 ? data.width : 0}
         height={data.height > 0 ? data.height : 0}
-        onPointerDown={onPointerDown}
+        onPointerDown={() => onElementPointerDown(data, ObjectType.AREA)}
       >
         <div
           className={`w-full h-full p-2 rounded cursor-move border-2 ${

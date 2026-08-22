@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Slot } from "../../context/ExtensionsContext";
 import {
   Action,
@@ -34,6 +34,14 @@ import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
+import { SpatialIndex } from "../../utils/spatialIndex";
+import {
+  buildRelationshipLookup,
+  collectVisibleRelationshipIds,
+  expandViewport,
+  getAreaBounds,
+  getNoteBounds,
+} from "../../utils/viewport";
 
 export default function Canvas() {
   const { t } = useTranslation();
@@ -45,8 +53,9 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
+  const diagram = useDiagram();
   const { tables, updateTable, relationships, addRelationship, database } =
-    useDiagram();
+    diagram;
   const { setSaveState } = useSaveState();
   const { areas, updateArea } = useAreas();
   const { notes, updateNote } = useNotes();
@@ -80,6 +89,180 @@ export default function Canvas() {
   const { emitAwareness } = useCollab();
   const lastLinkingRef = useRef(false);
   const rightClickPanned = useRef(false);
+  const elementPointerDownRef = useRef(null);
+  const tableIndexRef = useRef(new SpatialIndex());
+  const noteIndexRef = useRef(new SpatialIndex());
+  const areaIndexRef = useRef(new SpatialIndex());
+  const diagramActionsRef = useRef(diagram);
+  diagramActionsRef.current = diagram;
+
+  const tableActions = useMemo(
+    () => ({
+      addTable: (...args) => diagramActionsRef.current.addTable(...args),
+      deleteTable: (...args) => diagramActionsRef.current.deleteTable(...args),
+      deleteField: (...args) => diagramActionsRef.current.deleteField(...args),
+      updateTable: (...args) => diagramActionsRef.current.updateTable(...args),
+    }),
+    [],
+  );
+
+  const tableById = useMemo(
+    () => new Map(tables.map((table) => [table.id, table])),
+    [tables],
+  );
+  const noteById = useMemo(
+    () => new Map(notes.map((note) => [note.id, note])),
+    [notes],
+  );
+  const areaById = useMemo(
+    () => new Map(areas.map((area) => [area.id, area])),
+    [areas],
+  );
+  const relationshipLookup = useMemo(
+    () => buildRelationshipLookup(relationships),
+    [relationships],
+  );
+
+  useMemo(() => {
+    tableIndexRef.current.sync(tables, (table) =>
+      table.hidden
+        ? null
+        : {
+            x: table.x,
+            y: table.y,
+            width: settings.tableWidth,
+            height: getTableHeight(
+              table,
+              settings.tableWidth,
+              settings.showComments,
+              relationshipLookup.byTableId.get(table.id) ?? [],
+            ),
+          },
+    );
+  }, [
+    relationshipLookup.byTableId,
+    settings.showComments,
+    settings.tableWidth,
+    tables,
+  ]);
+
+  useMemo(() => {
+    noteIndexRef.current.sync(notes, getNoteBounds);
+  }, [notes]);
+
+  useMemo(() => {
+    areaIndexRef.current.sync(areas, getAreaBounds);
+  }, [areas]);
+
+  const visibility = useMemo(() => {
+    const startedAt = performance.now();
+    const viewport = expandViewport(viewBox, transform.zoom);
+    const tableIds = tableIndexRef.current.query(viewport);
+    const noteIds = noteIndexRef.current.query(viewport);
+    const areaIds = areaIndexRef.current.query(viewport);
+
+    const appendIfMissing = (ids, id, lookup) => {
+      if (lookup.has(id) && !ids.includes(id)) ids.push(id);
+    };
+
+    for (const element of bulkSelectedElements) {
+      if (element.type === ObjectType.TABLE) {
+        appendIfMissing(tableIds, element.id, tableById);
+      } else if (element.type === ObjectType.NOTE) {
+        appendIfMissing(noteIds, element.id, noteById);
+      } else if (element.type === ObjectType.AREA) {
+        appendIfMissing(areaIds, element.id, areaById);
+      }
+    }
+
+    if (selectedElement.element === ObjectType.TABLE) {
+      appendIfMissing(tableIds, selectedElement.id, tableById);
+    } else if (selectedElement.element === ObjectType.NOTE) {
+      appendIfMissing(noteIds, selectedElement.id, noteById);
+    } else if (selectedElement.element === ObjectType.AREA) {
+      appendIfMissing(areaIds, selectedElement.id, areaById);
+    }
+    if (linking) appendIfMissing(tableIds, linkingLine.startTableId, tableById);
+
+    const relationshipIds = collectVisibleRelationshipIds({
+      visibleTableIds: tableIds,
+      relationshipsByTableId: relationshipLookup.byTableId,
+      relationshipOrderById: relationshipLookup.orderById,
+      forcedRelationshipIds:
+        selectedElement.element === ObjectType.RELATIONSHIP
+          ? [selectedElement.id]
+          : [],
+    });
+
+    return {
+      tables: tableIds.map((id) => tableById.get(id)).filter(Boolean),
+      notes: noteIds.map((id) => noteById.get(id)).filter(Boolean),
+      areas: areaIds.map((id) => areaById.get(id)).filter(Boolean),
+      relationships: relationshipIds
+        .map((id) => relationshipLookup.byId.get(id))
+        .filter(Boolean),
+      updateDuration: performance.now() - startedAt,
+    };
+  }, [
+    areaById,
+    bulkSelectedElements,
+    linking,
+    linkingLine.startTableId,
+    noteById,
+    relationshipLookup,
+    selectedElement.element,
+    selectedElement.id,
+    tableById,
+    transform.zoom,
+    viewBox,
+  ]);
+
+  const lastDiagnosticsRef = useRef(0);
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const now = performance.now();
+    if (now - lastDiagnosticsRef.current < 2000) return;
+    lastDiagnosticsRef.current = now;
+
+    const memory = performance.memory;
+    console.debug("[drawDB:viewport]", {
+      total: {
+        tables: tables.length,
+        relationships: relationships.length,
+        notes: notes.length,
+        areas: areas.length,
+      },
+      rendered: {
+        tables: visibility.tables.length,
+        relationships: visibility.relationships.length,
+        notes: visibility.notes.length,
+        areas: visibility.areas.length,
+      },
+      updateMs: Number(visibility.updateDuration.toFixed(2)),
+      heapMB: memory
+        ? Number((memory.usedJSHeapSize / 1024 / 1024).toFixed(1))
+        : undefined,
+    });
+  }, [
+    areas.length,
+    notes.length,
+    relationships.length,
+    tables.length,
+    visibility,
+  ]);
+
+  useEffect(
+    () => () => {
+      tableIndexRef.current.clear();
+      noteIndexRef.current.clear();
+      areaIndexRef.current.clear();
+    },
+    [],
+  );
+
+  const markElementPointerDown = useCallback((element, type) => {
+    elementPointerDownRef.current = { element, type };
+  }, []);
 
   useEffect(() => {
     if (linking) {
@@ -129,10 +312,6 @@ export default function Canvas() {
     ctrlKey: false,
     metaKey: false,
   });
-  // this is used to store the element that is clicked on
-  // at the moment, and shouldn't be a part of the state
-  let elementPointerDown = null;
-
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
   };
@@ -151,7 +330,9 @@ export default function Canvas() {
       );
     };
 
-    tables.forEach((table) => {
+    tableIndexRef.current.query(rect).forEach((id) => {
+      const table = tableById.get(id);
+      if (!table) return;
       if (table.locked) return;
 
       const element = {
@@ -168,7 +349,7 @@ export default function Canvas() {
           table,
           settings.tableWidth,
           settings.showComments,
-          relationships,
+          relationshipLookup.byTableId.get(table.id) ?? [],
         ),
       };
       if (shouldAddElement(tableRect, element)) {
@@ -176,7 +357,9 @@ export default function Canvas() {
       }
     });
 
-    areas.forEach((area) => {
+    areaIndexRef.current.query(rect).forEach((id) => {
+      const area = areaById.get(id);
+      if (!area) return;
       if (area.locked) return;
 
       const element = {
@@ -196,7 +379,9 @@ export default function Canvas() {
       }
     });
 
-    notes.forEach((note) => {
+    noteIndexRef.current.query(rect).forEach((id) => {
+      const note = noteById.get(id);
+      if (!note) return;
       if (note.locked) return;
 
       const element = {
@@ -459,6 +644,7 @@ export default function Canvas() {
     const isMouseRightButton = e.button === 2;
 
     if (isMouseLeftButton) {
+      const elementPointerDown = elementPointerDownRef.current;
       setBulkSelectRect({
         x1: pointer.spaces.diagram.x,
         y1: pointer.spaces.diagram.y,
@@ -471,6 +657,7 @@ export default function Canvas() {
       if (elementPointerDown !== null) {
         handlePointerDownOnElement(e, elementPointerDown);
       }
+      elementPointerDownRef.current = null;
       pointer.setStyle("crosshair");
     } else if (isMouseMiddleButton || isMouseRightButton) {
       if (isMouseRightButton) rightClickPanned.current = false;
@@ -773,36 +960,41 @@ export default function Canvas() {
               />
             </>
           )}
-          {areas.map((a) => (
+          {visibility.areas.map((a) => (
             <Area
               key={a.id}
               data={a}
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: a,
-                  type: ObjectType.AREA,
-                };
-              }}
+              onElementPointerDown={markElementPointerDown}
             />
           ))}
-          {relationships.map((e) => (
-            <Relationship key={e.id} data={e} />
+          {visibility.relationships.map((e) => (
+            <Relationship
+              key={e.id}
+              data={e}
+              startTable={tableById.get(e.startTableId)}
+              endTable={tableById.get(e.endTableId)}
+              startRelationships={
+                relationshipLookup.byTableId.get(e.startTableId) ?? []
+              }
+              endRelationships={
+                relationshipLookup.byTableId.get(e.endTableId) ?? []
+              }
+            />
           ))}
-          {tables.map((table) => (
+          {visibility.tables.map((table) => (
             <Table
               key={table.id}
               tableData={table}
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: table,
-                  type: ObjectType.TABLE,
-                };
-              }}
+              database={database}
+              relationships={relationshipLookup.byTableId.get(table.id) ?? []}
+              tableById={tableById}
+              tableActions={tableActions}
+              onElementPointerDown={markElementPointerDown}
             />
           ))}
           {linking && (
@@ -814,16 +1006,11 @@ export default function Canvas() {
             />
           )}
           <Slot name="svg-overlay" />
-          {notes.map((n) => (
+          {visibility.notes.map((n) => (
             <Note
               key={n.id}
               data={n}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: n,
-                  type: ObjectType.NOTE,
-                };
-              }}
+              onElementPointerDown={markElementPointerDown}
             />
           ))}
           {bulkSelectRect.show && (

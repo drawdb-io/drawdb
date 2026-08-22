@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import {
   Action,
   Tab,
@@ -27,13 +27,7 @@ import {
   SideSheet,
   Divider,
 } from "@douyinfe/semi-ui";
-import {
-  useLayout,
-  useSettings,
-  useDiagram,
-  useSelect,
-  useUndoRedo,
-} from "../../hooks";
+import { useLayout, useSettings, useSelect, useUndoRedo } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
@@ -48,24 +42,20 @@ import {
   getRelationshipFields,
 } from "../../utils/utils";
 
-export default function Table({
+function Table({
   tableData,
-  onPointerDown,
+  onElementPointerDown,
   setHoveredTable,
   handleGripField,
   setLinkingLine,
+  database,
+  relationships,
+  tableById,
+  tableActions,
 }) {
   const [hoveredField, setHoveredField] = useState(null);
   const { layout } = useLayout();
-  const {
-    database,
-    tables,
-    relationships,
-    addTable,
-    deleteTable,
-    deleteField,
-    updateTable,
-  } = useDiagram();
+  const { addTable, deleteTable, deleteField, updateTable } = tableActions;
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -210,7 +200,7 @@ export default function Table({
       if (selectedElement.currentTab !== Tab.TABLES) return;
       document
         .getElementById(`scroll_table_${tableData.id}`)
-        .scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -227,7 +217,7 @@ export default function Table({
     });
     if (!rel) return null;
 
-    const refTable = tables.find((tbl) => tbl.id === rel.endTableId);
+    const refTable = tableById.get(rel.endTableId);
     const refField = refTable?.fields.find((f) => f.id === matchedEndFieldId);
     if (!refTable || !refField) return null;
 
@@ -245,7 +235,7 @@ export default function Table({
         width={settings.tableWidth}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
-        onPointerDown={onPointerDown}
+        onPointerDown={() => onElementPointerDown(tableData, ObjectType.TABLE)}
       >
         <div
           onDoubleClick={openEditor}
@@ -620,3 +610,5 @@ export default function Table({
     );
   }
 }
+
+export default memo(Table);

@@ -1,4 +1,5 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { applyTransformActions } from "../utils/transform";
 
 export const TransformContext = createContext(null);
 
@@ -7,35 +8,33 @@ export default function TransformContextProvider({ children }) {
     zoom: 1,
     pan: { x: 0, y: 0 },
   });
+  const pendingActionsRef = useRef([]);
+  const frameRef = useRef(null);
 
   /**
    * @type {typeof DrawDB.TransformContext["setTransform"]}
    */
   const setTransform = useCallback(
     (actionOrValue) => {
-      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-      const findFirstNumber = (...values) =>
-        values.find((value) => typeof value === "number" && !isNaN(value));
+      pendingActionsRef.current.push(actionOrValue);
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
 
-      setTransformInternal((prev) => {
-        if (typeof actionOrValue === "function") {
-          actionOrValue = actionOrValue(prev);
-        }
-
-        return {
-          zoom: clamp(
-            findFirstNumber(actionOrValue.zoom, prev.zoom, 1),
-            0.02,
-            5,
-          ),
-          pan: {
-            x: findFirstNumber(actionOrValue.pan?.x, prev.pan?.x, 0),
-            y: findFirstNumber(actionOrValue.pan?.y, prev.pan?.y, 0),
-          },
-        };
+      frameRef.current = requestAnimationFrame(() => {
+        const actions = pendingActionsRef.current;
+        pendingActionsRef.current = [];
+        frameRef.current = null;
+        setTransformInternal((prev) => applyTransformActions(prev, actions));
       });
     },
     [setTransformInternal],
+  );
+
+  useEffect(
+    () => () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      pendingActionsRef.current = [];
+    },
+    [],
   );
 
   return (
