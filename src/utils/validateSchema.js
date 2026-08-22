@@ -1,5 +1,5 @@
 import { Validator } from "jsonschema";
-import { ddbSchema, jsonSchema } from "../data/schemas";
+import { ddbSchema, jsonSchema } from "../data/schemas.js";
 
 export function jsonDiagramIsValid(obj) {
   return new Validator().validate(obj, jsonSchema).valid;

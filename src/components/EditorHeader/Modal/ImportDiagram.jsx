@@ -1,9 +1,6 @@
-import {
-  ddbDiagramIsValid,
-  jsonDiagramIsValid,
-} from "../../../utils/validateSchema";
-import { Upload, Banner } from "@douyinfe/semi-ui";
-import { DB, IMPORT_FROM, STATUS } from "../../../data/constants";
+import { useEffect, useRef, useState } from "react";
+import { Upload, Banner, Button, Progress } from "@douyinfe/semi-ui";
+import { IMPORT_FROM, STATUS } from "../../../data/constants";
 import {
   useAreas,
   useEnums,
@@ -13,6 +10,10 @@ import {
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { fromDBML } from "../../../utils/importFrom/dbml";
+import {
+  getDiagramImportFormat,
+  validateImportedDiagram,
+} from "../../../utils/importDiagram";
 
 export default function ImportDiagram({
   setImportData,
@@ -26,6 +27,11 @@ export default function ImportDiagram({
   const { types } = useTypes();
   const { enums } = useEnums();
   const { t } = useTranslation();
+  const [processing, setProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const workerRef = useRef(null);
+  const pendingRejectRef = useRef(null);
+  const importRunRef = useRef(0);
 
   const diagramIsEmpty = () => {
     return (
@@ -38,80 +44,7 @@ export default function ImportDiagram({
     );
   };
 
-  const loadJsonData = (file, e) => {
-    let jsonObject = null;
-    try {
-      jsonObject = JSON.parse(e.target.result);
-    } catch (error) {
-      setError({
-        type: STATUS.ERROR,
-        message: "The file contains an error.",
-      });
-      return;
-    }
-
-    if (file.type === "application/json") {
-      if (!jsonDiagramIsValid(jsonObject)) {
-        setError({
-          type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
-        });
-        return;
-      }
-    } else if (file.name.split(".").pop() === "ddb") {
-      if (!ddbDiagramIsValid(jsonObject)) {
-        setError({
-          type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
-        });
-        return;
-      }
-    }
-
-    if (!jsonObject.database) {
-      jsonObject.database = DB.GENERIC;
-    }
-
-    if (jsonObject.database !== database) {
-      setError({
-        type: STATUS.ERROR,
-        message:
-          "The imported diagram and the open diagram don't use matching databases.",
-      });
-      return;
-    }
-
-    let ok = true;
-    jsonObject.relationships.forEach((rel) => {
-      const startTable = jsonObject.tables.find(
-        (t) => t.id === rel.startTableId,
-      );
-      const endTable = jsonObject.tables.find((t) => t.id === rel.endTableId);
-
-      if (!startTable || !endTable) {
-        setError({
-          type: STATUS.ERROR,
-          message: `Relationship ${rel.name} references a table that does not exist.`,
-        });
-        ok = false;
-        return;
-      }
-
-      if (
-        !startTable.fields.find((f) => f.id === rel.startFieldId) ||
-        !endTable.fields.find((f) => f.id === rel.endFieldId)
-      ) {
-        setError({
-          type: STATUS.ERROR,
-          message: `Relationship ${rel.name} references a field that does not exist.`,
-        });
-        ok = false;
-        return;
-      }
-    });
-
-    if (!ok) return;
-
+  const finishSuccessfulImport = (jsonObject) => {
     setImportData(jsonObject);
     if (diagramIsEmpty()) {
       setError({
@@ -127,13 +60,191 @@ export default function ImportDiagram({
     }
   };
 
-  const loadDBMLData = (e) => {
+  const cancelImport = () => {
+    importRunRef.current++;
+    pendingRejectRef.current?.({ cancelled: true });
+    pendingRejectRef.current = null;
+    workerRef.current?.terminate();
+    workerRef.current = null;
+    setProcessing(false);
+    setProgress(0);
+    setImportData(null);
+  };
+
+  useEffect(
+    () => () => {
+      importRunRef.current++;
+      pendingRejectRef.current?.({ cancelled: true });
+      workerRef.current?.terminate();
+    },
+    [],
+  );
+
+  const readAsArrayBuffer = (file) => {
+    if (typeof file.arrayBuffer === "function") return file.arrayBuffer();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const validateInWorker = (buffer, format) =>
+    new Promise((resolve, reject) => {
+      let worker;
+      try {
+        worker = new Worker(
+          new URL("../../../workers/importDiagram.worker.js", import.meta.url),
+          { type: "module" },
+        );
+      } catch (error) {
+        reject({ workerFailure: true, error });
+        return;
+      }
+
+      workerRef.current = worker;
+      pendingRejectRef.current = reject;
+      const dispose = () => {
+        worker.terminate();
+        if (workerRef.current === worker) workerRef.current = null;
+        pendingRejectRef.current = null;
+      };
+
+      worker.onmessage = ({ data }) => {
+        if (data.type === "progress") {
+          setProgress(data.progress);
+          return;
+        }
+        if (data.type === "validation-error") {
+          dispose();
+          reject({ validationFailure: true, message: data.message });
+          return;
+        }
+        if (data.type === "complete") {
+          dispose();
+          resolve(data);
+        }
+      };
+      worker.onerror = (event) => {
+        event.preventDefault();
+        dispose();
+        reject({ workerFailure: true });
+      };
+      worker.postMessage({ buffer, format, expectedDatabase: database }, [
+        buffer,
+      ]);
+    });
+
+  const validateOnMainThread = (buffer, format) => {
+    let source = new TextDecoder().decode(buffer);
+    const diagram = JSON.parse(source);
+    source = null;
+    const validation = validateImportedDiagram(diagram, {
+      format,
+      expectedDatabase: database,
+    });
+    if (!validation.ok) {
+      throw { validationFailure: true, message: validation.message };
+    }
+    return { diagram, ...validation, duration: 0 };
+  };
+
+  const loadJsonData = async (file) => {
+    const run = ++importRunRef.current;
+    const startedAt = performance.now();
+    const format = getDiagramImportFormat(file);
+    setProcessing(true);
+    setProgress(5);
+    setImportData(null);
+    setError({ type: STATUS.NONE, message: "" });
+
     try {
-      setImportData(fromDBML(e.target.result, database));
+      let buffer = await readAsArrayBuffer(file);
+      if (run !== importRunRef.current) return;
+      setProgress(20);
+
+      let result;
+      if (typeof Worker === "function") {
+        try {
+          result = await validateInWorker(buffer, format);
+          buffer = result.buffer;
+        } catch (error) {
+          if (!error?.workerFailure) throw error;
+          buffer = await readAsArrayBuffer(file);
+          result = validateOnMainThread(buffer, format);
+        }
+      } else {
+        result = validateOnMainThread(buffer, format);
+      }
+
+      if (run !== importRunRef.current) return;
+      setProgress(95);
+      let jsonObject = result.diagram;
+      if (!jsonObject) {
+        let source = new TextDecoder().decode(buffer);
+        jsonObject = JSON.parse(source);
+        source = null;
+      }
+      if (!jsonObject.database) jsonObject.database = result.database;
+
+      if (import.meta.env.DEV) {
+        console.debug("[drawDB:import]", {
+          counts: result.counts,
+          workerMs: Number((result.duration ?? 0).toFixed(2)),
+          totalMs: Number((performance.now() - startedAt).toFixed(2)),
+        });
+      }
+
+      setProgress(100);
+      finishSuccessfulImport(jsonObject);
+    } catch (error) {
+      if (error?.cancelled || run !== importRunRef.current) return;
+      setError({
+        type: STATUS.ERROR,
+        message: error?.validationFailure
+          ? error.message
+          : "The file contains an error.",
+      });
+    } finally {
+      if (run === importRunRef.current) setProcessing(false);
+    }
+  };
+
+  const loadDBMLData = (source) => {
+    try {
+      finishSuccessfulImport(fromDBML(source, database));
     } catch (error) {
       const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
 
       setError({ type: STATUS.ERROR, message });
+    }
+  };
+
+  const readAsText = (file) => {
+    if (typeof file.text === "function") return file.text();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  };
+
+  const processFile = async (file) => {
+    if (importFrom === IMPORT_FROM.JSON) {
+      await loadJsonData(file);
+      return;
+    }
+    if (importFrom === IMPORT_FROM.DBML) {
+      try {
+        loadDBMLData(await readAsText(file));
+      } catch (_error) {
+        setError({
+          type: STATUS.ERROR,
+          message: "The file contains an error.",
+        });
+      }
     }
   };
 
@@ -168,12 +279,7 @@ export default function ImportDiagram({
           if (!f) {
             return;
           }
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            if (importFrom == IMPORT_FROM.JSON) loadJsonData(f, e);
-            if (importFrom == IMPORT_FROM.DBML) loadDBMLData(e);
-          };
-          reader.readAsText(f);
+          processFile(f);
 
           return {
             autoRemove: false,
@@ -186,12 +292,13 @@ export default function ImportDiagram({
         dragMainText={t("drag_and_drop_files")}
         dragSubText={getDragSubText()}
         accept={getAcceptableFileTypes()}
-        onRemove={() =>
+        onRemove={() => {
+          cancelImport();
           setError({
             type: STATUS.NONE,
             message: "",
-          })
-        }
+          });
+        }}
         onFileChange={() =>
           setError({
             type: STATUS.NONE,
@@ -200,6 +307,14 @@ export default function ImportDiagram({
         }
         limit={1}
       />
+      {processing && (
+        <div className="flex items-center gap-3 py-3">
+          <Progress percent={progress} className="grow" />
+          <Button size="small" type="tertiary" onClick={cancelImport}>
+            {t("cancel")}
+          </Button>
+        </div>
+      )}
       {error.type === STATUS.ERROR ? (
         <Banner
           type="danger"
