@@ -26,7 +26,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { noteWidth, noteRadius, noteFold } from "../../data/constants";
 
-export default function Note({ data, onPointerDown }) {
+export default function Note({ data, onElementPointerDown }) {
   const [editField, setEditField] = useState({});
   const [hovered, setHovered] = useState(false);
   const [resizing, setResizing] = useState(false);
@@ -395,7 +395,7 @@ export default function Note({ data, onPointerDown }) {
         y={data.y}
         width={width}
         height={data.height}
-        onPointerDown={onPointerDown}
+        onPointerDown={() => onElementPointerDown(data, ObjectType.NOTE)}
       >
         <div className="text-gray-900 select-none w-full h-full cursor-move px-3 py-2">
           <div className="flex justify-between gap-1 w-full">

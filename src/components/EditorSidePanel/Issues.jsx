@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
-import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
 import { useEnums, useSettings, useDiagram, useTypes } from "../../hooks";
 import { useTranslation } from "react-i18next";
@@ -11,25 +10,17 @@ export default function Issues({ dbmlProblems = [] }) {
   const { settings } = useSettings();
   const { enums } = useEnums();
   const { tables, relationships, database } = useDiagram();
-  const [issues, setIssues] = useState([]);
-
-  useEffect(() => {
-    const findIssues = async () => {
-      const newIssues = getIssues({
+  const issues = useMemo(
+    () =>
+      getIssues({
         tables: tables,
         relationships: relationships,
         types: types,
         database: database,
         enums: enums,
-      });
-
-      if (!arrayIsEqual(newIssues, issues)) {
-        setIssues(newIssues);
-      }
-    };
-
-    findIssues();
-  }, [tables, relationships, issues, types, database, enums]);
+      }),
+    [tables, relationships, types, database, enums],
+  );
 
   const badgeCount = settings.strictMode
     ? dbmlProblems.length || null

@@ -1,7 +1,7 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import { memo, useMemo, useRef, useState, useEffect } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath, calcCompositePath } from "../../utils/calcPath";
-import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
+import { useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
@@ -10,25 +10,28 @@ import {
   getVisibleFields,
   getRelationshipFields,
 } from "../../utils/utils";
+import { openRelationshipEditorSelection } from "../../utils/selection";
 
 const labelFontSize = 16;
 
-export default function Relationship({ data }) {
+function Relationship({
+  data,
+  startTable,
+  endTable,
+  startRelationships,
+  endRelationships,
+}) {
   const { settings } = useSettings();
-  const { tables, relationships } = useDiagram();
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 
   const pathValues = useMemo(() => {
-    const startTable = tables.find((t) => t.id === data.startTableId);
-    const endTable = tables.find((t) => t.id === data.endTableId);
-
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
 
-    const startFields = getVisibleFields(startTable, relationships);
-    const endFields = getVisibleFields(endTable, relationships);
+    const startFields = getVisibleFields(startTable, startRelationships);
+    const endFields = getVisibleFields(endTable, endRelationships);
 
     const pairs = getRelationshipFields(data);
 
@@ -36,18 +39,18 @@ export default function Relationship({ data }) {
       startFieldIndex: getVisibleFieldIndex(
         startTable,
         data.startFieldId,
-        relationships,
+        startRelationships,
       ),
       endFieldIndex: getVisibleFieldIndex(
         endTable,
         data.endFieldId,
-        relationships,
+        endRelationships,
       ),
       startFieldIndices: pairs.map((p) =>
-        getVisibleFieldIndex(startTable, p.startFieldId, relationships),
+        getVisibleFieldIndex(startTable, p.startFieldId, startRelationships),
       ),
       endFieldIndices: pairs.map((p) =>
-        getVisibleFieldIndex(endTable, p.endFieldId, relationships),
+        getVisibleFieldIndex(endTable, p.endFieldId, endRelationships),
       ),
       startTable: {
         x: startTable.x,
@@ -62,7 +65,7 @@ export default function Relationship({ data }) {
         fields: endFields,
       },
     };
-  }, [tables, relationships, data]);
+  }, [data, endRelationships, endTable, startRelationships, startTable]);
 
   const isComposite = (pathValues?.startFieldIndices?.length ?? 0) > 1;
 
@@ -81,8 +84,16 @@ export default function Relationship({ data }) {
     );
   }, [pathValues, isComposite, settings.tableWidth, settings.showComments]);
 
+  const path = useMemo(() => {
+    if (!pathValues) return null;
+    return composite
+      ? composite.path
+      : calcPath(pathValues, settings.tableWidth, 1, settings.showComments);
+  }, [composite, pathValues, settings.showComments, settings.tableWidth]);
+
   const pathRef = useRef();
   const labelRef = useRef();
+  const [pathMetrics, setPathMetrics] = useState({ ready: false });
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -108,62 +119,60 @@ export default function Relationship({ data }) {
       break;
   }
 
-  let cardinalityStartX = 0;
-  let cardinalityEndX = 0;
-  let cardinalityStartY = 0;
-  let cardinalityEndY = 0;
-  let labelX = 0;
-  let labelY = 0;
-
-  let labelWidth = labelRef.current?.getBBox().width ?? 0;
-  let labelHeight = labelRef.current?.getBBox().height ?? 0;
-
   const cardinalityOffset = 28;
 
-  if (composite) {
-    labelX = composite.labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = composite.labelPoint.y + (labelHeight ?? 0) / 2;
-    cardinalityStartX = composite.startCardinality.x;
-    cardinalityStartY = composite.startCardinality.y;
-    cardinalityEndX = composite.endCardinality.x;
-    cardinalityEndY = composite.endCardinality.y;
-  } else if (pathRef.current) {
+  useEffect(() => {
+    if (!pathValues) {
+      setPathMetrics({ ready: false });
+      return;
+    }
+
+    const labelWidth = labelRef.current?.getBBox().width ?? 0;
+    const labelHeight = labelRef.current?.getBBox().height ?? 0;
+    if (composite) {
+      setPathMetrics({
+        ready: true,
+        labelX: composite.labelPoint.x - labelWidth / 2,
+        labelY: composite.labelPoint.y + labelHeight / 2,
+        cardinalityStartX: composite.startCardinality.x,
+        cardinalityStartY: composite.startCardinality.y,
+        cardinalityEndX: composite.endCardinality.x,
+        cardinalityEndY: composite.endCardinality.y,
+      });
+      return;
+    }
+
+    if (!pathRef.current) return;
     const pathLength = pathRef.current.getTotalLength();
-
     const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
-    labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
-
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
-    cardinalityStartX = point1.x;
-    cardinalityStartY = point1.y;
     const point2 = pathRef.current.getPointAtLength(
       pathLength - cardinalityOffset,
     );
-    cardinalityEndX = point2.x;
-    cardinalityEndY = point2.y;
-  }
+    setPathMetrics({
+      ready: true,
+      labelX: labelPoint.x - labelWidth / 2,
+      labelY: labelPoint.y + labelHeight / 2,
+      cardinalityStartX: point1.x,
+      cardinalityStartY: point1.y,
+      cardinalityEndX: point2.x,
+      cardinalityEndY: point2.y,
+    });
+  }, [composite, path, pathValues]);
 
   const edit = () => {
     if (!layout.sidebar) {
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
+      setSelectedElement((prev) =>
+        openRelationshipEditorSelection(prev, data.id, false),
+      );
     } else {
-      setSelectedElement((prev) => ({
-        ...prev,
-        currentTab: Tab.RELATIONSHIPS,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
+      setSelectedElement((prev) =>
+        openRelationshipEditorSelection(prev, data.id, true),
+      );
       if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
       document
         .getElementById(`scroll_ref_${data.id}`)
-        .scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -174,16 +183,7 @@ export default function Relationship({ data }) {
       <g className="select-none group" onDoubleClick={edit}>
         {/* invisible wider path for better hover ux */}
         <path
-          d={
-            composite
-              ? composite.path
-              : calcPath(
-                  pathValues,
-                  settings.tableWidth,
-                  1,
-                  settings.showComments,
-                )
-          }
+          d={path}
           fill="none"
           stroke="transparent"
           strokeWidth={12}
@@ -191,24 +191,15 @@ export default function Relationship({ data }) {
         />
         <path
           ref={pathRef}
-          d={
-            composite
-              ? composite.path
-              : calcPath(
-                  pathValues,
-                  settings.tableWidth,
-                  1,
-                  settings.showComments,
-                )
-          }
+          d={path}
           className="relationship-path"
           fill="none"
           cursor="pointer"
         />
         {settings.showRelationshipLabels && (
           <text
-            x={labelX}
-            y={labelY}
+            x={pathMetrics.labelX ?? 0}
+            y={pathMetrics.labelY ?? 0}
             fill={settings.mode === "dark" ? "lightgrey" : "#333"}
             fontSize={labelFontSize}
             fontWeight={500}
@@ -218,16 +209,16 @@ export default function Relationship({ data }) {
             {data.name}
           </text>
         )}
-        {(composite || pathRef.current) && settings.showCardinality && (
+        {pathMetrics.ready && settings.showCardinality && (
           <>
             <CardinalityLabel
-              x={cardinalityStartX}
-              y={cardinalityStartY}
+              x={pathMetrics.cardinalityStartX}
+              y={pathMetrics.cardinalityStartY}
               text={cardinalityStart}
             />
             <CardinalityLabel
-              x={cardinalityEndX}
-              y={cardinalityEndY}
+              x={pathMetrics.cardinalityEndX}
+              y={pathMetrics.cardinalityEndY}
               text={cardinalityEnd}
             />
           </>
@@ -257,6 +248,8 @@ export default function Relationship({ data }) {
     </>
   );
 }
+
+export default memo(Relationship);
 
 function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
   const [textWidth, setTextWidth] = useState(0);
