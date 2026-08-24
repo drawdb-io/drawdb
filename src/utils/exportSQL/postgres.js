@@ -12,7 +12,7 @@ export function toPostgres(diagram) {
     .map(
       (e) =>
         `CREATE TYPE "${e.name}" AS ENUM (\n${e.values
-          .map((v) => `\t'${v}'`)
+          .map((v) => `\t'${escapeQuotes(String(v))}'`)
           .join(",\n")}\n);\n`,
     )
     .join("\n");

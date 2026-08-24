@@ -20,7 +20,7 @@ function parseType(field, db) {
   const meta = dbToTypes[db]?.[field.type];
   if (field.type === "SET" || field.type === "ENUM") {
     res += field.values
-      ? `(${field.values.map((v) => `'${v}'`).join(", ")})`
+      ? `(${field.values.map((v) => `'${escapeQuotes(String(v))}'`).join(", ")})`
       : "";
   } else if (meta?.isSized || meta?.hasPrecision) {
     res += field.size ? `(${field.size})` : "";
