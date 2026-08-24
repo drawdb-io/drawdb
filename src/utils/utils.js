@@ -51,7 +51,13 @@ export function isKeyword(str) {
 }
 
 export function isFunction(str) {
-  return /\w+\([^)]*\)$/.test(str);
+  if (typeof str !== "string") return false;
+
+  // Anchored at BOTH ends. End-anchored only, a plain-text default that
+  // merely ends in a parenthesised word -- "Call now(free)", "see item(s)"
+  // -- looked like a function call and was emitted into the SQL unquoted.
+  // The dot keeps qualified names such as pg_catalog.now() matching.
+  return /^[\w.]+\([^)]*\)$/.test(str);
 }
 
 export function areFieldsCompatible(db, field1Type, field2Type) {
