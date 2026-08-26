@@ -12,7 +12,7 @@ function parseType(field) {
   let res = field.type;
 
   if (field.type === "SET" || field.type === "ENUM") {
-    res += `${field.values ? "(" + field.values.map((value) => "'" + value + "'").join(", ") + ")" : ""}`;
+    res += `${field.values ? "(" + field.values.map((value) => "'" + escapeQuotes(String(value)) + "'").join(", ") + ")" : ""}`;
   }
 
   if (
