@@ -698,11 +698,12 @@ export default function Canvas() {
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
       } else if (e.shiftKey) {
+        const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
         setTransform((prev) => ({
           ...prev,
           pan: {
             ...prev.pan,
-            x: prev.pan.x + e.deltaY / prev.zoom,
+            x: prev.pan.x + delta / prev.zoom,
           },
         }));
       } else {
