@@ -1,5 +1,6 @@
 export const defaultBlue = "#175e7a";
 export const defaultNoteTheme = "#fcf7ac";
+export const defaultRelationshipColor = "#808080";
 export const noteWidth = 180;
 export const noteRadius = 3;
 export const noteFold = 24;

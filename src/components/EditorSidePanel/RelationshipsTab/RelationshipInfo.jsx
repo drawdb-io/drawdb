@@ -17,11 +17,13 @@ import {
   Constraint,
   Action,
   ObjectType,
+  defaultRelationshipColor,
 } from "../../../data/constants";
 import { useDiagram, useLayout, useUndoRedo } from "../../../hooks";
 import { getRelationshipFields } from "../../../utils/utils";
+import ColorPicker from "../ColorPicker";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export default function RelationshipInfo({ data }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -29,6 +31,43 @@ export default function RelationshipInfo({ data }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const [editField, setEditField] = useState({});
+  const initialColorRef = useRef(data.color ?? defaultRelationshipColor);
+
+  const handleColorPick = (color) => {
+    if (layout.readOnly) return;
+    setUndoStack((prev) => {
+      let undoColor = initialColorRef.current;
+      const lastColorChange = prev.findLast(
+        (e) =>
+          e.element === ObjectType.RELATIONSHIP &&
+          e.rid === data.id &&
+          e.action === Action.EDIT &&
+          e.redo?.color,
+      );
+      if (lastColorChange) {
+        undoColor = lastColorChange.redo.color;
+      }
+
+      if (color === undoColor) return prev;
+
+      return [
+        ...prev,
+        {
+          action: Action.EDIT,
+          element: ObjectType.RELATIONSHIP,
+          component: "self",
+          rid: data.id,
+          undo: { color: undoColor },
+          redo: { color },
+          message: t("edit_relationship", {
+            refName: data.name,
+            extra: "[color]",
+          }),
+        },
+      ];
+    });
+    setRedoStack([]);
+  };
 
   const startTable = useMemo(
     () => tables.find((tb) => tb.id === data.startTableId),
@@ -240,14 +279,6 @@ export default function RelationshipInfo({ data }) {
           <span className="font-semibold">{t("foreign")}: </span>
           {startTableName}
         </div>
-        <Button
-          icon={<i className="bi bi-arrow-left-right" />}
-          type="tertiary"
-          size="small"
-          onClick={swapKeys}
-          disabled={layout.readOnly}
-          title={t("swap")}
-        />
       </div>
 
       <div className="font-semibold my-1">{t("cardinality")}:</div>
@@ -387,15 +418,31 @@ export default function RelationshipInfo({ data }) {
         </Collapse>
       </Card>
 
-      <Button
-        block
-        type="danger"
-        disabled={layout.readOnly}
-        icon={<IconDeleteStroked />}
-        onClick={() => deleteRelationship(data.id)}
-      >
-        {t("delete")}
-      </Button>
+      <div className="flex justify-between items-center gap-1 mt-2 mb-2">
+        <ColorPicker
+          usePopover={true}
+          readOnly={layout.readOnly}
+          value={data.color ?? defaultRelationshipColor}
+          onChange={(color) => updateRelationship(data.id, { color })}
+          onColorPick={(color) => handleColorPick(color)}
+        />
+        <div className="flex gap-1">
+          <Button
+            icon={<i className="bi bi-arrow-left-right" />}
+            type="tertiary"
+            onClick={swapKeys}
+            disabled={layout.readOnly}
+            title={t("swap")}
+          />
+          <Button
+            type="danger"
+            disabled={layout.readOnly}
+            icon={<IconDeleteStroked />}
+            onClick={() => deleteRelationship(data.id)}
+            title={t("delete")}
+          />
+        </div>
+      </div>
     </>
   );
 }

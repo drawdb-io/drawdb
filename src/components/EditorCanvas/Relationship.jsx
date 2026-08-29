@@ -83,6 +83,7 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
+  const [hovered, setHovered] = useState(false);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -171,7 +172,12 @@ export default function Relationship({ data }) {
 
   return (
     <>
-      <g className="select-none group" onDoubleClick={edit}>
+      <g
+        className="select-none group"
+        onDoubleClick={edit}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+      >
         {/* invisible wider path for better hover ux */}
         <path
           d={
@@ -202,6 +208,7 @@ export default function Relationship({ data }) {
                 )
           }
           className="relationship-path"
+          style={{ stroke: hovered ? undefined : data.color }}
           fill="none"
           cursor="pointer"
         />
@@ -209,7 +216,7 @@ export default function Relationship({ data }) {
           <text
             x={labelX}
             y={labelY}
-            fill={settings.mode === "dark" ? "lightgrey" : "#333"}
+            fill={data.color ?? (settings.mode === "dark" ? "lightgrey" : "#333")}
             fontSize={labelFontSize}
             fontWeight={500}
             ref={labelRef}
@@ -224,11 +231,13 @@ export default function Relationship({ data }) {
               x={cardinalityStartX}
               y={cardinalityStartY}
               text={cardinalityStart}
+              color={data.color}
             />
             <CardinalityLabel
               x={cardinalityEndX}
               y={cardinalityEndY}
               text={cardinalityEnd}
+              color={data.color}
             />
           </>
         )}
@@ -258,7 +267,7 @@ export default function Relationship({ data }) {
   );
 }
 
-function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
+function CardinalityLabel({ x, y, text, color, r = 12, padding = 14 }) {
   const [textWidth, setTextWidth] = useState(0);
   const textRef = useRef(null);
 
@@ -278,7 +287,7 @@ function CardinalityLabel({ x, y, text, r = 12, padding = 14 }) {
         ry={r}
         width={textWidth + padding}
         height={r * 2}
-        fill="grey"
+        fill={color ?? "grey"}
         className="group-hover:fill-sky-600"
       />
       <text
