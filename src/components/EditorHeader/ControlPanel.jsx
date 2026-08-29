@@ -47,6 +47,7 @@ import {
   IMPORT_FROM,
   noteWidth,
   pngExportPixelRatio,
+  keyboardPanStep,
 } from "../../data/constants";
 import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -606,6 +607,18 @@ export default function ControlPanel({
     setTransform((prev) => ({ ...prev, zoom: prev.zoom * 1.2 }));
   const zoomOut = () =>
     setTransform((prev) => ({ ...prev, zoom: prev.zoom / 1.2 }));
+  const panBy = (dx, dy) =>
+    setTransform((prev) => ({
+      ...prev,
+      pan: {
+        x: prev.pan.x + dx / prev.zoom,
+        y: prev.pan.y + dy / prev.zoom,
+      },
+    }));
+  const panLeft = () => panBy(-keyboardPanStep, 0);
+  const panRight = () => panBy(keyboardPanStep, 0);
+  const panUp = () => panBy(0, -keyboardPanStep);
+  const panDown = () => panBy(0, keyboardPanStep);
   const viewStrictMode = () => {
     setSettings((prev) => ({ ...prev, strictMode: !prev.strictMode }));
   };
@@ -1878,6 +1891,10 @@ export default function ControlPanel({
   useHotkeys("mod+h", () => window.open(socials.docs, "_blank"), EDITOR_HOTKEY);
   useHotkeys("mod+alt+w", fitWindow, EDITOR_HOTKEY);
   useHotkeys("alt+e", toggleDBMLEditor, EDITOR_HOTKEY);
+  useHotkeys("left", panLeft, EDITOR_HOTKEY);
+  useHotkeys("right", panRight, EDITOR_HOTKEY);
+  useHotkeys("up", panUp, EDITOR_HOTKEY);
+  useHotkeys("down", panDown, EDITOR_HOTKEY);
 
   return (
     <>
