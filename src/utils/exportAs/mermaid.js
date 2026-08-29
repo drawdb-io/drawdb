@@ -8,7 +8,7 @@ export function jsonToMermaid(obj) {
       case i18n.t(Cardinality.ONE_TO_ONE):
       case Cardinality.ONE_TO_ONE:
         return "||--||";
-      case i18n.t(Cardinality.MANY_TO_ONE_TO_ONE):
+      case i18n.t(Cardinality.MANY_TO_ONE):
       case Cardinality.MANY_TO_ONE:
         return "}o--||";
       case i18n.t(Cardinality.ONE_TO_MANY):
