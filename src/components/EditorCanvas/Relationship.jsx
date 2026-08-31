@@ -83,6 +83,13 @@ export default function Relationship({ data }) {
 
   const pathRef = useRef();
   const labelRef = useRef();
+  const [labelWidthMeasured, setLabelWidthMeasured] = useState(0);
+
+  useEffect(() => {
+    if (labelRef.current) {
+      setLabelWidthMeasured(labelRef.current.getBBox().width);
+    }
+  }, [data.name]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -115,7 +122,7 @@ export default function Relationship({ data }) {
   let labelX = 0;
   let labelPoint;
 
-  let labelWidth = labelRef.current?.getBBox().width ?? 0;
+  const labelWidth = labelWidthMeasured || labelRef.current?.getBBox().width || 0;
 
   const cardinalityOffset = 28;
 
