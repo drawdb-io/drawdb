@@ -33,7 +33,7 @@ export function strHasQuotes(str) {
   );
 }
 
-const keywords = [
+const keywords = new Set([
   "NULL",
   "TRUE",
   "FALSE",
@@ -42,16 +42,16 @@ const keywords = [
   "CURRENT_TIMESTAMP",
   "LOCALTIME",
   "LOCALTIMESTAMP",
-];
+]);
 
 export function isKeyword(str) {
   if (typeof str !== "string") return false;
 
-  return keywords.includes(str.toUpperCase());
+  return keywords.has(str.toUpperCase());
 }
 
 export function isFunction(str) {
-  return /\w+\([^)]*\)$/.test(str);
+  return /\w+\([^)]*\)\s*$/.test(str);
 }
 
 export function areFieldsCompatible(db, field1Type, field2Type) {
