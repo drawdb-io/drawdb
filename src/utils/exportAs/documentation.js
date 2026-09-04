@@ -75,7 +75,7 @@ export function jsonToDocumentation(obj) {
         ]);
         indexesSection =
           "\n#### Indexes\n" +
-          formatMarkdownTable(["Name", "Unique", "Fields"], indexRows);
+          formatMarkdownTable(["Name", "Unique", "Columns"], indexRows);
       }
 
       let uniqueConstraintsSection = "";
@@ -86,7 +86,7 @@ export function jsonToDocumentation(obj) {
         ]);
         uniqueConstraintsSection =
           "\n#### Unique constraints\n" +
-          formatMarkdownTable(["Name", "Fields"], ucRows);
+          formatMarkdownTable(["Name", "Columns"], ucRows);
       }
 
       return (
@@ -125,7 +125,7 @@ export function jsonToDocumentation(obj) {
       ? obj.types
           .map((type) => {
             const rows = [[type.name, type.fields.map((f) => f.name).join(", "), type.comment ?? ""]];
-            return formatMarkdownTable(["Name", "Fields", "Note"], rows);
+            return formatMarkdownTable(["Name", "Columns", "Note"], rows);
           })
           .join("\n")
       : "";

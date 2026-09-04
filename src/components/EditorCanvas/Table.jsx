@@ -309,13 +309,13 @@ export default function Table({
                     disabled={layout.readOnly}
                     aria-label={
                       tableData.collapsed
-                        ? "Expand unlinked fields"
-                        : "Collapse unlinked fields"
+                        ? "Expand unlinked columns"
+                        : "Collapse unlinked columns"
                     }
                     title={
                       tableData.collapsed
-                        ? "Expand unlinked fields"
-                        : "Collapse unlinked fields"
+                        ? "Expand unlinked columns"
+                        : "Collapse unlinked columns"
                     }
                     onClick={toggleTableCollapse}
                     onPointerDown={(e) => e.stopPropagation()}
