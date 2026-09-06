@@ -1,3 +1,4 @@
+import { appendViews } from "../views";
 import {
   parseDefault,
   escapeQuotes,
@@ -36,7 +37,7 @@ GO
   }
 }
 
-export function toMSSQL(diagram) {
+function tablesToMSSQL(diagram) {
   const tablesSql = diagram.tables
     .map((table) => {
       const fieldsSql = table.fields
@@ -124,4 +125,8 @@ GO`;
     .join("");
 
   return `${tablesSql}\n${referencesSql}`;
+}
+
+export function toMSSQL(diagram) {
+  return appendViews(tablesToMSSQL(diagram), diagram);
 }

@@ -23,6 +23,7 @@ import {
   useTransform,
   useTypes,
   useUndoRedo,
+  useViews,
 } from "../../../hooks";
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
@@ -72,6 +73,7 @@ export default function Modal({
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
   const { setEnums } = useEnums();
+  const { setViews } = useViews();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { settings, setSettings } = useSettings();
@@ -105,6 +107,7 @@ export default function Modal({
     setRelationships(importData.relationships);
     setAreas(importData.subjectAreas ?? []);
     setNotes(importData.notes ?? []);
+    setViews(importData.views ?? []);
     if (importData.title) {
       setTitle(importData.title);
     }
@@ -169,6 +172,7 @@ export default function Modal({
       setTransform((prev) => ({ ...prev, pan: { x: 0, y: 0 } }));
       setNotes([]);
       setAreas([]);
+      setViews([]);
     } else {
       setTables((prev) => [...prev, ...diagramData.tables]);
       setRelationships((prev) =>

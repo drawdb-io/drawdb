@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Collapse, Badge } from "@douyinfe/semi-ui";
 import { arrayIsEqual } from "../../utils/utils";
 import { getIssues } from "../../utils/issues";
-import { useEnums, useSettings, useDiagram, useTypes } from "../../hooks";
+import {
+  useEnums,
+  useSettings,
+  useDiagram,
+  useTypes,
+  useViews,
+} from "../../hooks";
 import { useTranslation } from "react-i18next";
 
 export default function Issues({ dbmlProblems = [] }) {
@@ -10,6 +16,7 @@ export default function Issues({ dbmlProblems = [] }) {
   const { t } = useTranslation();
   const { settings } = useSettings();
   const { enums } = useEnums();
+  const { views } = useViews();
   const { tables, relationships, database } = useDiagram();
   const [issues, setIssues] = useState([]);
 
@@ -21,6 +28,7 @@ export default function Issues({ dbmlProblems = [] }) {
         types: types,
         database: database,
         enums: enums,
+        views: views,
       });
 
       if (!arrayIsEqual(newIssues, issues)) {
@@ -29,7 +37,7 @@ export default function Issues({ dbmlProblems = [] }) {
     };
 
     findIssues();
-  }, [tables, relationships, issues, types, database, enums]);
+  }, [tables, relationships, issues, types, database, enums, views]);
 
   const badgeCount = settings.strictMode
     ? dbmlProblems.length || null

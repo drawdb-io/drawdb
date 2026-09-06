@@ -48,6 +48,7 @@ export const Tab = {
   NOTES: "4",
   TYPES: "5",
   ENUMS: "6",
+  VIEWS: "7",
 };
 
 export const ObjectType = {
@@ -59,6 +60,7 @@ export const ObjectType = {
   TYPE: 5,
   ENUM: 6,
   DBML: 7,
+  VIEW: 8,
 };
 
 export const Action = {

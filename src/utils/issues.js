@@ -219,6 +219,83 @@ export function getIssues(diagram) {
     }
   });
 
+  const duplicateViewNames = {};
+  const tableNames = new Set(diagram.tables.map((t) => t.name));
+  (diagram.views ?? []).forEach((view) => {
+    if (view.name === "") {
+      issues.push(i18n.t("view_w_no_name"));
+      return;
+    }
+
+    if (duplicateViewNames[view.name]) {
+      issues.push(i18n.t("duplicate_views", { viewName: view.name }));
+    } else {
+      duplicateViewNames[view.name] = true;
+    }
+
+    if (tableNames.has(view.name)) {
+      issues.push(i18n.t("view_name_clashes_w_table", { viewName: view.name }));
+    }
+
+    if (!view.baseTableId) {
+      issues.push(i18n.t("view_w_no_base_table", { viewName: view.name }));
+      return;
+    }
+
+    const joinScope = new Set([view.baseTableId]);
+    (view.joins ?? []).forEach((join) => {
+      if (!join.tableId) {
+        issues.push(i18n.t("join_w_no_table", { viewName: view.name }));
+        return;
+      }
+
+      const joined = diagram.tables.find((t) => t.id === join.tableId);
+      if (!join.on?.leftFieldId || !join.on?.rightFieldId) {
+        issues.push(
+          i18n.t("join_w_no_condition", {
+            viewName: view.name,
+            tableName: joined?.name ?? "",
+          }),
+        );
+      } else if (join.on.leftTableId && !joinScope.has(join.on.leftTableId)) {
+        issues.push(
+          i18n.t("join_out_of_order", {
+            viewName: view.name,
+            tableName: joined?.name ?? "",
+          }),
+        );
+      }
+
+      joinScope.add(join.tableId);
+    });
+
+    const duplicateViewColumns = {};
+    (view.columns ?? []).forEach((column) => {
+      if (!column.fieldId) {
+        issues.push(i18n.t("empty_view_column", { viewName: view.name }));
+        return;
+      }
+
+      const name =
+        column.alias?.trim() ||
+        diagram.tables
+          .find((t) => t.id === column.tableId)
+          ?.fields.find((f) => f.id === column.fieldId)?.name;
+      if (!name) return;
+
+      if (duplicateViewColumns[name]) {
+        issues.push(
+          i18n.t("duplicate_view_columns", {
+            viewName: view.name,
+            columnName: name,
+          }),
+        );
+      } else {
+        duplicateViewColumns[name] = true;
+      }
+    });
+  });
+
   const duplicateFKName = {};
   diagram.relationships.forEach((r) => {
     if (duplicateFKName[r.name]) {

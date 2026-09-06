@@ -23,6 +23,7 @@ export const databases = new Proxy(
       hasTypes: true,
       hasEnums: true,
       hasArrays: true,
+      hasMaterializedViews: true,
     },
     [DB.SQLITE]: {
       name: "SQLite",
@@ -50,6 +51,7 @@ export const databases = new Proxy(
       hasTypes: false,
       hasEnums: false,
       hasArrays: false,
+      hasMaterializedViews: true,
       beta: true,
     },
     [DB.GENERIC]: {
@@ -58,6 +60,7 @@ export const databases = new Proxy(
       image: null,
       description: i18n.t("generic_description"),
       hasTypes: true,
+      hasMaterializedViews: true,
     },
   },
   { get: (target, prop) => (prop in target ? target[prop] : {}) },

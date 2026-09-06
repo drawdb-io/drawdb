@@ -21,6 +21,7 @@ import {
   useNotes,
   useTransform,
   useTypes,
+  useViews,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { loadCache, saveCache } from "../../../utils/cache";
@@ -38,6 +39,7 @@ export default function Versions({ open, title, setTitle }) {
   const { notes, setNotes } = useNotes();
   const { types, setTypes } = useTypes();
   const { enums, setEnums } = useEnums();
+  const { views, setViews } = useViews();
   const { transform } = useTransform();
   const { t, i18n } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +60,7 @@ export default function Versions({ open, title, setTitle }) {
       relationships: relationships,
       notes: notes,
       subjectAreas: areas,
+      views: views,
       database: database,
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
@@ -72,6 +75,7 @@ export default function Versions({ open, title, setTitle }) {
     title,
     enums,
     types,
+    views,
     transform,
   ]);
 
@@ -99,6 +103,7 @@ export default function Versions({ open, title, setTitle }) {
         setRelationships(parsedDiagram.relationships);
         setAreas(parsedDiagram.subjectAreas);
         setNotes(parsedDiagram.notes);
+        setViews(parsedDiagram.views ?? []);
         setTitle(parsedDiagram.title);
 
         if (databases[database].hasTypes) {
@@ -126,6 +131,7 @@ export default function Versions({ open, title, setTitle }) {
       setNotes,
       setTypes,
       setEnums,
+      setViews,
       setTitle,
     ],
   );
@@ -192,6 +198,7 @@ export default function Versions({ open, title, setTitle }) {
       relationships: relationships,
       notes: notes,
       subjectAreas: areas,
+      views: views,
       database: database,
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),

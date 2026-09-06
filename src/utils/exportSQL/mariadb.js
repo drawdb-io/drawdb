@@ -1,3 +1,4 @@
+import { appendViews } from "../views";
 import {
   escapeQuotes,
   parseDefault,
@@ -25,7 +26,7 @@ function parseType(field) {
   return res;
 }
 
-export function toMariaDB(diagram) {
+function tablesToMariaDB(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
@@ -83,4 +84,8 @@ export function toMariaDB(diagram) {
         .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
+}
+
+export function toMariaDB(diagram) {
+  return appendViews(tablesToMariaDB(diagram), diagram);
 }

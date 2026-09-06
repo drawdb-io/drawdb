@@ -26,6 +26,7 @@ import {
   useTypes,
   useSaveState,
   useEnums,
+  useViews,
   useNavigateWithParams,
 } from "../hooks";
 import FloatingControls from "./FloatingControls";
@@ -77,6 +78,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const { saveState, setSaveState } = useSaveState();
   const { transform, setTransform } = useTransform();
   const { enums, setEnums } = useEnums();
+  const { views, setViews } = useViews();
   const {
     tables,
     relationships,
@@ -117,6 +119,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       references: relationships,
       notes,
       areas,
+      views,
       pan: transform.pan,
       zoom: transform.zoom,
       ...(databases[database].hasEnums && { enums }),
@@ -130,6 +133,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       relationships,
       notes,
       areas,
+      views,
       transform,
       enums,
       types,
@@ -181,6 +185,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           references: relationships,
           notes: notes,
           areas: areas,
+          views: views,
           pan: transform.pan,
           zoom: transform.zoom,
           loadedFromGistId: loadedFromGistId,
@@ -204,6 +209,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           references: relationships,
           notes: notes,
           areas: areas,
+          views: views,
           gistId: gistId ?? "",
           pan: transform.pan,
           zoom: transform.zoom,
@@ -227,6 +233,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     relationships,
     notes,
     areas,
+    views,
     types,
     title,
     transform,
@@ -305,6 +312,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setTransform({ pan: diagram.pan, zoom: diagram.zoom });
       setTypes(diagram.types ?? []);
       setEnums(diagram.enums ?? []);
+      setViews(diagram.views ?? []);
     };
 
     const resetEditorState = () => {
@@ -314,6 +322,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setNotes([]);
       setTypes([]);
       setEnums([]);
+      setViews([]);
       setUndoStack([]);
       setRedoStack([]);
       setTransform({ zoom: 1, pan: { x: 0, y: 0 } });
@@ -378,6 +387,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setRedoStack([]);
       setTypes(template.types ?? []);
       setEnums(template.enums ?? []);
+      setViews(template.views ?? []);
     };
 
     const loadFromGist = async (shareId, diagramId = null) => {
@@ -398,6 +408,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
         setTransform(parsed.transform);
         setTypes(parsed.types ?? []);
         setEnums(parsed.enums ?? []);
+        setViews(parsed.views ?? []);
         if (parsed.customTypes) mergeCustomTypes(parsed.customTypes);
         if (diagramId) {
           navigate(`/editor/diagrams/${diagramId}`, { replace: true });
@@ -448,6 +459,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     setTypes,
     setDatabase,
     setEnums,
+    setViews,
     selectedDb,
     setSaveState,
     setLayout,
@@ -470,6 +482,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       tables?.length === 0 &&
       areas?.length === 0 &&
       notes?.length === 0 &&
+      views?.length === 0 &&
       types?.length === 0
     )
       return;
@@ -484,6 +497,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     tables?.length,
     areas?.length,
     notes?.length,
+    views?.length,
     types?.length,
     relationships?.length,
     transform.zoom,

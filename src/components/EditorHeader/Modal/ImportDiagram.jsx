@@ -10,6 +10,7 @@ import {
   useNotes,
   useDiagram,
   useTypes,
+  useViews,
 } from "../../../hooks";
 import { useTranslation } from "react-i18next";
 import { fromDBML } from "../../../utils/importFrom/dbml";
@@ -25,6 +26,7 @@ export default function ImportDiagram({
   const { tables, relationships, database } = useDiagram();
   const { types } = useTypes();
   const { enums } = useEnums();
+  const { views } = useViews();
   const { t } = useTranslation();
 
   const diagramIsEmpty = () => {
@@ -34,7 +36,8 @@ export default function ImportDiagram({
       notes.length === 0 &&
       areas.length === 0 &&
       types.length === 0 &&
-      enums.length === 0
+      enums.length === 0 &&
+      views.length === 0
     );
   };
 

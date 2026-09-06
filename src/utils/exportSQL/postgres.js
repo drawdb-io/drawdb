@@ -1,3 +1,4 @@
+import { appendViews } from "../views";
 import {
   escapeQuotes,
   exportFieldComment,
@@ -7,7 +8,7 @@ import {
 } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
 
-export function toPostgres(diagram) {
+function tablesToPostgres(diagram) {
   const enumStatements = diagram.enums
     .map(
       (e) =>
@@ -132,4 +133,8 @@ export function toPostgres(diagram) {
     .map((s) => s.trim())
     .filter(Boolean)
     .join("\n\n");
+}
+
+export function toPostgres(diagram) {
+  return appendViews(tablesToPostgres(diagram), diagram);
 }

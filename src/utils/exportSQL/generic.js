@@ -1,4 +1,5 @@
 import { DB } from "../../data/constants";
+import { appendViews } from "../views";
 import { dbToTypes, defaultTypes } from "../../data/datatypes";
 import {
   escapeQuotes,
@@ -189,7 +190,7 @@ export function getTypeString(
   }
 }
 
-export function jsonToMySQL(obj) {
+function tablesToMySQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -255,7 +256,7 @@ export function jsonToMySQL(obj) {
     .join("\n")}`;
 }
 
-export function jsonToPostgreSQL(obj) {
+function tablesToPostgreSQL(obj) {
   const typeStatements = obj.types
     .map((type) => {
       const enumStatements = type.fields
@@ -412,7 +413,7 @@ export function getSQLiteType(field) {
   }
 }
 
-export function jsonToSQLite(obj) {
+function tablesToSQLite(obj) {
   return obj.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, obj);
@@ -453,7 +454,7 @@ export function jsonToSQLite(obj) {
     .join("\n");
 }
 
-export function jsonToMariaDB(obj) {
+function tablesToMariaDB(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -521,7 +522,7 @@ export function jsonToMariaDB(obj) {
     .join("\n")}`;
 }
 
-export function jsonToSQLServer(obj) {
+function tablesToSQLServer(obj) {
   return `${obj.types
     .map((type) => {
       return `${
@@ -597,7 +598,7 @@ export function jsonToSQLServer(obj) {
     .join("\n")}`;
 }
 
-export function jsonToOracleSQL(obj) {
+function tablesToOracleSQL(obj) {
   return `${obj.tables
     .map(
       (table) =>
@@ -672,4 +673,28 @@ export function jsonToOracleSQL(obj) {
         .join(", ")});`;
     })
     .join("\n")}`;
+}
+
+export function jsonToMySQL(obj) {
+  return appendViews(tablesToMySQL(obj), obj, DB.MYSQL);
+}
+
+export function jsonToPostgreSQL(obj) {
+  return appendViews(tablesToPostgreSQL(obj), obj, DB.POSTGRES);
+}
+
+export function jsonToSQLite(obj) {
+  return appendViews(tablesToSQLite(obj), obj, DB.SQLITE);
+}
+
+export function jsonToMariaDB(obj) {
+  return appendViews(tablesToMariaDB(obj), obj, DB.MARIADB);
+}
+
+export function jsonToSQLServer(obj) {
+  return appendViews(tablesToSQLServer(obj), obj, DB.MSSQL);
+}
+
+export function jsonToOracleSQL(obj) {
+  return appendViews(tablesToOracleSQL(obj), obj, DB.ORACLESQL);
 }

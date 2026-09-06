@@ -1,3 +1,4 @@
+import { appendViews } from "../views";
 import {
   escapeQuotes,
   parseDefault,
@@ -25,7 +26,7 @@ function parseType(field) {
   return res;
 }
 
-export function toMySQL(diagram) {
+function tablesToMySQL(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
@@ -87,4 +88,8 @@ export function toMySQL(diagram) {
         .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
+}
+
+export function toMySQL(diagram) {
+  return appendViews(tablesToMySQL(diagram), diagram);
 }

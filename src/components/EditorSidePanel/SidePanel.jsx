@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { IconCode, IconList } from "@douyinfe/semi-icons";
+import { IconCode, IconEyeOpened, IconList } from "@douyinfe/semi-icons";
 import { IconTable, IconRelationship } from "../../icons";
 import { Tab } from "../../data/constants";
 import {
@@ -12,6 +12,7 @@ import {
   useEnums,
   useTypes,
   useSettings,
+  useViews,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
@@ -20,6 +21,7 @@ import Issues from "./Issues";
 import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
+import ViewsTab from "./ViewsTab/ViewsTab";
 import { databases } from "../../data/databases";
 import EnumsTab from "./EnumsTab/EnumsTab";
 import { isRtl } from "../../i18n/utils/rtl";
@@ -35,6 +37,7 @@ export default function SidePanel({ width, resize, setResize }) {
   const { notesCount } = useNotes();
   const { typesCount } = useTypes();
   const { enumsCount } = useEnums();
+  const { viewsCount } = useViews();
   const { t } = useTranslation();
   const [dbmlProblems, setDbmlProblems] = useState([]);
 
@@ -44,6 +47,11 @@ export default function SidePanel({ width, resize, setResize }) {
         tab: `${t("tables")} (${tablesCount})`,
         itemKey: Tab.TABLES,
         component: <TablesTab />,
+      },
+      {
+        tab: `${t("views")} (${viewsCount})`,
+        itemKey: Tab.VIEWS,
+        component: <ViewsTab />,
       },
       {
         tab: `${t("relationships")} (${relationshipsCount})`,
@@ -83,6 +91,7 @@ export default function SidePanel({ width, resize, setResize }) {
     t,
     database,
     tablesCount,
+    viewsCount,
     relationshipsCount,
     areasCount,
     typesCount,
@@ -140,6 +149,10 @@ export default function SidePanel({ width, resize, setResize }) {
             >
               <IconRelationship />
               <span>{relationshipsCount}</span>
+            </div>
+            <div className="flex items-center gap-1.5" title={t("views")}>
+              <IconEyeOpened />
+              <span>{viewsCount}</span>
             </div>
           </div>
           <div className="segmented-bg inline-flex items-center p-0.5 rounded-sm text-xs">

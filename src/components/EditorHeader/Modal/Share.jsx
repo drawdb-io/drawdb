@@ -10,6 +10,7 @@ import {
   useNotes,
   useTransform,
   useTypes,
+  useViews,
 } from "../../../hooks";
 import { databases } from "../../../data/databases";
 import { MODAL } from "../../../data/constants";
@@ -27,6 +28,7 @@ export default function Share({ title, setModal }) {
   const { areas } = useAreas();
   const { types } = useTypes();
   const { enums } = useEnums();
+  const { views } = useViews();
   const { transform } = useTransform();
   const [error, setError] = useState(null);
 
@@ -74,6 +76,7 @@ export default function Share({ title, setModal }) {
       relationships: relationships,
       notes: notes,
       subjectAreas: areas,
+      views: views,
       database: database,
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
@@ -89,6 +92,7 @@ export default function Share({ title, setModal }) {
     title,
     enums,
     types,
+    views,
     transform,
   ]);
 

@@ -1,3 +1,4 @@
+import { appendViews } from "../views";
 import { dbToTypes } from "../../data/datatypes";
 import {
   parseDefault,
@@ -5,7 +6,7 @@ import {
   getFkColumnNames,
 } from "./shared";
 
-export function toOracleSQL(diagram) {
+function tablesToOracleSQL(diagram) {
   return `${diagram.tables
     .map(
       (table) =>
@@ -68,4 +69,8 @@ export function toOracleSQL(diagram) {
         .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .join("\n")}`;
+}
+
+export function toOracleSQL(diagram) {
+  return appendViews(tablesToOracleSQL(diagram), diagram);
 }

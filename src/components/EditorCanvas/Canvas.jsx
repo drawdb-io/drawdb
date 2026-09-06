@@ -13,6 +13,7 @@ import {
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
 import Table from "./Table";
+import View from "./View";
 import Area from "./Area";
 import Relationship from "./Relationship";
 import Note from "./Note";
@@ -28,10 +29,12 @@ import {
   useLayout,
   useSaveState,
   useCollab,
+  useViews,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
+import { getViewHeight, resolveViewColumns } from "../../utils/views";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
@@ -50,6 +53,7 @@ export default function Canvas() {
     useDiagram();
   const { setSaveState } = useSaveState();
   const { areas, updateArea } = useAreas();
+  const { views, updateView } = useViews();
   const { notes, updateNote } = useNotes();
   const { layout } = useLayout();
   const { settings } = useSettings();
@@ -173,6 +177,31 @@ export default function Canvas() {
         ),
       };
       if (shouldAddElement(tableRect, element)) {
+        elements.push(element);
+      }
+    });
+
+    views.forEach((view) => {
+      if (view.locked) return;
+
+      const element = {
+        id: view.id,
+        type: ObjectType.VIEW,
+        currentCoords: { x: view.x, y: view.y },
+        initialCoords: { x: view.x, y: view.y },
+      };
+      const viewRect = {
+        x: view.x,
+        y: view.y,
+        width: settings.tableWidth,
+        height: getViewHeight(
+          view,
+          resolveViewColumns(view, tables),
+          settings.tableWidth,
+          settings.showComments,
+        ),
+      };
+      if (shouldAddElement(viewRect, element)) {
         elements.push(element);
       }
     });
@@ -371,6 +400,9 @@ export default function Canvas() {
         if (el.type === ObjectType.NOTE) {
           updateNote(el.id, { ...elementFinalCoords });
         }
+        if (el.type === ObjectType.VIEW) {
+          updateView(el.id, { ...elementFinalCoords });
+        }
         newBulkSelectedElements.push({
           ...el,
           currentCoords: elementFinalCoords,
@@ -449,7 +481,8 @@ export default function Canvas() {
 
     // don't pan if the sidesheet for editing a table is open
     if (
-      selectedElement.element === ObjectType.TABLE &&
+      (selectedElement.element === ObjectType.TABLE ||
+        selectedElement.element === ObjectType.VIEW) &&
       selectedElement.open &&
       !layout.sidebar
     )
@@ -803,6 +836,18 @@ export default function Canvas() {
                 elementPointerDown = {
                   element: table,
                   type: ObjectType.TABLE,
+                };
+              }}
+            />
+          ))}
+          {views.map((view) => (
+            <View
+              key={view.id}
+              viewData={view}
+              onPointerDown={() => {
+                elementPointerDown = {
+                  element: view,
+                  type: ObjectType.VIEW,
                 };
               }}
             />

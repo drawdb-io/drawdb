@@ -1,4 +1,5 @@
 export { default as IconAddTable } from "./IconAddTable";
+export { default as IconAddView } from "./IconAddView";
 export { default as IconTable } from "./IconTable";
 export { default as IconRelationship } from "./IconRelationship";
 export { default as IconAddArea } from "./IconAddArea";
