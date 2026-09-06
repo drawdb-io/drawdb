@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { IconCode, IconEyeOpened, IconList } from "@douyinfe/semi-icons";
+import { IconCode, IconList } from "@douyinfe/semi-icons";
 import { IconTable, IconRelationship } from "../../icons";
 import { Tab } from "../../data/constants";
 import {
@@ -149,10 +149,6 @@ export default function SidePanel({ width, resize, setResize }) {
             >
               <IconRelationship />
               <span>{relationshipsCount}</span>
-            </div>
-            <div className="flex items-center gap-1.5" title={t("views")}>
-              <IconEyeOpened />
-              <span>{viewsCount}</span>
             </div>
           </div>
           <div className="segmented-bg inline-flex items-center p-0.5 rounded-sm text-xs">
