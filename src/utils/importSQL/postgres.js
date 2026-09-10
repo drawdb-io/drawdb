@@ -284,6 +284,7 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
           const newEnum = {
             name: e.name.name,
             values: e.create_definitions.value.map((x) => x.value),
+            id : nanoid()
           };
           enums.push(newEnum);
         } else if (Array.isArray(e.create_definitions)) {
