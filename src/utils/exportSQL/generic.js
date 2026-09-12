@@ -524,14 +524,16 @@ function tablesToMariaDB(obj) {
 
 function tablesToSQLServer(obj) {
   return `${obj.types
+    .filter((type) => type.fields.length > 0)
     .map((type) => {
       return `${
         type.comment === "" ? "" : `/**\n${type.comment}\n*/\n`
-      }CREATE TYPE [${type.name}] FROM ${
-        type.fields.length < 0
-          ? ""
-          : `${getTypeString(type.fields[0], obj.database, DB.MSSQL, true)}`
-      };\nGO\n`;
+      }CREATE TYPE [${type.name}] FROM ${getTypeString(
+        type.fields[0],
+        obj.database,
+        DB.MSSQL,
+        true,
+      )};\nGO\n`;
     })
     .join("\n")}\n${obj.tables
     .map(
