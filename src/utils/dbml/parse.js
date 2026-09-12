@@ -31,13 +31,13 @@ function fieldDefault(column) {
   return value === undefined || value === null ? "" : String(value);
 }
 
-function parseField(column) {
+function parseField(column, primaryKeyColumns) {
   return {
     name: column.name,
     type: baseTypeName(column.type).toUpperCase(),
     size: column.type?.args ?? "",
     default: fieldDefault(column),
-    primary: !!column.pk,
+    primary: !!column.pk || primaryKeyColumns.has(column.name),
     unique: !!column.unique,
     notNull: !!column.not_null,
     increment: !!column.increment,
@@ -46,16 +46,23 @@ function parseField(column) {
 }
 
 function parseTable(table) {
+  const compositeKey = table.indexes.find((index) => index.pk);
+  const primaryKeyColumns = new Set(
+    compositeKey?.columns.map((column) => column.value) ?? [],
+  );
+
   return {
     name: table.name,
     comment: table.note ?? "",
     color: table.headerColor ?? null,
-    fields: table.fields.map(parseField),
-    indices: table.indexes.map((index) => ({
-      name: index.name ?? "",
-      fields: index.columns.map((column) => column.value),
-      unique: !!index.unique,
-    })),
+    fields: table.fields.map((field) => parseField(field, primaryKeyColumns)),
+    indices: table.indexes
+      .filter((index) => !index.pk)
+      .map((index) => ({
+        name: index.name ?? "",
+        fields: index.columns.map((column) => column.value),
+        unique: !!index.unique,
+      })),
   };
 }
 

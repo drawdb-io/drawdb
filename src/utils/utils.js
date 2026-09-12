@@ -42,6 +42,8 @@ const keywords = [
   "CURRENT_TIMESTAMP",
   "LOCALTIME",
   "LOCALTIMESTAMP",
+  "SYSDATE",
+  "SYSTIMESTAMP",
 ];
 
 export function isKeyword(str) {

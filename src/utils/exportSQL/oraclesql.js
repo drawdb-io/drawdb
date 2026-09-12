@@ -6,6 +6,17 @@ import {
   getFkColumnNames,
 } from "./shared";
 
+function oracleDeleteClause(constraint) {
+  switch (String(constraint).toLowerCase()) {
+    case "cascade":
+      return "\nON DELETE CASCADE";
+    case "set null":
+      return "\nON DELETE SET NULL";
+    default:
+      return "";
+  }
+}
+
 function tablesToOracleSQL(diagram) {
   return `${diagram.tables
     .map(
@@ -32,7 +43,7 @@ function tablesToOracleSQL(diagram) {
                 !dbToTypes[diagram.database][field.type].hasCheck
                   ? ""
                   : ` CHECK(${field.check})`
-              }${field.comment ? ` -- ${field.comment}` : ""}`,
+              }`,
           )
           .join(",\n")}${
           table.fields.filter((f) => f.primary).length > 0
@@ -41,7 +52,7 @@ function tablesToOracleSQL(diagram) {
                 .map((f) => `"${f.name}"`)
                 .join(", ")})`
             : ""
-        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n)${table.comment ? ` -- ${table.comment}` : ""};\n${`\n${table.indices
+        }${uniqueConstraintClause(table, (s) => `"${s}"`)}\n);\n${`\n${table.indices
           .map(
             (i) =>
               `\nCREATE ${i.unique ? "UNIQUE " : ""}INDEX "${i.name}"\nON "${table.name}" (${i.fields
@@ -66,7 +77,7 @@ function tablesToOracleSQL(diagram) {
         .map((c) => `"${c}"`)
         .join(", ")}) REFERENCES "${endName}" (${endColumns
         .map((c) => `"${c}"`)
-        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+        .join(", ")})${oracleDeleteClause(r.deleteConstraint)};`;
     })
     .join("\n")}`;
 }

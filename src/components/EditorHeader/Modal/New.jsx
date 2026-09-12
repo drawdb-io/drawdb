@@ -3,6 +3,7 @@ import { useSettings } from "../../../hooks";
 import { useLiveQuery } from "dexie-react-hooks";
 import Thumbnail from "../../Thumbnail";
 import { useTranslation } from "react-i18next";
+import { Slot } from "../../../context/ExtensionsContext";
 
 export default function New({ selectedTemplateId, setSelectedTemplateId }) {
   const { settings } = useSettings();
@@ -43,6 +44,7 @@ export default function New({ selectedTemplateId, setSelectedTemplateId }) {
           <div className="text-center mt-1">{temp.title}</div>
         </div>
       ))}
+      <Slot name="new-diagram-end" />
     </div>
   );
 }
