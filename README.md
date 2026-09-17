@@ -50,6 +50,15 @@ docker run -p 3000:80 drawdb
 
 If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files.
 
+### Easypanel
+
+If you'd rather not build/run the container yourself, [Easypanel](https://easypanel.io) is a self-hosted deployment platform with a one-click drawDB template:
+
+[![Deploy on Easypanel][easypanel-btn]][easypanel-deploy]
+
+[easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
+[easypanel-deploy]: https://easypanel.io/templates/drawdb
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
