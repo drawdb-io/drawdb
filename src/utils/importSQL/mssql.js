@@ -1,3 +1,4 @@
+import { Parser } from "node-sql-parser";
 import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
@@ -317,4 +318,121 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
   }
 
   return { tables, relationships };
+}
+
+const GO_BATCH_SEPARATOR = /^[ \t]*GO[ \t]*(--[^\n]*)?$/gim;
+const GO_MARKER = "\0";
+const ALTER_FK_STATEMENT = new RegExp(
+  [
+    "ALTER\\s+TABLE\\s+",
+    "(?:[\\[\\w\\].]+\\.)?", // optional schema prefix
+    "((?:\\[[^\\]]+\\])|[\\w$]+)", // table
+    "\\s+ADD\\s+",
+    "(?:CONSTRAINT\\s+((?:\\[[^\\]]+\\])|[\\w$]+)\\s+)?",
+    "FOREIGN\\s+KEY\\s*\\(\\s*([^)]+?)\\s*\\)",
+    "\\s+REFERENCES\\s+",
+    "(?:[\\[\\w\\].]+\\.)?",
+    "((?:\\[[^\\]]+\\])|[\\w$]+)",
+    "\\s*\\(\\s*([^)]+?)\\s*\\)",
+    "([^;]*?)",
+    "(?:;(?:\\s*GO\\b)?|\\s*GO\\b|\\s*$)",
+  ].join(""),
+  "gi",
+);
+
+function unquoteIdentifier(identifier) {
+  return identifier.startsWith("[")
+    ? identifier.slice(1, -1).replace(/\]\]/g, "]")
+    : identifier;
+}
+
+function quoteIdentifier(identifier) {
+  return "`" + identifier.replace(/`/g, "``") + "`";
+}
+
+function parseColumns(columns) {
+  return columns
+    .split(",")
+    .map((column) => column.trim())
+    .filter(Boolean)
+    .map(unquoteIdentifier);
+}
+
+function parseReferentialAction(actions) {
+  const onUpdate =
+    /on\s+update\s+(cascade|no\s+action|restrict|set\s+null|set\s+default)/i.exec(
+      actions,
+    );
+  const onDelete =
+    /on\s+delete\s+(cascade|no\s+action|restrict|set\s+null|set\s+default)/i.exec(
+      actions,
+    );
+
+  let action = "";
+  if (onUpdate) {
+    action += ` ON UPDATE ${onUpdate[1].replace(/\s+/g, " ").toUpperCase()}`;
+  }
+  if (onDelete) {
+    action += ` ON DELETE ${onDelete[1].replace(/\s+/g, " ").toUpperCase()}`;
+  }
+  return action;
+}
+
+function toMysqlAlterForeignKey([
+  table,
+  constraintName,
+  startColumns,
+  endTable,
+  endColumns,
+  actions,
+]) {
+  const startColumnList = parseColumns(startColumns)
+    .map(quoteIdentifier)
+    .join(", ");
+  const endColumnList = parseColumns(endColumns)
+    .map(quoteIdentifier)
+    .join(", ");
+  const constraint = constraintName
+    ? `CONSTRAINT ${quoteIdentifier(unquoteIdentifier(constraintName))} `
+    : "";
+
+  return (
+    `ALTER TABLE ${quoteIdentifier(unquoteIdentifier(table))} ` +
+    `ADD ${constraint}FOREIGN KEY (${startColumnList}) ` +
+    `REFERENCES ${quoteIdentifier(unquoteIdentifier(endTable))} (${endColumnList})` +
+    parseReferentialAction(actions)
+  );
+}
+
+/**
+ * Parses a transactsql script into a list of statements.
+ *
+ * The transactsql grammar of node-sql-parser cannot parse `ALTER TABLE ... ADD
+ * FOREIGN KEY` statements and fails when a semicolon-terminated statement is
+ * followed by a GO batch separator, which breaks importing scripts that
+ * drawdb itself exported (issue #320). GO batches are therefore parsed as
+ * semicolon-separated statements and foreign keys are parsed with the mysql
+ * grammar, which produces the alter statement shape fromMSSQL already
+ * understands.
+ */
+export function parseMssqlSource(source) {
+  const foreignKeys = [];
+  const statementsSource = source
+    .replace(ALTER_FK_STATEMENT, (match, ...groups) => {
+      foreignKeys.push(toMysqlAlterForeignKey(groups));
+      return "";
+    })
+    .replace(GO_BATCH_SEPARATOR, GO_MARKER)
+    .replace(/;[ \t\r\n]*\0|\0[ \t\r\n]*;/g, GO_MARKER)
+    .replace(/\0/g, ";");
+
+  const parser = new Parser();
+  const parsed = parser.astify(statementsSource, { database: DB.MSSQL });
+  const statements = Array.isArray(parsed) ? parsed : [parsed];
+
+  for (const foreignKey of foreignKeys) {
+    statements.push(parser.astify(foreignKey, { database: DB.MYSQL }));
+  }
+
+  return statements;
 }
