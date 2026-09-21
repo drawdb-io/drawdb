@@ -69,7 +69,6 @@ const id = {
     coordinate_space: "Ruang",
     coordinate_space_screen: "Layar",
     coordinate_space_diagram: "Diagram",
-    table_width: "Lebar tabel",
     language: "Bahasa",
     flush_storage: "Bersihkan penyimpanan",
     are_you_sure_flush_storage:

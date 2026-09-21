@@ -72,7 +72,6 @@ const el = {
     coordinate_space: "Χώρος",
     coordinate_space_screen: "Οθόνη",
     coordinate_space_diagram: "Διάγραμμα",
-    table_width: "Πλάτος πίνακα",
     language: "Γλώσσα",
     flush_storage: "Εκκαθάριση αποθήκευσης",
     are_you_sure_flush_storage:

@@ -74,7 +74,6 @@ const ur = {
     coordinate_space: "اسپیس",
     coordinate_space_screen: "سکرین",
     coordinate_space_diagram: "ڈایاگرام",
-    table_width: "ٹیبل کی چوڑائی",
     language: "زبان",
     flush_storage: "اسٹوریج صاف کریں",
     are_you_sure_flush_storage:

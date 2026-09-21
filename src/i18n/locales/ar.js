@@ -67,7 +67,6 @@ const ar = {
     coordinate_space: "الفضاء",
     coordinate_space_screen: "الشاشة",
     coordinate_space_diagram: "المخطط",
-    table_width: "عرض الجدول",
     language: "اللغة",
     flush_storage: "مسح التخزين",
     are_you_sure_flush_storage:

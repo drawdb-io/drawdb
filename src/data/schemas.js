@@ -5,6 +5,7 @@ export const tableSchema = {
     name: { type: "string" },
     x: { type: "number" },
     y: { type: "number" },
+    width: { type: "number" },
     fields: {
       type: "array",
       items: {
@@ -154,6 +155,7 @@ export const viewSchema = {
     name: { type: "string" },
     x: { type: "number" },
     y: { type: "number" },
+    width: { type: "number" },
     baseTableId: { type: ["string", "integer", "null"] },
     joins: {
       type: "array",

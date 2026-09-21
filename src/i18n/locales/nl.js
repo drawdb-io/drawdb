@@ -74,7 +74,6 @@ const nl = {
     coordinate_space: "Ruimte",
     coordinate_space_screen: "Scherm",
     coordinate_space_diagram: "Diagram",
-    table_width: "Tabelbreedte",
     language: "Taal",
     flush_storage: "Opslag legen",
     are_you_sure_flush_storage:

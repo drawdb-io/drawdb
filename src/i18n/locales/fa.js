@@ -60,7 +60,6 @@ const fa = {
     show_timeline: "نمایش خط زمانی",
     autosave: "ذخیره خودکار",
     panning: "پانینگ",
-    table_width: "عرض جدول",
     language: "زبان",
     flush_storage: "پاک کردن حافظه",
     are_you_sure_flush_storage:

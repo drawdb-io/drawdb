@@ -74,7 +74,6 @@ const pa = {
     coordinate_space: "ਸਪੇਸ",
     coordinate_space_screen: "ਸਕ੍ਰੀਨ",
     coordinate_space_diagram: "ਡਾਯਾਗ੍ਰਾਮ",
-    table_width: "ਟੇਬਲ ਦੀ ਚੌੜਾਈ",
     language: "ਭਾਸ਼ਾ",
     flush_storage: "ਸਟੋਰੇਜ ਸਾਫ਼ ਕਰੋ",
     are_you_sure_flush_storage:

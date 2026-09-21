@@ -60,7 +60,6 @@ const ru = {
     show_timeline: "Показать временную шкалу",
     autosave: "Автосохранение",
     panning: "Панорамирование",
-    table_width: "Ширина таблицы",
     language: "Язык",
     flush_storage: "Очистить хранилище",
     are_you_sure_flush_storage:

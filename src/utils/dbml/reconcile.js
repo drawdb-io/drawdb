@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
-import { defaultBlue, tableWidth } from "../../data/constants";
+import { defaultBlue } from "../../data/constants";
 import { arrangeTables } from "../arrangeTables";
-import { isKeyword } from "../utils";
+import { getTableWidth, isKeyword } from "../utils";
 import { isInlineEnumType, typeTakesSize } from "./types";
 
 const NEW_TABLE_GAP_X = 80;
@@ -216,7 +216,8 @@ function placeNewTables(tables) {
   }
 
   const x =
-    Math.max(...placed.map((table) => table.x + tableWidth)) + NEW_TABLE_GAP_X;
+    Math.max(...placed.map((table) => table.x + getTableWidth(table))) +
+    NEW_TABLE_GAP_X;
   const y = Math.min(...placed.map((table) => table.y));
 
   unplaced.forEach((table, i) => {

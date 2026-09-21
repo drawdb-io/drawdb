@@ -74,7 +74,6 @@ const ka = {
     coordinate_space: "ಅಂತರ",
     coordinate_space_screen: "ಪರದೆ",
     coordinate_space_diagram: "ಚಿತ್ರ",
-    table_width: "ಕೋಷ್ಟಕದ ಅಗಲ",
     language: "ಭಾಷೆ",
     flush_storage: "ಸಂಗ್ರಹವನ್ನು ಫ್ಲಷ್ ಮಾಡಿ",
     are_you_sure_flush_storage:

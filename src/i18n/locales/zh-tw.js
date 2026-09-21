@@ -76,7 +76,6 @@ const zh_tw = {
     coordinate_space: "座標空間",
     coordinate_space_screen: "螢幕座標",
     coordinate_space_diagram: "圖表座標",
-    table_width: "資料表寬度",
     language: "語言",
     flush_storage: "清除儲存空間",
     are_you_sure_flush_storage:

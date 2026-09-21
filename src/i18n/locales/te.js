@@ -60,7 +60,6 @@ const te = {
     show_timeline: "టైమ్‌లైన్ చూపించు",
     autosave: "ఆటోసేవ్",
     panning: "ప్యానింగ్",
-    table_width: "పట్టిక వెడల్పు",
     language: "భాష",
     flush_storage: "స్టోరేజ్ క్లియర్ చేయి",
     are_you_sure_flush_storage:

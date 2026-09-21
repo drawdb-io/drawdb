@@ -74,7 +74,6 @@ const sw = {
     coordinate_space: "Nafasi ya kuratibu",
     coordinate_space_screen: "Skrini",
     coordinate_space_diagram: "Mchoro",
-    table_width: "Upana wa jedwali",
     language: "Lugha",
     flush_storage: "Safisha hifadhi",
     are_you_sure_flush_storage:

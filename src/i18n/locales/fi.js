@@ -74,7 +74,6 @@ const fi = {
     coordinate_space: "Avaruus",
     coordinate_space_screen: "Näyttö",
     coordinate_space_diagram: "Kaavio",
-    table_width: "Taulun leveys",
     language: "Kieli",
     flush_storage: "Tyhjennä tallennustila",
     are_you_sure_flush_storage:

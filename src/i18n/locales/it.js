@@ -69,7 +69,6 @@ const it = {
     coordinate_space: "Spazio",
     coordinate_space_screen: "Schermo",
     coordinate_space_diagram: "Diagramma",
-    table_width: "Larghezza della tabella",
     language: "Lingua",
     flush_storage: "Pulizia memoria",
     are_you_sure_flush_storage:

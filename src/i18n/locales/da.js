@@ -74,7 +74,6 @@ const da = {
     coordinate_space: "Rum",
     coordinate_space_screen: "Skærm",
     coordinate_space_diagram: "Diagram",
-    table_width: "Tabel bredde",
     language: "Sprog",
     flush_storage: "Tøm lagring",
     are_you_sure_flush_storage:

@@ -74,7 +74,6 @@ const uk = {
     coordinate_space: "Простір",
     coordinate_space_screen: "Екран",
     coordinate_space_diagram: "Діаграма",
-    table_width: "Ширина таблиці",
     language: "Мова",
     flush_storage: "Очистити сховище",
     are_you_sure_flush_storage:

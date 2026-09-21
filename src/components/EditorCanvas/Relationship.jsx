@@ -9,6 +9,7 @@ import {
   getVisibleFieldIndex,
   getVisibleFields,
   getRelationshipFields,
+  getTableWidth,
 } from "../../utils/utils";
 
 const labelFontSize = 16;
@@ -52,12 +53,14 @@ export default function Relationship({ data }) {
       startTable: {
         x: startTable.x,
         y: startTable.y,
+        width: getTableWidth(startTable),
         comment: startTable.comment,
         fields: startFields,
       },
       endTable: {
         x: endTable.x,
         y: endTable.y,
+        width: getTableWidth(endTable),
         comment: endTable.comment,
         fields: endFields,
       },
@@ -75,11 +78,10 @@ export default function Relationship({ data }) {
         startFieldIndices: pathValues.startFieldIndices,
         endFieldIndices: pathValues.endFieldIndices,
       },
-      settings.tableWidth,
       1,
       settings.showComments,
     );
-  }, [pathValues, isComposite, settings.tableWidth, settings.showComments]);
+  }, [pathValues, isComposite, settings.showComments]);
 
   const pathRef = useRef();
   const labelRef = useRef();
@@ -183,12 +185,7 @@ export default function Relationship({ data }) {
           d={
             composite
               ? composite.path
-              : calcPath(
-                  pathValues,
-                  settings.tableWidth,
-                  1,
-                  settings.showComments,
-                )
+              : calcPath(pathValues, 1, settings.showComments)
           }
           fill="none"
           stroke="transparent"
@@ -200,12 +197,7 @@ export default function Relationship({ data }) {
           d={
             composite
               ? composite.path
-              : calcPath(
-                  pathValues,
-                  settings.tableWidth,
-                  1,
-                  settings.showComments,
-                )
+              : calcPath(pathValues, 1, settings.showComments)
           }
           className="relationship-path"
           style={{ stroke: hovered ? undefined : data.color }}

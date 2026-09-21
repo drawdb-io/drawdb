@@ -71,7 +71,6 @@ const ms = {
     coordinate_space: "Ruang koordinat",
     coordinate_space_screen: "Skrin",
     coordinate_space_diagram: "Rajah",
-    table_width: "Lebar jadual",
     language: "Bahasa",
     flush_storage: "Kosongkan storan",
     are_you_sure_flush_storage:

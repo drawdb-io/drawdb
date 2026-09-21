@@ -7,6 +7,7 @@ import {
   gridSize,
   gridCircleRadius,
 } from "../data/constants";
+import { getTableWidth } from "../utils/utils";
 
 export default function Thumbnail({ diagram, i, zoom, theme }) {
   return (
@@ -72,7 +73,7 @@ export default function Thumbnail({ diagram, i, zoom, theme }) {
             <foreignObject
               x={table.x}
               y={table.y}
-              width={200}
+              width={getTableWidth(table)}
               height={height}
               key={i}
             >

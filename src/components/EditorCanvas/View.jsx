@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Tab, ObjectType } from "../../data/constants";
+import { useMemo, useState } from "react";
+import { Action, Tab, ObjectType } from "../../data/constants";
 import {
   IconMore,
   IconDeleteStroked,
@@ -22,17 +22,28 @@ import {
   useDiagram,
   useSelect,
   useViews,
+  useUndoRedo,
+  useTransform,
 } from "../../hooks";
 import ViewInfo from "../EditorSidePanel/ViewsTab/ViewInfo";
 import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
-import { getViewHeight, resolveViewColumns } from "../../utils/views";
+import {
+  getViewHeight,
+  getViewWidth,
+  resolveViewColumns,
+} from "../../utils/views";
+import ResizeHandles from "./ResizeHandles";
 
 export default function View({ viewData, onPointerDown }) {
+  const [hovered, setHovered] = useState(false);
+  const [resizeEngaged, setResizeEngaged] = useState(false);
   const { layout } = useLayout();
   const { database, tables } = useDiagram();
   const { views, addView, deleteView, updateView } = useViews();
   const { settings } = useSettings();
+  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { transform } = useTransform();
   const { t } = useTranslation();
   const {
     selectedElement,
@@ -51,12 +62,9 @@ export default function View({ viewData, onPointerDown }) {
     [viewData, tables],
   );
 
-  const height = getViewHeight(
-    viewData,
-    columns,
-    settings.tableWidth,
-    settings.showComments,
-  );
+  const width = getViewWidth(viewData);
+
+  const height = getViewHeight(viewData, columns, settings.showComments);
 
   const isSelected = useMemo(() => {
     return (
@@ -146,6 +154,45 @@ export default function View({ viewData, onPointerDown }) {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const resizeView = ({ width: nextWidth, x: nextX }) => {
+    updateView(
+      viewData.id,
+      nextX === undefined
+        ? { width: nextWidth }
+        : { width: nextWidth, x: nextX },
+    );
+    if (nextX === undefined) return;
+    setBulkSelectedElements((prev) =>
+      prev.map((el) =>
+        el.type === ObjectType.VIEW && el.id === viewData.id
+          ? {
+              ...el,
+              initialCoords: { ...el.initialCoords, x: nextX },
+              currentCoords: { ...el.currentCoords, x: nextX },
+            }
+          : el,
+      ),
+    );
+  };
+
+  const commitResize = (initial, final) => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.VIEW,
+        vid: viewData.id,
+        undo: initial,
+        redo: final,
+        message: t("edit_view", {
+          viewName: viewData.name,
+          extra: "[width]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+  };
+
   if (viewData.hidden) return null;
 
   return (
@@ -154,10 +201,12 @@ export default function View({ viewData, onPointerDown }) {
         key={viewData.id}
         x={viewData.x}
         y={viewData.y}
-        width={settings.tableWidth}
+        width={width}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
         onPointerDown={onPointerDown}
+        onPointerEnter={(e) => e.isPrimary && setHovered(true)}
+        onPointerLeave={(e) => e.isPrimary && setHovered(false)}
       >
         <div
           onDoubleClick={openEditor}
@@ -165,7 +214,13 @@ export default function View({ viewData, onPointerDown }) {
             settings.mode === "light"
               ? "bg-zinc-100 text-zinc-800"
               : "bg-zinc-800 text-zinc-200"
-          } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
+          } ${
+            resizeEngaged
+              ? "border-dashed border-blue-500"
+              : isSelected
+                ? "border-solid border-blue-500"
+                : borderColor
+          }`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -299,6 +354,19 @@ export default function View({ viewData, onPointerDown }) {
           })}
         </div>
       </foreignObject>
+      {!layout.readOnly && !viewData.locked && (
+        <ResizeHandles
+          x={viewData.x}
+          y={viewData.y}
+          width={width}
+          height={height}
+          zoom={transform.zoom}
+          visible={hovered}
+          onResize={resizeView}
+          onResizeEnd={commitResize}
+          onEngagedChange={setResizeEngaged}
+        />
+      )}
       <SideSheet
         title={t("edit")}
         size="small"
