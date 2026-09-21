@@ -33,6 +33,7 @@ import {
   useDiagram,
   useSelect,
   useUndoRedo,
+  useTransform,
 } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
@@ -43,10 +44,12 @@ import {
   getCommentHeight,
   getFieldOffsetY,
   getTableHeight,
+  getTableWidth,
   getVisibleFieldEntries,
   getVisibleFields,
   getRelationshipFields,
 } from "../../utils/utils";
+import ResizeHandles from "./ResizeHandles";
 
 export default function Table({
   tableData,
@@ -56,6 +59,8 @@ export default function Table({
   setLinkingLine,
 }) {
   const [hoveredField, setHoveredField] = useState(null);
+  const [hovered, setHovered] = useState(false);
+  const [resizeEngaged, setResizeEngaged] = useState(false);
   const { layout } = useLayout();
   const {
     database,
@@ -68,6 +73,7 @@ export default function Table({
   } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { settings } = useSettings();
+  const { transform } = useTransform();
   const { t } = useTranslation();
   const {
     selectedElement,
@@ -81,9 +87,10 @@ export default function Table({
     [settings.mode],
   );
 
+  const width = getTableWidth(tableData);
+
   const height = getTableHeight(
     tableData,
-    settings.tableWidth,
     settings.showComments,
     relationships,
   );
@@ -234,6 +241,46 @@ export default function Table({
     return { tableName: refTable.name, fieldName: refField.name };
   };
 
+  const resizeTable = ({ width: nextWidth, x: nextX }) => {
+    updateTable(
+      tableData.id,
+      nextX === undefined
+        ? { width: nextWidth }
+        : { width: nextWidth, x: nextX },
+    );
+    if (nextX === undefined) return;
+    setBulkSelectedElements((prev) =>
+      prev.map((el) =>
+        el.type === ObjectType.TABLE && el.id === tableData.id
+          ? {
+              ...el,
+              initialCoords: { ...el.initialCoords, x: nextX },
+              currentCoords: { ...el.currentCoords, x: nextX },
+            }
+          : el,
+      ),
+    );
+  };
+
+  const commitResize = (initial, final) => {
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.EDIT,
+        element: ObjectType.TABLE,
+        component: "self",
+        tid: tableData.id,
+        undo: initial,
+        redo: final,
+        message: t("edit_table", {
+          tableName: tableData.name,
+          extra: "[width]",
+        }),
+      },
+    ]);
+    setRedoStack([]);
+  };
+
   if (tableData.hidden) return null;
 
   return (
@@ -242,10 +289,12 @@ export default function Table({
         key={tableData.id}
         x={tableData.x}
         y={tableData.y}
-        width={settings.tableWidth}
+        width={width}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
         onPointerDown={onPointerDown}
+        onPointerEnter={(e) => e.isPrimary && setHovered(true)}
+        onPointerLeave={(e) => e.isPrimary && setHovered(false)}
       >
         <div
           onDoubleClick={openEditor}
@@ -254,7 +303,13 @@ export default function Table({
                  settings.mode === "light"
                    ? "bg-zinc-100 text-zinc-800"
                    : "bg-zinc-800 text-zinc-200"
-               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
+               } ${
+                 resizeEngaged
+                   ? "border-dashed border-blue-500"
+                   : isSelected
+                     ? "border-solid border-blue-500"
+                     : borderColor
+               }`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -469,6 +524,19 @@ export default function Table({
           })}
         </div>
       </foreignObject>
+      {!layout.readOnly && !tableData.locked && (
+        <ResizeHandles
+          x={tableData.x}
+          y={tableData.y}
+          width={width}
+          height={height}
+          zoom={transform.zoom}
+          visible={hovered}
+          onResize={resizeTable}
+          onResizeEnd={commitResize}
+          onEngagedChange={setResizeEngaged}
+        />
+      )}
       <SideSheet
         title={t("edit")}
         size="small"
@@ -542,14 +610,14 @@ export default function Table({
                   getFieldOffsetY(
                     visibleFields,
                     index,
-                    settings.tableWidth,
+                    width,
                     settings.showComments,
                   ) +
                   tableHeaderHeight +
                   tableColorStripHeight +
                   getCommentHeight(
                     tableData.comment,
-                    settings.tableWidth,
+                    width,
                     settings.showComments,
                   ) +
                   14;

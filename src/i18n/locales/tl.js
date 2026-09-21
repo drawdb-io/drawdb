@@ -74,7 +74,6 @@ const tl = {
     coordinate_space: "Space",
     coordinate_space_screen: "Screen",
     coordinate_space_diagram: "Diagram",
-    table_width: "Lapad ng Talahanayan",
     language: "Wika",
     flush_storage: "I-flush ang Storage",
     are_you_sure_flush_storage:

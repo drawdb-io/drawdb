@@ -74,7 +74,6 @@ const pa_pk = {
     coordinate_space: "جگہ",
     coordinate_space_screen: "سکرین",
     coordinate_space_diagram: "ڈایاگرام",
-    table_width: "ٹیبل دی چوڑائی",
     language: "زبان",
     flush_storage: "سٹوریج صاف کرو",
     are_you_sure_flush_storage:

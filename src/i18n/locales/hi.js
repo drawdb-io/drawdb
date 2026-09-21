@@ -61,7 +61,6 @@ const hi = {
     show_timeline: "टाइमलाइन दिखाएं",
     autosave: "ऑटोसेव",
     panning: "पैनिंग",
-    table_width: "टेबल की चौड़ाई",
     language: "भाषा",
     flush_storage: "स्टोरेज साफ़ करें",
     are_you_sure_flush_storage:

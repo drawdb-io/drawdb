@@ -1,5 +1,6 @@
 import { graphlib, layout } from "@dagrejs/dagre";
-import { getTableHeight } from "./utils";
+import { tableWidth as defaultTableWidth } from "../data/constants";
+import { getTableHeight, getTableWidth } from "./utils";
 
 const nodeSep = 60;
 const rankSep = 110;
@@ -22,13 +23,8 @@ export function autoArrange(tables, relationships, settings) {
   }
 
   const sizeOf = (table) => ({
-    width: settings.tableWidth,
-    height: getTableHeight(
-      table,
-      settings.tableWidth,
-      settings.showComments,
-      relationships,
-    ),
+    width: getTableWidth(table),
+    height: getTableHeight(table, settings.showComments, relationships),
   });
 
   const connected = movable.filter((table) => connectedIds.has(table.id));
@@ -66,7 +62,7 @@ export function autoArrange(tables, relationships, settings) {
   }
 
   if (isolated.length > 0) {
-    const rowWidth = Math.max(maxX, 4 * settings.tableWidth + 3 * isolatedGap);
+    const rowWidth = Math.max(maxX, 4 * defaultTableWidth + 3 * isolatedGap);
     let x = 0;
     let y = connected.length > 0 ? maxY + rankSep : 0;
     let rowHeight = 0;

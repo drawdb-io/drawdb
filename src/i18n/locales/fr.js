@@ -60,7 +60,6 @@ const fr = {
     show_timeline: "Afficher la chronologie",
     autosave: "Sauvegarde automatique",
     panning: "Panoramique",
-    table_width: "Largeur de la table",
     language: "Langue",
     flush_storage: "Vider le stockage",
     are_you_sure_flush_storage:

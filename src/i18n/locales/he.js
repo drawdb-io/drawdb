@@ -67,7 +67,6 @@ const he = {
     coordinate_space: "מרחב",
     coordinate_space_screen: "מסך",
     coordinate_space_diagram: "דיאגרמה",
-    table_width: "רוחב טבלה",
     language: "שפה",
     flush_storage: "נקה אחסון",
     are_you_sure_flush_storage:

@@ -74,7 +74,6 @@ const tm = {
     coordinate_space: "இடம்",
     coordinate_space_screen: "திரை",
     coordinate_space_diagram: "வரைபடம்",
-    table_width: "அட்டவணை அகலம்",
     language: "மொழி",
     flush_storage: "சேமிப்பகத்தை காலி செய்",
     are_you_sure_flush_storage:

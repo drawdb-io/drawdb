@@ -59,7 +59,6 @@ const od = {
     show_timeline: "ଟାଇମଲାଇନ୍ ଦେଖାନ୍ତୁ",
     autosave: "ଅଟୋସେଭ୍",
     panning: "ପ୍ୟାନିଂ",
-    table_width: "ଟେବଲ୍ ଚଉଡ଼ା",
     language: "ଭାଷା",
     flush_storage: "ସ୍ଟୋରେଜ୍ ସଫା କରନ୍ତୁ",
     are_you_sure_flush_storage:

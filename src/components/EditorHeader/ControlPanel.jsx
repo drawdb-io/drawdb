@@ -99,8 +99,12 @@ import { applyDiagramPlan } from "../../utils/dbml/applyPlan";
 import { diffDiagram } from "../../utils/dbml/diff";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
-import { getTableHeight } from "../../utils/utils";
-import { getViewHeight, resolveViewColumns } from "../../utils/views";
+import { getTableHeight, getTableWidth } from "../../utils/utils";
+import {
+  getViewHeight,
+  getViewWidth,
+  resolveViewColumns,
+} from "../../utils/views";
 import { autoArrange } from "../../utils/autoArrange";
 import { findAutoFKRelationships } from "../../utils/autoRelationships";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -688,30 +692,23 @@ export default function ControlPanel({
     tablesToFit.forEach((table) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
-      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + settings.tableWidth);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + getTableWidth(table));
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
-        table.y +
-          getTableHeight(
-            table,
-            settings.tableWidth,
-            settings.showComments,
-            relationships,
-          ),
+        table.y + getTableHeight(table, settings.showComments, relationships),
       );
     });
 
     views.forEach((view) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, view.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, view.y);
-      minMaxXY.maxX = Math.max(minMaxXY.maxX, view.x + settings.tableWidth);
+      minMaxXY.maxX = Math.max(minMaxXY.maxX, view.x + getViewWidth(view));
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
         view.y +
           getViewHeight(
             view,
             resolveViewColumns(view, tables),
-            settings.tableWidth,
             settings.showComments,
           ),
       );
@@ -1930,10 +1927,6 @@ export default function ControlPanel({
         ),
         function: () =>
           setSettings((prev) => ({ ...prev, autosave: !prev.autosave })),
-      },
-      table_width: {
-        function: () => setModal(MODAL.TABLE_WIDTH),
-        disabled: layout.readOnly,
       },
       configure_custom_types: {
         function: () => setModal(MODAL.CONFIG_CUSTOM_TYPES),

@@ -19,8 +19,6 @@ export const getModalTitle = (modal) => {
       return i18n.t("save_as");
     case MODAL.NEW:
       return i18n.t("create_new_diagram");
-    case MODAL.TABLE_WIDTH:
-      return i18n.t("table_width");
     case MODAL.LANGUAGE:
       return i18n.t("language");
     case MODAL.SHARE:

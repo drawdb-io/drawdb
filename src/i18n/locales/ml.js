@@ -71,7 +71,6 @@ const ml = {
         coordinate_space: "സ്പേസ്",
         coordinate_space_screen: "സ്ക്രീൻ",
         coordinate_space_diagram: "ഡയഗ്രം",
-        table_width: "ടേബിൾ വീതി",
         language: "ഭാഷ",
         flush_storage: "സ്റ്റോറേജ് ഫ്ലഷ് ചെയ്യുക",
         are_you_sure_flush_storage: "സ്റ്റോറേജ് ഫ്ലഷ് ചെയ്യണമെന്ന് ഉറപ്പാണോ? ഇത് നിങ്ങളുടെ എല്ലാ ഡയഗ്രമുകളും കസ്റ്റം ടെംപ്ലേറ്റുകളും ഇല്ലാതാക്കും.",

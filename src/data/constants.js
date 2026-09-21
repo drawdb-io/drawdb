@@ -19,6 +19,8 @@ export const otherColor = "text-zinc-500";
 export const dateColor = "text-cyan-500";
 export const tableHeaderHeight = 50;
 export const tableWidth = 220;
+export const minTableWidth = 180;
+export const maxTableWidth = 480;
 export const gridSize = 24;
 export const gridCircleRadius = 0.85;
 export const tableFieldHeight = 36;
@@ -89,7 +91,6 @@ export const MODAL = {
   SAVEAS: 6,
   NEW: 7,
   IMPORT_SRC: 8,
-  TABLE_WIDTH: 9,
   LANGUAGE: 10,
   SHARE: 11,
   CONFIG_CUSTOM_TYPES: 12,

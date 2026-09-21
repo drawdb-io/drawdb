@@ -67,7 +67,6 @@ const no = {
     coordinate_space: "Koordinatsystem",
     coordinate_space_screen: "Skjerm",
     coordinate_space_diagram: "Diagram",
-    table_width: "Tabellbredde",
     language: "Språk",
     flush_storage: "Tøm lagring",
     are_you_sure_flush_storage:

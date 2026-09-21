@@ -67,7 +67,6 @@ const tr = {
     coordinate_space: "Koordinat uzayı",
     coordinate_space_screen: "Ekran",
     coordinate_space_diagram: "Diagram",
-    table_width: "Tablo genişliği",
     language: "Dil",
     flush_storage: "Depoyu temizle",
     are_you_sure_flush_storage:

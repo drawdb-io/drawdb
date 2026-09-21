@@ -68,7 +68,6 @@ const pt = {
     coordinate_space: "Espaço de coordenadas",
     coordinate_space_screen: "Tela",
     coordinate_space_diagram: "Diagrama",
-    table_width: "Largura da tabela",
     language: "Idioma",
     flush_storage: "Limpar armazenamento",
     are_you_sure_flush_storage:

@@ -19,7 +19,6 @@ import {
   useEnums,
   useNavigateWithParams,
   useNotes,
-  useSettings,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -45,7 +44,6 @@ import Language from "./Language";
 import New from "./New";
 import Open from "./Open";
 import Rename from "./Rename";
-import SetTableWidth from "./SetTableWidth";
 import Share from "./Share";
 import { mergeCustomTypes } from "../../../utils/customTypes";
 
@@ -76,12 +74,10 @@ export default function Modal({
   const { setViews } = useViews();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { settings, setSettings } = useSettings();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState(
     i18n.language,
   );
-  const [tempTableWidth, setTempTableWidth] = useState(settings.tableWidth);
   const [importSource, setImportSource] = useState({
     src: "",
     overwrite: false,
@@ -204,7 +200,10 @@ export default function Modal({
 
       if (!result) return;
 
-      const { diagram, warnings } = normalizeAiDiagram(result.diagram, database);
+      const { diagram, warnings } = normalizeAiDiagram(
+        result.diagram,
+        database,
+      );
       const allWarnings = [...(result.warnings ?? []), ...warnings];
 
       applyImportedDiagram(diagram);
@@ -272,10 +271,6 @@ export default function Modal({
         return;
       case MODAL.LANGUAGE:
         i18n.changeLanguage(uncontrolledLanguage);
-        setModal(MODAL.NONE);
-        return;
-      case MODAL.TABLE_WIDTH:
-        setSettings((prev) => ({ ...prev, tableWidth: tempTableWidth }));
         setModal(MODAL.NONE);
         return;
       default:
@@ -365,13 +360,6 @@ export default function Modal({
             </div>
           );
         }
-      case MODAL.TABLE_WIDTH:
-        return (
-          <SetTableWidth
-            tempWidth={tempTableWidth}
-            setTempWidth={setTempTableWidth}
-          />
-        );
       case MODAL.LANGUAGE:
         return (
           <Language
@@ -389,7 +377,6 @@ export default function Modal({
   const handleCancel = () => {
     if (modal === MODAL.RENAME) setUncontrolledTitle(title);
     if (modal === MODAL.LANGUAGE) setUncontrolledLanguage(i18n.language);
-    if (modal === MODAL.TABLE_WIDTH) setTempTableWidth(settings.tableWidth);
     setModal(MODAL.NONE);
   };
 

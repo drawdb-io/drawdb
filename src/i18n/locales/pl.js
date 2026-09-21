@@ -67,7 +67,6 @@ const pl = {
     coordinate_space: "Przestrzeń",
     coordinate_space_screen: "Ekran",
     coordinate_space_diagram: "Diagram",
-    table_width: "Szerokość tabeli",
     language: "Język",
     flush_storage: "Wyczyść pamięć",
     are_you_sure_flush_storage:

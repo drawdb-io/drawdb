@@ -67,7 +67,6 @@ const ko = {
     coordinate_space: "좌표 공간",
     coordinate_space_screen: "화면",
     coordinate_space_diagram: "다이어그램",
-    table_width: "테이블 너비",
     language: "언어",
     flush_storage: "저장소 비우기",
     are_you_sure_flush_storage:

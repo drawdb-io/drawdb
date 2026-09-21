@@ -33,8 +33,16 @@ import {
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
-import { areFieldsCompatible, getTableHeight } from "../../utils/utils";
-import { getViewHeight, resolveViewColumns } from "../../utils/views";
+import {
+  areFieldsCompatible,
+  getTableHeight,
+  getTableWidth,
+} from "../../utils/utils";
+import {
+  getViewHeight,
+  getViewWidth,
+  resolveViewColumns,
+} from "../../utils/views";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
@@ -168,13 +176,8 @@ export default function Canvas() {
       const tableRect = {
         x: table.x,
         y: table.y,
-        width: settings.tableWidth,
-        height: getTableHeight(
-          table,
-          settings.tableWidth,
-          settings.showComments,
-          relationships,
-        ),
+        width: getTableWidth(table),
+        height: getTableHeight(table, settings.showComments, relationships),
       };
       if (shouldAddElement(tableRect, element)) {
         elements.push(element);
@@ -193,11 +196,10 @@ export default function Canvas() {
       const viewRect = {
         x: view.x,
         y: view.y,
-        width: settings.tableWidth,
+        width: getViewWidth(view),
         height: getViewHeight(
           view,
           resolveViewColumns(view, tables),
-          settings.tableWidth,
           settings.showComments,
         ),
       };

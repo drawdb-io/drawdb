@@ -68,7 +68,6 @@ const cz = {
     coordinate_space: "Prostor",
     coordinate_space_screen: "Obrazovka",
     coordinate_space_diagram: "Diagram",
-    table_width: "Šířka stolu",
     language: "Jazyk",
     flush_storage: "Splachovací úložiště",
     are_you_sure_flush_storage:

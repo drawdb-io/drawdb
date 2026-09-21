@@ -68,7 +68,6 @@ const zh = {
     coordinate_space: "坐标空间",
     coordinate_space_screen: "屏幕",
     coordinate_space_diagram: "图表",
-    table_width: "表格宽度",
     language: "语言",
     export_saved_data: "导出保存的数据",
     flush_storage: "清除存储",

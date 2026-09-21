@@ -71,7 +71,6 @@ const mr = {
     coordinate_space: "स्पेस",
     coordinate_space_screen: "स्क्रीन",
     coordinate_space_diagram: "डायग्राम",
-    table_width: "टेबलची रुंदी",
     language: "भाषा",
     flush_storage: "स्टोरेज साफ करा",
     are_you_sure_flush_storage:

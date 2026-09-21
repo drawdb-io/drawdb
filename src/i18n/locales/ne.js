@@ -62,7 +62,6 @@ const ne = {
     show_timeline: "टाइमलाइन देखाउनुहोस्",
     autosave: "स्वतः सेभ",
     panning: "प्यानिङ",
-    table_width: "टेबल चौडाइ",
     language: "भाषा",
     flush_storage: "स्टोरेज सफा गर्नुहोस्",
     are_you_sure_flush_storage:

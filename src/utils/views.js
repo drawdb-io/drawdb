@@ -3,6 +3,7 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
+  tableWidth as defaultTableWidth,
 } from "../data/constants";
 import {
   getCommentHeight,
@@ -44,18 +45,16 @@ const quoteFor = {
   [DB.MSSQL]: (s) => `[${s}]`,
 };
 
-const identifierQuote = (database) =>
-  quoteFor[database] ?? ((s) => `"${s}"`);
+const identifierQuote = (database) => quoteFor[database] ?? ((s) => `"${s}"`);
 
 export function operatorTakesValue(operator) {
   return !valuelessOperators.has(operator);
 }
 
 export function viewTableIds(view) {
-  return [
-    view.baseTableId,
-    ...(view.joins ?? []).map((j) => j.tableId),
-  ].filter(Boolean);
+  return [view.baseTableId, ...(view.joins ?? []).map((j) => j.tableId)].filter(
+    Boolean,
+  );
 }
 
 export function viewScopeTables(view, tables = []) {
@@ -187,7 +186,9 @@ export function buildViewSQL(view, tables = [], database = DB.GENERIC) {
     const joinTable = tables.find((t) => t.id === join.tableId);
     if (!joinTable) continue;
 
-    const left = join.on ? qualify(join.on.leftTableId, join.on.leftFieldId) : null;
+    const left = join.on
+      ? qualify(join.on.leftTableId, join.on.leftFieldId)
+      : null;
     const right = join.on ? qualify(join.tableId, join.on.rightFieldId) : null;
     const onClause = left && right ? ` ON ${left} = ${right}` : "";
     lines.push(`${join.type} JOIN ${quote(joinTable.name)}${onClause}`);
@@ -271,11 +272,16 @@ export function appendViews(sql, obj, database = obj?.database) {
   return sql.trimEnd() ? `${sql.trimEnd()}\n\n${views}` : views;
 }
 
-export function getViewHeight(view, columns, width, showComments = true) {
+export function getViewWidth(view) {
+  const width = view?.width;
+  return typeof width === "number" && width > 0 ? width : defaultTableWidth;
+}
+
+export function getViewHeight(view, columns, showComments = true) {
   return (
     columns.length * (tableFieldHeight + 1) +
     tableHeaderHeight +
     tableColorStripHeight +
-    getCommentHeight(view.comment, width, showComments)
+    getCommentHeight(view.comment, getViewWidth(view), showComments)
   );
 }

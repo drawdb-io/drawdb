@@ -4,6 +4,9 @@ import {
   tableFieldHeight,
   tableHeaderHeight,
   tableColorStripHeight,
+  tableWidth as defaultTableWidth,
+  minTableWidth,
+  maxTableWidth,
 } from "../data/constants";
 
 export function dataURItoBlob(dataUrl) {
@@ -161,11 +164,17 @@ export function getFieldHeight(field, containerWidth, showComments = true) {
   );
 }
 
+export function clampTableWidth(width) {
+  return Math.min(maxTableWidth, Math.max(minTableWidth, Math.round(width)));
+}
+
+export function getTableWidth(table) {
+  const width = table?.width;
+  return typeof width === "number" && width > 0 ? width : defaultTableWidth;
+}
+
 export function getRelationshipFields(relationship) {
-  if (
-    Array.isArray(relationship?.fields) &&
-    relationship.fields.length > 0
-  ) {
+  if (Array.isArray(relationship?.fields) && relationship.fields.length > 0) {
     return relationship.fields;
   }
   return [
@@ -245,12 +254,8 @@ export function getFieldOffsetY(
   return total;
 }
 
-export function getTableHeight(
-  table,
-  width,
-  showComments = true,
-  relationships = [],
-) {
+export function getTableHeight(table, showComments = true, relationships = []) {
+  const width = getTableWidth(table);
   const visibleFields = getVisibleFields(table, relationships);
 
   return (

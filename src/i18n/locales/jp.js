@@ -67,7 +67,6 @@ const jp = {
     coordinate_space: "空間",
     coordinate_space_screen: "スクリーン",
     coordinate_space_diagram: "ダイアグラム",
-    table_width: "テーブル幅",
     language: "言語",
     flush_storage: "ストレージを消去",
     are_you_sure_flush_storage:
