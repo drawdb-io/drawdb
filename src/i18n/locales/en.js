@@ -57,6 +57,7 @@ const en = {
     reset_view: "Reset view",
     show_grid: "Show grid",
     snap_to_grid: "Snap to grid",
+    show_scrollbars: "Show scrollbars",
     show_datatype: "Show datatype",
     show_cardinality: "Show cardinality",
     theme: "Theme",

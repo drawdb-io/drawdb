@@ -1849,6 +1849,18 @@ export default function ControlPanel({
         ),
         function: snapToGrid,
       },
+      show_scrollbars: {
+        state: settings.showScrollbars ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showScrollbars: !prev.showScrollbars,
+          })),
+      },
       show_cardinality: {
         state: settings.showCardinality ? (
           <i className="bi bi-toggle-on" />
@@ -2068,9 +2080,7 @@ export default function ControlPanel({
         cancelText={t("cancel")}
       >
         <div className="space-y-3">
-          <p className="text-sm">
-            {t("auto_connect_fk_modal_description")}
-          </p>
+          <p className="text-sm">{t("auto_connect_fk_modal_description")}</p>
           <ol className="list-decimal ps-5 space-y-1 text-sm">
             <li>{t("auto_connect_fk_rule_1")}</li>
             <li>{t("auto_connect_fk_rule_2")}</li>
