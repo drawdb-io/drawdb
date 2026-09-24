@@ -17,11 +17,7 @@ export default function ColorPicker({
   };
 
   return (
-    <div
-      onPointerUp={handleColorPick}
-      onBlur={handleColorPick}
-      onMouseLeave={handleColorPick}
-    >
+    <div onPointerUp={handleColorPick} onBlur={handleColorPick}>
       <SemiColorPicker
         {...props}
         value={SemiColorPicker.colorStringToValue(value)}
