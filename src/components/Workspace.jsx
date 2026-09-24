@@ -582,8 +582,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
                 <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-blue-300 bg-blue-50 px-5 py-1.5 shadow-md dark:border-sky-900/50 dark:bg-sky-900/30">
                   <i className="bi bi-hdd" />
                   <span className="text-sm">
-                    This diagram is stored locally on your browser. Move it to
-                    the cloud?
+                    {t("move_to_cloud_prompt")}
                   </span>
                   <Button
                     size="small"
@@ -592,13 +591,13 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
                       cloudOnly ? moveToCloud : extensions.moveToCloudUpgrade
                     }
                   >
-                    Move
+                    {t("move")}
                   </Button>
                   <Button
                     size="small"
                     theme="borderless"
                     type="tertiary"
-                    aria-label="Dismiss"
+                    aria-label={t("dismiss")}
                     icon={<i className="bi bi-x-lg" />}
                     onClick={dismissMoveToCloud}
                   />

@@ -12,13 +12,13 @@ import CodeEditor from "../CodeEditor";
 const APPLY_DELAY_MS = 500;
 const MARKER_OWNER = "dbml";
 
-function toProblems(error) {
+function toProblems(error, t) {
   const diags = Array.isArray(error?.diags) ? error.diags : [];
 
   if (!diags.length) {
     return [
       {
-        message: error?.message ?? "Invalid DBML",
+        message: error?.message ?? t("invalid_dbml"),
         startLine: 1,
         startColumn: 1,
         endLine: 1,
@@ -134,7 +134,7 @@ export default function DBMLEditor({ onProblemsChange }) {
       next = reconcileDbml(parsed, base, base.database);
       plan = diffDiagram(base, next);
     } catch (error) {
-      reportProblems(toProblems(error));
+      reportProblems(toProblems(error, t));
       return;
     }
 

@@ -72,7 +72,7 @@ export default function ImportSource({
 
       <div className="mt-2">
         <Checkbox
-          aria-label="overwrite checkbox"
+          aria-label={t("overwrite_checkbox")}
           checked={importData.overwrite}
           onChange={(e) =>
             setImportData((prev) => ({

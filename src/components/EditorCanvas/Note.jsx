@@ -413,7 +413,7 @@ export default function Note({ data, onPointerDown }) {
               <ButtonGroup
                 type="tertiary"
                 size="small"
-                aria-label="Note actions"
+                aria-label={t("note_actions")}
               >
                 <Button
                   size="small"

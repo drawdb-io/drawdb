@@ -2303,7 +2303,7 @@ export default function ControlPanel({
             <img
               width={54}
               src={icon}
-              alt="logo"
+              alt={t("logo")}
               className="ms-7 min-w-[54px]"
             />
           </Link>
@@ -2317,8 +2317,8 @@ export default function ControlPanel({
                     filter:
                       "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
                   }}
-                  alt={databases[database].name + " icon"}
-                  title={databases[database].name + " diagram"}
+                  alt={t("database_icon", { databaseName: databases[database].name })}
+                  title={t("database_diagram", { databaseName: databases[database].name })}
                 />
               )}
               <Slot name="diagram-title-prefix" />
@@ -2333,7 +2333,7 @@ export default function ControlPanel({
                 }}
                 onClick={!layout.readOnly && (() => setModal(MODAL.RENAME))}
               >
-                <span>{isTemplate ? "Templates" : "Diagrams"}</span>
+                <span>{isTemplate ? t("templates") : t("diagrams")}</span>
                 <span className="select-none text-zinc-400 dark:text-zinc-500 mx-1">
                   /
                 </span>

@@ -16,7 +16,7 @@ export default function EnumDetails({ data }) {
   return (
     <>
       <div className="flex justify-center items-center gap-2">
-        <div className="font-semibold">{t("Name")}: </div>
+        <div className="font-semibold">{t("name")}: </div>
         <Input
           value={data.name}
           readonly={layout.readOnly}

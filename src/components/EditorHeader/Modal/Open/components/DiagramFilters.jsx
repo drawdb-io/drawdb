@@ -3,12 +3,6 @@ import { IconSearch } from "@douyinfe/semi-icons";
 import { useTranslation } from "react-i18next";
 import { ALL } from "../diagram";
 
-const SOURCE_OPTIONS = [
-  { value: ALL, label: "All types" },
-  { value: "cloud", label: "Cloud" },
-  { value: "local", label: "Local" },
-];
-
 export default function DiagramFilters({
   query,
   onQueryChange,
@@ -21,6 +15,11 @@ export default function DiagramFilters({
   onClear,
 }) {
   const { t } = useTranslation();
+  const sourceOptions = [
+    { value: ALL, label: t("all_types") },
+    { value: "cloud", label: t("cloud") },
+    { value: "local", label: t("local") },
+  ];
   const hasActiveFilters =
     query.trim() !== "" || database !== ALL || source !== ALL;
 
@@ -44,7 +43,7 @@ export default function DiagramFilters({
         <Select
           value={source}
           onChange={onSourceChange}
-          optionList={SOURCE_OPTIONS}
+          optionList={sourceOptions}
           className="min-w-[130px]"
         />
       )}

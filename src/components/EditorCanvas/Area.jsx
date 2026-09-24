@@ -31,6 +31,7 @@ export default function Area({
   setResize,
   setInitDimensions,
 }) {
+  const { t } = useTranslation();
   const ref = useRef(null);
   const isHovered = useHover(ref);
   const { layout } = useLayout();
@@ -179,7 +180,7 @@ export default function Area({
               <ButtonGroup
                 type="tertiary"
                 size="small"
-                aria-label="Area actions"
+                aria-label={t("area_actions")}
               >
                 <Button
                   size="small"

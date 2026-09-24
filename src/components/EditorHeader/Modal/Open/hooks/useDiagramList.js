@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 import { db } from "../../../../../data/db";
 import { useExtensions } from "../../../../../context/ExtensionsContext";
 
 const DISABLED = { loading: false, error: null, items: [] };
 
 function readError(err) {
-  return err?.response?.data?.error || err?.message || "Failed to load";
+  return err?.response?.data?.error || err?.message;
 }
 
 export function useDiagramList() {
+  const { t } = useTranslation();
   const extensions = useExtensions();
   const cloudList = extensions?.cloudList;
   const cloudEnabled = typeof cloudList === "function";
@@ -33,7 +35,7 @@ export function useDiagramList() {
       })
       .catch((err) => {
         if (!cancelled)
-          setCloud({ loading: false, error: readError(err), items: null });
+          setCloud({ loading: false, error: err ?? true, items: null });
       });
     return () => {
       cancelled = true;
@@ -42,7 +44,7 @@ export function useDiagramList() {
 
   return {
     loading: cloud.loading || local === undefined,
-    error: cloud.error,
+    error: cloud.error && (readError(cloud.error) || t("failed_to_load_short")),
     cloud: cloud.items ?? [],
     local: local ?? [],
     cloudEnabled,

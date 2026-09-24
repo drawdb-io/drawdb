@@ -359,6 +359,51 @@ const en = {
     unlock: "Unlock",
     edit_dbml: "Edit DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
+    move_to_cloud_prompt:
+      "This diagram is stored locally on your browser. Move it to the cloud?",
+    move: "Move",
+    dismiss: "Dismiss",
+    view_actions: "View actions",
+    see_more: "See more",
+    table_actions: "Table actions",
+    unlock_table: "Unlock table",
+    lock_table: "Lock table",
+    expand_unlinked_columns: "Expand unlinked columns",
+    collapse_unlinked_columns: "Collapse unlinked columns",
+    note_actions: "Note actions",
+    area_actions: "Area actions",
+    database_icon: "{{databaseName}} icon",
+    database_diagram: "{{databaseName}} diagram",
+    templates: "Templates",
+    diagrams: "Diagrams",
+    logo: "logo",
+    check_syntax_errors:
+      "Please check for syntax errors or let us know about the error.",
+    parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
+    overwrite_checkbox: "overwrite checkbox",
+    file_contains_error: "The file contains an error.",
+    file_missing_diagram_properties:
+      "The file is missing necessary properties for a diagram.",
+    imported_diagram_database_mismatch:
+      "The imported diagram and the open diagram don't use matching databases.",
+    relationship_references_missing_table:
+      "Relationship {{relationshipName}} references a table that does not exist.",
+    relationship_references_missing_field:
+      "Relationship {{relationshipName}} references a column that does not exist.",
+    ready_to_import: "Everything looks good. You can now import.",
+    import_will_overwrite_current:
+      "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+    all: "All",
+    all_databases: "All databases",
+    all_types: "All types",
+    cloud: "Cloud",
+    local: "Local",
+    you: "You",
+    owner: "Owner",
+    user_with_id: "User {{id}}",
+    no_diagrams_match_filters: "No diagrams match your filters.",
+    failed_to_load_short: "Failed to load",
+    invalid_dbml: "Invalid DBML",
   },
 };
 

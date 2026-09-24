@@ -136,7 +136,12 @@ export default function Modal({
       }
     } catch (error) {
       const message = error.location
-        ? `${error.name} [Ln ${error.location.start.line}, Col ${error.location.start.column}]: ${error.message}`
+        ? t("parse_error_at", {
+            name: error.name,
+            line: error.location.start.line,
+            column: error.location.start.column,
+            message: error.message,
+          })
         : error.message;
 
       setError({ type: STATUS.ERROR, message });
@@ -154,7 +159,7 @@ export default function Modal({
     } catch (e) {
       setError({
         type: STATUS.ERROR,
-        message: `Please check for syntax errors or let us know about the error.`,
+        message: t("check_syntax_errors"),
       });
     }
   };
@@ -331,7 +336,7 @@ export default function Modal({
           return (
             <>
               {modal === MODAL.IMG ? (
-                <Image src={exportData.data} alt="Diagram" height={280} />
+                <Image src={exportData.data} alt={t("coordinate_space_diagram")} height={280} />
               ) : (
                 <CodeEditor
                   height={360}

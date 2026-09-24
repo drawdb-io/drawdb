@@ -1,27 +1,36 @@
 import { Tag } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import SortableHeader from "./SortableHeader";
-import { SOURCE, databaseName, formatSize, ownerLabel } from "../diagram";
+import {
+  SOURCE,
+  databaseName,
+  formatSize,
+  isOwnEntry,
+  ownerLabel,
+} from "../diagram";
 
 function TypeCell({ entry }) {
+  const { t } = useTranslation();
   const isCloud = entry.source === SOURCE.cloud;
   return (
     <Tag size="small" color={isCloud ? "cyan" : "grey"}>
-      {isCloud ? "Cloud" : "Local"}
+      {isCloud ? t("cloud") : t("local")}
     </Tag>
   );
 }
 
 function OwnerCell({ entry, currentUserId }) {
-  const label = ownerLabel(entry, currentUserId);
-  if (label === "You") {
+  const { t } = useTranslation();
+  if (isOwnEntry(entry, currentUserId)) {
     return (
       <Tag size="small" color="blue">
-        You
+        {t("you")}
       </Tag>
     );
   }
-  return <span className="text-sm">{label}</span>;
+  return (
+    <span className="text-sm">{ownerLabel(entry, currentUserId, t)}</span>
+  );
 }
 
 function formatTimestamp(date) {
@@ -37,13 +46,17 @@ function useColumns({ showType, showOwner, currentUserId }) {
       sortable: true,
       render: ({ entry }) => entry.name,
     },
-    showType && { key: "type", label: "Type", render: TypeCell },
+    showType && { key: "type", label: t("type"), render: TypeCell },
     showOwner && {
       key: "owner",
-      label: "Owner",
+      label: t("owner"),
       render: (props) => <OwnerCell {...props} currentUserId={currentUserId} />,
     },
-    { key: "database", label: "Database", render: ({ entry }) => databaseName(entry.database) },
+    {
+      key: "database",
+      label: t("database"),
+      render: ({ entry }) => databaseName(entry.database, t),
+    },
     {
       key: "lastModified",
       label: t("last_modified"),

@@ -48,7 +48,7 @@ export default function ImportDiagram({
     } catch (error) {
       setError({
         type: STATUS.ERROR,
-        message: "The file contains an error.",
+        message: t("file_contains_error"),
       });
       return;
     }
@@ -57,7 +57,7 @@ export default function ImportDiagram({
       if (!jsonDiagramIsValid(jsonObject)) {
         setError({
           type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
+          message: t("file_missing_diagram_properties"),
         });
         return;
       }
@@ -65,7 +65,7 @@ export default function ImportDiagram({
       if (!ddbDiagramIsValid(jsonObject)) {
         setError({
           type: STATUS.ERROR,
-          message: "The file is missing necessary properties for a diagram.",
+          message: t("file_missing_diagram_properties"),
         });
         return;
       }
@@ -78,8 +78,7 @@ export default function ImportDiagram({
     if (jsonObject.database !== database) {
       setError({
         type: STATUS.ERROR,
-        message:
-          "The imported diagram and the open diagram don't use matching databases.",
+        message: t("imported_diagram_database_mismatch"),
       });
       return;
     }
@@ -94,7 +93,9 @@ export default function ImportDiagram({
       if (!startTable || !endTable) {
         setError({
           type: STATUS.ERROR,
-          message: `Relationship ${rel.name} references a table that does not exist.`,
+          message: t("relationship_references_missing_table", {
+            relationshipName: rel.name,
+          }),
         });
         ok = false;
         return;
@@ -106,7 +107,9 @@ export default function ImportDiagram({
       ) {
         setError({
           type: STATUS.ERROR,
-          message: `Relationship ${rel.name} references a field that does not exist.`,
+          message: t("relationship_references_missing_field", {
+            relationshipName: rel.name,
+          }),
         });
         ok = false;
         return;
@@ -119,13 +122,12 @@ export default function ImportDiagram({
     if (diagramIsEmpty()) {
       setError({
         type: STATUS.OK,
-        message: "Everything looks good. You can now import.",
+        message: t("ready_to_import"),
       });
     } else {
       setError({
         type: STATUS.WARNING,
-        message:
-          "The current diagram is not empty. Importing a new diagram will overwrite the current changes.",
+        message: t("import_will_overwrite_current"),
       });
     }
   };
@@ -134,7 +136,12 @@ export default function ImportDiagram({
     try {
       setImportData(fromDBML(e.target.result, database));
     } catch (error) {
-      const message = `${error.diags[0].name} [Ln ${error.diags[0].location.start.line}, Col ${error.diags[0].location.start.column}]: ${error.diags[0].message}`;
+      const message = t("parse_error_at", {
+        name: error.diags[0].name,
+        line: error.diags[0].location.start.line,
+        column: error.diags[0].location.start.column,
+        message: error.diags[0].message,
+      });
 
       setError({ type: STATUS.ERROR, message });
     }

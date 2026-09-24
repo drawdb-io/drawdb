@@ -335,12 +335,12 @@ export default function Table({
                 <ButtonGroup
                   type="tertiary"
                   size="small"
-                  aria-label="Table actions"
+                  aria-label={t("table_actions")}
                 >
                   <Button
                     size="small"
                     type="tertiary"
-                    title={tableData.locked ? "Unlock table" : "Lock table"}
+                    title={tableData.locked ? t("unlock_table") : t("lock_table")}
                     icon={
                       tableData.locked ? (
                         <IconLock size="small" />
@@ -364,13 +364,13 @@ export default function Table({
                     disabled={layout.readOnly}
                     aria-label={
                       tableData.collapsed
-                        ? "Expand unlinked columns"
-                        : "Collapse unlinked columns"
+                        ? t("expand_unlinked_columns")
+                        : t("collapse_unlinked_columns")
                     }
                     title={
                       tableData.collapsed
-                        ? "Expand unlinked columns"
-                        : "Collapse unlinked columns"
+                        ? t("expand_unlinked_columns")
+                        : t("collapse_unlinked_columns")
                     }
                     onClick={toggleTableCollapse}
                     onPointerDown={(e) => e.stopPropagation()}
@@ -423,7 +423,7 @@ export default function Table({
                       size="small"
                       type="tertiary"
                       icon={<IconMore size="small" />}
-                      title="See more"
+                      title={t("see_more")}
                     />
                   </Popover>
                 </ButtonGroup>

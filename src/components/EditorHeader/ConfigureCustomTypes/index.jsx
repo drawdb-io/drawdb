@@ -12,15 +12,12 @@ import {
 } from "../../../utils/customTypes";
 import { useDiagram } from "../../../hooks";
 
-const dbFilterOptions = [
-  { label: "All", value: "" },
-  ...Object.values(DB)
-    .filter((value) => value !== DB.GENERIC)
-    .map((value) => ({
-      label: databases[value].name,
-      value,
-    })),
-];
+const databaseFilterOptions = Object.values(DB)
+  .filter((value) => value !== DB.GENERIC)
+  .map((value) => ({
+    label: databases[value].name,
+    value,
+  }));
 
 function storedToArray(stored) {
   const arr = [];
@@ -54,6 +51,10 @@ export default function ConfigureCustomTypes({ open, onClose }) {
   const [customTypes, setCustomTypes] = useState([]);
   const [filterDb, setFilterDb] = useState("");
   const savedTypesRef = useRef([]);
+  const dbFilterOptions = [
+    { label: t("all"), value: "" },
+    ...databaseFilterOptions,
+  ];
 
   const addType = () => {
     setCustomTypes((prev) => [

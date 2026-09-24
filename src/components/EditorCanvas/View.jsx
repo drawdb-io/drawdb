@@ -242,7 +242,7 @@ export default function View({ viewData, onPointerDown }) {
                 <ButtonGroup
                   type="tertiary"
                   size="small"
-                  aria-label="View actions"
+                  aria-label={t("view_actions")}
                 >
                   <Button
                     size="small"
@@ -306,7 +306,7 @@ export default function View({ viewData, onPointerDown }) {
                       size="small"
                       type="tertiary"
                       icon={<IconMore size="small" />}
-                      title="See more"
+                      title={t("see_more")}
                     />
                   </Popover>
                 </ButtonGroup>
