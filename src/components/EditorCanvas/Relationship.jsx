@@ -86,6 +86,17 @@ export default function Relationship({ data }) {
   const pathRef = useRef();
   const labelRef = useRef();
   const [hovered, setHovered] = useState(false);
+  const [labelWidth, setLabelWidth] = useState(0);
+
+  // getBBox() reads 0 during the first render (ref not attached yet), which
+  // left the label horizontally un-centered until some unrelated re-render
+  // (e.g. hover) happened to fix it. Measure after mount instead — same
+  // pattern CardinalityLabel below already uses for its pill width.
+  useEffect(() => {
+    if (labelRef.current) {
+      setLabelWidth(labelRef.current.getBBox().width);
+    }
+  }, [data.name]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -116,16 +127,13 @@ export default function Relationship({ data }) {
   let cardinalityStartY = 0;
   let cardinalityEndY = 0;
   let labelX = 0;
-  let labelY = 0;
-
-  let labelWidth = labelRef.current?.getBBox().width ?? 0;
-  let labelHeight = labelRef.current?.getBBox().height ?? 0;
+  let labelPoint;
 
   const cardinalityOffset = 28;
 
   if (composite) {
     labelX = composite.labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = composite.labelPoint.y + (labelHeight ?? 0) / 2;
+    labelPoint = composite.labelPoint;
     cardinalityStartX = composite.startCardinality.x;
     cardinalityStartY = composite.startCardinality.y;
     cardinalityEndX = composite.endCardinality.x;
@@ -133,9 +141,8 @@ export default function Relationship({ data }) {
   } else if (pathRef.current) {
     const pathLength = pathRef.current.getTotalLength();
 
-    const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
+    labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
     labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
 
     const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
     cardinalityStartX = point1.x;
@@ -204,13 +211,14 @@ export default function Relationship({ data }) {
           fill="none"
           cursor="pointer"
         />
-        {settings.showRelationshipLabels && (
+        {settings.showRelationshipLabels && labelPoint && (
           <text
             x={labelX}
-            y={labelY}
+            y={labelPoint.y}
             fill={data.color ?? (settings.mode === "dark" ? "lightgrey" : "#333")}
             fontSize={labelFontSize}
             fontWeight={500}
+            dominantBaseline="middle"
             ref={labelRef}
             className="group-hover:fill-sky-600"
           >
