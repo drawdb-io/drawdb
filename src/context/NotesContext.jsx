@@ -7,6 +7,7 @@ import {
 } from "../data/constants";
 import { useUndoRedo, useTransform, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
+import { cascadePosition } from "../utils/rect";
 import { useTranslation } from "react-i18next";
 
 export const NotesContext = createContext(null);
@@ -32,8 +33,10 @@ export default function NotesContextProvider({ children }) {
       const height = 88;
       created = {
         id: notes.length,
-        x: transform.pan.x,
-        y: transform.pan.y - height / 2,
+        ...cascadePosition(
+          { x: transform.pan.x, y: transform.pan.y - height / 2 },
+          notes,
+        ),
         title: `note_${notes.length}`,
         content: "",
         locked: false,

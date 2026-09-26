@@ -5,6 +5,7 @@ import { Toast } from "@douyinfe/semi-ui";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
 import { getRelationshipFields } from "../utils/utils";
+import { cascadePosition } from "../utils/rect";
 
 export const DiagramContext = createContext(null);
 
@@ -40,8 +41,7 @@ export default function DiagramContextProvider({ children }) {
     const newTable = {
       id,
       name: `table_${id}`,
-      x: transform.pan.x,
-      y: transform.pan.y,
+      ...cascadePosition(transform.pan, tables),
       locked: false,
       fields: [
         {
