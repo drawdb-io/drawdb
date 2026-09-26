@@ -3,6 +3,7 @@ import { createContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Action, ObjectType, defaultBlue } from "../data/constants";
 import { useSelect, useTransform, useUndoRedo, useCollab } from "../hooks";
+import { cascadePosition } from "../utils/rect";
 
 export const AreasContext = createContext(null);
 
@@ -29,8 +30,10 @@ export default function AreasContextProvider({ children }) {
       created = {
         id: areas.length,
         name: `area_${areas.length}`,
-        x: transform.pan.x - width / 2,
-        y: transform.pan.y - height / 2,
+        ...cascadePosition(
+          { x: transform.pan.x - width / 2, y: transform.pan.y - height / 2 },
+          areas,
+        ),
         width,
         height,
         color: defaultBlue,

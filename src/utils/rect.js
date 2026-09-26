@@ -16,3 +16,14 @@ export function isInsideRect(rect1, rect2) {
     rect1.y + rect1.height < rect2.y + rect2.height
   );
 }
+
+export function cascadePosition(position, occupied, step = 30) {
+  let { x, y } = position;
+  while (
+    occupied.some((o) => Math.abs(o.x - x) < step && Math.abs(o.y - y) < step)
+  ) {
+    x += step;
+    y += step;
+  }
+  return { x, y };
+}
