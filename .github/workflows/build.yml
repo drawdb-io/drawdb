@@ -24,6 +24,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
+    - name: Run tests
+      run: npm test
     - name: Run eslint 
       run: npm run lint
     - name: Run vite build
