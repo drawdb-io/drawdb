@@ -1,7 +1,8 @@
 import axios from "axios";
+import { backendUrl } from "../config";
 
 export async function send(subject, message, attachments) {
-  return await axios.post(`${import.meta.env.VITE_BACKEND_URL}/email/send`, {
+  return await axios.post(`${backendUrl}/email/send`, {
     subject,
     message,
     attachments,
