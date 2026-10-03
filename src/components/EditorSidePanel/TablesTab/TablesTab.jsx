@@ -7,6 +7,7 @@ import {
   useSaveState,
   useLayout,
   useUndoRedo,
+  useSettings,
 } from "../../../hooks";
 import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
@@ -76,6 +77,7 @@ function TableListItem({ table }) {
   const { layout } = useLayout();
   const { updateTable } = useDiagram();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { settings } = useSettings();
   const { t } = useTranslation();
 
   const toggleTableVisibility = (e) => {
@@ -105,11 +107,19 @@ function TableListItem({ table }) {
         className="relative"
         header={
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <DragHandle readOnly={layout.readOnly} id={table.id} />
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap shrink-0 max-w-[60%]">
                 {table.name}
               </div>
+              {settings.showComments && table.comment && (
+                <div
+                  className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1 text-xs font-normal opacity-60"
+                  title={table.comment}
+                >
+                  {table.comment}
+                </div>
+              )}
             </div>
             <Button
               size="small"

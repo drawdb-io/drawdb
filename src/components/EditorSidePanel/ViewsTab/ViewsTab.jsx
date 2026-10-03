@@ -1,6 +1,12 @@
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconPlus, IconEyeOpened, IconEyeClosed } from "@douyinfe/semi-icons";
-import { useLayout, useSelect, useUndoRedo, useViews } from "../../../hooks";
+import {
+  useLayout,
+  useSelect,
+  useSettings,
+  useUndoRedo,
+  useViews,
+} from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 import SearchBar from "./SearchBar";
@@ -61,6 +67,7 @@ export default function ViewsTab() {
 function ViewListItem({ view }) {
   const { updateView } = useViews();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { settings } = useSettings();
   const { t } = useTranslation();
 
   const toggleViewVisibility = (e) => {
@@ -88,9 +95,17 @@ function ViewListItem({ view }) {
         header={
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap shrink-0 max-w-[60%]">
                 {view.name}
               </div>
+              {settings.showComments && view.comment && (
+                <div
+                  className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1 text-xs font-normal opacity-60"
+                  title={view.comment}
+                >
+                  {view.comment}
+                </div>
+              )}
             </div>
             <Button
               size="small"
