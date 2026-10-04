@@ -33,14 +33,16 @@ export default function Searchbar() {
       onChange={(v) => setValue(v)}
       onSelect={(v) => {
         const i = types.findIndex((t) => t.name === v);
+        const selectedType = types[i];
+        const scrollId = selectedType?.id ?? i;
         setSelectedElement((prev) => ({
           ...prev,
-          id: i,
+          id: scrollId,
           open: true,
           element: ObjectType.TYPE,
         }));
         document
-          .getElementById(`scroll_type_${i}`)
+          .getElementById(`scroll_type_${scrollId}`)
           .scrollIntoView({ behavior: "smooth" });
       }}
       className="w-full"
