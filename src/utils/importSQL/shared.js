@@ -29,25 +29,16 @@ export function buildSQLFromAST(ast, db = DB.MYSQL) {
   }
 
   if (ast.type === "function") {
-    let expr = "";
-    expr = ast.name;
-    if (ast.args) {
-      expr +=
-        "(" +
-        ast.args.value
-          .map((v) => {
-            if (v.type === "column_ref") return "`" + v.column + "`";
-            if (
-              v.type === "single_quote_string" ||
-              v.type === "double_quote_string"
-            )
-              return "'" + v.value + "'";
-            return v.value;
-          })
-          .join(", ") +
-        ")";
-    }
-    return expr;
+    const name = Array.isArray(ast.name?.name)
+      ? ast.name.name.map((part) => part.value).join(".")
+      : ast.name;
+    const args = Array.isArray(ast.args?.value)
+      ? ast.args.value.map((arg) => buildSQLFromAST(arg, db)).join(", ")
+      : "";
+    return `${name}(${args})`;
+  } else if (ast.type === "cast") {
+    const type = (ast.target ?? []).map((target) => target.dataType).join(", ");
+    return `${buildSQLFromAST(ast.expr, db)}::${type}`;
   } else if (ast.type === "column_ref") {
     return quoteColumn(ast.column, db);
   } else if (ast.type === "expr_list") {
