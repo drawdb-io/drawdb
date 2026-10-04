@@ -44,6 +44,7 @@ import {
   resolveViewColumns,
 } from "../../utils/views";
 import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
+import { getWheelPanDelta } from "../../utils/wheel";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
 
@@ -734,20 +735,14 @@ export default function Canvas() {
           },
           zoom: e.deltaY <= 0 ? prev.zoom * 1.05 : prev.zoom / 1.05,
         }));
-      } else if (e.shiftKey) {
-        setTransform((prev) => ({
-          ...prev,
-          pan: {
-            ...prev.pan,
-            x: prev.pan.x + e.deltaY / prev.zoom,
-          },
-        }));
       } else {
+        const delta = getWheelPanDelta(e);
         setTransform((prev) => ({
           ...prev,
           pan: {
             ...prev.pan,
-            y: prev.pan.y + e.deltaY / prev.zoom,
+            x: prev.pan.x + delta.x / prev.zoom,
+            y: prev.pan.y + delta.y / prev.zoom,
           },
         }));
       }
