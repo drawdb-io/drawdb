@@ -21,6 +21,25 @@ function quoteColumn(str, db) {
   }
 }
 
+// node-sql-parser reports identifiers either as a plain string or, for the
+// dialects that support quoted/qualified names, as `{ expr: { value } }`.
+function columnName(column) {
+  if (typeof column === "string") return column;
+  return column?.expr?.value ?? column?.value ?? "";
+}
+
+// Function names arrive as `{ name: [{ value: "LENGTH" }, ...] }`.
+function functionName(name) {
+  if (typeof name === "string") return name;
+  const parts = name?.name;
+  if (Array.isArray(parts)) return parts.map((p) => p?.value ?? "").join(".");
+  return name?.value ?? "";
+}
+
+function stringLiteral(value) {
+  return "'" + String(value).replace(/'/g, "''") + "'";
+}
+
 export function buildSQLFromAST(ast, db = DB.MYSQL) {
   if (ast.type === "binary_expr") {
     const leftSQL = buildSQLFromAST(ast.left, db);
@@ -29,19 +48,19 @@ export function buildSQLFromAST(ast, db = DB.MYSQL) {
   }
 
   if (ast.type === "function") {
-    let expr = "";
-    expr = ast.name;
+    let expr = functionName(ast.name);
     if (ast.args) {
       expr +=
         "(" +
         ast.args.value
           .map((v) => {
-            if (v.type === "column_ref") return "`" + v.column + "`";
+            if (v.type === "column_ref")
+              return quoteColumn(columnName(v.column), db);
             if (
               v.type === "single_quote_string" ||
               v.type === "double_quote_string"
             )
-              return "'" + v.value + "'";
+              return stringLiteral(v.value);
             return v.value;
           })
           .join(", ") +
@@ -49,10 +68,10 @@ export function buildSQLFromAST(ast, db = DB.MYSQL) {
     }
     return expr;
   } else if (ast.type === "column_ref") {
-    return quoteColumn(ast.column, db);
+    return quoteColumn(columnName(ast.column), db);
   } else if (ast.type === "expr_list") {
     return ast.value.map((v) => v.value).join(" AND ");
   } else {
-    return typeof ast.value === "string" ? "'" + ast.value + "'" : ast.value;
+    return typeof ast.value === "string" ? stringLiteral(ast.value) : ast.value;
   }
 }
