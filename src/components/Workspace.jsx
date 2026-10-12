@@ -86,6 +86,8 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     setRelationships,
     database,
     setDatabase,
+    sqlHeader,
+    setSqlHeader,
   } = useDiagram();
   const { undoStack, redoStack, setUndoStack, setRedoStack } = useUndoRedo();
   const { t, i18n } = useTranslation();
@@ -120,6 +122,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       notes,
       areas,
       views,
+      sqlHeader,
       pan: transform.pan,
       zoom: transform.zoom,
       ...(databases[database].hasEnums && { enums }),
@@ -134,6 +137,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       notes,
       areas,
       views,
+      sqlHeader,
       transform,
       enums,
       types,
@@ -186,6 +190,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           notes: notes,
           areas: areas,
           views: views,
+          sqlHeader: sqlHeader,
           pan: transform.pan,
           zoom: transform.zoom,
           loadedFromGistId: loadedFromGistId,
@@ -210,6 +215,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
           notes: notes,
           areas: areas,
           views: views,
+          sqlHeader: sqlHeader,
           gistId: gistId ?? "",
           pan: transform.pan,
           zoom: transform.zoom,
@@ -234,6 +240,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     notes,
     areas,
     views,
+    sqlHeader,
     types,
     title,
     transform,
@@ -267,13 +274,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       console.warn("move to cloud failed:", err);
       setSaveState(State.ERROR);
     }
-  }, [
-    extensions,
-    loadedDiagramId,
-    buildCloudPayload,
-    setSaveState,
-    cloudLoad,
-  ]);
+  }, [extensions, loadedDiagramId, buildCloudPayload, setSaveState, cloudLoad]);
 
   const dismissMoveToCloud = () => {
     if (!loadedDiagramId) return;
@@ -313,6 +314,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setTypes(diagram.types ?? []);
       setEnums(diagram.enums ?? []);
       setViews(diagram.views ?? []);
+      setSqlHeader(diagram.sqlHeader ?? "");
     };
 
     const resetEditorState = () => {
@@ -323,6 +325,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setTypes([]);
       setEnums([]);
       setViews([]);
+      setSqlHeader("");
       setUndoStack([]);
       setRedoStack([]);
       setTransform({ zoom: 1, pan: { x: 0, y: 0 } });
@@ -388,6 +391,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       setTypes(template.types ?? []);
       setEnums(template.enums ?? []);
       setViews(template.views ?? []);
+      setSqlHeader(template.sqlHeader ?? "");
     };
 
     const loadFromGist = async (shareId, diagramId = null) => {
@@ -409,6 +413,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
         setTypes(parsed.types ?? []);
         setEnums(parsed.enums ?? []);
         setViews(parsed.views ?? []);
+        setSqlHeader(parsed.sqlHeader ?? "");
         if (parsed.customTypes) mergeCustomTypes(parsed.customTypes);
         if (diagramId) {
           navigate(`/editor/diagrams/${diagramId}`, { replace: true });
@@ -460,6 +465,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     setDatabase,
     setEnums,
     setViews,
+    setSqlHeader,
     selectedDb,
     setSaveState,
     setLayout,
@@ -503,6 +509,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     transform.zoom,
     title,
     gistId,
+    sqlHeader,
     setSaveState,
   ]);
 
@@ -581,9 +588,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
               <div className="pointer-events-none absolute inset-x-0 top-3 z-50 flex justify-center">
                 <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-blue-300 bg-blue-50 px-5 py-1.5 shadow-md dark:border-sky-900/50 dark:bg-sky-900/30">
                   <i className="bi bi-hdd" />
-                  <span className="text-sm">
-                    {t("move_to_cloud_prompt")}
-                  </span>
+                  <span className="text-sm">{t("move_to_cloud_prompt")}</span>
                   <Button
                     size="small"
                     theme="solid"

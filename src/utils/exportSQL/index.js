@@ -7,6 +7,12 @@ import { toPostgres } from "./postgres";
 import { toSqlite } from "./sqlite";
 
 export function exportSQL(diagram) {
+  const sql = schemaSQL(diagram);
+  const header = diagram.sqlHeader?.trim();
+  return header ? `${header}\n\n${sql}` : sql;
+}
+
+function schemaSQL(diagram) {
   switch (diagram.database) {
     case DB.SQLITE:
       return toSqlite(diagram);

@@ -1,4 +1,16 @@
-import { Banner, Button, Input, Spin, Toast, Collapse, Tag, Space, Radio, RadioGroup, Typography } from "@douyinfe/semi-ui";
+import {
+  Banner,
+  Button,
+  Input,
+  Spin,
+  Toast,
+  Collapse,
+  Tag,
+  Space,
+  Radio,
+  RadioGroup,
+  Typography,
+} from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IdContext } from "../../Workspace";
@@ -23,7 +35,7 @@ export default function Share({ title, setModal }) {
   const { t } = useTranslation();
   const { gistId, setGistId } = useContext(IdContext);
   const [loading, setLoading] = useState(true);
-  const { tables, relationships, database } = useDiagram();
+  const { tables, relationships, database, sqlHeader } = useDiagram();
   const { notes } = useNotes();
   const { areas } = useAreas();
   const { types } = useTypes();
@@ -78,6 +90,7 @@ export default function Share({ title, setModal }) {
       subjectAreas: areas,
       views: views,
       database: database,
+      ...(sqlHeader && { sqlHeader: sqlHeader }),
       ...(databases[database].hasTypes && { types: types }),
       ...(databases[database].hasEnums && { enums: enums }),
       ...(hasCustomTypes && { customTypes: usedCustomTypes }),
@@ -93,6 +106,7 @@ export default function Share({ title, setModal }) {
     enums,
     types,
     views,
+    sqlHeader,
     transform,
   ]);
 

@@ -51,6 +51,7 @@ export const Tab = {
   TYPES: "5",
   ENUMS: "6",
   VIEWS: "7",
+  SQL_HEADER: "8",
 };
 
 export const ObjectType = {

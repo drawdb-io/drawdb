@@ -278,6 +278,7 @@ export const jsonSchema = {
     },
     title: { type: "string" },
     database: { type: "string" },
+    sqlHeader: { type: "string" },
   },
   required: ["tables", "relationships", "notes", "subjectAreas"],
   additionalProperties: true,
