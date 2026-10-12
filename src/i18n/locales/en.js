@@ -301,6 +301,9 @@ const en = {
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
     show_comments: "Show comments",
+    sql_header: "SQL header",
+    sql_header_description:
+      "Statements written at the top of every SQL export, before the schema.",
     configure_custom_types: "Configure custom types",
     type_color: "Color",
     custom_types_description:

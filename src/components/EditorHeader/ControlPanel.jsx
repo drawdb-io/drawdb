@@ -163,6 +163,7 @@ export default function ControlPanel({
     deleteRelationship,
     updateRelationship,
     database,
+    sqlHeader,
   } = useDiagram();
   const { enums, setEnums, deleteEnum, addEnum, updateEnum } = useEnums();
   const { types, addType, deleteType, updateType, setTypes } = useTypes();
@@ -1064,6 +1065,7 @@ export default function ControlPanel({
         notes,
         areas,
         views,
+        sqlHeader,
         pan: transform.pan,
         zoom: transform.zoom,
         ...(databases[database].hasEnums && { enums }),
@@ -1124,6 +1126,7 @@ export default function ControlPanel({
       notes,
       areas,
       views,
+      sqlHeader,
       pan: transform.pan,
       zoom: transform.zoom,
       ...(databases[database].hasEnums && { enums }),
@@ -1245,6 +1248,7 @@ export default function ControlPanel({
               notes: notes,
               subjectAreas: areas,
               views: views,
+              sqlHeader: sqlHeader,
               custom: 1,
               templateId: uuidv4(),
               ...(databases[database].hasEnums && { enums: enums }),
@@ -1495,6 +1499,7 @@ export default function ControlPanel({
             database: database,
             enums: enums,
             views: views,
+            sqlHeader: sqlHeader,
           });
           setExportData((prev) => ({
             ...prev,
@@ -1565,6 +1570,7 @@ export default function ControlPanel({
                   database: database,
                   ...(databases[database].hasTypes && { types: types }),
                   ...(databases[database].hasEnums && { enums: enums }),
+                  ...(sqlHeader && { sqlHeader: sqlHeader }),
                   title: title,
                 },
                 null,
@@ -2068,9 +2074,7 @@ export default function ControlPanel({
         cancelText={t("cancel")}
       >
         <div className="space-y-3">
-          <p className="text-sm">
-            {t("auto_connect_fk_modal_description")}
-          </p>
+          <p className="text-sm">{t("auto_connect_fk_modal_description")}</p>
           <ol className="list-decimal ps-5 space-y-1 text-sm">
             <li>{t("auto_connect_fk_rule_1")}</li>
             <li>{t("auto_connect_fk_rule_2")}</li>
@@ -2317,8 +2321,12 @@ export default function ControlPanel({
                     filter:
                       "opacity(0.4) drop-shadow(0 0 0 white) drop-shadow(0 0 0 white)",
                   }}
-                  alt={t("database_icon", { databaseName: databases[database].name })}
-                  title={t("database_diagram", { databaseName: databases[database].name })}
+                  alt={t("database_icon", {
+                    databaseName: databases[database].name,
+                  })}
+                  title={t("database_diagram", {
+                    databaseName: databases[database].name,
+                  })}
                 />
               )}
               <Slot name="diagram-title-prefix" />

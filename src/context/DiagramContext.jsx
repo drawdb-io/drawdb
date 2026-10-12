@@ -14,6 +14,7 @@ export default function DiagramContextProvider({ children }) {
   const [database, setDatabaseRaw] = useState(DB.GENERIC);
   const [tables, setTables] = useState([]);
   const [relationships, setRelationships] = useState([]);
+  const [sqlHeader, setSqlHeaderRaw] = useState("");
   const { transform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -29,6 +30,21 @@ export default function DiagramContextProvider({ children }) {
           target: "database",
           action: "update",
           entityId: "database",
+          data: [next],
+        });
+      }
+    },
+    [emitDelta, isApplyingRemoteRef],
+  );
+
+  const setSqlHeader = useCallback(
+    (next) => {
+      setSqlHeaderRaw(next);
+      if (!isApplyingRemoteRef?.current) {
+        emitDelta({
+          target: "sqlHeader",
+          action: "update",
+          entityId: "sqlHeader",
           data: [next],
         });
       }
@@ -331,6 +347,8 @@ export default function DiagramContextProvider({ children }) {
         updateRelationship,
         database,
         setDatabase,
+        sqlHeader,
+        setSqlHeader,
         tablesCount: tables.length,
         relationshipsCount: relationships.length,
       }}

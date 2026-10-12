@@ -66,7 +66,7 @@ export default function Modal({
   saveAsCopy,
 }) {
   const { t, i18n } = useTranslation();
-  const { setTables, setRelationships, database } = useDiagram();
+  const { setTables, setRelationships, database, setSqlHeader } = useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -116,6 +116,7 @@ export default function Modal({
     if (importData.customTypes) {
       mergeCustomTypes(importData.customTypes);
     }
+    setSqlHeader(importData.sqlHeader ?? "");
   };
 
   const parseSQLAndLoadDiagram = () => {
@@ -336,7 +337,11 @@ export default function Modal({
           return (
             <>
               {modal === MODAL.IMG ? (
-                <Image src={exportData.data} alt={t("coordinate_space_diagram")} height={280} />
+                <Image
+                  src={exportData.data}
+                  alt={t("coordinate_space_diagram")}
+                  height={280}
+                />
               ) : (
                 <CodeEditor
                   height={360}

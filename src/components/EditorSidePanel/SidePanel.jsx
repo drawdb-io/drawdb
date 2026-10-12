@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { IconCode, IconList } from "@douyinfe/semi-icons";
 import { IconTable, IconRelationship } from "../../icons";
-import { Tab } from "../../data/constants";
+import { DB, Tab } from "../../data/constants";
 import {
   useLayout,
   useSelect,
@@ -27,6 +27,7 @@ import EnumsTab from "./EnumsTab/EnumsTab";
 import { isRtl } from "../../i18n/utils/rtl";
 import i18n from "../../i18n/i18n";
 import DBMLEditor from "./DBMLEditor";
+import SqlHeaderTab from "./SqlHeaderTab";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout, setLayout } = useLayout();
@@ -86,6 +87,14 @@ export default function SidePanel({ width, resize, setResize }) {
       });
     }
 
+    if (database !== DB.GENERIC) {
+      tabs.push({
+        tab: t("sql_header"),
+        itemKey: Tab.SQL_HEADER,
+        component: <SqlHeaderTab />,
+      });
+    }
+
     return isRtl(i18n.language) ? tabs.reverse() : tabs;
   }, [
     t,
@@ -98,6 +107,8 @@ export default function SidePanel({ width, resize, setResize }) {
     enumsCount,
     notesCount,
   ]);
+
+  const fillHeight = selectedElement.currentTab === Tab.SQL_HEADER;
 
   const setDbmlEditor = (value) => {
     setLayout((prev) => ({ ...prev, dbmlEditor: value }));
@@ -123,6 +134,8 @@ export default function SidePanel({ width, resize, setResize }) {
               }
               collapsible
               tabBarStyle={{ direction: "ltr" }}
+              className={fillHeight ? "h-full flex flex-col" : ""}
+              contentStyle={fillHeight ? { flex: 1, minHeight: 0 } : undefined}
             >
               {tabList.length &&
                 tabList.map((tab) => (
@@ -130,8 +143,11 @@ export default function SidePanel({ width, resize, setResize }) {
                     tab={tab.tab}
                     itemKey={tab.itemKey}
                     key={tab.itemKey}
+                    className={fillHeight ? "h-full *:h-full" : ""}
                   >
-                    <div className="p-2">{tab.component}</div>
+                    <div className={fillHeight ? "p-2 h-full" : "p-2"}>
+                      {tab.component}
+                    </div>
                   </TabPane>
                 ))}
             </Tabs>
