@@ -422,6 +422,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   NUMERIC: {
     type: "NUMERIC",
@@ -432,6 +433,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   FLOAT: {
     type: "FLOAT",
@@ -442,6 +444,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   DOUBLE: {
     type: "DOUBLE",
@@ -452,6 +455,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   BIT: {
     type: "BIT",
