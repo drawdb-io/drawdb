@@ -1,7 +1,8 @@
-import { createContext, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import { ObjectType, Tab } from "../data/constants";
 
 export const SelectContext = createContext(null);
+export const SelectActionsContext = createContext(null);
 
 export default function SelectContextProvider({ children }) {
   const [selectedElement, setSelectedElement] = useState({
@@ -15,16 +16,19 @@ export default function SelectContextProvider({ children }) {
   });
   const [bulkSelectedElements, setBulkSelectedElements] = useState([]);
 
+  const actions = useMemo(
+    () => ({ setSelectedElement, setBulkSelectedElements }),
+    [],
+  );
+
+  const value = useMemo(
+    () => ({ ...actions, selectedElement, bulkSelectedElements }),
+    [actions, selectedElement, bulkSelectedElements],
+  );
+
   return (
-    <SelectContext.Provider
-      value={{
-        selectedElement,
-        setSelectedElement,
-        bulkSelectedElements,
-        setBulkSelectedElements,
-      }}
-    >
-      {children}
-    </SelectContext.Provider>
+    <SelectActionsContext.Provider value={actions}>
+      <SelectContext.Provider value={value}>{children}</SelectContext.Provider>
+    </SelectActionsContext.Provider>
   );
 }

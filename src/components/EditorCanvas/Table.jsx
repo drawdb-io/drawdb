@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import {
   Action,
   Tab,
@@ -33,8 +33,9 @@ import {
   useDiagram,
   useSelect,
   useUndoRedo,
-  useTransform,
 } from "../../hooks";
+import { DiagramActionsContext } from "../../context/DiagramContext";
+import { SelectActionsContext } from "../../context/SelectContext";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
 import { resolveType } from "../../utils/customTypes";
@@ -51,8 +52,12 @@ import {
 } from "../../utils/utils";
 import ResizeHandles from "./ResizeHandles";
 
-export default function Table({
+export default memo(function Table({
   tableData,
+  isSelected,
+  zoom,
+  database,
+  relationships,
   onPointerDown,
   setHoveredTable,
   handleGripField,
@@ -62,25 +67,14 @@ export default function Table({
   const [hovered, setHovered] = useState(false);
   const [resizeEngaged, setResizeEngaged] = useState(false);
   const { layout } = useLayout();
-  const {
-    database,
-    tables,
-    relationships,
-    addTable,
-    deleteTable,
-    deleteField,
-    updateTable,
-  } = useDiagram();
+  const { addTable, deleteTable, deleteField, updateTable } = useContext(
+    DiagramActionsContext,
+  );
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const { settings } = useSettings();
-  const { transform } = useTransform();
   const { t } = useTranslation();
-  const {
-    selectedElement,
-    setSelectedElement,
-    bulkSelectedElements,
-    setBulkSelectedElements,
-  } = useSelect();
+  const { setSelectedElement, setBulkSelectedElements } =
+    useContext(SelectActionsContext);
 
   const borderColor = useMemo(
     () => (settings.mode === "light" ? "border-zinc-300" : "border-zinc-600"),
@@ -104,16 +98,6 @@ export default function Table({
     () => getVisibleFields(tableData, relationships),
     [tableData, relationships],
   );
-
-  const isSelected = useMemo(() => {
-    return (
-      (selectedElement.id == tableData.id &&
-        selectedElement.element === ObjectType.TABLE) ||
-      bulkSelectedElements.some(
-        (e) => e.type === ObjectType.TABLE && e.id === tableData.id,
-      )
-    );
-  }, [selectedElement, tableData, bulkSelectedElements]);
 
   const toggleTableCollapse = (e) => {
     e.stopPropagation();
@@ -144,12 +128,12 @@ export default function Table({
     updateTable(tableData.id, { locked: locking });
 
     const lockTable = () => {
-      setSelectedElement({
-        ...selectedElement,
+      setSelectedElement((prev) => ({
+        ...prev,
         element: ObjectType.NONE,
         id: -1,
         open: false,
-      });
+      }));
       setBulkSelectedElements((prev) =>
         prev.filter(
           (el) => el.id !== tableData.id || el.type !== ObjectType.TABLE,
@@ -199,46 +183,18 @@ export default function Table({
   };
 
   const openEditor = () => {
-    if (!layout.sidebar) {
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.TABLE,
-        id: tableData.id,
-        open: true,
-      }));
-    } else {
-      setSelectedElement((prev) => ({
-        ...prev,
-        currentTab: Tab.TABLES,
-        element: ObjectType.TABLE,
-        id: tableData.id,
-        open: true,
-      }));
-      if (selectedElement.currentTab !== Tab.TABLES) return;
+    setSelectedElement((prev) => ({
+      ...prev,
+      ...(layout.sidebar && { currentTab: Tab.TABLES }),
+      element: ObjectType.TABLE,
+      id: tableData.id,
+      open: true,
+    }));
+    if (layout.sidebar) {
       document
         .getElementById(`scroll_table_${tableData.id}`)
-        .scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({ behavior: "smooth" });
     }
-  };
-
-  const getFieldReference = (fieldData) => {
-    let matchedEndFieldId = null;
-    const rel = relationships.find((r) => {
-      if (r.startTableId !== tableData.id) return false;
-      const pair = getRelationshipFields(r).find(
-        (p) => p.startFieldId === fieldData.id,
-      );
-      if (!pair) return false;
-      matchedEndFieldId = pair.endFieldId;
-      return true;
-    });
-    if (!rel) return null;
-
-    const refTable = tables.find((tbl) => tbl.id === rel.endTableId);
-    const refField = refTable?.fields.find((f) => f.id === matchedEndFieldId);
-    if (!refTable || !refField) return null;
-
-    return { tableName: refTable.name, fieldName: refField.name };
   };
 
   const resizeTable = ({ width: nextWidth, x: nextX }) => {
@@ -292,7 +248,7 @@ export default function Table({
         width={width}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
-        onPointerDown={onPointerDown}
+        onPointerDown={() => onPointerDown(tableData, ObjectType.TABLE)}
         onPointerEnter={(e) => e.isPrimary && setHovered(true)}
         onPointerLeave={(e) => e.isPrimary && setHovered(false)}
       >
@@ -340,7 +296,9 @@ export default function Table({
                   <Button
                     size="small"
                     type="tertiary"
-                    title={tableData.locked ? t("unlock_table") : t("lock_table")}
+                    title={
+                      tableData.locked ? t("unlock_table") : t("lock_table")
+                    }
                     icon={
                       tableData.locked ? (
                         <IconLock size="small" />
@@ -437,76 +395,15 @@ export default function Table({
           </div>
 
           {visibleFieldEntries.map(({ field: e }, i) => {
-            const resolved = resolveType(database, e.type);
-            const reference = getFieldReference(e);
             return settings.showFieldSummary ? (
               <Popover
                 key={e.id ?? i}
                 content={
-                  <div className="popover-theme">
-                    <div
-                      className="flex justify-between items-center pb-2"
-                      style={{ direction: "ltr" }}
-                    >
-                      <p className="me-4 font-bold">{e.name}</p>
-                      <p
-                        className={
-                          "ms-4 font-mono " +
-                          (resolved.isCustom ? "" : resolved.color)
-                        }
-                        style={
-                          resolved.isCustom ? { color: resolved.color } : {}
-                        }
-                      >
-                        {e.type +
-                          ((resolved.isSized || resolved.hasPrecision) &&
-                          e.size &&
-                          e.size !== ""
-                            ? "(" + e.size + ")"
-                            : "")}
-                      </p>
-                    </div>
-                    <hr />
-                    {e.primary && (
-                      <Tag color="blue" className="me-2 my-2">
-                        {t("primary_key")}
-                      </Tag>
-                    )}
-                    {e.unique && (
-                      <Tag color="amber" className="me-2 my-2">
-                        {t("unique")}
-                      </Tag>
-                    )}
-                    {e.notNull && (
-                      <Tag color="purple" className="me-2 my-2">
-                        {t("not_null")}
-                      </Tag>
-                    )}
-                    {e.increment && (
-                      <Tag color="green" className="me-2 my-2">
-                        {t("autoincrement")}
-                      </Tag>
-                    )}
-                    {reference && (
-                      <Tag color="light-blue" className="me-2 my-2">
-                        {t("foreign_key")}
-                      </Tag>
-                    )}
-                    {reference && (
-                      <p>
-                        <strong>{t("references")}: </strong>
-                        {reference.tableName}({reference.fieldName})
-                      </p>
-                    )}
-                    <p>
-                      <strong>{t("default_value")}: </strong>
-                      {e.default === "" ? t("not_set") : e.default}
-                    </p>
-                    <p className="max-w-80">
-                      <strong>{t("comment")}: </strong>
-                      {e.comment === "" ? t("not_set") : e.comment}
-                    </p>
-                  </div>
+                  <FieldSummary
+                    field={e}
+                    tableId={tableData.id}
+                    database={database}
+                  />
                 }
                 position="right"
                 showArrow
@@ -530,34 +427,14 @@ export default function Table({
           y={tableData.y}
           width={width}
           height={height}
-          zoom={transform.zoom}
+          zoom={zoom}
           visible={hovered}
           onResize={resizeTable}
           onResizeEnd={commitResize}
           onEngagedChange={setResizeEngaged}
         />
       )}
-      <SideSheet
-        title={t("edit")}
-        size="small"
-        visible={
-          selectedElement.element === ObjectType.TABLE &&
-          selectedElement.id === tableData.id &&
-          selectedElement.open &&
-          !layout.sidebar
-        }
-        onCancel={() =>
-          setSelectedElement((prev) => ({
-            ...prev,
-            open: !prev.open,
-          }))
-        }
-        style={{ paddingBottom: "16px" }}
-      >
-        <div className="sidesheet-theme">
-          <TableInfo data={tableData} />
-        </div>
-      </SideSheet>
+      <TableEditSheet tableData={tableData} />
     </>
   );
 
@@ -687,4 +564,119 @@ export default function Table({
       </div>
     );
   }
+});
+
+function FieldSummary({ field: e, tableId, database }) {
+  const { tables, relationships } = useDiagram();
+  const { t } = useTranslation();
+  const resolved = resolveType(database, e.type);
+
+  let matchedEndFieldId = null;
+  const rel = relationships.find((r) => {
+    if (r.startTableId !== tableId) return false;
+    const pair = getRelationshipFields(r).find((p) => p.startFieldId === e.id);
+    if (!pair) return false;
+    matchedEndFieldId = pair.endFieldId;
+    return true;
+  });
+  const refTable = rel && tables.find((tbl) => tbl.id === rel.endTableId);
+  const refField = refTable?.fields.find((f) => f.id === matchedEndFieldId);
+  const reference =
+    refTable && refField
+      ? { tableName: refTable.name, fieldName: refField.name }
+      : null;
+
+  return (
+    <div className="popover-theme">
+      <div
+        className="flex justify-between items-center pb-2"
+        style={{ direction: "ltr" }}
+      >
+        <p className="me-4 font-bold">{e.name}</p>
+        <p
+          className={
+            "ms-4 font-mono " + (resolved.isCustom ? "" : resolved.color)
+          }
+          style={resolved.isCustom ? { color: resolved.color } : {}}
+        >
+          {e.type +
+            ((resolved.isSized || resolved.hasPrecision) &&
+            e.size &&
+            e.size !== ""
+              ? "(" + e.size + ")"
+              : "")}
+        </p>
+      </div>
+      <hr />
+      {e.primary && (
+        <Tag color="blue" className="me-2 my-2">
+          {t("primary_key")}
+        </Tag>
+      )}
+      {e.unique && (
+        <Tag color="amber" className="me-2 my-2">
+          {t("unique")}
+        </Tag>
+      )}
+      {e.notNull && (
+        <Tag color="purple" className="me-2 my-2">
+          {t("not_null")}
+        </Tag>
+      )}
+      {e.increment && (
+        <Tag color="green" className="me-2 my-2">
+          {t("autoincrement")}
+        </Tag>
+      )}
+      {reference && (
+        <Tag color="light-blue" className="me-2 my-2">
+          {t("foreign_key")}
+        </Tag>
+      )}
+      {reference && (
+        <p>
+          <strong>{t("references")}: </strong>
+          {reference.tableName}({reference.fieldName})
+        </p>
+      )}
+      <p>
+        <strong>{t("default_value")}: </strong>
+        {e.default === "" ? t("not_set") : e.default}
+      </p>
+      <p className="max-w-80">
+        <strong>{t("comment")}: </strong>
+        {e.comment === "" ? t("not_set") : e.comment}
+      </p>
+    </div>
+  );
+}
+
+function TableEditSheet({ tableData }) {
+  const { layout } = useLayout();
+  const { selectedElement, setSelectedElement } = useSelect();
+  const { t } = useTranslation();
+
+  return (
+    <SideSheet
+      title={t("edit")}
+      size="small"
+      visible={
+        selectedElement.element === ObjectType.TABLE &&
+        selectedElement.id === tableData.id &&
+        selectedElement.open &&
+        !layout.sidebar
+      }
+      onCancel={() =>
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: !prev.open,
+        }))
+      }
+      style={{ paddingBottom: "16px" }}
+    >
+      <div className="sidesheet-theme">
+        <TableInfo data={tableData} />
+      </div>
+    </SideSheet>
+  );
 }
