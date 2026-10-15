@@ -32,7 +32,6 @@ export const tableSchema = {
           "check",
           "primary",
           "unique",
-          "notNull",
           "increment",
           "comment",
         ],
