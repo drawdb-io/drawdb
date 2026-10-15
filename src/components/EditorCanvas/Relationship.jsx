@@ -1,7 +1,15 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath, calcCompositePath } from "../../utils/calcPath";
-import { useDiagram, useSettings, useLayout, useSelect } from "../../hooks";
+import { useSettings, useLayout, useSelect } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
@@ -13,18 +21,78 @@ import {
 } from "../../utils/utils";
 
 const labelFontSize = 16;
+const cardinalityOffset = 28;
 
-export default function Relationship({ data }) {
-  const { settings } = useSettings();
-  const { tables, relationships } = useDiagram();
+export default memo(function Relationship({
+  data,
+  startTable,
+  endTable,
+  relationships,
+}) {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 
-  const pathValues = useMemo(() => {
-    const startTable = tables.find((t) => t.id === data.startTableId);
-    const endTable = tables.find((t) => t.id === data.endTableId);
+  const edit = useCallback(() => {
+    setSelectedElement((prev) => ({
+      ...prev,
+      ...(layout.sidebar && { currentTab: Tab.RELATIONSHIPS }),
+      element: ObjectType.RELATIONSHIP,
+      id: data.id,
+      open: true,
+    }));
+    if (layout.sidebar) {
+      document
+        .getElementById(`scroll_ref_${data.id}`)
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [data.id, layout.sidebar, setSelectedElement]);
 
+  return (
+    <>
+      <RelationshipPath
+        data={data}
+        startTable={startTable}
+        endTable={endTable}
+        relationships={relationships}
+        onEdit={edit}
+      />
+      <SideSheet
+        title={t("edit")}
+        size="small"
+        visible={
+          selectedElement.element === ObjectType.RELATIONSHIP &&
+          selectedElement.id === data.id &&
+          selectedElement.open &&
+          !layout.sidebar
+        }
+        onCancel={() => {
+          setSelectedElement((prev) => ({
+            ...prev,
+            open: false,
+          }));
+        }}
+        style={{ paddingBottom: "16px" }}
+      >
+        <div className="sidesheet-theme">
+          <RelationshipInfo data={data} />
+        </div>
+      </SideSheet>
+    </>
+  );
+});
+
+const RelationshipPath = memo(function RelationshipPath({
+  data,
+  startTable,
+  endTable,
+  relationships,
+  onEdit,
+}) {
+  const { settings } = useSettings();
+  const { t } = useTranslation();
+
+  const pathValues = useMemo(() => {
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
 
@@ -65,7 +133,7 @@ export default function Relationship({ data }) {
         fields: endFields,
       },
     };
-  }, [tables, relationships, data]);
+  }, [startTable, endTable, relationships, data]);
 
   const isComposite = (pathValues?.startFieldIndices?.length ?? 0) > 1;
 
@@ -83,9 +151,49 @@ export default function Relationship({ data }) {
     );
   }, [pathValues, isComposite, settings.showComments]);
 
+  const d = useMemo(() => {
+    if (!pathValues) return null;
+    if (composite) return composite.path;
+    return calcPath(pathValues, 1, settings.showComments);
+  }, [pathValues, composite, settings.showComments]);
+
   const pathRef = useRef();
   const labelRef = useRef();
   const [hovered, setHovered] = useState(false);
+  const [anchors, setAnchors] = useState(null);
+
+  useLayoutEffect(() => {
+    if (!d || !pathRef.current) {
+      setAnchors(null);
+      return;
+    }
+
+    const labelBox = labelRef.current?.getBBox();
+    const labelWidth = labelBox?.width ?? 0;
+    const labelHeight = labelBox?.height ?? 0;
+
+    let labelPoint, startPoint, endPoint;
+    if (composite) {
+      labelPoint = composite.labelPoint;
+      startPoint = composite.startCardinality;
+      endPoint = composite.endCardinality;
+    } else {
+      const path = pathRef.current;
+      const pathLength = path.getTotalLength();
+      labelPoint = path.getPointAtLength(pathLength / 2);
+      startPoint = path.getPointAtLength(cardinalityOffset);
+      endPoint = path.getPointAtLength(pathLength - cardinalityOffset);
+    }
+
+    setAnchors({
+      label: {
+        x: labelPoint.x - labelWidth / 2,
+        y: labelPoint.y + labelHeight / 2,
+      },
+      start: { x: startPoint.x, y: startPoint.y },
+      end: { x: endPoint.x, y: endPoint.y },
+    });
+  }, [d, composite, data.name, settings.showRelationshipLabels]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -111,153 +219,63 @@ export default function Relationship({ data }) {
       break;
   }
 
-  let cardinalityStartX = 0;
-  let cardinalityEndX = 0;
-  let cardinalityStartY = 0;
-  let cardinalityEndY = 0;
-  let labelX = 0;
-  let labelY = 0;
-
-  let labelWidth = labelRef.current?.getBBox().width ?? 0;
-  let labelHeight = labelRef.current?.getBBox().height ?? 0;
-
-  const cardinalityOffset = 28;
-
-  if (composite) {
-    labelX = composite.labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = composite.labelPoint.y + (labelHeight ?? 0) / 2;
-    cardinalityStartX = composite.startCardinality.x;
-    cardinalityStartY = composite.startCardinality.y;
-    cardinalityEndX = composite.endCardinality.x;
-    cardinalityEndY = composite.endCardinality.y;
-  } else if (pathRef.current) {
-    const pathLength = pathRef.current.getTotalLength();
-
-    const labelPoint = pathRef.current.getPointAtLength(pathLength / 2);
-    labelX = labelPoint.x - (labelWidth ?? 0) / 2;
-    labelY = labelPoint.y + (labelHeight ?? 0) / 2;
-
-    const point1 = pathRef.current.getPointAtLength(cardinalityOffset);
-    cardinalityStartX = point1.x;
-    cardinalityStartY = point1.y;
-    const point2 = pathRef.current.getPointAtLength(
-      pathLength - cardinalityOffset,
-    );
-    cardinalityEndX = point2.x;
-    cardinalityEndY = point2.y;
-  }
-
-  const edit = () => {
-    if (!layout.sidebar) {
-      setSelectedElement((prev) => ({
-        ...prev,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
-    } else {
-      setSelectedElement((prev) => ({
-        ...prev,
-        currentTab: Tab.RELATIONSHIPS,
-        element: ObjectType.RELATIONSHIP,
-        id: data.id,
-        open: true,
-      }));
-      if (selectedElement.currentTab !== Tab.RELATIONSHIPS) return;
-      document
-        .getElementById(`scroll_ref_${data.id}`)
-        .scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  if (!pathValues) return null;
+  if (!d) return null;
 
   return (
-    <>
-      <g
-        className="select-none group"
-        onDoubleClick={edit}
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
-      >
-        {/* invisible wider path for better hover ux */}
-        <path
-          d={
-            composite
-              ? composite.path
-              : calcPath(pathValues, 1, settings.showComments)
-          }
-          fill="none"
-          stroke="transparent"
-          strokeWidth={12}
-          cursor="pointer"
-        />
-        <path
-          ref={pathRef}
-          d={
-            composite
-              ? composite.path
-              : calcPath(pathValues, 1, settings.showComments)
-          }
-          className="relationship-path"
-          style={{ stroke: hovered ? undefined : data.color }}
-          fill="none"
-          cursor="pointer"
-        />
-        {settings.showRelationshipLabels && (
-          <text
-            x={labelX}
-            y={labelY}
-            fill={data.color ?? (settings.mode === "dark" ? "lightgrey" : "#333")}
-            fontSize={labelFontSize}
-            fontWeight={500}
-            ref={labelRef}
-            className="group-hover:fill-sky-600"
-          >
-            {data.name}
-          </text>
-        )}
-        {(composite || pathRef.current) && settings.showCardinality && (
-          <>
-            <CardinalityLabel
-              x={cardinalityStartX}
-              y={cardinalityStartY}
-              text={cardinalityStart}
-              color={data.color}
-            />
-            <CardinalityLabel
-              x={cardinalityEndX}
-              y={cardinalityEndY}
-              text={cardinalityEnd}
-              color={data.color}
-            />
-          </>
-        )}
-      </g>
-      <SideSheet
-        title={t("edit")}
-        size="small"
-        visible={
-          selectedElement.element === ObjectType.RELATIONSHIP &&
-          selectedElement.id === data.id &&
-          selectedElement.open &&
-          !layout.sidebar
-        }
-        onCancel={() => {
-          setSelectedElement((prev) => ({
-            ...prev,
-            open: false,
-          }));
-        }}
-        style={{ paddingBottom: "16px" }}
-      >
-        <div className="sidesheet-theme">
-          <RelationshipInfo data={data} />
-        </div>
-      </SideSheet>
-    </>
+    <g
+      className="select-none group"
+      onDoubleClick={onEdit}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+    >
+      {/* invisible wider path for better hover ux */}
+      <path
+        d={d}
+        fill="none"
+        stroke="transparent"
+        strokeWidth={12}
+        cursor="pointer"
+      />
+      <path
+        ref={pathRef}
+        d={d}
+        className="relationship-path"
+        style={{ stroke: hovered ? undefined : data.color }}
+        fill="none"
+        cursor="pointer"
+      />
+      {settings.showRelationshipLabels && (
+        <text
+          x={anchors?.label.x ?? 0}
+          y={anchors?.label.y ?? 0}
+          fill={data.color ?? (settings.mode === "dark" ? "lightgrey" : "#333")}
+          fontSize={labelFontSize}
+          fontWeight={500}
+          ref={labelRef}
+          className="group-hover:fill-sky-600"
+        >
+          {data.name}
+        </text>
+      )}
+      {anchors && settings.showCardinality && (
+        <>
+          <CardinalityLabel
+            x={anchors.start.x}
+            y={anchors.start.y}
+            text={cardinalityStart}
+            color={data.color}
+          />
+          <CardinalityLabel
+            x={anchors.end.x}
+            y={anchors.end.y}
+            text={cardinalityEnd}
+            color={data.color}
+          />
+        </>
+      )}
+    </g>
   );
-}
+});
 
 function CardinalityLabel({ x, y, text, color, r = 12, padding = 14 }) {
   const [textWidth, setTextWidth] = useState(0);

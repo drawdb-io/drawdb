@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Slot } from "../../context/ExtensionsContext";
 import {
   Action,
@@ -47,6 +47,12 @@ import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
 
+const notDragging = {
+  id: -1,
+  type: ObjectType.NONE,
+  grabOffset: { x: 0, y: 0 },
+};
+
 export default function Canvas() {
   const { t } = useTranslation();
 
@@ -73,11 +79,6 @@ export default function Canvas() {
     bulkSelectedElements,
     setBulkSelectedElements,
   } = useSelect();
-  const notDragging = {
-    id: -1,
-    type: ObjectType.NONE,
-    grabOffset: { x: 0, y: 0 },
-  };
   const [dragging, setDragging] = useState(notDragging);
   const [linking, setLinking] = useState(false);
   const [linkingLine, setLinkingLine] = useState({
@@ -142,9 +143,27 @@ export default function Canvas() {
     ctrlKey: false,
     metaKey: false,
   });
-  // this is used to store the element that is clicked on
-  // at the moment, and shouldn't be a part of the state
-  let elementPointerDown = null;
+  const elementPointerDownRef = useRef(null);
+  const handleElementPointerDown = useCallback((element, type) => {
+    elementPointerDownRef.current = { element, type };
+  }, []);
+
+  const tablesById = useMemo(
+    () => new Map(tables.map((table) => [table.id, table])),
+    [tables],
+  );
+
+  const selectedTableIds = useMemo(() => {
+    const ids = new Set(
+      bulkSelectedElements
+        .filter((el) => el.type === ObjectType.TABLE)
+        .map((el) => el.id),
+    );
+    if (selectedElement.element === ObjectType.TABLE) {
+      ids.add(selectedElement.id);
+    }
+    return ids;
+  }, [bulkSelectedElements, selectedElement.element, selectedElement.id]);
 
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
@@ -479,6 +498,9 @@ export default function Canvas() {
    * @param {PointerEvent} e
    */
   const handlePointerDown = (e) => {
+    const elementPointerDown = elementPointerDownRef.current;
+    elementPointerDownRef.current = null;
+
     if (!e.isPrimary) return;
 
     // don't pan if the sidesheet for editing a table is open
@@ -636,11 +658,11 @@ export default function Canvas() {
     });
   };
 
-  const handleGripField = () => {
+  const handleGripField = useCallback(() => {
     setPanning((old) => ({ ...old, isPanning: false }));
     setDragging(notDragging);
     setLinking(true);
-  };
+  }, []);
 
   const getCardinality = (startField, endField) => {
     const startIsUnique = startField.unique || startField.primary;
@@ -817,42 +839,37 @@ export default function Canvas() {
               data={a}
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: a,
-                  type: ObjectType.AREA,
-                };
-              }}
+              onPointerDown={handleElementPointerDown}
             />
           ))}
           {relationships.map((e) => (
-            <Relationship key={e.id} data={e} />
+            <Relationship
+              key={e.id}
+              data={e}
+              startTable={tablesById.get(e.startTableId)}
+              endTable={tablesById.get(e.endTableId)}
+              relationships={relationships}
+            />
           ))}
           {tables.map((table) => (
             <Table
               key={table.id}
               tableData={table}
+              isSelected={selectedTableIds.has(table.id)}
+              zoom={transform.zoom}
+              database={database}
+              relationships={relationships}
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: table,
-                  type: ObjectType.TABLE,
-                };
-              }}
+              onPointerDown={handleElementPointerDown}
             />
           ))}
           {views.map((view) => (
             <View
               key={view.id}
               viewData={view}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: view,
-                  type: ObjectType.VIEW,
-                };
-              }}
+              onPointerDown={handleElementPointerDown}
             />
           ))}
           {linking && (
@@ -868,12 +885,7 @@ export default function Canvas() {
             <Note
               key={n.id}
               data={n}
-              onPointerDown={() => {
-                elementPointerDown = {
-                  element: n,
-                  type: ObjectType.NOTE,
-                };
-              }}
+              onPointerDown={handleElementPointerDown}
             />
           ))}
           {bulkSelectRect.show && (

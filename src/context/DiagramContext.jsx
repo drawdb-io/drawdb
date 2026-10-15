@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useMemo, useRef, useState } from "react";
 import { Action, DB, ObjectType, defaultBlue } from "../data/constants";
 import { useTransform, useUndoRedo, useSelect, useCollab } from "../hooks";
 import { Toast } from "@douyinfe/semi-ui";
@@ -8,6 +8,7 @@ import { getRelationshipFields } from "../utils/utils";
 import { cascadePosition } from "../utils/rect";
 
 export const DiagramContext = createContext(null);
+export const DiagramActionsContext = createContext(null);
 
 export default function DiagramContextProvider({ children }) {
   const { t } = useTranslation();
@@ -330,30 +331,52 @@ export default function DiagramContextProvider({ children }) {
     }
   };
 
+  const latestActionsRef = useRef(null);
+  latestActionsRef.current = {
+    addTable,
+    updateTable,
+    updateField,
+    deleteField,
+    deleteTable,
+    addRelationship,
+    deleteRelationship,
+    updateRelationship,
+  };
+
+  const actions = useMemo(
+    () => ({
+      ...Object.fromEntries(
+        Object.keys(latestActionsRef.current).map((name) => [
+          name,
+          (...args) => latestActionsRef.current[name](...args),
+        ]),
+      ),
+      setTables,
+      setRelationships,
+      setDatabase,
+      setSqlHeader,
+    }),
+    [setDatabase, setSqlHeader],
+  );
+
+  const value = useMemo(
+    () => ({
+      ...actions,
+      tables,
+      relationships,
+      database,
+      sqlHeader,
+      tablesCount: tables.length,
+      relationshipsCount: relationships.length,
+    }),
+    [actions, tables, relationships, database, sqlHeader],
+  );
+
   return (
-    <DiagramContext.Provider
-      value={{
-        tables,
-        setTables,
-        addTable,
-        updateTable,
-        updateField,
-        deleteField,
-        deleteTable,
-        relationships,
-        setRelationships,
-        addRelationship,
-        deleteRelationship,
-        updateRelationship,
-        database,
-        setDatabase,
-        sqlHeader,
-        setSqlHeader,
-        tablesCount: tables.length,
-        relationshipsCount: relationships.length,
-      }}
-    >
-      {children}
-    </DiagramContext.Provider>
+    <DiagramActionsContext.Provider value={actions}>
+      <DiagramContext.Provider value={value}>
+        {children}
+      </DiagramContext.Provider>
+    </DiagramActionsContext.Provider>
   );
 }

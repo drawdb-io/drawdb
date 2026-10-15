@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Action, Tab, ObjectType } from "../../data/constants";
 import {
   IconMore,
@@ -35,7 +35,7 @@ import {
 } from "../../utils/views";
 import ResizeHandles from "./ResizeHandles";
 
-export default function View({ viewData, onPointerDown }) {
+export default memo(function View({ viewData, onPointerDown }) {
   const [hovered, setHovered] = useState(false);
   const [resizeEngaged, setResizeEngaged] = useState(false);
   const { layout } = useLayout();
@@ -204,7 +204,7 @@ export default function View({ viewData, onPointerDown }) {
         width={width}
         height={height}
         className="group drop-shadow-lg rounded-md cursor-move"
-        onPointerDown={onPointerDown}
+        onPointerDown={() => onPointerDown(viewData, ObjectType.VIEW)}
         onPointerEnter={(e) => e.isPrimary && setHovered(true)}
         onPointerLeave={(e) => e.isPrimary && setHovered(false)}
       >
@@ -387,4 +387,4 @@ export default function View({ viewData, onPointerDown }) {
       </SideSheet>
     </>
   );
-}
+});
