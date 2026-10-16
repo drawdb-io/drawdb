@@ -23,6 +23,12 @@ DrawDB is a robust and user-friendly database entity relationship diagram (ERD) 
 
 ## Getting Started
 
+### Run with PicoRunner
+
+[![Launch on PicoRunner](https://picorunner.com/badges/launch.svg)](https://picorunner.com/launch/?repository=https%3A%2F%2Fgithub.com%2Fdrawdb-io%2Fdrawdb)
+
+[PicoRunner](https://picorunner.com/) opens installation review for this repository on macOS. The manifest uses Node 24 and locked npm dependencies, builds drawDB, and serves it on `127.0.0.1` with Vite preview. Diagrams remain in browser storage; keep the same browser profile and local address and export backups. The optional sharing backend is configured separately; `.env` and `.env.local` are preserved, but this launch path does not provision a backend.
+
 ### Local Development
 
 ```bash
@@ -61,4 +67,5 @@ docker run -p 3000:80 -e VITE_BACKEND_URL=https://your-drawdb-server.example.com
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
 ## Support
+
 - Join discussions: [Discord](https://discord.gg/BrjZgNrmR6)
