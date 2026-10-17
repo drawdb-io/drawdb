@@ -3,27 +3,27 @@
     <h1>drawDB</h1>
 </div>
 
-<h3 align="center">Free, simple, and intuitive database schema editor and SQL generator.</h3>
+<h3 align="center">免费、简洁、直观的数据库架构编辑器与 SQL 生成器</h3>
 
 <div align="center" style="margin-bottom:12px;">
     <a href="https://drawdb.app/" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Start%20building-grey" alt="drawDB"/>
+        <img src="https://img.shields.io/badge/Start%20building-grey" alt="立即开始使用"/>
     </a>
     <a href="https://discord.gg/BrjZgNrmR6" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/discord/1196658537208758412.svg?label=Join%20the%20Discord&logo=discord" alt="Discord"/>
+        <img src="https://img.shields.io/discord/1196658537208758412.svg?label=Join%20the%20Discord&logo=discord" alt="加入 Discord 社区"/>
     </a>
     <a href="https://x.com/drawDB_" style="display: flex; align-items: center;">
-        <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="Follow us on X"/>
+        <img src="https://img.shields.io/badge/Follow%20us%20on%20X-blue?logo=X" alt="在 X 上关注我们"/>
     </a>
 </div>
 
-<h3 align="center"><img width="700" style="border-radius:5px;" alt="drawDB screenshot demo" src="drawdb.png"></h3>
+<h3 align="center"><img width="700" style="border-radius:5px;" alt="drawDB 截图预览" src="drawdb.png"></h3>
 
-DrawDB is a robust and user-friendly database entity relationship diagram (ERD) editor right in your browser. Build diagrams with a few clicks, export and import SQL scripts, generate migrations, customize your editor, and more without creating an account. See the full set of features on [here](https://drawdb.app/).
+DrawDB 是一款强大且易用的数据库实体关系图（ERD）编辑器，完全运行于你的浏览器之中。无需注册账号，只需几次点击即可构建图表、导入与导出 SQL 脚本、生成迁移脚本、自定义编辑器等。完整功能请查看[这里](https://drawdb.app/)。
 
-## Getting Started
+## 快速上手
 
-### Local Development
+### 本地开发
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
@@ -32,7 +32,7 @@ npm install
 npm run dev
 ```
 
-### Build
+### 构建
 
 ```bash
 git clone https://github.com/drawdb-io/drawdb
@@ -41,24 +41,24 @@ npm install
 npm run build
 ```
 
-### Docker Build
+### Docker 构建
 
 ```bash
 docker build -t drawdb .
 docker run -p 3000:80 drawdb
 ```
 
-If you want to enable sharing, set up the [server](https://github.com/drawdb-io/drawdb-server) and environment variables according to `.env.sample`. This is optional unless you need to share files.
+如需启用图表共享功能，请部署配套的[服务端仓库](https://github.com/drawdb-io/drawdb-server)，并参照 `.env.sample` 配置环境变量。**除非你需要分享文件，否则此步骤可选。**
 
-With the Docker image, pass the server URL when starting the container. No rebuild is needed:
+使用 Docker 镜像时，只需在启动容器时传入服务端 URL 即可，**无需重新构建**：
 
 ```bash
 docker run -p 3000:80 -e VITE_BACKEND_URL=https://your-drawdb-server.example.com ghcr.io/drawdb-io/drawdb:latest
 ```
 
-## Contributing
+## 贡献指南
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+有关本项目的贡献规范，请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-## Support
-- Join discussions: [Discord](https://discord.gg/BrjZgNrmR6)
+## 支持
+- 加入社区讨论：[Discord](https://discord.gg/BrjZgNrmR6)
