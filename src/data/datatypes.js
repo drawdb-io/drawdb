@@ -647,16 +647,10 @@ const mysqlTypesBase = {
   TINYTEXT: {
     type: "TINYTEXT",
     color: stringColor,
-    checkDefault: (field) => {
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    },
+    checkDefault: (field) => true,
     hasCheck: true,
-    isSized: true,
+    isSized: false,
     hasPrecision: false,
-    defaultSize: 65535,
     hasQuotes: true,
   },
   TEXT: {
@@ -677,31 +671,19 @@ const mysqlTypesBase = {
   MEDIUMTEXT: {
     type: "MEDIUMTEXT",
     color: stringColor,
-    checkDefault: (field) => {
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    },
+    checkDefault: (field) => true,
     hasCheck: true,
-    isSized: true,
+    isSized: false,
     hasPrecision: false,
-    defaultSize: 65535,
     hasQuotes: true,
   },
   LONGTEXT: {
     type: "LONGTEXT",
     color: stringColor,
-    checkDefault: (field) => {
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    },
+    checkDefault: (field) => true,
     hasCheck: true,
-    isSized: true,
+    isSized: false,
     hasPrecision: false,
-    defaultSize: 65535,
     hasQuotes: true,
   },
   ENUM: {
