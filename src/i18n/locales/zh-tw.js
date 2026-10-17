@@ -288,6 +288,8 @@ const zh_tw = {
     insert_sql: "插入 SQL",
     upload_file: "上傳檔案",
     show_comments: "顯示註解",
+    sql_header: "SQL 標頭",
+    sql_header_description: "在每次匯出 SQL 時，寫在建表語句之前的內容。",
     configure_custom_types: "設定自訂型別",
     type_color: "顏色",
     custom_types_description:

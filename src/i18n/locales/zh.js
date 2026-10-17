@@ -290,6 +290,8 @@ const zh = {
     insert_sql: "插入 SQL",
     upload_file: "上传文件",
     show_comments: "显示注释",
+    sql_header: "SQL 头部",
+    sql_header_description: "在每次导出 SQL 时，写在所有建表语句前的内容。",
     configure_custom_types: "配置自定义类型",
     type_color: "颜色",
     custom_types_description: "定义默认不支持的自定义数据类型。创建或编辑列时可以使用这些类型。",
