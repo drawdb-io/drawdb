@@ -14,6 +14,7 @@ const defaultSettings = {
   showRelationshipLabels: true,
   showDebugCoordinates: false,
   showComments: false,
+  showScrollbars: false,
 };
 
 export const SettingsContext = createContext({

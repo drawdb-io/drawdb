@@ -1855,6 +1855,18 @@ export default function ControlPanel({
         ),
         function: snapToGrid,
       },
+      show_scrollbars: {
+        state: settings.showScrollbars ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showScrollbars: !prev.showScrollbars,
+          })),
+      },
       show_cardinality: {
         state: settings.showCardinality ? (
           <i className="bi bi-toggle-on" />
