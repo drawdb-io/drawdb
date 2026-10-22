@@ -1,0 +1,25 @@
+load("//anybuild/tools:node_static.bzl", "nodestatic_build", "nodestatic_config")
+load("//anybuild/tools:staticfile.bzl", "staticfile_serve")
+
+config = nodestatic_config(
+    schema = 1,
+    commands = {"install": "npm ci"},
+    node_package_manager = "npm",
+    node_version = "24",
+    node_build_command = "npm run build",
+    static_dir = "dist",
+)
+
+build = nodestatic_build(config)
+
+staticfile_serve(
+    config,
+    build,
+    name = "drawdb",
+    provider = "node-static",
+    extra_commands = {
+        "start": "static-web-server --root='{}' --page-fallback='{}/index.html' --log-level=info --port={}".format(
+            build.static_app.serve_path, build.static_app.serve_path, config.port,
+        ),
+    },
+)
