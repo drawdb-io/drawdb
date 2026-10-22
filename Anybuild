@@ -3,6 +3,25 @@ load("//anybuild/tools:staticfile.bzl", "staticfile_serve")
 
 config = nodestatic_config(
     schema = 1,
+    node_install_requires_all_files = True,
+    static_redirects_config = """
+[[advanced.rewrites]]
+source = "/assets/**"
+destination = "$0"
+
+[[advanced.rewrites]]
+source = "/editor/**"
+destination = "/index.html"
+
+[[advanced.rewrites]]
+source = "/**/*.*"
+destination = "$0"
+
+[[advanced.rewrites]]
+source = "/**"
+destination = "/index.html"
+
+""",
     commands = {"install": "npm ci"},
     node_package_manager = "npm",
     node_version = "24",
@@ -18,8 +37,8 @@ staticfile_serve(
     name = "drawdb",
     provider = "node-static",
     extra_commands = {
-        "start": "static-web-server --root='{}' --page-fallback='{}/index.html' --log-level=info --port={}".format(
-            build.static_app.serve_path, build.static_app.serve_path, config.port,
+        "start": "static-web-server --root='{}' --config-file='{}/sws.toml' --log-level=info --port={}".format(
+            build.static_app.serve_path, build.static_config.serve_path, config.port,
         ),
     },
 )
