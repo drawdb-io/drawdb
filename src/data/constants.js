@@ -90,11 +90,11 @@ export const MODAL = {
   RENAME: 4,
   OPEN: 5,
   SAVEAS: 6,
-  NEW: 7,
   IMPORT_SRC: 8,
   LANGUAGE: 10,
   SHARE: 11,
   CONFIG_CUSTOM_TYPES: 12,
+  IMPORT_DB: 13,
 };
 
 export const STATUS = {

@@ -19,6 +19,7 @@ import {
   useEnums,
   useNavigateWithParams,
   useNotes,
+  useSettings,
   useTransform,
   useTypes,
   useUndoRedo,
@@ -27,6 +28,8 @@ import {
 import { isRtl } from "../../../i18n/utils/rtl";
 import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
+import { fromSchemaQuery } from "../../../utils/importFrom/schemaQuery";
+import { autoArrange } from "../../../utils/autoArrange";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -37,11 +40,11 @@ import {
   getOkText,
 } from "../../../utils/modalData";
 import CodeEditor from "../../CodeEditor";
+import ImportDatabase from "./ImportDatabase";
 import ImportDiagram from "./ImportDiagram";
 import ImportSource from "./ImportSource";
 import ImportWithAiButton from "./ImportWithAiButton";
 import Language from "./Language";
-import New from "./New";
 import Open from "./Open";
 import Rename from "./Rename";
 import Share from "./Share";
@@ -64,6 +67,8 @@ export default function Modal({
   importDb,
   importFrom,
   saveAsCopy,
+  fitToView,
+  onBack,
 }) {
   const { t, i18n } = useTranslation();
   const { setTables, setRelationships, database, setSqlHeader } = useDiagram();
@@ -74,12 +79,14 @@ export default function Modal({
   const { setViews } = useViews();
   const { setTransform } = useTransform();
   const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { settings } = useSettings();
   const [uncontrolledTitle, setUncontrolledTitle] = useState(title);
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState(
     i18n.language,
   );
   const [importSource, setImportSource] = useState({
     src: "",
+    schema: "",
     overwrite: false,
   });
   const [importData, setImportData] = useState(null);
@@ -87,7 +94,6 @@ export default function Modal({
     type: STATUS.NONE,
     message: "",
   });
-  const [selectedTemplateId, setSelectedTemplateId] = useState(-1);
   const [selectedDiagramId, setSelectedDiagramId] = useState(0);
   const [saveAsTitle, setSaveAsTitle] = useState(title);
   const [aiImporting, setAiImporting] = useState(false);
@@ -258,6 +264,57 @@ export default function Modal({
       case MODAL.IMPORT_SRC:
         parseSQLAndLoadDiagram();
         return;
+      case MODAL.IMPORT_DB: {
+        let imported;
+        try {
+          imported = fromSchemaQuery(importSource.schema, database);
+        } catch (e) {
+          setError({
+            type: STATUS.ERROR,
+            message: t(
+              e.message === "truncated"
+                ? "truncated_query_result"
+                : "invalid_query_result",
+            ),
+          });
+          return;
+        }
+
+        const positions = new Map(
+          autoArrange(imported.tables, imported.relationships, settings).map(
+            (p) => [p.id, p],
+          ),
+        );
+        const tables = imported.tables.map((table) => ({
+          ...table,
+          x: positions.get(table.id).x,
+          y: positions.get(table.id).y,
+        }));
+
+        applyImportedDiagram({ ...imported, tables });
+        if (tables.length) fitToView(tables);
+
+        const skipped = ["views", "indexes", "checks"]
+          .filter((key) => imported.skipped[key] > 0)
+          .map((key) =>
+            t(`import_db_${key}`, { count: imported.skipped[key] }),
+          );
+        Toast.success({
+          content: [
+            t("import_db_summary", {
+              tables: t("import_db_tables", { count: tables.length }),
+              relationships: t("import_db_relationships", {
+                count: imported.relationships.length,
+              }),
+            }),
+            skipped.length
+              ? t("import_db_skipped", { items: skipped.join(", ") })
+              : "",
+          ].join(" "),
+          duration: 6,
+        });
+        return;
+      }
       case MODAL.OPEN:
         if (!selectedDiagramId) return;
         navigate(`/editor/diagrams/${selectedDiagramId}`, "_blank");
@@ -269,10 +326,6 @@ export default function Modal({
         return;
       case MODAL.SAVEAS:
         await saveAsCopy(saveAsTitle);
-        setModal(MODAL.NONE);
-        return;
-      case MODAL.NEW:
-        window.open("/editor/templates/" + selectedTemplateId, "_blank");
         setModal(MODAL.NONE);
         return;
       case MODAL.LANGUAGE:
@@ -305,11 +358,14 @@ export default function Modal({
             setError={setError}
           />
         );
-      case MODAL.NEW:
+      case MODAL.IMPORT_DB:
         return (
-          <New
-            selectedTemplateId={selectedTemplateId}
-            setSelectedTemplateId={setSelectedTemplateId}
+          <ImportDatabase
+            importData={importSource}
+            setImportData={setImportSource}
+            error={error}
+            setError={setError}
+            sourceDb={database === DB.GENERIC ? importDb : database}
           />
         );
       case MODAL.RENAME:
@@ -396,15 +452,21 @@ export default function Modal({
     (modal === MODAL.RENAME && title === "") ||
     ((modal === MODAL.IMG || modal === MODAL.CODE) && !exportData.data) ||
     (modal === MODAL.SAVEAS && saveAsTitle === "") ||
-    (modal === MODAL.IMPORT_SRC && importSource.src === "");
+    (modal === MODAL.IMPORT_SRC && importSource.src === "") ||
+    (modal === MODAL.IMPORT_DB && !importSource.schema.trim());
 
   const showAiFooter =
     modal === MODAL.IMPORT_SRC && typeof importSqlWithAi === "function";
 
-  const aiFooter = (
+  const footer = (
     <div className="flex items-center justify-between">
-      <div>
-        {error.type === STATUS.ERROR && (
+      <div className="flex items-center gap-2">
+        {onBack && (
+          <Button type="tertiary" onClick={onBack}>
+            {t("back")}
+          </Button>
+        )}
+        {showAiFooter && error.type === STATUS.ERROR && (
           <ImportWithAiButton
             loading={aiImporting}
             disabled={!importSource.src}
@@ -429,7 +491,7 @@ export default function Modal({
       title={getModalTitle(modal)}
       visible={modal !== MODAL.NONE && modal !== MODAL.CONFIG_CUSTOM_TYPES}
       onOk={getModalOnOk}
-      {...(showAiFooter ? { footer: aiFooter } : {})}
+      {...(showAiFooter || onBack ? { footer } : {})}
       afterClose={() => {
         setExportData(() => ({
           data: "",
@@ -443,6 +505,7 @@ export default function Modal({
         setImportData(null);
         setImportSource({
           src: "",
+          schema: "",
           overwrite: false,
         });
       }}
