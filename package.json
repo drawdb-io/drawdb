@@ -61,7 +61,7 @@
     "postcss": "^8.5.23",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
-    "vite": "^8.1.0"
+    "vite": "^8.3.5"
   },
   "lint-staged": {
     "*.{js,jsx}": [
