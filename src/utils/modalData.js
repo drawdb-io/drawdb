@@ -7,6 +7,8 @@ export const getModalTitle = (modal) => {
       return i18n.t("import_diagram");
     case MODAL.IMPORT_SRC:
       return i18n.t("import_from_source");
+    case MODAL.IMPORT_DB:
+      return i18n.t("import_from_database");
     case MODAL.CODE:
       return i18n.t("export");
     case MODAL.IMG:
@@ -17,8 +19,6 @@ export const getModalTitle = (modal) => {
       return i18n.t("open_diagram");
     case MODAL.SAVEAS:
       return i18n.t("save_as");
-    case MODAL.NEW:
-      return i18n.t("create_new_diagram");
     case MODAL.LANGUAGE:
       return i18n.t("language");
     case MODAL.SHARE:
@@ -33,8 +33,9 @@ export const getModalWidth = (modal) => {
     case MODAL.LANGUAGE:
     case MODAL.OPEN:
     case MODAL.CODE:
-    case MODAL.NEW:
       return 740;
+    case MODAL.IMPORT_DB:
+      return 1280;
     default:
       return 600;
   }
@@ -44,6 +45,7 @@ export const getOkText = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
     case MODAL.IMPORT_SRC:
+    case MODAL.IMPORT_DB:
       return i18n.t("import");
     case MODAL.CODE:
     case MODAL.IMG:
@@ -54,8 +56,6 @@ export const getOkText = (modal) => {
       return i18n.t("open");
     case MODAL.SAVEAS:
       return i18n.t("save_as");
-    case MODAL.NEW:
-      return i18n.t("create");
     case MODAL.SHARE:
       return i18n.t("share");
     default:

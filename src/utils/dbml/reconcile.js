@@ -96,6 +96,8 @@ function createField(parsed) {
   };
 
   if (parsed.size !== "") field.size = parsed.size;
+  if (parsed.isArray) field.isArray = true;
+  if (parsed.unsigned) field.unsigned = true;
   if (isInlineEnumType(parsed.type)) field.values = parsed.values ?? [];
 
   return field;

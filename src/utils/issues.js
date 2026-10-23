@@ -4,6 +4,7 @@ import { isFunction } from "./utils";
 
 function checkDefault(field, database) {
   if (field.default === "") return true;
+  if (field.isArray) return true;
   if (isFunction(field.default)) return true;
   if (
     !field.notNull &&

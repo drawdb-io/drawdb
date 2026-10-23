@@ -224,6 +224,19 @@ const en = {
     delete_relationship: "Delete relationship {{refName}}",
     not_found: "Not found",
     pick_db: "Choose a database",
+    back: "Back",
+    next: "Next",
+    not_supported: "Not supported",
+    start_template: "From a template",
+    start_template_description:
+      "Pick a ready-made schema, like a blog or an online store.",
+    start_blank: "Blank canvas",
+    start_blank_description: "Design a new schema from scratch.",
+    start_database_description:
+      "Run a read-only query against your database and paste the result.",
+    start_sql_description: "Paste or upload CREATE TABLE statements.",
+    start_dbml_description: "Upload a .dbml file, e.g. from dbdiagram.io.",
+    start_json_description: "Open a diagram exported from drawDB.",
     generic: "Generic",
     generic_description:
       "Generic diagrams can be exported to any SQL flavor but support few data types.",
@@ -300,6 +313,32 @@ const en = {
     download: "Download",
     insert_sql: "Insert SQL",
     upload_file: "Upload file",
+    import_from_database: "Import from database",
+    schema_query_instructions:
+      "Run this read-only query against your {{database}} database in any SQL client, then paste the single value it returns on the right. Your credentials never leave your machine.",
+    requires_version: "Requires {{version}} or later.",
+    schema_query_oracle_note: "Column defaults are not imported.",
+    query: "Query",
+    paste_result: "Paste result",
+    schema_query_large:
+      "Large schema? Some SQL clients cut off long values. Download the query, run it from the command line, and upload the file it writes:",
+    upload_query_result: "Upload the query result (.json or .txt)",
+    invalid_query_result:
+      "This doesn't look like the query result. Copy the whole drawdb_schema value.",
+    truncated_query_result:
+      "The query result is cut off. Your SQL client likely truncated it, so run the query from the command line and upload the file instead.",
+    import_db_summary: "Imported {{tables}} and {{relationships}}.",
+    import_db_skipped: "Not imported: {{items}}.",
+    import_db_tables_one: "{{count}} table",
+    import_db_tables_other: "{{count}} tables",
+    import_db_relationships_one: "{{count}} relationship",
+    import_db_relationships_other: "{{count}} relationships",
+    import_db_views_one: "{{count}} view",
+    import_db_views_other: "{{count}} views",
+    import_db_indexes_one: "{{count}} expression or partial index",
+    import_db_indexes_other: "{{count}} expression or partial indexes",
+    import_db_checks_one: "{{count}} CHECK constraint",
+    import_db_checks_other: "{{count}} CHECK constraints",
     show_comments: "Show comments",
     sql_header: "SQL header",
     sql_header_description:
