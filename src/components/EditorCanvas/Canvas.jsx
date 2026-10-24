@@ -12,10 +12,10 @@ import {
   defaultRelationshipColor,
 } from "../../data/constants";
 import { Toast } from "@douyinfe/semi-ui";
-import Table from "./Table";
+import Table, { TableEditSheet } from "./Table";
 import View from "./View";
 import Area from "./Area";
-import Relationship from "./Relationship";
+import Relationship, { RelationshipEditSheet } from "./Relationship";
 import Note from "./Note";
 import {
   useCanvas,
@@ -35,6 +35,7 @@ import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import {
   areFieldsCompatible,
+  getRelatedFieldKeysByTable,
   getTableHeight,
   getTableWidth,
 } from "../../utils/utils";
@@ -63,7 +64,7 @@ export default function Canvas() {
     pointer,
   } = canvasContextValue;
 
-  const { tables, updateTable, relationships, addRelationship, database } =
+  const { tables, updateTables, relationships, addRelationship, database } =
     useDiagram();
   const { setSaveState } = useSaveState();
   const { areas, updateArea } = useAreas();
@@ -153,6 +154,20 @@ export default function Canvas() {
     [tables],
   );
 
+  const relatedFieldKeysRef = useRef(new Map());
+  const relatedFieldKeysByTable = useMemo(() => {
+    const next = getRelatedFieldKeysByTable(relationships);
+    const prev = relatedFieldKeysRef.current;
+    next.forEach((keys, tableId) => {
+      const old = prev.get(tableId);
+      if (old && old.size === keys.size && [...keys].every((k) => old.has(k))) {
+        next.set(tableId, old);
+      }
+    });
+    relatedFieldKeysRef.current = next;
+    return next;
+  }, [relationships]);
+
   const selectedTableIds = useMemo(() => {
     const ids = new Set(
       bulkSelectedElements
@@ -196,7 +211,11 @@ export default function Canvas() {
         x: table.x,
         y: table.y,
         width: getTableWidth(table),
-        height: getTableHeight(table, settings.showComments, relationships),
+        height: getTableHeight(
+          table,
+          settings.showComments,
+          relatedFieldKeysByTable.get(table.id),
+        ),
       };
       if (shouldAddElement(tableRect, element)) {
         elements.push(element);
@@ -407,13 +426,14 @@ export default function Canvas() {
       const deltaY = mainElementFinalY - currentCoords.y;
 
       const newBulkSelectedElements = [];
+      const tableUpdates = new Map();
       bulkSelectedElements.forEach((el) => {
         const elementFinalCoords = {
           x: el.currentCoords.x + deltaX,
           y: el.currentCoords.y + deltaY,
         };
         if (el.type === ObjectType.TABLE) {
-          updateTable(el.id, { ...elementFinalCoords });
+          tableUpdates.set(el.id, elementFinalCoords);
         }
         if (el.type === ObjectType.AREA) {
           updateArea(el.id, { ...elementFinalCoords });
@@ -430,6 +450,7 @@ export default function Canvas() {
         });
       });
 
+      if (tableUpdates.size > 0) updateTables(tableUpdates);
       setBulkSelectedElements(newBulkSelectedElements);
       return;
     }
@@ -848,7 +869,10 @@ export default function Canvas() {
               data={e}
               startTable={tablesById.get(e.startTableId)}
               endTable={tablesById.get(e.endTableId)}
-              relationships={relationships}
+              startRelatedFieldKeys={relatedFieldKeysByTable.get(
+                e.startTableId,
+              )}
+              endRelatedFieldKeys={relatedFieldKeysByTable.get(e.endTableId)}
             />
           ))}
           {tables.map((table) => (
@@ -856,9 +880,8 @@ export default function Canvas() {
               key={table.id}
               tableData={table}
               isSelected={selectedTableIds.has(table.id)}
-              zoom={transform.zoom}
               database={database}
-              relationships={relationships}
+              relatedFieldKeys={relatedFieldKeysByTable.get(table.id)}
               setHoveredTable={setHoveredTable}
               handleGripField={handleGripField}
               setLinkingLine={setLinkingLine}
@@ -899,6 +922,8 @@ export default function Canvas() {
           )}
         </svg>
       </div>
+      <TableEditSheet />
+      <RelationshipEditSheet />
       {settings.showDebugCoordinates && (
         <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-xs pointer-events-none select-none">
           <table className="table-auto grow">

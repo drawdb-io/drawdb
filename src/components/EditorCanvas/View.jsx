@@ -23,7 +23,6 @@ import {
   useSelect,
   useViews,
   useUndoRedo,
-  useTransform,
 } from "../../hooks";
 import ViewInfo from "../EditorSidePanel/ViewsTab/ViewInfo";
 import { useTranslation } from "react-i18next";
@@ -43,7 +42,6 @@ export default memo(function View({ viewData, onPointerDown }) {
   const { views, addView, deleteView, updateView } = useViews();
   const { settings } = useSettings();
   const { setUndoStack, setRedoStack } = useUndoRedo();
-  const { transform } = useTransform();
   const { t } = useTranslation();
   const {
     selectedElement,
@@ -360,7 +358,6 @@ export default memo(function View({ viewData, onPointerDown }) {
           y={viewData.y}
           width={width}
           height={height}
-          zoom={transform.zoom}
           visible={hovered}
           onResize={resizeView}
           onResizeEnd={commitResize}

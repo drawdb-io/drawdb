@@ -185,31 +185,33 @@ export function getRelationshipFields(relationship) {
   ];
 }
 
-export function isFieldRelatedToTable(
-  tableId,
-  field,
-  fieldIndex,
-  relationships = [],
-) {
-  return relationships.some((relationship) =>
-    getRelationshipFields(relationship).some(
-      (pair) =>
-        (relationship.startTableId === tableId &&
-          (pair.startFieldId === field.id ||
-            pair.startFieldId === fieldIndex)) ||
-        (relationship.endTableId === tableId &&
-          (pair.endFieldId === field.id || pair.endFieldId === fieldIndex)),
-    ),
-  );
+export function getRelatedFieldKeysByTable(relationships = []) {
+  const byTable = new Map();
+  const add = (tableId, key) => {
+    let keys = byTable.get(tableId);
+    if (!keys) {
+      keys = new Set();
+      byTable.set(tableId, keys);
+    }
+    keys.add(key);
+  };
+  for (const relationship of relationships) {
+    for (const pair of getRelationshipFields(relationship)) {
+      add(relationship.startTableId, pair.startFieldId);
+      add(relationship.endTableId, pair.endFieldId);
+    }
+  }
+  return byTable;
 }
 
-export function getVisibleFieldEntries(table, relationships = []) {
+export function getVisibleFieldEntries(table, relatedFieldKeys) {
   const fields = table.fields ?? [];
 
   return fields.reduce((entries, field, index) => {
     if (
       !table.collapsed ||
-      isFieldRelatedToTable(table.id, field, index, relationships)
+      relatedFieldKeys?.has(field.id) ||
+      relatedFieldKeys?.has(index)
     ) {
       entries.push({ field, originalIndex: index });
     }
@@ -217,14 +219,9 @@ export function getVisibleFieldEntries(table, relationships = []) {
   }, []);
 }
 
-export function getVisibleFields(table, relationships = []) {
-  return getVisibleFieldEntries(table, relationships).map(({ field }) => field);
-}
-
-export function getVisibleFieldIndex(table, fieldId, relationships = []) {
-  return getVisibleFieldEntries(table, relationships).findIndex(
-    ({ field, originalIndex }) =>
-      field.id === fieldId || originalIndex === fieldId,
+export function getVisibleFields(table, relatedFieldKeys) {
+  return getVisibleFieldEntries(table, relatedFieldKeys).map(
+    ({ field }) => field,
   );
 }
 
@@ -254,9 +251,9 @@ export function getFieldOffsetY(
   return total;
 }
 
-export function getTableHeight(table, showComments = true, relationships = []) {
+export function getTableHeight(table, showComments = true, relatedFieldKeys) {
   const width = getTableWidth(table);
-  const visibleFields = getVisibleFields(table, relationships);
+  const visibleFields = getVisibleFields(table, relatedFieldKeys);
 
   return (
     getFieldsTotalHeight(visibleFields, width, showComments) +

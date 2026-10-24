@@ -100,7 +100,11 @@ import { applyDiagramPlan } from "../../utils/dbml/applyPlan";
 import { diffDiagram } from "../../utils/dbml/diff";
 import { exportSavedData } from "../../utils/exportSavedData";
 import { nanoid } from "nanoid";
-import { getTableHeight, getTableWidth } from "../../utils/utils";
+import {
+  getRelatedFieldKeysByTable,
+  getTableHeight,
+  getTableWidth,
+} from "../../utils/utils";
 import {
   getViewHeight,
   getViewWidth,
@@ -718,13 +722,19 @@ export default function ControlPanel({
       maxY: -Infinity,
     };
 
+    const relatedFieldKeysByTable = getRelatedFieldKeysByTable(relationships);
     tablesToFit.forEach((table) => {
       minMaxXY.minX = Math.min(minMaxXY.minX, table.x);
       minMaxXY.minY = Math.min(minMaxXY.minY, table.y);
       minMaxXY.maxX = Math.max(minMaxXY.maxX, table.x + getTableWidth(table));
       minMaxXY.maxY = Math.max(
         minMaxXY.maxY,
-        table.y + getTableHeight(table, settings.showComments, relationships),
+        table.y +
+          getTableHeight(
+            table,
+            settings.showComments,
+            relatedFieldKeysByTable.get(table.id),
+          ),
       );
     });
 

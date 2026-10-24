@@ -1,6 +1,7 @@
 import {
   memo,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -9,13 +10,13 @@ import {
 } from "react";
 import { Cardinality, ObjectType, Tab } from "../../data/constants";
 import { calcPath, calcCompositePath } from "../../utils/calcPath";
-import { useSettings, useLayout, useSelect } from "../../hooks";
+import { useSettings, useLayout, useSelect, useDiagram } from "../../hooks";
+import { SelectActionsContext } from "../../context/SelectContext";
 import { useTranslation } from "react-i18next";
 import { SideSheet } from "@douyinfe/semi-ui";
 import RelationshipInfo from "../EditorSidePanel/RelationshipsTab/RelationshipInfo";
 import {
-  getVisibleFieldIndex,
-  getVisibleFields,
+  getVisibleFieldEntries,
   getRelationshipFields,
   getTableWidth,
 } from "../../utils/utils";
@@ -27,11 +28,11 @@ export default memo(function Relationship({
   data,
   startTable,
   endTable,
-  relationships,
+  startRelatedFieldKeys,
+  endRelatedFieldKeys,
 }) {
   const { layout } = useLayout();
-  const { selectedElement, setSelectedElement } = useSelect();
-  const { t } = useTranslation();
+  const { setSelectedElement } = useContext(SelectActionsContext);
 
   const edit = useCallback(() => {
     setSelectedElement((prev) => ({
@@ -49,44 +50,56 @@ export default memo(function Relationship({
   }, [data.id, layout.sidebar, setSelectedElement]);
 
   return (
-    <>
-      <RelationshipPath
-        data={data}
-        startTable={startTable}
-        endTable={endTable}
-        relationships={relationships}
-        onEdit={edit}
-      />
-      <SideSheet
-        title={t("edit")}
-        size="small"
-        visible={
-          selectedElement.element === ObjectType.RELATIONSHIP &&
-          selectedElement.id === data.id &&
-          selectedElement.open &&
-          !layout.sidebar
-        }
-        onCancel={() => {
-          setSelectedElement((prev) => ({
-            ...prev,
-            open: false,
-          }));
-        }}
-        style={{ paddingBottom: "16px" }}
-      >
-        <div className="sidesheet-theme">
-          <RelationshipInfo data={data} />
-        </div>
-      </SideSheet>
-    </>
+    <RelationshipPath
+      data={data}
+      startTable={startTable}
+      endTable={endTable}
+      startRelatedFieldKeys={startRelatedFieldKeys}
+      endRelatedFieldKeys={endRelatedFieldKeys}
+      onEdit={edit}
+    />
   );
 });
+
+export function RelationshipEditSheet() {
+  const { layout } = useLayout();
+  const { selectedElement, setSelectedElement } = useSelect();
+  const { relationships } = useDiagram();
+  const { t } = useTranslation();
+
+  const data =
+    selectedElement.element === ObjectType.RELATIONSHIP &&
+    selectedElement.open &&
+    !layout.sidebar
+      ? relationships.find((r) => r.id === selectedElement.id)
+      : null;
+
+  return (
+    <SideSheet
+      title={t("edit")}
+      size="small"
+      visible={Boolean(data)}
+      onCancel={() => {
+        setSelectedElement((prev) => ({
+          ...prev,
+          open: false,
+        }));
+      }}
+      style={{ paddingBottom: "16px" }}
+    >
+      <div className="sidesheet-theme">
+        {data && <RelationshipInfo data={data} />}
+      </div>
+    </SideSheet>
+  );
+}
 
 const RelationshipPath = memo(function RelationshipPath({
   data,
   startTable,
   endTable,
-  relationships,
+  startRelatedFieldKeys,
+  endRelatedFieldKeys,
   onEdit,
 }) {
   const { settings } = useSettings();
@@ -96,44 +109,42 @@ const RelationshipPath = memo(function RelationshipPath({
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
 
-    const startFields = getVisibleFields(startTable, relationships);
-    const endFields = getVisibleFields(endTable, relationships);
+    const startEntries = getVisibleFieldEntries(
+      startTable,
+      startRelatedFieldKeys,
+    );
+    const endEntries = getVisibleFieldEntries(endTable, endRelatedFieldKeys);
+    const indexOf = (entries, fieldId) =>
+      entries.findIndex(
+        ({ field, originalIndex }) =>
+          field.id === fieldId || originalIndex === fieldId,
+      );
 
     const pairs = getRelationshipFields(data);
 
     return {
-      startFieldIndex: getVisibleFieldIndex(
-        startTable,
-        data.startFieldId,
-        relationships,
-      ),
-      endFieldIndex: getVisibleFieldIndex(
-        endTable,
-        data.endFieldId,
-        relationships,
-      ),
+      startFieldIndex: indexOf(startEntries, data.startFieldId),
+      endFieldIndex: indexOf(endEntries, data.endFieldId),
       startFieldIndices: pairs.map((p) =>
-        getVisibleFieldIndex(startTable, p.startFieldId, relationships),
+        indexOf(startEntries, p.startFieldId),
       ),
-      endFieldIndices: pairs.map((p) =>
-        getVisibleFieldIndex(endTable, p.endFieldId, relationships),
-      ),
+      endFieldIndices: pairs.map((p) => indexOf(endEntries, p.endFieldId)),
       startTable: {
         x: startTable.x,
         y: startTable.y,
         width: getTableWidth(startTable),
         comment: startTable.comment,
-        fields: startFields,
+        fields: startEntries.map(({ field }) => field),
       },
       endTable: {
         x: endTable.x,
         y: endTable.y,
         width: getTableWidth(endTable),
         comment: endTable.comment,
-        fields: endFields,
+        fields: endEntries.map(({ field }) => field),
       },
     };
-  }, [startTable, endTable, relationships, data]);
+  }, [startTable, endTable, startRelatedFieldKeys, endRelatedFieldKeys, data]);
 
   const isComposite = (pathValues?.startFieldIndices?.length ?? 0) > 1;
 
