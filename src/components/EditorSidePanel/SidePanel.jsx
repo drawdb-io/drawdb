@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Tabs, TabPane } from "@douyinfe/semi-ui";
 import { IconCode, IconList } from "@douyinfe/semi-icons";
 import { IconTable, IconRelationship } from "../../icons";
@@ -29,7 +29,7 @@ import i18n from "../../i18n/i18n";
 import DBMLEditor from "./DBMLEditor";
 import SqlHeaderTab from "./SqlHeaderTab";
 
-export default function SidePanel({ width, resize, setResize }) {
+export default memo(function SidePanel({ width, resize, setResize }) {
   const { layout, setLayout } = useLayout();
   const { settings } = useSettings();
   const { selectedElement, setSelectedElement } = useSelect();
@@ -210,4 +210,4 @@ export default function SidePanel({ width, resize, setResize }) {
       </div>
     </div>
   );
-}
+});

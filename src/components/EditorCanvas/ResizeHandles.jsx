@@ -11,7 +11,6 @@ export default function ResizeHandles({
   y,
   width,
   height,
-  zoom,
   visible,
   onResize,
   onResizeEnd,
@@ -41,7 +40,7 @@ export default function ResizeHandles({
       width,
       clientX: e.clientX,
       pointerId: e.pointerId,
-      zoom: zoom || 1,
+      zoom: e.currentTarget.ownerSVGElement?.getScreenCTM()?.a || 1,
     };
     setActive(side);
 

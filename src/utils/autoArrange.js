@@ -1,6 +1,10 @@
 import { graphlib, layout } from "@dagrejs/dagre";
 import { tableWidth as defaultTableWidth } from "../data/constants";
-import { getTableHeight, getTableWidth } from "./utils";
+import {
+  getRelatedFieldKeysByTable,
+  getTableHeight,
+  getTableWidth,
+} from "./utils";
 
 const nodeSep = 60;
 const rankSep = 110;
@@ -25,9 +29,14 @@ export function autoArrange(tables, relationships, settings) {
     }
   }
 
+  const relatedFieldKeysByTable = getRelatedFieldKeysByTable(relationships);
   const sizeOf = (table) => ({
     width: getTableWidth(table),
-    height: getTableHeight(table, settings.showComments, relationships),
+    height: getTableHeight(
+      table,
+      settings.showComments,
+      relatedFieldKeysByTable.get(table.id),
+    ),
   });
 
   const connected = movable.filter((table) => connectedIds.has(table.id));

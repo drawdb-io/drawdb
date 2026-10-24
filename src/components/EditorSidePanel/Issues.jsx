@@ -21,7 +21,7 @@ export default function Issues({ dbmlProblems = [] }) {
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-    const findIssues = async () => {
+    const timer = setTimeout(() => {
       const newIssues = getIssues({
         tables: tables,
         relationships: relationships,
@@ -34,9 +34,9 @@ export default function Issues({ dbmlProblems = [] }) {
       if (!arrayIsEqual(newIssues, issues)) {
         setIssues(newIssues);
       }
-    };
+    }, 300);
 
-    findIssues();
+    return () => clearTimeout(timer);
   }, [tables, relationships, issues, types, database, enums, views]);
 
   const badgeCount = settings.strictMode

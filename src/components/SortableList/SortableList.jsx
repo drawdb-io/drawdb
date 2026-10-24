@@ -1,3 +1,4 @@
+import { memo, useRef } from "react";
 import {
   closestCenter,
   DndContext,
@@ -12,6 +13,10 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableItem } from "./SortableItem";
 
+const SortableRow = memo(function SortableRow({ item, index, renderItem }) {
+  return <SortableItem id={item.id}>{renderItem(item, index)}</SortableItem>;
+});
+
 export function SortableList({
   items,
   onChange,
@@ -20,6 +25,15 @@ export function SortableList({
   keyPrefix,
 }) {
   const sensors = useSensors(useSensor(PointerSensor));
+  const idsRef = useRef([]);
+
+  const ids = items.map((item) => item.id);
+  if (
+    ids.length !== idsRef.current.length ||
+    ids.some((id, i) => id !== idsRef.current[i])
+  ) {
+    idsRef.current = ids;
+  }
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -39,14 +53,17 @@ export function SortableList({
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={idsRef.current}
+        strategy={verticalListSortingStrategy}
+      >
         {items.map((item, i) => (
-          <SortableItem
-            id={item.id}
+          <SortableRow
             key={`${keyPrefix}-sortable-item-${item.id}`}
-          >
-            {renderItem(item, i)}
-          </SortableItem>
+            item={item}
+            index={i}
+            renderItem={renderItem}
+          />
         ))}
       </SortableContext>
     </DndContext>

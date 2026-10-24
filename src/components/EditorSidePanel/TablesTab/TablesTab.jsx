@@ -1,3 +1,4 @@
+import { memo, useContext } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
 import { IconEyeOpened, IconEyeClosed } from "@douyinfe/semi-icons";
 import { IconPlus } from "@douyinfe/semi-icons";
@@ -6,9 +7,10 @@ import {
   useDiagram,
   useSaveState,
   useLayout,
-  useUndoRedo,
   useSettings,
 } from "../../../hooks";
+import { DiagramActionsContext } from "../../../context/DiagramContext";
+import { UndoRedoActionsContext } from "../../../context/UndoRedoContext";
 import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 import { DragHandle } from "../../SortableList/DragHandle";
@@ -65,7 +67,7 @@ export default function TablesTab() {
             items={tables}
             onChange={(newTables) => setTables(newTables)}
             afterChange={() => setSaveState(State.SAVING)}
-            renderItem={(item) => <TableListItem table={item} />}
+            renderItem={renderTableListItem}
           />
         </Collapse>
       )}
@@ -73,10 +75,12 @@ export default function TablesTab() {
   );
 }
 
-function TableListItem({ table }) {
+const renderTableListItem = (table) => <TableListItem table={table} />;
+
+const TableListItem = memo(function TableListItem({ table }) {
   const { layout } = useLayout();
-  const { updateTable } = useDiagram();
-  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { updateTable } = useContext(DiagramActionsContext);
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoActionsContext);
   const { settings } = useSettings();
   const { t } = useTranslation();
 
@@ -141,4 +145,4 @@ function TableListItem({ table }) {
       </Collapse.Panel>
     </div>
   );
-}
+});

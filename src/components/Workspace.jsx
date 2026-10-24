@@ -508,12 +508,18 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     views?.length,
     types?.length,
     relationships?.length,
-    transform.zoom,
     title,
     gistId,
     sqlHeader,
     setSaveState,
   ]);
+
+  useEffect(() => {
+    if (!settings.autosave || tables.length === 0) return;
+
+    const timer = setTimeout(() => setSaveState(State.SAVING), 500);
+    return () => clearTimeout(timer);
+  }, [transform.zoom, settings.autosave, tables.length, setSaveState]);
 
   useEffect(() => {
     if (layout.readOnly) return;

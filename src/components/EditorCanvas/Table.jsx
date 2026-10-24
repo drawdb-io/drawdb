@@ -27,14 +27,9 @@ import {
   SideSheet,
   Divider,
 } from "@douyinfe/semi-ui";
-import {
-  useLayout,
-  useSettings,
-  useDiagram,
-  useSelect,
-  useUndoRedo,
-} from "../../hooks";
+import { useLayout, useSettings, useDiagram, useSelect } from "../../hooks";
 import { DiagramActionsContext } from "../../context/DiagramContext";
+import { UndoRedoActionsContext } from "../../context/UndoRedoContext";
 import { SelectActionsContext } from "../../context/SelectContext";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
@@ -47,17 +42,17 @@ import {
   getTableHeight,
   getTableWidth,
   getVisibleFieldEntries,
-  getVisibleFields,
   getRelationshipFields,
 } from "../../utils/utils";
 import ResizeHandles from "./ResizeHandles";
 
+const shadowInset = 12;
+
 export default memo(function Table({
   tableData,
   isSelected,
-  zoom,
   database,
-  relationships,
+  relatedFieldKeys,
   onPointerDown,
   setHoveredTable,
   handleGripField,
@@ -70,7 +65,7 @@ export default memo(function Table({
   const { addTable, deleteTable, deleteField, updateTable } = useContext(
     DiagramActionsContext,
   );
-  const { setUndoStack, setRedoStack } = useUndoRedo();
+  const { setUndoStack, setRedoStack } = useContext(UndoRedoActionsContext);
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { setSelectedElement, setBulkSelectedElements } =
@@ -83,20 +78,19 @@ export default memo(function Table({
 
   const width = getTableWidth(tableData);
 
-  const height = getTableHeight(
-    tableData,
-    settings.showComments,
-    relationships,
+  const height = useMemo(
+    () => getTableHeight(tableData, settings.showComments, relatedFieldKeys),
+    [tableData, settings.showComments, relatedFieldKeys],
   );
 
   const visibleFieldEntries = useMemo(
-    () => getVisibleFieldEntries(tableData, relationships),
-    [tableData, relationships],
+    () => getVisibleFieldEntries(tableData, relatedFieldKeys),
+    [tableData, relatedFieldKeys],
   );
 
   const visibleFields = useMemo(
-    () => getVisibleFields(tableData, relationships),
-    [tableData, relationships],
+    () => visibleFieldEntries.map(({ field }) => field),
+    [visibleFieldEntries],
   );
 
   const toggleTableCollapse = (e) => {
@@ -243,18 +237,19 @@ export default memo(function Table({
     <>
       <foreignObject
         key={tableData.id}
-        x={tableData.x}
-        y={tableData.y}
-        width={width}
-        height={height}
-        className="group drop-shadow-lg rounded-md cursor-move"
+        x={tableData.x - shadowInset}
+        y={tableData.y - shadowInset}
+        width={width + shadowInset * 2}
+        height={height + shadowInset * 2}
+        className="group"
         onPointerDown={() => onPointerDown(tableData, ObjectType.TABLE)}
         onPointerEnter={(e) => e.isPrimary && setHovered(true)}
         onPointerLeave={(e) => e.isPrimary && setHovered(false)}
       >
-        <div
-          onDoubleClick={openEditor}
-          className={`border-2 hover:border-dashed hover:border-blue-500
+        <div className="pointer-events-none" style={{ padding: shadowInset }}>
+          <div
+            onDoubleClick={openEditor}
+            className={`pointer-events-auto cursor-move shadow-[0_4px_4px_rgb(0_0_0/0.15)] border-2 hover:border-dashed hover:border-blue-500
                select-none rounded-lg w-full ${
                  settings.mode === "light"
                    ? "bg-zinc-100 text-zinc-800"
@@ -266,159 +261,160 @@ export default memo(function Table({
                      ? "border-solid border-blue-500"
                      : borderColor
                }`}
-          style={{ direction: "ltr" }}
-        >
-          <div
-            className="h-[10px] w-full rounded-t-md"
-            style={{ backgroundColor: tableData.color }}
-          />
-          <div
-            className={`${
-              visibleFieldEntries.length === 0
-                ? "rounded-b-md"
-                : "border-b border-gray-400"
-            } ${
-              settings.mode === "light" ? "bg-zinc-100" : "bg-zinc-900"
-            } ${tableData.comment && settings.showComments ? "pb-3" : ""}`}
+            style={{ direction: "ltr" }}
           >
             <div
-              className={`overflow-hidden font-bold h-[40px] flex justify-between items-center gap-2`}
+              className="h-[10px] w-full rounded-t-md"
+              style={{ backgroundColor: tableData.color }}
+            />
+            <div
+              className={`${
+                visibleFieldEntries.length === 0
+                  ? "rounded-b-md"
+                  : "border-b border-gray-400"
+              } ${
+                settings.mode === "light" ? "bg-zinc-100" : "bg-zinc-900"
+              } ${tableData.comment && settings.showComments ? "pb-3" : ""}`}
             >
-              <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">
-                {tableData.name}
-              </div>
-              <div className="hidden group-hover:flex items-center shrink-0 pe-2">
-                <ButtonGroup
-                  type="tertiary"
-                  size="small"
-                  aria-label={t("table_actions")}
-                >
-                  <Button
-                    size="small"
+              <div
+                className={`overflow-hidden font-bold h-[40px] flex justify-between items-center gap-2`}
+              >
+                <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">
+                  {tableData.name}
+                </div>
+                <div className="hidden group-hover:flex items-center shrink-0 pe-2">
+                  <ButtonGroup
                     type="tertiary"
-                    title={
-                      tableData.locked ? t("unlock_table") : t("lock_table")
-                    }
-                    icon={
-                      tableData.locked ? (
-                        <IconLock size="small" />
-                      ) : (
-                        <IconUnlock size="small" />
-                      )
-                    }
-                    disabled={layout.readOnly}
-                    onClick={lockUnlockTable}
-                  />
-                  <Button
                     size="small"
-                    type="tertiary"
-                    icon={
-                      tableData.collapsed ? (
-                        <IconChevronDown size="small" />
-                      ) : (
-                        <IconChevronUp size="small" />
-                      )
-                    }
-                    disabled={layout.readOnly}
-                    aria-label={
-                      tableData.collapsed
-                        ? t("expand_unlinked_columns")
-                        : t("collapse_unlinked_columns")
-                    }
-                    title={
-                      tableData.collapsed
-                        ? t("expand_unlinked_columns")
-                        : t("collapse_unlinked_columns")
-                    }
-                    onClick={toggleTableCollapse}
-                    onPointerDown={(e) => e.stopPropagation()}
-                  />
-                  <Popover
-                    key={tableData.id}
-                    content={
-                      <div className="popover-theme flex flex-col py-1 min-w-[160px]">
-                        <Button
-                          icon={<IconEditStroked />}
-                          type="tertiary"
-                          theme="borderless"
-                          block
-                          style={{ justifyContent: "flex-start" }}
-                          onClick={openEditor}
-                        >
-                          {t("edit")}
-                        </Button>
-                        <Button
-                          icon={<IconCopyStroked />}
-                          type="tertiary"
-                          theme="borderless"
-                          block
-                          style={{ justifyContent: "flex-start" }}
-                          onClick={duplicateTable}
-                          disabled={layout.readOnly}
-                        >
-                          {t("duplicate")}
-                        </Button>
-                        <Divider className="!my-1" />
-                        <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
-                          theme="borderless"
-                          block
-                          style={{ justifyContent: "flex-start" }}
-                          onClick={() => deleteTable(tableData.id)}
-                          disabled={layout.readOnly}
-                        >
-                          {t("delete")}
-                        </Button>
-                      </div>
-                    }
-                    position="rightTop"
-                    style={{ padding: 8 }}
-                    showArrow
-                    trigger="click"
+                    aria-label={t("table_actions")}
                   >
                     <Button
                       size="small"
                       type="tertiary"
-                      icon={<IconMore size="small" />}
-                      title={t("see_more")}
+                      title={
+                        tableData.locked ? t("unlock_table") : t("lock_table")
+                      }
+                      icon={
+                        tableData.locked ? (
+                          <IconLock size="small" />
+                        ) : (
+                          <IconUnlock size="small" />
+                        )
+                      }
+                      disabled={layout.readOnly}
+                      onClick={lockUnlockTable}
                     />
-                  </Popover>
-                </ButtonGroup>
+                    <Button
+                      size="small"
+                      type="tertiary"
+                      icon={
+                        tableData.collapsed ? (
+                          <IconChevronDown size="small" />
+                        ) : (
+                          <IconChevronUp size="small" />
+                        )
+                      }
+                      disabled={layout.readOnly}
+                      aria-label={
+                        tableData.collapsed
+                          ? t("expand_unlinked_columns")
+                          : t("collapse_unlinked_columns")
+                      }
+                      title={
+                        tableData.collapsed
+                          ? t("expand_unlinked_columns")
+                          : t("collapse_unlinked_columns")
+                      }
+                      onClick={toggleTableCollapse}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    />
+                    <Popover
+                      key={tableData.id}
+                      content={
+                        <div className="popover-theme flex flex-col py-1 min-w-[160px]">
+                          <Button
+                            icon={<IconEditStroked />}
+                            type="tertiary"
+                            theme="borderless"
+                            block
+                            style={{ justifyContent: "flex-start" }}
+                            onClick={openEditor}
+                          >
+                            {t("edit")}
+                          </Button>
+                          <Button
+                            icon={<IconCopyStroked />}
+                            type="tertiary"
+                            theme="borderless"
+                            block
+                            style={{ justifyContent: "flex-start" }}
+                            onClick={duplicateTable}
+                            disabled={layout.readOnly}
+                          >
+                            {t("duplicate")}
+                          </Button>
+                          <Divider className="!my-1" />
+                          <Button
+                            icon={<IconDeleteStroked />}
+                            type="danger"
+                            theme="borderless"
+                            block
+                            style={{ justifyContent: "flex-start" }}
+                            onClick={() => deleteTable(tableData.id)}
+                            disabled={layout.readOnly}
+                          >
+                            {t("delete")}
+                          </Button>
+                        </div>
+                      }
+                      position="rightTop"
+                      style={{ padding: 8 }}
+                      showArrow
+                      trigger="click"
+                    >
+                      <Button
+                        size="small"
+                        type="tertiary"
+                        icon={<IconMore size="small" />}
+                        title={t("see_more")}
+                      />
+                    </Popover>
+                  </ButtonGroup>
+                </div>
               </div>
+              {tableData.comment && settings.showComments && (
+                <div className="text-xs px-3 line-clamp-5">
+                  {tableData.comment}
+                </div>
+              )}
             </div>
-            {tableData.comment && settings.showComments && (
-              <div className="text-xs px-3 line-clamp-5">
-                {tableData.comment}
-              </div>
-            )}
-          </div>
 
-          {visibleFieldEntries.map(({ field: e }, i) => {
-            return settings.showFieldSummary ? (
-              <Popover
-                key={e.id ?? i}
-                content={
-                  <FieldSummary
-                    field={e}
-                    tableId={tableData.id}
-                    database={database}
-                  />
-                }
-                position="right"
-                showArrow
-                style={
-                  isRtl(i18n.language)
-                    ? { direction: "rtl" }
-                    : { direction: "ltr" }
-                }
-              >
-                {field(e, i)}
-              </Popover>
-            ) : (
-              field(e, i)
-            );
-          })}
+            {visibleFieldEntries.map(({ field: e }, i) => {
+              return settings.showFieldSummary ? (
+                <Popover
+                  key={e.id ?? i}
+                  content={
+                    <FieldSummary
+                      field={e}
+                      tableId={tableData.id}
+                      database={database}
+                    />
+                  }
+                  position="right"
+                  showArrow
+                  style={
+                    isRtl(i18n.language)
+                      ? { direction: "rtl" }
+                      : { direction: "ltr" }
+                  }
+                >
+                  {field(e, i)}
+                </Popover>
+              ) : (
+                field(e, i)
+              );
+            })}
+          </div>
         </div>
       </foreignObject>
       {!layout.readOnly && !tableData.locked && (
@@ -427,14 +423,12 @@ export default memo(function Table({
           y={tableData.y}
           width={width}
           height={height}
-          zoom={zoom}
           visible={hovered}
           onResize={resizeTable}
           onResizeEnd={commitResize}
           onEngagedChange={setResizeEngaged}
         />
       )}
-      <TableEditSheet tableData={tableData} />
     </>
   );
 
@@ -651,21 +645,24 @@ function FieldSummary({ field: e, tableId, database }) {
   );
 }
 
-function TableEditSheet({ tableData }) {
+export function TableEditSheet() {
   const { layout } = useLayout();
   const { selectedElement, setSelectedElement } = useSelect();
+  const { tables } = useDiagram();
   const { t } = useTranslation();
+
+  const tableData =
+    selectedElement.element === ObjectType.TABLE &&
+    selectedElement.open &&
+    !layout.sidebar
+      ? tables.find((table) => table.id === selectedElement.id)
+      : null;
 
   return (
     <SideSheet
       title={t("edit")}
       size="small"
-      visible={
-        selectedElement.element === ObjectType.TABLE &&
-        selectedElement.id === tableData.id &&
-        selectedElement.open &&
-        !layout.sidebar
-      }
+      visible={Boolean(tableData)}
       onCancel={() =>
         setSelectedElement((prev) => ({
           ...prev,
@@ -675,7 +672,7 @@ function TableEditSheet({ tableData }) {
       style={{ paddingBottom: "16px" }}
     >
       <div className="sidesheet-theme">
-        <TableInfo data={tableData} />
+        {tableData && <TableInfo data={tableData} />}
       </div>
     </SideSheet>
   );

@@ -175,6 +175,24 @@ export default function DiagramContextProvider({ children }) {
     }
   };
 
+  const updateTables = (updatesById) => {
+    setTables((prev) =>
+      prev.map((t) =>
+        updatesById.has(t.id) ? { ...t, ...updatesById.get(t.id) } : t,
+      ),
+    );
+    if (shouldEmit()) {
+      updatesById.forEach((updatedValues, id) => {
+        emitDelta({
+          target: "table",
+          action: "update",
+          entityId: id,
+          data: [id, updatedValues],
+        });
+      });
+    }
+  };
+
   const updateField = (tid, fid, updatedValues) => {
     setTables((prev) =>
       prev.map((table) => {
@@ -335,6 +353,7 @@ export default function DiagramContextProvider({ children }) {
   latestActionsRef.current = {
     addTable,
     updateTable,
+    updateTables,
     updateField,
     deleteField,
     deleteTable,
