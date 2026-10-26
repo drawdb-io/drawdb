@@ -262,7 +262,7 @@ export default function ControlPanel({
       if (a.element === ObjectType.TABLE) {
         deleteTable(a.data.table.id, false);
       } else if (a.element === ObjectType.AREA) {
-        deleteArea(areas[areas.length - 1].id, false);
+        deleteArea(a.data.id, false);
       } else if (a.element === ObjectType.NOTE) {
         deleteNote(notes[notes.length - 1].id, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
@@ -281,10 +281,8 @@ export default function ControlPanel({
         setRedoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
-        setRedoStack((prev) => [
-          ...prev,
-          { ...a, x: areas[a.id].x, y: areas[a.id].y },
-        ]);
+        const { x, y } = areas.find((area) => area.id === a.id);
+        setRedoStack((prev) => [...prev, { ...a, x, y }]);
         updateArea(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.NOTE) {
         setRedoStack((prev) => [
@@ -302,7 +300,7 @@ export default function ControlPanel({
       } else if (a.element === ObjectType.NOTE) {
         addNote(a.data, false);
       } else if (a.element === ObjectType.AREA) {
-        addArea(a.data, false);
+        addArea(a.data, false, a.index);
       } else if (a.element === ObjectType.TYPE) {
         addType(a.data, false);
       } else if (a.element === ObjectType.ENUM) {
@@ -480,7 +478,7 @@ export default function ControlPanel({
       if (a.element === ObjectType.TABLE) {
         addTable(a.data, false);
       } else if (a.element === ObjectType.AREA) {
-        addArea(null, false);
+        addArea(a.data, false);
       } else if (a.element === ObjectType.NOTE) {
         addNote(null, false);
       } else if (a.element === ObjectType.RELATIONSHIP) {
@@ -499,10 +497,8 @@ export default function ControlPanel({
         setUndoStack((prev) => [...prev, { ...a, x, y }]);
         updateTable(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.AREA) {
-        setUndoStack((prev) => [
-          ...prev,
-          { ...a, x: areas[a.id].x, y: areas[a.id].y },
-        ]);
+        const { x, y } = areas.find((area) => area.id === a.id);
+        setUndoStack((prev) => [...prev, { ...a, x, y }]);
         updateArea(a.id, { x: a.x, y: a.y });
       } else if (a.element === ObjectType.NOTE) {
         setUndoStack((prev) => [
@@ -962,14 +958,16 @@ export default function ControlPanel({
           id: notes.length,
         });
         break;
-      case ObjectType.AREA:
+      case ObjectType.AREA: {
+        const copiedArea = areas.find((a) => a.id === selectedElement.id);
         addArea({
-          ...areas[selectedElement.id],
-          x: areas[selectedElement.id].x + 20,
-          y: areas[selectedElement.id].y + 20,
-          id: areas.length,
+          ...copiedArea,
+          x: copiedArea.x + 20,
+          y: copiedArea.y + 20,
+          id: nanoid(),
         });
         break;
+      }
       case ObjectType.VIEW: {
         const copiedView = views.find((v) => v.id === selectedElement.id);
         addView({
@@ -1009,7 +1007,9 @@ export default function ControlPanel({
         break;
       case ObjectType.AREA:
         navigator.clipboard
-          .writeText(JSON.stringify({ ...areas[selectedElement.id] }))
+          .writeText(
+            JSON.stringify(areas.find((a) => a.id === selectedElement.id)),
+          )
           .catch(() => Toast.error(t("oops_smth_went_wrong")));
         break;
       case ObjectType.VIEW:
@@ -1065,7 +1065,7 @@ export default function ControlPanel({
           ...obj,
           x: obj.x + 20,
           y: obj.y + 20,
-          id: areas.length,
+          id: nanoid(),
         });
       } else if (v.validate(obj, noteSchema).valid) {
         addNote({

@@ -6,7 +6,7 @@ import { useAreas, useLayout, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
-export default function AreaInfo({ data, i }) {
+export default function AreaInfo({ data }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const { deleteArea, updateArea } = useAreas();
@@ -35,7 +35,7 @@ export default function AreaInfo({ data, i }) {
         {
           action: Action.EDIT,
           element: ObjectType.AREA,
-          aid: i,
+          aid: data.id,
           undo: { color: undoColor },
           redo: { color: color },
           message: t("edit_area", {
@@ -64,7 +64,7 @@ export default function AreaInfo({ data, i }) {
             {
               action: Action.EDIT,
               element: ObjectType.AREA,
-              aid: i,
+              aid: data.id,
               undo: editField,
               redo: { name: e.target.value },
               message: t("edit_area", {
@@ -80,14 +80,14 @@ export default function AreaInfo({ data, i }) {
         usePopover={true}
         value={data.color}
         readOnly={layout.readOnly}
-        onChange={(color) => updateArea(i, { color })}
+        onChange={(color) => updateArea(data.id, { color })}
         onColorPick={(color) => handleColorPick(color)}
       />
       <Button
         type="danger"
         disabled={layout.readOnly}
         icon={<IconDeleteStroked />}
-        onClick={() => deleteArea(i, true)}
+        onClick={() => deleteArea(data.id, true)}
       />
     </div>
   );

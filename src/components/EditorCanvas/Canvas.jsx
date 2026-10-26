@@ -578,11 +578,12 @@ export default function Canvas() {
   };
 
   const didResize = (id) => {
+    const area = areas.find((a) => a.id === id);
     return !(
-      areas[id].x === areaInitDimensions.x &&
-      areas[id].y === areaInitDimensions.y &&
-      areas[id].width === areaInitDimensions.width &&
-      areas[id].height === areaInitDimensions.height
+      area.x === areaInitDimensions.x &&
+      area.y === areaInitDimensions.y &&
+      area.width === areaInitDimensions.width &&
+      area.height === areaInitDimensions.height
     );
   };
 
@@ -648,6 +649,7 @@ export default function Canvas() {
     setLinking(false);
 
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
+      const resizedArea = areas.find((a) => a.id === areaResize.id);
       setUndoStack((prev) => [
         ...prev,
         {
@@ -655,15 +657,15 @@ export default function Canvas() {
           element: ObjectType.AREA,
           aid: areaResize.id,
           undo: {
-            ...areas[areaResize.id],
+            ...resizedArea,
             x: areaInitDimensions.x,
             y: areaInitDimensions.y,
             width: areaInitDimensions.width,
             height: areaInitDimensions.height,
           },
-          redo: areas[areaResize.id],
+          redo: resizedArea,
           message: t("edit_area", {
-            areaName: areas[areaResize.id].name,
+            areaName: resizedArea.name,
             extra: "[resize]",
           }),
         },
