@@ -3,6 +3,7 @@ export const tableSchema = {
   properties: {
     id: { type: ["integer", "string"] },
     name: { type: "string" },
+    areaId: { type: ["integer", "string", "null"] },
     x: { type: "number" },
     y: { type: "number" },
     width: { type: "number" },
@@ -89,6 +90,7 @@ export const areaSchema = {
     width: { type: "number" },
     height: { type: "number" },
     locked: { type: "boolean" },
+    hidden: { type: "boolean" },
     color: { type: "string", pattern: "^#[0-9a-fA-F]{6}$" },
   },
   required: ["id", "name", "x", "y", "width", "height", "color"],

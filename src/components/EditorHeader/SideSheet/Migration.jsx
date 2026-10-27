@@ -52,6 +52,7 @@ export default function Migration({
         "width",
         "height",
         "locked",
+        "areaId",
         "color",
         "title",
         "transform",

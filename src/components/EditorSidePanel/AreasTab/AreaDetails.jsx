@@ -1,8 +1,17 @@
 import { useState, useRef } from "react";
 import { Button, Input } from "@douyinfe/semi-ui";
 import ColorPicker from "../ColorPicker";
-import { IconDeleteStroked } from "@douyinfe/semi-icons";
-import { useAreas, useLayout, useUndoRedo } from "../../../hooks";
+import {
+  IconDeleteStroked,
+  IconEyeClosed,
+  IconEyeOpened,
+} from "@douyinfe/semi-icons";
+import {
+  useAreaMembership,
+  useAreas,
+  useLayout,
+  useUndoRedo,
+} from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +19,7 @@ export default function AreaInfo({ data }) {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const { deleteArea, updateArea } = useAreas();
+  const { toggleAreaHidden } = useAreaMembership();
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const initialColorRef = useRef(data.color);
@@ -82,6 +92,13 @@ export default function AreaInfo({ data }) {
         readOnly={layout.readOnly}
         onChange={(color) => updateArea(data.id, { color })}
         onColorPick={(color) => handleColorPick(color)}
+      />
+      <Button
+        theme="borderless"
+        type="tertiary"
+        disabled={layout.readOnly}
+        icon={data.hidden ? <IconEyeClosed /> : <IconEyeOpened />}
+        onClick={() => toggleAreaHidden(data)}
       />
       <Button
         type="danger"

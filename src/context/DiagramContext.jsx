@@ -351,6 +351,8 @@ export default function DiagramContextProvider({ children }) {
 
   const latestActionsRef = useRef(null);
   latestActionsRef.current = {
+    getTables: () => tables,
+    getRelationships: () => relationships,
     addTable,
     updateTable,
     updateTables,
