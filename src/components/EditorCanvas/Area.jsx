@@ -10,6 +10,8 @@ import ColorPicker from "../EditorSidePanel/ColorPicker";
 import {
   IconEdit,
   IconDeleteStroked,
+  IconEyeClosed,
+  IconEyeOpened,
   IconLock,
   IconUnlock,
 } from "@douyinfe/semi-icons";
@@ -21,23 +23,29 @@ import {
   useSelect,
   useAreas,
   useSaveState,
+  useAreaMembership,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useHover } from "usehooks-ts";
 
+const collapsedHeight = 40;
+
 export default memo(function Area({
   data,
+  tableCount,
   onPointerDown,
   setResize,
   setInitDimensions,
 }) {
   const { t } = useTranslation();
   const ref = useRef(null);
+
   const isHovered = useHover(ref);
   const { layout } = useLayout();
   const { settings } = useSettings();
   const { setSaveState } = useSaveState();
   const { updateArea } = useAreas();
+  const { toggleAreaHidden } = useAreaMembership();
   const {
     selectedElement,
     setSelectedElement,
@@ -151,6 +159,47 @@ export default memo(function Area({
     );
   }, [selectedElement, data, bulkSelectedElements]);
 
+  const borderClass = isHovered
+    ? "border-dashed border-blue-500"
+    : isSelected
+      ? "border-blue-500"
+      : "border-slate-400";
+
+  if (data.hidden) {
+    return (
+      <g ref={ref}>
+        <foreignObject
+          x={data.x}
+          y={data.y}
+          width={Math.max(Math.min(data.width, 280), 180)}
+          height={collapsedHeight}
+          onPointerDown={() => onPointerDown(data, ObjectType.AREA)}
+        >
+          <div
+            className={`w-full h-full px-2 rounded cursor-move border-2 flex items-center gap-2 ${borderClass}`}
+            style={{ backgroundColor: `${data.color}66` }}
+            onDoubleClick={edit}
+          >
+            <div className="text-color select-none overflow-hidden text-ellipsis whitespace-nowrap font-semibold">
+              {data.name}
+            </div>
+            <div className="text-color select-none whitespace-nowrap text-xs opacity-70 flex-1">
+              {t("area_table_count", { count: tableCount })}
+            </div>
+            <Button
+              size="small"
+              type="tertiary"
+              theme="borderless"
+              icon={<IconEyeClosed size="small" />}
+              onClick={() => toggleAreaHidden(data)}
+              disabled={layout.readOnly}
+            />
+          </div>
+        </foreignObject>
+      </g>
+    );
+  }
+
   return (
     <g ref={ref}>
       <foreignObject
@@ -162,13 +211,7 @@ export default memo(function Area({
         onPointerDown={() => onPointerDown(data, ObjectType.AREA)}
       >
         <div
-          className={`w-full h-full p-2 rounded cursor-move border-2 ${
-            isHovered
-              ? "border-dashed border-blue-500"
-              : isSelected
-                ? "border-blue-500 opacity-100"
-                : "border-slate-400 opacity-100"
-          }`}
+          className={`w-full h-full p-2 rounded cursor-move border-2 ${borderClass}`}
           style={{ backgroundColor: `${data.color}66` }}
           onDoubleClick={edit}
         >
@@ -193,6 +236,13 @@ export default memo(function Area({
                     )
                   }
                   onClick={lockUnlockArea}
+                  disabled={layout.readOnly}
+                />
+                <Button
+                  size="small"
+                  type="tertiary"
+                  icon={<IconEyeOpened size="small" />}
+                  onClick={() => toggleAreaHidden(data)}
                   disabled={layout.readOnly}
                 />
                 <Popover

@@ -158,6 +158,8 @@ const en = {
       "This feature is meant for object-relational DBMSs like PostgreSQL.\nIf used for MySQL or MariaDB a JSON type will be generated with the corresponding json validation check.\nIf used for SQLite it will be translated to a BLOB.\nIf used for MSSQL a type alias to the first column will be generated.",
     table_deleted: "Table deleted",
     area_deleted: "Area deleted",
+    area_table_count_one: "{{count}} table",
+    area_table_count_other: "{{count}} tables",
     note_deleted: "Note deleted",
     relationship_deleted: "Relationship deleted",
     type_deleted: "Type deleted",

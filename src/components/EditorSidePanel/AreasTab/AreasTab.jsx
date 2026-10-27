@@ -33,8 +33,8 @@ export default function AreasTab() {
         />
       ) : (
         <div className="p-2">
-          {areas.map((a, i) => (
-            <AreaInfo data={a} key={"area_" + i} i={i} />
+          {areas.map((a) => (
+            <AreaInfo data={a} key={a.id} />
           ))}
         </div>
       )}

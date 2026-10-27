@@ -30,23 +30,31 @@ import {
   useSaveState,
   useCollab,
   useViews,
+  useAreaMembership,
 } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import { useEventListener } from "usehooks-ts";
 import {
   areFieldsCompatible,
   getRelatedFieldKeysByTable,
-  getTableHeight,
-  getTableWidth,
 } from "../../utils/utils";
 import {
   getViewHeight,
   getViewWidth,
   resolveViewColumns,
 } from "../../utils/views";
-import { getRectFromEndpoints, isInsideRect } from "../../utils/rect";
+import {
+  findContainingArea,
+  getRectFromEndpoints,
+  isInsideRect,
+} from "../../utils/rect";
 import { State, noteWidth } from "../../data/constants";
 import { nanoid } from "nanoid";
+
+const noHiddenAreas = {
+  areaHiddenTableIds: new Set(),
+  tableCountByArea: new Map(),
+};
 
 const notDragging = {
   id: -1,
@@ -145,6 +153,7 @@ export default function Canvas() {
     metaKey: false,
   });
   const elementPointerDownRef = useRef(null);
+  const carriedTablesRef = useRef([]);
   const handleElementPointerDown = useCallback((element, type) => {
     elementPointerDownRef.current = { element, type };
   }, []);
@@ -180,6 +189,27 @@ export default function Canvas() {
     return ids;
   }, [bulkSelectedElements, selectedElement.element, selectedElement.id]);
 
+  const { getTableRect, resolveAreaId, persistInferredAreaIds } =
+    useAreaMembership();
+
+  const { areaHiddenTableIds, tableCountByArea } = useMemo(() => {
+    const hiddenAreaIds = new Set(
+      areas.filter((a) => a.hidden).map((a) => a.id),
+    );
+    if (hiddenAreaIds.size === 0) return noHiddenAreas;
+    const areaHiddenTableIds = new Set();
+    const tableCountByArea = new Map();
+    tables.forEach((table) => {
+      if (!hiddenAreaIds.has(table.areaId)) return;
+      areaHiddenTableIds.add(table.id);
+      tableCountByArea.set(
+        table.areaId,
+        (tableCountByArea.get(table.areaId) ?? 0) + 1,
+      );
+    });
+    return { areaHiddenTableIds, tableCountByArea };
+  }, [areas, tables]);
+
   const isSameElement = (el1, el2) => {
     return el1.id === el2.id && el1.type === el2.type;
   };
@@ -199,7 +229,7 @@ export default function Canvas() {
     };
 
     tables.forEach((table) => {
-      if (table.locked) return;
+      if (table.locked || areaHiddenTableIds.has(table.id)) return;
 
       const element = {
         id: table.id,
@@ -207,17 +237,7 @@ export default function Canvas() {
         currentCoords: { x: table.x, y: table.y },
         initialCoords: { x: table.x, y: table.y },
       };
-      const tableRect = {
-        x: table.x,
-        y: table.y,
-        width: getTableWidth(table),
-        height: getTableHeight(
-          table,
-          settings.showComments,
-          relatedFieldKeysByTable.get(table.id),
-        ),
-      };
-      if (shouldAddElement(tableRect, element)) {
+      if (shouldAddElement(getTableRect(table), element)) {
         elements.push(element);
       }
     });
@@ -247,7 +267,7 @@ export default function Canvas() {
     });
 
     areas.forEach((area) => {
-      if (area.locked) return;
+      if (area.locked || area.hidden) return;
 
       const element = {
         id: area.id,
@@ -354,9 +374,32 @@ export default function Canvas() {
       return;
     }
 
+    const dragSet = isSelected ? bulkSelectedElements : [elementInBulk];
     if (!isSelected) {
-      setBulkSelectedElements([elementInBulk]);
+      setBulkSelectedElements(dragSet);
     }
+    const draggedAreaIds = new Set(
+      dragSet.filter((el) => el.type === ObjectType.AREA).map((el) => el.id),
+    );
+    const draggedTableIds = new Set(
+      dragSet.filter((el) => el.type === ObjectType.TABLE).map((el) => el.id),
+    );
+    carriedTablesRef.current =
+      draggedAreaIds.size === 0
+        ? []
+        : tables
+            .filter(
+              (table) =>
+                !table.locked &&
+                !draggedTableIds.has(table.id) &&
+                draggedAreaIds.has(resolveAreaId(table, areas)),
+            )
+            .map((table) => ({
+              id: table.id,
+              initialCoords: { x: table.x, y: table.y },
+              currentCoords: { x: table.x, y: table.y },
+            }));
+    if (draggedAreaIds.size > 0) persistInferredAreaIds(areas);
     setDragging({
       id: element.id,
       type,
@@ -418,7 +461,7 @@ export default function Canvas() {
           y: pointer.spaces.diagram.y - dragging.grabOffset.y,
         });
 
-      const { currentCoords } = bulkSelectedElements.find((el) =>
+      const { currentCoords, initialCoords } = bulkSelectedElements.find((el) =>
         isSameElement(el, dragging),
       );
 
@@ -448,6 +491,14 @@ export default function Canvas() {
           ...el,
           currentCoords: elementFinalCoords,
         });
+      });
+
+      carriedTablesRef.current.forEach((carried) => {
+        carried.currentCoords = {
+          x: carried.initialCoords.x + mainElementFinalX - initialCoords.x,
+          y: carried.initialCoords.y + mainElementFinalY - initialCoords.y,
+        };
+        tableUpdates.set(carried.id, carried.currentCoords);
       });
 
       if (tableUpdates.size > 0) updateTables(tableUpdates);
@@ -578,11 +629,12 @@ export default function Canvas() {
   };
 
   const didResize = (id) => {
+    const area = areas.find((a) => a.id === id);
     return !(
-      areas[id].x === areaInitDimensions.x &&
-      areas[id].y === areaInitDimensions.y &&
-      areas[id].width === areaInitDimensions.width &&
-      areas[id].height === areaInitDimensions.height
+      area.x === areaInitDimensions.x &&
+      area.y === areaInitDimensions.y &&
+      area.width === areaInitDimensions.width &&
+      area.height === areaInitDimensions.height
     );
   };
 
@@ -601,18 +653,65 @@ export default function Canvas() {
     if (!e.isPrimary) return;
 
     if (didDrag()) {
+      const movedAreas = bulkSelectedElements.filter(
+        (el) => el.type === ObjectType.AREA,
+      );
+      const movedAreaIds = new Set(movedAreas.map((el) => el.id));
+      const areasAt = (coordsKey) =>
+        areas.map((area) => {
+          const moved = movedAreas.find((el) => el.id === area.id);
+          return moved ? { ...area, ...moved[coordsKey] } : area;
+        });
+      const areasBefore = areasAt("initialCoords");
+      const areasAfter = areasAt("currentCoords");
+
+      const areaChanges = new Map();
+      bulkSelectedElements.forEach((el) => {
+        if (el.type !== ObjectType.TABLE) return;
+        const table = tablesById.get(el.id);
+        const before = resolveAreaId(table, areasBefore, el.initialCoords);
+        if (movedAreaIds.has(before)) return;
+        const after =
+          findContainingArea(getTableRect(table, el.currentCoords), areasAfter)
+            ?.id ?? null;
+        if (after !== before) areaChanges.set(el.id, { before, after });
+      });
+      if (areaChanges.size > 0) {
+        updateTables(
+          new Map(
+            [...areaChanges].map(([id, { after }]) => [id, { areaId: after }]),
+          ),
+        );
+      }
+
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.MOVE,
           bulk: true,
           message: t("bulk_update"),
-          elements: bulkSelectedElements.map((el) => ({
-            id: el.id,
-            type: el.type,
-            undo: el.initialCoords,
-            redo: el.currentCoords,
-          })),
+          elements: [
+            ...bulkSelectedElements.map((el) => {
+              const change =
+                el.type === ObjectType.TABLE && areaChanges.get(el.id);
+              return {
+                id: el.id,
+                type: el.type,
+                undo: change
+                  ? { ...el.initialCoords, areaId: change.before }
+                  : el.initialCoords,
+                redo: change
+                  ? { ...el.currentCoords, areaId: change.after }
+                  : el.currentCoords,
+              };
+            }),
+            ...carriedTablesRef.current.map((carried) => ({
+              id: carried.id,
+              type: ObjectType.TABLE,
+              undo: carried.initialCoords,
+              redo: carried.currentCoords,
+            })),
+          ],
         },
       ]);
       setRedoStack([]);
@@ -636,6 +735,7 @@ export default function Canvas() {
       }
     }
     setDragging(notDragging);
+    carriedTablesRef.current = [];
 
     if (panning.isPanning && didPan()) {
       setSaveState(State.SAVING);
@@ -648,24 +748,56 @@ export default function Canvas() {
     setLinking(false);
 
     if (areaResize.id !== -1 && didResize(areaResize.id)) {
+      const resizedArea = areas.find((a) => a.id === areaResize.id);
+      const areasBefore = areas.map((a) =>
+        a.id === resizedArea.id ? { ...a, ...areaInitDimensions } : a,
+      );
+      const areaChanges = new Map();
+      tables.forEach((table) => {
+        const before = resolveAreaId(table, areasBefore);
+        if (before !== resizedArea.id && before !== null) return;
+        const rect = getTableRect(table);
+        const stillInside =
+          before === resizedArea.id &&
+          findContainingArea(rect, [resizedArea]) !== null;
+        const after = stillInside
+          ? resizedArea.id
+          : findContainingArea(rect, areas)?.id ?? null;
+        if (after !== before) areaChanges.set(table.id, { before, after });
+      });
+      persistInferredAreaIds(areasBefore);
+      if (areaChanges.size > 0) {
+        updateTables(
+          new Map(
+            [...areaChanges].map(([id, { after }]) => [id, { areaId: after }]),
+          ),
+        );
+      }
+      const { x, y, width, height } = resizedArea;
       setUndoStack((prev) => [
         ...prev,
         {
           action: Action.EDIT,
+          bulk: true,
           element: ObjectType.AREA,
-          aid: areaResize.id,
-          undo: {
-            ...areas[areaResize.id],
-            x: areaInitDimensions.x,
-            y: areaInitDimensions.y,
-            width: areaInitDimensions.width,
-            height: areaInitDimensions.height,
-          },
-          redo: areas[areaResize.id],
           message: t("edit_area", {
-            areaName: areas[areaResize.id].name,
+            areaName: resizedArea.name,
             extra: "[resize]",
           }),
+          elements: [
+            {
+              id: resizedArea.id,
+              type: ObjectType.AREA,
+              undo: areaInitDimensions,
+              redo: { x, y, width, height },
+            },
+            ...[...areaChanges].map(([id, { before, after }]) => ({
+              id,
+              type: ObjectType.TABLE,
+              undo: { areaId: before },
+              redo: { areaId: after },
+            })),
+          ],
         },
       ]);
       setRedoStack([]);
@@ -858,36 +990,42 @@ export default function Canvas() {
             <Area
               key={a.id}
               data={a}
+              tableCount={tableCountByArea.get(a.id) ?? 0}
               setResize={setAreaResize}
               setInitDimensions={setAreaInitDimensions}
               onPointerDown={handleElementPointerDown}
             />
           ))}
-          {relationships.map((e) => (
-            <Relationship
-              key={e.id}
-              data={e}
-              startTable={tablesById.get(e.startTableId)}
-              endTable={tablesById.get(e.endTableId)}
-              startRelatedFieldKeys={relatedFieldKeysByTable.get(
-                e.startTableId,
-              )}
-              endRelatedFieldKeys={relatedFieldKeysByTable.get(e.endTableId)}
-            />
-          ))}
-          {tables.map((table) => (
-            <Table
-              key={table.id}
-              tableData={table}
-              isSelected={selectedTableIds.has(table.id)}
-              database={database}
-              relatedFieldKeys={relatedFieldKeysByTable.get(table.id)}
-              setHoveredTable={setHoveredTable}
-              handleGripField={handleGripField}
-              setLinkingLine={setLinkingLine}
-              onPointerDown={handleElementPointerDown}
-            />
-          ))}
+          {relationships.map((e) =>
+            areaHiddenTableIds.has(e.startTableId) ||
+            areaHiddenTableIds.has(e.endTableId) ? null : (
+              <Relationship
+                key={e.id}
+                data={e}
+                startTable={tablesById.get(e.startTableId)}
+                endTable={tablesById.get(e.endTableId)}
+                startRelatedFieldKeys={relatedFieldKeysByTable.get(
+                  e.startTableId,
+                )}
+                endRelatedFieldKeys={relatedFieldKeysByTable.get(e.endTableId)}
+              />
+            ),
+          )}
+          {tables.map((table) =>
+            areaHiddenTableIds.has(table.id) ? null : (
+              <Table
+                key={table.id}
+                tableData={table}
+                isSelected={selectedTableIds.has(table.id)}
+                database={database}
+                relatedFieldKeys={relatedFieldKeysByTable.get(table.id)}
+                setHoveredTable={setHoveredTable}
+                handleGripField={handleGripField}
+                setLinkingLine={setLinkingLine}
+                onPointerDown={handleElementPointerDown}
+              />
+            ),
+          )}
           {views.map((view) => (
             <View
               key={view.id}
