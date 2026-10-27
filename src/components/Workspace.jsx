@@ -261,22 +261,25 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
   const moveToCloud = useCallback(async () => {
     if (typeof extensions.cloudSave !== "function" || !loadedDiagramId) return;
     setSaveState(State.SAVING);
+    const cloudId = uuidv4();
     try {
-      await extensions.cloudSave(buildCloudPayload(loadedDiagramId), {
-        isNew: true,
-      });
+      await extensions.cloudSave(buildCloudPayload(cloudId), { isNew: true });
       await db.diagrams.where("diagramId").equals(loadedDiagramId).delete();
-      setDiagramSource("cloud");
-      if (typeof cloudLoad === "function") {
-        await cloudLoad(loadedDiagramId);
-      }
       setSaveState(State.SAVED);
       setLastSaved(new Date().toLocaleString());
+      navigate(`/editor/diagrams/${cloudId}`, { replace: true });
     } catch (err) {
       console.warn("move to cloud failed:", err);
       setSaveState(State.ERROR);
     }
-  }, [extensions, loadedDiagramId, buildCloudPayload, setSaveState, cloudLoad]);
+  }, [
+    extensions,
+    loadedDiagramId,
+    buildCloudPayload,
+    setSaveState,
+    setLastSaved,
+    navigate,
+  ]);
 
   const dismissMoveToCloud = () => {
     if (!loadedDiagramId) return;
