@@ -1,0 +1,28 @@
+schema = 1
+name = "drawDB"
+
+[runtime]
+kind = "node"
+version = "24"
+package_manager = "npm"
+
+[[setup.steps]]
+kind = "dependencies"
+locked = true
+
+[[setup.steps]]
+run = ["npm", "run", "build"]
+
+[launch]
+command = ["npm", "run", "preview", "--", "--host", "{host}", "--port", "{port}", "--strictPort"]
+host = "127.0.0.1"
+port = 4335
+
+[health]
+type = "http"
+path = "/"
+timeout_seconds = 90
+
+[persistence]
+# User-created data lives in browser storage, outside the checkout.
+paths = [".env", ".env.local"]
