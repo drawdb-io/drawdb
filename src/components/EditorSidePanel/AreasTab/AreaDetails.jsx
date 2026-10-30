@@ -14,6 +14,7 @@ import {
 } from "../../../hooks";
 import { Action, ObjectType } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
+import { DragHandle } from "../../SortableList/DragHandle";
 
 export default function AreaInfo({ data }) {
   const { t } = useTranslation();
@@ -61,6 +62,7 @@ export default function AreaInfo({ data }) {
 
   return (
     <div id={`scroll_area_${data.id}`} className="my-3 flex gap-2 items-center">
+      <DragHandle readOnly={layout.readOnly} id={data.id} />
       <Input
         value={data.name}
         placeholder={t("name")}
