@@ -8,7 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { Cardinality, ObjectType, Tab } from "../../data/constants";
+import {
+  Cardinality,
+  ObjectType,
+  Tab,
+  darkBgTheme,
+} from "../../data/constants";
+import { relationshipHoverLabel } from "./RelationshipHoverLabel";
 import { calcPath, calcCompositePath } from "../../utils/calcPath";
 import { useSettings, useLayout, useSelect, useDiagram } from "../../hooks";
 import { SelectActionsContext } from "../../context/SelectContext";
@@ -30,6 +36,7 @@ export default memo(function Relationship({
   endTable,
   startRelatedFieldKeys,
   endRelatedFieldKeys,
+  shortLabel,
 }) {
   const { layout } = useLayout();
   const { setSelectedElement } = useContext(SelectActionsContext);
@@ -56,6 +63,7 @@ export default memo(function Relationship({
       endTable={endTable}
       startRelatedFieldKeys={startRelatedFieldKeys}
       endRelatedFieldKeys={endRelatedFieldKeys}
+      shortLabel={shortLabel}
       onEdit={edit}
     />
   );
@@ -100,9 +108,12 @@ const RelationshipPath = memo(function RelationshipPath({
   endTable,
   startRelatedFieldKeys,
   endRelatedFieldKeys,
+  shortLabel,
   onEdit,
 }) {
   const { settings } = useSettings();
+  const labelText =
+    settings.shortRelationshipLabels && shortLabel ? shortLabel : data.name;
   const { t } = useTranslation();
 
   const pathValues = useMemo(() => {
@@ -197,6 +208,7 @@ const RelationshipPath = memo(function RelationshipPath({
     }
 
     setAnchors({
+      center: { x: labelPoint.x, y: labelPoint.y },
       label: {
         x: labelPoint.x - labelWidth / 2,
         y: labelPoint.y + labelHeight / 2,
@@ -204,7 +216,24 @@ const RelationshipPath = memo(function RelationshipPath({
       start: { x: startPoint.x, y: startPoint.y },
       end: { x: endPoint.x, y: endPoint.y },
     });
-  }, [d, composite, data.name, settings.showRelationshipLabels]);
+  }, [d, composite, labelText, settings.showRelationshipLabels]);
+
+  const showFullName = () => {
+    setHovered(true);
+    if (anchors && data.name) {
+      relationshipHoverLabel.show({
+        id: data.id,
+        text: data.name,
+        x: anchors.center.x,
+        y: anchors.center.y - 28,
+      });
+    }
+  };
+  const hideFullName = () => {
+    setHovered(false);
+    relationshipHoverLabel.hide(data.id);
+  };
+  useEffect(() => () => relationshipHoverLabel.hide(data.id), [data.id]);
 
   let cardinalityStart = "1";
   let cardinalityEnd = "1";
@@ -236,8 +265,8 @@ const RelationshipPath = memo(function RelationshipPath({
     <g
       className="select-none group"
       onDoubleClick={onEdit}
-      onPointerEnter={() => setHovered(true)}
-      onPointerLeave={() => setHovered(false)}
+      onPointerEnter={showFullName}
+      onPointerLeave={hideFullName}
     >
       {/* invisible wider path for better hover ux */}
       <path
@@ -262,10 +291,14 @@ const RelationshipPath = memo(function RelationshipPath({
           fill={data.color ?? (settings.mode === "dark" ? "lightgrey" : "#333")}
           fontSize={labelFontSize}
           fontWeight={500}
+          stroke={settings.mode === "dark" ? darkBgTheme : "white"}
+          strokeWidth={4}
+          strokeLinejoin="round"
+          paintOrder="stroke"
           ref={labelRef}
           className="group-hover:fill-sky-600"
         >
-          {data.name}
+          {labelText}
         </text>
       )}
       {anchors && settings.showCardinality && (

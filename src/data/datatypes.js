@@ -988,12 +988,7 @@ const postgresTypesBase = {
   TEXT: {
     type: "TEXT",
     color: stringColor,
-    checkDefault: (field) => {
-      if (strHasQuotes(field.default)) {
-        return field.default.length - 2 <= field.size;
-      }
-      return field.default.length <= field.size;
-    },
+    checkDefault: () => true,
     hasCheck: true,
     isSized: false,
     hasPrecision: false,
