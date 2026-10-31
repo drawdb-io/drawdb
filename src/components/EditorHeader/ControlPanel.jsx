@@ -85,6 +85,7 @@ import {
   IconAddView,
 } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
+import ZoomSlider from "./ZoomSlider";
 import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
@@ -110,7 +111,8 @@ import {
   getViewWidth,
   resolveViewColumns,
 } from "../../utils/views";
-import { autoArrange } from "../../utils/autoArrange";
+import { layoutEngines, runLayout } from "../../utils/layout";
+import { spreadDiagram } from "../../utils/spreadDiagram";
 import { schemaQueries } from "../../utils/importFrom/schemaQuery";
 import { findAutoFKRelationships } from "../../utils/autoRelationships";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -123,6 +125,8 @@ const EDITOR_HOTKEY = {
   preventDefault: true,
   ignoreEventWhen: (e) => Boolean(e.target?.closest?.(".monaco-editor")),
 };
+
+const spreadStepFactor = 1.2;
 
 export default function ControlPanel({
   title,
@@ -784,39 +788,147 @@ export default function ControlPanel({
       pan: { x: centerX, y: centerY },
     }));
   };
-  const autoArrangeTables = () => {
-    const positions = autoArrange(tables, relationships, settings);
-    const positionById = new Map(positions.map((p) => [p.id, p]));
+  const [arrangeMenuOpen, setArrangeMenuOpen] = useState(false);
+  const autoArrangeTables = async (engineId) => {
+    if (layout.readOnly) return;
+    let layoutResult;
+    try {
+      layoutResult = await runLayout(engineId, {
+        tables,
+        relationships,
+        areas,
+        settings,
+      });
+    } catch (e) {
+      Toast.error(e.message);
+      return;
+    }
 
     const elements = [];
+    const tablePositionsById = new Map(
+      layoutResult.tables.map((position) => [position.id, position]),
+    );
     const arrangedTables = tables.map((table) => {
-      const pos = positionById.get(table.id);
-      if (!pos || (pos.x === table.x && pos.y === table.y)) return table;
+      const position = tablePositionsById.get(table.id);
+      if (!position || (position.x === table.x && position.y === table.y)) {
+        return table;
+      }
       elements.push({
         id: table.id,
         type: ObjectType.TABLE,
         undo: { x: table.x, y: table.y },
-        redo: { x: pos.x, y: pos.y },
+        redo: { x: position.x, y: position.y },
       });
-      return { ...table, x: pos.x, y: pos.y };
+      return { ...table, x: position.x, y: position.y };
     });
+    for (const arrangedArea of layoutResult.areas) {
+      const area = areas.find((a) => a.id === arrangedArea.id);
+      if (!area) continue;
+      const { id, ...redo } = arrangedArea;
+      elements.push({
+        id,
+        type: ObjectType.AREA,
+        undo: {
+          x: area.x,
+          y: area.y,
+          width: area.width,
+          height: area.height,
+        },
+        redo,
+      });
+    }
 
     if (elements.length === 0) return;
 
     for (const element of elements) {
-      updateTable(element.id, element.redo);
+      if (element.type === ObjectType.AREA) {
+        updateArea(element.id, element.redo);
+      } else {
+        updateTable(element.id, element.redo);
+      }
     }
     setUndoStack((prev) => [
       ...prev,
       {
         action: Action.MOVE,
         bulk: true,
-        message: t("auto_arrange"),
+        message: `${t("auto_arrange")}: ${t(`layout_${engineId}`)}`,
         elements,
       },
     ]);
     setRedoStack([]);
     fitToView(arrangedTables);
+  };
+  // spreadDiagramAroundView moves everything away from the center of the
+  // screen by spreadFactor, or toward it when spreadFactor is below 1. What the
+  // person is looking at stays in place while the gaps around it change.
+  const spreadDiagramAroundView = (spreadFactor) => {
+    if (layout.readOnly) return;
+    const spread = spreadDiagram({
+      tables,
+      relationships,
+      areas,
+      notes,
+      settings,
+      center: transform.pan,
+      factor: spreadFactor,
+    });
+
+    const elements = [
+      ...spread.tables.map((position) => {
+        const table = tables.find((t) => t.id === position.id);
+        return {
+          id: position.id,
+          type: ObjectType.TABLE,
+          undo: { x: table.x, y: table.y },
+          redo: { x: position.x, y: position.y },
+        };
+      }),
+      ...spread.areas.map(({ id, ...redo }) => {
+        const area = areas.find((a) => a.id === id);
+        return {
+          id,
+          type: ObjectType.AREA,
+          undo: {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+          },
+          redo,
+        };
+      }),
+      ...spread.notes.map((position) => {
+        const note = notes.find((n) => n.id === position.id);
+        return {
+          id: position.id,
+          type: ObjectType.NOTE,
+          undo: { x: note.x, y: note.y },
+          redo: { x: position.x, y: position.y },
+        };
+      }),
+    ];
+    if (elements.length === 0) return;
+
+    for (const element of elements) {
+      if (element.type === ObjectType.AREA) {
+        updateArea(element.id, element.redo);
+      } else if (element.type === ObjectType.NOTE) {
+        updateNote(element.id, element.redo);
+      } else {
+        updateTable(element.id, element.redo);
+      }
+    }
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: t(spreadFactor > 1 ? "spread_out" : "pull_together"),
+        elements,
+      },
+    ]);
+    setRedoStack([]);
   };
   const autoConnectFKs = () => {
     if (layout.readOnly) return;
@@ -1789,8 +1901,11 @@ export default function ControlPanel({
         disabled: layout.readOnly,
       },
       auto_arrange: {
-        function: autoArrangeTables,
-        disabled: layout.readOnly,
+        children: layoutEngines.map((engine) => ({
+          name: t(`layout_${engine.id}`),
+          function: () => autoArrangeTables(engine.id),
+          disabled: layout.readOnly,
+        })),
       },
       auto_connect_fk: {
         function: autoConnectFKs,
@@ -1934,6 +2049,30 @@ export default function ControlPanel({
           setSettings((prev) => ({
             ...prev,
             showRelationshipLabels: !prev.showRelationshipLabels,
+          })),
+      },
+      short_relationship_labels: {
+        state: settings.shortRelationshipLabels ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            shortRelationshipLabels: !prev.shortRelationshipLabels,
+          })),
+      },
+      show_relationship_legend: {
+        state: settings.showRelationshipLegend ? (
+          <i className="bi bi-toggle-on" />
+        ) : (
+          <i className="bi bi-toggle-off" />
+        ),
+        function: () =>
+          setSettings((prev) => ({
+            ...prev,
+            showRelationshipLegend: !prev.showRelationshipLegend,
           })),
       },
       show_debug_coordinates: {
@@ -2172,6 +2311,10 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
+          <ZoomSlider
+            zoom={transform.zoom}
+            onChange={(zoom) => setTransform((prev) => ({ ...prev, zoom }))}
+          />
           <Dropdown
             style={{ width: "240px" }}
             position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
@@ -2292,13 +2435,72 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("auto_arrange")} position="bottom">
+          <Dropdown
+            trigger="custom"
+            visible={arrangeMenuOpen}
+            onClickOutSide={() => setArrangeMenuOpen(false)}
+            position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
+            disabled={layout.readOnly}
+            render={
+              <Dropdown.Menu
+                style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+              >
+                <Dropdown.Title>{t("auto_arrange")}</Dropdown.Title>
+                {layoutEngines.map((engine) => (
+                  <Dropdown.Item
+                    key={engine.id}
+                    onClick={() => {
+                      setArrangeMenuOpen(false);
+                      autoArrangeTables(engine.id);
+                    }}
+                  >
+                    {t(`layout_${engine.id}`)}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            }
+          >
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
-              onClick={autoArrangeTables}
               disabled={layout.readOnly}
+              title={t("auto_arrange")}
+              onClick={() => setArrangeMenuOpen((open) => !open)}
             >
               <i className="fa-solid fa-wand-magic-sparkles" />
+            </button>
+          </Dropdown>
+          <Tooltip content={t("pull_together")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg disabled:opacity-50"
+              onClick={() => spreadDiagramAroundView(1 / spreadStepFactor)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-down-left-and-up-right-to-center" />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("spread_out")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg disabled:opacity-50"
+              onClick={() => spreadDiagramAroundView(spreadStepFactor)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-up-right-and-down-left-from-center" />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("show_relationship_legend")} position="bottom">
+            <button
+              className={`py-1 px-2 hover-2 rounded-sm text-lg ${
+                settings.showRelationshipLegend ? "text-sky-500" : ""
+              }`}
+              aria-pressed={settings.showRelationshipLegend}
+              onClick={() =>
+                setSettings((prev) => ({
+                  ...prev,
+                  showRelationshipLegend: !prev.showRelationshipLegend,
+                }))
+              }
+            >
+              <i className="fa-solid fa-list-ul" />
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />

@@ -12,6 +12,9 @@ const defaultSettings = {
   autosave: true,
   showCardinality: true,
   showRelationshipLabels: true,
+  shortRelationshipLabels: false,
+  showRelationshipLegend: false,
+  relationshipLegendPlacement: null,
   showDebugCoordinates: false,
   showComments: false,
 };
