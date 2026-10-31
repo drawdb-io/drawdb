@@ -494,7 +494,10 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
       areas?.length === 0 &&
       notes?.length === 0 &&
       views?.length === 0 &&
-      types?.length === 0
+      types?.length === 0 &&
+      enums?.length === 0 &&
+      undoStack.length === 0 &&
+      redoStack.length === 0
     )
       return;
 
@@ -510,6 +513,7 @@ export default function WorkSpace({ forcedDiagramId } = {}) {
     notes?.length,
     views?.length,
     types?.length,
+    enums?.length,
     relationships?.length,
     title,
     gistId,
