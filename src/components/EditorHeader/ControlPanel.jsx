@@ -85,6 +85,7 @@ import {
   IconAddView,
 } from "../../icons";
 import LayoutDropdown from "./LayoutDropdown";
+import ZoomSlider from "./ZoomSlider";
 import Sidesheet from "./SideSheet/Sidesheet";
 import Modal from "./Modal/Modal";
 import { useTranslation } from "react-i18next";
@@ -2286,6 +2287,10 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
+          <ZoomSlider
+            zoom={transform.zoom}
+            onChange={(zoom) => setTransform((prev) => ({ ...prev, zoom }))}
+          />
           <Dropdown
             style={{ width: "240px" }}
             position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
