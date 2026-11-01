@@ -111,6 +111,7 @@ import {
   resolveViewColumns,
 } from "../../utils/views";
 import { layoutEngines, runLayout } from "../../utils/layout";
+import { spreadDiagram } from "../../utils/spreadDiagram";
 import { schemaQueries } from "../../utils/importFrom/schemaQuery";
 import { findAutoFKRelationships } from "../../utils/autoRelationships";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -123,6 +124,8 @@ const EDITOR_HOTKEY = {
   preventDefault: true,
   ignoreEventWhen: (e) => Boolean(e.target?.closest?.(".monaco-editor")),
 };
+
+const spreadStepFactor = 1.2;
 
 export default function ControlPanel({
   title,
@@ -854,6 +857,77 @@ export default function ControlPanel({
     ]);
     setRedoStack([]);
     fitToView(arrangedTables);
+  };
+  // spreadDiagramAroundView moves everything away from the center of the
+  // screen by spreadFactor, or toward it when spreadFactor is below 1. What the
+  // person is looking at stays in place while the gaps around it change.
+  const spreadDiagramAroundView = (spreadFactor) => {
+    if (layout.readOnly) return;
+    const spread = spreadDiagram({
+      tables,
+      relationships,
+      areas,
+      notes,
+      settings,
+      center: transform.pan,
+      factor: spreadFactor,
+    });
+
+    const elements = [
+      ...spread.tables.map((position) => {
+        const table = tables.find((t) => t.id === position.id);
+        return {
+          id: position.id,
+          type: ObjectType.TABLE,
+          undo: { x: table.x, y: table.y },
+          redo: { x: position.x, y: position.y },
+        };
+      }),
+      ...spread.areas.map(({ id, ...redo }) => {
+        const area = areas.find((a) => a.id === id);
+        return {
+          id,
+          type: ObjectType.AREA,
+          undo: {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+          },
+          redo,
+        };
+      }),
+      ...spread.notes.map((position) => {
+        const note = notes.find((n) => n.id === position.id);
+        return {
+          id: position.id,
+          type: ObjectType.NOTE,
+          undo: { x: note.x, y: note.y },
+          redo: { x: position.x, y: position.y },
+        };
+      }),
+    ];
+    if (elements.length === 0) return;
+
+    for (const element of elements) {
+      if (element.type === ObjectType.AREA) {
+        updateArea(element.id, element.redo);
+      } else if (element.type === ObjectType.NOTE) {
+        updateNote(element.id, element.redo);
+      } else {
+        updateTable(element.id, element.redo);
+      }
+    }
+    setUndoStack((prev) => [
+      ...prev,
+      {
+        action: Action.MOVE,
+        bulk: true,
+        message: t(spreadFactor > 1 ? "spread_out" : "pull_together"),
+        elements,
+      },
+    ]);
+    setRedoStack([]);
   };
   const autoConnectFKs = () => {
     if (layout.readOnly) return;
@@ -2366,6 +2440,24 @@ export default function ControlPanel({
               <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
           </Dropdown>
+          <Tooltip content={t("pull_together")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg disabled:opacity-50"
+              onClick={() => spreadDiagramAroundView(1 / spreadStepFactor)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-down-left-and-up-right-to-center" />
+            </button>
+          </Tooltip>
+          <Tooltip content={t("spread_out")} position="bottom">
+            <button
+              className="py-1 px-2 hover-2 rounded-sm text-lg disabled:opacity-50"
+              onClick={() => spreadDiagramAroundView(spreadStepFactor)}
+              disabled={layout.readOnly}
+            >
+              <i className="fa-solid fa-up-right-and-down-left-from-center" />
+            </button>
+          </Tooltip>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button

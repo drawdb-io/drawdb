@@ -260,6 +260,8 @@ const sv = {
     layout_elk_layered: "Skiktad efter fältrader (ELK)",
     layout_elk_stress: "Klustrad (ELK stress)",
     layout_by_subject_area: "Efter ämnesområde",
+    spread_out: "Sprid ut",
+    pull_together: "Dra ihop",
     auto_connect_fk: "Koppla främmande nycklar automatiskt",
     auto_connect_fk_success: "Skapade {{count}} referens(er) för främmande nycklar",
     no_foreign_keys_found: "Inga relationer hittades",

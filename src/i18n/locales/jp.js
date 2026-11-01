@@ -264,6 +264,8 @@ const jp = {
     layout_elk_layered: "フィールド行に沿った階層型 (ELK)",
     layout_elk_stress: "クラスター型 (ELK stress)",
     layout_by_subject_area: "主題領域ごと",
+    spread_out: "間隔を広げる",
+    pull_together: "間隔を狭める",
     auto_connect_fk: "外部キーを自動接続",
     auto_connect_fk_success: "{{count}} 件の外部キー参照を作成しました",
     no_foreign_keys_found: "リレーションシップが見つかりません",

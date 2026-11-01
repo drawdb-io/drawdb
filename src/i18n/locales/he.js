@@ -253,6 +253,8 @@ const he = {
     layout_elk_layered: "בשכבות לפי שורות השדות (ELK)",
     layout_elk_stress: "באשכולות (ELK stress)",
     layout_by_subject_area: "לפי תחום עניין",
+    spread_out: "פזר",
+    pull_together: "קרב",
     auto_connect_fk: "חבר מפתחות זרים אוטומטית",
     auto_connect_fk_success: "נוצרו {{count}} הפניות למפתחות זרים",
     no_foreign_keys_found: "לא נמצאו קשרים",

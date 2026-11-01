@@ -280,6 +280,8 @@ const vi = {
     layout_elk_layered: "Phân lớp theo hàng trường (ELK)",
     layout_elk_stress: "Theo cụm (ELK stress)",
     layout_by_subject_area: "Theo vùng",
+    spread_out: "Giãn ra",
+    pull_together: "Thu lại",
     auto_connect_fk: "Tự động kết nối khóa ngoại",
     auto_connect_fk_success: "Đã tạo {{count}} tham chiếu khóa ngoại",
     no_foreign_keys_found: "Không tìm thấy quan hệ nào",

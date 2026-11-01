@@ -289,6 +289,8 @@ const es = {
     layout_elk_layered: "Por capas según las filas de campos (ELK)",
     layout_elk_stress: "Agrupado (ELK stress)",
     layout_by_subject_area: "Por área de tema",
+    spread_out: "Separar",
+    pull_together: "Juntar",
     auto_connect_fk: "Conectar claves foráneas automáticamente",
     auto_connect_fk_success: "Se crearon {{count}} referencia(s) de clave foránea",
     no_foreign_keys_found: "No se encontraron relaciones",

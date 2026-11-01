@@ -284,6 +284,8 @@ const da = {
     layout_elk_layered: "Lagdelt efter feltrækker (ELK)",
     layout_elk_stress: "Grupperet (ELK stress)",
     layout_by_subject_area: "Efter emneområde",
+    spread_out: "Spred ud",
+    pull_together: "Træk sammen",
     auto_connect_fk: "Forbind fremmednøgler automatisk",
     auto_connect_fk_success: "Oprettede {{count}} fremmednøglereference(r)",
     no_foreign_keys_found: "Ingen forhold fundet",

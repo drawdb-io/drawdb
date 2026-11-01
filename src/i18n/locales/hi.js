@@ -261,6 +261,8 @@ const hi = {
     layout_elk_layered: "फ़ील्ड पंक्तियों के अनुसार परतों में (ELK)",
     layout_elk_stress: "समूहों में (ELK stress)",
     layout_by_subject_area: "सब्जेक्ट एरिया के अनुसार",
+    spread_out: "दूर-दूर फैलाएं",
+    pull_together: "पास-पास लाएं",
     auto_connect_fk: "फॉरेन कुंजियाँ ऑटो-कनेक्ट करें",
     auto_connect_fk_success: "{{count}} फॉरेन कुंजी संदर्भ बनाए गए",
     no_foreign_keys_found: "कोई संबंध नहीं मिला",

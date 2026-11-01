@@ -324,6 +324,8 @@ const hu = {
     layout_elk_layered: "Rétegzett mezősorok szerint (ELK)",
     layout_elk_stress: "Csoportosított (ELK stress)",
     layout_by_subject_area: "Területek szerint",
+    spread_out: "Széthúzás",
+    pull_together: "Összehúzás",
     auto_connect_fk: "Idegen kulcsok automatikus összekötése",
     auto_connect_fk_success: "{{count}} idegen kulcs hivatkozás létrehozva",
     no_foreign_keys_found: "Nem található kapcsolat",

@@ -283,6 +283,8 @@ const cz = {
     layout_elk_layered: "Ve vrstvách podle řádků polí (ELK)",
     layout_elk_stress: "Ve shlucích (ELK stress)",
     layout_by_subject_area: "Podle oblastí předmětu",
+    spread_out: "Roztáhnout",
+    pull_together: "Stáhnout k sobě",
     auto_connect_fk: "Automaticky propojit cizí klíče",
     auto_connect_fk_success: "Vytvořené odkazy cizích klíčů: {{count}}",
     no_foreign_keys_found: "Nebyly nalezeny žádné vztahy",

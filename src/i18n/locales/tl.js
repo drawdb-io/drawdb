@@ -319,6 +319,8 @@ const tl = {
     layout_elk_layered: "Patong-patong ayon sa mga hilera ng field (ELK)",
     layout_elk_stress: "Nakapangkat (ELK stress)",
     layout_by_subject_area: "Ayon sa subject area",
+    spread_out: "Paglayuin",
+    pull_together: "Paglapitin",
     auto_connect_fk: "Awtomatikong ikonekta ang mga foreign key",
     auto_connect_fk_success: "Nakagawa ng {{count}} foreign key reference",
     no_foreign_keys_found: "Walang nahanap na relasyon",

@@ -262,6 +262,8 @@ const it = {
     layout_elk_layered: "A livelli per righe dei campi (ELK)",
     layout_elk_stress: "A gruppi (ELK stress)",
     layout_by_subject_area: "Per area tematica",
+    spread_out: "Allarga",
+    pull_together: "Avvicina",
     auto_connect_fk: "Collega automaticamente le chiavi esterne",
     auto_connect_fk_success: "Creati {{count}} riferimenti a chiavi esterne",
     no_foreign_keys_found: "Nessuna relazione trovata",

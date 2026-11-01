@@ -284,6 +284,8 @@ const bg = {
         layout_elk_layered: "На слоеве по редовете на полетата (ELK)",
         layout_elk_stress: "Групирано (ELK stress)",
         layout_by_subject_area: "По предметни области",
+        spread_out: "Раздалечи",
+        pull_together: "Сближи",
         auto_connect_fk: "Автоматично свързване на външни ключове",
         auto_connect_fk_success: "Създадени референции на външни ключове: {{count}}",
         no_foreign_keys_found: "Не са намерени връзки",

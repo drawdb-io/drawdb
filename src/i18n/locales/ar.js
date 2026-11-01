@@ -254,6 +254,8 @@ const ar = {
     layout_elk_layered: "طبقات حسب صفوف الحقول (ELK)",
     layout_elk_stress: "عناقيد (ELK stress)",
     layout_by_subject_area: "حسب المجال الموضوعي",
+    spread_out: "زيادة المسافات",
+    pull_together: "تقليل المسافات",
     auto_connect_fk: "ربط المفاتيح الخارجية تلقائيًا",
     auto_connect_fk_success: "تم إنشاء {{count}} مرجع (مراجع) للمفاتيح الخارجية",
     no_foreign_keys_found: "لم يتم العثور على علاقات",

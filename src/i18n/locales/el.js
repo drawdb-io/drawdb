@@ -285,6 +285,8 @@ const el = {
     layout_elk_layered: "Σε επίπεδα ανά γραμμές πεδίων (ELK)",
     layout_elk_stress: "Σε ομάδες (ELK stress)",
     layout_by_subject_area: "Ανά θεματική περιοχή",
+    spread_out: "Αραίωση",
+    pull_together: "Πύκνωση",
     auto_connect_fk: "Αυτόματη σύνδεση ξένων κλειδιών",
     auto_connect_fk_success: "Δημιουργήθηκαν {{count}} αναφορές ξένων κλειδιών",
     no_foreign_keys_found: "Δεν βρέθηκαν σχέσεις",

@@ -284,6 +284,8 @@ const de = {
     layout_elk_layered: "Geschichtet nach Feldzeilen (ELK)",
     layout_elk_stress: "Gruppiert (ELK stress)",
     layout_by_subject_area: "Nach Themengebiet",
+    spread_out: "Auseinanderziehen",
+    pull_together: "Zusammenrücken",
     auto_connect_fk: "Fremdschlüssel automatisch verbinden",
     auto_connect_fk_success: "{{count}} Fremdschlüssel-Referenz(en) erstellt",
     no_foreign_keys_found: "Keine Beziehungen gefunden",

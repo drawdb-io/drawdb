@@ -260,6 +260,8 @@ const pl = {
     layout_elk_layered: "Warstwowo według wierszy pól (ELK)",
     layout_elk_stress: "Skupiska (ELK stress)",
     layout_by_subject_area: "Według obszaru tematycznego",
+    spread_out: "Rozsuń",
+    pull_together: "Zsuń",
     auto_connect_fk: "Automatycznie połącz klucze obce",
     auto_connect_fk_success: "Utworzono odwołania kluczy obcych: {{count}}",
     no_foreign_keys_found: "Nie znaleziono relacji",

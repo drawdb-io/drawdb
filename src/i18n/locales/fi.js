@@ -284,6 +284,8 @@ const fi = {
     layout_elk_layered: "Kerroksittain kenttärivien mukaan (ELK)",
     layout_elk_stress: "Ryhmitelty (ELK stress)",
     layout_by_subject_area: "Aihealueittain",
+    spread_out: "Levitä",
+    pull_together: "Kokoa yhteen",
     auto_connect_fk: "Yhdistä viiteavaimet automaattisesti",
     auto_connect_fk_success: "Luotiin {{count}} viiteavainviittausta",
     no_foreign_keys_found: "Suhteita ei löytynyt",

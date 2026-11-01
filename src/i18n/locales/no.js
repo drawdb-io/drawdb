@@ -258,6 +258,8 @@ const no = {
     layout_elk_layered: "Lagdelt etter feltrader (ELK)",
     layout_elk_stress: "Gruppert (ELK stress)",
     layout_by_subject_area: "Etter emneområde",
+    spread_out: "Spre ut",
+    pull_together: "Trekk sammen",
     auto_connect_fk: "Koble fremmednøkler automatisk",
     auto_connect_fk_success: "Opprettet {{count}} fremmednøkkelreferanse(r)",
     no_foreign_keys_found: "Ingen relasjoner funnet",

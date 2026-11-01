@@ -261,6 +261,8 @@ const ro = {
     layout_elk_layered: "Pe straturi după rândurile câmpurilor (ELK)",
     layout_elk_stress: "Grupat (ELK stress)",
     layout_by_subject_area: "După zona subiectului",
+    spread_out: "Depărtează",
+    pull_together: "Apropie",
     auto_connect_fk: "Conectează automat cheile străine",
     auto_connect_fk_success: "Au fost create {{count}} referințe de chei străine",
     no_foreign_keys_found: "Nu au fost găsite relații",

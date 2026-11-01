@@ -260,6 +260,8 @@ const fr = {
     layout_elk_layered: "En couches selon les lignes de champs (ELK)",
     layout_elk_stress: "Regroupé (ELK stress)",
     layout_by_subject_area: "Par sujet",
+    spread_out: "Espacer",
+    pull_together: "Resserrer",
     auto_connect_fk: "Connecter automatiquement les clés étrangères",
     auto_connect_fk_success: "{{count}} référence(s) de clé étrangère créée(s)",
     no_foreign_keys_found: "Aucune relation trouvée",

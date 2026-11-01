@@ -258,6 +258,8 @@ const tr = {
     layout_elk_layered: "Alan satırlarına göre katmanlı (ELK)",
     layout_elk_stress: "Kümelenmiş (ELK stress)",
     layout_by_subject_area: "Konu alanına göre",
+    spread_out: "Aralıkları aç",
+    pull_together: "Aralıkları kapat",
     auto_connect_fk: "Yabancı anahtarları otomatik bağla",
     auto_connect_fk_success: "{{count}} yabancı anahtar referansı oluşturuldu",
     no_foreign_keys_found: "İlişki bulunamadı",

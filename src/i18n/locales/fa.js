@@ -258,6 +258,8 @@ const fa = {
     layout_elk_layered: "لایه‌ای بر اساس ردیف‌های فیلد (ELK)",
     layout_elk_stress: "خوشه‌ای (ELK stress)",
     layout_by_subject_area: "بر اساس ناحیهٔ موضوعی",
+    spread_out: "افزایش فاصله‌ها",
+    pull_together: "کاهش فاصله‌ها",
     auto_connect_fk: "اتصال خودکار کلیدهای خارجی",
     auto_connect_fk_success: "{{count}} ارجاع کلید خارجی ایجاد شد",
     no_foreign_keys_found: "هیچ ارتباطی یافت نشد",

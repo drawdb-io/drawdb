@@ -273,6 +273,8 @@ const en = {
     layout_elk_layered: "Layered by field rows (ELK)",
     layout_elk_stress: "Clustered (ELK stress)",
     layout_by_subject_area: "By subject area",
+    spread_out: "Spread out",
+    pull_together: "Pull together",
     auto_connect_fk: "Auto-connect foreign keys",
     auto_connect_fk_success: "Created {{count}} foreign key reference(s)",
     no_foreign_keys_found: "No relationships found",

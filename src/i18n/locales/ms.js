@@ -288,6 +288,8 @@ const ms = {
     layout_elk_layered: "Berlapis mengikut baris medan (ELK)",
     layout_elk_stress: "Berkelompok (ELK stress)",
     layout_by_subject_area: "Mengikut kawasan subjek",
+    spread_out: "Jarakkan",
+    pull_together: "Rapatkan",
     auto_connect_fk: "Sambung kekunci asing secara automatik",
     auto_connect_fk_success: "{{count}} rujukan kekunci asing dicipta",
     no_foreign_keys_found: "Tiada perhubungan ditemui",

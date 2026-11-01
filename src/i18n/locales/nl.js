@@ -282,6 +282,8 @@ const nl = {
     layout_elk_layered: "Gelaagd volgens veldrijen (ELK)",
     layout_elk_stress: "Geclusterd (ELK stress)",
     layout_by_subject_area: "Per onderwerpsgebied",
+    spread_out: "Uit elkaar zetten",
+    pull_together: "Dichter bij elkaar zetten",
     auto_connect_fk: "Foreign keys automatisch koppelen",
     auto_connect_fk_success: "{{count}} foreign key-verwijzing(en) aangemaakt",
     no_foreign_keys_found: "Geen relaties gevonden",

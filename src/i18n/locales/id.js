@@ -267,6 +267,8 @@ const id = {
     layout_elk_layered: "Berlapis menurut baris kolom (ELK)",
     layout_elk_stress: "Berkelompok (ELK stress)",
     layout_by_subject_area: "Menurut area subjek",
+    spread_out: "Renggangkan",
+    pull_together: "Rapatkan",
     auto_connect_fk: "Hubungkan kunci asing otomatis",
     auto_connect_fk_success: "{{count}} referensi kunci asing dibuat",
     no_foreign_keys_found: "Tidak ada hubungan yang ditemukan",

@@ -263,6 +263,8 @@ const ru = {
     layout_elk_layered: "По слоям по строкам полей (ELK)",
     layout_elk_stress: "Кластерами (ELK stress)",
     layout_by_subject_area: "По предметным областям",
+    spread_out: "Раздвинуть",
+    pull_together: "Сдвинуть",
     auto_connect_fk: "Автосвязывание внешних ключей",
     auto_connect_fk_success: "Создано ссылок по внешним ключам: {{count}}",
     no_foreign_keys_found: "Отношения не найдены",

@@ -258,6 +258,8 @@ const zh_tw = {
     layout_elk_layered: "依欄位列分層 (ELK)",
     layout_elk_stress: "叢集 (ELK stress)",
     layout_by_subject_area: "依主題區域",
+    spread_out: "拉開間距",
+    pull_together: "收緊間距",
     multiselect: "多重選取",
     export_saved_data: "匯出儲存的資料",
     dbml_view: "DBML 檢視",

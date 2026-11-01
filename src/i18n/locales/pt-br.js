@@ -261,6 +261,8 @@ const pt = {
     layout_elk_layered: "Em camadas por linhas de campos (ELK)",
     layout_elk_stress: "Agrupado (ELK stress)",
     layout_by_subject_area: "Por área de assunto",
+    spread_out: "Espalhar",
+    pull_together: "Aproximar",
     auto_connect_fk: "Conectar chaves estrangeiras automaticamente",
     auto_connect_fk_success: "{{count}} referência(s) de chave estrangeira criada(s)",
     no_foreign_keys_found: "Nenhum relacionamento encontrado",

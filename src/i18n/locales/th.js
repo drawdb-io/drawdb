@@ -270,6 +270,8 @@ const th = {
     layout_elk_layered: "แบบชั้นตามแถวฟิลด์ (ELK)",
     layout_elk_stress: "แบบกลุ่ม (ELK stress)",
     layout_by_subject_area: "ตามพื้นที่หัวข้อ",
+    spread_out: "กระจายออก",
+    pull_together: "ดึงเข้าหากัน",
     auto_connect_fk: "เชื่อมต่อคีย์ต่างประเทศอัตโนมัติ",
     auto_connect_fk_success: "สร้างการอ้างอิงคีย์ต่างประเทศ {{count}} รายการแล้ว",
     no_foreign_keys_found: "ไม่พบความสัมพันธ์",

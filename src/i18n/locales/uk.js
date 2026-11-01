@@ -266,6 +266,8 @@ const uk = {
     layout_elk_layered: "Шарами за рядками полів (ELK)",
     layout_elk_stress: "Кластерами (ELK stress)",
     layout_by_subject_area: "За тематичними областями",
+    spread_out: "Розсунути",
+    pull_together: "Зсунути",
     auto_connect_fk: "Автозв'язування зовнішніх ключів",
     auto_connect_fk_success: "Створено посилань за зовнішніми ключами: {{count}}",
     no_foreign_keys_found: "Зв'язків не знайдено",

@@ -258,6 +258,8 @@ const ko = {
     layout_elk_layered: "필드 행 기준 계층형 (ELK)",
     layout_elk_stress: "군집형 (ELK stress)",
     layout_by_subject_area: "주제 영역별",
+    spread_out: "간격 넓히기",
+    pull_together: "간격 좁히기",
     auto_connect_fk: "외래 키 자동 연결",
     auto_connect_fk_success: "외래 키 참조 {{count}}개를 생성했습니다",
     no_foreign_keys_found: "관계를 찾을 수 없습니다",
