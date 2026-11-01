@@ -110,7 +110,7 @@ import {
   getViewWidth,
   resolveViewColumns,
 } from "../../utils/views";
-import { autoArrange } from "../../utils/autoArrange";
+import { layoutEngines, runLayout } from "../../utils/layout";
 import { schemaQueries } from "../../utils/importFrom/schemaQuery";
 import { findAutoFKRelationships } from "../../utils/autoRelationships";
 import { deleteFromCache, STORAGE_KEY } from "../../utils/cache";
@@ -784,34 +784,71 @@ export default function ControlPanel({
       pan: { x: centerX, y: centerY },
     }));
   };
-  const autoArrangeTables = () => {
-    const positions = autoArrange(tables, relationships, settings);
-    const positionById = new Map(positions.map((p) => [p.id, p]));
+  const [arrangeMenuOpen, setArrangeMenuOpen] = useState(false);
+  const autoArrangeTables = async (engineId) => {
+    if (layout.readOnly) return;
+    let layoutResult;
+    try {
+      layoutResult = await runLayout(engineId, {
+        tables,
+        relationships,
+        areas,
+        settings,
+      });
+    } catch (e) {
+      Toast.error(e.message);
+      return;
+    }
 
     const elements = [];
+    const tablePositionsById = new Map(
+      layoutResult.tables.map((position) => [position.id, position]),
+    );
     const arrangedTables = tables.map((table) => {
-      const pos = positionById.get(table.id);
-      if (!pos || (pos.x === table.x && pos.y === table.y)) return table;
+      const position = tablePositionsById.get(table.id);
+      if (!position || (position.x === table.x && position.y === table.y)) {
+        return table;
+      }
       elements.push({
         id: table.id,
         type: ObjectType.TABLE,
         undo: { x: table.x, y: table.y },
-        redo: { x: pos.x, y: pos.y },
+        redo: { x: position.x, y: position.y },
       });
-      return { ...table, x: pos.x, y: pos.y };
+      return { ...table, x: position.x, y: position.y };
     });
+    for (const arrangedArea of layoutResult.areas) {
+      const area = areas.find((a) => a.id === arrangedArea.id);
+      if (!area) continue;
+      const { id, ...redo } = arrangedArea;
+      elements.push({
+        id,
+        type: ObjectType.AREA,
+        undo: {
+          x: area.x,
+          y: area.y,
+          width: area.width,
+          height: area.height,
+        },
+        redo,
+      });
+    }
 
     if (elements.length === 0) return;
 
     for (const element of elements) {
-      updateTable(element.id, element.redo);
+      if (element.type === ObjectType.AREA) {
+        updateArea(element.id, element.redo);
+      } else {
+        updateTable(element.id, element.redo);
+      }
     }
     setUndoStack((prev) => [
       ...prev,
       {
         action: Action.MOVE,
         bulk: true,
-        message: t("auto_arrange"),
+        message: `${t("auto_arrange")}: ${t(`layout_${engineId}`)}`,
         elements,
       },
     ]);
@@ -1789,8 +1826,11 @@ export default function ControlPanel({
         disabled: layout.readOnly,
       },
       auto_arrange: {
-        function: autoArrangeTables,
-        disabled: layout.readOnly,
+        children: layoutEngines.map((engine) => ({
+          name: t(`layout_${engine.id}`),
+          function: () => autoArrangeTables(engine.id),
+          disabled: layout.readOnly,
+        })),
       },
       auto_connect_fk: {
         function: autoConnectFKs,
@@ -2292,15 +2332,40 @@ export default function ControlPanel({
             </button>
           </Tooltip>
           <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("auto_arrange")} position="bottom">
+          <Dropdown
+            trigger="custom"
+            visible={arrangeMenuOpen}
+            onClickOutSide={() => setArrangeMenuOpen(false)}
+            position={isRtl(i18n.language) ? "bottomRight" : "bottomLeft"}
+            disabled={layout.readOnly}
+            render={
+              <Dropdown.Menu
+                style={isRtl(i18n.language) ? { direction: "rtl" } : {}}
+              >
+                <Dropdown.Title>{t("auto_arrange")}</Dropdown.Title>
+                {layoutEngines.map((engine) => (
+                  <Dropdown.Item
+                    key={engine.id}
+                    onClick={() => {
+                      setArrangeMenuOpen(false);
+                      autoArrangeTables(engine.id);
+                    }}
+                  >
+                    {t(`layout_${engine.id}`)}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            }
+          >
             <button
               className="py-1 px-2 hover-2 rounded-sm text-xl -mt-0.5 disabled:opacity-50"
-              onClick={autoArrangeTables}
               disabled={layout.readOnly}
+              title={t("auto_arrange")}
+              onClick={() => setArrangeMenuOpen((open) => !open)}
             >
               <i className="fa-solid fa-wand-magic-sparkles" />
             </button>
-          </Tooltip>
+          </Dropdown>
           <Divider layout="vertical" margin="8px" />
           <Tooltip content={t("save")} position="bottom">
             <button

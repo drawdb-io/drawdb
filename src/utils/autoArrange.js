@@ -13,7 +13,12 @@ const targetRatio = 16 / 9;
 const minRatio = 1 / 3;
 const maxRatio = 4;
 
-export function autoArrange(tables, relationships, settings) {
+export function autoArrange(
+  tables,
+  relationships,
+  settings,
+  { direction = "LR" } = {},
+) {
   const movable = tables.filter((table) => !table.locked);
   const movableIds = new Set(movable.map((table) => table.id));
 
@@ -43,7 +48,7 @@ export function autoArrange(tables, relationships, settings) {
   const isolated = movable.filter((table) => !connectedIds.has(table.id));
 
   const graph = new graphlib.Graph();
-  graph.setGraph({ rankdir: "LR", nodesep: nodeSep, ranksep: rankSep });
+  graph.setGraph({ rankdir: direction, nodesep: nodeSep, ranksep: rankSep });
   graph.setDefaultEdgeLabel(() => ({}));
 
   for (const table of connected) {
@@ -80,7 +85,11 @@ export function autoArrange(tables, relationships, settings) {
   let { width: maxX, height: maxY } = extent();
 
   const ratio = maxX / maxY;
-  if (placed.length > 1 && (ratio < minRatio || ratio > maxRatio)) {
+  if (
+    direction === "LR" &&
+    placed.length > 1 &&
+    (ratio < minRatio || ratio > maxRatio)
+  ) {
     const ranks = new Map();
     for (const p of [...placed].sort((a, b) => a.y - b.y)) {
       if (!ranks.has(p.rank)) ranks.set(p.rank, []);
