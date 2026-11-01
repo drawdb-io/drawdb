@@ -37,7 +37,10 @@ import { useEventListener } from "usehooks-ts";
 import {
   areFieldsCompatible,
   getRelatedFieldKeysByTable,
+  getTableHeight,
+  getTableWidth,
 } from "../../utils/utils";
+import CanvasScrollbars from "./CanvasScrollbars";
 import {
   getViewHeight,
   getViewWidth,
@@ -162,6 +165,39 @@ export default function Canvas() {
     () => new Map(tables.map((table) => [table.id, table])),
     [tables],
   );
+
+  // contentBounds holds the box around every table, area, note and view.
+  // CanvasScrollbars measures the scrollable extent from it.
+  const contentBounds = useMemo(() => {
+    const elementBoxes = [
+      ...tables.map((table) => ({
+        x: table.x,
+        y: table.y,
+        width: getTableWidth(table),
+        height: getTableHeight(table, settings.showComments),
+      })),
+      ...areas,
+      ...notes.map((note) => ({
+        x: note.x,
+        y: note.y,
+        width: noteWidth,
+        height: note.height ?? 100,
+      })),
+      ...views.map((view) => ({
+        x: view.x,
+        y: view.y,
+        width: getViewWidth(view),
+        height: 200,
+      })),
+    ].filter((box) => Number.isFinite(box.x) && Number.isFinite(box.y));
+    if (elementBoxes.length === 0) return null;
+    return {
+      left: Math.min(...elementBoxes.map((b) => b.x)),
+      top: Math.min(...elementBoxes.map((b) => b.y)),
+      right: Math.max(...elementBoxes.map((b) => b.x + b.width)),
+      bottom: Math.max(...elementBoxes.map((b) => b.y + b.height)),
+    };
+  }, [tables, areas, notes, views, settings.showComments]);
 
   const relatedFieldKeysRef = useRef(new Map());
   const relatedFieldKeysByTable = useMemo(() => {
@@ -933,205 +969,210 @@ export default function Canvas() {
   );
 
   return (
-    <div className="grow h-full touch-none" id="canvas">
-      <div
-        className="w-full h-full"
-        style={{
-          cursor: pointer.style,
-          backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
-        }}
-      >
-        <svg
-          id="diagram"
-          ref={canvasRef}
-          onPointerMove={handlePointerMove}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onContextMenu={(e) => {
-            if (rightClickPanned.current) {
-              e.preventDefault();
-              rightClickPanned.current = false;
-            }
+    <div className="grow h-full relative">
+      <div className="w-full h-full touch-none relative" id="canvas">
+        <div
+          className="w-full h-full"
+          style={{
+            cursor: pointer.style,
+            backgroundColor: settings.mode === "dark" ? darkBgTheme : "white",
           }}
-          className="absolute w-full h-full touch-none"
-          viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
         >
-          {settings.showGrid && (
-            <>
-              <defs>
-                <pattern
-                  id="pattern-grid"
-                  x={-gridCircleRadius}
-                  y={-gridCircleRadius}
-                  width={gridSize}
-                  height={gridSize}
-                  patternUnits="userSpaceOnUse"
-                  patternContentUnits="userSpaceOnUse"
-                >
-                  <circle
-                    cx={gridCircleRadius}
-                    cy={gridCircleRadius}
-                    r={gridCircleRadius}
-                    fill="rgb(99, 152, 191)"
-                    opacity="1"
-                  />
-                </pattern>
-              </defs>
-              <rect
-                x={viewBox.left}
-                y={viewBox.top}
-                width={viewBox.width}
-                height={viewBox.height}
-                fill="url(#pattern-grid)"
-              />
-            </>
-          )}
-          {areas.map((a) => (
-            <Area
-              key={a.id}
-              data={a}
-              tableCount={tableCountByArea.get(a.id) ?? 0}
-              setResize={setAreaResize}
-              setInitDimensions={setAreaInitDimensions}
-              onPointerDown={handleElementPointerDown}
-            />
-          ))}
-          {relationships.map((e) =>
-            areaHiddenTableIds.has(e.startTableId) ||
-            areaHiddenTableIds.has(e.endTableId) ? null : (
-              <Relationship
-                key={e.id}
-                data={e}
-                startTable={tablesById.get(e.startTableId)}
-                endTable={tablesById.get(e.endTableId)}
-                startRelatedFieldKeys={relatedFieldKeysByTable.get(
-                  e.startTableId,
-                )}
-                endRelatedFieldKeys={relatedFieldKeysByTable.get(e.endTableId)}
-              />
-            ),
-          )}
-          {tables.map((table) =>
-            areaHiddenTableIds.has(table.id) ? null : (
-              <Table
-                key={table.id}
-                tableData={table}
-                isSelected={selectedTableIds.has(table.id)}
-                database={database}
-                relatedFieldKeys={relatedFieldKeysByTable.get(table.id)}
-                setHoveredTable={setHoveredTable}
-                handleGripField={handleGripField}
-                setLinkingLine={setLinkingLine}
+          <svg
+            id="diagram"
+            ref={canvasRef}
+            onPointerMove={handlePointerMove}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onContextMenu={(e) => {
+              if (rightClickPanned.current) {
+                e.preventDefault();
+                rightClickPanned.current = false;
+              }
+            }}
+            className="absolute w-full h-full touch-none"
+            viewBox={`${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`}
+          >
+            {settings.showGrid && (
+              <>
+                <defs>
+                  <pattern
+                    id="pattern-grid"
+                    x={-gridCircleRadius}
+                    y={-gridCircleRadius}
+                    width={gridSize}
+                    height={gridSize}
+                    patternUnits="userSpaceOnUse"
+                    patternContentUnits="userSpaceOnUse"
+                  >
+                    <circle
+                      cx={gridCircleRadius}
+                      cy={gridCircleRadius}
+                      r={gridCircleRadius}
+                      fill="rgb(99, 152, 191)"
+                      opacity="1"
+                    />
+                  </pattern>
+                </defs>
+                <rect
+                  x={viewBox.left}
+                  y={viewBox.top}
+                  width={viewBox.width}
+                  height={viewBox.height}
+                  fill="url(#pattern-grid)"
+                />
+              </>
+            )}
+            {areas.map((a) => (
+              <Area
+                key={a.id}
+                data={a}
+                tableCount={tableCountByArea.get(a.id) ?? 0}
+                setResize={setAreaResize}
+                setInitDimensions={setAreaInitDimensions}
                 onPointerDown={handleElementPointerDown}
               />
-            ),
-          )}
-          {views.map((view) => (
-            <View
-              key={view.id}
-              viewData={view}
-              onPointerDown={handleElementPointerDown}
-            />
-          ))}
-          {linking && (
-            <path
-              d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
-              stroke="red"
-              strokeDasharray="8,8"
-              className="pointer-events-none touch-none"
-            />
-          )}
-          <Slot name="svg-overlay" />
-          {notes.map((n) => (
-            <Note
-              key={n.id}
-              data={n}
-              onPointerDown={handleElementPointerDown}
-            />
-          ))}
-          {bulkSelectRect.show && (
-            <rect
-              {...getRectFromEndpoints(bulkSelectRect)}
-              stroke="grey"
-              fill="grey"
-              fillOpacity={0.15}
-              strokeDasharray={10}
-            />
-          )}
-        </svg>
-      </div>
-      <TableEditSheet />
-      <RelationshipEditSheet />
-      {settings.showDebugCoordinates && (
-        <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-xs pointer-events-none select-none">
-          <table className="table-auto grow">
-            <thead>
-              <tr>
-                <th className="text-left" colSpan={3}>
-                  {t("transform")}
-                </th>
-              </tr>
-              <tr className="italic [&_th]:font-normal [&_th]:text-right">
-                <th>pan x</th>
-                <th>pan y</th>
-                <th>scale</th>
-              </tr>
-            </thead>
-            <tbody className="[&_td]:text-right [&_td]:min-w-[8ch]">
-              <tr>
-                <td>{transform.pan.x.toFixed(2)}</td>
-                <td>{transform.pan.y.toFixed(2)}</td>
-                <td>{transform.zoom.toFixed(4)}</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
-            <thead>
-              <tr>
-                <th colSpan={4}>{t("viewbox")}</th>
-              </tr>
-              <tr className="italic [&_th]:font-normal">
-                <th>left</th>
-                <th>top</th>
-                <th>width</th>
-                <th>height</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{viewBox.left.toFixed(2)}</td>
-                <td>{viewBox.top.toFixed(2)}</td>
-                <td>{viewBox.width.toFixed(2)}</td>
-                <td>{viewBox.height.toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-          <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
-            <thead>
-              <tr>
-                <th colSpan={3}>{t("cursor_coordinates")}</th>
-              </tr>
-              <tr className="italic [&_th]:font-normal">
-                <th>{t("coordinate_space")}</th>
-                <th>x</th>
-                <th>y</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{t("coordinate_space_screen")}</td>
-                <td>{pointer.spaces.screen.x.toFixed(2)}</td>
-                <td>{pointer.spaces.screen.y.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td>{t("coordinate_space_diagram")}</td>
-                <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
-                <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
+            ))}
+            {relationships.map((e) =>
+              areaHiddenTableIds.has(e.startTableId) ||
+              areaHiddenTableIds.has(e.endTableId) ? null : (
+                <Relationship
+                  key={e.id}
+                  data={e}
+                  startTable={tablesById.get(e.startTableId)}
+                  endTable={tablesById.get(e.endTableId)}
+                  startRelatedFieldKeys={relatedFieldKeysByTable.get(
+                    e.startTableId,
+                  )}
+                  endRelatedFieldKeys={relatedFieldKeysByTable.get(
+                    e.endTableId,
+                  )}
+                />
+              ),
+            )}
+            {tables.map((table) =>
+              areaHiddenTableIds.has(table.id) ? null : (
+                <Table
+                  key={table.id}
+                  tableData={table}
+                  isSelected={selectedTableIds.has(table.id)}
+                  database={database}
+                  relatedFieldKeys={relatedFieldKeysByTable.get(table.id)}
+                  setHoveredTable={setHoveredTable}
+                  handleGripField={handleGripField}
+                  setLinkingLine={setLinkingLine}
+                  onPointerDown={handleElementPointerDown}
+                />
+              ),
+            )}
+            {views.map((view) => (
+              <View
+                key={view.id}
+                viewData={view}
+                onPointerDown={handleElementPointerDown}
+              />
+            ))}
+            {linking && (
+              <path
+                d={`M ${linkingLine.startX} ${linkingLine.startY} L ${linkingLine.endX} ${linkingLine.endY}`}
+                stroke="red"
+                strokeDasharray="8,8"
+                className="pointer-events-none touch-none"
+              />
+            )}
+            <Slot name="svg-overlay" />
+            {notes.map((n) => (
+              <Note
+                key={n.id}
+                data={n}
+                onPointerDown={handleElementPointerDown}
+              />
+            ))}
+            {bulkSelectRect.show && (
+              <rect
+                {...getRectFromEndpoints(bulkSelectRect)}
+                stroke="grey"
+                fill="grey"
+                fillOpacity={0.15}
+                strokeDasharray={10}
+              />
+            )}
+          </svg>
         </div>
-      )}
+        <TableEditSheet />
+        <RelationshipEditSheet />
+        {settings.showDebugCoordinates && (
+          <div className="fixed flex flex-col flex-wrap gap-6 bg-[rgba(var(--semi-grey-1),var(--tw-bg-opacity))]/40 border border-color bottom-4 right-4 p-4 rounded-xl backdrop-blur-xs pointer-events-none select-none">
+            <table className="table-auto grow">
+              <thead>
+                <tr>
+                  <th className="text-left" colSpan={3}>
+                    {t("transform")}
+                  </th>
+                </tr>
+                <tr className="italic [&_th]:font-normal [&_th]:text-right">
+                  <th>pan x</th>
+                  <th>pan y</th>
+                  <th>scale</th>
+                </tr>
+              </thead>
+              <tbody className="[&_td]:text-right [&_td]:min-w-[8ch]">
+                <tr>
+                  <td>{transform.pan.x.toFixed(2)}</td>
+                  <td>{transform.pan.y.toFixed(2)}</td>
+                  <td>{transform.zoom.toFixed(4)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+              <thead>
+                <tr>
+                  <th colSpan={4}>{t("viewbox")}</th>
+                </tr>
+                <tr className="italic [&_th]:font-normal">
+                  <th>left</th>
+                  <th>top</th>
+                  <th>width</th>
+                  <th>height</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{viewBox.left.toFixed(2)}</td>
+                  <td>{viewBox.top.toFixed(2)}</td>
+                  <td>{viewBox.width.toFixed(2)}</td>
+                  <td>{viewBox.height.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="table-auto grow [&_th]:text-left [&_th:not(:first-of-type)]:text-right [&_td:not(:first-of-type)]:text-right [&_td]:min-w-[8ch]">
+              <thead>
+                <tr>
+                  <th colSpan={3}>{t("cursor_coordinates")}</th>
+                </tr>
+                <tr className="italic [&_th]:font-normal">
+                  <th>{t("coordinate_space")}</th>
+                  <th>x</th>
+                  <th>y</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{t("coordinate_space_screen")}</td>
+                  <td>{pointer.spaces.screen.x.toFixed(2)}</td>
+                  <td>{pointer.spaces.screen.y.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td>{t("coordinate_space_diagram")}</td>
+                  <td>{pointer.spaces.diagram.x.toFixed(2)}</td>
+                  <td>{pointer.spaces.diagram.y.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      <CanvasScrollbars viewBox={viewBox} contentBounds={contentBounds} />
     </div>
   );
 }
