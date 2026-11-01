@@ -23,6 +23,7 @@
     "axios": "^1.20.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
+    "elkjs": "^0.12.1",
     "file-saver": "^2.0.5",
     "framer-motion": "^10.18.0",
     "html-to-image": "1.11.11",
