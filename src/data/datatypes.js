@@ -422,6 +422,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   NUMERIC: {
     type: "NUMERIC",
@@ -432,6 +433,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   FLOAT: {
     type: "FLOAT",
@@ -442,6 +444,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   DOUBLE: {
     type: "DOUBLE",
@@ -452,6 +455,7 @@ const mysqlTypesBase = {
     hasCheck: true,
     isSized: false,
     hasPrecision: true,
+    signed: true,
   },
   BIT: {
     type: "BIT",
@@ -1211,6 +1215,15 @@ const postgresTypesBase = {
     isSized: false,
     hasPrecision: false,
     hasQuotes: true,
+  },
+  GEOGRAPHY: {
+    type: "GEOGRAPHY",
+    color: geometricColor,
+    checkDefault: (field) => true,
+    hasCheck: false,
+    isSized: false,
+    hasPrecision: false,
+    noDefault: true,
   },
   CIDR: {
     type: "CIDR",
