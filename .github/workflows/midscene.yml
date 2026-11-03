@@ -23,7 +23,7 @@ concurrency:
 jobs:
   browser:
     if: vars.MIDSCENE_E2E_ENABLED == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
