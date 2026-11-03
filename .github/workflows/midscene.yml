@@ -1,0 +1,111 @@
+name: Midscene E2E
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, test/midscene]
+    paths:
+      - src/**
+      - public/**
+      - tests/midscene/**
+      - package.json
+      - package-lock.json
+      - vite.config.js
+      - .github/workflows/midscene.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: midscene-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  browser:
+    if: vars.MIDSCENE_E2E_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:e2e:check
+      - run: npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Run browser workflows
+        id: tests
+        timeout-minutes: 22
+        env:
+          BROWSER_CHANNEL: chromium
+          MIDSCENE_MODEL_NAME: ${{ vars.MIDSCENE_MODEL_NAME }}
+          MIDSCENE_MODEL_FAMILY: ${{ vars.MIDSCENE_MODEL_FAMILY }}
+          MIDSCENE_MODEL_PROTOCOL: ${{ vars.MIDSCENE_MODEL_PROTOCOL }}
+          MIDSCENE_MODEL_BASE_URL: ${{ vars.MIDSCENE_MODEL_BASE_URL }}
+          MIDSCENE_MODEL_REASONING_EFFORT: ${{ vars.MIDSCENE_MODEL_REASONING_EFFORT }}
+          MIDSCENE_MODEL_API_KEY: ${{ secrets.MIDSCENE_MODEL_API_KEY }}
+        run: |
+          for name in MIDSCENE_MODEL_NAME MIDSCENE_MODEL_FAMILY MIDSCENE_MODEL_BASE_URL MIDSCENE_MODEL_API_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing $name"
+              exit 1
+            fi
+          done
+          npm run test:e2e:run
+      - name: Preserve reports and screenshots
+        id: artifacts
+        if: ${{ always() && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: midscene-report-${{ github.run_attempt }}
+          path: |
+            tests/midscene/midscene_run/
+            tests/midscene/.midscene/test-results/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Locate report for Cloudflare Pages
+        id: report
+        if: ${{ always() && vars.MIDSCENE_PAGES_PROJECT != '' && (steps.tests.outcome == 'success' || steps.tests.outcome == 'failure') }}
+        run: |
+          shopt -s nullglob
+          reports=(tests/midscene/midscene_run/report/midscene-e2e-*/index.html)
+          if [ "${#reports[@]}" -ne 1 ]; then
+            echo "::error::Expected exactly one Midscene HTML report"
+            exit 1
+          fi
+          echo "directory=${reports[0]%/index.html}" >> "$GITHUB_OUTPUT"
+      - name: Publish interactive report
+        id: deploy
+        if: ${{ always() && steps.report.outcome == 'success' }}
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.151.1"
+          command: pages deploy "${{ steps.report.outputs.directory }}" --project-name=${{ vars.MIDSCENE_PAGES_PROJECT }} --branch=run-${{ github.run_id }}-${{ github.run_attempt }} --commit-hash=${{ github.sha }}
+      - name: Write report links to Summary
+        if: always()
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          REPORT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          ARTIFACT_URL: ${{ steps.artifacts.outputs.artifact-url }}
+        run: |
+          {
+            echo '## Midscene E2E report'
+            echo "Revision: $GITHUB_SHA"
+            echo "Test outcome: ${TEST_OUTCOME:-not run}"
+            if [ -n "$REPORT_URL" ]; then
+              echo "[Open interactive HTML report]($REPORT_URL)"
+            else
+              echo 'Online report unavailable. Check the publishing steps and download the artifacts below.'
+            fi
+            if [ -n "$ARTIFACT_URL" ]; then
+              echo "[Download reports and screenshots]($ARTIFACT_URL)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
