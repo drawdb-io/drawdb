@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Midscene generated reports and execution state
+tests/midscene/.midscene/
+tests/midscene/midscene_run/
+tests/midscene/midscene-node-spec.*.md

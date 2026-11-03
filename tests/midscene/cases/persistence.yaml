@@ -1,0 +1,12 @@
+cases:
+  - name: Create related tables and restore them after reload
+    steps:
+      - aiAct: Select MySQL in the database selection dialog and click Continue. In Create new diagram select Blank canvas and click Create. Add a table named users with the default id primary key and one additional VARCHAR field named name. Do not add any other fields.
+      - aiAct: Add a second table named orders with its default id primary key and one additional INTEGER field named user_id. Do not add any other fields.
+      - aiAct: Create a foreign key relationship from orders.user_id to users.id using the Relationships panel. Keep exactly these two tables and one relationship.
+      - aiAct: Arrange the two tables on the canvas side by side with a clear gap so both tables, every field, and their relationship line are fully visible. Drag table headers or use the arrange controls. Finish by clicking empty canvas away from the tables to dismiss field tooltips.
+      - storage.check: {}
+      - aiAssert: The diagram shows users with id and name, orders with id and user_id, and a relationship line connecting the tables.
+      - app.reload: {}
+      - aiAssert: The diagram shows users with id and name, orders with id and user_id, and a relationship line connecting the tables.
+      - storage.check: {}

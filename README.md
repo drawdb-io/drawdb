@@ -56,6 +56,10 @@ With the Docker image, pass the server URL when starting the container. No rebui
 docker run -p 3000:80 -e VITE_BACKEND_URL=https://your-drawdb-server.example.com ghcr.io/drawdb-io/drawdb:latest
 ```
 
+## Browser tests
+
+See [the Midscene test guide](tests/midscene/README.md) to run diagram persistence and SQL import/export tests against a local production build.
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.

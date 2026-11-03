@@ -1,0 +1,13 @@
+cases:
+  - name: Import SQL, rename a column, and export the updated schema
+    steps:
+      - aiAct: Select MySQL and click Continue. In Create new diagram select Blank canvas and click Create. In the File menu open Import from SQL, then select the Upload file tab. Stop before choosing a file.
+      - fixture.upload: {}
+      - aiAct: Click Import to import the uploaded SQL into the diagram.
+      - storage.check: {}
+      - aiAssert: The diagram shows users and orders with a relationship connecting them.
+      - aiAct: In the users table rename only the name field to display_name. Keep its type and all other fields and the relationship unchanged. Widen the users table on the canvas by dragging its right edge so the full display_name field name is visible without truncation. Finish by clicking empty canvas away from the tables.
+      - storage.check: { renamed: true }
+      - aiAssert: The users table shows display_name instead of name, and the orders table and relationship remain visible.
+      - aiAct: Open File then Export SQL, and click Export in the export dialog once. Stop immediately after clicking Export; the next test step checks the browser download.
+      - export.check: {}

@@ -8,7 +8,10 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:e2e": "npm run build && npm run test:e2e:run",
+    "test:e2e:check": "tsc --noEmit -p tests/midscene/tsconfig.json && cd tests/midscene && midscene-test nodes",
+    "test:e2e:run": "cd tests/midscene && midscene-test --config midscene.config.ts"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.1",
@@ -47,7 +50,10 @@
     "uuid": "^14.0.1"
   },
   "devDependencies": {
+    "@midscene/test": "1.16.5",
+    "@midscene/web": "1.16.5",
     "@tailwindcss/postcss": "^4.0.14",
+    "@types/node": "24.10.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^6.0.3",
@@ -58,9 +64,11 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
+    "playwright": "1.56.1",
     "postcss": "^8.5.23",
     "prettier": "3.2.5",
     "tailwindcss": "^4.0.14",
+    "typescript": "5.9.3",
     "vite": "^8.3.5"
   },
   "lint-staged": {
