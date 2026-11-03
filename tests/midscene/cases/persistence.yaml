@@ -8,5 +8,5 @@ cases:
       - storage.check: {}
       - aiAssert: The diagram shows users with id and name, orders with id and user_id, and a relationship line connecting the tables.
       - app.reload: {}
-      - aiAssert: After reloading, the diagram still shows the users and orders tables, their fields, and the relationship line connecting them.
+      - aiAssert: The diagram shows users with id and name, orders with id and user_id, and a relationship line connecting the tables.
       - storage.check: {}
