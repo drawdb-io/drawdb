@@ -271,8 +271,7 @@ const ms = {
     upload_file: "Muat naik fail",
     not_found: "Tidak dijumpai",
     inherits: "Mewarisi",
-    merging_column_w_inherited_definition:
-      "Lajur '{{fieldName}}' dalam jadual '{{tableName}}' dengan definisi warisan akan digabungkan",
+    merging_column_w_inherited_definition: "Lajur '{{fieldName}}' dalam jadual '{{tableName}}' dengan definisi warisan akan digabungkan",
     saved_as_copy: "Disimpan sebagai salinan. Buka:",
     toolbar: "Bar alat",
     nullable: "Boleh null",
@@ -284,28 +283,18 @@ const ms = {
     add_unique_constraint: "Tambah kekangan unik",
     references: "Rujukan",
     auto_arrange: "Susun automatik",
-    layout_dagre_left_to_right: "Berlapis, kiri ke kanan",
-    layout_dagre_top_to_bottom: "Berlapis, atas ke bawah",
-    layout_elk_layered: "Berlapis mengikut baris medan (ELK)",
-    layout_elk_stress: "Berkelompok (ELK stress)",
-    layout_by_subject_area: "Mengikut kawasan subjek",
     auto_connect_fk: "Sambung kekunci asing secara automatik",
     auto_connect_fk_success: "{{count}} rujukan kekunci asing dicipta",
     no_foreign_keys_found: "Tiada perhubungan ditemui",
     all_relations_already_connected: "Semua perhubungan sudah disambungkan",
     auto_connect_fk_modal_title: "Sambung Kekunci Asing Secara Automatik",
-    auto_connect_fk_modal_description:
-      "Untuk mewujudkan perhubungan PK/FK secara automatik, lajur anda perlu mengikut konvensyen penamaan standard:",
-    auto_connect_fk_rule_1:
-      "Awalan jadual + lajur PK (cth., user_id atau users_id untuk jadual 'users' dengan kekunci primer 'id')",
-    auto_connect_fk_rule_2:
-      "Nama lajur PK yang sepadan (cth., author_id sepadan dengan author_id dalam jadual induk)",
-    auto_connect_fk_modal_question:
-      "Adakah anda mahu mengimbas rajah dan membina perhubungan yang sepadan?",
+    auto_connect_fk_modal_description: "Untuk mewujudkan perhubungan PK/FK secara automatik, lajur anda perlu mengikut konvensyen penamaan standard:",
+    auto_connect_fk_rule_1: "Awalan jadual + lajur PK (cth., user_id atau users_id untuk jadual 'users' dengan kekunci primer 'id')",
+    auto_connect_fk_rule_2: "Nama lajur PK yang sepadan (cth., author_id sepadan dengan author_id dalam jadual induk)",
+    auto_connect_fk_modal_question: "Adakah anda mahu mengimbas rajah dan membina perhubungan yang sepadan?",
     migrations: "Migrasi",
     generate_migration: "Jana migrasi",
-    migration_not_supported_generic:
-      "Migrasi tidak disokong untuk rajah generik.",
+    migration_not_supported_generic: "Migrasi tidak disokong untuk rajah generik.",
     no_migration_needed: "Tiada migrasi diperlukan",
     scripts: "Skrip",
     json_diff: "Perbezaan JSON",
@@ -313,8 +302,7 @@ const ms = {
     show_comments: "Tunjuk komen",
     configure_custom_types: "Konfigurasikan jenis tersuai",
     type_color: "Warna",
-    custom_types_description:
-      "Tentukan jenis data tersuai yang tidak disokong secara lalai. Jenis ini akan tersedia semasa mencipta atau menyunting lajur.",
+    custom_types_description: "Tentukan jenis data tersuai yang tidak disokong secara lalai. Jenis ini akan tersedia semasa mencipta atau menyunting lajur.",
     type_data_corrupted: "Jenis yang dikonfigurasikan telah rosak.",
     no_custom_types: "Anda tiada jenis yang dikonfigurasikan",
     close: "Tutup",
@@ -355,22 +343,17 @@ const ms = {
     view_w_no_name: "Paparan tanpa nama",
     view_w_no_base_table: "Paparan '{{viewName}}' tiada jadual asas",
     duplicate_views: "Paparan berganda bernama '{{viewName}}'",
-    view_name_clashes_w_table:
-      "Paparan '{{viewName}}' mempunyai nama yang sama dengan jadual",
+    view_name_clashes_w_table: "Paparan '{{viewName}}' mempunyai nama yang sama dengan jadual",
     join_w_no_table: "JOIN tanpa jadual dalam paparan '{{viewName}}'",
-    join_w_no_condition:
-      "JOIN pada '{{tableName}}' dalam paparan '{{viewName}}' tiada syarat",
-    join_out_of_order:
-      "JOIN pada '{{tableName}}' dalam paparan '{{viewName}}' merujuk jadual yang di-JOIN selepasnya",
+    join_w_no_condition: "JOIN pada '{{tableName}}' dalam paparan '{{viewName}}' tiada syarat",
+    join_out_of_order: "JOIN pada '{{tableName}}' dalam paparan '{{viewName}}' merujuk jadual yang di-JOIN selepasnya",
     empty_view_column: "Lajur output kosong dalam paparan '{{viewName}}'",
-    duplicate_view_columns:
-      "Lajur output berganda '{{columnName}}' dalam paparan '{{viewName}}'",
+    duplicate_view_columns: "Lajur output berganda '{{columnName}}' dalam paparan '{{viewName}}'",
     lock: "Kunci",
     unlock: "Buka kunci",
     edit_dbml: "Sunting DBML",
     dbml_problem: "Baris {{line}}, Lajur {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Rajah ini disimpan secara setempat dalam pelayar anda. Pindahkan ke awan?",
+    move_to_cloud_prompt: "Rajah ini disimpan secara setempat dalam pelayar anda. Pindahkan ke awan?",
     move: "Pindahkan",
     dismiss: "Abaikan",
     view_actions: "Tindakan paparan",
@@ -387,22 +370,16 @@ const ms = {
     templates: "Templat",
     diagrams: "Rajah",
     logo: "logo",
-    check_syntax_errors:
-      "Sila semak ralat sintaks atau maklumkan kepada kami tentang ralat ini.",
+    check_syntax_errors: "Sila semak ralat sintaks atau maklumkan kepada kami tentang ralat ini.",
     parse_error_at: "{{name}} [Baris {{line}}, Lajur {{column}}]: {{message}}",
     overwrite_checkbox: "kotak semak tulis ganti",
     file_contains_error: "Fail mengandungi ralat.",
-    file_missing_diagram_properties:
-      "Fail tiada sifat yang diperlukan untuk rajah.",
-    imported_diagram_database_mismatch:
-      "Rajah yang diimport dan rajah yang dibuka tidak menggunakan pangkalan data yang sama.",
-    relationship_references_missing_table:
-      "Perhubungan {{relationshipName}} merujuk jadual yang tidak wujud.",
-    relationship_references_missing_field:
-      "Perhubungan {{relationshipName}} merujuk lajur yang tidak wujud.",
+    file_missing_diagram_properties: "Fail tiada sifat yang diperlukan untuk rajah.",
+    imported_diagram_database_mismatch: "Rajah yang diimport dan rajah yang dibuka tidak menggunakan pangkalan data yang sama.",
+    relationship_references_missing_table: "Perhubungan {{relationshipName}} merujuk jadual yang tidak wujud.",
+    relationship_references_missing_field: "Perhubungan {{relationshipName}} merujuk lajur yang tidak wujud.",
     ready_to_import: "Semuanya kelihatan baik. Anda boleh import sekarang.",
-    import_will_overwrite_current:
-      "Rajah semasa tidak kosong. Mengimport rajah baru akan menulis ganti perubahan semasa.",
+    import_will_overwrite_current: "Rajah semasa tidak kosong. Mengimport rajah baru akan menulis ganti perubahan semasa.",
     all: "Semua",
     all_databases: "Semua pangkalan data",
     all_types: "Semua jenis",

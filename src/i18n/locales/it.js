@@ -98,8 +98,7 @@ const it = {
     no_tables: "Nessuna tabella",
     no_tables_text: "Crea il tuo diagramma!",
     no_relationships: "Nessuna relazione",
-    no_relationships_text:
-      "Trascina per collegare le colonne e creare relazioni!",
+    no_relationships_text: "Trascina per collegare le colonne e creare relazioni!",
     no_subject_areas: "Nessuna area tematica",
     no_subject_areas_text: "Aggiungi un'area tematica!",
     no_notes: "Nessuna nota",
@@ -181,13 +180,11 @@ const it = {
       "Colonne della tabella duplicate con il nome '{{fieldName}}' nella tabella '{{tableName}}'",
     duplicate_index:
       "Indice duplicato con il nome '{{indexName}}' nella tabella '{{tableName}}'",
-    empty_index:
-      "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
+    empty_index: "L'indice nella tabella '{{tableName}}' non indicizza nessuna colonna",
     no_primary_key: "La tabella '{{tableName}}' non ha una chiave primaria",
     type_with_no_name: "Dichiarato un tipo senza nome",
     duplicate_types: "Tipi duplicati con il nome '{{typeName}}'",
-    type_w_no_fields:
-      "Dichiarato un tipo vuoto '{{typeName}}' senza alcuna colonna",
+    type_w_no_fields: "Dichiarato un tipo vuoto '{{typeName}}' senza alcuna colonna",
     empty_type_field_name: "Colonna `name` vuota nel tipo '{{typeName}}'",
     empty_type_field_type: "Colonna `type` vuota nel tipo '{{typeName}}'",
     no_values_for_type_field:
@@ -195,8 +192,7 @@ const it = {
     duplicate_type_fields:
       "Colonne di tipo duplicate con il nome '{{fieldName}}' nel tipo '{{typeName}}'",
     duplicate_reference: "Riferimento duplicato con il nome '{{refName}}'",
-    circular_dependency:
-      "Dipendenza circolare riguardante la tabella '{{refName}}'",
+    circular_dependency: "Dipendenza circolare riguardante la tabella '{{refName}}'",
     timeline: "Cronologia",
     details: "Dettagli",
     no_activity: "Non ci sono ancora attività.",
@@ -227,16 +223,14 @@ const it = {
     no_enums: "Nessun enum",
     no_enums_text: "Definisci qui gli enum",
     declare_array: "Dichiara array",
-    empty_index_name:
-      "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
+    empty_index_name: "Dichiarato un indice senza nome nella tabella '{{tableName}}'",
     didnt_find_diagram: "Ops! Impossibile trovare il diagramma.",
     unsigned: "Senza segno",
     share: "Condividi",
     unshare: "Annulla condivisione",
     copy_link: "Copia link",
     readme: "README",
-    failed_to_load:
-      "Caricamento non riuscito. Assicurati che il link sia corretto",
+    failed_to_load: "Caricamento non riuscito. Assicurati che il link sia corretto",
     share_info:
       "* La condivisione di questo link non consentirà di creare una sessione di collaborazione in tempo reale.",
     show_relationship_labels: "Mostra le etichette di relazione",
@@ -248,8 +242,7 @@ const it = {
     dbml_view: "Vista DBML",
     tab_view: "Vista tabella",
     inherits: "Eredita",
-    merging_column_w_inherited_definition:
-      "La colonna '{{fieldName}}' della tabella '{{tableName}}' con definizione ereditata verrà unita",
+    merging_column_w_inherited_definition: "La colonna '{{fieldName}}' della tabella '{{tableName}}' con definizione ereditata verrà unita",
     no_saved_diagrams: "Non hai diagrammi salvati",
     open_recent: "Apri recenti",
     saved_as_copy: "Salvato come copia. Apri:",
@@ -264,24 +257,15 @@ const it = {
     references: "Riferimenti",
     enum_deleted: "Enum eliminato",
     auto_arrange: "Disposizione automatica",
-    layout_dagre_left_to_right: "A livelli, da sinistra a destra",
-    layout_dagre_top_to_bottom: "A livelli, dall'alto in basso",
-    layout_elk_layered: "A livelli per righe dei campi (ELK)",
-    layout_elk_stress: "A gruppi (ELK stress)",
-    layout_by_subject_area: "Per area tematica",
     auto_connect_fk: "Collega automaticamente le chiavi esterne",
     auto_connect_fk_success: "Creati {{count}} riferimenti a chiavi esterne",
     no_foreign_keys_found: "Nessuna relazione trovata",
     all_relations_already_connected: "Tutte le relazioni sono già collegate",
     auto_connect_fk_modal_title: "Collegamento automatico delle chiavi esterne",
-    auto_connect_fk_modal_description:
-      "Per stabilire automaticamente le relazioni PK/FK, le colonne devono seguire le convenzioni di denominazione standard:",
-    auto_connect_fk_rule_1:
-      "Prefisso della tabella + colonna PK (es. user_id o users_id per la tabella 'users' con chiave primaria 'id')",
-    auto_connect_fk_rule_2:
-      "Nome della colonna PK corrispondente (es. author_id che corrisponde a author_id nella tabella padre)",
-    auto_connect_fk_modal_question:
-      "Vuoi analizzare il diagramma e creare le relazioni corrispondenti?",
+    auto_connect_fk_modal_description: "Per stabilire automaticamente le relazioni PK/FK, le colonne devono seguire le convenzioni di denominazione standard:",
+    auto_connect_fk_rule_1: "Prefisso della tabella + colonna PK (es. user_id o users_id per la tabella 'users' con chiave primaria 'id')",
+    auto_connect_fk_rule_2: "Nome della colonna PK corrispondente (es. author_id che corrisponde a author_id nella tabella padre)",
+    auto_connect_fk_modal_question: "Vuoi analizzare il diagramma e creare le relazioni corrispondenti?",
     label: "Etichetta",
     many_side_label: "Etichetta lato molti (n)",
     version: "Versione",
@@ -292,8 +276,7 @@ const it = {
     read_only: "Sola lettura",
     continue: "Continua",
     restore_version: "Ripristina versione",
-    restore_warning:
-      "Caricare un'altra versione sovrascriverà tutte le modifiche.",
+    restore_warning: "Caricare un'altra versione sovrascriverà tutte le modifiche.",
     return_to_current: "Torna al diagramma",
     no_changes_to_record: "Nessuna modifica da registrare",
     click_to_view: "Clicca per visualizzare",
@@ -305,8 +288,7 @@ const it = {
     see_all: "Vedi tutto",
     migrations: "Migrazioni",
     generate_migration: "Genera migrazione",
-    migration_not_supported_generic:
-      "Le migrazioni non sono supportate per i diagrammi generici.",
+    migration_not_supported_generic: "Le migrazioni non sono supportate per i diagrammi generici.",
     no_migration_needed: "Nessuna migrazione necessaria",
     scripts: "Script",
     json_diff: "Differenze JSON",
@@ -316,8 +298,7 @@ const it = {
     show_comments: "Mostra commenti",
     configure_custom_types: "Configura tipi personalizzati",
     type_color: "Colore",
-    custom_types_description:
-      "Definisci tipi di dati personalizzati non supportati per impostazione predefinita. Questi tipi saranno disponibili durante la creazione o la modifica delle colonne.",
+    custom_types_description: "Definisci tipi di dati personalizzati non supportati per impostazione predefinita. Questi tipi saranno disponibili durante la creazione o la modifica delle colonne.",
     type_data_corrupted: "I tipi configurati sono danneggiati.",
     no_custom_types: "Non hai configurato alcun tipo",
     close: "Chiudi",
@@ -358,22 +339,17 @@ const it = {
     view_w_no_name: "Vista senza nome",
     view_w_no_base_table: "La vista '{{viewName}}' non ha una tabella di base",
     duplicate_views: "Viste duplicate con il nome '{{viewName}}'",
-    view_name_clashes_w_table:
-      "La vista '{{viewName}}' ha lo stesso nome di una tabella",
+    view_name_clashes_w_table: "La vista '{{viewName}}' ha lo stesso nome di una tabella",
     join_w_no_table: "Join senza tabella nella vista '{{viewName}}'",
-    join_w_no_condition:
-      "Il join su '{{tableName}}' nella vista '{{viewName}}' non ha alcuna condizione",
-    join_out_of_order:
-      "Il join su '{{tableName}}' nella vista '{{viewName}}' fa riferimento a una tabella unita dopo di esso",
+    join_w_no_condition: "Il join su '{{tableName}}' nella vista '{{viewName}}' non ha alcuna condizione",
+    join_out_of_order: "Il join su '{{tableName}}' nella vista '{{viewName}}' fa riferimento a una tabella unita dopo di esso",
     empty_view_column: "Colonna di output vuota nella vista '{{viewName}}'",
-    duplicate_view_columns:
-      "Colonna di output duplicata '{{columnName}}' nella vista '{{viewName}}'",
+    duplicate_view_columns: "Colonna di output duplicata '{{columnName}}' nella vista '{{viewName}}'",
     lock: "Blocca",
     unlock: "Sblocca",
     edit_dbml: "Modifica DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Questo diagramma è salvato localmente nel tuo browser. Vuoi spostarlo nel cloud?",
+    move_to_cloud_prompt: "Questo diagramma è salvato localmente nel tuo browser. Vuoi spostarlo nel cloud?",
     move: "Sposta",
     dismiss: "Ignora",
     view_actions: "Azioni vista",
@@ -390,22 +366,16 @@ const it = {
     templates: "Modelli",
     diagrams: "Diagrammi",
     logo: "logo",
-    check_syntax_errors:
-      "Controlla eventuali errori di sintassi o segnalaci l'errore.",
+    check_syntax_errors: "Controlla eventuali errori di sintassi o segnalaci l'errore.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "casella di sovrascrittura",
     file_contains_error: "Il file contiene un errore.",
-    file_missing_diagram_properties:
-      "Al file mancano le proprietà necessarie per un diagramma.",
-    imported_diagram_database_mismatch:
-      "Il diagramma importato e il diagramma aperto non usano lo stesso database.",
-    relationship_references_missing_table:
-      "La relazione {{relationshipName}} fa riferimento a una tabella inesistente.",
-    relationship_references_missing_field:
-      "La relazione {{relationshipName}} fa riferimento a una colonna inesistente.",
+    file_missing_diagram_properties: "Al file mancano le proprietà necessarie per un diagramma.",
+    imported_diagram_database_mismatch: "Il diagramma importato e il diagramma aperto non usano lo stesso database.",
+    relationship_references_missing_table: "La relazione {{relationshipName}} fa riferimento a una tabella inesistente.",
+    relationship_references_missing_field: "La relazione {{relationshipName}} fa riferimento a una colonna inesistente.",
     ready_to_import: "È tutto a posto. Ora puoi importare.",
-    import_will_overwrite_current:
-      "Il diagramma attuale non è vuoto. Importare un nuovo diagramma sovrascriverà le modifiche attuali.",
+    import_will_overwrite_current: "Il diagramma attuale non è vuoto. Importare un nuovo diagramma sovrascriverà le modifiche attuali.",
     all: "Tutti",
     all_databases: "Tutti i database",
     all_types: "Tutti i tipi",

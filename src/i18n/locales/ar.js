@@ -221,8 +221,7 @@ const ar = {
     empty_index_name: "تم إعلان مؤشر بدون اسم في الجدول '{{tableName}}'",
     didnt_find_diagram: "عفوًا! لم يتم العثور على المخطط.",
     inherits: "يرث",
-    merging_column_w_inherited_definition:
-      "سيتم دمج العمود '{{fieldName}}' في الجدول '{{tableName}}' مع التعريف الموروث",
+    merging_column_w_inherited_definition: "سيتم دمج العمود '{{fieldName}}' في الجدول '{{tableName}}' مع التعريف الموروث",
     no_saved_diagrams: "ليس لديك مخططات محفوظة",
     open_recent: "فتح الأخيرة",
     saved_as_copy: "تم الحفظ كنسخة. فتح:",
@@ -244,32 +243,21 @@ const ar = {
     copy_link: "نسخ الرابط",
     readme: "README",
     failed_to_load: "فشل التحميل. تأكد من صحة الرابط.",
-    share_info:
-      "* مشاركة هذا الرابط لن تنشئ جلسة تعاون مباشرة في الوقت الفعلي.",
+    share_info: "* مشاركة هذا الرابط لن تنشئ جلسة تعاون مباشرة في الوقت الفعلي.",
     show_relationship_labels: "عرض تسميات العلاقات",
     docs: "المستندات",
     supported_types: "أنواع الملفات المدعومة:",
     bulk_update: "تحديث جماعي",
     auto_arrange: "ترتيب تلقائي",
-    layout_dagre_left_to_right: "طبقات، من اليسار إلى اليمين",
-    layout_dagre_top_to_bottom: "طبقات، من الأعلى إلى الأسفل",
-    layout_elk_layered: "طبقات حسب صفوف الحقول (ELK)",
-    layout_elk_stress: "عناقيد (ELK stress)",
-    layout_by_subject_area: "حسب المجال الموضوعي",
     auto_connect_fk: "ربط المفاتيح الخارجية تلقائيًا",
-    auto_connect_fk_success:
-      "تم إنشاء {{count}} مرجع (مراجع) للمفاتيح الخارجية",
+    auto_connect_fk_success: "تم إنشاء {{count}} مرجع (مراجع) للمفاتيح الخارجية",
     no_foreign_keys_found: "لم يتم العثور على علاقات",
     all_relations_already_connected: "جميع العلاقات متصلة بالفعل",
     auto_connect_fk_modal_title: "ربط المفاتيح الخارجية تلقائيًا",
-    auto_connect_fk_modal_description:
-      "لإنشاء علاقات PK/FK تلقائيًا، يجب أن تتبع أعمدتك اصطلاحات التسمية القياسية:",
-    auto_connect_fk_rule_1:
-      "بادئة الجدول + عمود PK (مثال: user_id أو users_id للجدول 'users' ذي المفتاح الأساسي 'id')",
-    auto_connect_fk_rule_2:
-      "اسم عمود PK مطابق (مثال: author_id يطابق author_id في الجدول الأصل)",
-    auto_connect_fk_modal_question:
-      "هل تريد فحص المخطط وإنشاء العلاقات المطابقة؟",
+    auto_connect_fk_modal_description: "لإنشاء علاقات PK/FK تلقائيًا، يجب أن تتبع أعمدتك اصطلاحات التسمية القياسية:",
+    auto_connect_fk_rule_1: "بادئة الجدول + عمود PK (مثال: user_id أو users_id للجدول 'users' ذي المفتاح الأساسي 'id')",
+    auto_connect_fk_rule_2: "اسم عمود PK مطابق (مثال: author_id يطابق author_id في الجدول الأصل)",
+    auto_connect_fk_modal_question: "هل تريد فحص المخطط وإنشاء العلاقات المطابقة؟",
     multiselect: "تحديد متعدد",
     export_saved_data: "تصدير البيانات المحفوظة",
     dbml_view: "عرض DBML",
@@ -306,8 +294,7 @@ const ar = {
     show_comments: "عرض التعليقات",
     configure_custom_types: "تهيئة الأنواع المخصصة",
     type_color: "اللون",
-    custom_types_description:
-      "عرّف أنواع بيانات مخصصة غير مدعومة افتراضيًا. ستكون هذه الأنواع متاحة عند إنشاء الأعمدة أو تحريرها.",
+    custom_types_description: "عرّف أنواع بيانات مخصصة غير مدعومة افتراضيًا. ستكون هذه الأنواع متاحة عند إنشاء الأعمدة أو تحريرها.",
     type_data_corrupted: "الأنواع المهيأة تالفة.",
     no_custom_types: "ليس لديك أي أنواع مهيأة",
     close: "إغلاق",
@@ -324,8 +311,7 @@ const ar = {
     primary_key: "المفتاح الأساسي",
     foreign_key: "المفتاح الخارجي",
     import_with_ai: "الاستيراد بالذكاء الاصطناعي",
-    ai_import_failed:
-      "فشل الاستيراد بالذكاء الاصطناعي. يرجى المحاولة مرة أخرى.",
+    ai_import_failed: "فشل الاستيراد بالذكاء الاصطناعي. يرجى المحاولة مرة أخرى.",
     views: "العروض",
     add_view: "إضافة عرض",
     edit_view: "{{extra}} تحرير العرض {{viewName}}",
@@ -351,19 +337,15 @@ const ar = {
     duplicate_views: "عروض مكررة بالاسم '{{viewName}}'",
     view_name_clashes_w_table: "العرض '{{viewName}}' له نفس اسم جدول",
     join_w_no_table: "ربط بدون جدول في العرض '{{viewName}}'",
-    join_w_no_condition:
-      "الربط على '{{tableName}}' في العرض '{{viewName}}' ليس له شرط",
-    join_out_of_order:
-      "الربط على '{{tableName}}' في العرض '{{viewName}}' يشير إلى جدول مربوط بعده",
+    join_w_no_condition: "الربط على '{{tableName}}' في العرض '{{viewName}}' ليس له شرط",
+    join_out_of_order: "الربط على '{{tableName}}' في العرض '{{viewName}}' يشير إلى جدول مربوط بعده",
     empty_view_column: "عمود إخراج فارغ في العرض '{{viewName}}'",
-    duplicate_view_columns:
-      "عمود إخراج مكرر '{{columnName}}' في العرض '{{viewName}}'",
+    duplicate_view_columns: "عمود إخراج مكرر '{{columnName}}' في العرض '{{viewName}}'",
     lock: "قفل",
     unlock: "إلغاء القفل",
     edit_dbml: "تحرير DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "هذا المخطط مخزن محليًا في متصفحك. هل تريد نقله إلى السحابة؟",
+    move_to_cloud_prompt: "هذا المخطط مخزن محليًا في متصفحك. هل تريد نقله إلى السحابة؟",
     move: "نقل",
     dismiss: "تجاهل",
     view_actions: "إجراءات العرض",
@@ -385,15 +367,11 @@ const ar = {
     overwrite_checkbox: "خانة اختيار الاستبدال",
     file_contains_error: "يحتوي الملف على خطأ.",
     file_missing_diagram_properties: "يفتقد الملف إلى الخصائص اللازمة للمخطط.",
-    imported_diagram_database_mismatch:
-      "المخطط المستورد والمخطط المفتوح لا يستخدمان قاعدة البيانات نفسها.",
-    relationship_references_missing_table:
-      "العلاقة {{relationshipName}} تشير إلى جدول غير موجود.",
-    relationship_references_missing_field:
-      "العلاقة {{relationshipName}} تشير إلى عمود غير موجود.",
+    imported_diagram_database_mismatch: "المخطط المستورد والمخطط المفتوح لا يستخدمان قاعدة البيانات نفسها.",
+    relationship_references_missing_table: "العلاقة {{relationshipName}} تشير إلى جدول غير موجود.",
+    relationship_references_missing_field: "العلاقة {{relationshipName}} تشير إلى عمود غير موجود.",
     ready_to_import: "كل شيء يبدو جيدًا. يمكنك الاستيراد الآن.",
-    import_will_overwrite_current:
-      "المخطط الحالي ليس فارغًا. سيؤدي استيراد مخطط جديد إلى استبدال التغييرات الحالية.",
+    import_will_overwrite_current: "المخطط الحالي ليس فارغًا. سيؤدي استيراد مخطط جديد إلى استبدال التغييرات الحالية.",
     all: "الكل",
     all_databases: "جميع قواعد البيانات",
     all_types: "جميع الأنواع",

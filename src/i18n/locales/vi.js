@@ -121,8 +121,7 @@ const vi = {
     autoincrement: "Tự động tăng",
     default_value: "Giá trị mặc định",
     check: "Kiểm tra ràng buộc",
-    this_will_appear_as_is:
-      "*Điều này sẽ xuất hiện trong đoạn lệnh được tạo như hiện tại",
+    this_will_appear_as_is: "*Điều này sẽ xuất hiện trong đoạn lệnh được tạo như hiện tại",
     comment: "Bình luận",
     add_field: "Thêm cột",
     values: "Giá trị",
@@ -189,8 +188,7 @@ const vi = {
     duplicate_types: "Các kiểu trùng lặp theo tên '{{typeName}}'",
     type_w_no_fields: "Khai báo một kiểu rỗng '{{typeName}}' không có cột nào",
     empty_type_field_name: "Thiếu tên cột trong kiểu '{{typeName}}'",
-    empty_type_field_type:
-      "Thiếu kiểu dữ liệu của cột trong kiểu '{{typeName}}'",
+    empty_type_field_type: "Thiếu kiểu dữ liệu của cột trong kiểu '{{typeName}}'",
     no_values_for_type_field:
       "Cột '{{fieldName}}' của kiểu '{{typeName}}' thuộc kiểu `{{type}}` nhưng không có giá trị nào được chỉ định",
     duplicate_type_fields:
@@ -227,8 +225,7 @@ const vi = {
     no_enums: "Không có enum",
     no_enums_text: "Định nghĩa enum ở đây",
     declare_array: "Khai báo mảng",
-    empty_index_name:
-      "Định nghĩa chỉ mục không có tên trong bảng '{{tableName}}'",
+    empty_index_name: "Định nghĩa chỉ mục không có tên trong bảng '{{tableName}}'",
     didnt_find_diagram: "Ôi! Không tìm thấy sơ đồ.",
     unsigned: "Unsigned",
     share: "Chia sẻ",
@@ -278,29 +275,19 @@ const vi = {
     references: "Tham chiếu",
     enum_deleted: "Đã xóa enum",
     auto_arrange: "Tự động sắp xếp",
-    layout_dagre_left_to_right: "Phân lớp, từ trái sang phải",
-    layout_dagre_top_to_bottom: "Phân lớp, từ trên xuống dưới",
-    layout_elk_layered: "Phân lớp theo hàng trường (ELK)",
-    layout_elk_stress: "Theo cụm (ELK stress)",
-    layout_by_subject_area: "Theo vùng",
     auto_connect_fk: "Tự động kết nối khóa ngoại",
     auto_connect_fk_success: "Đã tạo {{count}} tham chiếu khóa ngoại",
     no_foreign_keys_found: "Không tìm thấy quan hệ nào",
     all_relations_already_connected: "Tất cả quan hệ đã được kết nối",
     auto_connect_fk_modal_title: "Tự động kết nối khóa ngoại",
-    auto_connect_fk_modal_description:
-      "Để tự động thiết lập quan hệ PK/FK, các cột của bạn nên tuân theo quy ước đặt tên chuẩn:",
-    auto_connect_fk_rule_1:
-      "Tiền tố bảng + cột PK (ví dụ: user_id hoặc users_id cho bảng 'users' có khóa chính 'id')",
-    auto_connect_fk_rule_2:
-      "Tên cột PK trùng khớp (ví dụ: author_id khớp với author_id trong bảng cha)",
-    auto_connect_fk_modal_question:
-      "Bạn có muốn quét sơ đồ và tạo các quan hệ tương ứng không?",
+    auto_connect_fk_modal_description: "Để tự động thiết lập quan hệ PK/FK, các cột của bạn nên tuân theo quy ước đặt tên chuẩn:",
+    auto_connect_fk_rule_1: "Tiền tố bảng + cột PK (ví dụ: user_id hoặc users_id cho bảng 'users' có khóa chính 'id')",
+    auto_connect_fk_rule_2: "Tên cột PK trùng khớp (ví dụ: author_id khớp với author_id trong bảng cha)",
+    auto_connect_fk_modal_question: "Bạn có muốn quét sơ đồ và tạo các quan hệ tương ứng không?",
     see_all: "Xem tất cả",
     migrations: "Migration",
     generate_migration: "Tạo migration",
-    migration_not_supported_generic:
-      "Migration không được hỗ trợ cho sơ đồ chung.",
+    migration_not_supported_generic: "Migration không được hỗ trợ cho sơ đồ chung.",
     no_migration_needed: "Không cần migration",
     scripts: "Script",
     json_diff: "So sánh JSON",
@@ -310,8 +297,7 @@ const vi = {
     show_comments: "Hiển thị bình luận",
     configure_custom_types: "Cấu hình kiểu tùy chỉnh",
     type_color: "Màu",
-    custom_types_description:
-      "Định nghĩa các kiểu dữ liệu tùy chỉnh không được hỗ trợ mặc định. Các kiểu này sẽ có sẵn khi tạo hoặc chỉnh sửa cột.",
+    custom_types_description: "Định nghĩa các kiểu dữ liệu tùy chỉnh không được hỗ trợ mặc định. Các kiểu này sẽ có sẵn khi tạo hoặc chỉnh sửa cột.",
     type_data_corrupted: "Các kiểu đã cấu hình bị hỏng.",
     no_custom_types: "Bạn chưa cấu hình kiểu nào",
     close: "Đóng",
@@ -354,19 +340,15 @@ const vi = {
     duplicate_views: "Các view trùng lặp với tên '{{viewName}}'",
     view_name_clashes_w_table: "View '{{viewName}}' trùng tên với một bảng",
     join_w_no_table: "JOIN không có bảng trong view '{{viewName}}'",
-    join_w_no_condition:
-      "JOIN trên '{{tableName}}' trong view '{{viewName}}' không có điều kiện",
-    join_out_of_order:
-      "JOIN trên '{{tableName}}' trong view '{{viewName}}' tham chiếu đến một bảng được JOIN sau nó",
+    join_w_no_condition: "JOIN trên '{{tableName}}' trong view '{{viewName}}' không có điều kiện",
+    join_out_of_order: "JOIN trên '{{tableName}}' trong view '{{viewName}}' tham chiếu đến một bảng được JOIN sau nó",
     empty_view_column: "Cột đầu ra trống trong view '{{viewName}}'",
-    duplicate_view_columns:
-      "Cột đầu ra '{{columnName}}' bị trùng lặp trong view '{{viewName}}'",
+    duplicate_view_columns: "Cột đầu ra '{{columnName}}' bị trùng lặp trong view '{{viewName}}'",
     lock: "Khóa",
     unlock: "Mở khóa",
     edit_dbml: "Chỉnh sửa DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Sơ đồ này được lưu cục bộ trên trình duyệt của bạn. Chuyển lên đám mây?",
+    move_to_cloud_prompt: "Sơ đồ này được lưu cục bộ trên trình duyệt của bạn. Chuyển lên đám mây?",
     move: "Chuyển",
     dismiss: "Bỏ qua",
     view_actions: "Thao tác view",
@@ -383,22 +365,16 @@ const vi = {
     templates: "Mẫu",
     diagrams: "Sơ đồ",
     logo: "logo",
-    check_syntax_errors:
-      "Vui lòng kiểm tra lỗi cú pháp hoặc báo cho chúng tôi về lỗi này.",
+    check_syntax_errors: "Vui lòng kiểm tra lỗi cú pháp hoặc báo cho chúng tôi về lỗi này.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "ô đánh dấu ghi đè",
     file_contains_error: "Tệp có lỗi.",
-    file_missing_diagram_properties:
-      "Tệp thiếu các thuộc tính cần thiết cho một sơ đồ.",
-    imported_diagram_database_mismatch:
-      "Sơ đồ được nhập và sơ đồ đang mở không dùng cùng loại cơ sở dữ liệu.",
-    relationship_references_missing_table:
-      "Quan hệ {{relationshipName}} tham chiếu đến một bảng không tồn tại.",
-    relationship_references_missing_field:
-      "Quan hệ {{relationshipName}} tham chiếu đến một cột không tồn tại.",
+    file_missing_diagram_properties: "Tệp thiếu các thuộc tính cần thiết cho một sơ đồ.",
+    imported_diagram_database_mismatch: "Sơ đồ được nhập và sơ đồ đang mở không dùng cùng loại cơ sở dữ liệu.",
+    relationship_references_missing_table: "Quan hệ {{relationshipName}} tham chiếu đến một bảng không tồn tại.",
+    relationship_references_missing_field: "Quan hệ {{relationshipName}} tham chiếu đến một cột không tồn tại.",
     ready_to_import: "Mọi thứ đều ổn. Bạn có thể nhập ngay.",
-    import_will_overwrite_current:
-      "Sơ đồ hiện tại không trống. Nhập sơ đồ mới sẽ ghi đè các thay đổi hiện tại.",
+    import_will_overwrite_current: "Sơ đồ hiện tại không trống. Nhập sơ đồ mới sẽ ghi đè các thay đổi hiện tại.",
     all: "Tất cả",
     all_databases: "Tất cả cơ sở dữ liệu",
     all_types: "Tất cả kiểu",

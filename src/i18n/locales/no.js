@@ -231,8 +231,7 @@ const no = {
     share_info:
       "* Å dele denne lenken vil ikke opprette en live sanntidssamarbeidssession.",
     inherits: "Arver",
-    merging_column_w_inherited_definition:
-      "Kolonnen '{{fieldName}}' i tabellen '{{tableName}}' med arvet definisjon blir slått sammen",
+    merging_column_w_inherited_definition: "Kolonnen '{{fieldName}}' i tabellen '{{tableName}}' med arvet definisjon blir slått sammen",
     no_saved_diagrams: "Du har ingen lagrede diagrammer",
     open_recent: "Åpne nylige",
     saved_as_copy: "Lagret som kopi. Åpne:",
@@ -254,24 +253,15 @@ const no = {
     supported_types: "Støttede filtyper:",
     bulk_update: "Masseoppdatering",
     auto_arrange: "Ordne automatisk",
-    layout_dagre_left_to_right: "Lagdelt, venstre mot høyre",
-    layout_dagre_top_to_bottom: "Lagdelt, ovenfra og ned",
-    layout_elk_layered: "Lagdelt etter feltrader (ELK)",
-    layout_elk_stress: "Gruppert (ELK stress)",
-    layout_by_subject_area: "Etter emneområde",
     auto_connect_fk: "Koble fremmednøkler automatisk",
     auto_connect_fk_success: "Opprettet {{count}} fremmednøkkelreferanse(r)",
     no_foreign_keys_found: "Ingen relasjoner funnet",
     all_relations_already_connected: "Alle relasjoner er allerede koblet",
     auto_connect_fk_modal_title: "Koble fremmednøkler automatisk",
-    auto_connect_fk_modal_description:
-      "For å opprette PK/FK-relasjoner automatisk bør kolonnene dine følge vanlige navnekonvensjoner:",
-    auto_connect_fk_rule_1:
-      "Tabellprefiks + PK-kolonne (f.eks. user_id eller users_id for tabellen 'users' med primærnøkkelen 'id')",
-    auto_connect_fk_rule_2:
-      "Samsvarende PK-kolonnenavn (f.eks. author_id som samsvarer med author_id i overordnet tabell)",
-    auto_connect_fk_modal_question:
-      "Vil du skanne diagrammet og opprette samsvarende relasjoner?",
+    auto_connect_fk_modal_description: "For å opprette PK/FK-relasjoner automatisk bør kolonnene dine følge vanlige navnekonvensjoner:",
+    auto_connect_fk_rule_1: "Tabellprefiks + PK-kolonne (f.eks. user_id eller users_id for tabellen 'users' med primærnøkkelen 'id')",
+    auto_connect_fk_rule_2: "Samsvarende PK-kolonnenavn (f.eks. author_id som samsvarer med author_id i overordnet tabell)",
+    auto_connect_fk_modal_question: "Vil du skanne diagrammet og opprette samsvarende relasjoner?",
     multiselect: "Flervalg",
     export_saved_data: "Eksporter lagrede data",
     dbml_view: "DBML-visning",
@@ -286,8 +276,7 @@ const no = {
     read_only: "Skrivebeskyttet",
     continue: "Fortsett",
     restore_version: "Gjenopprett versjon",
-    restore_warning:
-      "Hvis du laster en annen versjon, blir alle endringer overskrevet.",
+    restore_warning: "Hvis du laster en annen versjon, blir alle endringer overskrevet.",
     return_to_current: "Tilbake til diagrammet",
     no_changes_to_record: "Ingen endringer å lagre",
     click_to_view: "Klikk for å vise",
@@ -299,8 +288,7 @@ const no = {
     see_all: "Se alle",
     migrations: "Migreringer",
     generate_migration: "Generer migrering",
-    migration_not_supported_generic:
-      "Migreringer støttes ikke for generiske diagrammer.",
+    migration_not_supported_generic: "Migreringer støttes ikke for generiske diagrammer.",
     no_migration_needed: "Ingen migrering nødvendig",
     scripts: "Skript",
     json_diff: "JSON-diff",
@@ -310,8 +298,7 @@ const no = {
     show_comments: "Vis kommentarer",
     configure_custom_types: "Konfigurer egendefinerte typer",
     type_color: "Farge",
-    custom_types_description:
-      "Definer egendefinerte datatyper som ikke støttes som standard. Disse typene blir tilgjengelige når du oppretter eller redigerer kolonner.",
+    custom_types_description: "Definer egendefinerte datatyper som ikke støttes som standard. Disse typene blir tilgjengelige når du oppretter eller redigerer kolonner.",
     type_data_corrupted: "De konfigurerte typene er skadet.",
     no_custom_types: "Du har ingen typer konfigurert",
     close: "Lukk",
@@ -352,22 +339,17 @@ const no = {
     view_w_no_name: "View uten navn",
     view_w_no_base_table: "View '{{viewName}}' har ingen basistabell",
     duplicate_views: "Dupliserte views med navnet '{{viewName}}'",
-    view_name_clashes_w_table:
-      "View '{{viewName}}' har samme navn som en tabell",
+    view_name_clashes_w_table: "View '{{viewName}}' har samme navn som en tabell",
     join_w_no_table: "Join uten tabell i view '{{viewName}}'",
-    join_w_no_condition:
-      "Join på '{{tableName}}' i view '{{viewName}}' har ingen betingelse",
-    join_out_of_order:
-      "Join på '{{tableName}}' i view '{{viewName}}' refererer til en tabell som joines etter den",
+    join_w_no_condition: "Join på '{{tableName}}' i view '{{viewName}}' har ingen betingelse",
+    join_out_of_order: "Join på '{{tableName}}' i view '{{viewName}}' refererer til en tabell som joines etter den",
     empty_view_column: "Tom utdatakolonne i view '{{viewName}}'",
-    duplicate_view_columns:
-      "Duplisert utdatakolonne '{{columnName}}' i view '{{viewName}}'",
+    duplicate_view_columns: "Duplisert utdatakolonne '{{columnName}}' i view '{{viewName}}'",
     lock: "Lås",
     unlock: "Lås opp",
     edit_dbml: "Rediger DBML",
     dbml_problem: "Lin {{line}}, Kol {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Dette diagrammet er lagret lokalt i nettleseren din. Flytte det til skyen?",
+    move_to_cloud_prompt: "Dette diagrammet er lagret lokalt i nettleseren din. Flytte det til skyen?",
     move: "Flytt",
     dismiss: "Lukk",
     view_actions: "View-handlinger",
@@ -384,22 +366,16 @@ const no = {
     templates: "Maler",
     diagrams: "Diagrammer",
     logo: "logo",
-    check_syntax_errors:
-      "Sjekk for syntaksfeil, eller gi oss beskjed om feilen.",
+    check_syntax_errors: "Sjekk for syntaksfeil, eller gi oss beskjed om feilen.",
     parse_error_at: "{{name}} [Lin {{line}}, Kol {{column}}]: {{message}}",
     overwrite_checkbox: "avkrysningsboks for overskriving",
     file_contains_error: "Filen inneholder en feil.",
-    file_missing_diagram_properties:
-      "Filen mangler nødvendige egenskaper for et diagram.",
-    imported_diagram_database_mismatch:
-      "Det importerte diagrammet og det åpne diagrammet bruker ikke samme database.",
-    relationship_references_missing_table:
-      "Relasjonen {{relationshipName}} refererer til en tabell som ikke finnes.",
-    relationship_references_missing_field:
-      "Relasjonen {{relationshipName}} refererer til en kolonne som ikke finnes.",
+    file_missing_diagram_properties: "Filen mangler nødvendige egenskaper for et diagram.",
+    imported_diagram_database_mismatch: "Det importerte diagrammet og det åpne diagrammet bruker ikke samme database.",
+    relationship_references_missing_table: "Relasjonen {{relationshipName}} refererer til en tabell som ikke finnes.",
+    relationship_references_missing_field: "Relasjonen {{relationshipName}} refererer til en kolonne som ikke finnes.",
     ready_to_import: "Alt ser bra ut. Du kan nå importere.",
-    import_will_overwrite_current:
-      "Det gjeldende diagrammet er ikke tomt. Import av et nytt diagram vil overskrive de gjeldende endringene.",
+    import_will_overwrite_current: "Det gjeldende diagrammet er ikke tomt. Import av et nytt diagram vil overskrive de gjeldende endringene.",
     all: "Alle",
     all_databases: "Alle databaser",
     all_types: "Alle typer",

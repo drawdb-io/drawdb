@@ -284,29 +284,18 @@ const es = {
     references: "Referencias",
     enum_deleted: "Enumeración eliminada",
     auto_arrange: "Organizar automáticamente",
-    layout_dagre_left_to_right: "Por capas, de izquierda a derecha",
-    layout_dagre_top_to_bottom: "Por capas, de arriba abajo",
-    layout_elk_layered: "Por capas según las filas de campos (ELK)",
-    layout_elk_stress: "Agrupado (ELK stress)",
-    layout_by_subject_area: "Por área de tema",
     auto_connect_fk: "Conectar claves foráneas automáticamente",
-    auto_connect_fk_success:
-      "Se crearon {{count}} referencia(s) de clave foránea",
+    auto_connect_fk_success: "Se crearon {{count}} referencia(s) de clave foránea",
     no_foreign_keys_found: "No se encontraron relaciones",
     all_relations_already_connected: "Todas las relaciones ya están conectadas",
     auto_connect_fk_modal_title: "Conectar claves foráneas automáticamente",
-    auto_connect_fk_modal_description:
-      "Para establecer relaciones PK/FK automáticamente, tus columnas deben seguir convenciones de nombres estándar:",
-    auto_connect_fk_rule_1:
-      "Prefijo de tabla + columna PK (p. ej., user_id o users_id para la tabla 'users' con clave primaria 'id')",
-    auto_connect_fk_rule_2:
-      "Nombre de columna PK coincidente (p. ej., author_id que coincide con author_id en la tabla padre)",
-    auto_connect_fk_modal_question:
-      "¿Quieres analizar el diagrama y crear las relaciones correspondientes?",
+    auto_connect_fk_modal_description: "Para establecer relaciones PK/FK automáticamente, tus columnas deben seguir convenciones de nombres estándar:",
+    auto_connect_fk_rule_1: "Prefijo de tabla + columna PK (p. ej., user_id o users_id para la tabla 'users' con clave primaria 'id')",
+    auto_connect_fk_rule_2: "Nombre de columna PK coincidente (p. ej., author_id que coincide con author_id en la tabla padre)",
+    auto_connect_fk_modal_question: "¿Quieres analizar el diagrama y crear las relaciones correspondientes?",
     migrations: "Migraciones",
     generate_migration: "Generar migración",
-    migration_not_supported_generic:
-      "Las migraciones no son compatibles con diagramas genéricos.",
+    migration_not_supported_generic: "Las migraciones no son compatibles con diagramas genéricos.",
     no_migration_needed: "No se necesita migración",
     scripts: "Scripts",
     json_diff: "Diferencias JSON",
@@ -314,8 +303,7 @@ const es = {
     insert_sql: "Insertar SQL",
     upload_file: "Subir archivo",
     type_color: "Color",
-    custom_types_description:
-      "Define tipos de datos personalizados que no se admiten por defecto. Estos tipos estarán disponibles al crear o editar columnas.",
+    custom_types_description: "Define tipos de datos personalizados que no se admiten por defecto. Estos tipos estarán disponibles al crear o editar columnas.",
     type_data_corrupted: "Los tipos configurados están dañados.",
     no_custom_types: "No tienes ningún tipo configurado",
     close: "Cerrar",
@@ -356,22 +344,17 @@ const es = {
     view_w_no_name: "Vista sin nombre",
     view_w_no_base_table: "La vista '{{viewName}}' no tiene tabla base",
     duplicate_views: "Vistas duplicadas con el nombre '{{viewName}}'",
-    view_name_clashes_w_table:
-      "La vista '{{viewName}}' tiene el mismo nombre que una tabla",
+    view_name_clashes_w_table: "La vista '{{viewName}}' tiene el mismo nombre que una tabla",
     join_w_no_table: "JOIN sin tabla en la vista '{{viewName}}'",
-    join_w_no_condition:
-      "El JOIN con '{{tableName}}' en la vista '{{viewName}}' no tiene condición",
-    join_out_of_order:
-      "El JOIN con '{{tableName}}' en la vista '{{viewName}}' hace referencia a una tabla unida después",
+    join_w_no_condition: "El JOIN con '{{tableName}}' en la vista '{{viewName}}' no tiene condición",
+    join_out_of_order: "El JOIN con '{{tableName}}' en la vista '{{viewName}}' hace referencia a una tabla unida después",
     empty_view_column: "Columna de salida vacía en la vista '{{viewName}}'",
-    duplicate_view_columns:
-      "Columna de salida '{{columnName}}' duplicada en la vista '{{viewName}}'",
+    duplicate_view_columns: "Columna de salida '{{columnName}}' duplicada en la vista '{{viewName}}'",
     lock: "Bloquear",
     unlock: "Desbloquear",
     edit_dbml: "Editar DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Este diagrama está guardado localmente en tu navegador. ¿Moverlo a la nube?",
+    move_to_cloud_prompt: "Este diagrama está guardado localmente en tu navegador. ¿Moverlo a la nube?",
     move: "Mover",
     dismiss: "Descartar",
     view_actions: "Acciones de la vista",
@@ -388,22 +371,16 @@ const es = {
     templates: "Plantillas",
     diagrams: "Diagramas",
     logo: "logo",
-    check_syntax_errors:
-      "Revisa si hay errores de sintaxis o infórmanos del error.",
+    check_syntax_errors: "Revisa si hay errores de sintaxis o infórmanos del error.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "casilla de sobrescritura",
     file_contains_error: "El archivo contiene un error.",
-    file_missing_diagram_properties:
-      "Al archivo le faltan propiedades necesarias para un diagrama.",
-    imported_diagram_database_mismatch:
-      "El diagrama importado y el diagrama abierto no usan la misma base de datos.",
-    relationship_references_missing_table:
-      "La relación {{relationshipName}} hace referencia a una tabla que no existe.",
-    relationship_references_missing_field:
-      "La relación {{relationshipName}} hace referencia a una columna que no existe.",
+    file_missing_diagram_properties: "Al archivo le faltan propiedades necesarias para un diagrama.",
+    imported_diagram_database_mismatch: "El diagrama importado y el diagrama abierto no usan la misma base de datos.",
+    relationship_references_missing_table: "La relación {{relationshipName}} hace referencia a una tabla que no existe.",
+    relationship_references_missing_field: "La relación {{relationshipName}} hace referencia a una columna que no existe.",
     ready_to_import: "Todo está correcto. Ya puedes importar.",
-    import_will_overwrite_current:
-      "El diagrama actual no está vacío. Importar un nuevo diagrama sobrescribirá los cambios actuales.",
+    import_will_overwrite_current: "El diagrama actual no está vacío. Importar un nuevo diagrama sobrescribirá los cambios actuales.",
     all: "Todos",
     all_databases: "Todas las bases de datos",
     all_types: "Todos los tipos",

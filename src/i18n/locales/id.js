@@ -191,7 +191,8 @@ const id = {
     type_with_no_name: "Mendeklarasikan tipe tanpa nama",
     duplicate_types: "Tipe duplikat dengan nama '{{typeName}}'",
     type_w_no_fields: "Mendeklarasikan tipe '{{typeName}}' kosong tanpa kolom",
-    empty_type_field_name: "Nama kolom `name` kosong dalam tipe '{{typeName}}'",
+    empty_type_field_name:
+      "Nama kolom `name` kosong dalam tipe '{{typeName}}'",
     empty_type_field_type:
       "Jenis kolom `type` kosong dalam tipe '{{typeName}}'",
     no_values_for_type_field:
@@ -236,8 +237,7 @@ const id = {
     didnt_find_diagram: "Ups! Tidak menemukan diagram.",
     dbml_view: "Tampilan DBML",
     inherits: "Mewarisi",
-    merging_column_w_inherited_definition:
-      "Kolom '{{fieldName}}' di tabel '{{tableName}}' dengan definisi warisan akan digabungkan",
+    merging_column_w_inherited_definition: "Kolom '{{fieldName}}' di tabel '{{tableName}}' dengan definisi warisan akan digabungkan",
     no_saved_diagrams: "Anda tidak memiliki diagram tersimpan",
     open_recent: "Buka terbaru",
     saved_as_copy: "Disimpan sebagai salinan. Buka:",
@@ -258,29 +258,19 @@ const id = {
     copy_link: "Salin tautan",
     readme: "README",
     failed_to_load: "Gagal memuat. Pastikan tautan sudah benar.",
-    share_info:
-      "* Membagikan tautan ini tidak akan membuat sesi kolaborasi waktu nyata.",
+    share_info: "* Membagikan tautan ini tidak akan membuat sesi kolaborasi waktu nyata.",
     supported_types: "Jenis berkas yang didukung:",
     bulk_update: "Pembaruan massal",
     auto_arrange: "Atur otomatis",
-    layout_dagre_left_to_right: "Berlapis, kiri ke kanan",
-    layout_dagre_top_to_bottom: "Berlapis, atas ke bawah",
-    layout_elk_layered: "Berlapis menurut baris kolom (ELK)",
-    layout_elk_stress: "Berkelompok (ELK stress)",
-    layout_by_subject_area: "Menurut area subjek",
     auto_connect_fk: "Hubungkan kunci asing otomatis",
     auto_connect_fk_success: "{{count}} referensi kunci asing dibuat",
     no_foreign_keys_found: "Tidak ada hubungan yang ditemukan",
     all_relations_already_connected: "Semua hubungan sudah terhubung",
     auto_connect_fk_modal_title: "Hubungkan Kunci Asing Otomatis",
-    auto_connect_fk_modal_description:
-      "Untuk membuat hubungan PK/FK secara otomatis, kolom Anda harus mengikuti konvensi penamaan standar:",
-    auto_connect_fk_rule_1:
-      "Prefiks tabel + kolom PK (mis., user_id atau users_id untuk tabel 'users' dengan kunci utama 'id')",
-    auto_connect_fk_rule_2:
-      "Nama kolom PK yang cocok (mis., author_id yang cocok dengan author_id di tabel induk)",
-    auto_connect_fk_modal_question:
-      "Apakah Anda ingin memindai diagram dan membuat hubungan yang cocok?",
+    auto_connect_fk_modal_description: "Untuk membuat hubungan PK/FK secara otomatis, kolom Anda harus mengikuti konvensi penamaan standar:",
+    auto_connect_fk_rule_1: "Prefiks tabel + kolom PK (mis., user_id atau users_id untuk tabel 'users' dengan kunci utama 'id')",
+    auto_connect_fk_rule_2: "Nama kolom PK yang cocok (mis., author_id yang cocok dengan author_id di tabel induk)",
+    auto_connect_fk_modal_question: "Apakah Anda ingin memindai diagram dan membuat hubungan yang cocok?",
     multiselect: "Pilih banyak",
     tab_view: "Tampilan tab",
     label: "Label",
@@ -304,8 +294,7 @@ const id = {
     see_all: "Lihat semua",
     migrations: "Migrasi",
     generate_migration: "Buat migrasi",
-    migration_not_supported_generic:
-      "Migrasi tidak didukung untuk diagram generik.",
+    migration_not_supported_generic: "Migrasi tidak didukung untuk diagram generik.",
     no_migration_needed: "Tidak perlu migrasi",
     scripts: "Skrip",
     json_diff: "Perbedaan JSON",
@@ -315,8 +304,7 @@ const id = {
     show_comments: "Tampilkan komentar",
     configure_custom_types: "Konfigurasi tipe kustom",
     type_color: "Warna",
-    custom_types_description:
-      "Definisikan tipe data kustom yang tidak didukung secara default. Tipe ini akan tersedia saat membuat atau menyunting kolom.",
+    custom_types_description: "Definisikan tipe data kustom yang tidak didukung secara default. Tipe ini akan tersedia saat membuat atau menyunting kolom.",
     type_data_corrupted: "Tipe yang dikonfigurasi rusak.",
     no_custom_types: "Anda belum mengonfigurasi tipe apa pun",
     close: "Tutup",
@@ -357,22 +345,17 @@ const id = {
     view_w_no_name: "View tanpa nama",
     view_w_no_base_table: "View '{{viewName}}' tidak memiliki tabel dasar",
     duplicate_views: "View duplikat dengan nama '{{viewName}}'",
-    view_name_clashes_w_table:
-      "View '{{viewName}}' memiliki nama yang sama dengan sebuah tabel",
+    view_name_clashes_w_table: "View '{{viewName}}' memiliki nama yang sama dengan sebuah tabel",
     join_w_no_table: "Join tanpa tabel di view '{{viewName}}'",
-    join_w_no_condition:
-      "Join pada '{{tableName}}' di view '{{viewName}}' tidak memiliki kondisi",
-    join_out_of_order:
-      "Join pada '{{tableName}}' di view '{{viewName}}' mereferensikan tabel yang di-join setelahnya",
+    join_w_no_condition: "Join pada '{{tableName}}' di view '{{viewName}}' tidak memiliki kondisi",
+    join_out_of_order: "Join pada '{{tableName}}' di view '{{viewName}}' mereferensikan tabel yang di-join setelahnya",
     empty_view_column: "Kolom keluaran kosong di view '{{viewName}}'",
-    duplicate_view_columns:
-      "Kolom keluaran duplikat '{{columnName}}' di view '{{viewName}}'",
+    duplicate_view_columns: "Kolom keluaran duplikat '{{columnName}}' di view '{{viewName}}'",
     lock: "Kunci",
     unlock: "Buka kunci",
     edit_dbml: "Edit DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Diagram ini disimpan secara lokal di browser Anda. Pindahkan ke cloud?",
+    move_to_cloud_prompt: "Diagram ini disimpan secara lokal di browser Anda. Pindahkan ke cloud?",
     move: "Pindahkan",
     dismiss: "Tutup",
     view_actions: "Tindakan view",
@@ -389,22 +372,16 @@ const id = {
     templates: "Template",
     diagrams: "Diagram",
     logo: "logo",
-    check_syntax_errors:
-      "Silakan periksa kesalahan sintaks atau beri tahu kami tentang kesalahan tersebut.",
+    check_syntax_errors: "Silakan periksa kesalahan sintaks atau beri tahu kami tentang kesalahan tersebut.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "kotak centang timpa",
     file_contains_error: "Berkas mengandung kesalahan.",
-    file_missing_diagram_properties:
-      "Berkas tidak memiliki properti yang diperlukan untuk diagram.",
-    imported_diagram_database_mismatch:
-      "Diagram yang diimpor dan diagram yang terbuka tidak menggunakan database yang sama.",
-    relationship_references_missing_table:
-      "Hubungan {{relationshipName}} mereferensikan tabel yang tidak ada.",
-    relationship_references_missing_field:
-      "Hubungan {{relationshipName}} mereferensikan kolom yang tidak ada.",
+    file_missing_diagram_properties: "Berkas tidak memiliki properti yang diperlukan untuk diagram.",
+    imported_diagram_database_mismatch: "Diagram yang diimpor dan diagram yang terbuka tidak menggunakan database yang sama.",
+    relationship_references_missing_table: "Hubungan {{relationshipName}} mereferensikan tabel yang tidak ada.",
+    relationship_references_missing_field: "Hubungan {{relationshipName}} mereferensikan kolom yang tidak ada.",
     ready_to_import: "Semuanya terlihat baik. Anda sekarang dapat mengimpor.",
-    import_will_overwrite_current:
-      "Diagram saat ini tidak kosong. Mengimpor diagram baru akan menimpa perubahan saat ini.",
+    import_will_overwrite_current: "Diagram saat ini tidak kosong. Mengimpor diagram baru akan menimpa perubahan saat ini.",
     all: "Semua",
     all_databases: "Semua database",
     all_types: "Semua tipe",
@@ -413,8 +390,7 @@ const id = {
     you: "Anda",
     owner: "Pemilik",
     user_with_id: "Pengguna {{id}}",
-    no_diagrams_match_filters:
-      "Tidak ada diagram yang cocok dengan filter Anda.",
+    no_diagrams_match_filters: "Tidak ada diagram yang cocok dengan filter Anda.",
     failed_to_load_short: "Gagal memuat",
     invalid_dbml: "DBML tidak valid",
   },

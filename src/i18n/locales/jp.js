@@ -184,7 +184,8 @@ const jp = {
     no_primary_key: "テーブル '{{tableName}}' に主キーがありません",
     type_with_no_name: "名前のないタイプが宣言されました",
     duplicate_types: "名前 '{{typeName}}' のタイプが重複しています",
-    type_w_no_fields: "列のない空のタイプ '{{typeName}}' が宣言されました",
+    type_w_no_fields:
+      "列のない空のタイプ '{{typeName}}' が宣言されました",
     empty_type_field_name: "タイプ '{{typeName}}' の列 `name` が空です",
     empty_type_field_type: "タイプ '{{typeName}}' の列 `type` が空です",
     no_values_for_type_field:
@@ -236,8 +237,7 @@ const jp = {
     share_info:
       "* このリンクを共有してもリアルタイムコラボレーションセッションは作成されません。",
     inherits: "継承元",
-    merging_column_w_inherited_definition:
-      "テーブル '{{tableName}}' の列 '{{fieldName}}' は継承された定義とマージされます",
+    merging_column_w_inherited_definition: "テーブル '{{tableName}}' の列 '{{fieldName}}' は継承された定義とマージされます",
     no_saved_diagrams: "保存されたダイアグラムはありません",
     open_recent: "最近使用したファイルを開く",
     saved_as_copy: "コピーとして保存しました。開く：",
@@ -259,25 +259,15 @@ const jp = {
     supported_types: "サポートされているファイル形式：",
     bulk_update: "一括更新",
     auto_arrange: "自動整列",
-    layout_dagre_left_to_right: "階層型（左から右）",
-    layout_dagre_top_to_bottom: "階層型（上から下）",
-    layout_elk_layered: "フィールド行に沿った階層型 (ELK)",
-    layout_elk_stress: "クラスター型 (ELK stress)",
-    layout_by_subject_area: "主題領域ごと",
     auto_connect_fk: "外部キーを自動接続",
     auto_connect_fk_success: "{{count}} 件の外部キー参照を作成しました",
     no_foreign_keys_found: "リレーションシップが見つかりません",
-    all_relations_already_connected:
-      "すべてのリレーションはすでに接続されています",
+    all_relations_already_connected: "すべてのリレーションはすでに接続されています",
     auto_connect_fk_modal_title: "外部キーの自動接続",
-    auto_connect_fk_modal_description:
-      "PK/FKリレーションシップを自動で作成するには、列が標準的な命名規則に従っている必要があります：",
-    auto_connect_fk_rule_1:
-      "テーブル接頭辞 + 主キー列（例：主キー 'id' を持つテーブル 'users' の場合は user_id または users_id）",
-    auto_connect_fk_rule_2:
-      "主キー列名の一致（例：親テーブルの author_id と一致する author_id）",
-    auto_connect_fk_modal_question:
-      "ダイアグラムをスキャンして、一致するリレーションシップを作成しますか？",
+    auto_connect_fk_modal_description: "PK/FKリレーションシップを自動で作成するには、列が標準的な命名規則に従っている必要があります：",
+    auto_connect_fk_rule_1: "テーブル接頭辞 + 主キー列（例：主キー 'id' を持つテーブル 'users' の場合は user_id または users_id）",
+    auto_connect_fk_rule_2: "主キー列名の一致（例：親テーブルの author_id と一致する author_id）",
+    auto_connect_fk_modal_question: "ダイアグラムをスキャンして、一致するリレーションシップを作成しますか？",
     multiselect: "複数選択",
     export_saved_data: "保存データをエクスポート",
     dbml_view: "DBMLビュー",
@@ -292,8 +282,7 @@ const jp = {
     read_only: "読み取り専用",
     continue: "続行",
     restore_version: "バージョンを復元",
-    restore_warning:
-      "別のバージョンを読み込むと、すべての変更が上書きされます。",
+    restore_warning: "別のバージョンを読み込むと、すべての変更が上書きされます。",
     return_to_current: "ダイアグラムに戻る",
     no_changes_to_record: "記録する変更はありません",
     click_to_view: "クリックして表示",
@@ -305,8 +294,7 @@ const jp = {
     see_all: "すべて表示",
     migrations: "マイグレーション",
     generate_migration: "マイグレーションを生成",
-    migration_not_supported_generic:
-      "一般的なダイアグラムではマイグレーションはサポートされていません。",
+    migration_not_supported_generic: "一般的なダイアグラムではマイグレーションはサポートされていません。",
     no_migration_needed: "マイグレーションは不要です",
     scripts: "スクリプト",
     json_diff: "JSONの差分",
@@ -316,8 +304,7 @@ const jp = {
     show_comments: "コメントを表示",
     configure_custom_types: "カスタムタイプを設定",
     type_color: "色",
-    custom_types_description:
-      "デフォルトではサポートされていないカスタムデータタイプを定義します。これらのタイプは列の作成・編集時に使用できます。",
+    custom_types_description: "デフォルトではサポートされていないカスタムデータタイプを定義します。これらのタイプは列の作成・編集時に使用できます。",
     type_data_corrupted: "設定されたタイプが破損しています。",
     no_custom_types: "設定されたタイプはありません",
     close: "閉じる",
@@ -334,8 +321,7 @@ const jp = {
     primary_key: "主キー",
     foreign_key: "外部キー",
     import_with_ai: "AIでインポート",
-    ai_import_failed:
-      "AIによるインポートに失敗しました。もう一度お試しください。",
+    ai_import_failed: "AIによるインポートに失敗しました。もう一度お試しください。",
     views: "ビュー",
     add_view: "ビューを追加",
     edit_view: "{{extra}} ビュー {{viewName}} を編集",
@@ -360,21 +346,16 @@ const jp = {
     view_w_no_base_table: "ビュー '{{viewName}}' にベーステーブルがありません",
     duplicate_views: "名前 '{{viewName}}' のビューが重複しています",
     view_name_clashes_w_table: "ビュー '{{viewName}}' はテーブルと同じ名前です",
-    join_w_no_table:
-      "ビュー '{{viewName}}' にテーブルが指定されていない結合があります",
-    join_w_no_condition:
-      "ビュー '{{viewName}}' の '{{tableName}}' への結合に条件がありません",
-    join_out_of_order:
-      "ビュー '{{viewName}}' の '{{tableName}}' への結合が、後から結合されるテーブルを参照しています",
+    join_w_no_table: "ビュー '{{viewName}}' にテーブルが指定されていない結合があります",
+    join_w_no_condition: "ビュー '{{viewName}}' の '{{tableName}}' への結合に条件がありません",
+    join_out_of_order: "ビュー '{{viewName}}' の '{{tableName}}' への結合が、後から結合されるテーブルを参照しています",
     empty_view_column: "ビュー '{{viewName}}' に空の出力列があります",
-    duplicate_view_columns:
-      "ビュー '{{viewName}}' 内に出力列 '{{columnName}}' が重複しています",
+    duplicate_view_columns: "ビュー '{{viewName}}' 内に出力列 '{{columnName}}' が重複しています",
     lock: "ロック",
     unlock: "ロック解除",
     edit_dbml: "DBMLを編集",
     dbml_problem: "{{line}} 行目、{{column}} 列目：{{message}}",
-    move_to_cloud_prompt:
-      "このダイアグラムはブラウザにローカル保存されています。クラウドに移動しますか？",
+    move_to_cloud_prompt: "このダイアグラムはブラウザにローカル保存されています。クラウドに移動しますか？",
     move: "移動",
     dismiss: "閉じる",
     view_actions: "ビューの操作",
@@ -391,22 +372,16 @@ const jp = {
     templates: "テンプレート",
     diagrams: "ダイアグラム",
     logo: "ロゴ",
-    check_syntax_errors:
-      "構文エラーがないか確認するか、エラーについてお知らせください。",
+    check_syntax_errors: "構文エラーがないか確認するか、エラーについてお知らせください。",
     parse_error_at: "{{name}} [{{line}} 行目、{{column}} 列目]：{{message}}",
     overwrite_checkbox: "上書きチェックボックス",
     file_contains_error: "ファイルにエラーが含まれています。",
-    file_missing_diagram_properties:
-      "ファイルにダイアグラムに必要なプロパティがありません。",
-    imported_diagram_database_mismatch:
-      "インポートしたダイアグラムと開いているダイアグラムのデータベースが一致しません。",
-    relationship_references_missing_table:
-      "リレーションシップ {{relationshipName}} が存在しないテーブルを参照しています。",
-    relationship_references_missing_field:
-      "リレーションシップ {{relationshipName}} が存在しない列を参照しています。",
+    file_missing_diagram_properties: "ファイルにダイアグラムに必要なプロパティがありません。",
+    imported_diagram_database_mismatch: "インポートしたダイアグラムと開いているダイアグラムのデータベースが一致しません。",
+    relationship_references_missing_table: "リレーションシップ {{relationshipName}} が存在しないテーブルを参照しています。",
+    relationship_references_missing_field: "リレーションシップ {{relationshipName}} が存在しない列を参照しています。",
     ready_to_import: "問題ありません。インポートできます。",
-    import_will_overwrite_current:
-      "現在のダイアグラムは空ではありません。新しいダイアグラムをインポートすると、現在の変更が上書きされます。",
+    import_will_overwrite_current: "現在のダイアグラムは空ではありません。新しいダイアグラムをインポートすると、現在の変更が上書きされます。",
     all: "すべて",
     all_databases: "すべてのデータベース",
     all_types: "すべてのタイプ",

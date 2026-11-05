@@ -309,30 +309,20 @@ const tl = {
     add: "Magdagdag",
     add_comment: "Magdagdag ng komento",
     composite_key: "Composite key",
-    composite_key_hint:
-      "Magdagdag ng mga kolum para makagawa ng composite key.",
+    composite_key_hint: "Magdagdag ng mga kolum para makagawa ng composite key.",
     unique_constraints: "Mga unique constraint",
     add_unique_constraint: "Magdagdag ng unique constraint",
     references: "Mga reference",
     auto_arrange: "Awtomatikong ayusin",
-    layout_dagre_left_to_right: "Patong-patong, kaliwa pakanan",
-    layout_dagre_top_to_bottom: "Patong-patong, itaas pababa",
-    layout_elk_layered: "Patong-patong ayon sa mga hilera ng field (ELK)",
-    layout_elk_stress: "Nakapangkat (ELK stress)",
-    layout_by_subject_area: "Ayon sa subject area",
     auto_connect_fk: "Awtomatikong ikonekta ang mga foreign key",
     auto_connect_fk_success: "Nakagawa ng {{count}} foreign key reference",
     no_foreign_keys_found: "Walang nahanap na relasyon",
     all_relations_already_connected: "Nakakonekta na ang lahat ng relasyon",
     auto_connect_fk_modal_title: "Awtomatikong Ikonekta ang mga Foreign Key",
-    auto_connect_fk_modal_description:
-      "Para awtomatikong makagawa ng mga PK/FK na relasyon, dapat sumunod ang iyong mga kolum sa karaniwang pagpapangalan:",
-    auto_connect_fk_rule_1:
-      "Prefix ng talahanayan + PK na kolum (hal., user_id o users_id para sa talahanayang 'users' na may primary key na 'id')",
-    auto_connect_fk_rule_2:
-      "Katugmang pangalan ng PK na kolum (hal., author_id na tumutugma sa author_id sa parent na talahanayan)",
-    auto_connect_fk_modal_question:
-      "Gusto mo bang i-scan ang diagram at gumawa ng mga katugmang relasyon?",
+    auto_connect_fk_modal_description: "Para awtomatikong makagawa ng mga PK/FK na relasyon, dapat sumunod ang iyong mga kolum sa karaniwang pagpapangalan:",
+    auto_connect_fk_rule_1: "Prefix ng talahanayan + PK na kolum (hal., user_id o users_id para sa talahanayang 'users' na may primary key na 'id')",
+    auto_connect_fk_rule_2: "Katugmang pangalan ng PK na kolum (hal., author_id na tumutugma sa author_id sa parent na talahanayan)",
+    auto_connect_fk_modal_question: "Gusto mo bang i-scan ang diagram at gumawa ng mga katugmang relasyon?",
     structure: "Istruktura",
     code: "Code",
     embed_settings: "Mga setting ng embed",
@@ -364,26 +354,19 @@ const tl = {
     value: "Value",
     where: "Where",
     view_w_no_name: "View na walang pangalan",
-    view_w_no_base_table:
-      "Walang base na talahanayan ang view na '{{viewName}}'",
+    view_w_no_base_table: "Walang base na talahanayan ang view na '{{viewName}}'",
     duplicate_views: "Mga duplicate na view na may pangalang '{{viewName}}'",
-    view_name_clashes_w_table:
-      "Kapareho ng pangalan ng isang talahanayan ang view na '{{viewName}}'",
+    view_name_clashes_w_table: "Kapareho ng pangalan ng isang talahanayan ang view na '{{viewName}}'",
     join_w_no_table: "Join na walang talahanayan sa view na '{{viewName}}'",
-    join_w_no_condition:
-      "Walang kondisyon ang join sa '{{tableName}}' sa view na '{{viewName}}'",
-    join_out_of_order:
-      "Ang join sa '{{tableName}}' sa view na '{{viewName}}' ay tumutukoy sa talahanayang na-join pagkatapos nito",
-    empty_view_column:
-      "Walang laman na output na kolum sa view na '{{viewName}}'",
-    duplicate_view_columns:
-      "Duplicate na output na kolum na '{{columnName}}' sa view na '{{viewName}}'",
+    join_w_no_condition: "Walang kondisyon ang join sa '{{tableName}}' sa view na '{{viewName}}'",
+    join_out_of_order: "Ang join sa '{{tableName}}' sa view na '{{viewName}}' ay tumutukoy sa talahanayang na-join pagkatapos nito",
+    empty_view_column: "Walang laman na output na kolum sa view na '{{viewName}}'",
+    duplicate_view_columns: "Duplicate na output na kolum na '{{columnName}}' sa view na '{{viewName}}'",
     lock: "I-lock",
     unlock: "I-unlock",
     edit_dbml: "I-edit ang DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Naka-save nang lokal sa iyong browser ang diagram na ito. Ilipat ito sa cloud?",
+    move_to_cloud_prompt: "Naka-save nang lokal sa iyong browser ang diagram na ito. Ilipat ito sa cloud?",
     move: "Ilipat",
     dismiss: "Isara",
     view_actions: "Mga aksyon sa view",
@@ -400,22 +383,16 @@ const tl = {
     templates: "Mga Template",
     diagrams: "Mga Diagram",
     logo: "logo",
-    check_syntax_errors:
-      "Pakisuri kung may mga syntax error o ipaalam sa amin ang error.",
+    check_syntax_errors: "Pakisuri kung may mga syntax error o ipaalam sa amin ang error.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "checkbox ng pag-overwrite",
     file_contains_error: "May error ang file.",
-    file_missing_diagram_properties:
-      "Kulang ang file ng mga kinakailangang property para sa isang diagram.",
-    imported_diagram_database_mismatch:
-      "Hindi magkatugma ang database ng na-import na diagram at ng nakabukas na diagram.",
-    relationship_references_missing_table:
-      "Ang relasyong {{relationshipName}} ay tumutukoy sa talahanayang hindi umiiral.",
-    relationship_references_missing_field:
-      "Ang relasyong {{relationshipName}} ay tumutukoy sa kolum na hindi umiiral.",
+    file_missing_diagram_properties: "Kulang ang file ng mga kinakailangang property para sa isang diagram.",
+    imported_diagram_database_mismatch: "Hindi magkatugma ang database ng na-import na diagram at ng nakabukas na diagram.",
+    relationship_references_missing_table: "Ang relasyong {{relationshipName}} ay tumutukoy sa talahanayang hindi umiiral.",
+    relationship_references_missing_field: "Ang relasyong {{relationshipName}} ay tumutukoy sa kolum na hindi umiiral.",
     ready_to_import: "Maayos ang lahat. Maaari ka nang mag-import.",
-    import_will_overwrite_current:
-      "Hindi walang laman ang kasalukuyang diagram. Mao-overwrite ng pag-import ng bagong diagram ang kasalukuyang mga pagbabago.",
+    import_will_overwrite_current: "Hindi walang laman ang kasalukuyang diagram. Mao-overwrite ng pag-import ng bagong diagram ang kasalukuyang mga pagbabago.",
     all: "Lahat",
     all_databases: "Lahat ng database",
     all_types: "Lahat ng uri",
@@ -424,8 +401,7 @@ const tl = {
     you: "Ikaw",
     owner: "May-ari",
     user_with_id: "User {{id}}",
-    no_diagrams_match_filters:
-      "Walang diagram na tumutugma sa iyong mga filter.",
+    no_diagrams_match_filters: "Walang diagram na tumutugma sa iyong mga filter.",
     failed_to_load_short: "Nabigong mag-load",
     invalid_dbml: "Hindi wastong DBML",
   },

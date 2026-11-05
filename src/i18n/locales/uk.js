@@ -124,7 +124,8 @@ const uk = {
     autoincrement: "Автоінкремент",
     default_value: "За замовчуванням",
     check: "Перевірка виразу",
-    this_will_appear_as_is: "*Це з’явиться у згенерованому скрипті без змін.",
+    this_will_appear_as_is:
+      "*Це з’явиться у згенерованому скрипті без змін.",
     comment: "Коментар",
     add_field: "Додати стовпець",
     values: "Значення",
@@ -169,11 +170,13 @@ const uk = {
     upload_sql_to_generate_diagrams:
       "Завантажте SQL-файл для автоматичного створення таблиць і стовпців.",
     overwrite_existing_diagram: "Перезаписати існуючу діаграму",
-    only_mysql_supported: "*Підтримується лише завантаження MySQL-скриптів.",
+    only_mysql_supported:
+      "*Підтримується лише завантаження MySQL-скриптів.",
     blank: "Порожній",
     filename: "Назва файлу",
     table_w_no_name: "Оголошено таблицю без назви",
-    duplicate_table_by_name: "Дубльована таблиця з назвою '{{tableName}}'",
+    duplicate_table_by_name:
+      "Дубльована таблиця з назвою '{{tableName}}'",
     empty_field_name: "Порожній стовпець `name` у таблиці '{{tableName}}'",
     empty_field_type: "Порожній стовпець `type` у таблиці '{{tableName}}'",
     no_values_for_field:
@@ -189,16 +192,21 @@ const uk = {
     empty_index: "Індекс у таблиці '{{tableName}}' не містить стовпців",
     no_primary_key: "Таблиця '{{tableName}}' не має первинного ключа",
     type_with_no_name: "Оголошено тип без назви",
-    duplicate_types: "Дубльовані типи з назвою '{{typeName}}'",
+    duplicate_types:
+      "Дубльовані типи з назвою '{{typeName}}'",
     type_w_no_fields: "Тип '{{typeName}}' оголошено без стовпців",
-    empty_type_field_name: "Порожній стовпець `name` у типі '{{typeName}}'",
-    empty_type_field_type: "Порожній стовпець `type` у типі '{{typeName}}'",
+    empty_type_field_name:
+      "Порожній стовпець `name` у типі '{{typeName}}'",
+    empty_type_field_type:
+      "Порожній стовпець `type` у типі '{{typeName}}'",
     no_values_for_type_field:
       "Стовпець '{{fieldName}}' у типі '{{typeName}}' має тип `{{type}}`, але значення не вказано",
     duplicate_type_fields:
       "Дубльовані стовпці '{{fieldName}}' у типі '{{typeName}}'",
-    duplicate_reference: "Дубльоване посилання з назвою '{{refName}}'",
-    circular_dependency: "Циклічна залежність, що стосується '{{refName}}'",
+    duplicate_reference:
+      "Дубльоване посилання з назвою '{{refName}}'",
+    circular_dependency:
+      "Циклічна залежність, що стосується '{{refName}}'",
     timeline: "Хронологія",
     details: "Деталі",
     no_activity: "У вас поки немає активності",
@@ -212,7 +220,8 @@ const uk = {
     edit_type: "{{extra}} Редагувати тип {{typeName}}",
     delete_type: "Видалити тип {{typeName}}",
     add_relationship: "Додати зв'язок",
-    edit_relationship: "{{extra}} Редагувати зв'язок {{refName}}",
+    edit_relationship:
+      "{{extra}} Редагувати зв'язок {{refName}}",
     delete_relationship: "Видалити зв'язок {{refName}}",
     not_found: "Не знайдено",
     saved_as_copy: "Збережено як копію. Відкрити:",
@@ -226,8 +235,7 @@ const uk = {
     references: "Посилання",
     pick_db: "Виберіть базу даних",
     generic: "Загальна",
-    generic_description:
-      "Загальні діаграми можна експортувати в будь-який діалект SQL, але вони підтримують небагато типів даних.",
+    generic_description: "Загальні діаграми можна експортувати в будь-який діалект SQL, але вони підтримують небагато типів даних.",
     enums: "Переліки",
     add_enum: "Додати перелік",
     edit_enum: "{{extra}} Редагувати перелік {{enumName}}",
@@ -246,34 +254,22 @@ const uk = {
     unshare: "Скасувати спільний доступ",
     copy_link: "Копіювати посилання",
     readme: "README",
-    failed_to_load:
-      "Не вдалося завантажити. Переконайтеся, що посилання правильне.",
-    share_info:
-      "* Надсилання цього посилання не створить сеанс спільної роботи в реальному часі.",
+    failed_to_load: "Не вдалося завантажити. Переконайтеся, що посилання правильне.",
+    share_info: "* Надсилання цього посилання не створить сеанс спільної роботи в реальному часі.",
     show_relationship_labels: "Показати мітки зв'язків",
     docs: "Документація",
     supported_types: "Підтримувані типи файлів:",
     bulk_update: "Масове оновлення",
     auto_arrange: "Авторозташування",
-    layout_dagre_left_to_right: "Шарами, зліва направо",
-    layout_dagre_top_to_bottom: "Шарами, згори донизу",
-    layout_elk_layered: "Шарами за рядками полів (ELK)",
-    layout_elk_stress: "Кластерами (ELK stress)",
-    layout_by_subject_area: "За тематичними областями",
     auto_connect_fk: "Автозв'язування зовнішніх ключів",
-    auto_connect_fk_success:
-      "Створено посилань за зовнішніми ключами: {{count}}",
+    auto_connect_fk_success: "Створено посилань за зовнішніми ключами: {{count}}",
     no_foreign_keys_found: "Зв'язків не знайдено",
     all_relations_already_connected: "Усі зв'язки вже встановлено",
     auto_connect_fk_modal_title: "Автозв'язування зовнішніх ключів",
-    auto_connect_fk_modal_description:
-      "Щоб автоматично встановити зв'язки PK/FK, ваші стовпці мають відповідати стандартним правилам іменування:",
-    auto_connect_fk_rule_1:
-      "Префікс таблиці + стовпець PK (наприклад, user_id або users_id для таблиці 'users' з первинним ключем 'id')",
-    auto_connect_fk_rule_2:
-      "Збіг назви стовпця PK (наприклад, author_id, що збігається з author_id у батьківській таблиці)",
-    auto_connect_fk_modal_question:
-      "Просканувати діаграму та створити відповідні зв'язки?",
+    auto_connect_fk_modal_description: "Щоб автоматично встановити зв'язки PK/FK, ваші стовпці мають відповідати стандартним правилам іменування:",
+    auto_connect_fk_rule_1: "Префікс таблиці + стовпець PK (наприклад, user_id або users_id для таблиці 'users' з первинним ключем 'id')",
+    auto_connect_fk_rule_2: "Збіг назви стовпця PK (наприклад, author_id, що збігається з author_id у батьківській таблиці)",
+    auto_connect_fk_modal_question: "Просканувати діаграму та створити відповідні зв'язки?",
     multiselect: "Множинний вибір",
     export_saved_data: "Експортувати збережені дані",
     dbml_view: "Перегляд DBML",
@@ -300,8 +296,7 @@ const uk = {
     see_all: "Показати всі",
     migrations: "Міграції",
     generate_migration: "Створити міграцію",
-    migration_not_supported_generic:
-      "Міграції не підтримуються для загальних діаграм.",
+    migration_not_supported_generic: "Міграції не підтримуються для загальних діаграм.",
     no_migration_needed: "Міграція не потрібна",
     scripts: "Скрипти",
     json_diff: "Відмінності JSON",
@@ -311,8 +306,7 @@ const uk = {
     show_comments: "Показати коментарі",
     configure_custom_types: "Налаштувати власні типи",
     type_color: "Колір",
-    custom_types_description:
-      "Визначте власні типи даних, які не підтримуються за замовчуванням. Ці типи будуть доступні під час створення або редагування стовпців.",
+    custom_types_description: "Визначте власні типи даних, які не підтримуються за замовчуванням. Ці типи будуть доступні під час створення або редагування стовпців.",
     type_data_corrupted: "Налаштовані типи пошкоджено.",
     no_custom_types: "У вас немає налаштованих типів",
     close: "Закрити",
@@ -329,8 +323,7 @@ const uk = {
     primary_key: "Первинний ключ",
     foreign_key: "Зовнішній ключ",
     import_with_ai: "Імпортувати за допомогою ШІ",
-    ai_import_failed:
-      "Не вдалося імпортувати за допомогою ШІ. Спробуйте ще раз.",
+    ai_import_failed: "Не вдалося імпортувати за допомогою ШІ. Спробуйте ще раз.",
     views: "Представлення",
     add_view: "Додати представлення",
     edit_view: "{{extra}} Редагувати представлення {{viewName}}",
@@ -354,23 +347,17 @@ const uk = {
     view_w_no_name: "Представлення без назви",
     view_w_no_base_table: "Представлення '{{viewName}}' не має базової таблиці",
     duplicate_views: "Дубльовані представлення з назвою '{{viewName}}'",
-    view_name_clashes_w_table:
-      "Представлення '{{viewName}}' має таку саму назву, як таблиця",
+    view_name_clashes_w_table: "Представлення '{{viewName}}' має таку саму назву, як таблиця",
     join_w_no_table: "З'єднання без таблиці в представленні '{{viewName}}'",
-    join_w_no_condition:
-      "З'єднання з '{{tableName}}' у представленні '{{viewName}}' не має умови",
-    join_out_of_order:
-      "З'єднання з '{{tableName}}' у представленні '{{viewName}}' посилається на таблицю, приєднану після нього",
-    empty_view_column:
-      "Порожній вихідний стовпець у представленні '{{viewName}}'",
-    duplicate_view_columns:
-      "Дубльований вихідний стовпець '{{columnName}}' у представленні '{{viewName}}'",
+    join_w_no_condition: "З'єднання з '{{tableName}}' у представленні '{{viewName}}' не має умови",
+    join_out_of_order: "З'єднання з '{{tableName}}' у представленні '{{viewName}}' посилається на таблицю, приєднану після нього",
+    empty_view_column: "Порожній вихідний стовпець у представленні '{{viewName}}'",
+    duplicate_view_columns: "Дубльований вихідний стовпець '{{columnName}}' у представленні '{{viewName}}'",
     lock: "Заблокувати",
     unlock: "Розблокувати",
     edit_dbml: "Редагувати DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Ця діаграма зберігається локально у вашому браузері. Перемістити її в хмару?",
+    move_to_cloud_prompt: "Ця діаграма зберігається локально у вашому браузері. Перемістити її в хмару?",
     move: "Перемістити",
     dismiss: "Закрити",
     view_actions: "Дії з представленням",
@@ -387,22 +374,16 @@ const uk = {
     templates: "Шаблони",
     diagrams: "Діаграми",
     logo: "логотип",
-    check_syntax_errors:
-      "Перевірте синтаксичні помилки або повідомте нам про помилку.",
+    check_syntax_errors: "Перевірте синтаксичні помилки або повідомте нам про помилку.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "прапорець перезапису",
     file_contains_error: "Файл містить помилку.",
-    file_missing_diagram_properties:
-      "У файлі відсутні необхідні властивості діаграми.",
-    imported_diagram_database_mismatch:
-      "Імпортована та відкрита діаграми використовують різні бази даних.",
-    relationship_references_missing_table:
-      "Зв'язок {{relationshipName}} посилається на таблицю, якої не існує.",
-    relationship_references_missing_field:
-      "Зв'язок {{relationshipName}} посилається на стовпець, якого не існує.",
+    file_missing_diagram_properties: "У файлі відсутні необхідні властивості діаграми.",
+    imported_diagram_database_mismatch: "Імпортована та відкрита діаграми використовують різні бази даних.",
+    relationship_references_missing_table: "Зв'язок {{relationshipName}} посилається на таблицю, якої не існує.",
+    relationship_references_missing_field: "Зв'язок {{relationshipName}} посилається на стовпець, якого не існує.",
     ready_to_import: "Усе гаразд. Тепер можна імпортувати.",
-    import_will_overwrite_current:
-      "Поточна діаграма не порожня. Імпорт нової діаграми перезапише поточні зміни.",
+    import_will_overwrite_current: "Поточна діаграма не порожня. Імпорт нової діаграми перезапише поточні зміни.",
     all: "Усі",
     all_databases: "Усі бази даних",
     all_types: "Усі типи",

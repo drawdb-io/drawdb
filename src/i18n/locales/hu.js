@@ -208,10 +208,8 @@ const hu = {
     type_with_no_name: "Nincs megadva egy egyedi típus neve",
     duplicate_types: "Több típus is létezik a(z) '{{typeName}}' névvel",
     type_w_no_fields: "Nincs megadva oszlop a(z) '{{typeName}}' típusnak",
-    empty_type_field_name:
-      "Nincs megadva egy oszlop `neve` a(z) '{{typeName}}' típusban",
-    empty_type_field_type:
-      "Nincs megadva egy oszlop `típusa` a(z) '{{typeName}}' típusban",
+    empty_type_field_name: "Nincs megadva egy oszlop `neve` a(z) '{{typeName}}' típusban",
+    empty_type_field_type: "Nincs megadva egy oszlop `típusa` a(z) '{{typeName}}' típusban",
     no_values_for_type_field:
       "A(z) '{{typeName}}' típus '{{fieldName}}' oszlopa `{{type}}` típusú, de nincs megadva érték",
     duplicate_type_fields:
@@ -280,8 +278,7 @@ const hu = {
     read_only: "Csak olvasható",
     continue: "Folytatás",
     restore_version: "Verzió visszaállítása",
-    restore_warning:
-      "Másik verzió betöltése felül fog írni minden változtatást.",
+    restore_warning: "Másik verzió betöltése felül fog írni minden változtatást.",
     return_to_current: "Visszatérés a diagramra",
     no_changes_to_record: "Nincs felvehető változás",
     click_to_view: "Kattintson a megtekintéshez",
@@ -322,24 +319,15 @@ const hu = {
     primary_key: "Elsődleges kulcs",
     foreign_key: "Idegen kulcs",
     auto_arrange: "Automatikus elrendezés",
-    layout_dagre_left_to_right: "Rétegzett, balról jobbra",
-    layout_dagre_top_to_bottom: "Rétegzett, fentről lefelé",
-    layout_elk_layered: "Rétegzett mezősorok szerint (ELK)",
-    layout_elk_stress: "Csoportosított (ELK stress)",
-    layout_by_subject_area: "Területek szerint",
     auto_connect_fk: "Idegen kulcsok automatikus összekötése",
     auto_connect_fk_success: "{{count}} idegen kulcs hivatkozás létrehozva",
     no_foreign_keys_found: "Nem található kapcsolat",
     all_relations_already_connected: "Minden kapcsolat már össze van kötve",
     auto_connect_fk_modal_title: "Idegen kulcsok automatikus összekötése",
-    auto_connect_fk_modal_description:
-      "A PK/FK kapcsolatok automatikus létrehozásához az oszlopoknak a szokásos elnevezési konvenciókat kell követniük:",
-    auto_connect_fk_rule_1:
-      "Tábla előtag + PK oszlop (pl. user_id vagy users_id a 'users' táblához, amelynek elsődleges kulcsa 'id')",
-    auto_connect_fk_rule_2:
-      "Egyező PK oszlopnév (pl. author_id, amely megegyezik a szülőtábla author_id oszlopával)",
-    auto_connect_fk_modal_question:
-      "Szeretné átvizsgálni a diagramot és létrehozni a megfelelő kapcsolatokat?",
+    auto_connect_fk_modal_description: "A PK/FK kapcsolatok automatikus létrehozásához az oszlopoknak a szokásos elnevezési konvenciókat kell követniük:",
+    auto_connect_fk_rule_1: "Tábla előtag + PK oszlop (pl. user_id vagy users_id a 'users' táblához, amelynek elsődleges kulcsa 'id')",
+    auto_connect_fk_rule_2: "Egyező PK oszlopnév (pl. author_id, amely megegyezik a szülőtábla author_id oszlopával)",
+    auto_connect_fk_modal_question: "Szeretné átvizsgálni a diagramot és létrehozni a megfelelő kapcsolatokat?",
     import_with_ai: "Importálás AI-jal",
     ai_import_failed: "Az AI importálás sikertelen. Kérjük, próbálja újra.",
     views: "Nézetek",
@@ -365,22 +353,17 @@ const hu = {
     view_w_no_name: "Nincs megadva név egy nézetnek",
     view_w_no_base_table: "A(z) '{{viewName}}' nézetnek nincs alaptáblája",
     duplicate_views: "Több nézet is létezik a(z) '{{viewName}}' névvel",
-    view_name_clashes_w_table:
-      "A(z) '{{viewName}}' nézet neve megegyezik egy tábla nevével",
+    view_name_clashes_w_table: "A(z) '{{viewName}}' nézet neve megegyezik egy tábla nevével",
     join_w_no_table: "Tábla nélküli illesztés a(z) '{{viewName}}' nézetben",
-    join_w_no_condition:
-      "A(z) '{{viewName}}' nézetben a(z) '{{tableName}}' táblára vonatkozó illesztésnek nincs feltétele",
-    join_out_of_order:
-      "A(z) '{{viewName}}' nézetben a(z) '{{tableName}}' táblára vonatkozó illesztés egy később illesztett táblára hivatkozik",
+    join_w_no_condition: "A(z) '{{viewName}}' nézetben a(z) '{{tableName}}' táblára vonatkozó illesztésnek nincs feltétele",
+    join_out_of_order: "A(z) '{{viewName}}' nézetben a(z) '{{tableName}}' táblára vonatkozó illesztés egy később illesztett táblára hivatkozik",
     empty_view_column: "Üres kimeneti oszlop a(z) '{{viewName}}' nézetben",
-    duplicate_view_columns:
-      "Több '{{columnName}}' nevű kimeneti oszlop is létezik a(z) '{{viewName}}' nézetben",
+    duplicate_view_columns: "Több '{{columnName}}' nevű kimeneti oszlop is létezik a(z) '{{viewName}}' nézetben",
     lock: "Zárolás",
     unlock: "Feloldás",
     edit_dbml: "DBML szerkesztése",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Ez a diagram helyben, a böngészőjében van tárolva. Áthelyezi a felhőbe?",
+    move_to_cloud_prompt: "Ez a diagram helyben, a böngészőjében van tárolva. Áthelyezi a felhőbe?",
     move: "Áthelyezés",
     dismiss: "Elvetés",
     view_actions: "Nézet műveletei",
@@ -397,22 +380,16 @@ const hu = {
     templates: "Sablonok",
     diagrams: "Diagramok",
     logo: "logó",
-    check_syntax_errors:
-      "Ellenőrizze a szintaktikai hibákat, vagy jelezze nekünk a hibát.",
+    check_syntax_errors: "Ellenőrizze a szintaktikai hibákat, vagy jelezze nekünk a hibát.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "felülírás jelölőnégyzet",
     file_contains_error: "A fájl hibát tartalmaz.",
-    file_missing_diagram_properties:
-      "A fájlból hiányoznak a diagramhoz szükséges tulajdonságok.",
-    imported_diagram_database_mismatch:
-      "Az importált és a megnyitott diagram nem azonos adatbázist használ.",
-    relationship_references_missing_table:
-      "A(z) {{relationshipName}} kapcsolat nem létező táblára hivatkozik.",
-    relationship_references_missing_field:
-      "A(z) {{relationshipName}} kapcsolat nem létező oszlopra hivatkozik.",
+    file_missing_diagram_properties: "A fájlból hiányoznak a diagramhoz szükséges tulajdonságok.",
+    imported_diagram_database_mismatch: "Az importált és a megnyitott diagram nem azonos adatbázist használ.",
+    relationship_references_missing_table: "A(z) {{relationshipName}} kapcsolat nem létező táblára hivatkozik.",
+    relationship_references_missing_field: "A(z) {{relationshipName}} kapcsolat nem létező oszlopra hivatkozik.",
     ready_to_import: "Minden rendben van. Most már importálhat.",
-    import_will_overwrite_current:
-      "A jelenlegi diagram nem üres. Új diagram importálása felülírja a jelenlegi módosításokat.",
+    import_will_overwrite_current: "A jelenlegi diagram nem üres. Új diagram importálása felülírja a jelenlegi módosításokat.",
     all: "Mind",
     all_databases: "Minden adatbázis",
     all_types: "Minden típus",

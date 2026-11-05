@@ -123,8 +123,7 @@ const da = {
     autoincrement: "Auto-inkrementel",
     default_value: "Standardværdi",
     check: "Tjek udtryk",
-    this_will_appear_as_is:
-      "*Dette vil fremstå i det generede script som det er.",
+    this_will_appear_as_is: "*Dette vil fremstå i det generede script som det er.",
     comment: "Kommentar",
     add_field: "Tilføj kolonne",
     values: "Værdier",
@@ -258,8 +257,7 @@ const da = {
     read_only: "Skrivebeskyttet",
     continue: "Fortsæt",
     restore_version: "Gendan version",
-    restore_warning:
-      "Indlæsning af en anden version vil overskrive alle ændringer.",
+    restore_warning: "Indlæsning af en anden version vil overskrive alle ændringer.",
     return_to_current: "Vend tilbage til diagram",
     no_changes_to_record: "Ingen ændringer at registrere",
     click_to_view: "Klik for at se",
@@ -281,28 +279,18 @@ const da = {
     add_unique_constraint: "Tilføj unik begrænsning",
     references: "Referencer",
     auto_arrange: "Arrangér automatisk",
-    layout_dagre_left_to_right: "Lagdelt, venstre mod højre",
-    layout_dagre_top_to_bottom: "Lagdelt, oppefra og ned",
-    layout_elk_layered: "Lagdelt efter feltrækker (ELK)",
-    layout_elk_stress: "Grupperet (ELK stress)",
-    layout_by_subject_area: "Efter emneområde",
     auto_connect_fk: "Forbind fremmednøgler automatisk",
     auto_connect_fk_success: "Oprettede {{count}} fremmednøglereference(r)",
     no_foreign_keys_found: "Ingen forhold fundet",
     all_relations_already_connected: "Alle forhold er allerede forbundet",
     auto_connect_fk_modal_title: "Forbind fremmednøgler automatisk",
-    auto_connect_fk_modal_description:
-      "For at oprette PK/FK-forhold automatisk skal dine kolonner følge almindelige navngivningskonventioner:",
-    auto_connect_fk_rule_1:
-      "Tabelpræfiks + PK-kolonne (f.eks. user_id eller users_id for tabellen 'users' med primærnøglen 'id')",
-    auto_connect_fk_rule_2:
-      "Matchende PK-kolonnenavn (f.eks. author_id, der matcher author_id i overordnet tabel)",
-    auto_connect_fk_modal_question:
-      "Vil du scanne diagrammet og oprette matchende forhold?",
+    auto_connect_fk_modal_description: "For at oprette PK/FK-forhold automatisk skal dine kolonner følge almindelige navngivningskonventioner:",
+    auto_connect_fk_rule_1: "Tabelpræfiks + PK-kolonne (f.eks. user_id eller users_id for tabellen 'users' med primærnøglen 'id')",
+    auto_connect_fk_rule_2: "Matchende PK-kolonnenavn (f.eks. author_id, der matcher author_id i overordnet tabel)",
+    auto_connect_fk_modal_question: "Vil du scanne diagrammet og oprette matchende forhold?",
     migrations: "Migreringer",
     generate_migration: "Generér migrering",
-    migration_not_supported_generic:
-      "Migreringer understøttes ikke for generiske diagrammer.",
+    migration_not_supported_generic: "Migreringer understøttes ikke for generiske diagrammer.",
     no_migration_needed: "Ingen migrering nødvendig",
     scripts: "Scripts",
     json_diff: "JSON-diff",
@@ -310,8 +298,7 @@ const da = {
     show_comments: "Vis kommentarer",
     configure_custom_types: "Konfigurér brugerdefinerede typer",
     type_color: "Farve",
-    custom_types_description:
-      "Definér brugerdefinerede datatyper, der ikke understøttes som standard. Disse typer vil være tilgængelige, når du opretter eller redigerer kolonner.",
+    custom_types_description: "Definér brugerdefinerede datatyper, der ikke understøttes som standard. Disse typer vil være tilgængelige, når du opretter eller redigerer kolonner.",
     type_data_corrupted: "De konfigurerede typer er beskadigede.",
     no_custom_types: "Du har ingen typer konfigureret",
     close: "Luk",
@@ -352,22 +339,17 @@ const da = {
     view_w_no_name: "View uden navn",
     view_w_no_base_table: "View '{{viewName}}' har ingen basistabel",
     duplicate_views: "Duplikerede views med navnet '{{viewName}}'",
-    view_name_clashes_w_table:
-      "View '{{viewName}}' har samme navn som en tabel",
+    view_name_clashes_w_table: "View '{{viewName}}' har samme navn som en tabel",
     join_w_no_table: "Join uden tabel i view '{{viewName}}'",
-    join_w_no_condition:
-      "Join på '{{tableName}}' i view '{{viewName}}' har ingen betingelse",
-    join_out_of_order:
-      "Join på '{{tableName}}' i view '{{viewName}}' refererer til en tabel, der joines efter den",
+    join_w_no_condition: "Join på '{{tableName}}' i view '{{viewName}}' har ingen betingelse",
+    join_out_of_order: "Join på '{{tableName}}' i view '{{viewName}}' refererer til en tabel, der joines efter den",
     empty_view_column: "Tom outputkolonne i view '{{viewName}}'",
-    duplicate_view_columns:
-      "Duplikeret outputkolonne '{{columnName}}' i view '{{viewName}}'",
+    duplicate_view_columns: "Duplikeret outputkolonne '{{columnName}}' i view '{{viewName}}'",
     lock: "Lås",
     unlock: "Lås op",
     edit_dbml: "Redigér DBML",
     dbml_problem: "Lin {{line}}, Kol {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Dette diagram er gemt lokalt i din browser. Flyt det til skyen?",
+    move_to_cloud_prompt: "Dette diagram er gemt lokalt i din browser. Flyt det til skyen?",
     move: "Flyt",
     dismiss: "Luk",
     view_actions: "View-handlinger",
@@ -388,17 +370,12 @@ const da = {
     parse_error_at: "{{name}} [Lin {{line}}, Kol {{column}}]: {{message}}",
     overwrite_checkbox: "afkrydsningsfelt for overskrivning",
     file_contains_error: "Filen indeholder en fejl.",
-    file_missing_diagram_properties:
-      "Filen mangler nødvendige egenskaber for et diagram.",
-    imported_diagram_database_mismatch:
-      "Det importerede diagram og det åbne diagram bruger ikke samme database.",
-    relationship_references_missing_table:
-      "Forholdet {{relationshipName}} refererer til en tabel, der ikke findes.",
-    relationship_references_missing_field:
-      "Forholdet {{relationshipName}} refererer til en kolonne, der ikke findes.",
+    file_missing_diagram_properties: "Filen mangler nødvendige egenskaber for et diagram.",
+    imported_diagram_database_mismatch: "Det importerede diagram og det åbne diagram bruger ikke samme database.",
+    relationship_references_missing_table: "Forholdet {{relationshipName}} refererer til en tabel, der ikke findes.",
+    relationship_references_missing_field: "Forholdet {{relationshipName}} refererer til en kolonne, der ikke findes.",
     ready_to_import: "Alt ser fint ud. Du kan nu importere.",
-    import_will_overwrite_current:
-      "Det nuværende diagram er ikke tomt. Import af et nyt diagram vil overskrive de nuværende ændringer.",
+    import_will_overwrite_current: "Det nuværende diagram er ikke tomt. Import af et nyt diagram vil overskrive de nuværende ændringer.",
     all: "Alle",
     all_databases: "Alle databaser",
     all_types: "Alle typer",

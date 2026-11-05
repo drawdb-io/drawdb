@@ -233,8 +233,7 @@ const sv = {
     share_info:
       "* Att dela denna länk kommer inte att skapa en live samarbetssession.",
     inherits: "Ärver",
-    merging_column_w_inherited_definition:
-      "Kolumnen '{{fieldName}}' i tabellen '{{tableName}}' med ärvd definition kommer att slås samman",
+    merging_column_w_inherited_definition: "Kolumnen '{{fieldName}}' i tabellen '{{tableName}}' med ärvd definition kommer att slås samman",
     no_saved_diagrams: "Du har inga sparade diagram",
     open_recent: "Öppna senaste",
     saved_as_copy: "Sparad som kopia. Öppna:",
@@ -245,8 +244,7 @@ const sv = {
     add: "Lägg till",
     add_comment: "Lägg till kommentar",
     composite_key: "Sammansatt nyckel",
-    composite_key_hint:
-      "Lägg till kolumner för att skapa en sammansatt nyckel.",
+    composite_key_hint: "Lägg till kolumner för att skapa en sammansatt nyckel.",
     unique_constraints: "Unika begränsningar",
     add_unique_constraint: "Lägg till unik begränsning",
     references: "Referenser",
@@ -257,25 +255,15 @@ const sv = {
     supported_types: "Filtyper som stöds:",
     bulk_update: "Massuppdatering",
     auto_arrange: "Ordna automatiskt",
-    layout_dagre_left_to_right: "Skiktad, vänster till höger",
-    layout_dagre_top_to_bottom: "Skiktad, uppifrån och ned",
-    layout_elk_layered: "Skiktad efter fältrader (ELK)",
-    layout_elk_stress: "Klustrad (ELK stress)",
-    layout_by_subject_area: "Efter ämnesområde",
     auto_connect_fk: "Koppla främmande nycklar automatiskt",
-    auto_connect_fk_success:
-      "Skapade {{count}} referens(er) för främmande nycklar",
+    auto_connect_fk_success: "Skapade {{count}} referens(er) för främmande nycklar",
     no_foreign_keys_found: "Inga relationer hittades",
     all_relations_already_connected: "Alla relationer är redan kopplade",
     auto_connect_fk_modal_title: "Koppla främmande nycklar automatiskt",
-    auto_connect_fk_modal_description:
-      "För att PK/FK-relationer ska kunna skapas automatiskt bör dina kolumner följa vanliga namngivningskonventioner:",
-    auto_connect_fk_rule_1:
-      "Tabellprefix + PK-kolumn (t.ex. user_id eller users_id för tabellen 'users' med primärnyckeln 'id')",
-    auto_connect_fk_rule_2:
-      "Matchande PK-kolumnnamn (t.ex. author_id som matchar author_id i den överordnade tabellen)",
-    auto_connect_fk_modal_question:
-      "Vill du skanna diagrammet och skapa matchande relationer?",
+    auto_connect_fk_modal_description: "För att PK/FK-relationer ska kunna skapas automatiskt bör dina kolumner följa vanliga namngivningskonventioner:",
+    auto_connect_fk_rule_1: "Tabellprefix + PK-kolumn (t.ex. user_id eller users_id för tabellen 'users' med primärnyckeln 'id')",
+    auto_connect_fk_rule_2: "Matchande PK-kolumnnamn (t.ex. author_id som matchar author_id i den överordnade tabellen)",
+    auto_connect_fk_modal_question: "Vill du skanna diagrammet och skapa matchande relationer?",
     multiselect: "Flerval",
     export_saved_data: "Exportera sparad data",
     dbml_view: "DBML-vy",
@@ -290,8 +278,7 @@ const sv = {
     read_only: "Skrivskyddad",
     continue: "Fortsätt",
     restore_version: "Återställ version",
-    restore_warning:
-      "Om du laddar en annan version skrivs alla ändringar över.",
+    restore_warning: "Om du laddar en annan version skrivs alla ändringar över.",
     return_to_current: "Tillbaka till diagrammet",
     no_changes_to_record: "Inga ändringar att spara",
     click_to_view: "Klicka för att visa",
@@ -303,8 +290,7 @@ const sv = {
     see_all: "Visa alla",
     migrations: "Migreringar",
     generate_migration: "Generera migrering",
-    migration_not_supported_generic:
-      "Migreringar stöds inte för generiska diagram.",
+    migration_not_supported_generic: "Migreringar stöds inte för generiska diagram.",
     no_migration_needed: "Ingen migrering behövs",
     scripts: "Skript",
     json_diff: "JSON-diff",
@@ -314,8 +300,7 @@ const sv = {
     show_comments: "Visa kommentarer",
     configure_custom_types: "Konfigurera anpassade typer",
     type_color: "Färg",
-    custom_types_description:
-      "Definiera anpassade datatyper som inte stöds som standard. Dessa typer blir tillgängliga när du skapar eller redigerar kolumner.",
+    custom_types_description: "Definiera anpassade datatyper som inte stöds som standard. Dessa typer blir tillgängliga när du skapar eller redigerar kolumner.",
     type_data_corrupted: "De konfigurerade typerna är skadade.",
     no_custom_types: "Du har inga typer konfigurerade",
     close: "Stäng",
@@ -356,22 +341,17 @@ const sv = {
     view_w_no_name: "Vy utan namn",
     view_w_no_base_table: "Vyn '{{viewName}}' har ingen bastabell",
     duplicate_views: "Dubbletter av vyer med namnet '{{viewName}}'",
-    view_name_clashes_w_table:
-      "Vyn '{{viewName}}' har samma namn som en tabell",
+    view_name_clashes_w_table: "Vyn '{{viewName}}' har samma namn som en tabell",
     join_w_no_table: "Join utan tabell i vyn '{{viewName}}'",
-    join_w_no_condition:
-      "Join på '{{tableName}}' i vyn '{{viewName}}' saknar villkor",
-    join_out_of_order:
-      "Join på '{{tableName}}' i vyn '{{viewName}}' refererar till en tabell som joinas efter den",
+    join_w_no_condition: "Join på '{{tableName}}' i vyn '{{viewName}}' saknar villkor",
+    join_out_of_order: "Join på '{{tableName}}' i vyn '{{viewName}}' refererar till en tabell som joinas efter den",
     empty_view_column: "Tom utdatakolumn i vyn '{{viewName}}'",
-    duplicate_view_columns:
-      "Dubblett av utdatakolumnen '{{columnName}}' i vyn '{{viewName}}'",
+    duplicate_view_columns: "Dubblett av utdatakolumnen '{{columnName}}' i vyn '{{viewName}}'",
     lock: "Lås",
     unlock: "Lås upp",
     edit_dbml: "Redigera DBML",
     dbml_problem: "Rad {{line}}, Kol {{column}}: {{message}}",
-    move_to_cloud_prompt:
-      "Det här diagrammet är sparat lokalt i din webbläsare. Flytta det till molnet?",
+    move_to_cloud_prompt: "Det här diagrammet är sparat lokalt i din webbläsare. Flytta det till molnet?",
     move: "Flytta",
     dismiss: "Stäng",
     view_actions: "Vyåtgärder",
@@ -388,22 +368,16 @@ const sv = {
     templates: "Mallar",
     diagrams: "Diagram",
     logo: "logotyp",
-    check_syntax_errors:
-      "Kontrollera om det finns syntaxfel eller berätta för oss om felet.",
+    check_syntax_errors: "Kontrollera om det finns syntaxfel eller berätta för oss om felet.",
     parse_error_at: "{{name}} [Rad {{line}}, Kol {{column}}]: {{message}}",
     overwrite_checkbox: "kryssruta för överskrivning",
     file_contains_error: "Filen innehåller ett fel.",
-    file_missing_diagram_properties:
-      "Filen saknar nödvändiga egenskaper för ett diagram.",
-    imported_diagram_database_mismatch:
-      "Det importerade diagrammet och det öppna diagrammet använder inte samma databas.",
-    relationship_references_missing_table:
-      "Relationen {{relationshipName}} refererar till en tabell som inte finns.",
-    relationship_references_missing_field:
-      "Relationen {{relationshipName}} refererar till en kolumn som inte finns.",
+    file_missing_diagram_properties: "Filen saknar nödvändiga egenskaper för ett diagram.",
+    imported_diagram_database_mismatch: "Det importerade diagrammet och det öppna diagrammet använder inte samma databas.",
+    relationship_references_missing_table: "Relationen {{relationshipName}} refererar till en tabell som inte finns.",
+    relationship_references_missing_field: "Relationen {{relationshipName}} refererar till en kolumn som inte finns.",
     ready_to_import: "Allt ser bra ut. Du kan nu importera.",
-    import_will_overwrite_current:
-      "Det aktuella diagrammet är inte tomt. Om du importerar ett nytt diagram skrivs de aktuella ändringarna över.",
+    import_will_overwrite_current: "Det aktuella diagrammet är inte tomt. Om du importerar ett nytt diagram skrivs de aktuella ändringarna över.",
     all: "Alla",
     all_databases: "Alla databaser",
     all_types: "Alla typer",

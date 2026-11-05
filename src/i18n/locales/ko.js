@@ -226,8 +226,7 @@ const ko = {
     didnt_find_diagram: "이런! 다이어그램을 찾을 수 없습니다.",
     unsigned: "부호 없음",
     inherits: "상속",
-    merging_column_w_inherited_definition:
-      "'{{tableName}}' 테이블의 '{{fieldName}}' 열은 상속된 정의와 병합됩니다",
+    merging_column_w_inherited_definition: "'{{tableName}}' 테이블의 '{{fieldName}}' 열은 상속된 정의와 병합됩니다",
     no_saved_diagrams: "저장된 다이어그램이 없습니다",
     open_recent: "최근 항목 열기",
     saved_as_copy: "사본으로 저장되었습니다. 열기:",
@@ -254,24 +253,15 @@ const ko = {
     supported_types: "지원되는 파일 형식:",
     bulk_update: "일괄 업데이트",
     auto_arrange: "자동 정렬",
-    layout_dagre_left_to_right: "계층형, 왼쪽에서 오른쪽",
-    layout_dagre_top_to_bottom: "계층형, 위에서 아래",
-    layout_elk_layered: "필드 행 기준 계층형 (ELK)",
-    layout_elk_stress: "군집형 (ELK stress)",
-    layout_by_subject_area: "주제 영역별",
     auto_connect_fk: "외래 키 자동 연결",
     auto_connect_fk_success: "외래 키 참조 {{count}}개를 생성했습니다",
     no_foreign_keys_found: "관계를 찾을 수 없습니다",
     all_relations_already_connected: "모든 관계가 이미 연결되어 있습니다",
     auto_connect_fk_modal_title: "외래 키 자동 연결",
-    auto_connect_fk_modal_description:
-      "PK/FK 관계를 자동으로 설정하려면 열 이름이 표준 명명 규칙을 따라야 합니다:",
-    auto_connect_fk_rule_1:
-      "테이블 접두사 + 기본 키 열 (예: 기본 키가 'id'인 'users' 테이블의 경우 user_id 또는 users_id)",
-    auto_connect_fk_rule_2:
-      "일치하는 기본 키 열 이름 (예: 상위 테이블의 author_id와 일치하는 author_id)",
-    auto_connect_fk_modal_question:
-      "다이어그램을 스캔하여 일치하는 관계를 만드시겠습니까?",
+    auto_connect_fk_modal_description: "PK/FK 관계를 자동으로 설정하려면 열 이름이 표준 명명 규칙을 따라야 합니다:",
+    auto_connect_fk_rule_1: "테이블 접두사 + 기본 키 열 (예: 기본 키가 'id'인 'users' 테이블의 경우 user_id 또는 users_id)",
+    auto_connect_fk_rule_2: "일치하는 기본 키 열 이름 (예: 상위 테이블의 author_id와 일치하는 author_id)",
+    auto_connect_fk_modal_question: "다이어그램을 스캔하여 일치하는 관계를 만드시겠습니까?",
     multiselect: "다중 선택",
     export_saved_data: "저장된 데이터 내보내기",
     dbml_view: "DBML 보기",
@@ -298,8 +288,7 @@ const ko = {
     see_all: "모두 보기",
     migrations: "마이그레이션",
     generate_migration: "마이그레이션 생성",
-    migration_not_supported_generic:
-      "일반 다이어그램에서는 마이그레이션이 지원되지 않습니다.",
+    migration_not_supported_generic: "일반 다이어그램에서는 마이그레이션이 지원되지 않습니다.",
     no_migration_needed: "마이그레이션이 필요하지 않습니다",
     scripts: "스크립트",
     json_diff: "JSON 비교",
@@ -309,8 +298,7 @@ const ko = {
     show_comments: "주석 보기",
     configure_custom_types: "사용자 정의 유형 설정",
     type_color: "색상",
-    custom_types_description:
-      "기본적으로 지원되지 않는 사용자 정의 데이터 유형을 정의합니다. 이 유형은 열을 만들거나 편집할 때 사용할 수 있습니다.",
+    custom_types_description: "기본적으로 지원되지 않는 사용자 정의 데이터 유형을 정의합니다. 이 유형은 열을 만들거나 편집할 때 사용할 수 있습니다.",
     type_data_corrupted: "설정된 유형이 손상되었습니다.",
     no_custom_types: "설정된 유형이 없습니다",
     close: "닫기",
@@ -351,22 +339,17 @@ const ko = {
     view_w_no_name: "이름이 없는 뷰가 선언되었습니다",
     view_w_no_base_table: "'{{viewName}}' 뷰에 기준 테이블이 없습니다",
     duplicate_views: "'{{viewName}}'라는 이름의 뷰가 중복 선언되었습니다",
-    view_name_clashes_w_table:
-      "'{{viewName}}' 뷰의 이름이 테이블 이름과 같습니다",
+    view_name_clashes_w_table: "'{{viewName}}' 뷰의 이름이 테이블 이름과 같습니다",
     join_w_no_table: "'{{viewName}}' 뷰에 테이블이 없는 조인이 있습니다",
-    join_w_no_condition:
-      "'{{viewName}}' 뷰의 '{{tableName}}' 조인에 조건이 없습니다",
-    join_out_of_order:
-      "'{{viewName}}' 뷰의 '{{tableName}}' 조인이 그 뒤에 조인되는 테이블을 참조합니다",
+    join_w_no_condition: "'{{viewName}}' 뷰의 '{{tableName}}' 조인에 조건이 없습니다",
+    join_out_of_order: "'{{viewName}}' 뷰의 '{{tableName}}' 조인이 그 뒤에 조인되는 테이블을 참조합니다",
     empty_view_column: "'{{viewName}}' 뷰에 빈 출력 열이 있습니다",
-    duplicate_view_columns:
-      "'{{viewName}}' 뷰에 '{{columnName}}' 출력 열이 중복되었습니다",
+    duplicate_view_columns: "'{{viewName}}' 뷰에 '{{columnName}}' 출력 열이 중복되었습니다",
     lock: "잠금",
     unlock: "잠금 해제",
     edit_dbml: "DBML 편집",
     dbml_problem: "{{line}}행, {{column}}열: {{message}}",
-    move_to_cloud_prompt:
-      "이 다이어그램은 브라우저에 로컬로 저장되어 있습니다. 클라우드로 옮기시겠습니까?",
+    move_to_cloud_prompt: "이 다이어그램은 브라우저에 로컬로 저장되어 있습니다. 클라우드로 옮기시겠습니까?",
     move: "옮기기",
     dismiss: "닫기",
     view_actions: "뷰 작업",
@@ -387,17 +370,12 @@ const ko = {
     parse_error_at: "{{name}} [{{line}}행, {{column}}열]: {{message}}",
     overwrite_checkbox: "덮어쓰기 체크박스",
     file_contains_error: "파일에 오류가 있습니다.",
-    file_missing_diagram_properties:
-      "파일에 다이어그램에 필요한 속성이 없습니다.",
-    imported_diagram_database_mismatch:
-      "가져온 다이어그램과 열린 다이어그램의 데이터베이스가 일치하지 않습니다.",
-    relationship_references_missing_table:
-      "관계 {{relationshipName}}이(가) 존재하지 않는 테이블을 참조합니다.",
-    relationship_references_missing_field:
-      "관계 {{relationshipName}}이(가) 존재하지 않는 열을 참조합니다.",
+    file_missing_diagram_properties: "파일에 다이어그램에 필요한 속성이 없습니다.",
+    imported_diagram_database_mismatch: "가져온 다이어그램과 열린 다이어그램의 데이터베이스가 일치하지 않습니다.",
+    relationship_references_missing_table: "관계 {{relationshipName}}이(가) 존재하지 않는 테이블을 참조합니다.",
+    relationship_references_missing_field: "관계 {{relationshipName}}이(가) 존재하지 않는 열을 참조합니다.",
     ready_to_import: "모두 정상입니다. 이제 가져올 수 있습니다.",
-    import_will_overwrite_current:
-      "현재 다이어그램이 비어 있지 않습니다. 새 다이어그램을 가져오면 현재 변경 사항을 덮어씁니다.",
+    import_will_overwrite_current: "현재 다이어그램이 비어 있지 않습니다. 새 다이어그램을 가져오면 현재 변경 사항을 덮어씁니다.",
     all: "전체",
     all_databases: "모든 데이터베이스",
     all_types: "모든 유형",
