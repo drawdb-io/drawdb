@@ -230,7 +230,8 @@ const ru = {
     share_info:
       "* Поделившись этой ссылкой, не будет создано сеанса совместной работы в режиме реального времени.",
     inherits: "Наследует",
-    merging_column_w_inherited_definition: "Столбец '{{fieldName}}' в таблице '{{tableName}}' будет объединён с унаследованным определением",
+    merging_column_w_inherited_definition:
+      "Столбец '{{fieldName}}' в таблице '{{tableName}}' будет объединён с унаследованным определением",
     no_saved_diagrams: "У вас нет сохранённых диаграмм",
     open_recent: "Открыть недавние",
     saved_as_copy: "Сохранено как копия. Открыть:",
@@ -263,17 +264,19 @@ const ru = {
     layout_elk_layered: "По слоям по строкам полей (ELK)",
     layout_elk_stress: "Кластерами (ELK stress)",
     layout_by_subject_area: "По предметным областям",
-    spread_out: "Раздвинуть",
-    pull_together: "Сдвинуть",
     auto_connect_fk: "Автосвязывание внешних ключей",
     auto_connect_fk_success: "Создано ссылок по внешним ключам: {{count}}",
     no_foreign_keys_found: "Отношения не найдены",
     all_relations_already_connected: "Все отношения уже связаны",
     auto_connect_fk_modal_title: "Автосвязывание внешних ключей",
-    auto_connect_fk_modal_description: "Чтобы автоматически создать связи PK/FK, ваши столбцы должны следовать стандартным соглашениям об именовании:",
-    auto_connect_fk_rule_1: "Префикс таблицы + столбец PK (например, user_id или users_id для таблицы 'users' с первичным ключом 'id')",
-    auto_connect_fk_rule_2: "Совпадающее имя столбца PK (например, author_id, совпадающий с author_id в родительской таблице)",
-    auto_connect_fk_modal_question: "Просканировать диаграмму и создать соответствующие отношения?",
+    auto_connect_fk_modal_description:
+      "Чтобы автоматически создать связи PK/FK, ваши столбцы должны следовать стандартным соглашениям об именовании:",
+    auto_connect_fk_rule_1:
+      "Префикс таблицы + столбец PK (например, user_id или users_id для таблицы 'users' с первичным ключом 'id')",
+    auto_connect_fk_rule_2:
+      "Совпадающее имя столбца PK (например, author_id, совпадающий с author_id в родительской таблице)",
+    auto_connect_fk_modal_question:
+      "Просканировать диаграмму и создать соответствующие отношения?",
     multiselect: "Множественный выбор",
     export_saved_data: "Экспорт сохранённых данных",
     dbml_view: "Вид DBML",
@@ -300,7 +303,8 @@ const ru = {
     see_all: "Показать все",
     migrations: "Миграции",
     generate_migration: "Создать миграцию",
-    migration_not_supported_generic: "Миграции не поддерживаются для общих диаграмм.",
+    migration_not_supported_generic:
+      "Миграции не поддерживаются для общих диаграмм.",
     no_migration_needed: "Миграция не требуется",
     scripts: "Скрипты",
     json_diff: "Различия JSON",
@@ -310,7 +314,8 @@ const ru = {
     show_comments: "Показать комментарии",
     configure_custom_types: "Настроить пользовательские типы",
     type_color: "Цвет",
-    custom_types_description: "Определите пользовательские типы данных, которые не поддерживаются по умолчанию. Эти типы будут доступны при создании или редактировании столбцов.",
+    custom_types_description:
+      "Определите пользовательские типы данных, которые не поддерживаются по умолчанию. Эти типы будут доступны при создании или редактировании столбцов.",
     type_data_corrupted: "Настроенные типы повреждены.",
     no_custom_types: "У вас нет настроенных типов",
     close: "Закрыть",
@@ -351,17 +356,22 @@ const ru = {
     view_w_no_name: "Представление без имени",
     view_w_no_base_table: "У представления '{{viewName}}' нет базовой таблицы",
     duplicate_views: "Дублирующиеся представления с именем '{{viewName}}'",
-    view_name_clashes_w_table: "Представление '{{viewName}}' имеет то же имя, что и таблица",
+    view_name_clashes_w_table:
+      "Представление '{{viewName}}' имеет то же имя, что и таблица",
     join_w_no_table: "Соединение без таблицы в представлении '{{viewName}}'",
-    join_w_no_condition: "Соединение с '{{tableName}}' в представлении '{{viewName}}' не имеет условия",
-    join_out_of_order: "Соединение с '{{tableName}}' в представлении '{{viewName}}' ссылается на таблицу, присоединённую после него",
+    join_w_no_condition:
+      "Соединение с '{{tableName}}' в представлении '{{viewName}}' не имеет условия",
+    join_out_of_order:
+      "Соединение с '{{tableName}}' в представлении '{{viewName}}' ссылается на таблицу, присоединённую после него",
     empty_view_column: "Пустой выходной столбец в представлении '{{viewName}}'",
-    duplicate_view_columns: "Дублирующийся выходной столбец '{{columnName}}' в представлении '{{viewName}}'",
+    duplicate_view_columns:
+      "Дублирующийся выходной столбец '{{columnName}}' в представлении '{{viewName}}'",
     lock: "Заблокировать",
     unlock: "Разблокировать",
     edit_dbml: "Редактировать DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Эта диаграмма хранится локально в вашем браузере. Переместить её в облако?",
+    move_to_cloud_prompt:
+      "Эта диаграмма хранится локально в вашем браузере. Переместить её в облако?",
     move: "Переместить",
     dismiss: "Закрыть",
     view_actions: "Действия с представлением",
@@ -378,16 +388,22 @@ const ru = {
     templates: "Шаблоны",
     diagrams: "Диаграммы",
     logo: "логотип",
-    check_syntax_errors: "Проверьте синтаксические ошибки или сообщите нам об ошибке.",
+    check_syntax_errors:
+      "Проверьте синтаксические ошибки или сообщите нам об ошибке.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "флажок перезаписи",
     file_contains_error: "Файл содержит ошибку.",
-    file_missing_diagram_properties: "В файле отсутствуют необходимые свойства диаграммы.",
-    imported_diagram_database_mismatch: "Импортируемая и открытая диаграммы используют разные базы данных.",
-    relationship_references_missing_table: "Отношение {{relationshipName}} ссылается на несуществующую таблицу.",
-    relationship_references_missing_field: "Отношение {{relationshipName}} ссылается на несуществующий столбец.",
+    file_missing_diagram_properties:
+      "В файле отсутствуют необходимые свойства диаграммы.",
+    imported_diagram_database_mismatch:
+      "Импортируемая и открытая диаграммы используют разные базы данных.",
+    relationship_references_missing_table:
+      "Отношение {{relationshipName}} ссылается на несуществующую таблицу.",
+    relationship_references_missing_field:
+      "Отношение {{relationshipName}} ссылается на несуществующий столбец.",
     ready_to_import: "Всё в порядке. Теперь можно импортировать.",
-    import_will_overwrite_current: "Текущая диаграмма не пуста. Импорт новой диаграммы перезапишет текущие изменения.",
+    import_will_overwrite_current:
+      "Текущая диаграмма не пуста. Импорт новой диаграммы перезапишет текущие изменения.",
     all: "Все",
     all_databases: "Все базы данных",
     all_types: "Все типы",

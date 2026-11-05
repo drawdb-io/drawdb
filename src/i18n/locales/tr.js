@@ -225,7 +225,8 @@ const tr = {
     empty_index_name: "'{{tableName}}' tablosunda isimsiz bir dizin bildirildi",
     didnt_find_diagram: "Oops! Diyagram bulunamadı.",
     inherits: "Devralır",
-    merging_column_w_inherited_definition: "'{{tableName}}' tablosundaki '{{fieldName}}' sütunu devralınan tanımla birleştirilecek",
+    merging_column_w_inherited_definition:
+      "'{{tableName}}' tablosundaki '{{fieldName}}' sütunu devralınan tanımla birleştirilecek",
     no_saved_diagrams: "Kayıtlı diyagramınız yok",
     open_recent: "Son kullanılanları aç",
     saved_as_copy: "Kopya olarak kaydedildi. Aç:",
@@ -247,7 +248,8 @@ const tr = {
     copy_link: "Bağlantıyı kopyala",
     readme: "README",
     failed_to_load: "Yüklenemedi. Bağlantının doğru olduğundan emin olun.",
-    share_info: "* Bu bağlantıyı paylaşmak canlı, gerçek zamanlı bir ortak çalışma oturumu oluşturmaz.",
+    share_info:
+      "* Bu bağlantıyı paylaşmak canlı, gerçek zamanlı bir ortak çalışma oturumu oluşturmaz.",
     show_relationship_labels: "İlişki etiketlerini göster",
     docs: "Belgeler",
     supported_types: "Desteklenen dosya türleri:",
@@ -258,17 +260,19 @@ const tr = {
     layout_elk_layered: "Alan satırlarına göre katmanlı (ELK)",
     layout_elk_stress: "Kümelenmiş (ELK stress)",
     layout_by_subject_area: "Konu alanına göre",
-    spread_out: "Aralıkları aç",
-    pull_together: "Aralıkları kapat",
     auto_connect_fk: "Yabancı anahtarları otomatik bağla",
     auto_connect_fk_success: "{{count}} yabancı anahtar referansı oluşturuldu",
     no_foreign_keys_found: "İlişki bulunamadı",
     all_relations_already_connected: "Tüm ilişkiler zaten bağlı",
     auto_connect_fk_modal_title: "Yabancı Anahtarları Otomatik Bağla",
-    auto_connect_fk_modal_description: "PK/FK ilişkilerini otomatik kurmak için sütunlarınız standart adlandırma kurallarına uymalıdır:",
-    auto_connect_fk_rule_1: "Tablo öneki + PK sütunu (ör. birincil anahtarı 'id' olan 'users' tablosu için user_id veya users_id)",
-    auto_connect_fk_rule_2: "Eşleşen PK sütun adı (ör. üst tablodaki author_id ile eşleşen author_id)",
-    auto_connect_fk_modal_question: "Diyagram taransın ve eşleşen ilişkiler oluşturulsun mu?",
+    auto_connect_fk_modal_description:
+      "PK/FK ilişkilerini otomatik kurmak için sütunlarınız standart adlandırma kurallarına uymalıdır:",
+    auto_connect_fk_rule_1:
+      "Tablo öneki + PK sütunu (ör. birincil anahtarı 'id' olan 'users' tablosu için user_id veya users_id)",
+    auto_connect_fk_rule_2:
+      "Eşleşen PK sütun adı (ör. üst tablodaki author_id ile eşleşen author_id)",
+    auto_connect_fk_modal_question:
+      "Diyagram taransın ve eşleşen ilişkiler oluşturulsun mu?",
     multiselect: "Çoklu seçim",
     export_saved_data: "Kayıtlı verileri dışa aktar",
     dbml_view: "DBML görünümü",
@@ -283,7 +287,8 @@ const tr = {
     read_only: "Salt okunur",
     continue: "Devam et",
     restore_version: "Sürümü geri yükle",
-    restore_warning: "Başka bir sürümü yüklemek tüm değişikliklerin üzerine yazar.",
+    restore_warning:
+      "Başka bir sürümü yüklemek tüm değişikliklerin üzerine yazar.",
     return_to_current: "Diyagrama dön",
     no_changes_to_record: "Kaydedilecek değişiklik yok",
     click_to_view: "Görüntülemek için tıklayın",
@@ -295,7 +300,8 @@ const tr = {
     see_all: "Tümünü gör",
     migrations: "Geçişler",
     generate_migration: "Geçiş oluştur",
-    migration_not_supported_generic: "Genel diyagramlar için geçişler desteklenmez.",
+    migration_not_supported_generic:
+      "Genel diyagramlar için geçişler desteklenmez.",
     no_migration_needed: "Geçiş gerekmiyor",
     scripts: "Betikler",
     json_diff: "JSON farkı",
@@ -305,7 +311,8 @@ const tr = {
     show_comments: "Yorumları göster",
     configure_custom_types: "Özel tipleri yapılandır",
     type_color: "Renk",
-    custom_types_description: "Varsayılan olarak desteklenmeyen özel veri tiplerini tanımlayın. Bu tipler sütun oluştururken veya düzenlerken kullanılabilir olacaktır.",
+    custom_types_description:
+      "Varsayılan olarak desteklenmeyen özel veri tiplerini tanımlayın. Bu tipler sütun oluştururken veya düzenlerken kullanılabilir olacaktır.",
     type_data_corrupted: "Yapılandırılmış tipler bozuk.",
     no_custom_types: "Yapılandırılmış tipiniz yok",
     close: "Kapat",
@@ -322,7 +329,8 @@ const tr = {
     primary_key: "Birincil anahtar",
     foreign_key: "Yabancı anahtar",
     import_with_ai: "Yapay zekâ ile içe aktar",
-    ai_import_failed: "Yapay zekâ ile içe aktarma başarısız oldu. Lütfen tekrar deneyin.",
+    ai_import_failed:
+      "Yapay zekâ ile içe aktarma başarısız oldu. Lütfen tekrar deneyin.",
     views: "Görünümler",
     add_view: "Görünüm ekle",
     edit_view: "{{extra}} Görünümü düzenle {{viewName}}",
@@ -346,17 +354,22 @@ const tr = {
     view_w_no_name: "İsimsiz görünüm",
     view_w_no_base_table: "'{{viewName}}' görünümünün temel tablosu yok",
     duplicate_views: "'{{viewName}}' adıyla yinelenen görünümler",
-    view_name_clashes_w_table: "'{{viewName}}' görünümü bir tabloyla aynı ada sahip",
+    view_name_clashes_w_table:
+      "'{{viewName}}' görünümü bir tabloyla aynı ada sahip",
     join_w_no_table: "'{{viewName}}' görünümünde tablosuz birleştirme",
-    join_w_no_condition: "'{{viewName}}' görünümündeki '{{tableName}}' birleştirmesinin koşulu yok",
-    join_out_of_order: "'{{viewName}}' görünümündeki '{{tableName}}' birleştirmesi, kendisinden sonra birleştirilen bir tabloya başvuruyor",
+    join_w_no_condition:
+      "'{{viewName}}' görünümündeki '{{tableName}}' birleştirmesinin koşulu yok",
+    join_out_of_order:
+      "'{{viewName}}' görünümündeki '{{tableName}}' birleştirmesi, kendisinden sonra birleştirilen bir tabloya başvuruyor",
     empty_view_column: "'{{viewName}}' görünümünde boş çıktı sütunu",
-    duplicate_view_columns: "'{{viewName}}' görünümünde yinelenen '{{columnName}}' çıktı sütunu",
+    duplicate_view_columns:
+      "'{{viewName}}' görünümünde yinelenen '{{columnName}}' çıktı sütunu",
     lock: "Kilitle",
     unlock: "Kilidi aç",
     edit_dbml: "DBML düzenle",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Bu diyagram tarayıcınızda yerel olarak saklanıyor. Buluta taşınsın mı?",
+    move_to_cloud_prompt:
+      "Bu diyagram tarayıcınızda yerel olarak saklanıyor. Buluta taşınsın mı?",
     move: "Taşı",
     dismiss: "Kapat",
     view_actions: "Görünüm işlemleri",
@@ -373,16 +386,22 @@ const tr = {
     templates: "Şablonlar",
     diagrams: "Diyagramlar",
     logo: "logo",
-    check_syntax_errors: "Lütfen sözdizimi hatalarını kontrol edin veya hatayı bize bildirin.",
+    check_syntax_errors:
+      "Lütfen sözdizimi hatalarını kontrol edin veya hatayı bize bildirin.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "üzerine yazma onay kutusu",
     file_contains_error: "Dosya bir hata içeriyor.",
-    file_missing_diagram_properties: "Dosyada bir diyagram için gerekli özellikler eksik.",
-    imported_diagram_database_mismatch: "İçe aktarılan diyagram ile açık diyagram aynı veritabanını kullanmıyor.",
-    relationship_references_missing_table: "{{relationshipName}} ilişkisi var olmayan bir tabloya başvuruyor.",
-    relationship_references_missing_field: "{{relationshipName}} ilişkisi var olmayan bir sütuna başvuruyor.",
+    file_missing_diagram_properties:
+      "Dosyada bir diyagram için gerekli özellikler eksik.",
+    imported_diagram_database_mismatch:
+      "İçe aktarılan diyagram ile açık diyagram aynı veritabanını kullanmıyor.",
+    relationship_references_missing_table:
+      "{{relationshipName}} ilişkisi var olmayan bir tabloya başvuruyor.",
+    relationship_references_missing_field:
+      "{{relationshipName}} ilişkisi var olmayan bir sütuna başvuruyor.",
     ready_to_import: "Her şey yolunda görünüyor. Artık içe aktarabilirsiniz.",
-    import_will_overwrite_current: "Mevcut diyagram boş değil. Yeni bir diyagramı içe aktarmak mevcut değişikliklerin üzerine yazacak.",
+    import_will_overwrite_current:
+      "Mevcut diyagram boş değil. Yeni bir diyagramı içe aktarmak mevcut değişikliklerin üzerine yazacak.",
     all: "Tümü",
     all_databases: "Tüm veritabanları",
     all_types: "Tüm tipler",

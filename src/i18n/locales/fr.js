@@ -206,7 +206,8 @@ const fr = {
     not_found: "Non trouvé",
     readme: "README",
     inherits: "Hérite de",
-    merging_column_w_inherited_definition: "La colonne '{{fieldName}}' de la table '{{tableName}}' avec une définition héritée sera fusionnée",
+    merging_column_w_inherited_definition:
+      "La colonne '{{fieldName}}' de la table '{{tableName}}' avec une définition héritée sera fusionnée",
     no_saved_diagrams: "Vous n'avez aucun diagramme enregistré",
     open_recent: "Ouvrir un fichier récent",
     saved_as_copy: "Enregistré en tant que copie. Ouvrir :",
@@ -230,7 +231,8 @@ const fr = {
     references: "Références",
     pick_db: "Choisissez une base de données",
     generic: "Générique",
-    generic_description: "Les diagrammes génériques peuvent être exportés vers n'importe quel dialecte SQL, mais prennent en charge peu de types de données.",
+    generic_description:
+      "Les diagrammes génériques peuvent être exportés vers n'importe quel dialecte SQL, mais prennent en charge peu de types de données.",
     enums: "Enums",
     add_enum: "Ajouter un enum",
     edit_enum: "{{extra}} Modifier l'enum {{enumName}}",
@@ -249,7 +251,8 @@ const fr = {
     unshare: "Ne plus partager",
     copy_link: "Copier le lien",
     failed_to_load: "Échec du chargement. Vérifiez que le lien est correct.",
-    share_info: "* Le partage de ce lien ne crée pas de session de collaboration en temps réel.",
+    share_info:
+      "* Le partage de ce lien ne crée pas de session de collaboration en temps réel.",
     show_relationship_labels: "Afficher les libellés des relations",
     docs: "Documentation",
     supported_types: "Types de fichiers pris en charge :",
@@ -260,17 +263,21 @@ const fr = {
     layout_elk_layered: "En couches selon les lignes de champs (ELK)",
     layout_elk_stress: "Regroupé (ELK stress)",
     layout_by_subject_area: "Par sujet",
-    spread_out: "Espacer",
-    pull_together: "Resserrer",
     auto_connect_fk: "Connecter automatiquement les clés étrangères",
     auto_connect_fk_success: "{{count}} référence(s) de clé étrangère créée(s)",
     no_foreign_keys_found: "Aucune relation trouvée",
-    all_relations_already_connected: "Toutes les relations sont déjà connectées",
-    auto_connect_fk_modal_title: "Connecter automatiquement les clés étrangères",
-    auto_connect_fk_modal_description: "Pour établir automatiquement les relations PK/FK, vos colonnes doivent suivre les conventions de nommage standard :",
-    auto_connect_fk_rule_1: "Préfixe de table + colonne PK (par ex. user_id ou users_id pour la table 'users' avec la clé primaire 'id')",
-    auto_connect_fk_rule_2: "Nom de colonne PK identique (par ex. author_id correspondant à author_id dans la table parente)",
-    auto_connect_fk_modal_question: "Voulez-vous analyser le diagramme et créer les relations correspondantes?",
+    all_relations_already_connected:
+      "Toutes les relations sont déjà connectées",
+    auto_connect_fk_modal_title:
+      "Connecter automatiquement les clés étrangères",
+    auto_connect_fk_modal_description:
+      "Pour établir automatiquement les relations PK/FK, vos colonnes doivent suivre les conventions de nommage standard :",
+    auto_connect_fk_rule_1:
+      "Préfixe de table + colonne PK (par ex. user_id ou users_id pour la table 'users' avec la clé primaire 'id')",
+    auto_connect_fk_rule_2:
+      "Nom de colonne PK identique (par ex. author_id correspondant à author_id dans la table parente)",
+    auto_connect_fk_modal_question:
+      "Voulez-vous analyser le diagramme et créer les relations correspondantes?",
     multiselect: "Sélection multiple",
     export_saved_data: "Exporter les données enregistrées",
     dbml_view: "Vue DBML",
@@ -285,7 +292,8 @@ const fr = {
     read_only: "Lecture seule",
     continue: "Continuer",
     restore_version: "Restaurer la version",
-    restore_warning: "Le chargement d'une autre version écrasera toutes les modifications.",
+    restore_warning:
+      "Le chargement d'une autre version écrasera toutes les modifications.",
     return_to_current: "Revenir au diagramme",
     no_changes_to_record: "Aucune modification à enregistrer",
     click_to_view: "Cliquez pour afficher",
@@ -297,7 +305,8 @@ const fr = {
     see_all: "Tout voir",
     migrations: "Migrations",
     generate_migration: "Générer une migration",
-    migration_not_supported_generic: "Les migrations ne sont pas prises en charge pour les diagrammes génériques.",
+    migration_not_supported_generic:
+      "Les migrations ne sont pas prises en charge pour les diagrammes génériques.",
     no_migration_needed: "Aucune migration nécessaire",
     scripts: "Scripts",
     json_diff: "Diff JSON",
@@ -307,7 +316,8 @@ const fr = {
     show_comments: "Afficher les commentaires",
     configure_custom_types: "Configurer les types personnalisés",
     type_color: "Couleur",
-    custom_types_description: "Définissez des types de données personnalisés qui ne sont pas pris en charge par défaut. Ces types seront disponibles lors de la création ou de la modification de colonnes.",
+    custom_types_description:
+      "Définissez des types de données personnalisés qui ne sont pas pris en charge par défaut. Ces types seront disponibles lors de la création ou de la modification de colonnes.",
     type_data_corrupted: "Les types configurés sont corrompus.",
     no_custom_types: "Vous n'avez configuré aucun type",
     close: "Fermer",
@@ -348,17 +358,22 @@ const fr = {
     view_w_no_name: "Vue sans nom",
     view_w_no_base_table: "La vue '{{viewName}}' n'a pas de table de base",
     duplicate_views: "Vues en double nommées '{{viewName}}'",
-    view_name_clashes_w_table: "La vue '{{viewName}}' porte le même nom qu'une table",
+    view_name_clashes_w_table:
+      "La vue '{{viewName}}' porte le même nom qu'une table",
     join_w_no_table: "Jointure sans table dans la vue '{{viewName}}'",
-    join_w_no_condition: "La jointure sur '{{tableName}}' dans la vue '{{viewName}}' n'a pas de condition",
-    join_out_of_order: "La jointure sur '{{tableName}}' dans la vue '{{viewName}}' référence une table jointe après elle",
+    join_w_no_condition:
+      "La jointure sur '{{tableName}}' dans la vue '{{viewName}}' n'a pas de condition",
+    join_out_of_order:
+      "La jointure sur '{{tableName}}' dans la vue '{{viewName}}' référence une table jointe après elle",
     empty_view_column: "Colonne de sortie vide dans la vue '{{viewName}}'",
-    duplicate_view_columns: "Colonne de sortie '{{columnName}}' en double dans la vue '{{viewName}}'",
+    duplicate_view_columns:
+      "Colonne de sortie '{{columnName}}' en double dans la vue '{{viewName}}'",
     lock: "Verrouiller",
     unlock: "Déverrouiller",
     edit_dbml: "Modifier le DBML",
     dbml_problem: "Ln {{line}}, Col {{column}} : {{message}}",
-    move_to_cloud_prompt: "Ce diagramme est stocké localement dans votre navigateur. Le déplacer vers le cloud?",
+    move_to_cloud_prompt:
+      "Ce diagramme est stocké localement dans votre navigateur. Le déplacer vers le cloud?",
     move: "Déplacer",
     dismiss: "Ignorer",
     view_actions: "Actions de la vue",
@@ -375,16 +390,22 @@ const fr = {
     templates: "Modèles",
     diagrams: "Diagrammes",
     logo: "logo",
-    check_syntax_errors: "Veuillez vérifier les erreurs de syntaxe ou nous signaler l'erreur.",
+    check_syntax_errors:
+      "Veuillez vérifier les erreurs de syntaxe ou nous signaler l'erreur.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}] : {{message}}",
     overwrite_checkbox: "case à cocher d'écrasement",
     file_contains_error: "Le fichier contient une erreur.",
-    file_missing_diagram_properties: "Il manque au fichier des propriétés nécessaires à un diagramme.",
-    imported_diagram_database_mismatch: "Le diagramme importé et le diagramme ouvert n'utilisent pas la même base de données.",
-    relationship_references_missing_table: "La relation {{relationshipName}} référence une table qui n'existe pas.",
-    relationship_references_missing_field: "La relation {{relationshipName}} référence une colonne qui n'existe pas.",
+    file_missing_diagram_properties:
+      "Il manque au fichier des propriétés nécessaires à un diagramme.",
+    imported_diagram_database_mismatch:
+      "Le diagramme importé et le diagramme ouvert n'utilisent pas la même base de données.",
+    relationship_references_missing_table:
+      "La relation {{relationshipName}} référence une table qui n'existe pas.",
+    relationship_references_missing_field:
+      "La relation {{relationshipName}} référence une colonne qui n'existe pas.",
     ready_to_import: "Tout est en ordre. Vous pouvez maintenant importer.",
-    import_will_overwrite_current: "Le diagramme actuel n'est pas vide. L'import d'un nouveau diagramme écrasera les modifications actuelles.",
+    import_will_overwrite_current:
+      "Le diagramme actuel n'est pas vide. L'import d'un nouveau diagramme écrasera les modifications actuelles.",
     all: "Tous",
     all_databases: "Toutes les bases de données",
     all_types: "Tous les types",

@@ -96,7 +96,8 @@ const pl = {
     no_tables: "Brak tabel",
     no_tables_text: "Zacznij budować swój diagram!",
     no_relationships: "Brak relacji",
-    no_relationships_text: "Przeciągnij, aby połączyć kolumny i tworzyć relacje!",
+    no_relationships_text:
+      "Przeciągnij, aby połączyć kolumny i tworzyć relacje!",
     no_subject_areas: "Brak obszarów tematycznych",
     no_subject_areas_text: "Dodaj obszary tematyczne, aby grupować tabele!",
     no_notes: "Brak notatek",
@@ -233,7 +234,8 @@ const pl = {
     share_info:
       "* Udostępnienie tego linku nie utworzy sesji współpracy w czasie rzeczywistym.",
     inherits: "Dziedziczy",
-    merging_column_w_inherited_definition: "Kolumna '{{fieldName}}' w tabeli '{{tableName}}' z odziedziczoną definicją zostanie scalona",
+    merging_column_w_inherited_definition:
+      "Kolumna '{{fieldName}}' w tabeli '{{tableName}}' z odziedziczoną definicją zostanie scalona",
     no_saved_diagrams: "Nie masz zapisanych diagramów",
     open_recent: "Otwórz ostatnie",
     saved_as_copy: "Zapisano jako kopię. Otwórz:",
@@ -260,17 +262,19 @@ const pl = {
     layout_elk_layered: "Warstwowo według wierszy pól (ELK)",
     layout_elk_stress: "Skupiska (ELK stress)",
     layout_by_subject_area: "Według obszaru tematycznego",
-    spread_out: "Rozsuń",
-    pull_together: "Zsuń",
     auto_connect_fk: "Automatycznie połącz klucze obce",
     auto_connect_fk_success: "Utworzono odwołania kluczy obcych: {{count}}",
     no_foreign_keys_found: "Nie znaleziono relacji",
     all_relations_already_connected: "Wszystkie relacje są już połączone",
     auto_connect_fk_modal_title: "Automatyczne łączenie kluczy obcych",
-    auto_connect_fk_modal_description: "Aby automatycznie utworzyć relacje PK/FK, kolumny powinny być nazwane zgodnie ze standardowymi konwencjami:",
-    auto_connect_fk_rule_1: "Prefiks tabeli + kolumna PK (np. user_id lub users_id dla tabeli 'users' z kluczem głównym 'id')",
-    auto_connect_fk_rule_2: "Zgodna nazwa kolumny PK (np. author_id odpowiadające author_id w tabeli nadrzędnej)",
-    auto_connect_fk_modal_question: "Czy chcesz przeskanować diagram i utworzyć pasujące relacje?",
+    auto_connect_fk_modal_description:
+      "Aby automatycznie utworzyć relacje PK/FK, kolumny powinny być nazwane zgodnie ze standardowymi konwencjami:",
+    auto_connect_fk_rule_1:
+      "Prefiks tabeli + kolumna PK (np. user_id lub users_id dla tabeli 'users' z kluczem głównym 'id')",
+    auto_connect_fk_rule_2:
+      "Zgodna nazwa kolumny PK (np. author_id odpowiadające author_id w tabeli nadrzędnej)",
+    auto_connect_fk_modal_question:
+      "Czy chcesz przeskanować diagram i utworzyć pasujące relacje?",
     multiselect: "Wielokrotny wybór",
     export_saved_data: "Eksportuj zapisane dane",
     dbml_view: "Widok DBML",
@@ -297,7 +301,8 @@ const pl = {
     see_all: "Zobacz wszystkie",
     migrations: "Migracje",
     generate_migration: "Generuj migrację",
-    migration_not_supported_generic: "Migracje nie są obsługiwane dla ogólnych diagramów.",
+    migration_not_supported_generic:
+      "Migracje nie są obsługiwane dla ogólnych diagramów.",
     no_migration_needed: "Migracja nie jest potrzebna",
     scripts: "Skrypty",
     json_diff: "Różnice JSON",
@@ -307,7 +312,8 @@ const pl = {
     show_comments: "Pokaż komentarze",
     configure_custom_types: "Konfiguruj własne typy",
     type_color: "Kolor",
-    custom_types_description: "Zdefiniuj własne typy danych, które nie są domyślnie obsługiwane. Te typy będą dostępne podczas tworzenia lub edytowania kolumn.",
+    custom_types_description:
+      "Zdefiniuj własne typy danych, które nie są domyślnie obsługiwane. Te typy będą dostępne podczas tworzenia lub edytowania kolumn.",
     type_data_corrupted: "Skonfigurowane typy są uszkodzone.",
     no_custom_types: "Nie masz skonfigurowanych żadnych typów",
     close: "Zamknij",
@@ -348,17 +354,22 @@ const pl = {
     view_w_no_name: "Widok bez nazwy",
     view_w_no_base_table: "Widok '{{viewName}}' nie ma tabeli bazowej",
     duplicate_views: "Duplikat widoków o nazwie '{{viewName}}'",
-    view_name_clashes_w_table: "Widok '{{viewName}}' ma taką samą nazwę jak tabela",
+    view_name_clashes_w_table:
+      "Widok '{{viewName}}' ma taką samą nazwę jak tabela",
     join_w_no_table: "Złączenie bez tabeli w widoku '{{viewName}}'",
-    join_w_no_condition: "Złączenie z '{{tableName}}' w widoku '{{viewName}}' nie ma warunku",
-    join_out_of_order: "Złączenie z '{{tableName}}' w widoku '{{viewName}}' odwołuje się do tabeli złączonej później",
+    join_w_no_condition:
+      "Złączenie z '{{tableName}}' w widoku '{{viewName}}' nie ma warunku",
+    join_out_of_order:
+      "Złączenie z '{{tableName}}' w widoku '{{viewName}}' odwołuje się do tabeli złączonej później",
     empty_view_column: "Pusta kolumna wynikowa w widoku '{{viewName}}'",
-    duplicate_view_columns: "Duplikat kolumny wynikowej '{{columnName}}' w widoku '{{viewName}}'",
+    duplicate_view_columns:
+      "Duplikat kolumny wynikowej '{{columnName}}' w widoku '{{viewName}}'",
     lock: "Zablokuj",
     unlock: "Odblokuj",
     edit_dbml: "Edytuj DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Ten diagram jest przechowywany lokalnie w przeglądarce. Przenieść go do chmury?",
+    move_to_cloud_prompt:
+      "Ten diagram jest przechowywany lokalnie w przeglądarce. Przenieść go do chmury?",
     move: "Przenieś",
     dismiss: "Odrzuć",
     view_actions: "Akcje widoku",
@@ -375,16 +386,22 @@ const pl = {
     templates: "Szablony",
     diagrams: "Diagramy",
     logo: "logo",
-    check_syntax_errors: "Sprawdź, czy nie ma błędów składni, lub zgłoś nam błąd.",
+    check_syntax_errors:
+      "Sprawdź, czy nie ma błędów składni, lub zgłoś nam błąd.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "pole wyboru nadpisania",
     file_contains_error: "Plik zawiera błąd.",
-    file_missing_diagram_properties: "W pliku brakuje właściwości wymaganych dla diagramu.",
-    imported_diagram_database_mismatch: "Importowany diagram i otwarty diagram używają różnych baz danych.",
-    relationship_references_missing_table: "Relacja {{relationshipName}} odwołuje się do nieistniejącej tabeli.",
-    relationship_references_missing_field: "Relacja {{relationshipName}} odwołuje się do nieistniejącej kolumny.",
+    file_missing_diagram_properties:
+      "W pliku brakuje właściwości wymaganych dla diagramu.",
+    imported_diagram_database_mismatch:
+      "Importowany diagram i otwarty diagram używają różnych baz danych.",
+    relationship_references_missing_table:
+      "Relacja {{relationshipName}} odwołuje się do nieistniejącej tabeli.",
+    relationship_references_missing_field:
+      "Relacja {{relationshipName}} odwołuje się do nieistniejącej kolumny.",
     ready_to_import: "Wszystko wygląda dobrze. Możesz teraz zaimportować.",
-    import_will_overwrite_current: "Bieżący diagram nie jest pusty. Zaimportowanie nowego diagramu nadpisze bieżące zmiany.",
+    import_will_overwrite_current:
+      "Bieżący diagram nie jest pusty. Zaimportowanie nowego diagramu nadpisze bieżące zmiany.",
     all: "Wszystkie",
     all_databases: "Wszystkie bazy danych",
     all_types: "Wszystkie typy",

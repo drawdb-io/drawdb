@@ -209,7 +209,8 @@ const hi = {
     versions: "संस्करण",
     didnt_find_diagram: "उफ़! डायग्राम नहीं मिला।",
     inherits: "इनहेरिट करता है",
-    merging_column_w_inherited_definition: "टेबल '{{tableName}}' में कॉलम '{{fieldName}}' को इनहेरिट की गई परिभाषा के साथ मर्ज किया जाएगा",
+    merging_column_w_inherited_definition:
+      "टेबल '{{tableName}}' में कॉलम '{{fieldName}}' को इनहेरिट की गई परिभाषा के साथ मर्ज किया जाएगा",
     saved_as_copy: "कॉपी के रूप में सेव किया गया। खोलें:",
     toolbar: "टूलबार",
     snap_to_grid: "ग्रिड पर स्नैप करें",
@@ -231,7 +232,8 @@ const hi = {
     references: "संदर्भ",
     pick_db: "डेटाबेस चुनें",
     generic: "जेनेरिक",
-    generic_description: "जेनेरिक डायग्राम किसी भी SQL फ्लेवर में एक्सपोर्ट किए जा सकते हैं, लेकिन कम डेटा प्रकारों को सपोर्ट करते हैं।",
+    generic_description:
+      "जेनेरिक डायग्राम किसी भी SQL फ्लेवर में एक्सपोर्ट किए जा सकते हैं, लेकिन कम डेटा प्रकारों को सपोर्ट करते हैं।",
     enums: "एनम्स",
     add_enum: "एनम जोड़ें",
     edit_enum: "{{extra}} एनम एडिट करें {{enumName}}",
@@ -243,14 +245,16 @@ const hi = {
     no_enums: "कोई एनम्स नहीं",
     no_enums_text: "यहां एनम्स परिभाषित करें",
     declare_array: "ऐरे घोषित करें",
-    empty_index_name: "टेबल '{{tableName}}' में बिना नाम का इंडेक्स घोषित किया गया",
+    empty_index_name:
+      "टेबल '{{tableName}}' में बिना नाम का इंडेक्स घोषित किया गया",
     unsigned: "अनसाइंड",
     share: "शेयर करें",
     unshare: "शेयर करना बंद करें",
     copy_link: "लिंक कॉपी करें",
     readme: "README",
     failed_to_load: "लोड करने में विफल। सुनिश्चित करें कि लिंक सही है।",
-    share_info: "* इस लिंक को शेयर करने से लाइव रियल-टाइम सहयोग सत्र नहीं बनेगा।",
+    share_info:
+      "* इस लिंक को शेयर करने से लाइव रियल-टाइम सहयोग सत्र नहीं बनेगा।",
     show_relationship_labels: "संबंध लेबल दिखाएं",
     docs: "डॉक्स",
     supported_types: "समर्थित फ़ाइल प्रकार:",
@@ -261,17 +265,19 @@ const hi = {
     layout_elk_layered: "फ़ील्ड पंक्तियों के अनुसार परतों में (ELK)",
     layout_elk_stress: "समूहों में (ELK stress)",
     layout_by_subject_area: "सब्जेक्ट एरिया के अनुसार",
-    spread_out: "दूर-दूर फैलाएं",
-    pull_together: "पास-पास लाएं",
     auto_connect_fk: "फॉरेन कुंजियाँ ऑटो-कनेक्ट करें",
     auto_connect_fk_success: "{{count}} फॉरेन कुंजी संदर्भ बनाए गए",
     no_foreign_keys_found: "कोई संबंध नहीं मिला",
     all_relations_already_connected: "सभी संबंध पहले से कनेक्ट हैं",
     auto_connect_fk_modal_title: "फॉरेन कुंजियाँ ऑटो-कनेक्ट करें",
-    auto_connect_fk_modal_description: "PK/FK संबंध अपने-आप बनाने के लिए, आपके कॉलम को मानक नामकरण नियमों का पालन करना चाहिए:",
-    auto_connect_fk_rule_1: "टेबल प्रीफ़िक्स + PK कॉलम (जैसे, प्राथमिक कुंजी 'id' वाली टेबल 'users' के लिए user_id या users_id)",
-    auto_connect_fk_rule_2: "मेल खाता PK कॉलम नाम (जैसे, author_id जो पैरेंट टेबल के author_id से मेल खाता है)",
-    auto_connect_fk_modal_question: "क्या आप डायग्राम को स्कैन करके मेल खाते संबंध बनाना चाहेंगे?",
+    auto_connect_fk_modal_description:
+      "PK/FK संबंध अपने-आप बनाने के लिए, आपके कॉलम को मानक नामकरण नियमों का पालन करना चाहिए:",
+    auto_connect_fk_rule_1:
+      "टेबल प्रीफ़िक्स + PK कॉलम (जैसे, प्राथमिक कुंजी 'id' वाली टेबल 'users' के लिए user_id या users_id)",
+    auto_connect_fk_rule_2:
+      "मेल खाता PK कॉलम नाम (जैसे, author_id जो पैरेंट टेबल के author_id से मेल खाता है)",
+    auto_connect_fk_modal_question:
+      "क्या आप डायग्राम को स्कैन करके मेल खाते संबंध बनाना चाहेंगे?",
     multiselect: "मल्टीसिलेक्ट",
     export_saved_data: "सेव किया गया डेटा एक्सपोर्ट करें",
     dbml_view: "DBML व्यू",
@@ -296,7 +302,8 @@ const hi = {
     failed_to_load_diagram: "डायग्राम लोड करने में विफल",
     migrations: "माइग्रेशन",
     generate_migration: "माइग्रेशन जेनरेट करें",
-    migration_not_supported_generic: "जेनेरिक डायग्राम के लिए माइग्रेशन समर्थित नहीं हैं।",
+    migration_not_supported_generic:
+      "जेनेरिक डायग्राम के लिए माइग्रेशन समर्थित नहीं हैं।",
     no_migration_needed: "किसी माइग्रेशन की ज़रूरत नहीं",
     scripts: "स्क्रिप्ट्स",
     json_diff: "JSON डिफ़",
@@ -306,7 +313,8 @@ const hi = {
     show_comments: "टिप्पणियाँ दिखाएं",
     configure_custom_types: "कस्टम प्रकार कॉन्फ़िगर करें",
     type_color: "रंग",
-    custom_types_description: "ऐसे कस्टम डेटा प्रकार परिभाषित करें जो डिफ़ॉल्ट रूप से समर्थित नहीं हैं। ये प्रकार कॉलम बनाते या एडिट करते समय उपलब्ध होंगे।",
+    custom_types_description:
+      "ऐसे कस्टम डेटा प्रकार परिभाषित करें जो डिफ़ॉल्ट रूप से समर्थित नहीं हैं। ये प्रकार कॉलम बनाते या एडिट करते समय उपलब्ध होंगे।",
     type_data_corrupted: "कॉन्फ़िगर किए गए प्रकार दूषित हैं।",
     no_custom_types: "आपके पास कोई प्रकार कॉन्फ़िगर नहीं है",
     close: "बंद करें",
@@ -347,17 +355,22 @@ const hi = {
     view_w_no_name: "बिना नाम का व्यू",
     view_w_no_base_table: "व्यू '{{viewName}}' में कोई बेस टेबल नहीं है",
     duplicate_views: "नाम '{{viewName}}' वाले डुप्लिकेट व्यूज़",
-    view_name_clashes_w_table: "व्यू '{{viewName}}' का नाम एक टेबल के नाम जैसा है",
+    view_name_clashes_w_table:
+      "व्यू '{{viewName}}' का नाम एक टेबल के नाम जैसा है",
     join_w_no_table: "व्यू '{{viewName}}' में बिना टेबल का जॉइन",
-    join_w_no_condition: "व्यू '{{viewName}}' में '{{tableName}}' पर जॉइन की कोई शर्त नहीं है",
-    join_out_of_order: "व्यू '{{viewName}}' में '{{tableName}}' पर जॉइन उस टेबल का संदर्भ देता है जो उसके बाद जॉइन की गई है",
+    join_w_no_condition:
+      "व्यू '{{viewName}}' में '{{tableName}}' पर जॉइन की कोई शर्त नहीं है",
+    join_out_of_order:
+      "व्यू '{{viewName}}' में '{{tableName}}' पर जॉइन उस टेबल का संदर्भ देता है जो उसके बाद जॉइन की गई है",
     empty_view_column: "व्यू '{{viewName}}' में खाली आउटपुट कॉलम",
-    duplicate_view_columns: "व्यू '{{viewName}}' में डुप्लिकेट आउटपुट कॉलम '{{columnName}}'",
+    duplicate_view_columns:
+      "व्यू '{{viewName}}' में डुप्लिकेट आउटपुट कॉलम '{{columnName}}'",
     lock: "लॉक करें",
     unlock: "अनलॉक करें",
     edit_dbml: "DBML एडिट करें",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "यह डायग्राम आपके ब्राउज़र में लोकली स्टोर है। क्या इसे क्लाउड पर ले जाएं?",
+    move_to_cloud_prompt:
+      "यह डायग्राम आपके ब्राउज़र में लोकली स्टोर है। क्या इसे क्लाउड पर ले जाएं?",
     move: "ले जाएं",
     dismiss: "खारिज करें",
     view_actions: "व्यू क्रियाएं",
@@ -374,16 +387,22 @@ const hi = {
     templates: "टेम्पलेट्स",
     diagrams: "डायग्राम",
     logo: "लोगो",
-    check_syntax_errors: "कृपया सिंटैक्स त्रुटियों की जांच करें या हमें त्रुटि के बारे में बताएं।",
+    check_syntax_errors:
+      "कृपया सिंटैक्स त्रुटियों की जांच करें या हमें त्रुटि के बारे में बताएं।",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "अधिलेखित करें चेकबॉक्स",
     file_contains_error: "फ़ाइल में एक त्रुटि है।",
-    file_missing_diagram_properties: "फ़ाइल में डायग्राम के लिए आवश्यक गुण नहीं हैं।",
-    imported_diagram_database_mismatch: "इम्पोर्ट किया गया डायग्राम और खुला डायग्राम एक जैसे डेटाबेस का उपयोग नहीं करते।",
-    relationship_references_missing_table: "संबंध {{relationshipName}} ऐसी टेबल का संदर्भ देता है जो मौजूद नहीं है।",
-    relationship_references_missing_field: "संबंध {{relationshipName}} ऐसे कॉलम का संदर्भ देता है जो मौजूद नहीं है।",
+    file_missing_diagram_properties:
+      "फ़ाइल में डायग्राम के लिए आवश्यक गुण नहीं हैं।",
+    imported_diagram_database_mismatch:
+      "इम्पोर्ट किया गया डायग्राम और खुला डायग्राम एक जैसे डेटाबेस का उपयोग नहीं करते।",
+    relationship_references_missing_table:
+      "संबंध {{relationshipName}} ऐसी टेबल का संदर्भ देता है जो मौजूद नहीं है।",
+    relationship_references_missing_field:
+      "संबंध {{relationshipName}} ऐसे कॉलम का संदर्भ देता है जो मौजूद नहीं है।",
     ready_to_import: "सब कुछ ठीक है। अब आप इम्पोर्ट कर सकते हैं।",
-    import_will_overwrite_current: "मौजूदा डायग्राम खाली नहीं है। नया डायग्राम इम्पोर्ट करने से मौजूदा बदलाव अधिलेखित हो जाएंगे।",
+    import_will_overwrite_current:
+      "मौजूदा डायग्राम खाली नहीं है। नया डायग्राम इम्पोर्ट करने से मौजूदा बदलाव अधिलेखित हो जाएंगे।",
     all: "सभी",
     all_databases: "सभी डेटाबेस",
     all_types: "सभी प्रकार",

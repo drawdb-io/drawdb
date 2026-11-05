@@ -4,7 +4,6 @@ const greek = {
   code: "el",
 };
 
-
 const el = {
   translation: {
     report_bug: "Αναφορά σφάλματος",
@@ -103,11 +102,13 @@ const el = {
     no_relationships: "Δεν υπάρχουν σχέσεις",
     no_relationships_text: "Συνδέστε στήλες για να δημιουργήσετε σχέσεις!",
     no_subject_areas: "Δεν υπάρχουν περιοχές θεμάτων",
-    no_subject_areas_text: "Προσθέστε περιοχές θεμάτων για να ομαδοποιήσετε πίνακες!",
+    no_subject_areas_text:
+      "Προσθέστε περιοχές θεμάτων για να ομαδοποιήσετε πίνακες!",
     no_notes: "Δεν υπάρχουν σημειώσεις",
     no_notes_text: "Χρησιμοποιήστε σημειώσεις για πρόσθετες πληροφορίες",
     no_types: "Δεν υπάρχουν τύποι",
-    no_types_text: "Δημιουργήστε τους δικούς σας προσαρμοσμένους τύπους δεδομένων",
+    no_types_text:
+      "Δημιουργήστε τους δικούς σας προσαρμοσμένους τύπους δεδομένων",
     no_issues: "Δεν βρέθηκαν προβλήματα.",
     strict_mode_is_on_no_issues:
       "Η αυστηρή λειτουργία είναι ενεργοποιημένη, επομένως δεν θα εμφανιστούν τα προβλήματα.",
@@ -120,7 +121,8 @@ const el = {
     autoincrement: "Αυτοαύξηση",
     default_value: "Προεπιλογή",
     check: "Έκφραση ελέγχου",
-    this_will_appear_as_is: "*Αυτό θα εμφανιστεί όπως είναι στο παραγόμενο σκριπτάκι.",
+    this_will_appear_as_is:
+      "*Αυτό θα εμφανιστεί όπως είναι στο παραγόμενο σκριπτάκι.",
     comment: "Σχόλιο",
     add_field: "Προσθήκη στήλης",
     values: "Τιμές",
@@ -165,7 +167,8 @@ const el = {
     upload_sql_to_generate_diagrams:
       "Ανεβάστε ένα αρχείο SQL για να δημιουργηθούν αυτόματα οι πίνακες και οι στήλες σας.",
     overwrite_existing_diagram: "Αντικατάσταση υπάρχοντος διαγράμματος",
-    only_mysql_supported: "*Αυτή τη στιγμή υποστηρίζονται μόνο φορτωμένα MySQL scripts.",
+    only_mysql_supported:
+      "*Αυτή τη στιγμή υποστηρίζονται μόνο φορτωμένα MySQL scripts.",
     blank: "Κενό",
     filename: "Όνομα αρχείου",
     table_w_no_name: "Δηλώθηκε πίνακας χωρίς όνομα",
@@ -226,14 +229,16 @@ const el = {
     no_enums: "Δεν υπάρχουν enums",
     no_enums_text: "Ορίστε enums εδώ",
     declare_array: "Δήλωση πίνακα",
-    empty_index_name: "Δηλώθηκε δείκτης χωρίς όνομα στον πίνακα '{{tableName}}'",
+    empty_index_name:
+      "Δηλώθηκε δείκτης χωρίς όνομα στον πίνακα '{{tableName}}'",
     didnt_find_diagram: "Ωχ! Δεν βρέθηκε διάγραμμα.",
     unsigned: "Χωρίς πρόσημο",
     share: "Κοινοποίηση",
     unshare: "Αφαίρεση κοινής χρήσης",
     copy_link: "Αντιγραφή συνδέσμου",
     readme: "README",
-    failed_to_load: "Αποτυχία φόρτωσης. Βεβαιωθείτε ότι ο σύνδεσμος είναι σωστός.",
+    failed_to_load:
+      "Αποτυχία φόρτωσης. Βεβαιωθείτε ότι ο σύνδεσμος είναι σωστός.",
     share_info:
       "* Η κοινοποίηση αυτού του συνδέσμου δεν δημιουργεί συνεδρία συνεργασίας σε πραγματικό χρόνο.",
     show_relationship_labels: "Εμφάνιση ετικετών σχέσης",
@@ -268,7 +273,8 @@ const el = {
     upload_file: "Ανέβασμα αρχείου",
     not_found: "Δεν βρέθηκε",
     inherits: "Κληρονομεί",
-    merging_column_w_inherited_definition: "Η στήλη '{{fieldName}}' στον πίνακα '{{tableName}}' θα συγχωνευθεί με τον κληρονομημένο ορισμό",
+    merging_column_w_inherited_definition:
+      "Η στήλη '{{fieldName}}' στον πίνακα '{{tableName}}' θα συγχωνευθεί με τον κληρονομημένο ορισμό",
     saved_as_copy: "Αποθηκεύτηκε ως αντίγραφο. Άνοιγμα:",
     toolbar: "Γραμμή εργαλείων",
     nullable: "Επιτρέπει null",
@@ -285,20 +291,23 @@ const el = {
     layout_elk_layered: "Σε επίπεδα ανά γραμμές πεδίων (ELK)",
     layout_elk_stress: "Σε ομάδες (ELK stress)",
     layout_by_subject_area: "Ανά θεματική περιοχή",
-    spread_out: "Αραίωση",
-    pull_together: "Πύκνωση",
     auto_connect_fk: "Αυτόματη σύνδεση ξένων κλειδιών",
     auto_connect_fk_success: "Δημιουργήθηκαν {{count}} αναφορές ξένων κλειδιών",
     no_foreign_keys_found: "Δεν βρέθηκαν σχέσεις",
     all_relations_already_connected: "Όλες οι σχέσεις είναι ήδη συνδεδεμένες",
     auto_connect_fk_modal_title: "Αυτόματη σύνδεση ξένων κλειδιών",
-    auto_connect_fk_modal_description: "Για την αυτόματη δημιουργία σχέσεων PK/FK, οι στήλες σας πρέπει να ακολουθούν τις τυπικές συμβάσεις ονοματοδοσίας:",
-    auto_connect_fk_rule_1: "Πρόθεμα πίνακα + στήλη PK (π.χ. user_id ή users_id για τον πίνακα 'users' με πρωτεύον κλειδί 'id')",
-    auto_connect_fk_rule_2: "Ίδιο όνομα στήλης PK (π.χ. author_id που αντιστοιχεί στο author_id του γονικού πίνακα)",
-    auto_connect_fk_modal_question: "Θέλετε να σαρωθεί το διάγραμμα και να δημιουργηθούν οι αντίστοιχες σχέσεις;",
+    auto_connect_fk_modal_description:
+      "Για την αυτόματη δημιουργία σχέσεων PK/FK, οι στήλες σας πρέπει να ακολουθούν τις τυπικές συμβάσεις ονοματοδοσίας:",
+    auto_connect_fk_rule_1:
+      "Πρόθεμα πίνακα + στήλη PK (π.χ. user_id ή users_id για τον πίνακα 'users' με πρωτεύον κλειδί 'id')",
+    auto_connect_fk_rule_2:
+      "Ίδιο όνομα στήλης PK (π.χ. author_id που αντιστοιχεί στο author_id του γονικού πίνακα)",
+    auto_connect_fk_modal_question:
+      "Θέλετε να σαρωθεί το διάγραμμα και να δημιουργηθούν οι αντίστοιχες σχέσεις;",
     migrations: "Μεταβάσεις",
     generate_migration: "Δημιουργία μετάβασης",
-    migration_not_supported_generic: "Οι μεταβάσεις δεν υποστηρίζονται για γενικά διαγράμματα.",
+    migration_not_supported_generic:
+      "Οι μεταβάσεις δεν υποστηρίζονται για γενικά διαγράμματα.",
     no_migration_needed: "Δεν απαιτείται μετάβαση",
     scripts: "Σενάρια",
     json_diff: "Διαφορές JSON",
@@ -306,7 +315,8 @@ const el = {
     show_comments: "Εμφάνιση σχολίων",
     configure_custom_types: "Ρύθμιση προσαρμοσμένων τύπων",
     type_color: "Χρώμα",
-    custom_types_description: "Ορίστε προσαρμοσμένους τύπους δεδομένων που δεν υποστηρίζονται από προεπιλογή. Αυτοί οι τύποι θα είναι διαθέσιμοι κατά τη δημιουργία ή επεξεργασία στηλών.",
+    custom_types_description:
+      "Ορίστε προσαρμοσμένους τύπους δεδομένων που δεν υποστηρίζονται από προεπιλογή. Αυτοί οι τύποι θα είναι διαθέσιμοι κατά τη δημιουργία ή επεξεργασία στηλών.",
     type_data_corrupted: "Οι ρυθμισμένοι τύποι είναι κατεστραμμένοι.",
     no_custom_types: "Δεν έχετε ρυθμίσει κανέναν τύπο",
     close: "Κλείσιμο",
@@ -347,17 +357,22 @@ const el = {
     view_w_no_name: "Όψη χωρίς όνομα",
     view_w_no_base_table: "Η όψη '{{viewName}}' δεν έχει βασικό πίνακα",
     duplicate_views: "Διπλότυπες όψεις με όνομα '{{viewName}}'",
-    view_name_clashes_w_table: "Η όψη '{{viewName}}' έχει το ίδιο όνομα με έναν πίνακα",
+    view_name_clashes_w_table:
+      "Η όψη '{{viewName}}' έχει το ίδιο όνομα με έναν πίνακα",
     join_w_no_table: "Σύνδεση χωρίς πίνακα στην όψη '{{viewName}}'",
-    join_w_no_condition: "Η σύνδεση στον '{{tableName}}' στην όψη '{{viewName}}' δεν έχει συνθήκη",
-    join_out_of_order: "Η σύνδεση στον '{{tableName}}' στην όψη '{{viewName}}' αναφέρεται σε πίνακα που συνδέεται μετά από αυτήν",
+    join_w_no_condition:
+      "Η σύνδεση στον '{{tableName}}' στην όψη '{{viewName}}' δεν έχει συνθήκη",
+    join_out_of_order:
+      "Η σύνδεση στον '{{tableName}}' στην όψη '{{viewName}}' αναφέρεται σε πίνακα που συνδέεται μετά από αυτήν",
     empty_view_column: "Κενή στήλη εξόδου στην όψη '{{viewName}}'",
-    duplicate_view_columns: "Διπλότυπη στήλη εξόδου '{{columnName}}' στην όψη '{{viewName}}'",
+    duplicate_view_columns:
+      "Διπλότυπη στήλη εξόδου '{{columnName}}' στην όψη '{{viewName}}'",
     lock: "Κλείδωμα",
     unlock: "Ξεκλείδωμα",
     edit_dbml: "Επεξεργασία DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Αυτό το διάγραμμα είναι αποθηκευμένο τοπικά στο πρόγραμμα περιήγησής σας. Μεταφορά στο cloud;",
+    move_to_cloud_prompt:
+      "Αυτό το διάγραμμα είναι αποθηκευμένο τοπικά στο πρόγραμμα περιήγησής σας. Μεταφορά στο cloud;",
     move: "Μεταφορά",
     dismiss: "Απόρριψη",
     view_actions: "Ενέργειες όψης",
@@ -374,16 +389,22 @@ const el = {
     templates: "Πρότυπα",
     diagrams: "Διαγράμματα",
     logo: "λογότυπο",
-    check_syntax_errors: "Ελέγξτε για συντακτικά σφάλματα ή ενημερώστε μας για το σφάλμα.",
+    check_syntax_errors:
+      "Ελέγξτε για συντακτικά σφάλματα ή ενημερώστε μας για το σφάλμα.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "πλαίσιο αντικατάστασης",
     file_contains_error: "Το αρχείο περιέχει σφάλμα.",
-    file_missing_diagram_properties: "Από το αρχείο λείπουν απαραίτητες ιδιότητες διαγράμματος.",
-    imported_diagram_database_mismatch: "Το εισαγόμενο και το ανοιχτό διάγραμμα δεν χρησιμοποιούν την ίδια βάση δεδομένων.",
-    relationship_references_missing_table: "Η σχέση {{relationshipName}} αναφέρεται σε πίνακα που δεν υπάρχει.",
-    relationship_references_missing_field: "Η σχέση {{relationshipName}} αναφέρεται σε στήλη που δεν υπάρχει.",
+    file_missing_diagram_properties:
+      "Από το αρχείο λείπουν απαραίτητες ιδιότητες διαγράμματος.",
+    imported_diagram_database_mismatch:
+      "Το εισαγόμενο και το ανοιχτό διάγραμμα δεν χρησιμοποιούν την ίδια βάση δεδομένων.",
+    relationship_references_missing_table:
+      "Η σχέση {{relationshipName}} αναφέρεται σε πίνακα που δεν υπάρχει.",
+    relationship_references_missing_field:
+      "Η σχέση {{relationshipName}} αναφέρεται σε στήλη που δεν υπάρχει.",
     ready_to_import: "Όλα φαίνονται εντάξει. Μπορείτε τώρα να κάνετε εισαγωγή.",
-    import_will_overwrite_current: "Το τρέχον διάγραμμα δεν είναι κενό. Η εισαγωγή νέου διαγράμματος θα αντικαταστήσει τις τρέχουσες αλλαγές.",
+    import_will_overwrite_current:
+      "Το τρέχον διάγραμμα δεν είναι κενό. Η εισαγωγή νέου διαγράμματος θα αντικαταστήσει τις τρέχουσες αλλαγές.",
     all: "Όλα",
     all_databases: "Όλες οι βάσεις δεδομένων",
     all_types: "Όλοι οι τύποι",
@@ -392,7 +413,8 @@ const el = {
     you: "Εσείς",
     owner: "Κάτοχος",
     user_with_id: "Χρήστης {{id}}",
-    no_diagrams_match_filters: "Κανένα διάγραμμα δεν ταιριάζει με τα φίλτρα σας.",
+    no_diagrams_match_filters:
+      "Κανένα διάγραμμα δεν ταιριάζει με τα φίλτρα σας.",
     failed_to_load_short: "Αποτυχία φόρτωσης",
     invalid_dbml: "Μη έγκυρο DBML",
   },

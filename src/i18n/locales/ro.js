@@ -237,7 +237,8 @@ const ro = {
     show_relationship_labels: "Arată etichetele relațiilor",
     docs: "Documentație",
     inherits: "Moștenește",
-    merging_column_w_inherited_definition: "Coloana '{{fieldName}}' din tabelul '{{tableName}}' cu definiție moștenită va fi combinată",
+    merging_column_w_inherited_definition:
+      "Coloana '{{fieldName}}' din tabelul '{{tableName}}' cu definiție moștenită va fi combinată",
     no_saved_diagrams: "Nu ai diagrame salvate",
     open_recent: "Deschide recente",
     saved_as_copy: "Salvat ca o copie. Deschide:",
@@ -261,17 +262,20 @@ const ro = {
     layout_elk_layered: "Pe straturi după rândurile câmpurilor (ELK)",
     layout_elk_stress: "Grupat (ELK stress)",
     layout_by_subject_area: "După zona subiectului",
-    spread_out: "Depărtează",
-    pull_together: "Apropie",
     auto_connect_fk: "Conectează automat cheile străine",
-    auto_connect_fk_success: "Au fost create {{count}} referințe de chei străine",
+    auto_connect_fk_success:
+      "Au fost create {{count}} referințe de chei străine",
     no_foreign_keys_found: "Nu au fost găsite relații",
     all_relations_already_connected: "Toate relațiile sunt deja conectate",
     auto_connect_fk_modal_title: "Conectare automată a cheilor străine",
-    auto_connect_fk_modal_description: "Pentru a stabili automat relațiile PK/FK, coloanele tale trebuie să respecte convențiile standard de denumire:",
-    auto_connect_fk_rule_1: "Prefixul tabelului + coloana PK (ex.: user_id sau users_id pentru tabelul 'users' cu cheia primară 'id')",
-    auto_connect_fk_rule_2: "Nume identic cu coloana PK (ex.: author_id care corespunde cu author_id din tabelul părinte)",
-    auto_connect_fk_modal_question: "Vrei să scanezi diagrama și să creezi relațiile corespunzătoare?",
+    auto_connect_fk_modal_description:
+      "Pentru a stabili automat relațiile PK/FK, coloanele tale trebuie să respecte convențiile standard de denumire:",
+    auto_connect_fk_rule_1:
+      "Prefixul tabelului + coloana PK (ex.: user_id sau users_id pentru tabelul 'users' cu cheia primară 'id')",
+    auto_connect_fk_rule_2:
+      "Nume identic cu coloana PK (ex.: author_id care corespunde cu author_id din tabelul părinte)",
+    auto_connect_fk_modal_question:
+      "Vrei să scanezi diagrama și să creezi relațiile corespunzătoare?",
     multiselect: "Selecție multiplă",
     export_saved_data: "Exportă datele salvate",
     dbml_view: "Vizualizare DBML",
@@ -286,7 +290,8 @@ const ro = {
     read_only: "Doar citire",
     continue: "Continuă",
     restore_version: "Restaurează versiunea",
-    restore_warning: "Încărcarea altei versiuni va suprascrie toate modificările.",
+    restore_warning:
+      "Încărcarea altei versiuni va suprascrie toate modificările.",
     return_to_current: "Înapoi la diagramă",
     no_changes_to_record: "Nicio modificare de înregistrat",
     click_to_view: "Clic pentru a vizualiza",
@@ -298,7 +303,8 @@ const ro = {
     see_all: "Vezi tot",
     migrations: "Migrări",
     generate_migration: "Generează migrare",
-    migration_not_supported_generic: "Migrările nu sunt acceptate pentru diagramele generale.",
+    migration_not_supported_generic:
+      "Migrările nu sunt acceptate pentru diagramele generale.",
     no_migration_needed: "Nu este necesară nicio migrare",
     scripts: "Scripturi",
     json_diff: "Diferențe JSON",
@@ -308,7 +314,8 @@ const ro = {
     show_comments: "Arată comentariile",
     configure_custom_types: "Configurează tipuri personalizate",
     type_color: "Culoare",
-    custom_types_description: "Definește tipuri de date personalizate care nu sunt acceptate implicit. Aceste tipuri vor fi disponibile la crearea sau editarea coloanelor.",
+    custom_types_description:
+      "Definește tipuri de date personalizate care nu sunt acceptate implicit. Aceste tipuri vor fi disponibile la crearea sau editarea coloanelor.",
     type_data_corrupted: "Tipurile configurate sunt corupte.",
     no_custom_types: "Nu ai niciun tip configurat",
     close: "Închide",
@@ -349,17 +356,22 @@ const ro = {
     view_w_no_name: "View fără nume",
     view_w_no_base_table: "View-ul '{{viewName}}' nu are tabel de bază",
     duplicate_views: "View-uri duplicate cu numele '{{viewName}}'",
-    view_name_clashes_w_table: "View-ul '{{viewName}}' are același nume ca un tabel",
+    view_name_clashes_w_table:
+      "View-ul '{{viewName}}' are același nume ca un tabel",
     join_w_no_table: "Join fără tabel în view-ul '{{viewName}}'",
-    join_w_no_condition: "Join-ul pe '{{tableName}}' din view-ul '{{viewName}}' nu are condiție",
-    join_out_of_order: "Join-ul pe '{{tableName}}' din view-ul '{{viewName}}' face referire la un tabel adăugat după el",
+    join_w_no_condition:
+      "Join-ul pe '{{tableName}}' din view-ul '{{viewName}}' nu are condiție",
+    join_out_of_order:
+      "Join-ul pe '{{tableName}}' din view-ul '{{viewName}}' face referire la un tabel adăugat după el",
     empty_view_column: "Coloană de ieșire goală în view-ul '{{viewName}}'",
-    duplicate_view_columns: "Coloană de ieșire duplicată '{{columnName}}' în view-ul '{{viewName}}'",
+    duplicate_view_columns:
+      "Coloană de ieșire duplicată '{{columnName}}' în view-ul '{{viewName}}'",
     lock: "Blochează",
     unlock: "Deblochează",
     edit_dbml: "Editează DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Această diagramă este stocată local în browserul tău. O muți în cloud?",
+    move_to_cloud_prompt:
+      "Această diagramă este stocată local în browserul tău. O muți în cloud?",
     move: "Mută",
     dismiss: "Închide",
     view_actions: "Acțiuni view",
@@ -376,16 +388,22 @@ const ro = {
     templates: "Șabloane",
     diagrams: "Diagrame",
     logo: "logo",
-    check_syntax_errors: "Verifică dacă există erori de sintaxă sau anunță-ne despre eroare.",
+    check_syntax_errors:
+      "Verifică dacă există erori de sintaxă sau anunță-ne despre eroare.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "casetă de suprascriere",
     file_contains_error: "Fișierul conține o eroare.",
-    file_missing_diagram_properties: "Fișierului îi lipsesc proprietățile necesare pentru o diagramă.",
-    imported_diagram_database_mismatch: "Diagrama importată și diagrama deschisă nu folosesc aceeași bază de date.",
-    relationship_references_missing_table: "Relația {{relationshipName}} face referire la un tabel care nu există.",
-    relationship_references_missing_field: "Relația {{relationshipName}} face referire la o coloană care nu există.",
+    file_missing_diagram_properties:
+      "Fișierului îi lipsesc proprietățile necesare pentru o diagramă.",
+    imported_diagram_database_mismatch:
+      "Diagrama importată și diagrama deschisă nu folosesc aceeași bază de date.",
+    relationship_references_missing_table:
+      "Relația {{relationshipName}} face referire la un tabel care nu există.",
+    relationship_references_missing_field:
+      "Relația {{relationshipName}} face referire la o coloană care nu există.",
     ready_to_import: "Totul arată bine. Acum poți importa.",
-    import_will_overwrite_current: "Diagrama curentă nu este goală. Importarea unei diagrame noi va suprascrie modificările curente.",
+    import_will_overwrite_current:
+      "Diagrama curentă nu este goală. Importarea unei diagrame noi va suprascrie modificările curente.",
     all: "Toate",
     all_databases: "Toate bazele de date",
     all_types: "Toate tipurile",

@@ -24,8 +24,7 @@ const zh_tw = {
     template_saved: "範本已儲存！",
     rename: "重新命名",
     delete_diagram: "刪除圖表",
-    are_you_sure_delete_diagram:
-      "確定要刪除此圖表嗎？此操作無法復原。",
+    are_you_sure_delete_diagram: "確定要刪除此圖表嗎？此操作無法復原。",
     oops_smth_went_wrong: "糟糕！發生錯誤。",
     import_diagram: "匯入圖表",
     import_from_source: "從 SQL 匯入",
@@ -37,8 +36,7 @@ const zh_tw = {
     undo: "復原",
     redo: "重做",
     clear: "清除",
-    are_you_sure_clear:
-      "確定要清除圖表嗎？此操作無法復原。",
+    are_you_sure_clear: "確定要清除圖表嗎？此操作無法復原。",
     cut: "剪下",
     copy: "複製",
     saved_as_copy: "已另存為副本。開啟：",
@@ -113,8 +111,7 @@ const zh_tw = {
     no_types: "尚無型別",
     no_types_text: "建立自訂資料型別",
     no_issues: "未偵測到問題。",
-    strict_mode_is_on_no_issues:
-      "嚴謹模式已關閉，因此不會顯示任何問題。",
+    strict_mode_is_on_no_issues: "嚴謹模式已關閉，因此不會顯示任何問題。",
     name: "名稱",
     type: "型別",
     null: "允許空值",
@@ -173,11 +170,9 @@ const zh_tw = {
     confirm: "確認",
     last_modified: "最後修改",
     drag_and_drop_files: "將檔案拖曳至此處或點選以上傳。",
-    upload_sql_to_generate_diagrams:
-      "上傳 SQL 檔案以自動產出資料表及欄位。",
+    upload_sql_to_generate_diagrams: "上傳 SQL 檔案以自動產出資料表及欄位。",
     overwrite_existing_diagram: "覆蓋現有圖表",
-    only_mysql_supported:
-      "*目前僅支援載入 MySQL 指令碼。",
+    only_mysql_supported: "*目前僅支援載入 MySQL 指令碼。",
     blank: "空白",
     filename: "檔案名稱",
     table_w_no_name: "有未命名的資料表",
@@ -190,10 +185,8 @@ const zh_tw = {
       "資料表「{{tableName}}」中欄位「{{fieldName}}」的預設值與其型別不符",
     not_null_is_null:
       "資料表「{{tableName}}」中的欄位「{{fieldName}}」設定為不可為空值但預設為空值",
-    duplicate_fields:
-      "資料表「{{tableName}}」中欄位名稱「{{fieldName}}」重複",
-    duplicate_index:
-      "資料表「{{tableName}}」中索引名稱「{{indexName}}」重複",
+    duplicate_fields: "資料表「{{tableName}}」中欄位名稱「{{fieldName}}」重複",
+    duplicate_index: "資料表「{{tableName}}」中索引名稱「{{indexName}}」重複",
     empty_index: "資料表「{{tableName}}」中有未包含任何欄位的索引",
     no_primary_key: "資料表「{{tableName}}」未設定主鍵",
     type_with_no_name: "有未命名的型別",
@@ -246,8 +239,7 @@ const zh_tw = {
     copy_link: "複製連結",
     readme: "README",
     failed_to_load: "載入失敗。請確認連結是否正確。",
-    share_info:
-      "* 分享此連結不會建立即時的協作工作階段。",
+    share_info: "* 分享此連結不會建立即時的協作工作階段。",
     show_relationship_labels: "顯示關聯標籤",
     docs: "說明文件",
     supported_types: "支援的檔案類型：",
@@ -258,8 +250,6 @@ const zh_tw = {
     layout_elk_layered: "依欄位列分層 (ELK)",
     layout_elk_stress: "叢集 (ELK stress)",
     layout_by_subject_area: "依主題區域",
-    spread_out: "拉開間距",
-    pull_together: "收緊間距",
     multiselect: "多重選取",
     export_saved_data: "匯出儲存的資料",
     dbml_view: "DBML 檢視",
@@ -286,8 +276,7 @@ const zh_tw = {
     see_all: "檢視全部",
     migrations: "遷移",
     generate_migration: "產生遷移",
-    migration_not_supported_generic:
-      "通用圖表不支援遷移。",
+    migration_not_supported_generic: "通用圖表不支援遷移。",
     no_migration_needed: "不需要遷移",
     scripts: "指令碼",
     json_diff: "JSON 差異",
@@ -323,9 +312,12 @@ const zh_tw = {
     no_foreign_keys_found: "找不到任何關聯",
     all_relations_already_connected: "所有關聯皆已連接",
     auto_connect_fk_modal_title: "自動連接外鍵",
-    auto_connect_fk_modal_description: "若要自動建立 PK/FK 關聯，欄位應遵循標準命名慣例：",
-    auto_connect_fk_rule_1: "資料表前綴 + 主鍵欄位（例如：主鍵為「id」的資料表「users」，使用 user_id 或 users_id）",
-    auto_connect_fk_rule_2: "相符的主鍵欄位名稱（例如：author_id 對應父資料表中的 author_id）",
+    auto_connect_fk_modal_description:
+      "若要自動建立 PK/FK 關聯，欄位應遵循標準命名慣例：",
+    auto_connect_fk_rule_1:
+      "資料表前綴 + 主鍵欄位（例如：主鍵為「id」的資料表「users」，使用 user_id 或 users_id）",
+    auto_connect_fk_rule_2:
+      "相符的主鍵欄位名稱（例如：author_id 對應父資料表中的 author_id）",
     auto_connect_fk_modal_question: "要掃描圖表並建立相符的關聯嗎？",
     views: "檢視表",
     add_view: "新增檢視表",
@@ -352,10 +344,13 @@ const zh_tw = {
     duplicate_views: "檢視表名稱「{{viewName}}」重複",
     view_name_clashes_w_table: "檢視表「{{viewName}}」與資料表同名",
     join_w_no_table: "檢視表「{{viewName}}」中有未指定資料表的聯結",
-    join_w_no_condition: "檢視表「{{viewName}}」中「{{tableName}}」的聯結未設定條件",
-    join_out_of_order: "檢視表「{{viewName}}」中「{{tableName}}」的聯結參照了之後才聯結的資料表",
+    join_w_no_condition:
+      "檢視表「{{viewName}}」中「{{tableName}}」的聯結未設定條件",
+    join_out_of_order:
+      "檢視表「{{viewName}}」中「{{tableName}}」的聯結參照了之後才聯結的資料表",
     empty_view_column: "檢視表「{{viewName}}」中有空白的輸出欄位",
-    duplicate_view_columns: "檢視表「{{viewName}}」中輸出欄位「{{columnName}}」重複",
+    duplicate_view_columns:
+      "檢視表「{{viewName}}」中輸出欄位「{{columnName}}」重複",
     lock: "鎖定",
     unlock: "解除鎖定",
     move_to_cloud_prompt: "此圖表儲存在您的瀏覽器本機。要移至雲端嗎？",
@@ -380,11 +375,15 @@ const zh_tw = {
     overwrite_checkbox: "覆蓋核取方塊",
     file_contains_error: "檔案包含錯誤。",
     file_missing_diagram_properties: "檔案缺少圖表必要的屬性。",
-    imported_diagram_database_mismatch: "匯入的圖表與目前開啟的圖表使用的資料庫不同。",
-    relationship_references_missing_table: "關聯「{{relationshipName}}」參照了不存在的資料表。",
-    relationship_references_missing_field: "關聯「{{relationshipName}}」參照了不存在的欄位。",
+    imported_diagram_database_mismatch:
+      "匯入的圖表與目前開啟的圖表使用的資料庫不同。",
+    relationship_references_missing_table:
+      "關聯「{{relationshipName}}」參照了不存在的資料表。",
+    relationship_references_missing_field:
+      "關聯「{{relationshipName}}」參照了不存在的欄位。",
     ready_to_import: "一切就緒，現在可以匯入。",
-    import_will_overwrite_current: "目前的圖表不是空白的。匯入新圖表將覆蓋目前的變更。",
+    import_will_overwrite_current:
+      "目前的圖表不是空白的。匯入新圖表將覆蓋目前的變更。",
     all: "全部",
     all_databases: "所有資料庫",
     all_types: "所有型別",

@@ -220,7 +220,8 @@ const he = {
     empty_index_name: "הוכרז אינדקס ללא שם בטבלה '{{tableName}}'",
     didnt_find_diagram: "אופס! לא נמצאה הדיאגרמה.",
     inherits: "יורש",
-    merging_column_w_inherited_definition: "העמודה '{{fieldName}}' בטבלה '{{tableName}}' תמוזג עם ההגדרה המורשת",
+    merging_column_w_inherited_definition:
+      "העמודה '{{fieldName}}' בטבלה '{{tableName}}' תמוזג עם ההגדרה המורשת",
     no_saved_diagrams: "אין לך דיאגרמות שמורות",
     open_recent: "פתח אחרונים",
     saved_as_copy: "נשמר כעותק. פתח:",
@@ -253,17 +254,19 @@ const he = {
     layout_elk_layered: "בשכבות לפי שורות השדות (ELK)",
     layout_elk_stress: "באשכולות (ELK stress)",
     layout_by_subject_area: "לפי תחום עניין",
-    spread_out: "פזר",
-    pull_together: "קרב",
     auto_connect_fk: "חבר מפתחות זרים אוטומטית",
     auto_connect_fk_success: "נוצרו {{count}} הפניות למפתחות זרים",
     no_foreign_keys_found: "לא נמצאו קשרים",
     all_relations_already_connected: "כל הקשרים כבר מחוברים",
     auto_connect_fk_modal_title: "חיבור אוטומטי של מפתחות זרים",
-    auto_connect_fk_modal_description: "כדי ליצור קשרי PK/FK אוטומטית, העמודות שלך צריכות לעקוב אחר מוסכמות שמות סטנדרטיות:",
-    auto_connect_fk_rule_1: "קידומת טבלה + עמודת PK (לדוגמה, user_id או users_id עבור הטבלה 'users' עם המפתח הראשי 'id')",
-    auto_connect_fk_rule_2: "שם עמודת PK תואם (לדוגמה, author_id התואם ל-author_id בטבלת האב)",
-    auto_connect_fk_modal_question: "האם לסרוק את הדיאגרמה וליצור קשרים תואמים?",
+    auto_connect_fk_modal_description:
+      "כדי ליצור קשרי PK/FK אוטומטית, העמודות שלך צריכות לעקוב אחר מוסכמות שמות סטנדרטיות:",
+    auto_connect_fk_rule_1:
+      "קידומת טבלה + עמודת PK (לדוגמה, user_id או users_id עבור הטבלה 'users' עם המפתח הראשי 'id')",
+    auto_connect_fk_rule_2:
+      "שם עמודת PK תואם (לדוגמה, author_id התואם ל-author_id בטבלת האב)",
+    auto_connect_fk_modal_question:
+      "האם לסרוק את הדיאגרמה וליצור קשרים תואמים?",
     multiselect: "בחירה מרובה",
     export_saved_data: "ייצא נתונים שמורים",
     dbml_view: "תצוגת DBML",
@@ -300,7 +303,8 @@ const he = {
     show_comments: "הצג הערות",
     configure_custom_types: "הגדר סוגים מותאמים אישית",
     type_color: "צבע",
-    custom_types_description: "הגדר סוגי נתונים מותאמים אישית שאינם נתמכים כברירת מחדל. סוגים אלה יהיו זמינים בעת יצירה או עריכה של עמודות.",
+    custom_types_description:
+      "הגדר סוגי נתונים מותאמים אישית שאינם נתמכים כברירת מחדל. סוגים אלה יהיו זמינים בעת יצירה או עריכה של עמודות.",
     type_data_corrupted: "הסוגים שהוגדרו פגומים.",
     no_custom_types: "אין לך סוגים מוגדרים",
     close: "סגור",
@@ -343,15 +347,19 @@ const he = {
     duplicate_views: "תצוגות כפולות בשם '{{viewName}}'",
     view_name_clashes_w_table: "לתצוגה '{{viewName}}' יש שם זהה לטבלה",
     join_w_no_table: "צירוף ללא טבלה בתצוגה '{{viewName}}'",
-    join_w_no_condition: "לצירוף על '{{tableName}}' בתצוגה '{{viewName}}' אין תנאי",
-    join_out_of_order: "הצירוף על '{{tableName}}' בתצוגה '{{viewName}}' מפנה לטבלה שצורפה אחריו",
+    join_w_no_condition:
+      "לצירוף על '{{tableName}}' בתצוגה '{{viewName}}' אין תנאי",
+    join_out_of_order:
+      "הצירוף על '{{tableName}}' בתצוגה '{{viewName}}' מפנה לטבלה שצורפה אחריו",
     empty_view_column: "עמודת פלט ריקה בתצוגה '{{viewName}}'",
-    duplicate_view_columns: "עמודת פלט כפולה '{{columnName}}' בתצוגה '{{viewName}}'",
+    duplicate_view_columns:
+      "עמודת פלט כפולה '{{columnName}}' בתצוגה '{{viewName}}'",
     lock: "נעל",
     unlock: "בטל נעילה",
     edit_dbml: "ערוך DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "דיאגרמה זו מאוחסנת מקומית בדפדפן שלך. להעביר אותה לענן?",
+    move_to_cloud_prompt:
+      "דיאגרמה זו מאוחסנת מקומית בדפדפן שלך. להעביר אותה לענן?",
     move: "העבר",
     dismiss: "סגור",
     view_actions: "פעולות תצוגה",
@@ -373,11 +381,15 @@ const he = {
     overwrite_checkbox: "תיבת סימון לדריסה",
     file_contains_error: "הקובץ מכיל שגיאה.",
     file_missing_diagram_properties: "בקובץ חסרים מאפיינים הנדרשים לדיאגרמה.",
-    imported_diagram_database_mismatch: "הדיאגרמה המיובאת והדיאגרמה הפתוחה אינן משתמשות באותו מסד נתונים.",
-    relationship_references_missing_table: "הקשר {{relationshipName}} מפנה לטבלה שאינה קיימת.",
-    relationship_references_missing_field: "הקשר {{relationshipName}} מפנה לעמודה שאינה קיימת.",
+    imported_diagram_database_mismatch:
+      "הדיאגרמה המיובאת והדיאגרמה הפתוחה אינן משתמשות באותו מסד נתונים.",
+    relationship_references_missing_table:
+      "הקשר {{relationshipName}} מפנה לטבלה שאינה קיימת.",
+    relationship_references_missing_field:
+      "הקשר {{relationshipName}} מפנה לעמודה שאינה קיימת.",
     ready_to_import: "הכל נראה תקין. כעת ניתן לייבא.",
-    import_will_overwrite_current: "הדיאגרמה הנוכחית אינה ריקה. ייבוא דיאגרמה חדשה ידרוס את השינויים הנוכחיים.",
+    import_will_overwrite_current:
+      "הדיאגרמה הנוכחית אינה ריקה. ייבוא דיאגרמה חדשה ידרוס את השינויים הנוכחיים.",
     all: "הכל",
     all_databases: "כל מסדי הנתונים",
     all_types: "כל הסוגים",

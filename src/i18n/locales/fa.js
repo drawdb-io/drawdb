@@ -203,7 +203,8 @@ const fa = {
     delete_relationship: "حذف ارتباط {{refName}}",
     not_found: "یافت نشد",
     inherits: "ارث‌بری از",
-    merging_column_w_inherited_definition: "ستون '{{fieldName}}' در جدول '{{tableName}}' با تعریف ارث‌بری‌شده ادغام خواهد شد",
+    merging_column_w_inherited_definition:
+      "ستون '{{fieldName}}' در جدول '{{tableName}}' با تعریف ارث‌بری‌شده ادغام خواهد شد",
     no_saved_diagrams: "هیچ نمودار ذخیره‌شده‌ای ندارید",
     open_recent: "باز کردن اخیر",
     saved_as_copy: "به عنوان کپی ذخیره شد. باز کردن:",
@@ -227,7 +228,8 @@ const fa = {
     references: "ارجاع‌ها",
     pick_db: "یک پایگاه داده انتخاب کنید",
     generic: "عمومی",
-    generic_description: "نمودارهای عمومی را می‌توان به هر نوع SQL صادر کرد، اما از نوع‌های داده کمی پشتیبانی می‌کنند.",
+    generic_description:
+      "نمودارهای عمومی را می‌توان به هر نوع SQL صادر کرد، اما از نوع‌های داده کمی پشتیبانی می‌کنند.",
     enums: "نوع‌های شمارشی",
     add_enum: "افزودن نوع شمارشی",
     edit_enum: "{{extra}} ویرایش نوع شمارشی {{enumName}}",
@@ -247,7 +249,8 @@ const fa = {
     copy_link: "کپی پیوند",
     readme: "README",
     failed_to_load: "بارگذاری ناموفق بود. مطمئن شوید پیوند درست است.",
-    share_info: "* اشتراک‌گذاری این پیوند یک جلسه همکاری زنده و بلادرنگ ایجاد نمی‌کند.",
+    share_info:
+      "* اشتراک‌گذاری این پیوند یک جلسه همکاری زنده و بلادرنگ ایجاد نمی‌کند.",
     show_relationship_labels: "نمایش برچسب روابط",
     docs: "مستندات",
     supported_types: "انواع فایل پشتیبانی‌شده:",
@@ -258,17 +261,19 @@ const fa = {
     layout_elk_layered: "لایه‌ای بر اساس ردیف‌های فیلد (ELK)",
     layout_elk_stress: "خوشه‌ای (ELK stress)",
     layout_by_subject_area: "بر اساس ناحیهٔ موضوعی",
-    spread_out: "افزایش فاصله‌ها",
-    pull_together: "کاهش فاصله‌ها",
     auto_connect_fk: "اتصال خودکار کلیدهای خارجی",
     auto_connect_fk_success: "{{count}} ارجاع کلید خارجی ایجاد شد",
     no_foreign_keys_found: "هیچ ارتباطی یافت نشد",
     all_relations_already_connected: "همه روابط از قبل متصل هستند",
     auto_connect_fk_modal_title: "اتصال خودکار کلیدهای خارجی",
-    auto_connect_fk_modal_description: "برای ایجاد خودکار روابط PK/FK، ستون‌های شما باید از قراردادهای نام‌گذاری استاندارد پیروی کنند:",
-    auto_connect_fk_rule_1: "پیشوند جدول + ستون PK (مثلاً user_id یا users_id برای جدول 'users' با کلید اصلی 'id')",
-    auto_connect_fk_rule_2: "نام ستون PK یکسان (مثلاً author_id مطابق با author_id در جدول والد)",
-    auto_connect_fk_modal_question: "آیا می‌خواهید نمودار را بررسی کرده و روابط منطبق را بسازید؟",
+    auto_connect_fk_modal_description:
+      "برای ایجاد خودکار روابط PK/FK، ستون‌های شما باید از قراردادهای نام‌گذاری استاندارد پیروی کنند:",
+    auto_connect_fk_rule_1:
+      "پیشوند جدول + ستون PK (مثلاً user_id یا users_id برای جدول 'users' با کلید اصلی 'id')",
+    auto_connect_fk_rule_2:
+      "نام ستون PK یکسان (مثلاً author_id مطابق با author_id در جدول والد)",
+    auto_connect_fk_modal_question:
+      "آیا می‌خواهید نمودار را بررسی کرده و روابط منطبق را بسازید؟",
     multiselect: "انتخاب چندگانه",
     export_saved_data: "صادر کردن داده‌های ذخیره‌شده",
     dbml_view: "نمای DBML",
@@ -295,7 +300,8 @@ const fa = {
     see_all: "مشاهده همه",
     migrations: "مهاجرت‌ها",
     generate_migration: "تولید مهاجرت",
-    migration_not_supported_generic: "مهاجرت‌ها برای نمودارهای عمومی پشتیبانی نمی‌شوند.",
+    migration_not_supported_generic:
+      "مهاجرت‌ها برای نمودارهای عمومی پشتیبانی نمی‌شوند.",
     no_migration_needed: "نیازی به مهاجرت نیست",
     scripts: "اسکریپت‌ها",
     json_diff: "تفاوت JSON",
@@ -305,7 +311,8 @@ const fa = {
     show_comments: "نمایش نظرها",
     configure_custom_types: "پیکربندی نوع‌های سفارشی",
     type_color: "رنگ",
-    custom_types_description: "نوع‌های داده سفارشی را که به‌طور پیش‌فرض پشتیبانی نمی‌شوند تعریف کنید. این نوع‌ها هنگام ایجاد یا ویرایش ستون‌ها در دسترس خواهند بود.",
+    custom_types_description:
+      "نوع‌های داده سفارشی را که به‌طور پیش‌فرض پشتیبانی نمی‌شوند تعریف کنید. این نوع‌ها هنگام ایجاد یا ویرایش ستون‌ها در دسترس خواهند بود.",
     type_data_corrupted: "نوع‌های پیکربندی‌شده خراب هستند.",
     no_custom_types: "هیچ نوع پیکربندی‌شده‌ای ندارید",
     close: "بستن",
@@ -322,7 +329,8 @@ const fa = {
     primary_key: "کلید اصلی",
     foreign_key: "کلید خارجی",
     import_with_ai: "وارد کردن با هوش مصنوعی",
-    ai_import_failed: "وارد کردن با هوش مصنوعی ناموفق بود. لطفاً دوباره تلاش کنید.",
+    ai_import_failed:
+      "وارد کردن با هوش مصنوعی ناموفق بود. لطفاً دوباره تلاش کنید.",
     views: "نماها",
     add_view: "افزودن نما",
     edit_view: "{{extra}} ویرایش نما {{viewName}}",
@@ -348,15 +356,19 @@ const fa = {
     duplicate_views: "نماهای تکراری با نام '{{viewName}}'",
     view_name_clashes_w_table: "نمای '{{viewName}}' هم‌نام با یک جدول است",
     join_w_no_table: "اتصال بدون جدول در نمای '{{viewName}}'",
-    join_w_no_condition: "اتصال روی '{{tableName}}' در نمای '{{viewName}}' شرط ندارد",
-    join_out_of_order: "اتصال روی '{{tableName}}' در نمای '{{viewName}}' به جدولی ارجاع می‌دهد که بعد از آن متصل شده است",
+    join_w_no_condition:
+      "اتصال روی '{{tableName}}' در نمای '{{viewName}}' شرط ندارد",
+    join_out_of_order:
+      "اتصال روی '{{tableName}}' در نمای '{{viewName}}' به جدولی ارجاع می‌دهد که بعد از آن متصل شده است",
     empty_view_column: "ستون خروجی خالی در نمای '{{viewName}}'",
-    duplicate_view_columns: "ستون خروجی تکراری '{{columnName}}' در نمای '{{viewName}}'",
+    duplicate_view_columns:
+      "ستون خروجی تکراری '{{columnName}}' در نمای '{{viewName}}'",
     lock: "قفل",
     unlock: "باز کردن قفل",
     edit_dbml: "ویرایش DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "این نمودار به‌صورت محلی در مرورگر شما ذخیره شده است. به فضای ابری منتقل شود؟",
+    move_to_cloud_prompt:
+      "این نمودار به‌صورت محلی در مرورگر شما ذخیره شده است. به فضای ابری منتقل شود؟",
     move: "انتقال",
     dismiss: "رد کردن",
     view_actions: "عملیات نما",
@@ -373,16 +385,22 @@ const fa = {
     templates: "قالب‌ها",
     diagrams: "نمودارها",
     logo: "لوگو",
-    check_syntax_errors: "لطفاً خطاهای نحوی را بررسی کنید یا ما را از خطا مطلع کنید.",
+    check_syntax_errors:
+      "لطفاً خطاهای نحوی را بررسی کنید یا ما را از خطا مطلع کنید.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "کادر بازنویسی",
     file_contains_error: "فایل حاوی خطا است.",
-    file_missing_diagram_properties: "فایل فاقد ویژگی‌های لازم برای نمودار است.",
-    imported_diagram_database_mismatch: "نمودار واردشده و نمودار باز از پایگاه داده یکسانی استفاده نمی‌کنند.",
-    relationship_references_missing_table: "ارتباط {{relationshipName}} به جدولی ارجاع می‌دهد که وجود ندارد.",
-    relationship_references_missing_field: "ارتباط {{relationshipName}} به ستونی ارجاع می‌دهد که وجود ندارد.",
+    file_missing_diagram_properties:
+      "فایل فاقد ویژگی‌های لازم برای نمودار است.",
+    imported_diagram_database_mismatch:
+      "نمودار واردشده و نمودار باز از پایگاه داده یکسانی استفاده نمی‌کنند.",
+    relationship_references_missing_table:
+      "ارتباط {{relationshipName}} به جدولی ارجاع می‌دهد که وجود ندارد.",
+    relationship_references_missing_field:
+      "ارتباط {{relationshipName}} به ستونی ارجاع می‌دهد که وجود ندارد.",
     ready_to_import: "همه چیز درست به نظر می‌رسد. اکنون می‌توانید وارد کنید.",
-    import_will_overwrite_current: "نمودار فعلی خالی نیست. وارد کردن نمودار جدید تغییرات فعلی را بازنویسی می‌کند.",
+    import_will_overwrite_current:
+      "نمودار فعلی خالی نیست. وارد کردن نمودار جدید تغییرات فعلی را بازنویسی می‌کند.",
     all: "همه",
     all_databases: "همه پایگاه‌های داده",
     all_types: "همه نوع‌ها",

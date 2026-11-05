@@ -228,8 +228,7 @@ const zh = {
     copy_link: "复制链接",
     readme: "说明文档",
     failed_to_load: "加载失败。请确认链接是否正确。",
-    share_info:
-      "* 分享此链接不会创建实时协作会话。",
+    share_info: "* 分享此链接不会创建实时协作会话。",
     supported_types: "支持的文件类型：",
     bulk_update: "批量更新",
     multiselect: "多选",
@@ -257,7 +256,8 @@ const zh = {
     see_all: "查看全部",
     snap_to_grid: "对齐网格线",
     inherits: "继承",
-    merging_column_w_inherited_definition: "表 '{{tableName}}' 中带有继承定义的列 '{{fieldName}}' 将被合并",
+    merging_column_w_inherited_definition:
+      "表 '{{tableName}}' 中带有继承定义的列 '{{fieldName}}' 将被合并",
     no_saved_diagrams: "您还没有保存的图表",
     saved_as_copy: "已另存为副本。打开：",
     toolbar: "工具栏",
@@ -276,16 +276,17 @@ const zh = {
     layout_elk_layered: "按字段行分层 (ELK)",
     layout_elk_stress: "聚类 (ELK stress)",
     layout_by_subject_area: "按主题区域",
-    spread_out: "拉开间距",
-    pull_together: "收紧间距",
     auto_connect_fk: "自动连接外键",
     auto_connect_fk_success: "已创建 {{count}} 个外键引用",
     no_foreign_keys_found: "未找到关系",
     all_relations_already_connected: "所有关系均已连接",
     auto_connect_fk_modal_title: "自动连接外键",
-    auto_connect_fk_modal_description: "要自动建立 PK/FK 关系，您的列应遵循标准命名约定：",
-    auto_connect_fk_rule_1: "表前缀 + 主键列（例如：对于主键为 'id' 的表 'users'，使用 user_id 或 users_id）",
-    auto_connect_fk_rule_2: "匹配的主键列名（例如：author_id 与父表中的 author_id 匹配）",
+    auto_connect_fk_modal_description:
+      "要自动建立 PK/FK 关系，您的列应遵循标准命名约定：",
+    auto_connect_fk_rule_1:
+      "表前缀 + 主键列（例如：对于主键为 'id' 的表 'users'，使用 user_id 或 users_id）",
+    auto_connect_fk_rule_2:
+      "匹配的主键列名（例如：author_id 与父表中的 author_id 匹配）",
     auto_connect_fk_modal_question: "是否扫描图表并建立匹配的关系？",
     migrations: "迁移",
     generate_migration: "生成迁移",
@@ -299,7 +300,8 @@ const zh = {
     show_comments: "显示注释",
     configure_custom_types: "配置自定义类型",
     type_color: "颜色",
-    custom_types_description: "定义默认不支持的自定义数据类型。创建或编辑列时可以使用这些类型。",
+    custom_types_description:
+      "定义默认不支持的自定义数据类型。创建或编辑列时可以使用这些类型。",
     type_data_corrupted: "已配置的类型数据已损坏。",
     no_custom_types: "您还没有配置任何类型",
     close: "关闭",
@@ -342,10 +344,13 @@ const zh = {
     duplicate_views: "重复声明了名为 '{{viewName}}' 的视图",
     view_name_clashes_w_table: "视图 '{{viewName}}' 与某个表同名",
     join_w_no_table: "视图 '{{viewName}}' 中有未指定表的连接",
-    join_w_no_condition: "视图 '{{viewName}}' 中对 '{{tableName}}' 的连接没有条件",
-    join_out_of_order: "视图 '{{viewName}}' 中对 '{{tableName}}' 的连接引用了在其之后才连接的表",
+    join_w_no_condition:
+      "视图 '{{viewName}}' 中对 '{{tableName}}' 的连接没有条件",
+    join_out_of_order:
+      "视图 '{{viewName}}' 中对 '{{tableName}}' 的连接引用了在其之后才连接的表",
     empty_view_column: "视图 '{{viewName}}' 中有空的输出列",
-    duplicate_view_columns: "视图 '{{viewName}}' 中输出列 '{{columnName}}' 重复",
+    duplicate_view_columns:
+      "视图 '{{viewName}}' 中输出列 '{{columnName}}' 重复",
     lock: "锁定",
     unlock: "解锁",
     edit_dbml: "编辑 DBML",
@@ -372,11 +377,15 @@ const zh = {
     overwrite_checkbox: "覆盖复选框",
     file_contains_error: "文件包含错误。",
     file_missing_diagram_properties: "文件缺少图表所需的属性。",
-    imported_diagram_database_mismatch: "导入的图表与当前打开的图表使用的数据库不一致。",
-    relationship_references_missing_table: "关系 {{relationshipName}} 引用了不存在的表。",
-    relationship_references_missing_field: "关系 {{relationshipName}} 引用了不存在的列。",
+    imported_diagram_database_mismatch:
+      "导入的图表与当前打开的图表使用的数据库不一致。",
+    relationship_references_missing_table:
+      "关系 {{relationshipName}} 引用了不存在的表。",
+    relationship_references_missing_field:
+      "关系 {{relationshipName}} 引用了不存在的列。",
     ready_to_import: "一切正常，现在可以导入了。",
-    import_will_overwrite_current: "当前图表不为空。导入新图表将覆盖当前的更改。",
+    import_will_overwrite_current:
+      "当前图表不为空。导入新图表将覆盖当前的更改。",
     all: "全部",
     all_databases: "所有数据库",
     all_types: "所有类型",

@@ -111,8 +111,7 @@ const th = {
     no_types: "ไม่มีชนิด",
     no_types_text: "สร้างชนิดข้อมูลของคุณเอง",
     no_issues: "ไม่พบปัญหา",
-    strict_mode_is_on_no_issues:
-      "โหมดเข้มงวดปิดอยู่ ดังนั้นจะไม่แสดงปัญหา",
+    strict_mode_is_on_no_issues: "โหมดเข้มงวดปิดอยู่ ดังนั้นจะไม่แสดงปัญหา",
     name: "ชื่อ",
     type: "ชนิด",
     null: "ค่าว่าง",
@@ -230,11 +229,16 @@ const th = {
     unique_constraints: "ข้อจำกัดค่าไม่ซ้ำ",
     add_unique_constraint: "เพิ่มข้อจำกัดค่าไม่ซ้ำ",
     references: "การอ้างอิง",
-    types_info: "ฟีเจอร์นี้มีไว้สำหรับ DBMS แบบออบเจ็กต์-เชิงสัมพันธ์ เช่น PostgreSQL\nหากใช้กับ MySQL หรือ MariaDB จะสร้างชนิด JSON พร้อมการตรวจสอบ json ที่สอดคล้องกัน\nหากใช้กับ SQLite จะถูกแปลงเป็น BLOB\nหากใช้กับ MSSQL จะสร้างชื่อแทนชนิดของคอลัมน์แรก",
-    no_values_for_field: "คอลัมน์ '{{fieldName}}' ของตาราง '{{tableName}}' เป็นชนิด `{{type}}` แต่ไม่ได้ระบุค่า",
-    default_doesnt_match_type: "ค่าเริ่มต้นของคอลัมน์ '{{fieldName}}' ในตาราง '{{tableName}}' ไม่ตรงกับชนิดของคอลัมน์",
-    not_null_is_null: "คอลัมน์ '{{fieldName}}' ของตาราง '{{tableName}}' เป็น NOT NULL แต่มีค่าเริ่มต้นเป็น NULL",
-    duplicate_fields: "คอลัมน์ตารางซ้ำกันชื่อ '{{fieldName}}' ในตาราง '{{tableName}}'",
+    types_info:
+      "ฟีเจอร์นี้มีไว้สำหรับ DBMS แบบออบเจ็กต์-เชิงสัมพันธ์ เช่น PostgreSQL\nหากใช้กับ MySQL หรือ MariaDB จะสร้างชนิด JSON พร้อมการตรวจสอบ json ที่สอดคล้องกัน\nหากใช้กับ SQLite จะถูกแปลงเป็น BLOB\nหากใช้กับ MSSQL จะสร้างชื่อแทนชนิดของคอลัมน์แรก",
+    no_values_for_field:
+      "คอลัมน์ '{{fieldName}}' ของตาราง '{{tableName}}' เป็นชนิด `{{type}}` แต่ไม่ได้ระบุค่า",
+    default_doesnt_match_type:
+      "ค่าเริ่มต้นของคอลัมน์ '{{fieldName}}' ในตาราง '{{tableName}}' ไม่ตรงกับชนิดของคอลัมน์",
+    not_null_is_null:
+      "คอลัมน์ '{{fieldName}}' ของตาราง '{{tableName}}' เป็น NOT NULL แต่มีค่าเริ่มต้นเป็น NULL",
+    duplicate_fields:
+      "คอลัมน์ตารางซ้ำกันชื่อ '{{fieldName}}' ในตาราง '{{tableName}}'",
     duplicate_index: "ดัชนีซ้ำกันชื่อ '{{indexName}}' ในตาราง '{{tableName}}'",
     empty_index: "ดัชนีในตาราง '{{tableName}}' ไม่ได้ระบุคอลัมน์ใด",
     type_with_no_name: "ประกาศชนิดโดยไม่มีชื่อ",
@@ -242,8 +246,10 @@ const th = {
     type_w_no_fields: "ประกาศชนิดว่าง '{{typeName}}' ที่ไม่มีคอลัมน์",
     empty_type_field_name: "คอลัมน์ `name` ว่างในชนิด '{{typeName}}'",
     empty_type_field_type: "คอลัมน์ `type` ว่างในชนิด '{{typeName}}'",
-    no_values_for_type_field: "คอลัมน์ '{{fieldName}}' ของชนิด '{{typeName}}' เป็นชนิด `{{type}}` แต่ไม่ได้ระบุค่า",
-    duplicate_type_fields: "คอลัมน์ของชนิดซ้ำกันชื่อ '{{fieldName}}' ในชนิด '{{typeName}}'",
+    no_values_for_type_field:
+      "คอลัมน์ '{{fieldName}}' ของชนิด '{{typeName}}' เป็นชนิด `{{type}}` แต่ไม่ได้ระบุค่า",
+    duplicate_type_fields:
+      "คอลัมน์ของชนิดซ้ำกันชื่อ '{{fieldName}}' ในชนิด '{{typeName}}'",
     duplicate_reference: "การอ้างอิงซ้ำกันชื่อ '{{refName}}'",
     circular_dependency: "การพึ่งพาแบบวงกลมที่เกี่ยวข้องกับตาราง '{{refName}}'",
     edit_area: "{{extra}} แก้ไขพื้นที่ {{areaName}}",
@@ -253,7 +259,8 @@ const th = {
     edit_type: "{{extra}} แก้ไขชนิด {{typeName}}",
     delete_type: "ลบชนิด {{typeName}}",
     edit_relationship: "{{extra}} แก้ไขความสัมพันธ์ {{refName}}",
-    generic_description: "ไดอะแกรมทั่วไปสามารถส่งออกเป็น SQL รูปแบบใดก็ได้ แต่รองรับชนิดข้อมูลเพียงไม่กี่ชนิด",
+    generic_description:
+      "ไดอะแกรมทั่วไปสามารถส่งออกเป็น SQL รูปแบบใดก็ได้ แต่รองรับชนิดข้อมูลเพียงไม่กี่ชนิด",
     edit_enum: "{{extra}} แก้ไขอีนัม {{enumName}}",
     delete_enum: "ลบอีนัม",
     enum_w_no_name: "พบอีนัมที่ไม่มีชื่อ",
@@ -270,21 +277,25 @@ const th = {
     layout_elk_layered: "แบบชั้นตามแถวฟิลด์ (ELK)",
     layout_elk_stress: "แบบกลุ่ม (ELK stress)",
     layout_by_subject_area: "ตามพื้นที่หัวข้อ",
-    spread_out: "กระจายออก",
-    pull_together: "ดึงเข้าหากัน",
     auto_connect_fk: "เชื่อมต่อคีย์ต่างประเทศอัตโนมัติ",
-    auto_connect_fk_success: "สร้างการอ้างอิงคีย์ต่างประเทศ {{count}} รายการแล้ว",
+    auto_connect_fk_success:
+      "สร้างการอ้างอิงคีย์ต่างประเทศ {{count}} รายการแล้ว",
     no_foreign_keys_found: "ไม่พบความสัมพันธ์",
     all_relations_already_connected: "ความสัมพันธ์ทั้งหมดเชื่อมต่อแล้ว",
     auto_connect_fk_modal_title: "เชื่อมต่อคีย์ต่างประเทศอัตโนมัติ",
-    auto_connect_fk_modal_description: "เพื่อสร้างความสัมพันธ์ PK/FK โดยอัตโนมัติ คอลัมน์ของคุณควรใช้รูปแบบการตั้งชื่อมาตรฐาน:",
-    auto_connect_fk_rule_1: "คำนำหน้าตาราง + คอลัมน์ PK (เช่น user_id หรือ users_id สำหรับตาราง 'users' ที่มีคีย์หลัก 'id')",
-    auto_connect_fk_rule_2: "ชื่อคอลัมน์ PK ที่ตรงกัน (เช่น author_id ที่ตรงกับ author_id ในตารางแม่)",
-    auto_connect_fk_modal_question: "ต้องการสแกนไดอะแกรมและสร้างความสัมพันธ์ที่ตรงกันหรือไม่?",
+    auto_connect_fk_modal_description:
+      "เพื่อสร้างความสัมพันธ์ PK/FK โดยอัตโนมัติ คอลัมน์ของคุณควรใช้รูปแบบการตั้งชื่อมาตรฐาน:",
+    auto_connect_fk_rule_1:
+      "คำนำหน้าตาราง + คอลัมน์ PK (เช่น user_id หรือ users_id สำหรับตาราง 'users' ที่มีคีย์หลัก 'id')",
+    auto_connect_fk_rule_2:
+      "ชื่อคอลัมน์ PK ที่ตรงกัน (เช่น author_id ที่ตรงกับ author_id ในตารางแม่)",
+    auto_connect_fk_modal_question:
+      "ต้องการสแกนไดอะแกรมและสร้างความสัมพันธ์ที่ตรงกันหรือไม่?",
     many_side_label: "ป้ายชื่อฝั่ง Many(n)",
     migrations: "การย้ายข้อมูล",
     generate_migration: "สร้างการย้ายข้อมูล",
-    migration_not_supported_generic: "ไม่รองรับการย้ายข้อมูลสำหรับไดอะแกรมทั่วไป",
+    migration_not_supported_generic:
+      "ไม่รองรับการย้ายข้อมูลสำหรับไดอะแกรมทั่วไป",
     no_migration_needed: "ไม่จำเป็นต้องย้ายข้อมูล",
     scripts: "สคริปต์",
     json_diff: "ความแตกต่าง JSON",
@@ -294,7 +305,8 @@ const th = {
     show_comments: "แสดงหมายเหตุ",
     configure_custom_types: "กำหนดค่าชนิดแบบกำหนดเอง",
     type_color: "สี",
-    custom_types_description: "กำหนดชนิดข้อมูลแบบกำหนดเองที่ไม่รองรับโดยค่าเริ่มต้น ชนิดเหล่านี้จะใช้ได้เมื่อสร้างหรือแก้ไขคอลัมน์",
+    custom_types_description:
+      "กำหนดชนิดข้อมูลแบบกำหนดเองที่ไม่รองรับโดยค่าเริ่มต้น ชนิดเหล่านี้จะใช้ได้เมื่อสร้างหรือแก้ไขคอลัมน์",
     type_data_corrupted: "ชนิดที่กำหนดค่าไว้เสียหาย",
     no_custom_types: "คุณยังไม่ได้กำหนดค่าชนิดใด ๆ",
     close: "ปิด",
@@ -337,15 +349,19 @@ const th = {
     duplicate_views: "วิวซ้ำกันชื่อ '{{viewName}}'",
     view_name_clashes_w_table: "วิว '{{viewName}}' มีชื่อเดียวกับตาราง",
     join_w_no_table: "JOIN ที่ไม่มีตารางในวิว '{{viewName}}'",
-    join_w_no_condition: "JOIN กับ '{{tableName}}' ในวิว '{{viewName}}' ไม่มีเงื่อนไข",
-    join_out_of_order: "JOIN กับ '{{tableName}}' ในวิว '{{viewName}}' อ้างอิงตารางที่ JOIN ภายหลัง",
+    join_w_no_condition:
+      "JOIN กับ '{{tableName}}' ในวิว '{{viewName}}' ไม่มีเงื่อนไข",
+    join_out_of_order:
+      "JOIN กับ '{{tableName}}' ในวิว '{{viewName}}' อ้างอิงตารางที่ JOIN ภายหลัง",
     empty_view_column: "คอลัมน์ผลลัพธ์ว่างในวิว '{{viewName}}'",
-    duplicate_view_columns: "คอลัมน์ผลลัพธ์ '{{columnName}}' ซ้ำในวิว '{{viewName}}'",
+    duplicate_view_columns:
+      "คอลัมน์ผลลัพธ์ '{{columnName}}' ซ้ำในวิว '{{viewName}}'",
     lock: "ล็อก",
     unlock: "ปลดล็อก",
     edit_dbml: "แก้ไข DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "ไดอะแกรมนี้จัดเก็บไว้ในเบราว์เซอร์ของคุณ ต้องการย้ายไปยังคลาวด์หรือไม่?",
+    move_to_cloud_prompt:
+      "ไดอะแกรมนี้จัดเก็บไว้ในเบราว์เซอร์ของคุณ ต้องการย้ายไปยังคลาวด์หรือไม่?",
     move: "ย้าย",
     dismiss: "ปิด",
     view_actions: "การดำเนินการของวิว",
@@ -362,16 +378,21 @@ const th = {
     templates: "เทมเพลต",
     diagrams: "ไดอะแกรม",
     logo: "โลโก้",
-    check_syntax_errors: "โปรดตรวจสอบข้อผิดพลาดทางไวยากรณ์ หรือแจ้งให้เราทราบเกี่ยวกับข้อผิดพลาด",
+    check_syntax_errors:
+      "โปรดตรวจสอบข้อผิดพลาดทางไวยากรณ์ หรือแจ้งให้เราทราบเกี่ยวกับข้อผิดพลาด",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "ช่องทำเครื่องหมายเขียนทับ",
     file_contains_error: "ไฟล์มีข้อผิดพลาด",
     file_missing_diagram_properties: "ไฟล์ขาดคุณสมบัติที่จำเป็นสำหรับไดอะแกรม",
-    imported_diagram_database_mismatch: "ไดอะแกรมที่นำเข้าและไดอะแกรมที่เปิดอยู่ใช้ฐานข้อมูลไม่ตรงกัน",
-    relationship_references_missing_table: "ความสัมพันธ์ {{relationshipName}} อ้างอิงตารางที่ไม่มีอยู่",
-    relationship_references_missing_field: "ความสัมพันธ์ {{relationshipName}} อ้างอิงคอลัมน์ที่ไม่มีอยู่",
+    imported_diagram_database_mismatch:
+      "ไดอะแกรมที่นำเข้าและไดอะแกรมที่เปิดอยู่ใช้ฐานข้อมูลไม่ตรงกัน",
+    relationship_references_missing_table:
+      "ความสัมพันธ์ {{relationshipName}} อ้างอิงตารางที่ไม่มีอยู่",
+    relationship_references_missing_field:
+      "ความสัมพันธ์ {{relationshipName}} อ้างอิงคอลัมน์ที่ไม่มีอยู่",
     ready_to_import: "ทุกอย่างเรียบร้อย คุณสามารถนำเข้าได้แล้ว",
-    import_will_overwrite_current: "ไดอะแกรมปัจจุบันไม่ว่างเปล่า การนำเข้าไดอะแกรมใหม่จะเขียนทับการเปลี่ยนแปลงปัจจุบัน",
+    import_will_overwrite_current:
+      "ไดอะแกรมปัจจุบันไม่ว่างเปล่า การนำเข้าไดอะแกรมใหม่จะเขียนทับการเปลี่ยนแปลงปัจจุบัน",
     all: "ทั้งหมด",
     all_databases: "ฐานข้อมูลทั้งหมด",
     all_types: "ทุกชนิด",

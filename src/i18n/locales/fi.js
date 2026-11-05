@@ -103,7 +103,8 @@ const fi = {
     no_tables: "Ei tauluja",
     no_tables_text: "Aloita kaaviosi rakentaminen!",
     no_relationships: "Ei suhteita",
-    no_relationships_text: "Vedä yhdistääksesi sarakkeet ja muodostaaksesi suhteita!",
+    no_relationships_text:
+      "Vedä yhdistääksesi sarakkeet ja muodostaaksesi suhteita!",
     no_subject_areas: "Ei aihealueita",
     no_subject_areas_text: "Lisää aihealueita ryhmitelläksesi tauluja!",
     no_notes: "Ei muistiinpanoja",
@@ -163,7 +164,8 @@ const fi = {
     create: "Luo",
     confirm: "Vahvista",
     last_modified: "Viimeksi muokattu",
-    drag_and_drop_files: "Vedä ja pudota tiedosto tähän tai klikkaa ladataksesi.",
+    drag_and_drop_files:
+      "Vedä ja pudota tiedosto tähän tai klikkaa ladataksesi.",
     upload_sql_to_generate_diagrams:
       "Lataa SQL-tiedosto automaattisesti luodaksesi taulut ja sarakkeet.",
     overwrite_existing_diagram: "Korvaa olemassa oleva kaavio",
@@ -284,20 +286,23 @@ const fi = {
     layout_elk_layered: "Kerroksittain kenttärivien mukaan (ELK)",
     layout_elk_stress: "Ryhmitelty (ELK stress)",
     layout_by_subject_area: "Aihealueittain",
-    spread_out: "Levitä",
-    pull_together: "Kokoa yhteen",
     auto_connect_fk: "Yhdistä viiteavaimet automaattisesti",
     auto_connect_fk_success: "Luotiin {{count}} viiteavainviittausta",
     no_foreign_keys_found: "Suhteita ei löytynyt",
     all_relations_already_connected: "Kaikki suhteet on jo yhdistetty",
     auto_connect_fk_modal_title: "Yhdistä viiteavaimet automaattisesti",
-    auto_connect_fk_modal_description: "Jotta PK/FK-suhteet voidaan muodostaa automaattisesti, sarakkeiden tulee noudattaa tavallisia nimeämiskäytäntöjä:",
-    auto_connect_fk_rule_1: "Taulun etuliite + PK-sarake (esim. user_id tai users_id taululle 'users', jonka pääavain on 'id')",
-    auto_connect_fk_rule_2: "Vastaava PK-sarakkeen nimi (esim. author_id, joka vastaa author_id:tä ylätaulussa)",
-    auto_connect_fk_modal_question: "Haluatko käydä kaavion läpi ja luoda vastaavat suhteet?",
+    auto_connect_fk_modal_description:
+      "Jotta PK/FK-suhteet voidaan muodostaa automaattisesti, sarakkeiden tulee noudattaa tavallisia nimeämiskäytäntöjä:",
+    auto_connect_fk_rule_1:
+      "Taulun etuliite + PK-sarake (esim. user_id tai users_id taululle 'users', jonka pääavain on 'id')",
+    auto_connect_fk_rule_2:
+      "Vastaava PK-sarakkeen nimi (esim. author_id, joka vastaa author_id:tä ylätaulussa)",
+    auto_connect_fk_modal_question:
+      "Haluatko käydä kaavion läpi ja luoda vastaavat suhteet?",
     migrations: "Migraatiot",
     generate_migration: "Luo migraatio",
-    migration_not_supported_generic: "Migraatioita ei tueta yleisille kaavioille.",
+    migration_not_supported_generic:
+      "Migraatioita ei tueta yleisille kaavioille.",
     no_migration_needed: "Migraatiota ei tarvita",
     scripts: "Skriptit",
     json_diff: "JSON-erot",
@@ -305,7 +310,8 @@ const fi = {
     show_comments: "Näytä kommentit",
     configure_custom_types: "Määritä mukautetut tyypit",
     type_color: "Väri",
-    custom_types_description: "Määritä mukautettuja tietotyyppejä, joita ei tueta oletuksena. Nämä tyypit ovat käytettävissä sarakkeita luotaessa tai muokattaessa.",
+    custom_types_description:
+      "Määritä mukautettuja tietotyyppejä, joita ei tueta oletuksena. Nämä tyypit ovat käytettävissä sarakkeita luotaessa tai muokattaessa.",
     type_data_corrupted: "Määritetyt tyypit ovat vioittuneet.",
     no_custom_types: "Sinulla ei ole määritettyjä tyyppejä",
     close: "Sulje",
@@ -346,17 +352,22 @@ const fi = {
     view_w_no_name: "Näkymä ilman nimeä",
     view_w_no_base_table: "Näkymällä '{{viewName}}' ei ole perustaulua",
     duplicate_views: "Kaksoiskappale näkymistä nimellä '{{viewName}}'",
-    view_name_clashes_w_table: "Näkymällä '{{viewName}}' on sama nimi kuin taululla",
+    view_name_clashes_w_table:
+      "Näkymällä '{{viewName}}' on sama nimi kuin taululla",
     join_w_no_table: "Liitos ilman taulua näkymässä '{{viewName}}'",
-    join_w_no_condition: "Liitoksella tauluun '{{tableName}}' näkymässä '{{viewName}}' ei ole ehtoa",
-    join_out_of_order: "Liitos tauluun '{{tableName}}' näkymässä '{{viewName}}' viittaa tauluun, joka liitetään sen jälkeen",
+    join_w_no_condition:
+      "Liitoksella tauluun '{{tableName}}' näkymässä '{{viewName}}' ei ole ehtoa",
+    join_out_of_order:
+      "Liitos tauluun '{{tableName}}' näkymässä '{{viewName}}' viittaa tauluun, joka liitetään sen jälkeen",
     empty_view_column: "Tyhjä tulossarake näkymässä '{{viewName}}'",
-    duplicate_view_columns: "Kaksoiskappale tulossarakkeesta '{{columnName}}' näkymässä '{{viewName}}'",
+    duplicate_view_columns:
+      "Kaksoiskappale tulossarakkeesta '{{columnName}}' näkymässä '{{viewName}}'",
     lock: "Lukitse",
     unlock: "Avaa lukitus",
     edit_dbml: "Muokkaa DBML:ää",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Tämä kaavio on tallennettu paikallisesti selaimeesi. Siirretäänkö se pilveen?",
+    move_to_cloud_prompt:
+      "Tämä kaavio on tallennettu paikallisesti selaimeesi. Siirretäänkö se pilveen?",
     move: "Siirrä",
     dismiss: "Hylkää",
     view_actions: "Näkymän toiminnot",
@@ -373,16 +384,22 @@ const fi = {
     templates: "Mallipohjat",
     diagrams: "Kaaviot",
     logo: "logo",
-    check_syntax_errors: "Tarkista syntaksivirheet tai ilmoita meille virheestä.",
+    check_syntax_errors:
+      "Tarkista syntaksivirheet tai ilmoita meille virheestä.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "korvaamisen valintaruutu",
     file_contains_error: "Tiedostossa on virhe.",
-    file_missing_diagram_properties: "Tiedostosta puuttuu kaavion vaatimia ominaisuuksia.",
-    imported_diagram_database_mismatch: "Tuotu kaavio ja avoin kaavio eivät käytä samaa tietokantaa.",
-    relationship_references_missing_table: "Suhde {{relationshipName}} viittaa tauluun, jota ei ole olemassa.",
-    relationship_references_missing_field: "Suhde {{relationshipName}} viittaa sarakkeeseen, jota ei ole olemassa.",
+    file_missing_diagram_properties:
+      "Tiedostosta puuttuu kaavion vaatimia ominaisuuksia.",
+    imported_diagram_database_mismatch:
+      "Tuotu kaavio ja avoin kaavio eivät käytä samaa tietokantaa.",
+    relationship_references_missing_table:
+      "Suhde {{relationshipName}} viittaa tauluun, jota ei ole olemassa.",
+    relationship_references_missing_field:
+      "Suhde {{relationshipName}} viittaa sarakkeeseen, jota ei ole olemassa.",
     ready_to_import: "Kaikki näyttää hyvältä. Voit nyt tuoda.",
-    import_will_overwrite_current: "Nykyinen kaavio ei ole tyhjä. Uuden kaavion tuominen korvaa nykyiset muutokset.",
+    import_will_overwrite_current:
+      "Nykyinen kaavio ei ole tyhjä. Uuden kaavion tuominen korvaa nykyiset muutokset.",
     all: "Kaikki",
     all_databases: "Kaikki tietokannat",
     all_types: "Kaikki tyypit",
@@ -398,4 +415,3 @@ const fi = {
 };
 
 export { fi, finnish };
-

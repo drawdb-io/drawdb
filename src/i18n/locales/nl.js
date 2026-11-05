@@ -103,9 +103,11 @@ const nl = {
     no_tables: "Geen tabellen",
     no_tables_text: "Begin met het bouwen van uw diagram!",
     no_relationships: "Geen relaties",
-    no_relationships_text: "Sleep om kolommen te verbinden en relaties te vormen!",
+    no_relationships_text:
+      "Sleep om kolommen te verbinden en relaties te vormen!",
     no_subject_areas: "Geen onderwerpsgebieden",
-    no_subject_areas_text: "Voeg onderwerpsgebieden toe om tabellen te groeperen!",
+    no_subject_areas_text:
+      "Voeg onderwerpsgebieden toe om tabellen te groeperen!",
     no_notes: "Geen notities",
     no_notes_text: "Gebruik notities om extra informatie vast te leggen",
     no_types: "Geen types",
@@ -123,7 +125,8 @@ const nl = {
     autoincrement: "Automatisch ophogen",
     default_value: "Standaardwaarde",
     check: "Check-expressie",
-    this_will_appear_as_is: "*Dit zal ongewijzigd in het gegenereerde script verschijnen.",
+    this_will_appear_as_is:
+      "*Dit zal ongewijzigd in het gegenereerde script verschijnen.",
     comment: "Opmerking",
     add_field: "Kolom toevoegen",
     values: "Waarden",
@@ -152,7 +155,8 @@ const nl = {
     note_deleted: "Notitie verwijderd",
     relationship_deleted: "Relatie verwijderd",
     type_deleted: "Type verwijderd",
-    cannot_connect: "Kan geen verbinding maken, de kolommen hebben verschillende typen",
+    cannot_connect:
+      "Kan geen verbinding maken, de kolommen hebben verschillende typen",
     copied_to_clipboard: "Gekopieerd naar klembord",
     create_new_diagram: "Nieuw diagram maken",
     cancel: "Annuleren",
@@ -189,7 +193,8 @@ const nl = {
     no_primary_key: "Tabel '{{tableName}}' heeft geen primaire sleutel",
     type_with_no_name: "Een type zonder naam gedeclareerd",
     duplicate_types: "Dubbele types met de naam '{{typeName}}'",
-    type_w_no_fields: "Een leeg type '{{typeName}}' zonder kolommen gedeclareerd",
+    type_w_no_fields:
+      "Een leeg type '{{typeName}}' zonder kolommen gedeclareerd",
     empty_type_field_name: "Lege kolom `naam` in type '{{typeName}}'",
     empty_type_field_type: "Lege kolom `type` in type '{{typeName}}'",
     no_values_for_type_field:
@@ -197,7 +202,8 @@ const nl = {
     duplicate_type_fields:
       "Dubbele typekolommen met de naam '{{fieldName}}' in type '{{typeName}}'",
     duplicate_reference: "Dubbele referentie met de naam '{{refName}}'",
-    circular_dependency: "Circulaire afhankelijkheid met betrekking tot tabel '{{refName}}'",
+    circular_dependency:
+      "Circulaire afhankelijkheid met betrekking tot tabel '{{refName}}'",
     timeline: "Tijdlijn",
     details: "Details",
     no_activity: "U heeft nog geen activiteit.",
@@ -228,7 +234,8 @@ const nl = {
     no_enums: "Geen enums",
     no_enums_text: "Definieer hier enums",
     declare_array: "Array declareren",
-    empty_index_name: "Een index zonder naam gedeclareerd in tabel '{{tableName}}'",
+    empty_index_name:
+      "Een index zonder naam gedeclareerd in tabel '{{tableName}}'",
     didnt_find_diagram: "Oeps! Het diagram niet gevonden.",
     unsigned: "Unsigned",
     share: "Delen",
@@ -256,7 +263,8 @@ const nl = {
     read_only: "Alleen-lezen",
     continue: "Doorgaan",
     restore_version: "Versie herstellen",
-    restore_warning: "Het laden van een andere versie zal alle wijzigingen overschrijven.",
+    restore_warning:
+      "Het laden van een andere versie zal alle wijzigingen overschrijven.",
     return_to_current: "Terug naar diagram",
     no_changes_to_record: "Geen wijzigingen om vast te leggen",
     click_to_view: "Klik om te bekijken",
@@ -271,7 +279,8 @@ const nl = {
     add: "Toevoegen",
     add_comment: "Opmerking toevoegen",
     composite_key: "Samengestelde sleutel",
-    composite_key_hint: "Voeg kolommen toe om een samengestelde sleutel te maken.",
+    composite_key_hint:
+      "Voeg kolommen toe om een samengestelde sleutel te maken.",
     unique_constraints: "Unieke constraints",
     add_unique_constraint: "Unieke constraint toevoegen",
     references: "Verwijzingen",
@@ -282,20 +291,23 @@ const nl = {
     layout_elk_layered: "Gelaagd volgens veldrijen (ELK)",
     layout_elk_stress: "Geclusterd (ELK stress)",
     layout_by_subject_area: "Per onderwerpsgebied",
-    spread_out: "Uit elkaar zetten",
-    pull_together: "Dichter bij elkaar zetten",
     auto_connect_fk: "Foreign keys automatisch koppelen",
     auto_connect_fk_success: "{{count}} foreign key-verwijzing(en) aangemaakt",
     no_foreign_keys_found: "Geen relaties gevonden",
     all_relations_already_connected: "Alle relaties zijn al gekoppeld",
     auto_connect_fk_modal_title: "Foreign keys automatisch koppelen",
-    auto_connect_fk_modal_description: "Om PK/FK-relaties automatisch aan te maken, moeten uw kolommen de gangbare naamgevingsconventies volgen:",
-    auto_connect_fk_rule_1: "Tabelprefix + PK-kolom (bijv. user_id of users_id voor tabel 'users' met primaire sleutel 'id')",
-    auto_connect_fk_rule_2: "Overeenkomende PK-kolomnaam (bijv. author_id die overeenkomt met author_id in de bovenliggende tabel)",
-    auto_connect_fk_modal_question: "Wilt u het diagram scannen en overeenkomende relaties aanmaken?",
+    auto_connect_fk_modal_description:
+      "Om PK/FK-relaties automatisch aan te maken, moeten uw kolommen de gangbare naamgevingsconventies volgen:",
+    auto_connect_fk_rule_1:
+      "Tabelprefix + PK-kolom (bijv. user_id of users_id voor tabel 'users' met primaire sleutel 'id')",
+    auto_connect_fk_rule_2:
+      "Overeenkomende PK-kolomnaam (bijv. author_id die overeenkomt met author_id in de bovenliggende tabel)",
+    auto_connect_fk_modal_question:
+      "Wilt u het diagram scannen en overeenkomende relaties aanmaken?",
     migrations: "Migraties",
     generate_migration: "Migratie genereren",
-    migration_not_supported_generic: "Migraties worden niet ondersteund voor generieke diagrammen.",
+    migration_not_supported_generic:
+      "Migraties worden niet ondersteund voor generieke diagrammen.",
     no_migration_needed: "Geen migratie nodig",
     scripts: "Scripts",
     json_diff: "JSON-diff",
@@ -305,7 +317,8 @@ const nl = {
     show_comments: "Opmerkingen tonen",
     configure_custom_types: "Aangepaste types configureren",
     type_color: "Kleur",
-    custom_types_description: "Definieer aangepaste gegevenstypes die standaard niet worden ondersteund. Deze types zijn beschikbaar bij het aanmaken of bewerken van kolommen.",
+    custom_types_description:
+      "Definieer aangepaste gegevenstypes die standaard niet worden ondersteund. Deze types zijn beschikbaar bij het aanmaken of bewerken van kolommen.",
     type_data_corrupted: "De geconfigureerde types zijn beschadigd.",
     no_custom_types: "U heeft geen types geconfigureerd",
     close: "Sluiten",
@@ -346,17 +359,22 @@ const nl = {
     view_w_no_name: "View zonder naam",
     view_w_no_base_table: "View '{{viewName}}' heeft geen basistabel",
     duplicate_views: "Dubbele views met de naam '{{viewName}}'",
-    view_name_clashes_w_table: "View '{{viewName}}' heeft dezelfde naam als een tabel",
+    view_name_clashes_w_table:
+      "View '{{viewName}}' heeft dezelfde naam als een tabel",
     join_w_no_table: "Join zonder tabel in view '{{viewName}}'",
-    join_w_no_condition: "Join op '{{tableName}}' in view '{{viewName}}' heeft geen voorwaarde",
-    join_out_of_order: "Join op '{{tableName}}' in view '{{viewName}}' verwijst naar een tabel die pas daarna wordt gejoind",
+    join_w_no_condition:
+      "Join op '{{tableName}}' in view '{{viewName}}' heeft geen voorwaarde",
+    join_out_of_order:
+      "Join op '{{tableName}}' in view '{{viewName}}' verwijst naar een tabel die pas daarna wordt gejoind",
     empty_view_column: "Lege uitvoerkolom in view '{{viewName}}'",
-    duplicate_view_columns: "Dubbele uitvoerkolom '{{columnName}}' in view '{{viewName}}'",
+    duplicate_view_columns:
+      "Dubbele uitvoerkolom '{{columnName}}' in view '{{viewName}}'",
     lock: "Vergrendelen",
     unlock: "Ontgrendelen",
     edit_dbml: "DBML bewerken",
     dbml_problem: "Rg {{line}}, Kol {{column}}: {{message}}",
-    move_to_cloud_prompt: "Dit diagram is lokaal in uw browser opgeslagen. Naar de cloud verplaatsen?",
+    move_to_cloud_prompt:
+      "Dit diagram is lokaal in uw browser opgeslagen. Naar de cloud verplaatsen?",
     move: "Verplaatsen",
     dismiss: "Sluiten",
     view_actions: "View-acties",
@@ -373,16 +391,22 @@ const nl = {
     templates: "Sjablonen",
     diagrams: "Diagrammen",
     logo: "logo",
-    check_syntax_errors: "Controleer op syntaxfouten of laat ons weten wat de fout is.",
+    check_syntax_errors:
+      "Controleer op syntaxfouten of laat ons weten wat de fout is.",
     parse_error_at: "{{name}} [Rg {{line}}, Kol {{column}}]: {{message}}",
     overwrite_checkbox: "selectievakje overschrijven",
     file_contains_error: "Het bestand bevat een fout.",
-    file_missing_diagram_properties: "Het bestand mist vereiste eigenschappen voor een diagram.",
-    imported_diagram_database_mismatch: "Het geïmporteerde diagram en het geopende diagram gebruiken niet dezelfde database.",
-    relationship_references_missing_table: "Relatie {{relationshipName}} verwijst naar een tabel die niet bestaat.",
-    relationship_references_missing_field: "Relatie {{relationshipName}} verwijst naar een kolom die niet bestaat.",
+    file_missing_diagram_properties:
+      "Het bestand mist vereiste eigenschappen voor een diagram.",
+    imported_diagram_database_mismatch:
+      "Het geïmporteerde diagram en het geopende diagram gebruiken niet dezelfde database.",
+    relationship_references_missing_table:
+      "Relatie {{relationshipName}} verwijst naar een tabel die niet bestaat.",
+    relationship_references_missing_field:
+      "Relatie {{relationshipName}} verwijst naar een kolom die niet bestaat.",
     ready_to_import: "Alles ziet er goed uit. U kunt nu importeren.",
-    import_will_overwrite_current: "Het huidige diagram is niet leeg. Het importeren van een nieuw diagram overschrijft de huidige wijzigingen.",
+    import_will_overwrite_current:
+      "Het huidige diagram is niet leeg. Het importeren van een nieuw diagram overschrijft de huidige wijzigingen.",
     all: "Alle",
     all_databases: "Alle databases",
     all_types: "Alle types",

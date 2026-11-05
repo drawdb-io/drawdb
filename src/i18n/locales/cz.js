@@ -32,8 +32,7 @@ const cz = {
     undo: "Vrátit zpět",
     redo: "Předělat",
     clear: "čistý",
-    are_you_sure_clear:
-      "Opravdu chcete vymazat diagram? To je nevratné.",
+    are_you_sure_clear: "Opravdu chcete vymazat diagram? To je nevratné.",
     cut: "Střih",
     copy: "Kopie",
     paste: "Vložit",
@@ -117,7 +116,8 @@ const cz = {
     autoincrement: "Autoinkrementace",
     default_value: "Výchozí",
     check: "Zkontrolujte výraz",
-    this_will_appear_as_is: "*To se objeví ve vygenerovaném skriptu tak, jak je.",
+    this_will_appear_as_is:
+      "*To se objeví ve vygenerovaném skriptu tak, jak je.",
     comment: "Komentář",
     add_field: "Přidat sloupec",
     values: "Hodnoty",
@@ -264,7 +264,8 @@ const cz = {
     upload_file: "Nahrát soubor",
     enum_deleted: "Enum smazán",
     inherits: "Dědí",
-    merging_column_w_inherited_definition: "Sloupec '{{fieldName}}' v tabulce '{{tableName}}' se zděděnou definicí bude sloučen",
+    merging_column_w_inherited_definition:
+      "Sloupec '{{fieldName}}' v tabulce '{{tableName}}' se zděděnou definicí bude sloučen",
     no_saved_diagrams: "Nemáte žádné uložené diagramy",
     open_recent: "Otevřít nedávné",
     saved_as_copy: "Uloženo jako kopie. Otevřít:",
@@ -283,20 +284,23 @@ const cz = {
     layout_elk_layered: "Ve vrstvách podle řádků polí (ELK)",
     layout_elk_stress: "Ve shlucích (ELK stress)",
     layout_by_subject_area: "Podle oblastí předmětu",
-    spread_out: "Roztáhnout",
-    pull_together: "Stáhnout k sobě",
     auto_connect_fk: "Automaticky propojit cizí klíče",
     auto_connect_fk_success: "Vytvořené odkazy cizích klíčů: {{count}}",
     no_foreign_keys_found: "Nebyly nalezeny žádné vztahy",
     all_relations_already_connected: "Všechny vztahy jsou již propojeny",
     auto_connect_fk_modal_title: "Automatické propojení cizích klíčů",
-    auto_connect_fk_modal_description: "Aby bylo možné automaticky vytvořit vztahy PK/FK, měly by vaše sloupce dodržovat standardní konvence pojmenování:",
-    auto_connect_fk_rule_1: "Předpona tabulky + sloupec PK (např. user_id nebo users_id pro tabulku 'users' s primárním klíčem 'id')",
-    auto_connect_fk_rule_2: "Shodný název sloupce PK (např. author_id odpovídající author_id v nadřazené tabulce)",
-    auto_connect_fk_modal_question: "Chcete prohledat diagram a vytvořit odpovídající vztahy?",
+    auto_connect_fk_modal_description:
+      "Aby bylo možné automaticky vytvořit vztahy PK/FK, měly by vaše sloupce dodržovat standardní konvence pojmenování:",
+    auto_connect_fk_rule_1:
+      "Předpona tabulky + sloupec PK (např. user_id nebo users_id pro tabulku 'users' s primárním klíčem 'id')",
+    auto_connect_fk_rule_2:
+      "Shodný název sloupce PK (např. author_id odpovídající author_id v nadřazené tabulce)",
+    auto_connect_fk_modal_question:
+      "Chcete prohledat diagram a vytvořit odpovídající vztahy?",
     migrations: "Migrace",
     generate_migration: "Vygenerovat migraci",
-    migration_not_supported_generic: "Migrace nejsou u obecných diagramů podporovány.",
+    migration_not_supported_generic:
+      "Migrace nejsou u obecných diagramů podporovány.",
     no_migration_needed: "Migrace není potřeba",
     scripts: "Skripty",
     json_diff: "Rozdíly JSON",
@@ -304,7 +308,8 @@ const cz = {
     show_comments: "Zobrazit komentáře",
     configure_custom_types: "Nastavit vlastní typy",
     type_color: "Barva",
-    custom_types_description: "Definujte vlastní datové typy, které nejsou ve výchozím nastavení podporovány. Tyto typy budou k dispozici při vytváření nebo úpravě sloupců.",
+    custom_types_description:
+      "Definujte vlastní datové typy, které nejsou ve výchozím nastavení podporovány. Tyto typy budou k dispozici při vytváření nebo úpravě sloupců.",
     type_data_corrupted: "Nastavené typy jsou poškozené.",
     no_custom_types: "Nemáte nastavené žádné typy",
     close: "Zavřít",
@@ -345,17 +350,22 @@ const cz = {
     view_w_no_name: "Pohled bez názvu",
     view_w_no_base_table: "Pohled '{{viewName}}' nemá základní tabulku",
     duplicate_views: "Duplicitní pohledy s názvem '{{viewName}}'",
-    view_name_clashes_w_table: "Pohled '{{viewName}}' má stejný název jako tabulka",
+    view_name_clashes_w_table:
+      "Pohled '{{viewName}}' má stejný název jako tabulka",
     join_w_no_table: "Spojení bez tabulky v pohledu '{{viewName}}'",
-    join_w_no_condition: "Spojení s '{{tableName}}' v pohledu '{{viewName}}' nemá podmínku",
-    join_out_of_order: "Spojení s '{{tableName}}' v pohledu '{{viewName}}' odkazuje na tabulku připojenou až po něm",
+    join_w_no_condition:
+      "Spojení s '{{tableName}}' v pohledu '{{viewName}}' nemá podmínku",
+    join_out_of_order:
+      "Spojení s '{{tableName}}' v pohledu '{{viewName}}' odkazuje na tabulku připojenou až po něm",
     empty_view_column: "Prázdný výstupní sloupec v pohledu '{{viewName}}'",
-    duplicate_view_columns: "Duplicitní výstupní sloupec '{{columnName}}' v pohledu '{{viewName}}'",
+    duplicate_view_columns:
+      "Duplicitní výstupní sloupec '{{columnName}}' v pohledu '{{viewName}}'",
     lock: "Zamknout",
     unlock: "Odemknout",
     edit_dbml: "Upravit DBML",
     dbml_problem: "Ln {{line}}, Col {{column}}: {{message}}",
-    move_to_cloud_prompt: "Tento diagram je uložen lokálně ve vašem prohlížeči. Přesunout ho do cloudu?",
+    move_to_cloud_prompt:
+      "Tento diagram je uložen lokálně ve vašem prohlížeči. Přesunout ho do cloudu?",
     move: "Přesunout",
     dismiss: "Zavřít",
     view_actions: "Akce pohledu",
@@ -372,16 +382,22 @@ const cz = {
     templates: "Šablony",
     diagrams: "Diagramy",
     logo: "logo",
-    check_syntax_errors: "Zkontrolujte prosím syntaktické chyby nebo nám chybu nahlaste.",
+    check_syntax_errors:
+      "Zkontrolujte prosím syntaktické chyby nebo nám chybu nahlaste.",
     parse_error_at: "{{name}} [Ln {{line}}, Col {{column}}]: {{message}}",
     overwrite_checkbox: "zaškrtávací políčko přepsání",
     file_contains_error: "Soubor obsahuje chybu.",
-    file_missing_diagram_properties: "V souboru chybí vlastnosti potřebné pro diagram.",
-    imported_diagram_database_mismatch: "Importovaný a otevřený diagram nepoužívají stejnou databázi.",
-    relationship_references_missing_table: "Vztah {{relationshipName}} odkazuje na neexistující tabulku.",
-    relationship_references_missing_field: "Vztah {{relationshipName}} odkazuje na neexistující sloupec.",
+    file_missing_diagram_properties:
+      "V souboru chybí vlastnosti potřebné pro diagram.",
+    imported_diagram_database_mismatch:
+      "Importovaný a otevřený diagram nepoužívají stejnou databázi.",
+    relationship_references_missing_table:
+      "Vztah {{relationshipName}} odkazuje na neexistující tabulku.",
+    relationship_references_missing_field:
+      "Vztah {{relationshipName}} odkazuje na neexistující sloupec.",
     ready_to_import: "Vše vypadá v pořádku. Nyní můžete importovat.",
-    import_will_overwrite_current: "Aktuální diagram není prázdný. Import nového diagramu přepíše aktuální změny.",
+    import_will_overwrite_current:
+      "Aktuální diagram není prázdný. Import nového diagramu přepíše aktuální změny.",
     all: "Vše",
     all_databases: "Všechny databáze",
     all_types: "Všechny typy",

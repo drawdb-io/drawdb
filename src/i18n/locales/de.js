@@ -96,7 +96,8 @@ const de = {
     no_tables: "Keine Tabellen",
     no_tables_text: "Beginnen Sie mit dem Aufbau Ihres Diagramms!",
     no_relationships: "Keine Beziehungen",
-    no_relationships_text: "Ziehen Sie, um Spalten zu verbinden und Beziehungen herzustellen!",
+    no_relationships_text:
+      "Ziehen Sie, um Spalten zu verbinden und Beziehungen herzustellen!",
     no_subject_areas: "Keine Themenbereiche",
     no_subject_areas_text: "Fügen Sie Themenbereiche zu Gruppentabellen hinzu!",
     no_notes: "Keine Notizen",
@@ -145,7 +146,8 @@ const de = {
     note_deleted: "Notiz gelöscht",
     relationship_deleted: "Beziehung gelöscht",
     type_deleted: "Typ gelöscht",
-    cannot_connect: "Kann nicht verbinden, die Spalten haben unterschiedliche Typen",
+    cannot_connect:
+      "Kann nicht verbinden, die Spalten haben unterschiedliche Typen",
     copied_to_clipboard: "In die Zwischenablage kopiert",
     create_new_diagram: "Neues Diagramm erstellen",
     cancel: "Abbrechen",
@@ -156,7 +158,8 @@ const de = {
     create: "Erstellen",
     confirm: "Bestätigen",
     last_modified: "Zuletzt geändert",
-    drag_and_drop_files: "Ziehen Sie die Datei hierher oder klicken Sie, um sie hochzuladen.",
+    drag_and_drop_files:
+      "Ziehen Sie die Datei hierher oder klicken Sie, um sie hochzuladen.",
     upload_sql_to_generate_diagrams:
       "Laden Sie eine SQL-Datei hoch, um Ihre Tabellen und Spalten automatisch zu generieren.",
     overwrite_existing_diagram: "Vorhandenes Diagramm überschreiben",
@@ -182,7 +185,8 @@ const de = {
     no_primary_key: "Tabelle '{{tableName}}' hat keinen Primärschlüssel",
     type_with_no_name: "Ein Typ ohne Namen wurde deklariert",
     duplicate_types: "Doppelte Typen mit dem Namen '{{typeName}}'",
-    type_w_no_fields: "Ein leerer Typ '{{typeName}}' ohne Spalten wurde deklariert",
+    type_w_no_fields:
+      "Ein leerer Typ '{{typeName}}' ohne Spalten wurde deklariert",
     empty_type_field_name: "Leere Spalte `name` im Typ '{{typeName}}'",
     empty_type_field_type: "Leere Spalte `type` im Typ '{{typeName}}'",
     no_values_for_type_field:
@@ -190,7 +194,8 @@ const de = {
     duplicate_type_fields:
       "Doppelte Typspalten mit dem Namen '{{fieldName}}' im Typ '{{typeName}}'",
     duplicate_reference: "Doppelte Referenz mit dem Namen '{{refName}}'",
-    circular_dependency: "Zirkuläre Abhängigkeit, die Tabelle '{{refName}}' betrifft",
+    circular_dependency:
+      "Zirkuläre Abhängigkeit, die Tabelle '{{refName}}' betrifft",
     timeline: "Zeitleiste",
     details: "Details",
     no_activity: "Sie haben noch keine Aktivitäten.",
@@ -221,14 +226,16 @@ const de = {
     no_enums: "Keine Aufzählungen",
     no_enums_text: "Aufzählungen hier definieren",
     declare_array: "Liste deklarieren",
-    empty_index_name: "Index ohne Namen in der Tabelle '{{tableName}}' deklariert",
+    empty_index_name:
+      "Index ohne Namen in der Tabelle '{{tableName}}' deklariert",
     didnt_find_diagram: "Hoppla! Das Diagramm wurde nicht gefunden.",
     unsigned: "Vorzeichenlos",
     share: "Teilen",
     unshare: "Nicht mehr teilen",
     copy_link: "Link kopieren",
     readme: "README",
-    failed_to_load: "Laden fehlgeschlagen. Stellen Sie sicher, das der Link korrekt ist.",
+    failed_to_load:
+      "Laden fehlgeschlagen. Stellen Sie sicher, das der Link korrekt ist.",
     share_info:
       "* Das Teilen dieses Links ermöglicht keine Live-Zusammenarbeit in Echtzeit.",
     show_relationship_labels: "Beziehungsbeschriftungen anzeigen",
@@ -257,7 +264,8 @@ const de = {
     read_only: "Nur lesen",
     continue: "Fortfahren",
     restore_version: "Version wiederherstellen",
-    restore_warning: "Das Laden einer anderen Version überschreibt alle Änderungen.",
+    restore_warning:
+      "Das Laden einer anderen Version überschreibt alle Änderungen.",
     return_to_current: "Zum Diagramm zurückkehren",
     no_changes_to_record: "Keine Änderungen zum Aufzeichnen",
     click_to_view: "Zum Anzeigen klicken",
@@ -274,7 +282,8 @@ const de = {
     add: "Hinzufügen",
     add_comment: "Kommentar hinzufügen",
     composite_key: "Zusammengesetzter Schlüssel",
-    composite_key_hint: "Fügen Sie Spalten hinzu, um einen zusammengesetzten Schlüssel zu bilden.",
+    composite_key_hint:
+      "Fügen Sie Spalten hinzu, um einen zusammengesetzten Schlüssel zu bilden.",
     unique_constraints: "Eindeutigkeitsbedingungen",
     add_unique_constraint: "Eindeutigkeitsbedingung hinzufügen",
     references: "Referenzen",
@@ -284,20 +293,23 @@ const de = {
     layout_elk_layered: "Geschichtet nach Feldzeilen (ELK)",
     layout_elk_stress: "Gruppiert (ELK stress)",
     layout_by_subject_area: "Nach Themengebiet",
-    spread_out: "Auseinanderziehen",
-    pull_together: "Zusammenrücken",
     auto_connect_fk: "Fremdschlüssel automatisch verbinden",
     auto_connect_fk_success: "{{count}} Fremdschlüssel-Referenz(en) erstellt",
     no_foreign_keys_found: "Keine Beziehungen gefunden",
     all_relations_already_connected: "Alle Beziehungen sind bereits verbunden",
     auto_connect_fk_modal_title: "Fremdschlüssel automatisch verbinden",
-    auto_connect_fk_modal_description: "Damit PK/FK-Beziehungen automatisch erstellt werden können, sollten Ihre Spalten den üblichen Namenskonventionen folgen:",
-    auto_connect_fk_rule_1: "Tabellenpräfix + PK-Spalte (z. B. user_id oder users_id für die Tabelle 'users' mit dem Primärschlüssel 'id')",
-    auto_connect_fk_rule_2: "Übereinstimmender PK-Spaltenname (z. B. author_id, passend zu author_id in der übergeordneten Tabelle)",
-    auto_connect_fk_modal_question: "Möchten Sie das Diagramm durchsuchen und passende Beziehungen erstellen?",
+    auto_connect_fk_modal_description:
+      "Damit PK/FK-Beziehungen automatisch erstellt werden können, sollten Ihre Spalten den üblichen Namenskonventionen folgen:",
+    auto_connect_fk_rule_1:
+      "Tabellenpräfix + PK-Spalte (z. B. user_id oder users_id für die Tabelle 'users' mit dem Primärschlüssel 'id')",
+    auto_connect_fk_rule_2:
+      "Übereinstimmender PK-Spaltenname (z. B. author_id, passend zu author_id in der übergeordneten Tabelle)",
+    auto_connect_fk_modal_question:
+      "Möchten Sie das Diagramm durchsuchen und passende Beziehungen erstellen?",
     migrations: "Migrationen",
     generate_migration: "Migration erzeugen",
-    migration_not_supported_generic: "Migrationen werden für generische Diagramme nicht unterstützt.",
+    migration_not_supported_generic:
+      "Migrationen werden für generische Diagramme nicht unterstützt.",
     no_migration_needed: "Keine Migration nötig",
     scripts: "Skripte",
     json_diff: "JSON-Diff",
@@ -305,7 +317,8 @@ const de = {
     show_comments: "Kommentare anzeigen",
     configure_custom_types: "Benutzerdefinierte Typen konfigurieren",
     type_color: "Farbe",
-    custom_types_description: "Definieren Sie benutzerdefinierte Datentypen, die standardmäßig nicht unterstützt werden. Diese Typen stehen beim Erstellen oder Bearbeiten von Spalten zur Verfügung.",
+    custom_types_description:
+      "Definieren Sie benutzerdefinierte Datentypen, die standardmäßig nicht unterstützt werden. Diese Typen stehen beim Erstellen oder Bearbeiten von Spalten zur Verfügung.",
     type_data_corrupted: "Die konfigurierten Typen sind beschädigt.",
     no_custom_types: "Sie haben keine Typen konfiguriert",
     close: "Schließen",
@@ -322,7 +335,8 @@ const de = {
     primary_key: "Primärschlüssel",
     foreign_key: "Fremdschlüssel",
     import_with_ai: "Mit KI importieren",
-    ai_import_failed: "KI-Import fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    ai_import_failed:
+      "KI-Import fehlgeschlagen. Bitte versuchen Sie es erneut.",
     views: "Views",
     add_view: "View hinzufügen",
     edit_view: "{{extra}} View {{viewName}} bearbeiten",
@@ -346,17 +360,22 @@ const de = {
     view_w_no_name: "View ohne Namen",
     view_w_no_base_table: "View '{{viewName}}' hat keine Basistabelle",
     duplicate_views: "Doppelte Views mit dem Namen '{{viewName}}'",
-    view_name_clashes_w_table: "View '{{viewName}}' hat denselben Namen wie eine Tabelle",
+    view_name_clashes_w_table:
+      "View '{{viewName}}' hat denselben Namen wie eine Tabelle",
     join_w_no_table: "Join ohne Tabelle in View '{{viewName}}'",
-    join_w_no_condition: "Join auf '{{tableName}}' in View '{{viewName}}' hat keine Bedingung",
-    join_out_of_order: "Join auf '{{tableName}}' in View '{{viewName}}' referenziert eine Tabelle, die erst danach gejoint wird",
+    join_w_no_condition:
+      "Join auf '{{tableName}}' in View '{{viewName}}' hat keine Bedingung",
+    join_out_of_order:
+      "Join auf '{{tableName}}' in View '{{viewName}}' referenziert eine Tabelle, die erst danach gejoint wird",
     empty_view_column: "Leere Ausgabespalte in View '{{viewName}}'",
-    duplicate_view_columns: "Doppelte Ausgabespalte '{{columnName}}' in View '{{viewName}}'",
+    duplicate_view_columns:
+      "Doppelte Ausgabespalte '{{columnName}}' in View '{{viewName}}'",
     lock: "Sperren",
     unlock: "Entsperren",
     edit_dbml: "DBML bearbeiten",
     dbml_problem: "Zl. {{line}}, Sp. {{column}}: {{message}}",
-    move_to_cloud_prompt: "Dieses Diagramm ist lokal in Ihrem Browser gespeichert. In die Cloud verschieben?",
+    move_to_cloud_prompt:
+      "Dieses Diagramm ist lokal in Ihrem Browser gespeichert. In die Cloud verschieben?",
     move: "Verschieben",
     dismiss: "Schließen",
     view_actions: "View-Aktionen",
@@ -373,16 +392,22 @@ const de = {
     templates: "Vorlagen",
     diagrams: "Diagramme",
     logo: "Logo",
-    check_syntax_errors: "Bitte prüfen Sie auf Syntaxfehler oder melden Sie uns den Fehler.",
+    check_syntax_errors:
+      "Bitte prüfen Sie auf Syntaxfehler oder melden Sie uns den Fehler.",
     parse_error_at: "{{name}} [Zl. {{line}}, Sp. {{column}}]: {{message}}",
     overwrite_checkbox: "Kontrollkästchen Überschreiben",
     file_contains_error: "Die Datei enthält einen Fehler.",
-    file_missing_diagram_properties: "Der Datei fehlen notwendige Eigenschaften eines Diagramms.",
-    imported_diagram_database_mismatch: "Das importierte und das geöffnete Diagramm verwenden nicht dieselbe Datenbank.",
-    relationship_references_missing_table: "Beziehung {{relationshipName}} verweist auf eine Tabelle, die nicht existiert.",
-    relationship_references_missing_field: "Beziehung {{relationshipName}} verweist auf eine Spalte, die nicht existiert.",
+    file_missing_diagram_properties:
+      "Der Datei fehlen notwendige Eigenschaften eines Diagramms.",
+    imported_diagram_database_mismatch:
+      "Das importierte und das geöffnete Diagramm verwenden nicht dieselbe Datenbank.",
+    relationship_references_missing_table:
+      "Beziehung {{relationshipName}} verweist auf eine Tabelle, die nicht existiert.",
+    relationship_references_missing_field:
+      "Beziehung {{relationshipName}} verweist auf eine Spalte, die nicht existiert.",
     ready_to_import: "Alles in Ordnung. Sie können jetzt importieren.",
-    import_will_overwrite_current: "Das aktuelle Diagramm ist nicht leer. Beim Importieren eines neuen Diagramms werden die aktuellen Änderungen überschrieben.",
+    import_will_overwrite_current:
+      "Das aktuelle Diagramm ist nicht leer. Beim Importieren eines neuen Diagramms werden die aktuellen Änderungen überschrieben.",
     all: "Alle",
     all_databases: "Alle Datenbanken",
     all_types: "Alle Typen",
