@@ -30,6 +30,7 @@ import { useExtensions } from "../../../context/ExtensionsContext";
 import { importSQL } from "../../../utils/importSQL";
 import { fromSchemaQuery } from "../../../utils/importFrom/schemaQuery";
 import { autoArrange } from "../../../utils/autoArrange";
+import { getTableHeight } from "../../../utils/utils";
 import {
   allowedTypesFor,
   normalizeAiDiagram,
@@ -71,7 +72,8 @@ export default function Modal({
   onBack,
 }) {
   const { t, i18n } = useTranslation();
-  const { setTables, setRelationships, database, setSqlHeader } = useDiagram();
+  const { tables, setTables, setRelationships, database, setSqlHeader } =
+    useDiagram();
   const { setNotes } = useNotes();
   const { setAreas } = useAreas();
   const { setTypes } = useTypes();
@@ -171,7 +173,44 @@ export default function Modal({
     }
   };
 
-  const applyImportedDiagram = (diagramData) => {
+  // arrangeImported lays out the imported tables with auto arrange. When the
+  // person adds the import to an existing diagram, we place the new tables
+  // below the tables already there.
+  const arrangeImported = (diagramData) => {
+    const importedTop =
+      !importSource.overwrite && tables.length > 0
+        ? Math.max(
+            ...tables.map(
+              (table) => table.y + getTableHeight(table, settings.showComments),
+            ),
+          ) + 110
+        : 0;
+    const importedLeft =
+      !importSource.overwrite && tables.length > 0
+        ? Math.min(...tables.map((table) => table.x))
+        : 0;
+    const arrangedPositions = new Map(
+      autoArrange(diagramData.tables, diagramData.relationships, settings).map(
+        (p) => [p.id, p],
+      ),
+    );
+    return {
+      ...diagramData,
+      tables: diagramData.tables.map((table) => {
+        const position = arrangedPositions.get(table.id);
+        return position
+          ? {
+              ...table,
+              x: importedLeft + position.x,
+              y: importedTop + position.y,
+            }
+          : table;
+      }),
+    };
+  };
+
+  const applyImportedDiagram = (importedData) => {
+    const diagramData = arrangeImported(importedData);
     if (importSource.overwrite) {
       setTables(diagramData.tables);
       setRelationships(diagramData.relationships);
@@ -197,6 +236,13 @@ export default function Modal({
 
     setUndoStack([]);
     setRedoStack([]);
+    if (diagramData.tables.length) {
+      fitToView(
+        importSource.overwrite
+          ? diagramData.tables
+          : [...tables, ...diagramData.tables],
+      );
+    }
 
     setModal(MODAL.NONE);
   };
@@ -280,19 +326,7 @@ export default function Modal({
           return;
         }
 
-        const positions = new Map(
-          autoArrange(imported.tables, imported.relationships, settings).map(
-            (p) => [p.id, p],
-          ),
-        );
-        const tables = imported.tables.map((table) => ({
-          ...table,
-          x: positions.get(table.id).x,
-          y: positions.get(table.id).y,
-        }));
-
-        applyImportedDiagram({ ...imported, tables });
-        if (tables.length) fitToView(tables);
+        applyImportedDiagram(imported);
 
         const skipped = ["views", "indexes", "checks"]
           .filter((key) => imported.skipped[key] > 0)

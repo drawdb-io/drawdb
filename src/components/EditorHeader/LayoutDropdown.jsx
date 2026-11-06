@@ -27,6 +27,7 @@ export default function LayoutDropdown() {
       }}
       render={
         <Dropdown.Menu>
+          <Dropdown.Title>{t("view")}</Dropdown.Title>
           <Dropdown.Item
             icon={
               layout.header ? <IconCheckboxTick /> : <div className="px-2" />
