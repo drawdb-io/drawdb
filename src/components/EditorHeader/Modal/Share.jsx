@@ -147,15 +147,29 @@ export default function Share({ title, setModal }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const copyLink = () => {
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
+  const copyLink = async () => {
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(url);
         Toast.success(t("copied_to_clipboard"));
-      })
-      .catch(() => {
+      } catch {
         Toast.error(t("oops_smth_went_wrong"));
-      });
+      }
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = url;
+      textArea.style.cssText = "position:fixed;opacity:0;pointer-events:none;";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        Toast.success(t("copied_to_clipboard"));
+      } catch {
+        Toast.error(t("oops_smth_went_wrong"));
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   if (customContent) {
