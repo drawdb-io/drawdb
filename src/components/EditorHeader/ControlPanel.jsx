@@ -124,6 +124,21 @@ const EDITOR_HOTKEY = {
   ignoreEventWhen: (e) => Boolean(e.target?.closest?.(".monaco-editor")),
 };
 
+const CLIPBOARD_HOTKEY = {
+  ...EDITOR_HOTKEY,
+  ignoreEventWhen: (e) => {
+    if (EDITOR_HOTKEY.ignoreEventWhen(e)) return true;
+    if (e.target?.closest?.(".semi-modal, .semi-sidesheet")) return true;
+    const selection = window.getSelection();
+    return Boolean(
+      selection &&
+        !selection.isCollapsed &&
+        selection.toString().trim() &&
+        !document.getElementById("canvas")?.contains(selection.anchorNode),
+    );
+  },
+};
+
 export default function ControlPanel({
   title,
   setTitle,
@@ -2090,9 +2105,9 @@ export default function ControlPanel({
   useHotkeys("mod+o", open, EDITOR_HOTKEY);
   useHotkeys("mod+e", edit, EDITOR_HOTKEY);
   useHotkeys("mod+d", duplicate, EDITOR_HOTKEY);
-  useHotkeys("mod+c", copy, EDITOR_HOTKEY);
+  useHotkeys("mod+c", copy, CLIPBOARD_HOTKEY);
   useHotkeys("mod+v", paste, EDITOR_HOTKEY);
-  useHotkeys("mod+x", cut, EDITOR_HOTKEY);
+  useHotkeys("mod+x", cut, CLIPBOARD_HOTKEY);
   useHotkeys("delete", del, EDITOR_HOTKEY);
   useHotkeys("mod+shift+g", viewGrid, EDITOR_HOTKEY);
   useHotkeys("mod+up", zoomIn, EDITOR_HOTKEY);
