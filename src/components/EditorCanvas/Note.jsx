@@ -202,7 +202,7 @@ export default memo(function Note({ data, onPointerDown }) {
     if (newHeight === data.height) return;
 
     updateNote(data.id, { height: newHeight });
-  }, [data.id, data.width, data.height, updateNote]);
+  }, [data.id, data.width, data.height, data.content, updateNote]);
 
   return (
     <g

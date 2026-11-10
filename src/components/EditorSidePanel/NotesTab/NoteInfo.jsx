@@ -94,11 +94,7 @@ export default function NoteInfo({ data, nid }) {
           autosize
           readonly={layout.readOnly}
           onChange={(value) => {
-            const textarea = document.getElementById(`note_${data.id}`);
-            textarea.style.height = "0";
-            textarea.style.height = textarea.scrollHeight + "px";
-            const newHeight = textarea.scrollHeight + 16 + 20 + 4;
-            updateNote(data.id, { height: newHeight, content: value });
+            updateNote(data.id, { content: value });
           }}
           onFocus={(e) =>
             setEditField({ content: e.target.value, height: data.height })
