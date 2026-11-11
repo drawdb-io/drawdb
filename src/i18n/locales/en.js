@@ -34,6 +34,7 @@ const en = {
     models: "Models",
     exit: "Exit",
     edit: "Edit",
+    locate_table: "Locate on canvas",
     undo: "Undo",
     redo: "Redo",
     clear: "Clear",

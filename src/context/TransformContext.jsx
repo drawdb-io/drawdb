@@ -1,6 +1,7 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
 export const TransformContext = createContext(null);
+export const TransformActionsContext = createContext(null);
 
 export default function TransformContextProvider({ children }) {
   const [transform, setTransformInternal] = useState({
@@ -38,9 +39,13 @@ export default function TransformContextProvider({ children }) {
     [setTransformInternal],
   );
 
+  const actions = useMemo(() => ({ setTransform }), [setTransform]);
+
   return (
-    <TransformContext.Provider value={{ transform, setTransform }}>
-      {children}
-    </TransformContext.Provider>
+    <TransformActionsContext.Provider value={actions}>
+      <TransformContext.Provider value={{ transform, setTransform }}>
+        {children}
+      </TransformContext.Provider>
+    </TransformActionsContext.Provider>
   );
 }

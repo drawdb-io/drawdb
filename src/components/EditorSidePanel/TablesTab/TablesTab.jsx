@@ -1,6 +1,6 @@
 import { memo, useContext } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
-import { IconEyeOpened, IconEyeClosed } from "@douyinfe/semi-icons";
+import { IconEyeOpened, IconEyeClosed, IconMapPin } from "@douyinfe/semi-icons";
 import { IconPlus } from "@douyinfe/semi-icons";
 import {
   useSelect,
@@ -10,9 +10,12 @@ import {
   useSettings,
 } from "../../../hooks";
 import { DiagramActionsContext } from "../../../context/DiagramContext";
+import { TransformActionsContext } from "../../../context/TransformContext";
+import { SelectActionsContext } from "../../../context/SelectContext";
 import { UndoRedoActionsContext } from "../../../context/UndoRedoContext";
 import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
+import { getTableCenter } from "../../../utils/utils";
 import { DragHandle } from "../../SortableList/DragHandle";
 import { SortableList } from "../../SortableList/SortableList";
 import SearchBar from "./SearchBar";
@@ -81,8 +84,21 @@ const TableListItem = memo(function TableListItem({ table }) {
   const { layout } = useLayout();
   const { updateTable } = useContext(DiagramActionsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoActionsContext);
+  const { setTransform } = useContext(TransformActionsContext);
+  const { setSelectedElement } = useContext(SelectActionsContext);
   const { settings } = useSettings();
   const { t } = useTranslation();
+
+  const locateTable = (e) => {
+    e.stopPropagation();
+    setSelectedElement((prev) => ({
+      ...prev,
+      element: ObjectType.TABLE,
+      id: table.id,
+      open: false,
+    }));
+    setTransform({ pan: getTableCenter(table, settings.showComments) });
+  };
 
   const toggleTableVisibility = (e) => {
     e.stopPropagation();
@@ -125,6 +141,15 @@ const TableListItem = memo(function TableListItem({ table }) {
                 </div>
               )}
             </div>
+            <Button
+              size="small"
+              theme="borderless"
+              type="tertiary"
+              onClick={locateTable}
+              disabled={table.hidden}
+              title={t("locate_table")}
+              icon={<IconMapPin />}
+            />
             <Button
               size="small"
               theme="borderless"
