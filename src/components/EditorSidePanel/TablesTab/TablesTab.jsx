@@ -1,6 +1,6 @@
 import { memo, useContext } from "react";
 import { Collapse, Button } from "@douyinfe/semi-ui";
-import { IconEyeOpened, IconEyeClosed, IconMapPin } from "@douyinfe/semi-icons";
+import { IconEyeOpened, IconEyeClosed } from "@douyinfe/semi-icons";
 import { IconPlus } from "@douyinfe/semi-icons";
 import {
   useSelect,
@@ -11,7 +11,6 @@ import {
 } from "../../../hooks";
 import { DiagramActionsContext } from "../../../context/DiagramContext";
 import { TransformActionsContext } from "../../../context/TransformContext";
-import { SelectActionsContext } from "../../../context/SelectContext";
 import { UndoRedoActionsContext } from "../../../context/UndoRedoContext";
 import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
@@ -28,6 +27,14 @@ export default function TablesTab() {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const { setSaveState } = useSaveState();
+  const { setTransform } = useContext(TransformActionsContext);
+  const { settings } = useSettings();
+
+  const locateTable = (id) => {
+    const table = tables.find((tbl) => `${tbl.id}` === `${id}`);
+    if (!table || table.hidden) return;
+    setTransform({ pan: getTableCenter(table, settings.showComments) });
+  };
 
   return (
     <>
@@ -55,14 +62,15 @@ export default function TablesTab() {
           }
           keepDOM={false}
           lazyRender
-          onChange={(k) =>
+          onChange={(k) => {
             setSelectedElement((prev) => ({
               ...prev,
               open: true,
               id: k[0],
               element: ObjectType.TABLE,
-            }))
-          }
+            }));
+            if (k[0] !== undefined) locateTable(k[0]);
+          }}
           accordion
         >
           <SortableList
@@ -84,21 +92,8 @@ const TableListItem = memo(function TableListItem({ table }) {
   const { layout } = useLayout();
   const { updateTable } = useContext(DiagramActionsContext);
   const { setUndoStack, setRedoStack } = useContext(UndoRedoActionsContext);
-  const { setTransform } = useContext(TransformActionsContext);
-  const { setSelectedElement } = useContext(SelectActionsContext);
   const { settings } = useSettings();
   const { t } = useTranslation();
-
-  const locateTable = (e) => {
-    e.stopPropagation();
-    setSelectedElement((prev) => ({
-      ...prev,
-      element: ObjectType.TABLE,
-      id: table.id,
-      open: false,
-    }));
-    setTransform({ pan: getTableCenter(table, settings.showComments) });
-  };
 
   const toggleTableVisibility = (e) => {
     e.stopPropagation();
@@ -141,15 +136,6 @@ const TableListItem = memo(function TableListItem({ table }) {
                 </div>
               )}
             </div>
-            <Button
-              size="small"
-              theme="borderless"
-              type="tertiary"
-              onClick={locateTable}
-              disabled={table.hidden}
-              title={t("locate_table")}
-              icon={<IconMapPin />}
-            />
             <Button
               size="small"
               theme="borderless"
