@@ -262,3 +262,15 @@ export function getTableHeight(table, showComments = true, relatedFieldKeys) {
     getCommentHeight(table.comment, width, showComments)
   );
 }
+
+/**
+ * Returns the center of a table in diagram space, which is the value the
+ * canvas pan has to be set to for the table to appear in the middle of the
+ * screen.
+ */
+export function getTableCenter(table, showComments = true) {
+  return {
+    x: table.x + getTableWidth(table) / 2,
+    y: table.y + getTableHeight(table, showComments) / 2,
+  };
+}

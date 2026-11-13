@@ -10,9 +10,11 @@ import {
   useSettings,
 } from "../../../hooks";
 import { DiagramActionsContext } from "../../../context/DiagramContext";
+import { TransformActionsContext } from "../../../context/TransformContext";
 import { UndoRedoActionsContext } from "../../../context/UndoRedoContext";
 import { Action, ObjectType, State } from "../../../data/constants";
 import { useTranslation } from "react-i18next";
+import { getTableCenter } from "../../../utils/utils";
 import { DragHandle } from "../../SortableList/DragHandle";
 import { SortableList } from "../../SortableList/SortableList";
 import SearchBar from "./SearchBar";
@@ -25,6 +27,14 @@ export default function TablesTab() {
   const { t } = useTranslation();
   const { layout } = useLayout();
   const { setSaveState } = useSaveState();
+  const { setTransform } = useContext(TransformActionsContext);
+  const { settings } = useSettings();
+
+  const locateTable = (id) => {
+    const table = tables.find((tbl) => `${tbl.id}` === `${id}`);
+    if (!table || table.hidden) return;
+    setTransform({ pan: getTableCenter(table, settings.showComments) });
+  };
 
   return (
     <>
@@ -52,14 +62,15 @@ export default function TablesTab() {
           }
           keepDOM={false}
           lazyRender
-          onChange={(k) =>
+          onChange={(k) => {
             setSelectedElement((prev) => ({
               ...prev,
               open: true,
               id: k[0],
               element: ObjectType.TABLE,
-            }))
-          }
+            }));
+            if (k[0] !== undefined) locateTable(k[0]);
+          }}
           accordion
         >
           <SortableList
