@@ -1105,10 +1105,12 @@ const postgresTypesBase = {
         "yesterday",
         "current_timestamp",
       ];
-      return (
-        /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2})?$/.test(
-          field.default,
-        ) || specialValues.includes(field.default.toLowerCase())
+      if (specialValues.includes(field.default.toLowerCase())) {
+        return true;
+      }
+
+      return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2})?$/.test(
+        field.default,
       );
     },
     hasCheck: false,
