@@ -1,7 +1,6 @@
 import { Cardinality, Constraint } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
 import i18n from "../../i18n/i18n";
-import { escapeQuotes } from "../exportSQL/shared";
 import { isFunction, isKeyword, getRelationshipFields } from "../utils";
 import {
   dbmlFieldSize,
@@ -10,6 +9,10 @@ import {
   isInlineEnumType,
   quoteIdentifier,
 } from "../dbml/types";
+
+function escapeString(value) {
+  return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
 
 function parseDefaultDbml(field, database) {
   if (isFunction(field.default)) {
@@ -20,7 +23,7 @@ function parseDefaultDbml(field, database) {
     return field.default;
   }
 
-  return `'${escapeQuotes(field.default)}'`;
+  return `'${escapeString(field.default)}'`;
 }
 
 function columnDefault(field, database) {
@@ -70,10 +73,10 @@ function cardinality(rel) {
 
 function processComment(comment) {
   if (comment.includes("\n")) {
-    return `'''${comment}'''`;
+    return `'''${escapeString(comment)}'''`;
   }
 
-  return `'${escapeQuotes(comment)}'`;
+  return `'${escapeString(comment)}'`;
 }
 
 function columnComment(field) {
@@ -117,7 +120,7 @@ function indexEntry(fields, name, unique) {
   if (!Array.isArray(fields) || !fields.length) return null;
 
   const settings = [
-    name ? `name: '${escapeQuotes(String(name))}'` : "",
+    name ? `name: '${escapeString(String(name))}'` : "",
     unique ? "unique" : "",
   ].filter(Boolean);
   const columns = fields.map((field) => quoteIdentifier(field)).join(", ");
