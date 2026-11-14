@@ -56,7 +56,13 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC) {
             field.increment = false;
             if (d.auto_increment) field.increment = true;
             field.notNull = false;
-            if (d.nullable) field.notNull = true;
+            // `nullable` is a node for BOTH markers: `NULL` gives
+            // { type: "null" } and `NOT NULL` gives { type: "not null" },
+            // so testing it for truthiness marked an explicitly nullable
+            // column as NOT NULL. Only an omitted marker is undefined.
+            if (d.nullable && d.nullable.type !== "null") {
+              field.notNull = true;
+            }
             field.primary = false;
             if (d.primary_key) field.primary = true;
             field.default = "";
