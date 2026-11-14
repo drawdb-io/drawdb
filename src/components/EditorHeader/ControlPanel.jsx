@@ -2592,22 +2592,27 @@ export default function ControlPanel({
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
+                                    gap: "8px",
                                   }}
                                   onClick={menu[category][item].function}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    {t(item)}
+                                  <span className="flex items-center gap-2 min-w-0">
+                                    <span className="min-w-0">{t(item)}</span>
                                     {menu[category][item].is_new && (
-                                      <Tag size="small" color="blue">
+                                      <Tag
+                                        size="small"
+                                        color="blue"
+                                        className="flex-shrink-0"
+                                      >
                                         {t("new")}
                                       </Tag>
                                     )}
                                   </span>
 
                                   {isRtl(i18n.language) ? (
-                                    <IconChevronLeft />
+                                    <IconChevronLeft className="flex-shrink-0" />
                                   ) : (
-                                    <IconChevronRight />
+                                    <IconChevronRight className="flex-shrink-0" />
                                   )}
                                 </Dropdown.Item>
                               </Dropdown>
