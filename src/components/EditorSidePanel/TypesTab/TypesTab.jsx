@@ -61,14 +61,14 @@ export default function TypesTab() {
             setSelectedElement((prev) => ({
               ...prev,
               open: true,
-              id: parseInt(id),
+              id,
               element: ObjectType.TYPE,
             }))
           }
           accordion
         >
           {types.map((t, i) => (
-            <TypeInfo data={t} key={i} index={i} />
+            <TypeInfo data={t} key={t.id ?? i} index={i} />
           ))}
         </Collapse>
       )}

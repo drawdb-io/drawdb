@@ -21,6 +21,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { dbToTypes } from "../../../data/datatypes";
 import { getCustomTypesForDb, resolveType } from "../../../utils/customTypes";
+import { getTypeById } from "../../../utils/types";
 
 export default function TypeField({ data, tid, fid }) {
   const { types, updateType } = useTypes();
@@ -30,6 +31,9 @@ export default function TypeField({ data, tid, fid }) {
   const { setUndoStack, setRedoStack } = useUndoRedo();
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();
+  const { type: currentType } = getTypeById(types, tid);
+  const currentFields = currentType?.fields ?? [];
+  const currentTypeName = currentType?.name?.toLowerCase();
 
   return (
     <Row gutter={6} className="hover-1 my-2">
@@ -41,7 +45,7 @@ export default function TypeField({ data, tid, fid }) {
           placeholder={t("name")}
           onChange={(value) =>
             updateType(tid, {
-              fields: types[tid].fields.map((e, id) =>
+              fields: currentFields.map((e, id) =>
                 id === fid ? { ...data, name: value } : e,
               ),
             })
@@ -83,7 +87,7 @@ export default function TypeField({ data, tid, fid }) {
             })),
             ...types
               .filter(
-                (type) => type.name.toLowerCase() !== types[tid].name.toLowerCase(),
+                (type) => type.name.toLowerCase() !== currentTypeName,
               )
               .map((type) => ({
                 label: type.name.toUpperCase(),
@@ -120,7 +124,7 @@ export default function TypeField({ data, tid, fid }) {
             setRedoStack([]);
             if (value === "ENUM" || value === "SET") {
               updateType(tid, {
-                fields: types[tid].fields?.map((e, id) =>
+                fields: currentFields.map((e, id) =>
                   id === fid
                     ? {
                         ...data,
@@ -135,7 +139,7 @@ export default function TypeField({ data, tid, fid }) {
               resolveType(database, value).hasPrecision
             ) {
               updateType(tid, {
-                fields: types[tid].fields.map((e, id) =>
+                fields: currentFields.map((e, id) =>
                   id === fid
                     ? {
                         ...data,
@@ -147,7 +151,7 @@ export default function TypeField({ data, tid, fid }) {
               });
             } else {
               updateType(tid, {
-                fields: types[tid].fields.map((e, id) =>
+                fields: currentFields.map((e, id) =>
                   id === fid ? { ...data, type: value } : e,
                 ),
               });
@@ -177,7 +181,7 @@ export default function TypeField({ data, tid, fid }) {
                     onChange={(v) => {
                       if (layout.readOnly) return;
                       updateType(tid, {
-                        fields: types[tid].fields.map((e, id) =>
+                        fields: currentFields.map((e, id) =>
                           id === fid ? { ...data, values: v } : e,
                         ),
                       });
@@ -220,7 +224,7 @@ export default function TypeField({ data, tid, fid }) {
                     readonly={layout.readOnly}
                     onChange={(value) =>
                       updateType(tid, {
-                        fields: types[tid].fields.map((e, id) =>
+                        fields: currentFields.map((e, id) =>
                           id === fid ? { ...data, size: value } : e,
                         ),
                       })
@@ -264,7 +268,7 @@ export default function TypeField({ data, tid, fid }) {
                     value={data.size}
                     onChange={(value) =>
                       updateType(tid, {
-                        fields: types[tid].fields.map((e, id) =>
+                        fields: currentFields.map((e, id) =>
                           id === fid ? { ...data, size: value } : e,
                         ),
                       })
@@ -315,7 +319,7 @@ export default function TypeField({ data, tid, fid }) {
                     },
                   ]);
                   updateType(tid, {
-                    fields: types[tid].fields.filter((_, k) => k !== fid),
+                    fields: currentFields.filter((_, k) => k !== fid),
                   });
                 }}
               >
