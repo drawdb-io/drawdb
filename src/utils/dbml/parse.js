@@ -68,8 +68,10 @@ function parseTable(table) {
 
 function parseRef(ref) {
   const [start, end] = ref.endpoints;
+  // DBML >= 4 gives ranges ("0..*", "0..1", "1..*"...); drawDB only knows 1 / *.
+  const side = (relation) => (String(relation).endsWith("*") ? "*" : "1");
   const cardinality =
-    CARDINALITY_BY_RELATION[`${start.relation}:${end.relation}`];
+    CARDINALITY_BY_RELATION[`${side(start.relation)}:${side(end.relation)}`];
   if (!cardinality) return null;
 
   return {
