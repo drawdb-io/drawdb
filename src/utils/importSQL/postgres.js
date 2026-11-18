@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { Cardinality, Constraint, DB } from "../../data/constants";
+import { databases } from "../../data/databases";
 import { dbToTypes } from "../../data/datatypes";
 import { buildSQLFromAST, findReferencedTable } from "./shared";
 
@@ -42,22 +43,23 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC) {
             field.id = nanoid();
             field.name = d.column.column.expr.value;
 
+            // integer[] comes as { dataType: "INTEGER", array }, text[] as "TEXT[]"
+            const dataType = d.definition.dataType.replace(/(\[\])+$/, "");
+            const isArray =
+              dataType !== d.definition.dataType || Boolean(d.definition.array);
+
             let type = types.find((t) =>
-              new RegExp(`^(${t.name}|"${t.name}")$`).test(
-                d.definition.dataType,
-              ),
+              new RegExp(`^(${t.name}|"${t.name}")$`).test(dataType),
             )?.name;
             type ??= enums.find((t) =>
-              new RegExp(`^(${t.name}|"${t.name}")$`).test(
-                d.definition.dataType,
-              ),
+              new RegExp(`^(${t.name}|"${t.name}")$`).test(dataType),
             )?.name;
 
-            type ??=
-              dbToTypes[diagramDb][d.definition.dataType.toUpperCase()].type;
-            type ??= affinity[diagramDb][d.definition.dataType.toUpperCase()];
+            type ??= dbToTypes[diagramDb][dataType.toUpperCase()].type;
+            type ??= affinity[diagramDb][dataType.toUpperCase()];
 
             field.type = type;
+            if (isArray && databases[diagramDb].hasArrays) field.isArray = true;
 
             if (d.definition.expr && d.definition.expr.type === "expr_list") {
               field.values = d.definition.expr.value.map((v) => v.value);
