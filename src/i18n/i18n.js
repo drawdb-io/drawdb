@@ -47,16 +47,17 @@ import { sd, sindhi } from "./locales/sd";
 import { th, thai } from "./locales/th";
 import { as, assamese } from "./locales/as";
 import { bg, bulgarian } from "./locales/bg";
+import { bs, bosnian } from "./locales/bs";
 import { ms, malay } from "./locales/ms";
 import { mn, mongolian } from "./locales/mn";
-import { tl,filipino } from "./locales/tl";
+import { tl, filipino } from "./locales/tl";
 import { sw, swahili } from "./locales/sw";
 import { fi, finnish } from "./locales/fi";
-
 
 export const languages = [
   english,
   bulgarian,
+  bosnian,
   chinese,
   danish,
   spanish,
@@ -164,6 +165,7 @@ i18n
       th,
       as,
       bg,
+      bs,
       ms,
       mn,
       tl,
