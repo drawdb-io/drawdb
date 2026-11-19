@@ -1,9 +1,16 @@
 import { DB } from "../../data/constants";
 
-export function findReferencedTable(tables, currentTable, name) {
-  return currentTable.name === name
-    ? currentTable
-    : tables.find((table) => table.name === name);
+export function findReferencedTable(
+  tables,
+  currentTable,
+  name,
+  existingTables = [],
+) {
+  if (currentTable && currentTable.name === name) return currentTable;
+  return (
+    tables.find((table) => table.name === name) ??
+    existingTables.find((table) => table.name === name)
+  );
 }
 
 function quoteColumn(str, db) {
