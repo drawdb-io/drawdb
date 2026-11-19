@@ -93,6 +93,7 @@ import { databases } from "../../data/databases";
 import { jsonToMermaid } from "../../utils/exportAs/mermaid";
 import { isRtl } from "../../i18n/utils/rtl";
 import { jsonToDocumentation } from "../../utils/exportAs/documentation";
+import { jsonToDjangoModels } from "../../utils/exportAs/django";
 import { IdContext } from "../Workspace";
 import { socials } from "../../data/socials";
 import { toDBML } from "../../utils/exportAs/dbml";
@@ -1769,6 +1770,23 @@ export default function ControlPanel({
                 ...prev,
                 data: result,
                 extension: "md",
+              }));
+            },
+          },
+          {
+            name: "Django Models",
+            function: () => {
+              openExportModal(MODAL.CODE);
+              const result = jsonToDjangoModels({
+                tables: tables,
+                relationships: relationships,
+                enums: enums,
+                database: database,
+              });
+              setExportData((prev) => ({
+                ...prev,
+                data: result,
+                extension: "py",
               }));
             },
           },
