@@ -22,7 +22,11 @@ const affinity = {
   ),
 };
 
-export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
+export function fromOracleSQL(
+  ast,
+  diagramDb = DB.GENERIC,
+  existingTables = [],
+) {
   const tables = [];
   const relationships = [];
   const enums = [];
@@ -106,7 +110,12 @@ export function fromOracleSQL(ast, diagramDb = DB.GENERIC) {
             const startFieldName = startFieldNames[0];
             const endTableName = d.constraint.reference.object.name;
 
-            const endTable = findReferencedTable(tables, table, endTableName);
+            const endTable = findReferencedTable(
+              tables,
+              table,
+              endTableName,
+              existingTables,
+            );
             if (!endTable) return;
 
             const fieldPairs = [];

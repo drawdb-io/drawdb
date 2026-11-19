@@ -37,7 +37,7 @@ const affinity = {
   ),
 };
 
-export function fromSQLite(ast, diagramDb = DB.GENERIC) {
+export function fromSQLite(ast, diagramDb = DB.GENERIC, existingTables = []) {
   const tables = [];
   const relationships = [];
 
@@ -51,7 +51,12 @@ export function fromSQLite(ast, diagramDb = DB.GENERIC) {
     const endFieldNames = referenceDefinition.definition.map((c) => c.column);
     const startFieldName = startFieldNames[0];
 
-    const endTable = findReferencedTable(tables, startTable, endTableName);
+    const endTable = findReferencedTable(
+      tables,
+      startTable,
+      endTableName,
+      existingTables,
+    );
     if (!endTable) return;
 
     const fieldPairs = [];
