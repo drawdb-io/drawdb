@@ -162,6 +162,7 @@ export default function Modal({
         ast,
         database === DB.GENERIC ? importDb : database,
         database,
+        importSource.overwrite ? [] : tables,
       );
 
       applyImportedDiagram(diagramData);

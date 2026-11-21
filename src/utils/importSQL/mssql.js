@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { Cardinality, DB } from "../../data/constants";
 import { dbToTypes } from "../../data/datatypes";
-import { buildSQLFromAST } from "./shared";
+import { buildSQLFromAST, findReferencedTable } from "./shared";
 
 const affinity = {
   [DB.MSSQL]: new Proxy(
@@ -32,7 +32,7 @@ const affinity = {
   ),
 };
 
-export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
+export function fromMSSQL(ast, diagramDb = DB.GENERIC, existingTables = []) {
   const tables = [];
   const relationships = [];
 
@@ -131,7 +131,12 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
               );
               const startFieldName = startFieldNames[0];
 
-              const endTable = tables.find((t) => t.name === endTableName);
+              const endTable = findReferencedTable(
+                tables,
+                null,
+                endTableName,
+                existingTables,
+              );
               if (!endTable) return;
 
               const fieldPairs = [];
@@ -258,7 +263,12 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
           const startTable = tables.find((t) => t.name === startTableName);
           if (!startTable) return;
 
-          const endTable = tables.find((t) => t.name === endTableName);
+          const endTable = findReferencedTable(
+            tables,
+            null,
+            endTableName,
+            existingTables,
+          );
           if (!endTable) return;
 
           const fieldPairs = [];
@@ -266,9 +276,7 @@ export function fromMSSQL(ast, diagramDb = DB.GENERIC) {
             const sf = startTable.fields.find(
               (f) => f.name === startFieldNames[i],
             );
-            const ef = endTable.fields.find(
-              (f) => f.name === endFieldNames[i],
-            );
+            const ef = endTable.fields.find((f) => f.name === endFieldNames[i]);
             if (!sf || !ef) break;
             fieldPairs.push({ startFieldId: sf.id, endFieldId: ef.id });
           }
