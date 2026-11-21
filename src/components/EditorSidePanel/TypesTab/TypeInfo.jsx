@@ -23,8 +23,7 @@ export default function TypeInfo({ index, data }) {
   const [editField, setEditField] = useState({});
   const { t } = useTranslation();
 
-  // TODO: remove indexes, not a valid case after adding id to types
-  const typeId = data.id ?? index;
+  const typeId = data.id;
 
   return (
     <div id={`scroll_type_${typeId}`}>
