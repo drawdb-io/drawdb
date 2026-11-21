@@ -39,9 +39,9 @@ export default function EnumDetails({ data }) {
             if (e.target.value === editField.name) return;
 
             const updatedFields = tables.reduce((acc, table) => {
-              table.fields.forEach((field, i) => {
+              table.fields.forEach((field) => {
                 if (field.type.toLowerCase() === data.name.toLowerCase()) {
-                  acc.push({ tid: table.id, fid: i });
+                  acc.push({ tid: table.id, fid: field.id });
                 }
               });
               return acc;
