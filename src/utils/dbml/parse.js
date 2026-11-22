@@ -67,7 +67,14 @@ function parseTable(table) {
 }
 
 function parseRef(ref) {
-  const [start, end] = ref.endpoints;
+  const [first, second] = ref.endpoints;
+  const fieldToken = second.fields?.[0]?.token;
+  const inline =
+    !!ref.token &&
+    !!fieldToken &&
+    ref.token.start.offset >= fieldToken.start.offset &&
+    ref.token.end.offset <= fieldToken.end.offset;
+  const [start, end] = inline ? [second, first] : [first, second];
   // DBML >= 4 gives ranges ("0..*", "0..1", "1..*"...); drawDB only knows 1 / *.
   const side = (relation) => (String(relation).endsWith("*") ? "*" : "1");
   const cardinality =
