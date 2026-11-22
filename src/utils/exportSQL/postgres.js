@@ -7,6 +7,7 @@ import {
   getFkColumnNames,
 } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
+import { DB } from "../../data/constants";
 
 function tablesToPostgres(diagram) {
   // Enum and composite type names are created quoted, so columns must refer
@@ -19,6 +20,7 @@ function tablesToPostgres(diagram) {
     ]),
   );
   const columnType = (type) => {
+    if (dbToTypes[DB.POSTGRES][String(type).toUpperCase()]) return type;
     const name = customTypeNames.get(String(type).toLowerCase());
     return name === undefined ? type : `"${name}"`;
   };
