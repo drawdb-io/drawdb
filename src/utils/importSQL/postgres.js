@@ -277,6 +277,10 @@ export function fromPostgres(ast, diagramDb = DB.GENERIC, existingTables = []) {
         });
         tables.push(table);
       } else if (e.keyword === "index") {
+        // An index on an expression (lower(email)) has no field to point at;
+        // skip it rather than fail the whole import.
+        if (e.index_columns.some((f) => !f.column?.expr)) return;
+
         const index = {
           name: e.index,
           unique: e.index_type === "unique",
