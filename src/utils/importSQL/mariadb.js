@@ -191,6 +191,16 @@ export function fromMariaDB(ast, diagramDb = DB.GENERIC, existingTables = []) {
                 u.id = j;
               });
             }
+          } else if (
+            d.resource === "index" &&
+            (d.keyword === "key" || d.keyword === "index")
+          ) {
+            table.indices.push({
+              id: table.indices.length,
+              name: d.index || `${table.name}_index_${table.indices.length}`,
+              unique: false,
+              fields: d.definition.map((c) => c.column),
+            });
           }
         });
 
