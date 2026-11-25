@@ -191,6 +191,13 @@ export function fromMySQL(ast, diagramDb = DB.GENERIC, existingTables = []) {
                 u.id = j;
               });
             }
+          } else if (d.resource === "index") {
+            table.indices.push({
+              id: table.indices.length,
+              name: d.index,
+              unique: false,
+              fields: d.definition.map((c) => c.column),
+            });
           }
         });
 
