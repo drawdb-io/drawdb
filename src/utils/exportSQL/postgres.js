@@ -7,8 +7,24 @@ import {
   getFkColumnNames,
 } from "./shared";
 import { dbToTypes } from "../../data/datatypes";
+import { DB } from "../../data/constants";
 
 function tablesToPostgres(diagram) {
+  // Enum and composite type names are created quoted, so columns must refer
+  // to them with the declared name, quoted, instead of the (possibly
+  // upper-cased) type stored on the field.
+  const customTypeNames = new Map(
+    [...diagram.enums, ...diagram.types].map((t) => [
+      t.name.toLowerCase(),
+      t.name,
+    ]),
+  );
+  const columnType = (type) => {
+    if (dbToTypes[DB.POSTGRES][String(type).toUpperCase()]) return type;
+    const name = customTypeNames.get(String(type).toLowerCase());
+    return name === undefined ? type : `"${name}"`;
+  };
+
   const enumStatements = diagram.enums
     .map(
       (e) =>
@@ -21,8 +37,8 @@ function tablesToPostgres(diagram) {
   const typeStatements = diagram.types
     .map(
       (type) =>
-        `CREATE TYPE ${type.name} AS (\n${type.fields
-          .map((f) => `\t${f.name} ${f.type}`)
+        `CREATE TYPE "${type.name}" AS (\n${type.fields
+          .map((f) => `\t${f.name} ${columnType(f.type)}`)
           .join(",\n")}\n);${
           type.comment?.trim()
             ? `\n\nCOMMENT ON TYPE "${type.name}" IS '${escapeQuotes(type.comment)}';`
@@ -43,7 +59,7 @@ function tablesToPostgres(diagram) {
           (field) =>
             `${exportFieldComment(field.comment)}\t"${
               field.name
-            }" ${field.type}${
+            }" ${columnType(field.type)}${
               field.size ? `(${field.size})` : ""
             }${field.isArray ? " ARRAY" : ""}${field.notNull ? " NOT NULL" : ""}${
               field.unique ? " UNIQUE" : ""
@@ -112,24 +128,20 @@ function tablesToPostgres(diagram) {
         startTable,
         endTable,
       );
-      if (startColumns.some((c) => !c) || endColumns.some((c) => !c))
-        return "";
+      if (startColumns.some((c) => !c) || endColumns.some((c) => !c)) return "";
 
       return `ALTER TABLE "${startTable.name}"\nADD FOREIGN KEY(${startColumns
         .map((c) => `"${c}"`)
         .join(", ")}) REFERENCES "${endTable.name}"(${endColumns
         .map((c) => `"${c}"`)
-        .join(", ")})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
+        .join(
+          ", ",
+        )})\nON UPDATE ${r.updateConstraint.toUpperCase()} ON DELETE ${r.deleteConstraint.toUpperCase()};`;
     })
     .filter(Boolean)
     .join("\n");
 
-  return [
-    enumStatements,
-    typeStatements,
-    tableStatements,
-    foreignKeyStatements,
-  ]
+  return [enumStatements, typeStatements, tableStatements, foreignKeyStatements]
     .map((s) => s.trim())
     .filter(Boolean)
     .join("\n\n");
