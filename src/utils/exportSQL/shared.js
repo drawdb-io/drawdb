@@ -46,6 +46,18 @@ export function exportFieldComment(comment) {
     .join("");
 }
 
+export function getSQLiteAutoIncrementField(
+  primaryFields,
+  getType = (field) => field.type,
+) {
+  const [field] = primaryFields;
+  return primaryFields.length === 1 &&
+    field.increment &&
+    getType(field) === "INTEGER"
+    ? field
+    : null;
+}
+
 export function uniqueConstraintClause(table, quote) {
   const constraints = (table.uniqueConstraints || []).filter(
     (uc) => Array.isArray(uc.fields) && uc.fields.length > 0,
