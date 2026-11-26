@@ -56,9 +56,18 @@ With the Docker image, pass the server URL when starting the container. No rebui
 docker run -p 3000:80 -e VITE_BACKEND_URL=https://your-drawdb-server.example.com ghcr.io/drawdb-io/drawdb:latest
 ```
 
+### Deploy on Wasmer
+
+[![Deploy to Wasmer](https://img.shields.io/badge/Deploy%20to-Wasmer-171717?logo=wasmer&logoColor=white)](https://wasmer.io/apps/create?github=drawdb-io%2Fdrawdb)
+
+[Wasmer Edge](https://docs.wasmer.io/edge/) is a cloud hosting platform powered by WebAssembly. Install dependencies with `npm ci`, run `npm run build`, and use `dist` as the output directory. The included [Anybuild file](./Anybuild) configures static hosting and client-side routing.
+
+The button opens the import page for this public repository; review the build settings before deploying. To customise drawDB and deploy your changes, fork this repository and import your own fork. Sharing still requires the optional [drawDB server](https://github.com/drawdb-io/drawdb-server).
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
 ## Support
+
 - Join discussions: [Discord](https://discord.gg/BrjZgNrmR6)
