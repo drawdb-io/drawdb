@@ -148,9 +148,6 @@ export default function Share({ title, setModal }) {
   }, []);
 
   const copyLink = () => {
-    // navigator.clipboard is unavailable in insecure contexts and rejects
-    // when the document is not focused; fall back to execCommand so the
-    // "Copy link" button keeps working (e.g. self-hosted deployments).
     const fallbackCopy = () => {
       const textarea = document.createElement("textarea");
       textarea.value = url;
