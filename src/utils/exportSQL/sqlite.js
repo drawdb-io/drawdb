@@ -2,6 +2,7 @@ import { appendViews } from "../views";
 import {
   exportFieldComment,
   getInlineFK,
+  getSQLiteAutoIncrementField,
   parseDefault,
   uniqueConstraintClause,
 } from "./shared";
@@ -12,6 +13,8 @@ function tablesToSqlite(diagram) {
   return diagram.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, diagram);
+      const primaryFields = table.fields.filter((field) => field.primary);
+      const autoIncrementField = getSQLiteAutoIncrementField(primaryFields);
       return `${
         table.comment === "" ? "" : `/* ${table.comment} */\n`
       }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
@@ -26,12 +29,11 @@ function tablesToSqlite(diagram) {
               !dbToTypes[diagram.database][field.type].hasCheck
                 ? ""
                 : ` CHECK(${field.check})`
-            }`,
+            }${field === autoIncrementField ? " PRIMARY KEY AUTOINCREMENT" : ""}`,
         )
         .join(",\n")}${
-        table.fields.filter((f) => f.primary).length > 0
-          ? `,\n\tPRIMARY KEY(${table.fields
-              .filter((f) => f.primary)
+        primaryFields.length > 0 && !autoIncrementField
+          ? `,\n\tPRIMARY KEY(${primaryFields
               .map((f) => `"${f.name}"`)
               .join(", ")})`
           : ""

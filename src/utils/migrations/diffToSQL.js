@@ -3,6 +3,7 @@ import {
   parseDefault,
   exportFieldComment,
   uniqueConstraintClause,
+  getSQLiteAutoIncrementField,
 } from "../exportSQL/shared";
 import { DB } from "../../data/constants";
 import { databases } from "../../data/databases";
@@ -70,6 +71,9 @@ function columnDefinition(field, db) {
 
 function toTable(table, db) {
   const q = getQuote(db);
+  const pk = table.fields.filter((f) => f.primary);
+  const autoIncrementField =
+    db === DB.SQLITE ? getSQLiteAutoIncrementField(pk) : null;
   const meta = (f) =>
     dbToTypes[db]?.[f.type] || dbToTypes[DB.GENERIC]?.[f.type];
 
@@ -92,7 +96,7 @@ function toTable(table, db) {
     fieldDefs = table.fields
       .map(
         (f) =>
-          `\t${q(f.name)} ${f.type}${f.notNull ? " NOT NULL" : ""}${f.unique ? " UNIQUE" : ""}${f.default !== "" ? ` DEFAULT ${parseDefault(f, db)}` : ""}${f.check && meta(f)?.hasCheck ? ` CHECK(${f.check})` : ""}`,
+          `\t${q(f.name)} ${f.type}${f.notNull ? " NOT NULL" : ""}${f.unique ? " UNIQUE" : ""}${f.default !== "" ? ` DEFAULT ${parseDefault(f, db)}` : ""}${f.check && meta(f)?.hasCheck ? ` CHECK(${f.check})` : ""}${f === autoIncrementField ? " PRIMARY KEY AUTOINCREMENT" : ""}`,
       )
       .join(",\n");
   } else if (db === DB.MSSQL) {
@@ -112,9 +116,8 @@ function toTable(table, db) {
       .join(",\n");
   }
 
-  const pk = table.fields.filter((f) => f.primary);
   const pkClause =
-    pk.length > 0
+    pk.length > 0 && !autoIncrementField
       ? `,\n\tPRIMARY KEY(${pk.map((f) => q(f.name)).join(", ")})`
       : "";
 

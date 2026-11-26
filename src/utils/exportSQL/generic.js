@@ -4,6 +4,7 @@ import { dbToTypes, defaultTypes } from "../../data/datatypes";
 import {
   escapeQuotes,
   getInlineFK,
+  getSQLiteAutoIncrementField,
   parseDefault,
   uniqueConstraintClause,
   getFkColumnNames,
@@ -417,6 +418,11 @@ function tablesToSQLite(obj) {
   return obj.tables
     .map((table) => {
       const inlineFK = getInlineFK(table, obj);
+      const primaryFields = table.fields.filter((field) => field.primary);
+      const autoIncrementField = getSQLiteAutoIncrementField(
+        primaryFields,
+        getSQLiteType,
+      );
       return `${
         table.comment === "" ? "" : `/* ${table.comment} */\n`
       }CREATE TABLE IF NOT EXISTS "${table.name}" (\n${table.fields
@@ -431,12 +437,11 @@ function tablesToSQLite(obj) {
               !dbToTypes[obj.database][field.type].hasCheck
                 ? ""
                 : ` CHECK(${field.check})`
-            }`,
+            }${field === autoIncrementField ? " PRIMARY KEY AUTOINCREMENT" : ""}`,
         )
         .join(",\n")}${
-        table.fields.filter((f) => f.primary).length > 0
-          ? `,\n\tPRIMARY KEY(${table.fields
-              .filter((f) => f.primary)
+        primaryFields.length > 0 && !autoIncrementField
+          ? `,\n\tPRIMARY KEY(${primaryFields
               .map((f) => `"${f.name}"`)
               .join(", ")})`
           : ""
