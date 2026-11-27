@@ -28,6 +28,19 @@ function quoteColumn(str, db) {
   }
 }
 
+function getColumnName(column) {
+  if (typeof column === "string") return column;
+  return column?.expr?.value ?? "";
+}
+
+function getFunctionName(name) {
+  if (typeof name === "string") return name;
+  if (Array.isArray(name?.name)) {
+    return name.name.map((n) => n.value).join(".");
+  }
+  return "";
+}
+
 export function buildSQLFromAST(ast, db = DB.MYSQL) {
   if (ast.type === "binary_expr") {
     const leftSQL = buildSQLFromAST(ast.left, db);
@@ -36,27 +49,16 @@ export function buildSQLFromAST(ast, db = DB.MYSQL) {
   }
 
   if (ast.type === "function") {
-    let expr = "";
-    expr = ast.name;
+    let expr = getFunctionName(ast.name);
     if (ast.args) {
       expr +=
         "(" +
-        ast.args.value
-          .map((v) => {
-            if (v.type === "column_ref") return "`" + v.column + "`";
-            if (
-              v.type === "single_quote_string" ||
-              v.type === "double_quote_string"
-            )
-              return "'" + v.value + "'";
-            return v.value;
-          })
-          .join(", ") +
+        ast.args.value.map((v) => buildSQLFromAST(v, db)).join(", ") +
         ")";
     }
     return expr;
   } else if (ast.type === "column_ref") {
-    return quoteColumn(ast.column, db);
+    return quoteColumn(getColumnName(ast.column), db);
   } else if (ast.type === "expr_list") {
     return ast.value.map((v) => v.value).join(" AND ");
   } else {
