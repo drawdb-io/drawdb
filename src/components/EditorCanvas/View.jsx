@@ -311,7 +311,7 @@ export default memo(function View({ viewData, onPointerDown }) {
               </div>
             </div>
             {viewData.comment && settings.showComments && (
-              <div className="text-xs px-3 line-clamp-5">
+              <div className="text-xs px-3 break-words line-clamp-5">
                 {viewData.comment}
               </div>
             )}

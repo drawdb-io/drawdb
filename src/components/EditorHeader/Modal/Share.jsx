@@ -148,14 +148,32 @@ export default function Share({ title, setModal }) {
   }, []);
 
   const copyLink = () => {
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        Toast.success(t("copied_to_clipboard"));
-      })
-      .catch(() => {
-        Toast.error(t("oops_smth_went_wrong"));
-      });
+    const fallbackCopy = () => {
+      const textarea = document.createElement("textarea");
+      textarea.value = url;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const copied = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return copied;
+    };
+
+    const showResult = (copied) =>
+      copied
+        ? Toast.success(t("copied_to_clipboard"))
+        : Toast.error(t("oops_smth_went_wrong"));
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => showResult(true))
+        .catch(() => showResult(fallbackCopy()));
+    } else {
+      showResult(fallbackCopy());
+    }
   };
 
   if (customContent) {

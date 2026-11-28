@@ -104,20 +104,36 @@ function countWrappedLines(comment, contentWidth, maxLines) {
       continue;
     }
 
-    const words = paragraph.split(/\s+/).filter(Boolean);
     let lineWidth = 0;
-
-    for (const word of words) {
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
       const wordWidth = ctx.measureText(word).width;
-      if (lineWidth === 0) {
-        lineWidth = wordWidth;
-      } else if (lineWidth + spaceWidth + wordWidth <= contentWidth) {
+      if (lineWidth > 0 && lineWidth + spaceWidth + wordWidth <= contentWidth) {
         lineWidth += spaceWidth + wordWidth;
-      } else {
+        continue;
+      }
+      if (lineWidth > 0) {
         lines++;
         if (lines >= maxLines) break;
-        lineWidth = wordWidth;
+        lineWidth = 0;
       }
+
+      // Scripts without spaces (e.g. CJK) produce "words" wider than the
+      // whole content width; wrap those character by character instead of
+      // counting them as a single line.
+      if (wordWidth <= contentWidth) {
+        lineWidth = wordWidth;
+        continue;
+      }
+      for (const char of word) {
+        const charWidth = ctx.measureText(char).width;
+        if (lineWidth > 0 && lineWidth + charWidth > contentWidth) {
+          lines++;
+          if (lines >= maxLines) break;
+          lineWidth = 0;
+        }
+        lineWidth += charWidth;
+      }
+      if (lines >= maxLines) break;
     }
     if (lineWidth > 0) lines++;
   }

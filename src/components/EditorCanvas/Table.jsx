@@ -383,7 +383,7 @@ export default memo(function Table({
                 </div>
               </div>
               {tableData.comment && settings.showComments && (
-                <div className="text-xs px-3 line-clamp-5">
+                <div className="text-xs px-3 break-words line-clamp-5">
                   {tableData.comment}
                 </div>
               )}
@@ -549,7 +549,7 @@ export default memo(function Table({
         {showFieldComment && (
           <div className="ms-3 px-3 pb-3">
             <div
-              className={`text-xs line-clamp-2 ${settings.mode === "light" ? "text-zinc-600" : "text-zinc-200"}`}
+              className={`text-xs break-words line-clamp-2 ${settings.mode === "light" ? "text-zinc-600" : "text-zinc-200"}`}
             >
               {fieldData.comment}
             </div>
